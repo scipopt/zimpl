@@ -1,0 +1,2 @@
+# $ID$
+LDFLAGS=-L/usr/local/cross-tools/lib -lgmp -lz -lm -static
