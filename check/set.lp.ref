@@ -3,6 +3,8 @@
 Minimize
  Objective: 
 Subject to
+ v1_1:
+  + v_b@2 + v_a@2 >= 0
  u1_18:
   + u_B@9 >= 0
  u1_17:
@@ -120,6 +122,8 @@ Subject to
  a1_1:
   + a_c + a_b + a_a >= 0
 Bounds
+ 0 <= v_b@2 <= +Inf
+ 0 <= v_a@2 <= +Inf
  0 <= u_B@9 <= +Inf
  0 <= u_A@9 <= +Inf
  0 <= u_B@8 <= +Inf

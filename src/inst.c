@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.36 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.37 2003/05/26 08:30:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -356,7 +356,6 @@ CodeNode* i_expr_fac(CodeNode* self)
 
    return self;
 }
-
 
 CodeNode* i_expr_card(CodeNode* self)
 {

@@ -44,6 +44,7 @@ set R   := indexset(P);
 set S   := R;
 set T := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
 set U := proj(T, <3,1>);
+set V := <a,2> in A*B with a == "a" or a == "b";
 
 var a[A];
 var b[B];
@@ -61,6 +62,7 @@ var n[{ 1 .. 100 }];
 var p[C];
 var q[C];
 var u[U];
+var v[V];
 
 subto a1: sum <i> in A : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= 0;
@@ -82,6 +84,7 @@ subto p1: forall <i1> in R do
 subto q1: forall <i1> in indexset(Q) do
    sum <i2> in Q[i1] : q[i2] >= 0;
 subto u1: forall <i1,i2> in U do u[i1,i2] >= 0;
+subto v1: sum <i1,i2> in V : v[i1,i2] >= 0;
 
 
 

@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.11 2003/05/04 07:27:32 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.12 2003/05/26 08:30:24 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,13 +29,15 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.11 2003/05/04 07:27:32 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.12 2003/05/26 08:30:24 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
 \setcounter{secnumdepth}{1}
+\renewcommand{\labelitemi}{$\blacktriangleright$}
+%
 \newcommand{\eg}{{e.\,g.}\xspace}
-\newcommand{\ie}{{e.\,g.}\xspace}
+\newcommand{\ie}{{i.\,e.}\xspace}
 \newcommand{\zimpl}{{\sc Zimpl}\xspace}
 \newcommand{\lp}{{\sc lp}\xspace}
 \newcommand{\mip}{{\sc mip}\xspace}
@@ -279,8 +281,8 @@ Each \zpl-file consists of five types of statements:
 \item Constraints
 \end{itemize}
 
-Each statement ends with a semicolon (\code{;}). 
-Everything from a number-sign (\code{\#}) to 
+Each statement ends with a semicolon \code{;}. 
+Everything from a number-sign \code{\#} to 
 the end of the line is treated as a
 comment and is ignored.
 
@@ -322,13 +324,17 @@ any of the following operators and functions:
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
 \code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
-\code{if b the a else b}         &conditional               &\\
+\code{if a then b else c}        &conditional               &\\
 \end{tabular}
 
 \medskip
-With $\min$ and $\max$ it is possible to find the minimum/maximum
-member of an one dimensional set of numeric values.
-\code{card} gives the cardinality of a set.
+%With $\min$ and $\max$ it is possible to find the minimum/maximum
+%member of an one dimensional set of numeric values.
+%\code{card} gives the cardinality of a set.
+
+\subsubsection{String expressions}
+A string is delimited by double quotation marks \code{"},
+\eg, \code{"Hallo"}. 
 
 The following is either a numeric or a string expression, depending if
 \emph{expression} is a string or a numeric expression.
@@ -336,9 +342,8 @@ The following is either a numeric or a string expression, depending if
 \code{if} \emph{boolean-expression} \code{then}
 \emph{expression} \code{else} \emph{expression} \code{end}.
 
-\subsubsection{String expressions}
-A string is delimited by double quotation marks (\code{"}),
-\eg, \code{"Hallo"}. At this time no further functions or operators 
+At this time no further functions or operators
+for strings are implemented.
 
 \subsubsection{Boolean expressions}
 These evaluate either to \emph{true} or \emph{false}. For numbers the
@@ -352,20 +357,28 @@ membership of a tuple.
 
 \subsection{Sets}
 Sets consist of tuples. The tuples in a sets are unordered, \ie, each tuple can only
-be once in a set. Sets start and end with \code{\{} and \code{\}},
+be once in a set. Sets are delimited by braces, \code{\{} and \code{\}},
 resp.
 Tuples consist of components. The components are ordered. 
 Each tuple of a specific set has the same number of components. 
 The components are either numbers or strings. The type of the $n$-th
-component of each tuple must be the same. A tuple starts and ends with
+component of each tuple of a set must be the same. A tuple starts and ends with
 $<$ and $>$, resp., \eg \code{$<$1,2,"x"$>$}. The components are separated by commas.
 If tuples are one-dimensional, it is possible 
-to omit the braces in a list of elements, but then 
+to omit the tuple delimiters in a list of elements, but then 
 they must be omitted from all tuples of the set, \eg \code{\{1,2,3}\}.
 
 Sets can be defined with the set statement. This consists of
 the keyword \code{set}, the name of the set, an assignment operator
 (\code{:=}) and a valid set expression.
+
+Sets are referenced by use of an \emph{template} tuple, consisting
+of placeholders that are replaced by the value of the components of
+the respective tuple. For example a set $S$ consisting of two dimensional
+tuples could be referenced by \code{<a,b> in S}. If any of the
+placeholders are actual values, only those tuples will be extacted
+that match these values. For example \code{<1,b> in S} will only get
+those tuples whose first component is \code{1}.
 
 \paragraph{Examples}
 {\small 
@@ -379,58 +392,81 @@ set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 For set expressions these functions and
 operators are defined:
 
+\medskip
 \begin{tabular}{llp{7cm}}
 %\hline
-A cross B   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
-A union B   &Union & $\{x | x\in A\vee x\in B\}$\\
-A inter B   &Intersection & $\{x |x\in A\wedge x\in B\}$\\
-A without B &Difference & $\{ x |x\in A\wedge x\not\in B\}$\\
-A symdiff B &Symmetric difference & 
+\code{A*B},&\\
+\code{A cross B}   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
+\code{A+B},&\\
+\code{A union B}   &Union & $\{x | x\in A\vee x\in B\}$\\
+\code{A inter B}   &Intersection & $\{x |x\in A\wedge x\in B\}$\\
+\code{A$\setminus$B, A-B},&\\
+\code{A without B} &Difference & $\{ x |x\in A\wedge x\not\in B\}$\\
+\code{A symdiff B} &Symmetric difference & 
 $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
-\{n to m {\em by s}\}& Generate, & 
+\code{\{n\,{..}\,m\}},&\\
+\code{\{n to m {\em by s}\}}& Generate, & 
 $\{ x | x=n + is \leq m, i\in\N_0\}$\\
 &(default $s = 1$)&\\ 
-$\mbox{proj}(A, t)$& Projection & 
+\code{proj(A, t)}& Projection & 
 The new set will consist of $n$-tuples, with\\
 &$t=(e_1,\ldots,e_n)$&
 the $i$-th component beeing the $e_i$-th component of $A$.\\
 %\hline
 \end{tabular}
 
-\medskip
-It is possible to write 
-* instead of \code{cross}, 
-+ instead of \code{union},  
-$\backslash$ or - instead of \code{without}
-and .. instead of \code{to}.  
-\medskip
-
-\paragraph{Conditional sets}
-It is possible to restrict a set to tuples that 
-
 \paragraph{Examples}
 {\small 
 \begin{verbatim}
 set D := A cross B;
 set E := { 6 to 9 } union A without { <2>, <3> }; 
-set F := <i,j> in Q with i > j and i < 5;
-set G := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
-set H := proj(G, <3,1>) 
+set F:= { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+set G := proj(F, <3,1>) 
 # will give: <"A",1>, <"A",2"> ... <"B",9>
 \end{verbatim}
 }
 
+\subsubsection{Conditional sets}
+It is possible to restrict a set to tuples that 
+satisfy a boolean expression. The expression given by the \code{with}
+clause is evaluated for each tuple in the set and only tuples for
+which the expression evaluated to \emph{true} are included in the new set.
+
+\paragraph{Examples}
+{\small 
+\begin{verbatim}
+set F := <i,j> in Q with i > j and i < 5;
+set A := { "a", "b", "c" };
+set B := { 1, 2, 3 };
+set V := <a,2> in A*B with a == "a" or a == "b";
+# will give: <"a",2>, <"b",2>
+\end{verbatim}
+}
+
+
+\subsubsection{Indexed sets}
 It is possible to index one set with another set.
 Here is a list of functions that use this:
 
+\medskip
 \begin{tabular}{llp{5cm}}
-\hline
-$\mbox{powerset}(A)$& Generates all subsets of $A$&$\{x | x\subseteq A\}$\\
-$\mbox{subset}(A,n)$& Generates all subsets of $A$\\
+\code{powerset(A)}& Generates all subsets of $A$&$\{x | x\subseteq A\}$\\
+\code{subset(A,n)}& Generates all subsets of $A$\\
                     & with $n$ elements&$\{x | x\subseteq A\wedge |x|=n\}$\\
-$\mbox{indexset}(A)$&The index set of $A$&$\{1\ldots |A|\}$\\
-\hline
+\code{indexset(A)}&The index set of $A$&$\{1\ldots |A|\}$\\
 \end{tabular}
+
+\medskip
+Indexed sets are accessed by adding the index of the set in brackets
+\code{[} and \code{]}, like \code{S[7]}. 
+There are three possibilites how to assign to an indexed set:
+\begin{itemize}
+\item The assignment expression is a list of comma separated pairs, 
+      consisting of a tuple from the index set and a set expression to assign.
+\item A set reference expression is given as index, then
+      the assignment expression is evaluated for each index tuple.
+\item By use of a function that returns a indexed set.
+\end{itemize}
 
 \subsubsection{Examples}
 {\small 
