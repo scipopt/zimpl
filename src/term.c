@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.16 2003/07/16 21:04:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.17 2003/07/17 07:36:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -30,7 +30,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define TRACE 1
+/* #define TRACE 1 */
 
 #include "bool.h"
 #include "mshell.h"

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.3 2003/07/17 07:36:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -533,7 +533,7 @@ void lps_free(Lps* lp)
 
    lps_hash_free(lp->var_hash);
    lps_hash_free(lp->con_hash);
-   
+
    for(sto = lp->sto_root; sto != NULL; sto = sto_next)
    {
       for(i = 0; i < sto_size; i++)

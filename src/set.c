@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.15 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.16 2003/07/17 07:36:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -249,6 +249,7 @@ Set* set_range(int start, int end, int step)
 {
    Set*      set;
    Tuple*    tuple;
+   Elem*     elem;
    Numb*     numb;
    int       x;
    
@@ -258,8 +259,10 @@ Set* set_range(int start, int end, int step)
    {
       tuple = tuple_new(1);
       numb  = numb_new_integer(x);
-      tuple_set_elem(tuple, 0, elem_new_numb(numb));
+      elem  = elem_new_numb(numb);
+      tuple_set_elem(tuple, 0, elem);
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
+      elem_free(elem);
       numb_free(numb);
       tuple_free(tuple);
    }

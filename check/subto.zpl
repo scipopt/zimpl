@@ -72,7 +72,7 @@ subto c32: x[1] + 5 >= x[2];
 subto c33: 5 <= x[1];
 subto c34: x[1] >= 5 + x[2];
 subto c35: 5 + x[1] >= x[2];
-subto c36: 5 <= 4;
+subto c36: 5 <= 6;
 subto c37: -5 + x[1] >= x[2];
 subto c38: x[1] == a[1] + sum <i> in A do a[i]*x[i];
 subto c39: x[1] == a[1] + sum <i> in A do x[i]*a[i];
