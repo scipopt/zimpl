@@ -1,5 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<!-- $Id: zimpl.php,v 1.2 2001/10/09 20:27:10 thor Exp $ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+"http://www.w3.org/TR/REC-html40/loose.dtd">
+<!-- $Id: zimpl.php,v 1.3 2001/10/09 21:06:44 thor Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -34,13 +35,13 @@ fclose($fp);
 <head>
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
-<meta name="keywords" content="ZIMPL, Mathematical Modelling Langanguage, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2001/10/09 20:27:10 $">
+<meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
+<meta name="date" content="$Date: 2001/10/09 21:06:44 $">
 <meta name="robots" content="index|follow">
-<meta http-equiv="content-type" content="text/html;charset=iso-8559-1">
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
 </head>
-<body BODY bgcolor="#FFFFFF" text="#000000" 
+<body bgcolor="#FFFFFF" text="#000000" 
       link="#0000FF" alink="#FF0000" vlink="#800080">
 <p>
 <!-- <img src="http://www.zib.de/global/images/zib_logo1.gif" -->
@@ -73,7 +74,7 @@ documentation. There is <em>no</em> Windows version.</p>
 <h3>Download</h3>
 <p>
 The latest Version is 1.0. Download complete source code and documentation
-<a href="zimpl10.tgz">here</a>. 
+<a href="zimpl-1.00.tgz">here</a>. 
 </p>
 <h3>Bugs</h3>
 <p>
@@ -107,40 +108,34 @@ or even better a working fix with a runnable example .zpl file to
 <dt><a href="http://mat.gsia.cmu.edu">
    Michael Trick's Operations Research Page</a></dt>
 <dt><a href="http://www-neos.mcs.anl.gov">
-   NEOS Server for Optimization</a><dt>
+   NEOS Server for Optimization</a></dt>
 </dl>
 <p>
-</p>
 <hr noshade>
-<!-- ---------------------------------------------------------------------- -->
 <a href="http://www.anybrowser.org/campaign/">
 <img src="images/anybrowser3.gif" alt="Best viewed with any browser" 
 border="0" height="31" width="88" align="bottom"></a>
-<!-- ---------------------------------------------------------------------- -->
 <a href="http://www.gimp.org">
 <img src="images/gfx_by_gimp.gif" alt="Graphics by GIMP" 
 border="0" height="36" width="90" align="bottom"></a> 
-<!-- ---------------------------------------------------------------------- -->
 <img src="images/msfree.gif" alt="100% Microsoft Free" 
-border="0" width="100" height="31" align="bottom"></a>    
-<!-- ---------------------------------------------------------------------- -->
+border="0" width="100" height="31" align="bottom">    
 <a href="http://www.php.net">
 <img src="images/phpsmall.gif" alt="Powered by PHP" 
 border="0" height="31" width="88" align="bottom"></a>
-<!-- ---------------------------------------------------------------------- -->
 <a href="http://petition.eurolinux.org">
 <img src="images/patent_button.gif" alt="No ePatents" 
 border="0" width="88" height="36" align="bottom"></a>    
-<!-- ---------------------------------------------------------------------- -->
 <a href="http://www.gnu.org">
 <img src="images/gnuspirit.png" alt="The GNU Project" 
  border="0" width="100" height="36" align="bottom"></a>
-<!-- ---------------------------------------------------------------------- -->
+<a href="http://validator.w3.org/check/referer">
+<img src="images/valid-html40.png" alt="Valid HTML 4.0!"
+border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2001/10/09 20:27:10 $ by
+Last Update $Date: 2001/10/09 21:06:44 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2001 by Thorsten Koch
-<br>URL:<a href=index.html>http://www.zib.de/koch/zimpl.html</a>
 </font>
 </address>
 </body>
