@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: index.php,v 1.1 2003/10/31 08:58:12 bzfkocht Exp $ -->
+<!-- $Id: index.php,v 1.2 2003/11/01 21:50:54 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/10/31 08:58:12 $">
+<meta name="date" content="$Date: 2003/11/01 21:50:54 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -179,8 +179,8 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2003/10/31 08:58:12 $ by
-<a href="/mitarbeiter/mitarbeiter.pl?email=koch&language=en">Thorsten Koch</a>
+Last Update $Date: 2003/11/01 21:50:54 $ by
+<a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch,
 <a href="/impressum.en.html">Imprint</a>
 </font>
