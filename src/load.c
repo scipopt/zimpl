@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.9 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: load.c,v 1.10 2002/11/11 21:17:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -122,7 +122,7 @@ static void add_stmt(
    const int   lineno,
    const char* text)
 {
-   const char* separ = " :;";
+   const char* separ = " :;\t";
 
    StmtType type;
    char*    copy;

@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.15 2002/11/04 07:14:57 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.16 2002/11/11 21:17:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #include "lint.h"
 #include "portab.h"
@@ -50,7 +51,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.05b Copyright (C)2002 by Thorsten Koch *\n" \
+"* Release 1.05c Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -106,6 +107,15 @@ static char* extend_basename(const char* filename, const char* extension)
    *t = '\0';
 
    return strcat(basename, extension);
+}
+
+static void check_write_ok(FILE* fp, const char* filename)
+{
+   if (ferror(fp))
+   {
+      fprintf(stderr, "*** Error: while writing file %s", filename);
+      perror(" ");
+   }
 }
 
 int main(int argc, char* const* argv)
@@ -223,21 +233,27 @@ int main(int argc, char* const* argv)
     */
    if (NULL == (fp = fopen(outfile, "w")))
    {
-      perror(outfile);
+      fprintf(stderr, "*** Error: when writing file %s", outfile);
+      perror(" ");
       abort();
    }
    lps_write(fp, format);
 
+   check_write_ok(fp, outfile);
+   
    fclose(fp);
 
    /* Write translation table
     */
    if (NULL == (fp = fopen(tblfile, "w")))
    {
-      perror(tblfile);
+      fprintf(stderr, "*** Error: when writing file %s", tblfile);
+      perror(" ");
       abort();
    }
    lps_transtable(fp);
+
+   check_write_ok(fp, tblfile);
 
    fclose(fp);
 
@@ -247,11 +263,14 @@ int main(int argc, char* const* argv)
    {
       if (NULL == (fp = fopen(ordfile, "w")))
       {
-         perror(ordfile);
+         fprintf(stderr, "*** Error: when writing file %s", ordfile);
+         perror(" ");
          abort();
       }
       lps_orderfile(fp);
 
+      check_write_ok(fp, ordfile);
+      
       fclose(fp);
    }
    

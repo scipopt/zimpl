@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.7 2002/10/20 09:17:39 bzfkocht Exp $"
+#ident "@(#) $Id: tuple.c,v 1.8 2002/11/11 21:17:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -127,9 +127,14 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
       /* Keine Warnung wenn wir mit dem 0-Tuple vergleichen.
        */
       if ((tuple_a->dim != 0) && (tuple_b->dim != 0))
+      {
          fprintf(stderr,
-            "Warning: Comparison of different dimension tuples\n");
-
+            "*** Warning: Comparison of different dimension tuples ");
+         tuple_print(stderr, tuple_a);
+         fprintf(stderr, " ");
+         tuple_print(stderr, tuple_b);
+         fputc('\n', stderr);
+      }
       return TRUE;
    }
    assert(tuple_a->dim == tuple_b->dim);

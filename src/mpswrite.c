@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mpswrite.c,v 1.4 2002/10/13 16:05:21 bzfkocht Exp $"
+#ident "@(#) $Id: mpswrite.c,v 1.5 2002/11/11 21:17:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -94,6 +94,11 @@ static void write_vars(
 
             write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV",
                (lp->direct == LP_MIN) ? var->cost : -var->cost);
+
+            if (lp->direct == LP_MAX)
+               fprintf(stderr, "%s\n%s\n",
+                  "*** Warning: Objective function inverted to make",
+                  "             minimization problem for MPS output\n");
          }
       }
       for(nzo = var->first; nzo != NULL; nzo = nzo->var_next)

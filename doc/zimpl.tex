@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.8 2002/10/29 10:42:47 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.9 2002/11/11 21:17:35 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.8 2002/10/29 10:42:47 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.9 2002/11/11 21:17:35 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -241,6 +241,9 @@ A typical invocation is for example:
 This reads the files \code{data.zpl} and \code{model.zpl} and
 produces \code{hardone.mps} and \code{hardone.tbl}.
 
+\medskip
+{\bfseries If \mps-output is specified for a maximization problem,
+the objective function will be inverted.}
 % -----------------------------------------------------------------------------
 % --- Format
 % -----------------------------------------------------------------------------
@@ -390,6 +393,8 @@ var z[<a,b,c> in C] integer
     <= if b <= 3 then p[b] else 10 end; 
 \end{verbatim}
 }
+
+\fbox{Remember: if nothing is specified a lower bounds of zero is assumed.}
 
 \subsection{Objective}
 There must be exactly one objective statement in a model. The objective

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: elem.c,v 1.7 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: elem.c,v 1.8 2002/11/11 21:17:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -220,7 +220,7 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr,
-         "Warning: Comparison of elements with different types ");
+         "*** Warning: Comparison of elements with different types ");
       elem_print(stderr, elem_a);
       fprintf(stderr, " / ");
       elem_print(stderr, elem_b);
