@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.10 2003/03/18 09:37:03 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.11 2003/05/04 07:27:32 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,16 +29,18 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.10 2003/03/18 09:37:03 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.11 2003/05/04 07:27:32 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
 \setcounter{secnumdepth}{1}
+\newcommand{\eg}{{e.\,g.}\xspace}
+\newcommand{\ie}{{e.\,g.}\xspace}
 \newcommand{\zimpl}{{\sc Zimpl}\xspace}
 \newcommand{\lp}{{\sc lp}\xspace}
 \newcommand{\mip}{{\sc mip}\xspace}
-\newcommand{\mps}{{\tt mps}\xspace}
-\newcommand{\lpf}{{\tt lp}\xspace}
+\newcommand{\mps}{{\sc mps}\xspace}
+\newcommand{\lpf}{{\sc lp}\xspace}
 \newcommand{\ibm}{{\sc ibm}\xspace}
 \newcommand{\zpl}{{\sc zpl}\xspace}
 \newcommand{\ampl}{{\sc ampl}\xspace}
@@ -91,13 +93,13 @@ by a \lp or \mip solver.
 Most of the things in \zimpl (and a lot more) can be found in 
 the wonderful book about the modelling language \ampl 
 from Robert Fourer, David N. Gay and Brian W. Kernighan
-\cite{FGK93}.
+\cite{FGK2003}.
 Indeed if not the guys at \ilog had needed more than three months just
 to tell me the price of \ampl for \cplex, I would probably use
 \ampl today.
-On the other hand, having the source code of a program has its atvantages. The
+On the other hand, having the source code of a program has its advantages. The
 possibility to run it regardless of architecture and operating system, the
-ability to modify it to suite the needs and not having to hassle with license
+ability to modify it to suite the needs, and not having to hassle with license
 managers may make a much less powerful program the better choice.
 And so \zimpl came into being.
 
@@ -123,26 +125,30 @@ for humans.
    NAME        ex1.mps
    ROWS
     N  OBJECTIV          
-    L  c0                
+    L  c1                
    COLUMNS
        x         OBJECTIV             2
-       x         c0                   1
+       x         c1                   1
        y         OBJECTIV             3
-       y         c0                   1
+       y         c1                   1
    RHS
-       RHS       c0                   6
+       RHS       c1                   6
    ENDATA
 \end{verbatim}
 }
-Another possibility is the \lpf format \cite{ILO00}, which is more
-readable but is only supported by a few solvers. 
+Another possibility is the \lpf format \cite{ILO02}, which is more
+readable\footnote{
+The \lpf format has also some idiosyncratic restrictions. For example
+variables should not be named \code{e12} or the like. And it is not
+possible to specify ranged constraints.}
+but is only supported by a few solvers. 
 {
 \small
 \begin{verbatim}
    Minimize
     cost:  +2 x +3 y
    Subject to
-    c0:  +1 x +1 y <= 6
+    c1:  +1 x +1 y <= 6
    End
 \end{verbatim}
 }
@@ -157,7 +163,7 @@ Now, with \zimpl it is possible to write this:
    var x;
    var y;
    minimize cost: 2 * x + 3 * y;
-   subto c0: x + y <= 6;
+   subto c1: x + y <= 6;
 \end{verbatim}
 }
 and have it automatically translated into \mps or \lpf format.
@@ -188,23 +194,31 @@ subto     cons: sum <i> in I : x[i] <= 6;
 % -----------------------------------------------------------------------------
 \section{Invocation}
 
-To run \zimpl on the model given in the file \code{ex1.zpl} type the command
+To run \zimpl on a model given in the file \code{ex1.zpl} type the command
 \begin{verbatim}
    zimpl ex1.zpl
 \end{verbatim}
 
 The general case is \code{zimpl} \code{[options]} $<$\code{input-files}$>$.
-It is possible to give more than one input file. They are read one
-after the other and then executed as if they were all in one big file.
-The result of running \zimpl will be either an error message or two files.
 
-The two files are the problem generated from the model in either 
-\lpf or \mps format with extension \code{.lp} or \code{.mps} and a file
-with the extension \code{.tbl} which lists all variable and constraint 
-names used in the model and there corresponding name in the problem
-file. The reason for this name translation is that the \mps format
-can only handle names up to eight characters long. And in \lp format
-the length of the names is also restricted to 16 characters.
+\medskip
+It is possible to give more than one input file. They are read one
+after the other as if they were all one big file.
+If any error occurs while processing, \zimpl will print out an 
+error message and abort. In case everything goes well, the results 
+will be written into two or three files, depending on the options specified.
+
+The first file is the problem generated from the model in either 
+\lpf or \mps format with extension \code{.lp} or \code{.mps}.
+The next one is the ``table'' file, which has the extension \code{.tbl}.
+This file lists all variable and constraint names used in the model 
+and there corresponding name in the problem file. 
+
+The reason for this name translation is that the \mps format
+can only handle names up to eight characters long. Also the the \lp format
+restricts the length of names to 16 characters.
+
+The third file is and optional \cplex branching order file.
 
 \medskip
 The following options are possible (only the first two are normally
@@ -225,10 +239,12 @@ string is replaced by the output filename. For example
 names. Can be either {\em cm} which will number them $1\ldots n$ with
 a `c' in front. {\em cn} will use the name supplied in the
 \code{subto} statement and number them $1\ldots n$ within the
-statement. {\em cf} will use the name of given with the \code{subto},
+statement. {\em cf} will use the name given with the \code{subto},
 then a $1\ldots n$ number like in \emph{cm} and then append all the
 local variables from the forall statements.\\
 %\hline
+-m&Writes the output file with unmangled variable names. This file
+   can usually not be optimizized because the format is invalid.\\
 -r&Writes an \cplex \code{ord} branching order file.\\
 -b&Enables bison debugging output.\\
 -d&Enables zimpl debugging output.\\
@@ -254,8 +270,15 @@ the objective function will be inverted.}
 % -----------------------------------------------------------------------------
 \section{Format}
 
-Each \zpl-file consists of five types of statements: Sets, parameters,
-variables, an objective and constraints.
+Each \zpl-file consists of five types of statements: 
+\begin{itemize}
+\item Sets
+\item Parameters
+\item Variables
+\item Objective
+\item Constraints
+\end{itemize}
+
 Each statement ends with a semicolon (\code{;}). 
 Everything from a number-sign (\code{\#}) to 
 the end of the line is treated as a
@@ -264,30 +287,48 @@ comment and is ignored.
 If a line starts with the word \code{include} followed by a filename in double
 quotation marks, this file is read instead of this line.
 
-\medskip
+\subsection{Expressions}
 \zimpl works on the lowest level with two types of data: Strings and
-numbers. A string is delimited by double quotation marks (\code{"}).
-A number can be given as 2, -6.5 or 5.234e-12. 
+numbers. 
+
 Wherever a number or string is required, it is also possible to give a
-parameter of the right value type. Also numeric expressions are
-allowed instead of just a number. 
-The precedence of numeric, boolean and set operators should be the
-usual one. If in doubt use parenthesis to be save.
+parameter of the right value type. Usually expressions are
+allowed instead of just a number or a string.
+The precedence of operators should be the usual one, but
+parenthesis can allways be used to specify the order of evaluation explicitly.
+If in doubt use parenthesis to be save.
 
 \subsubsection{Numeric expressions}
-The following functions are currently implemented: 
-$^\wedge$, \code{+}, \code{-}, \code{*}, \code{/}, \code{mod},
-\code{div}, \code{abs}, \code{floor}, \code{ceil}, 
-\code{log} (logarithm with base 10),
-\code{ln} (logarithm with base $e$), \code{exp} ($e^x$), \code{$!$} (factorial). 
-$^\wedge$ stands for \emph{to the
-power of}. \code{mod} is the modulo function and
-\code{div} gives the integer part of a division. \code{**} can be used
-as synonym for $^\wedge$.
+A number in \zimpl can be given in the usual format, \eg as 2, -6.5 or 5.234e-12. 
+Numeric expressions consist of numbers, numeric valued parameters, and
+any of the following operators and functions:
+
+\begin{tabular}{lll}
+\code{a${}^\wedge$b}, \code{a**b}&$a$ to the power of $b$   & $a^b$\\
+\code{a+b}                       &addition                  & $a+b$\\
+\code{a-b}                       &subtraction               & $a-b$\\
+\code{a*b}                       &multiplication            & $a\cdot b$\\
+\code{a/b}                       &division                  & $a/b$\\
+\code{a mod b}                   &modulo                    & $a\mod b$\\
+\code{a div b}                   &integer divison           & \\
+\code{abs(a)}                    &absolute value            & $|a|$\\
+\code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
+\code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
+\code{a!}                        &factorial                 & $a!$\\
+\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
+\code{ln(a)}                     &natural logarithm         & $\ln a$\\
+\code{exp(a)}                    &exponential function      & $e^a$\\
+\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
+\code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
+\code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
+\code{card(S)}                   &cardinality of a set      &$|S|$\\
+\code{if b the a else b}         &conditional               &\\
+\end{tabular}
+
+\medskip
 With $\min$ and $\max$ it is possible to find the minimum/maximum
 member of an one dimensional set of numeric values.
 \code{card} gives the cardinality of a set.
-\code{random(a, b)} generates a random number between $a$ and $b$.
 
 The following is either a numeric or a string expression, depending if
 \emph{expression} is a string or a numeric expression.
@@ -295,26 +336,51 @@ The following is either a numeric or a string expression, depending if
 \code{if} \emph{boolean-expression} \code{then}
 \emph{expression} \code{else} \emph{expression} \code{end}.
 
+\subsubsection{String expressions}
+A string is delimited by double quotation marks (\code{"}),
+\eg, \code{"Hallo"}. At this time no further functions or operators 
+
 \subsubsection{Boolean expressions}
-For numbers $<,<=,==,!=,>=,>$ are defined. For strings only $==$ and
-$!=$ are available. The expression \emph{tuple} \code{in}
-\emph{set-expression} can be used to test set
-membership of a tuple. Combinations of boolean-expressions with \code{and},
-\code{or} and negation with \code{not} are possible.
+These evaluate either to \emph{true} or \emph{false}. For numbers the
+relational operators $<$, $<=$, $==$, $!=$, $>=$, and $>$ are
+defined. For strings only $==$ and $!=$ are available. 
+Combinations of boolean expressions with \code{and},
+or \code{or}, and negation with \code{not} are possible.
+
+The expression \emph{tuple} \code{in} \emph{set-expression} can be used to test set
+membership of a tuple. 
 
 \subsection{Sets}
-The elements of a set are tuples. Each tuple of a set has the same
-number of components. 
-The components are either numbers or strings. The type of the n-th
+Sets consist of tuples. The tuples in a sets are unordered, \ie, each tuple can only
+be once in a set. Sets start and end with \code{\{} and \code{\}},
+resp.
+Tuples consist of components. The components are ordered. 
+Each tuple of a specific set has the same number of components. 
+The components are either numbers or strings. The type of the $n$-th
 component of each tuple must be the same. A tuple starts and ends with
-$<$ and $>$, resp. The components are separated by commas.
+$<$ and $>$, resp., \eg \code{$<$1,2,"x"$>$}. The components are separated by commas.
 If tuples are one-dimensional, it is possible 
 to omit the braces in a list of elements, but then 
-they must be omitted from all tuples of the set.
+they must be omitted from all tuples of the set, \eg \code{\{1,2,3}\}.
 
-\subsubsection{Set functions}
-\begin{tabular}{llp{5cm}}
-\hline
+Sets can be defined with the set statement. This consists of
+the keyword \code{set}, the name of the set, an assignment operator
+(\code{:=}) and a valid set expression.
+
+\paragraph{Examples}
+{\small 
+\begin{verbatim}
+set A := { 1, 2, 3 };
+set B := { "hi", "ha", "ho" };
+set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
+\end{verbatim}
+}
+
+For set expressions these functions and
+operators are defined:
+
+\begin{tabular}{llp{7cm}}
+%\hline
 A cross B   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
 A union B   &Union & $\{x | x\in A\vee x\in B\}$\\
 A inter B   &Intersection & $\{x |x\in A\wedge x\in B\}$\\
@@ -324,10 +390,11 @@ $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
 \{n to m {\em by s}\}& Generate, & 
 $\{ x | x=n + is \leq m, i\in\N_0\}$\\
 &(default $s = 1$)&\\ 
-$\mbox{proj}(A, t)$& Projection $t=(e_1,\ldots,e_n)$& 
-The new set will consist of $n$-tuples, with the
-$i$-th component beeing the $e_i$-th component of $A$.\\
-\hline
+$\mbox{proj}(A, t)$& Projection & 
+The new set will consist of $n$-tuples, with\\
+&$t=(e_1,\ldots,e_n)$&
+the $i$-th component beeing the $e_i$-th component of $A$.\\
+%\hline
 \end{tabular}
 
 \medskip
@@ -336,13 +403,14 @@ It is possible to write
 + instead of \code{union},  
 $\backslash$ or - instead of \code{without}
 and .. instead of \code{to}.  
+\medskip
 
-\subsubsection{Examples}
+\paragraph{Conditional sets}
+It is possible to restrict a set to tuples that 
+
+\paragraph{Examples}
 {\small 
 \begin{verbatim}
-set A := { 1, 2, 3 };
-set B := { "hi", "ha", "ho" };
-set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 set D := A cross B;
 set E := { 6 to 9 } union A without { <2>, <3> }; 
 set F := <i,j> in Q with i > j and i < 5;

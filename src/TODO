@@ -1,3 +1,6 @@
+Mindestens in Elem und Numb machen die SID wenig sinn,
+weil sie nie zurueckgesetzt werden.
+
 Einleseroutinen für indizerte Sets
 Einleseroutinen für Matrizen:
     <1> <2> <3>
@@ -48,9 +51,6 @@ z.B. { 1, 2, 3 } \ { "3" }
 -------------------------------
 
 Demangle script. das die .lp + .tbl für menschen lesbar macht.
-
-Flag für make_tmpname in lpfwrite das angibt ob der Name gemangelt oder
-korrekt als x["hallo",5] ausgegeben werden soll.
 
 ----------------------------
 Potenzmengen und mengen element kann dann auch eine menge sein,

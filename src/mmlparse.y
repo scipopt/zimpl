@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.33 2003/03/23 12:12:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.34 2003/05/04 07:27:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -53,6 +53,7 @@ extern void yyerror(const char* s);
 %union
 {
    unsigned int bits;
+   /*  Numb*        numb;*/
    double       numb;
    const char*  strg;
    const char*  name;
