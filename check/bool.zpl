@@ -1,8 +1,7 @@
-#!/bin/sh
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
-#*   File....: check.sh                                                      */
-#*   Name....: check script                                                  */
+#*   File....: bool.zpl                                                      */
+#*   Name....: bool test                                                     */
 #*   Author..: Thorsten Koch                                                 */
 #*   Copyright by Author, All rights reserved                                */
 #*                                                                           */
@@ -24,53 +23,19 @@
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
-# $1 = Binary
-PASS=0
-COUNT=0
-for i in expr param set subto var bool
-do
-   COUNT=`expr $COUNT + 1` 
-   $1 -v0 $i.zpl
-   diff $i.lp $i.lp.ref >/dev/null
-   case $? in
-    0) echo Test $i "(lp)" OK; PASS=`expr $PASS + 1` ;;
-    1) echo Test $i "(lp)" FAIL ;;
-    *) echo Test $i "(lp)" ERROR ;;
-   esac
-   COUNT=`expr $COUNT + 1` 
-   diff $i.tbl $i.tbl.ref >/dev/null
-   case $? in
-    0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
-    1) echo Test $i "(tbl)" FAIL ;;
-    *) echo Test $i "(tbl)" ERROR ;;
-   esac
-   rm $i.tbl $i.lp
-done 
-if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
-else echo FAILURE!; 
-fi
-#
-PASS=0
-COUNT=0
-#
-cd errors
-#
-for i in *.zpl
-do
-   COUNT=`expr $COUNT + 1` 
-   NAME=`basename $i .zpl`
-   ../$1 -v0 $i 2>$NAME.err
-   diff $NAME.err $NAME.err.ref >/dev/null
-   case $? in
-    0) echo Test $i "(err)" OK; PASS=`expr $PASS + 1`  ;;
-    1) echo Test $i "(err)" FAIL ;;
-    *) echo Test $i "(err)" ERROR ;;
-   esac
-   rm $NAME.err
-done 2>/dev/null
-if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
-else echo FAILURE!; 
-fi
+set A := { 1 .. 10 };
+set B := { 5 .. 15 };
+
+param a1 := if A == B or A <= B then 1 else 2 end;
+param a2 := if A != B and A < B then 1 else 2 end;
+param a3 := if not A > B and not A < B then 1 else 2 end;
+param a4 := if a1 < a2 or a2 != a3 then 1 else 2 end;
+
+var x[A];
+
+maximize c1: a1 * x[1] + a2 * x[2] + a3 * x[3] + a4 * x[4];
+ 
+
 
 
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.8 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.9 2003/09/10 09:38:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -84,6 +84,11 @@ void prog_free(Prog* prog)
 Bool prog_is_valid(const Prog* prog)
 {
    return ((prog != NULL) && SID_ok(prog, PROG_SID));
+}
+
+Bool prog_is_empty(const Prog* prog)
+{
+   return prog->used == 0;
 }
 
 void prog_add_stmt(Prog* prog, Stmt* stmt)

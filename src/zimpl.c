@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.39 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.40 2003/09/10 09:38:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -56,7 +56,7 @@ Bool zpldebug  = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.99e Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 1.99f Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -297,6 +297,11 @@ int main(int argc, char* const* argv)
    for(i = optind; i < argc; i++)
       prog_load(prog, argv[i]);
 
+   if (prog_is_empty(prog))
+   {
+      fprintf(stderr, "*** Error 168: No program statements to execute\n");
+      exit(EXIT_FAILURE);
+   }
    if (zpldebug)
       prog_print(stderr, prog);
    

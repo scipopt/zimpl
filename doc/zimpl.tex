@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.17 2003/09/10 09:38:39 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.17 2003/09/10 09:38:39 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -384,7 +384,10 @@ the respective tuple. For example a set $S$ consisting of two dimensional
 tuples could be referenced by \code{<a,b> in S}. If any of the
 placeholders are actual values, only those tuples will be extacted
 that match these values. For example \code{<1,b> in S} will only get
-those tuples whose first component is \code{1}.
+those tuples whose first component is \code{1}. Please not that if
+one of the placeholders is the name of an already defined parameter,
+set or variable, it will be subtituted which will either result in an
+error or an actual value.
 
 \paragraph{Examples}
 {\small 
@@ -972,7 +975,11 @@ can produce:
   Probably you have a index expression which does not match the  
   dimension of the tuples in the set.
   Example: \code{set B:=\{$<$1$>$ in \{$<$1,2$>$\}\};}
-\item[]\ \\
+%
+% zimpl.c
+%
+\item[168 No program statements to execute]\ \\
+  No \zimpl statements were found in the files loaded.
 \item[]\ \\
 \item[]\ \\
 \item[]\ \\

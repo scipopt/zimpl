@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.7 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.8 2003/09/10 09:38:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -126,9 +126,13 @@ void mps_write(
    char  vtmp  [MPS_NAME_LEN + 1];
    char  ctmp  [MPS_NAME_LEN + 1];
    int   indicator;
+   Bool  has_ranges = FALSE;
+   mpq_t temp;
    
    assert(lp != NULL);
    assert(fp != NULL);
+
+   mpq_init(temp);
 
    if (text != NULL)
       fprintf(fp, "* %s\n", text);
@@ -156,8 +160,8 @@ void mps_write(
             indicator = 'L';
             break;
          case CON_RANGE:
-            indicator = 'L';
-            fprintf(stderr, "*** WARNING: Ranges not yet supported\n");
+            indicator = 'E';
+            has_ranges = TRUE;
             break;
          default :
             abort();
@@ -186,12 +190,52 @@ void mps_write(
    
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      if (!mpq_equal(con->rhs, const_zero))
+      lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
+
+      switch(lps_contype(con))
       {
-         lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
-         write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
+      case CON_EQUAL:
+         if (!mpq_equal(con->rhs, const_zero))
+            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
+         break;
+      case CON_LHS:
+         if (!mpq_equal(con->lhs, const_zero))
+            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->lhs);
+         break;
+      case CON_RHS:
+         if (!mpq_equal(con->rhs, const_zero))
+            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
+         break;
+      case CON_RANGE:
+         if (!mpq_equal(con->lhs, const_zero))
+            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->lhs);
+         break;
+      default :
+         abort();
       }
    }
+   if (has_ranges)
+   {
+      fprintf(fp, "RANGES\n");
+   
+      for(con = lp->con_root; con != NULL; con = con->next)
+      {
+         if (lps_contype(con) == CON_RANGE)
+         {
+            lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
+
+            /* lhs > rhs => temp is positive
+             * range is lhs <= x <= lhs + temp = rhs
+             */
+            mpq_sub(temp, con->rhs, con->lhs);
+            
+            assert(!mpq_equal(temp, const_zero));
+            
+            write_data(fp, TRUE, ' ', ' ', "RNG", ctmp, temp);
+         }
+      }
+   }
+   
    fprintf(fp, "BOUNDS\n");
 
    /* Variables with size == 0, have to be included because
@@ -231,6 +275,8 @@ void mps_write(
       }
    }
    fprintf(fp, "ENDATA\n");
+
+   mpq_clear(temp);
 }   
 
 

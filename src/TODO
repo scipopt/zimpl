@@ -1,23 +1,17 @@
-warum gibt set A:= {1,"hallo", 2, "a"}; keine fehler ?
-soll das so? 
+usage korrigieren.
+doku auch.
+
+was passiert bei <i,i> in { <1,1>, <1,2>, <2,1>, <2,2> } = |2|{<1,1>,<1,2>,<2,1>,<2,2>} genau ?
+
+warum gibt set A:= {1,"hallo", 2, "a"}; keine fehler ? soll das so? 
 
 Warning 165 kommt nur wenn die Mengen die gleiche cardinalität haben.
 
 check, that   -2^4 + 3! * 2 - 3 has the right value.
 
-
-wenn lpfcpy meldet das ein unmapbares zeichen in einem
-string war, dann @num anhängen.
-
 check füer read/include siehe example
 
-option fuer gerneiruung von kurzen variablenamen (nur x#262626)
-überprüfen ob man mit unterschiedlichen strings gleiche namen bekommen kann.
-
-set check erweitern fuer mengenoperationen inbesondere auch
-boolsche mit der leeren menge. s.u.
-
-Tests für boolsche operatoren. z.B. not wird nirgends getestet.
+MPS testen auch ranges.
 
 Funktion statistik Anzahl vars/Cons/Boxed/Fixed/NZOs etc, 
          (bei soplex/extr gibts schon so was)
@@ -46,30 +40,19 @@ und/oder
 if (....) term else term endif 
 einbauen
 
-Bug mit datei ohne ; keine Ausgabe.
-Falscher Dateityp sollte früher erkannt werden.
-
 parameter mit -s auf der Kommandozeile setzen können.
 
 check mit fixierten variablen.
 
 check separate flag
 
-checks auf für MPS
-
 check: Tests für preprocessing
-
-ranges: MPS write fehlt noch
 
 zugriff auf set elemente nach ordnungsnummer, so das
 for <i> in { 1 .. card(A) } do
    A[ord(i)] 
 geht.
 
-
-check:  errors.zpl felft, einer fuer jeden error/warnin
-        außerdem errors warning durchnummeriern.
-        dann err007.zpl
 
 Speedups:
 
@@ -169,10 +152,6 @@ check statement mit forall als reductionsoperator expr* -> bool
 
 Im LP reihenfolge der sets beibehalten
 
-bessere fehlermeldungen
-
-Warning wenn locale Variable eine globale uerbschreibt.
-(Was passiert da eigendlich. Geht das überhaupt?)
 
 
 

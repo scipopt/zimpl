@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.15 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.16 2003/09/10 09:38:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1488,26 +1488,32 @@ void lps_write(
    }
 }
 
-static void lpfstrncpy(char* t, const char* s, int len)
+static Bool lpfstrncpy(char* t, const char* s, int len)
 {
    /* '@' was excluded, to make sure the appendix is unique.
     */
    static const char* allowed = "!#$%&()/,.;?_{}|~"; 
 
+   Bool was_smashed = FALSE;
+   
    while(--len >= 0 && *s != '\0')
    {
       if (isalnum(*s) || strchr(allowed, *s) != NULL)
          *t = *s;
       else
+      {
          *t = '_';
-      
+         was_smashed = TRUE;
+      }
       s++;
       t++;
    }
    *t = '\0';
+
+   return was_smashed;
 }
 
-/* size has to be big enough to store a '#', a '\0'
+/* size has to be big enough to store a '@', a '\0'
  * and the var or row number.
  */
 void lps_makename(
@@ -1516,41 +1522,57 @@ void lps_makename(
    const char* name,
    int         no)
 {
-   char  temp[16];
+   char  temp[9];
    int   len;
    int   nlen;
 
    assert(target != NULL);
-   assert(size   >= 9);         /* so we have at lest '#' + 7 + '\0' */
+   assert(size   >= 9);         /* so we have at least '@' + 7 digits + '\0' */
    assert(name   != NULL);
    assert(no     >= 0);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
    nlen = strlen(name);
 
+   /* There are 3 possibilities:
+    *
+    *   i) name is smaller than size and does not contain problematic chars
+    *      -> just copy it.
+    *  ii) as above but contains unvalid chars
+    *      -> copy it, transform the chars to '_' and append "@varnum".
+    * iii) the name is longer than the size.
+    *      -> do as in ii) but only copy as much chars as fit.
+    */      
    if (nlen < size)
    {
-      lpfstrncpy(target, name, nlen);
+      if (lpfstrncpy(target, name, nlen))
+      {
+         sprintf(temp, "@%x", no);
+
+         len = size - (int)strlen(temp) - 1;
+
+         assert(len >= 0);
+
+         /* Trick: if len > strlen(target) it doesn't matter,
+          * lpfstrncmp always appends a '\0' and the strcat below
+          * will append temp at the right place.
+          * Otherwise it will be appended at len, which is the
+          * latest possible position.
+          */
+         target[len] = '\0';
+         strcat(target, temp);
+      }
    }
    else
    {
-      /* The 16 is to make sure the %x later has enough room
-       */
-      sprintf(temp, "%x", no);
+      sprintf(temp, "@%x", no);
       
-      /* -2 : fuer '@' und '\0'
-       */
-      len = size - (int)strlen(temp) - 2;
+      len = size - (int)strlen(temp) - 1; /* -1 for '\0' */
       
       assert(len >= 0);
       
-      lpfstrncpy(target, name, len);
-      
-      target[len] = '@';
-      
-      strcpy(&target[len + 1], temp);
-      
-      assert(strlen(target) == (size_t)size - 1);
+      (void)lpfstrncpy(target, name, len);
+      strcat(target, temp);
    }
    assert(strlen(target) <= (size_t)size - 1);
 }

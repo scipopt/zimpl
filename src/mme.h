@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.42 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.43 2003/09/10 09:38:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -707,6 +707,8 @@ extern Prog*        prog_new(void);
 extern void         prog_free(Prog* prog);
 /*lint -sem(        prog_is_valid, 1p == 1) */
 extern Bool         prog_is_valid(const Prog* prog);
+/*lint -sem(        prog_is_empty, 1p == 1) */
+extern Bool         prog_is_empty(const Prog* prog);
 /*lint -sem(        prog_add_stmt, 1p == 1 && 2p == 1) */
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 /*lint -sem(        prog_print, 1p == 1 && 2p == 1) */
