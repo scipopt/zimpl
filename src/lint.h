@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.3 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.4 2003/08/22 08:21:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -51,5 +51,27 @@ extern FILE* popen(const char *command, const char *type);
 /*lint -esym(534, pclose) */
 extern int   pclose(FILE *stream);
 
+/* zlib support
+ */
+/*lint -esym(534,gzclose) */
+
+typedef void* gzFile;
+
+/*lint -sem(  gzopen, 1p && nulterm(1) && 2p && nulterm(2), r_null) */
+extern gzFile gzopen(const char *path, const char *mode);
+/*lint -sem(  gzread, 1p == 1 && 2p) */
+extern int    gzread(gzFile file, void* buf, unsigned len);
+/*lint -sem(  gzwrite, 1p == 1 && 2p) */
+extern int    gzwrite(gzFile file, const void* buf, unsigned len);
+/*lint -sem(  gzputs, 1p == 1 && 2p && nulterm(2)) */
+extern int    gzputs(gzFile file, const char *s);
+/*lint -sem(  gzgets, 1p == 1 && 2p && 3n > 0, r_null) */
+extern char*  gzgets(gzFile file, char *buf, int len);
+/*lint -sem(  gzclose, 1p == 1) */
+extern int    gzclose(gzFile file);
+
 #endif /* _LINT_H_ */
 #endif /* _lint */
+
+
+

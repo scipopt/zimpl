@@ -1,0 +1,4 @@
+#--- $Id: make.cygwin.x86.gnu.dbg,v 1.1 2003/08/22 08:21:22 bzfkocht Exp $
+CPPFLAGS	+=	-DFREEMEM -I/opt/gmp/include
+CFLAGS		=	-O -g $(GCCWARN)
+LDFLAGS		=	-L/opt/gmp/lib -lgmp -lz -static

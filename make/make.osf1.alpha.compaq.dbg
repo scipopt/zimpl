@@ -1,7 +1,7 @@
-#--- $Id: make.osf1.alpha.compaq.dbg,v 1.2 2003/08/22 07:06:11 bzfkocht Exp $
+#--- $Id: make.osf1.alpha.compaq.dbg,v 1.3 2003/08/22 08:21:22 bzfkocht Exp $
 CC		=	cc
 CPPFLAGS	+=	-DFREEMEM -I/usr/local/include -Dinline=""
 CFLAGS		=	-std1 -w0 -gall -check \
 			-msg_disable strctpadding,nestincl,ignorecallval,unusedincl,unnecincl,hexoctunsign,questcompare2
-LDFLAGS		=	-L/usr/local/lib -lgmp 
+LDFLAGS		=	-L/usr/local/lib -lgmp -lz 
 

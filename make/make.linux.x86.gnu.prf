@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.prf,v 1.1 2003/08/20 14:45:20 bzfkocht Exp $
-CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
+#--- $Id: make.linux.x86.gnu.prf,v 1.2 2003/08/22 08:21:22 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -I/tmp/gmp/include
 CFLAGS		=	-O2 -march=pentiumpro -g -pg $(GCCWARN)
-LDFLAGS		=	-L/tmp/gmp/lib -lgmp -static
+LDFLAGS		=	-L/tmp/gmp/lib -lgmp -lz -static 

@@ -1,3 +1,6 @@
+ - Included zlib. It is now possible to read in 
+   .gz transparantly. 
+
  - New function exists() that looks if a set has 
    at least one member, e.g.
    exists( <i> in I with i > 5 )

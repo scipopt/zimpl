@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.9 2003/08/20 14:45:20 bzfkocht Exp $
+# $Id: Makefile,v 1.10 2003/08/22 08:21:22 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -37,7 +37,7 @@ ARCH            :=      $(shell uname -m | \
 OSTYPE          :=      $(shell uname -s | \
                         tr A-Z a-z | \
                         sed \
-			-e s/cygwin_nt..../cygwin_nt/ \
+			-e s/cygwin.*/cygwin/ \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
@@ -57,9 +57,9 @@ SRCDIR		=	src
 BINDIR		=	bin
 LIBDIR		=	lib
 
-CPPFLAGS	=	-I$(SRCDIR) -I/tmp/gmp/include
+CPPFLAGS	=	-I$(SRCDIR) 
 CFLAGS		=	-O
-LDFLAGS		=	-lm
+LDFLAGS		=	-lgmp -lz 
 YFLAGS		=	-d -t -v  
 LFLAGS		=	-d
 DFLAGS		=	-MM

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.8 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.9 2003/08/22 08:21:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -24,14 +24,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <fcntl.h>
 
+#ifndef _lint
+#include <zlib.h>
+#else
 #include "lint.h"
+#endif /* _lint */
+
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -284,7 +291,7 @@ static int split_fields(char* s, char* field[])
 
 CodeNode* i_read(CodeNode* self)
 {
-   FILE*       fp;
+   gzFile      fp;
    char*       s;
    char*       t;
    char        buf[MAX_LINE_LEN];
@@ -299,7 +306,7 @@ CodeNode* i_read(CodeNode* self)
    Elem*       elem;
    Tuple*      tuple;
    Entry*      entry;
-   const char* filename;
+   char*       filename;
    char*       comment;
    int         skip;
    int         use;
@@ -313,16 +320,16 @@ CodeNode* i_read(CodeNode* self)
    rdef     = code_eval_child_rdef(self, 0);
    use      = rdef_get_use(rdef);
    skip     = rdef_get_skip(rdef);
-   filename = rdef_get_filename(rdef);
    dim      = parse_template(self,
       rdef_get_template(rdef), param_field, param_type, &is_tuple_list);
 
-   comment    = malloc(strlen(rdef_get_comment(rdef)) + 2);
+   filename = malloc(strlen(rdef_get_filename(rdef)) + 4);
+   assert(filename != NULL);
+   strcpy(filename, rdef_get_filename(rdef));
 
-   assert(comment != NULL);
-   
+   comment  = malloc(strlen(rdef_get_comment(rdef)) + 2);
+   assert(comment  != NULL);
    comment[0] = '\n';
-
    strcpy(&comment[1], rdef_get_comment(rdef));
 
    /* The last template parameter is the value for the entry_list.
@@ -330,10 +337,21 @@ CodeNode* i_read(CodeNode* self)
    if (!is_tuple_list)
       dim--;
 
+   if (access(filename, R_OK) != 0)
+   {
+      strcat(filename, ".gz");
+
+      /* If .gz also does not work, revert to the old name
+       * to get a better error message.
+       */
+      if (access(filename, R_OK) != 0)
+         strcpy(filename, rdef_get_filename(rdef));
+   }
+
    if (verbose)
       printf("Reading %s\n", filename);
-   
-   if (NULL == (fp = fopen(filename, "r")))
+
+   if (NULL == (fp = gzopen(filename, "r")))
    {
       perror(filename);
       code_errmsg(self);
@@ -341,7 +359,7 @@ CodeNode* i_read(CodeNode* self)
    }
    else
    {
-      while(NULL != fgets(buf, sizeof(buf), fp))
+      while(NULL != gzgets(fp, buf, sizeof(buf)))
       {
          /* Count the line
           */
@@ -451,7 +469,7 @@ CodeNode* i_read(CodeNode* self)
          if (--use == 0)
             break;
       }
-      fclose(fp);
+      gzclose(fp);
    }
    
    if (list == NULL)
@@ -463,6 +481,7 @@ CodeNode* i_read(CodeNode* self)
    code_value_list(self, list);
 
    free(comment);
-
+   free(filename);
+   
    return self;
 }
