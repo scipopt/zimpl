@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $
+# $Id: Makefile,v 1.3 2001/01/28 19:16:13 thor Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   Type....: Makefile                                                      *
@@ -12,15 +12,15 @@
 .PHONY:		clean lint
 
 NAME		=	mme
-CC		=	insure gcc 
+CC		=	gcc 
 YACC		=	bison
 LEX		=	flex
 CPPFLAGS	=	-I./ -I../optlib
-OPTI_FLAGS      =       #-O
+OPTI_FLAGS      =       -O
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline
-DEBU_FLAGS      =       -g -DNO_MSHELL #-DNDEBUG 
+DEBU_FLAGS      =       -g -pg -DNO_MSHELL #-DNDEBUG 
 LDFLAGS		=	-lm
 DFLAGS		=	-MM
 YFLAGS		=	-v -d -t

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: set.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -149,19 +149,10 @@ void set_add_member(Set* set, Tuple* tuple, int where)
 
 int set_lookup(const Set* set, const Tuple* tuple)
 {
-   int i;
-   
    assert(set_is_valid(set));
    assert(tuple_is_valid(tuple));
 
    return hash_has_tuple(set->hash, tuple);
-#if 0
-   for(i = 0; i < set->used; i++)
-      if (!tuple_cmp(tuple, set->member[i]))
-         break;
-   
-   return i < set->used ? tuple_copy(set->member[i]) : NULL;
-#endif
 }
 
 Tuple* set_match_next(const Set* set, const Tuple* pattern, int* idx)

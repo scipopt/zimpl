@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.2 2001/01/28 19:16:14 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -24,7 +24,7 @@ typedef struct term_element TermElem;
 struct term_element
 {
    const Symbol* symbol;
-   int           index;
+   Entry*        entry;
    double        coeff;
    TermElem*     next;
 };
@@ -52,22 +52,27 @@ Term* term_new(void)
    return term;
 }
 
-void term_add_elem(Term* term, const Symbol* sym, int idx, double coeff)
+void term_add_elem(Term* term, const Symbol* sym, Entry* entry, double coeff)
 {
    TermElem* te = calloc(1, sizeof(*te));
 
-   assert(te  != NULL);
    assert(term_is_valid(term));
-   assert(sym != NULL);
-   assert(idx >= 0);
-   assert(NE(coeff, 0.0));
+   assert(symbol_is_valid(sym));
+   assert(entry_is_valid(entry));
+   assert(te  != NULL);
 
-   te->symbol       = sym;
-   te->index        = idx;
-   te->coeff        = coeff;
-   te->next         = NULL;
-   term->last->next = te;
-   term->last       = te;
+   /* ??? Bin mir nicht sicher ob das die richtige stelle fuer diese
+    * optimierung ist.
+    */
+   if (NE(coeff, 0.0))
+   {
+      te->symbol       = sym;
+      te->entry        = entry_copy(entry);
+      te->coeff        = coeff;
+      te->next         = NULL;
+      term->last->next = te;
+      term->last       = te;
+   }
 }
 
 void term_free(Term* term)
@@ -80,6 +85,7 @@ void term_free(Term* term)
    for(p = term->first.next; p != NULL; p = q)
    {
       q = p->next;
+      entry_free(p->entry);
       free(p);
    }
    SID_del(term);
@@ -94,22 +100,22 @@ int term_is_valid(const Term* term)
 Term* term_copy(Term* term)
 {
    Term*     tnew = term_new();
-   TermElem* enew;
    TermElem* te;
    
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
    
    for(te = term->first.next; te != NULL; te = te->next)
-      term_add_elem(tnew, te->symbol, te->index, te->coeff);
+      term_add_elem(tnew, te->symbol, te->entry, te->coeff);
 
    tnew->constant = term->constant;
    
    return tnew;
 }
 
-void term_print(FILE* fp, const Term* term)
+void term_print(FILE* fp, const Term* term, int flag)
 {
+   Tuple*    tuple;
    TermElem* te;
    
    assert(term_is_valid(term));
@@ -122,8 +128,18 @@ void term_print(FILE* fp, const Term* term)
          fprintf(fp, " + %g ", te->coeff);
       else
          fprintf(fp, " - %g ", -te->coeff);
-         
-      fprintf(fp, "%s_%d", symbol_get_name(te->symbol), te->index);
+
+      tuple = entry_get_tuple(te->entry);
+      
+      fprintf(fp, "%s", symbol_get_name(te->symbol));
+
+      if (flag & TERM_PRINT_SYMBOL)
+         tuple_print(fp, tuple);
+
+      if (flag & TERM_PRINT_INDEX)
+         fprintf(fp, "_%d", entry_get_index(te->entry));      
+
+      tuple_free(tuple);
    }
    if (NE(term->constant, 0.0))
    {
@@ -142,15 +158,17 @@ Term* term_add_term(Term* term_a, Term* term_b)
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term = term_new();
+   term           = term_new();
    term->constant = term_a->constant + term_b->constant;
 
    for(te = term_a->first.next; te != NULL; te = te->next)
-      term_add_elem(term, te->symbol, te->index, te->coeff);
+      term_add_elem(term, te->symbol, te->entry, te->coeff);
 
    for(te = term_b->first.next; te != NULL; te = te->next)
-      term_add_elem(term, te->symbol, te->index, te->coeff);
+      term_add_elem(term, te->symbol, te->entry, te->coeff);
    
+   assert(term_is_valid(term));
+
    return term;
 }
 

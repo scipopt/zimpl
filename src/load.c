@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -33,7 +33,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
       if (cnt == *size - 1)
       {
          *size += BUF_EXT;
-         *buf   = realloc(*buf, *size);
+         *buf   = realloc(*buf, (size_t)*size);
       }
       assert(*buf != NULL);
       
@@ -119,7 +119,7 @@ static int add_stmt(Prog* prog, int lineno, const char* text)
 int prog_load(Prog* prog)
 {
    int   bufsize = BUF_EXT;
-   char* buf     = malloc(bufsize);
+   char* buf     = malloc((size_t)bufsize);
    FILE* fp;
    char* s;
    int   lineno = 1;

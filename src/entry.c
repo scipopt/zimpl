@@ -1,4 +1,4 @@
-#ident "@(#) $Id: entry.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: entry.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -33,6 +33,7 @@ struct entry
 {
    SID
    int        refc;
+   int        index;
    Tuple*     tuple;
    SymbolType type;
    EntryValue value;
@@ -46,6 +47,7 @@ Entry* entry_new_numb(Tuple* tuple, double numb)
    assert(tuple != NULL);
 
    entry->refc       = 1;
+   entry->index      = -1;
    entry->tuple      = tuple_copy(tuple);
    entry->type       = SYM_NUMB;
    entry->value.numb = numb;
@@ -65,6 +67,7 @@ Entry* entry_new_strg(Tuple* tuple, const char* strg)
    assert(strg  != NULL);
    
    entry->refc       = 1;
+   entry->index      = -1;
    entry->tuple      = tuple_copy(tuple);
    entry->type       = SYM_STRG;
    entry->value.strg = strg;
@@ -84,6 +87,7 @@ Entry* entry_new_set(Tuple* tuple, Set* set)
    assert(set   != NULL);
    
    entry->refc      = 1;
+   entry->index     = -1;
    entry->tuple     = tuple_copy(tuple);
    entry->type      = SYM_SET;
    entry->value.set = set_copy(set);
@@ -103,6 +107,7 @@ Entry* entry_new_var(Tuple* tuple, Var* var)
    assert(var   != NULL);
    
    entry->refc      = 1;
+   entry->index     = -1;
    entry->tuple     = tuple_copy(tuple);
    entry->type      = SYM_VAR;
    entry->value.var = var_copy(var);
@@ -165,6 +170,14 @@ int entry_cmp(const Entry* entry, const Tuple* tuple)
    return tuple_cmp(entry->tuple, tuple);
 }
 
+void entry_set_index(Entry* entry, int idx)
+{
+   assert(entry_is_valid(entry));
+   assert(entry->index == -1); /* Muss man nicht fordern */
+   
+   entry->index = idx;
+}
+
 SymbolType entry_get_type(const Entry* entry)
 {
    assert(entry_is_valid(entry));
@@ -178,6 +191,13 @@ Tuple* entry_get_tuple(const Entry* entry)
    assert(tuple_is_valid(entry->tuple));
    
    return tuple_copy(entry->tuple);
+}
+
+int entry_get_index(Entry* entry)
+{
+   assert(entry_is_valid(entry));
+   
+   return entry->index;
 }
 
 double entry_get_numb(const Entry* entry)
@@ -239,7 +259,3 @@ void entry_print(FILE* fp, const Entry* entry)
    }
 }
 
-unsigned int entry_hash(const Entry* entry)
-{
-   return tuple_hash(entry->tuple);
-}

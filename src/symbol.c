@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.3 2001/01/28 19:16:14 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -38,9 +38,9 @@ struct symbol
 
 static int    symbols = 0;
 #ifndef NDEBUG
-static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL };
+static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
 #else
-static Symbol anchor  = { "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL };
+static Symbol anchor  = { "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
 #endif
 
 Symbol* symbol_new(const char* name, SymbolType type, Set* set)
@@ -120,21 +120,12 @@ Symbol* symbol_lookup(const char* name)
    return sym;
 }
 
-int symbol_lookup_tuple(const Symbol* sym, const Tuple* tuple)
+Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple)
 {
-   int i;
-   
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
 
-   return hash_has_entry(sym->hash, tuple);
-#if 0
-   for(i = 0; i < sym->used; i++)
-      if (!entry_cmp(sym->entry[i], tuple))
-         break;
-   
-   return i < sym->used ? i : -1;
-#endif
+   return hash_lookup_entry(sym->hash, tuple);
 }
 
 /* Entry wird gefressen.
@@ -171,6 +162,7 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
       if ((sym->type == SYM_ERR) && (sym->used == 0))
          sym->type = entry_get_type(entry);
 
+      entry_set_index(entry, sym->used);      
       hash_add_entry(sym->hash, entry);
       
       sym->entry[sym->used] = entry_copy(entry);      

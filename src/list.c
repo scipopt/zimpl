@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: list.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -242,7 +242,7 @@ const Elem* list_get_elem(const List* list, ListElem** idxp)
 
    data = list_get_data(list, idxp);
 
-   return (data == NULL) ? NULL : data->elem;
+   return (data == NULL) ? ELEM_NULL : data->elem;
 }
 
 Tuple* list_get_tuple(const List* list, ListElem** idxp)
@@ -254,7 +254,7 @@ Tuple* list_get_tuple(const List* list, ListElem** idxp)
 
    data = list_get_data(list, idxp);
 
-   return (data == NULL) ? NULL : tuple_copy(data->tuple);
+   return (data == NULL) ? TUPLE_NULL : tuple_copy(data->tuple);
 }
 
 Entry* list_get_entry(const List* list, ListElem** idxp)
@@ -266,7 +266,7 @@ Entry* list_get_entry(const List* list, ListElem** idxp)
 
    data = list_get_data(list, idxp);
 
-   return (data == NULL) ? NULL : entry_copy(data->entry);
+   return (data == NULL) ? ENTRY_NULL : entry_copy(data->entry);
 }
 
 void list_print(FILE* fp, const List* list)

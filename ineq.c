@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ineq.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: ineq.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ineq.c                                                        */
@@ -81,7 +81,7 @@ void ineq_print(FILE* fp, const Ineq* ineq)
    
    assert(ineq_is_valid(ineq));
 
-   term_print(fp, ineq->term);
+   term_print(fp, ineq->term, TERM_PRINT_INDEX);
    
    switch(ineq->type)
    {

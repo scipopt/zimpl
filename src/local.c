@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: local.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -75,7 +75,7 @@ const Elem* local_lookup(const char* name)
       if (!strcmp(local->name, name))
          break;
 
-   return local == NULL ? NULL : local->element;
+   return local == NULL ? ELEM_NULL : local->element;
 }
 
 void local_install_tuple(const Tuple* pattern, const Tuple* values)

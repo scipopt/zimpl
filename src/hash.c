@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.3 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -17,7 +17,7 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define HASH_BUCKETS  65521
+#define HASH_BUCKETS  65521U
 #define HASH_SID      0x48617368
 
 typedef struct hash_element HElem;
@@ -35,7 +35,7 @@ struct hash_element
 struct hash
 {
    SID
-   int      size;
+   size_t   size;
    int      elems;
    HashType type;
    HElem**  bucket;
@@ -62,9 +62,9 @@ Hash* hash_new(HashType type)
 
 void hash_free(Hash* hash)
 {
-   HElem* he;
-   HElem* hq;
-   int    i;
+   HElem*       he;
+   HElem*       hq;
+   unsigned int i;
       
    assert(hash_is_valid(hash));
 
@@ -107,18 +107,22 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
 
 void hash_add_entry(Hash* hash, Entry* entry)
 {
-   HElem*       he = calloc(1, sizeof(he));
+   HElem*       he = calloc(1, sizeof(*he));
+   Tuple*       tuple;
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
    assert(entry_is_valid(entry));
    assert(hash->type == HASH_ENTRY);
 
-   hcode               = entry_hash(entry) % hash->size;
+   tuple               = entry_get_tuple(entry);
+   hcode               = tuple_hash(tuple) % hash->size;
    he->value.entry     = entry;
    he->next            = hash->bucket[hcode];
    hash->bucket[hcode] = he;
    hash->elems++;
+   
+   tuple_free(tuple);
 }
 
 int hash_has_tuple(Hash* hash, const Tuple* tuple)
@@ -138,38 +142,39 @@ int hash_has_tuple(Hash* hash, const Tuple* tuple)
 
 int hash_has_entry(Hash* hash, Tuple* tuple)
 {
-   unsigned int hcode = entry_hash(entry) % hash->size;
-   Tuple*       tuple = entry_get_tuple(entry);
+   unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
    
    assert(hash_is_valid(hash));
-   assert(entry_is_valid(entry));
+   assert(tuple_is_valid(tuple));
    
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
       if (!entry_cmp(he->value.entry, tuple))
          break;
 
-   tuple_free(tuple);
-   
    return he != NULL;
 }
 
-Entry* hash_lookup_entry(Hash* hash, Entry* entry)
+Entry* hash_lookup_entry(Hash* hash, Tuple* tuple)
 {
-   unsigned int hcode = entry_hash(entry) % hash->size;
-   Tuple*       tuple = entry_get_tuple(entry);
+   unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
+   Entry*       entry = NULL;
    
    assert(hash_is_valid(hash));
-   assert(entry_is_valid(entry));
+   assert(tuple_is_valid(tuple));
 
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
       if (!entry_cmp(he->value.entry, tuple))
          break;
 
-   tuple_free(tuple);
-   
-   return (he != NULL) ? entry_copy(he->value.entry) : NULL;
+   assert(he != NULL);
+
+   entry = entry_copy(he->value.entry);
+
+   assert(entry_is_valid(entry));
+
+   return entry;
 }
 
 

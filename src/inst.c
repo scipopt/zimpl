@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -483,6 +483,63 @@ void i_symbol_deref(CodeNode* self)
 {
    const char* name;
    Tuple*      tuple;
+   Entry*      entry;
+   Symbol*     sym;
+   Set*        set;   
+   Term*       term;
+   
+   Trace("i_symbol_deref");
+   
+   assert(code_is_valid(self));
+
+   name  = code_get_name(code_get_child(self, 0));
+   tuple = code_get_tuple(code_get_child(self, 1));   
+   sym   = symbol_lookup(name);
+
+   if (sym == NULL)
+   {
+      fprintf(stderr, "Error: unknown symbol \"%s\", lineno=%d, column=%d\n",
+         name, code_get_lineno(self), code_get_column(self));      
+      assert(0);
+   }
+   entry = symbol_lookup_entry(sym, tuple);
+
+   if (entry == NULL)
+   {
+      fprintf(stderr, "Error: Unknown index ");
+      tuple_print(stderr, tuple);
+      fprintf(stderr, " for symbol \"%s\" at lineno=%d, column=%d\n",
+         name, code_get_lineno(self), code_get_column(self));
+      assert(0);
+   }
+   tuple_free(tuple);
+
+   switch(symbol_get_type(sym))
+   {
+   case SYM_NUMB :
+      code_value_numb(self, entry_get_numb(entry));
+      break;
+   case SYM_STRG :
+      code_value_strg(self, entry_get_strg(entry));
+      break;
+   case SYM_SET :
+      set = entry_get_set(entry);
+      code_value_set(self, set);
+      set_free(set);
+      break;
+   case SYM_VAR :
+      term = term_new();
+      term_add_elem(term, sym, entry, 1.0);
+      code_value_term(self, term);
+      term_free(term);
+      break;
+   default :
+      assert(0);
+   }
+   entry_free(entry);
+#if 0
+   const char* name;
+   Tuple*      tuple;
    Symbol*     sym;
    Set*        set;   
    int         idx;
@@ -536,6 +593,7 @@ void i_symbol_deref(CodeNode* self)
    default :
       assert(0);
    }
+#endif
 }
 
 /* ----------------------------------------------------------------------------
@@ -554,7 +612,7 @@ void i_idxset_new(CodeNode* self)
    assert(code_is_valid(self));
 
    child  = code_get_child(self, 0);
-   tuple  = (child == NULL) ? NULL : code_get_tuple(child);
+   tuple  = (child == NULL) ? TUPLE_NULL : code_get_tuple(child);
    set    = code_get_set(code_get_child(self, 1));
    idxset = idxset_new();
 
@@ -967,7 +1025,7 @@ void i_object_min(CodeNode* self)
 
    printf("Minimize\n");
    printf("%s: ", name);
-   term_print(stdout, term);
+   term_print(stdout, term, TERM_PRINT_INDEX);
    printf("\nSubject To\n");
 
    term_free(term);

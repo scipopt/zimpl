@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -18,7 +18,9 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define CODE_SID 0x436f6465
+#define CODE_SID  0x436f6465
+#define INST_NULL ((Inst)0)
+//#define CODE_NULL ((CodeNode*)0)
 
 typedef union code_value CodeValue;
 
@@ -34,7 +36,7 @@ union code_value
    Entry*      entry;
    Symbol*     symbol;
    IdxSet*     idxset;
-   Bool        bool;
+   int         bool;
    int         size;
    List*       list;
    VarType     vartype;
@@ -63,7 +65,7 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    int       i;
    CodeNode* child;
    
-   assert(inst != NULL);
+   assert(inst != INST_NULL);
    assert(node != NULL);
 
    node->eval   = inst;
@@ -333,7 +335,7 @@ void code_execute(CodeNode* node)
       fprintf(stderr, "\n");
       break;
    case CODE_TERM :
-      term_print(stderr, code_get_term(node));
+      term_print(stderr, code_get_term(node), TERM_PRINT_SYMBOL);
       fprintf(stderr, "\n");
       break;
    case CODE_INEQ :
@@ -447,7 +449,7 @@ int code_get_size(CodeNode* node)
    return code_check_type(node, CODE_SIZE)->value.size;
 }
 
-Bool code_get_bool(CodeNode* node)
+int code_get_bool(CodeNode* node)
 {
    return code_check_type(node, CODE_BOOL)->value.bool;
 }
@@ -561,7 +563,7 @@ void code_value_ineq(CodeNode* node, Ineq* ineq)
    node->value.ineq = ineq_copy(ineq);
 }
 
-void code_value_bool(CodeNode* node, Bool bool)
+void code_value_bool(CodeNode* node, int bool)
 {
    assert(code_is_valid(node));
 
