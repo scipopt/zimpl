@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.3 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.4 2003/08/02 08:44:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -63,7 +63,7 @@ void xlp_transtable(FILE* fp)
 
 void xlp_orderfile(FILE* fp)
 {
-   //   lps_orderfile(lp, fp);
+   lps_orderfile(lp, fp);
 }
 
 void xlp_free()
@@ -149,6 +149,17 @@ Var* xlp_addvar(
       numb_get_mpq(bound_get_value(upper), temp);
       lps_setupper(var, temp);
    }
+   numb_get_mpq(startval, temp);
+   
+   lps_setstartval(var, temp);
+
+   numb_get_mpq(priority, temp);
+   
+   if (mpz_get_si(mpq_denref(temp)) != 1)
+      fprintf(stderr, "*** Warning variable priority has to be integral\n");
+
+   lps_setpriority(var, (int)mpz_get_si(mpq_numref(temp)));
+
    mpq_clear(temp);
    
    return var;

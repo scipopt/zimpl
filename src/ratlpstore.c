@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.3 2003/07/17 07:36:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.4 2003/08/02 08:44:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -555,6 +555,7 @@ void lps_free(Lps* lp)
       mpq_clear(var->lower);
       mpq_clear(var->upper);
       mpq_clear(var->value);
+      mpq_clear(var->startval);
       
       free(var->name);
       free(var);
@@ -721,6 +722,7 @@ Var* lps_addvar(
    mpq_init(v->lower);
    mpq_init(v->upper);
    mpq_init(v->value);
+   mpq_init(v->startval);
    
    v->sid       = VAR_SID;
    v->name      = strdup(name);
@@ -1263,6 +1265,16 @@ void lps_setvalue(
    mpq_set(var->value, value);
 }
 
+void lps_setstartval(
+   Var*        var,
+   const mpq_t startval)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+   
+   mpq_set(var->startval, startval);
+}
+
 void lps_stat(const Lps* lp)
 {
    assert(lps_valid(lp));
@@ -1386,15 +1398,6 @@ void lps_transtable(const Lps* lp, FILE* fp, int size, const char* head)
    
    mpq_clear(zero);
 }
-
-#if 0
-void lps_orderfile(const Lps* lp, FILE* fp)
-{
-   assert(lps_valid(lp));
-
-   ord_write(lp, fp);
-}
-#endif
 
 void lps_scale(const Lps* lp)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.3 2003/08/02 08:44:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -63,6 +63,7 @@ struct variable
    mpq_t        lower;
    mpq_t        upper;
    mpq_t        value;
+   mpq_t        startval;
    int          priority;
    Var*         prev;
    Var*         next;   

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.11 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.12 2003/08/02 08:44:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -41,9 +41,9 @@
 struct tuple
 {
    SID
-   int    dim;
-   int    refc;
-   Elem** element;
+   int          dim;
+   int          refc;
+   Elem**       element;
 };
 
 Tuple* tuple_new(int dim)
@@ -96,7 +96,7 @@ void tuple_free(Tuple* tuple)
 
 Bool tuple_is_valid(const Tuple* tuple)
 {
-   return ((tuple != NULL) && SID_ok(tuple, TUPLE_SID) && (tuple->refc > 0));
+   return tuple != NULL && SID_ok(tuple, TUPLE_SID) && tuple->refc > 0;
 }
 
 Tuple* tuple_copy(const Tuple* source)

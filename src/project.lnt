@@ -47,6 +47,8 @@
 -esym(429,nodes,t)
 /* iread.c */
 -esym(771,field) // Symbol 'field' (line 227) conceivably not initialized
+/* gmpmisc.c */
+-esym(754,pool_elem::pad)
 //-e429
 //--- Bison ---
 -esym(424, yyss, yyvs) // klappt nicht

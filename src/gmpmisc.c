@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.c,v 1.1 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.c,v 1.2 2003/08/02 08:44:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -41,6 +41,75 @@
 mpq_t const_zero;
 mpq_t const_one;
 mpq_t const_minus_one;
+
+#define POOL_SIZE        10000
+#define POOL_ELEM_SIZE   16
+
+typedef union pool_elem PoolElem;
+typedef struct pool     Pool;
+
+union pool_elem
+{
+   char      pad[POOL_ELEM_SIZE];
+   PoolElem* next;   
+};
+
+struct pool
+{
+   PoolElem elem[POOL_SIZE];
+   Pool*    next;
+};
+
+static Pool*     pool_root  = NULL;
+static PoolElem* pool_next  = NULL;
+
+static void* pool_alloc(void)
+{
+   Pool*     pool;
+   PoolElem* elem;
+   int       i;
+   
+   if (pool_next == NULL)
+   {
+      pool       = malloc(sizeof(*pool));
+      pool->next = pool_root;
+      pool_root  = pool;
+
+      for(i = 0; i < POOL_SIZE - 1; i++)
+         pool->elem[i].next = &pool->elem[i + 1];
+
+      pool->elem[i].next = NULL;
+
+      pool_next = &pool->elem[0];
+   }
+   assert(pool_next != NULL);
+
+   elem      = pool_next;
+   pool_next = elem->next;
+
+   return elem;
+}
+
+static void pool_free(void* pv)
+{
+   PoolElem* elem = pv;
+
+   elem->next = pool_next;
+   pool_next  = elem;
+}
+
+static void pool_exit(void)
+{
+   Pool* p;
+   Pool* q;
+   
+   for(p = pool_root; p != NULL; p = q)
+   {
+      q = p->next;
+
+      free(p);
+   }
+}
 
 /* [+|-]?[0-9]*.[0-9]+[[e|E][+|-][0-9]+]? */
 /* if it does not fit here, it doesn't fit in a double either */
@@ -121,21 +190,57 @@ void gmp_print_mpq(FILE* fp, const mpq_t qval)
 /*ARGSUSED*/
 static void* gmp_alloc(size_t size)
 {
+   if (size <= POOL_ELEM_SIZE)
+      return pool_alloc();
+
    return malloc(size);
 }
 
 /*ARGSUSED*/
 static void* gmp_realloc(void* ptr, size_t old_size, size_t new_size)
 {
+   void* p;
+
+   if (old_size <= POOL_ELEM_SIZE && new_size <= POOL_ELEM_SIZE)
+      return ptr;
+
+   if (old_size <= POOL_ELEM_SIZE)
+   {
+      assert(new_size > POOL_ELEM_SIZE);
+      assert(new_size > old_size);
+      
+      p = malloc(new_size);
+
+      memcpy(p, ptr, old_size);
+      
+      pool_free(ptr);
+      
+      return p;
+   }
+   if (new_size <= POOL_ELEM_SIZE) 
+   {
+      assert(old_size > POOL_ELEM_SIZE);
+      assert(old_size > new_size);
+      
+      p = pool_alloc();
+
+      memcpy(p, ptr, new_size);
+      
+      free(ptr);
+      
+      return p;
+   }
    return realloc(ptr, new_size);
 }
 
 /*ARGSUSED*/
 static void gmp_free(void* ptr, size_t size)
 {
-   free(ptr);
+   if (size <= POOL_ELEM_SIZE)
+      pool_free(ptr);
+   else
+      free(ptr);
 }
-
 
 void gmp_init(Bool verbose)
 {
@@ -157,6 +262,8 @@ void gmp_exit()
    mpq_clear(const_zero);
    mpq_clear(const_one);
    mpq_clear(const_minus_one);
+
+   pool_exit();
 }
 
 

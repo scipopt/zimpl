@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.c,v 1.6 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.c,v 1.7 2003/08/02 08:44:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -407,6 +407,101 @@ void mem_check(
    for(p = memlist; p != MHDR_NIL; p = p->next)
       mem_valid(p, file, line);
 }      
+
+#elif BOEHM_GC
+
+#include <gc.h>
+
+void* mem_malloc(
+   size_t       size,
+   const char*  file,
+   const int    line) 
+{
+   const char* errmsg1 =
+      "mem_malloc(size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(size > 0);
+   
+   if (NULL == (p = GC_malloc(size)))
+   {
+      fprintf(stderr, errmsg1, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+void* mem_calloc(
+   size_t       item,
+   size_t       size,
+   const char*  file,
+   const int    line)
+{
+   const char* errmsg1 =
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(item > 0);
+   assert(size > 0);
+   
+   if (NULL == (p = GC_malloc(item * size)))
+   {
+      fprintf(stderr, errmsg1, item, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+void* mem_realloc(
+   void*        ptr,
+   size_t       size,
+   const char*  file,
+   const int    line)
+{
+   const char* errmsg1 =
+      "mem_realloc(size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(ptr  != NULL);
+   assert(size >  0);
+
+   if (NULL == (p = GC_realloc(ptr, size)))
+   {
+      fprintf(stderr, errmsg1, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+char* mem_strdup(
+   const char* str,
+   const char* file,
+   const int   line)
+{
+   const char* errmsg1 =
+      "mem_strdup(size=%u, file=%s, line=%d): out of memory";
+
+   char* s;
+   
+   assert(str != NULL);
+   
+   if (NULL == (s = GC_malloc_atomic(strlen(str))))
+   {
+      fprintf(stderr, errmsg1, strlen(str), file, line);
+      abort();
+   }   
+   return strcpy(s, str);
+}
+
+void mem_free(
+   void*       ptr,
+   const char* file,
+   const int   line)
+{
+}
 
 #else /* NO_MSHELL */
 

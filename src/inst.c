@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.42 2003/07/17 07:36:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.43 2003/08/02 08:44:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -998,7 +998,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
       elem  = list_get_elem(list, &le);
       tuple = tuple_new(1);
 
-      tuple_set_elem(tuple, 0, elem);      
+      tuple_set_elem(tuple, 0, elem);
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_WARN);
 
       tuple_free(tuple);
@@ -1282,7 +1282,7 @@ CodeNode* i_tuple_new(CodeNode* self)
    
    for(i = 0; i < n; i++)
       tuple_set_elem(tuple, i, list_get_elem(list, &le));
-   
+
    code_value_tuple(self, tuple);
 
    tuple_free(tuple);

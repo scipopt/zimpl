@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ordwrite.c,v 1.5 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.1 2003/08/02 08:44:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -35,18 +35,19 @@
 
 #include "mshell.h"
 #include "bool.h"
-#include "ratlptypes.h"
+#include "ratlp.h"
+#include "ratlpstore.h"
 #include "mme.h"
+
+#define MPS_NAME_LEN  8
 
 /* A specification for the ORD file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 545.
  */
-void ord_write(
+void lps_orderfile(
    const Lps* lp,
    FILE*      fp)
 {
-#warning "Not yet implemented"
-#if 0
    const Var*  var;
    char  vtmp  [13];
    
@@ -58,7 +59,7 @@ void ord_write(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->type == VAR_CON)
+      if (var->class == VAR_CON)
          continue;
 
       if (var->size == 0)
@@ -67,13 +68,10 @@ void ord_write(
       lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
       fprintf(fp, "    %-8.8s  %8d", vtmp, var->priority);
-
-      if (LT(var->startval, INFINITY))
-         fprintf(fp, "  %.10e", var->startval);
+      fprintf(fp, "  %.10e", mpq_get_d(var->startval));
 
       fputc('\n', fp);
    }
-#endif
    fprintf(fp, "ENDATA\n");   
 }   
 

@@ -1,3 +1,26 @@
+Speedups:
+
+numbgmp: mpq_clear aufrufen für verwendete oder schon erledigt.
+strstore: string table, jeder nur einmal und dann handle. Macht auch
+          str_has und str_cmp schneller.
+auf explicite copys umstellen. Statt
+
+numb = new_numb
+elem = new_elem(numb);
+tuple_new_tuple(elem);
+free(elem);
+free(numb);
+
+nur noch 
+tuple_new_tuple(new_elem(new_numb)));
+
+und ansnsten hatlr
+
+tuple_new_tuple(elem_copy(elem))));
+
+
+
+
 INFINITY in mmlparser kommt noch nicht durch.
 
 

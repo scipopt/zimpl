@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.3 2003/08/02 08:44:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -124,6 +124,8 @@ extern void         lps_setscale(Con* con, const mpq_t scale);
 extern void         lps_setpriority(Var* var, int priority);
 /*lint -sem(        lps_setvalue, 1p == 1) */
 extern void         lps_setvalue(Var* var, const mpq_t value);
+/*lint -sem(        lps_setstartval, 1p == 1) */
+extern void         lps_setstartval(Var* var, const mpq_t startval);
 /*lint -sem(        lps_write, 1p == 1 && 2p == 1 && nulterm(4)) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, 1p == 1 && 2p == 1 && 3n > 0 && 4p && nulterm(4)) */
@@ -144,8 +146,12 @@ extern void         lpf_write(const Lps* lp, FILE* fp, const char* text);
 
 /* ratmpswrite.c
  */
-/*lint -sem(        lpf_write, 1p == 1 && 2p == 1) && nulterm(3)) */
+/*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
 extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
 
+/* ratordwrite.c
+ */
+/*lint -sem(        lps_ordwrite, 1p == 1 && 2p == 1) */
+extern void         lps_orderfile(const Lps* lp, FILE* fp);
 
 #endif /* _RATLP_H_ */
