@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.27 2002/11/25 09:08:37 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.28 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -56,6 +56,7 @@ extern void yyerror(const char* s);
    double       numb;
    const char*  strg;
    const char*  name;
+   Symbol*      sym;
    CodeNode*    code;
 };
 
@@ -72,10 +73,7 @@ extern void yyerror(const char* s);
 %token CARD ABS FLOOR CEIL LOG LN EXP
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
-%token <name> NUMBSYM
-%token <name> STRGSYM
-%token <name> VARSYM
-%token <name> SETSYM
+%token <sym> NUMBSYM STRGSYM VARSYM SETSYM
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
@@ -369,14 +367,14 @@ factor
 
 vexpr
    : VARSYM symidx          {
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       } 
    | '+' VARSYM symidx %prec UNARY  {
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($2), $3);
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3);
       } 
    | '-' VARSYM symidx %prec UNARY  { 
          $$ = code_new_inst(i_term_coeff, 2,
-            code_new_inst(i_symbol_deref, 2, code_new_name($2), $3),
+            code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3),
             code_new_numb(-1.0));
       } 
    ;   
@@ -415,7 +413,7 @@ condition
 
 sexpr
    : SETSYM symidx  {
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
    | '{' expr TO expr BY expr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
@@ -444,7 +442,7 @@ sexpr
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
       }
    | INDEXSET '(' SETSYM ')' {
-         $$ = code_new_inst(i_set_indexset, 1, code_new_name($3));
+         $$ = code_new_inst(i_set_indexset, 1, code_new_symbol($3));
       }
    ;
 
@@ -520,10 +518,10 @@ expr
          $$ = code_new_inst(i_local_deref, 1, code_new_name($1));
       }
    | NUMBSYM symidx { 
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
    | STRGSYM symidx { 
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
    | expr '+' expr         { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
    | expr '-' expr         { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }

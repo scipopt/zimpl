@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.17 2002/11/25 09:08:37 bzfkocht Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.18 2003/02/04 06:58:11 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -140,10 +140,10 @@ static int yycolumn = 0;
 
       yycolumn += yyleng; 
 
-      lval->name = str_new(yytext);
-
       if (NULL != (sym = symbol_lookup(yytext)))
       {
+         lval->sym = sym;
+
          switch(symbol_get_type(sym))
          {
          case SYM_NUMB :
@@ -158,6 +158,8 @@ static int yycolumn = 0;
             abort();
          }
       }
+      lval->name = str_new(yytext);
+
       return NAME;
    }
 

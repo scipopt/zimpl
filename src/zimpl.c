@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.17 2002/11/25 09:08:37 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.18 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -51,7 +51,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.05d Copyright (C)2002 by Thorsten Koch *\n" \
+"* Release 1.05e Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -323,6 +323,7 @@ int main(int argc, char* const* argv)
    free(tblfile);
    free(basefile);
    free(filter);
+   free(cmdpipe);
    
    mem_display(stderr);
 #endif /* __INSURE__ || !NDEBUG || FREEMEM */

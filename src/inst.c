@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.29 2002/11/05 12:48:01 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.30 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1077,15 +1077,13 @@ CodeNode* i_set_proj(CodeNode* self)
 
 CodeNode* i_set_indexset(CodeNode* self)
 {
-   const char*   name;
    const Symbol* sym;
    
    Trace("i_set_indexset");
 
    assert(code_is_valid(self));
 
-   name  = code_eval_child_name(self, 0);
-   sym   = symbol_lookup(name);
+   sym = code_eval_child_symbol(self, 0);
 
    assert(sym != NULL);
 
@@ -1521,7 +1519,6 @@ CodeNode* i_newsym_var(CodeNode* self)
 
 CodeNode* i_symbol_deref(CodeNode* self)
 {
-   const char*  name;
    const Tuple* tuple;
    const Entry* entry;
    Symbol*      sym;
@@ -1532,28 +1529,20 @@ CodeNode* i_symbol_deref(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   name  = code_eval_child_name(self, 0);
+   sym   = code_eval_child_symbol(self, 0);
    tuple = code_eval_child_tuple(self, 1);   
-   sym   = symbol_lookup(name);
 
    /* wurde schon in mmlscan ueberprueft
     */
    assert(sym != NULL);
-#if 0
-   if (sym == NULL)
-   {
-      fprintf(stderr, "*** Error: Unknown symbol \"%s\"\n", name);
-      code_errmsg(self);
-      abort();
-   }
-#endif
+
    entry = symbol_lookup_entry(sym, tuple);
 
    if (NULL == entry)
    {
       fprintf(stderr, "*** Error: Unknown index ");
       tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol \"%s\"\n", name);
+      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
       code_errmsg(self);
       abort();
    }

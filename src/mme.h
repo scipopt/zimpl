@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.22 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.23 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -50,7 +50,7 @@ enum code_type
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
    CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE,
-   CODE_RDEF, CODE_RPAR, CODE_BITS
+   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM
 };
 
 enum set_check_type

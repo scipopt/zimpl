@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.14 2002/07/29 09:21:58 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.15 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -57,6 +57,7 @@ union code_value
    RDef*        rdef;
    RPar*        rpar;
    unsigned int bits;
+   Symbol*      sym;
 };
 
 #define MAX_CHILDS 7
@@ -245,6 +246,24 @@ CodeNode* code_new_bits(unsigned int bits)
    return node;
 }
 
+CodeNode* code_new_symbol(Symbol* sym)
+{
+   CodeNode* node = calloc(1, sizeof(*node));
+
+   assert(node != NULL);
+
+   node->type       = CODE_SYM;
+   node->eval       = i_nop;
+   node->value.sym  = sym;
+   node->stmt       = scan_get_stmt();
+   node->column     = scan_get_column();
+
+   SID_set(node, CODE_SID);
+   assert(code_is_valid(node));
+   
+   return node;
+}
+
 static inline void code_free_value(const CodeNode* node)
 {
    assert(code_is_valid(node));
@@ -292,6 +311,8 @@ static inline void code_free_value(const CodeNode* node)
       rpar_free(node->value.rpar);
       break;
    case CODE_BITS :
+      break;
+   case CODE_SYM :
       break;
    default :
       abort();
@@ -469,6 +490,11 @@ inline const RPar* code_get_rpar(CodeNode* node)
 inline unsigned int code_get_bits(CodeNode* node)
 {
    return code_check_type(node, CODE_BITS)->value.bits;
+}
+
+inline Symbol* code_get_symbol(CodeNode* node)
+{
+   return code_check_type(node, CODE_SYM)->value.sym;
 }
 
 /* ----------------------------------------------------------------------------
@@ -741,6 +767,11 @@ const RPar* code_eval_child_rpar(const CodeNode* node, int no)
 unsigned int code_eval_child_bits(const CodeNode* node, int no)
 {
    return code_get_bits(code_eval(code_get_child(node, no)));
+}
+
+Symbol* code_eval_child_symbol(const CodeNode* node, int no)
+{
+   return code_get_symbol(code_eval(code_get_child(node, no)));
 }
 
 

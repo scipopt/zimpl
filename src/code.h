@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.h,v 1.8 2002/07/29 09:21:59 bzfkocht Exp $"
+#ident "@(#) $Id: code.h,v 1.9 2003/02/04 06:58:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -44,6 +44,8 @@ extern CodeNode*    code_new_vartype(VarType vartype);
 extern CodeNode*    code_new_contype(ConType contype);
 /*lint -sem(        code_new_bits, @p == 1) */
 extern CodeNode*    code_new_bits(unsigned int bits);
+/*lint -sem(        code_new_symbol, @p == 1) */
+extern CodeNode*    code_new_symbol(Symbol* sym);
 /*lint -sem(        code_free, 1p == 1) */
 extern void         code_free(CodeNode* node);
 /*lint -sem(        code_is_valid, 1p == 1) */
@@ -100,6 +102,8 @@ extern const RDef*  code_get_rdef(CodeNode* node);
 extern const RPar*  code_get_rpar(CodeNode* node);
 /*lint -sem(        code_get_bits, 1p == 1) */
 extern unsigned int code_get_bits(CodeNode* node);
+/*lint -sem(        code_get_symbol, 1p == 1) */
+extern Symbol*      code_get_symbol(CodeNode* node);
 /*lint -sem(        code_value_numb, 1p == 1) */
 extern void         code_value_numb(CodeNode* node, double numb);
 /*lint -sem(        code_value_strg, 1p == 1 && 2p && nulterm(2)) */
@@ -169,8 +173,10 @@ extern ConType      code_eval_child_contype(const CodeNode* node, int no);
 extern const RDef*  code_eval_child_rdef(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_rpar, 1p == 1 && 2n >= 0, @p == 1) */
 extern const RPar*  code_eval_child_rpar(const CodeNode* node, int no);
-/*lint -sem(        int code_eval_child_bits, 1p == 1 && 2n >= 0) */
-extern unsigned     int code_eval_child_bits(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_bits, 1p == 1 && 2n >= 0) */
+extern unsigned int code_eval_child_bits(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_symbol, 1p == 1 && 2n >= 0) */
+extern Symbol*      code_eval_child_symbol(const CodeNode* node, int no);
 
 #endif /* _CODE_H_ */
 
