@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.51 2003/10/29 15:04:49 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.52 2003/10/29 17:47:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -231,6 +231,8 @@ int main(int argc, char* const* argv)
    FILE*       fp;
    Bool        write_order = FALSE;
    Bool        presolve    = FALSE;
+   char**      param_table;
+   int         param_count = 0;
    int         c;
    int         i;
    FILE*       (*openfile)(const char*, const char*) = fopen;
@@ -238,7 +240,8 @@ int main(int argc, char* const* argv)
 
    yydebug       = 0;
    yy_flex_debug = 0;
-
+   param_table   = malloc(sizeof(*param_table));
+   
    while((c = getopt(argc, argv, options)) != -1)
    {
       switch(c)
@@ -247,6 +250,9 @@ int main(int argc, char* const* argv)
          yydebug = 1;
          break;
       case 'D' :
+         param_table = realloc(param_table, (param_count + 1) * sizeof(*param_table));
+         param_table[param_count] = strdup(optarg);
+         param_count++;
          break;
       case 'h' :
          printf(usage, argv[0]);
@@ -368,21 +374,13 @@ int main(int argc, char* const* argv)
    (void)symbol_new("@@", SYM_VAR, set, 100, NULL);
    set_free(set);
    
-   /* Do it again Sam, to get the defines from the command line
+   /* Now store the param defines
     */
-   optind = 0;
-   while((c = getopt(argc, argv, options)) != -1)
-   {
-      switch(c)
-      {
-      case 'D' :
-         add_parameter(optarg);
-         break;
-      default :
-         break;
-      }
-   }
+   for(i = 0; i < param_count; i++)
+      add_parameter(param_table[i]);
 
+   /* Next we read in the zpl program(s)
+    */
    prog = prog_new();
 
    for(i = optind; i < argc; i++)
@@ -482,6 +480,10 @@ int main(int argc, char* const* argv)
    
    /* Now clean up. 
     */
+   for(i = 0; i < param_count; i++)
+      free(param_table[i]);
+   free(param_table);
+   
    prog_free(prog);
 
    xlp_free();

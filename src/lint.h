@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.6 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.7 2003/10/29 17:47:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -42,6 +42,8 @@ extern char* strdup(const char* s);
  */
 extern int isinf(double);
 extern int isnan(double);
+extern int isfinite(double);
+extern int finite(double); /* This is probably not POSIX */
 
 /*lint -esym(757, optarg, optind, opterr, optopt) */
 /*lint -sem(getopt, 1n > 0 && 2p && 3p) */
