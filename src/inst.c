@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.23 2002/08/18 14:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.24 2002/08/22 07:20:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -998,6 +998,59 @@ CodeNode* i_set_range(CodeNode* self)
    code_value_set(self, set);
 
    set_free(set);
+
+   return self;
+}
+
+CodeNode* i_set_proj(CodeNode* self)
+{
+   const Set*   set_a;
+   const Tuple* tuple;
+   const Elem*  elem;
+   int          dim;
+   int          idx;
+   Set*         set_r;
+   int          i;
+   
+   Trace("i_set_proj");
+
+   assert(code_is_valid(self));
+
+   set_a = code_eval_child_set(self, 0);
+   tuple = code_eval_child_tuple(self, 1);
+   dim   = set_get_dim(set_a);
+   
+   for(i = 0; i < tuple_get_dim(tuple); i++)
+   {
+      elem = tuple_get_elem(tuple, i);
+
+      /* Are there only number in the selection tuple ?
+       */
+      if (ELEM_NUMB != elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error: Illegal value type in tuple: ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " only numbers are possible\n");
+         code_errmsg(self);
+         abort();
+      }
+      idx = (int)elem_get_numb(elem);
+      
+      /* Are all the number between 1 and dim(set) ?
+       */
+      if (idx < 1 || idx > dim)
+      {
+         fprintf(stderr, "*** Error: Illegal index %d, ", idx);
+         fprintf(stderr, "           set has only dimension %d\n", dim);
+         code_errmsg(self);
+         abort();
+      }
+   }
+   set_r = set_proj(set_a, tuple);
+
+   code_value_set(self, set_r);
+
+   set_free(set_r);
 
    return self;
 }

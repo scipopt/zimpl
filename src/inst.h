@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.12 2002/08/18 14:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.13 2002/08/22 07:20:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -138,16 +138,18 @@ extern CodeNode* i_object_max(CodeNode* self);
 extern CodeNode* i_object_min(CodeNode* self);
 /*lint -sem(     i_set_cross, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_cross(CodeNode* self);
+/*lint -sem(     i_set_empty, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_empty(CodeNode* self);
 /*lint -sem(     i_set_inter, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_inter(CodeNode* self);
+/*lint -sem(     i_set_minus, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_minus(CodeNode* self);
 /*lint -sem(     i_set_new_tuple, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_new_tuple(CodeNode* self);
 /*lint -sem(     i_set_new_elem, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_new_elem(CodeNode* self);
-/*lint -sem(     i_set_minus, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_set_minus(CodeNode* self);
-/*lint -sem(     i_set_empty, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_set_empty(CodeNode* self);
+/*lint -sem(     i_set_proj, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_proj(CodeNode* self);
 /*lint -sem(     i_set_range, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_range(CodeNode* self);
 /*lint -sem(     i_set_sdiff, 1p == 1, type(1), @p == 1p) */

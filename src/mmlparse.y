@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.19 2002/08/18 14:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.20 2002/08/22 07:20:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -67,7 +67,7 @@ extern void yyerror(const char* s);
 %token AND OR NOT
 %token SUM MIN MAX
 %token IF THEN ELSE END
-%token INTER UNION CROSS SYMDIFF WITHOUT
+%token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW
 %token CARD ABS FLOOR CEIL LOG LN EXP
 %token READ AS SKIP USE COMMENT
@@ -104,7 +104,7 @@ extern void yyerror(const char* s);
 %left  '*' '/' MOD DIV
 %left  UNARY
 %left  POW
-%left  ABS CARD FLOOR CEIL
+%left  ABS CARD FLOOR CEIL PROJ
 %%
 stmt
    : decl_set   { code_set_root($1); }
@@ -370,6 +370,9 @@ sexpr
    | '(' sexpr ')'      { $$ = $2; }
    | '{' tuple_list '}' { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
    | '{' expr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
+   | PROJ '(' sexpr ',' tuple ')' {
+         $$ = code_new_inst(i_set_proj, 2, $3, $5);
+      }
    ;
 
 read
@@ -474,7 +477,7 @@ expr
       }
    | SUM idxset DO expr %prec SUM {
          $$ = code_new_inst(i_expr_sum, 2, $2, $4);
-      }
+      }   
    ;
 
 

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.18 2002/08/18 12:26:34 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.19 2002/08/22 07:20:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -255,6 +255,8 @@ extern Set*         set_inter(const Set* set_a, const Set* set_b);
 extern Set*         set_minus(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_sdiff, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_sdiff(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_proj, 1p == 1 && 2p == 1, @p == 1) */
+extern Set*         set_proj(const Set* set_a, const Tuple* pattern);
 /*lint -sem(        set_is_subseteq, 1p == 1 && 2p == 1) */
 extern Bool         set_is_subseteq(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_is_subset, 1p == 1 && 2p == 1) */

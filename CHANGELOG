@@ -1,6 +1,12 @@
+ - New function proj(set,tuple) wich projects a set to the elements
+   of the tuple given. Example: 
+   set A := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+   set B := proj(A, <3,1>) 
+   will give: <"A",1>, <"A",2"> ... <"B",9>
+
  - Bug fixed, dublicate constraint names now give an error message.
 
- - new functions log(x), ln(x) and exp(x), meaning 
+ - New functions log(x), ln(x) and exp(x), meaning 
    logarithm to base 10, natural logarithm and e^x.
 
  - It is now possible to have variables on both sides of an 

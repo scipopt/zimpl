@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.8 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.9 2002/08/22 07:20:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -384,6 +384,51 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
       if (!set_lookup(set_a, set_b->member[i]))
          set_add_member(set, set_b->member[i], SET_ADD_END);         
 
+   assert(set_is_valid(set));
+
+   return set;
+}
+
+/* project set_a to a new set, using the elements index in the tuple.
+ */
+Set* set_proj(const Set* set_a, const Tuple* pattern)
+{
+   Set*   set;
+   Tuple* tuple;
+   int    i;
+   int    k;
+   int    dim;
+   int*   idx;
+   
+   assert(set_is_valid(set_a));
+   assert(tuple_is_valid(pattern));
+
+   dim = tuple_get_dim(pattern);
+   set = set_new(dim);
+   idx = malloc(sizeof(*idx) * dim);
+
+   assert(set != NULL);
+   assert(idx != NULL);
+   
+   for(i = 0; i < dim; i++)
+      idx[i] = (int)elem_get_numb(tuple_get_elem(pattern, i)) - 1;
+      
+   for(k = 0; k < set_a->used; k++)
+   {
+      tuple = tuple_new(dim);
+
+      for(i = 0; i < dim; i++)
+         tuple_set_elem(tuple, i, tuple_get_elem(set_a->member[k], idx[i])); 
+
+      /* This is suboptimal, because set_add_member look again.
+       */
+      if (!hash_has_tuple(set->hash, tuple))
+         set_add_member(set, tuple, SET_ADD_END);
+
+      tuple_free(tuple);
+   }
+   free(idx);
+   
    assert(set_is_valid(set));
 
    return set;
