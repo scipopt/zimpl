@@ -1,3 +1,8 @@
+ - Big bug fixed in storage of variable and constraint names.
+   It is unclear to be why it has worked before at all.
+
+ - Grammar fixed, since trailing '*' expr of vexpr where not parsed.
+
  - Only variables that are written to the LP are written to the 
    ".tbl" file. 
 
@@ -23,7 +28,7 @@
 
  - The read template syntax is checked more precice.
 
- - Integervariables with bounds [0,1] are automatically changed
+ - Integer variables with bounds [0,1] are automatically changed
    to binary variables.
 
  - New function proj(set,tuple) wich projects a set to the elements

@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.6 2002/07/31 06:58:42 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.7 2002/10/20 09:17:38 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -21,7 +21,7 @@
 \usepackage{url}
 %\usepackage{zibtitlepage}
 \usepackage[notoday,nofancy]{rcsinfo}
-\rcsInfo $Id: zimpl.tex,v 1.6 2002/07/31 06:58:42 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.7 2002/10/20 09:17:38 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -62,7 +62,7 @@
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small 31. July 2002}
+\date{\small for Version 1.04\\20. October 2002}
 \maketitle
 \vfill
 \begin{abstract}
@@ -85,7 +85,7 @@ the wonderful book about the modelling language \ampl
 from Robert Fourer, David N. Gay and Brian W. Kernighan
 \cite{FGK93}.
 Indeed if not the guys at \ilog had needed more than three months just
-to tell me the price of \ampl for \cplex I would probably use
+to tell me the price of \ampl for \cplex, I would probably use
 \ampl today.
 On the other hand, having the source code of a program has its atvantages. The
 possibility to run it regardless of architecture and operating system, the
@@ -203,12 +203,19 @@ The following options are possible (only the first two are normally
 of interest):
 
 \medskip
-\begin{tabular}{ll}
+\begin{tabular}{lp{115mm}}
 %\hline
 -t {\em format}& Selects the output format. Can be either \code{lp}
 which is default or \code{mps}.\\
 -o {\em name} & Sets the base-name for the output files.\\ 
-& Defaults to the first input file striped of the extension.\\
+& Defaults to the first input file striped of the extension.\\ 
+-n {\em cform}& Select the format for the generation of constraint
+names. Can be either {\em cm} which will number them $1\ldots n$ with
+a `c' in front. {\em cn} will use the name supplied in the
+\code{subto} statement and number them $1\ldots n$ within the
+statement. {\em cf} will use the name of given with the \code{subto},
+then a $1\ldots n$ number like in \emph{cm} and then append all the
+local variables from the forall statements.\\
 %\hline
 -b&Enables bison debugging output.\\
 -d&Enables zimpl debugging output.\\
@@ -253,8 +260,9 @@ usual one. If in doubt use parenthesis to be save.
 
 \subsubsection{Numeric expressions}
 The following functions are currently implemented: 
-$^\wedge$,\code{+,-,*,/,mod,div,abs,floor,ceil}. 
-$\wedge$ stands for \emph{to the
+$^\wedge$, \code{+}, \code{-}, \code{*}, \code{/}, \code{mod},
+\code{div}, \code{abs}, \code{floor}, \code{ceil}. 
+$^\wedge$ stands for \emph{to the
 power of}. \code{mod} is the modulo function and
 \code{div} gives the integer part of a division. \code{**} can be used
 as synonym for $^\wedge$.
@@ -285,7 +293,7 @@ to omit the braces in a list of elements, but then
 they must be omitted from all tuples of the set.
 
 \subsubsection{Set functions}
-\begin{tabular}{lll}
+\begin{tabular}{llp{5cm}}
 \hline
 A cross B   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
 A union B   &Union & $\{x | x\in A\vee x\in B\}$\\
@@ -296,6 +304,9 @@ $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
 \{n to m {\em by s}\}& Generate, & 
 $\{ x | x=n + is \leq m, i\in\N_0\}$\\
 &(default $s = 1$)&\\ 
+$\mbox{proj}(A, t)$& Projection $t=(e_1,\ldots,e_n)$& 
+The new set will consist of $n$-tuples, with the
+$i$-th component beeing the $e_i$-th component of $A$.\\
 \hline
 \end{tabular}
 
@@ -315,6 +326,9 @@ set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 set D := A cross B;
 set E := { 6 to 9 } union A without { <2>, <3> }; 
 set F := <i,j> in Q with i > j and i < 5;
+set G := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+set H := proj(G, <3,1>) 
+# will give: <"A",1>, <"A",2"> ... <"B",9>
 \end{verbatim}
 }
 
@@ -384,10 +398,10 @@ minimize cost: 12 * x1 -4.4 * x2
 
 \subsection{Constraints}
 The general format for a constraint is 
-\code{subto name: term sense rhs}.
+\code{subto name: term sense term}.
 Name can be any name starting with a letter. The term is defined
 as in the objective. Sense is one of
-\code{<=}, \code{>=} and \code{==}. The rhs is any numeric expression.
+\code{<=}, \code{>=} and \code{==}. 
 Many constraints can be generated with one statement by the use of the
 \code{forall} instruction, see below.
 
@@ -398,6 +412,10 @@ subto time : 3 * x1 + 4 * x2 <= 7;
 subto space: sum <a> in A : 2 * u[a] * y[a] >= 50;
 subto weird: forall <a> in A : 
    sum <a,b,c> in C : z[a,b,c] == 55;
+subto c21: 6 * (sum <i> in A : x[i] 
+   + sum <j> in B : y[j]) >= 2;
+subto c40: x[1] == a[1] + 
+   2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
 \end{verbatim}
 }
 
@@ -550,6 +568,10 @@ can produce:
  In some context type \emph{xxx} was expected, but the interpreter
  found type \emph{yyy}. The meaning of the numbers could be looked up
  in \code{code.h}.
+\item[Duplicate constraint name "xxx"]\ \\
+ The name given to a \code{subto} statement was allready used with
+ another \code{subto} statement. Either change the name, or use 
+ \code{-n cm} or \code{-n cf}.
 \end{description}
 
 \section{Remarks}

@@ -11,9 +11,6 @@ Was im prinzip ein bedingtes ODER ist.
 
 ------------------------------------------
 
-Da ist noch ein bug in rbt_search. Manchmal wird nichts gefunden,
-scheint aber zufällig. Compilerfehler???
-
 lint: check bei passes(2+)
 
 Initialisierung von set's

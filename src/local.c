@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.7 2002/10/13 16:05:21 bzfkocht Exp $"
+#ident "@(#) $Id: local.c,v 1.8 2002/10/20 09:17:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -146,11 +146,11 @@ void local_print_all(FILE* fp)
 char* local_tostrall()
 {
    const Local* local;
-   int          size = LOCAL_STR_SIZE;
-   int          len  = 1; /* fuer die '\0' */
+   unsigned int size = LOCAL_STR_SIZE;
+   unsigned int len  = 1; /* fuer die '\0' */
    char*        str  = malloc(size);
    char*        selem;
-   int          selemlen;
+   unsigned int selemlen;
    Bool         after_elem = FALSE;
 
    assert(str != NULL);

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.6 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.7 2002/10/20 09:17:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -43,22 +43,26 @@ struct nonzero
 
 struct variable
 {
-   char*   name;
-   int     number;
-   int     size;
-   VarType type;
-   double  cost;
-   double  lower;
-   double  upper;
-   int     priority;
-   double  startval;
-   Var*    prev;
-   Var*    next;   
-   Nzo*    first;
+   unsigned int sid;
+   char*        name;
+   int          number;
+   int          size;
+   VarType      type;
+   double       cost;
+   double       lower;
+   double       upper;
+   int          priority;
+   double       startval;
+   Var*         prev;
+   Var*         next;   
+   Nzo*         first;
 };
+
+#define VAR_SID 0x5e564152
 
 struct constraint
 {
+   unsigned int sid;
    char*        name;
    int          number;
    ConType      type;
@@ -70,6 +74,8 @@ struct constraint
    Con*         next;
    Nzo*         first;
 };
+
+#define CON_SID 0x5e434f4e
 
 struct lpstorage
 {

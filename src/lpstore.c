@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.10 2002/10/13 16:05:21 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.11 2002/10/20 09:17:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -64,6 +64,8 @@ static Bool lps_valid()
    const char* err9  = "Wrong Variable";
    const char* err10 = "Wrong Constraint";
    const char* err11 = "Storage-size error";
+   const char* err12 = "Wrong Variable SID";
+   const char* err13 = "Wrong Constraint SID";
    
    Var* var;
    Var* var_prev;
@@ -85,6 +87,11 @@ static Bool lps_valid()
    
    for(var = lp->var_root, var_prev = NULL; var != NULL; var = var->next)
    {
+      if (var->sid != VAR_SID)
+      {
+         fprintf(stderr, "%s\n", err12);
+         return FALSE;
+      }
       if (var_prev == var->prev)
          var_prev = var;
       else
@@ -129,6 +136,11 @@ static Bool lps_valid()
    
    for(con = lp->con_root, con_prev = NULL; con != NULL; con = con->next)
    {
+      if (con->sid != CON_SID)
+      {
+         fprintf(stderr, "%s\n", err13);
+         return FALSE;
+      }
       if (con_prev == con->prev)
          con_prev = con;
       else
@@ -233,6 +245,10 @@ static void lps_storage()
    lp->next      = s->begin;
 }
 
+/* If var_name_cmp() is called internally two Var* are passed as
+ * arguments. If rbt_search is called, only a string with the name
+ * is used as key. To distinguish the two cases the sid is used.
+ */
 static int var_name_cmp(
    const void* a,
    const void* b)
@@ -240,9 +256,18 @@ static int var_name_cmp(
    assert(a != NULL);
    assert(b != NULL);
 
+   assert(((const Var*)b)->sid == VAR_SID);
+
+   if (((const Var*)a)->sid == VAR_SID)
+      return(strcmp(((const Var*)a)->name, ((const Var*)b)->name));
+
    return(strcmp((const char*)a, ((const Var*)b)->name));
 }   
    
+/* If con_name_cmp() is called internally two Con* are passed as
+ * arguments. If rbt_search is called, only a string with the name
+ * is used as key. To distinguish the two cases the sid is used.
+ */
 static int con_name_cmp(
    const void* a,
    const void* b)
@@ -250,6 +275,11 @@ static int con_name_cmp(
    assert(a != NULL);
    assert(b != NULL);
 
+   assert(((const Con*)b)->sid == CON_SID);
+
+   if (((const Con*)a)->sid == CON_SID)
+      return(strcmp(((const Con*)a)->name, ((const Con*)b)->name));
+   
    return(strcmp((const char*)a, ((const Con*)b)->name));
 }   
 
@@ -304,6 +334,9 @@ void lps_free()
    {
       var_next = var->next;
 
+#ifndef NDEBUG
+      var->sid = 0x0;
+#endif
       free(var->name);
       free(var);
    }
@@ -311,6 +344,9 @@ void lps_free()
    {
       con_next = con->next;
 
+#ifndef NDEBUG
+      con->sid = 0x0;
+#endif
       free(con->name);
       free(con);
    }
@@ -331,7 +367,8 @@ void lps_number()
    
    for(var = lp->var_root, i = 0; var != NULL; var = var->next, i++)
    {
-      assert(var != NULL);
+      assert(var      != NULL);
+      assert(var->sid == VAR_SID);
       
       var->number = i;
    }
@@ -339,7 +376,8 @@ void lps_number()
    
    for(con = lp->con_root, i = 0; con != NULL; con = con->next, i++)
    {
-      assert(con != NULL);
+      assert(con      != NULL);
+      assert(con->sid == CON_SID);
       
       con->number = i;
    }
@@ -356,11 +394,12 @@ Var* lps_getvar(
 
    vr = rbt_search(lp->var_tree, name);
 
+   assert((vr == NULL) || (vr->sid == VAR_SID));
    assert((vr == NULL) || (!strcmp(vr->name, name)));
 
 #ifndef NDEBUG
    {
-      Var* var;
+      const Var* var;
       
       for(var = lp->var_root; var != NULL; var = var->next)
          if (!strcmp(var->name, name))
@@ -382,16 +421,18 @@ Con* lps_getcon(
     
    cr = rbt_search(lp->con_tree, name);
 
+   assert((cr == NULL) || (cr->sid == CON_SID));
    assert((cr == NULL) || (!strcmp(cr->name, name)));
 
 #ifndef NDEBUG
    {
-      Con* con;
+      const Con* con;
       
       for(con = lp->con_root; con != NULL; con = con->next)
+      {
          if (!strcmp(con->name, name))
             break;
-
+      }
       assert(con == cr);
    }
 #endif
@@ -405,8 +446,10 @@ Nzo* lps_getnzo(
    Nzo*   nzo;
    
    assert(lps_valid());
-   assert(con != NULL);
-   assert(var != NULL);   
+   assert(con      != NULL);
+   assert(con->sid == CON_SID);
+   assert(var      != NULL);   
+   assert(var->sid == VAR_SID);
 
    /* Whatever is shorter
     */
@@ -444,7 +487,8 @@ Var* lps_addvar(
    v = malloc(sizeof(*v));
    
    assert(v != NULL);
-   
+
+   v->sid       = VAR_SID;
    v->name      = strdup(name);
    v->number    = lp->vars;
    v->size      = 0;
@@ -492,7 +536,8 @@ Con* lps_addcon(
    c = malloc(sizeof(*c));
    
    assert(c != NULL);
-   
+
+   c->sid       = CON_SID;
    c->name      = strdup(name);
    c->number    = lp->cons;   
    c->size      = 0;
@@ -528,9 +573,11 @@ void lps_addnzo(
    Nzo* nzo;
    
    assert(lps_valid());
-   assert(con          != NULL);
-   assert(var          != NULL);
-   assert(fabs(value)  >  EPS_ZERO);
+   assert(con         != NULL);
+   assert(con->sid    == CON_SID);
+   assert(var         != NULL);   
+   assert(var->sid    == VAR_SID);
+   assert(fabs(value) >  EPS_ZERO);
 
    /* Ins LP aufnehmen
     */
@@ -652,8 +699,9 @@ void lps_objname(
 double lps_getcost(
    const Var* var)
 {
-   assert(var != NULL);
-
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+   
    return var->cost;
 }
 
@@ -661,7 +709,8 @@ void lps_setcost(
    Var*   var,
    double cost)
 {
-   assert(var != NULL);
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
 
    var->cost = cost;   
 }
@@ -670,9 +719,10 @@ void lps_setlower(
    Var*   var,
    double lower)
 {
-   assert(var   != NULL);
-   assert(lower <  INFINITY - EPS_ZERO);
-   assert(lower <= var->upper + EPS_ZERO);
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+   assert(lower    <  INFINITY - EPS_ZERO);
+   assert(lower    <= var->upper + EPS_ZERO);
 
    var->lower = lower;   
 }
@@ -681,9 +731,10 @@ void lps_setupper(
    Var*   var,
    double upper)
 {
-   assert(var   != NULL);
-   assert(upper >  -INFINITY + EPS_ZERO);
-   assert(upper >= var->lower - EPS_ZERO);
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+   assert(upper    >  -INFINITY + EPS_ZERO);
+   assert(upper    >= var->lower - EPS_ZERO);
    
    var->upper = upper;   
 }
@@ -692,8 +743,9 @@ void lps_setsense(
    Con*    con,
    ConType type)
 {
-   assert(con != NULL);
-
+   assert(con      != NULL);
+   assert(con->sid == CON_SID);
+   
    con->type = type;   
 }
 
@@ -701,7 +753,8 @@ void lps_setrhs(
    Con*   con,
    double rhs)
 {
-   assert(con != NULL);
+   assert(con      != NULL);
+   assert(con->sid == CON_SID);
 
    con->rhs = rhs;   
 }
@@ -716,7 +769,8 @@ void lps_stat()
 
 int lps_getsense(const Con* con)
 {
-   assert(con != NULL);
+   assert(con      != NULL);
+   assert(con->sid == CON_SID);
    
    switch(con->type)
    {

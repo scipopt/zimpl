@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.22 2002/10/08 15:41:05 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.23 2002/10/20 09:17:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -30,6 +30,7 @@
 /*lint -esym(718,yylex) -esym(746,yylex) */
 /*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
 /*lint -esym(553,__GNUC__)  -esym(578,yylen) */
+/*lint -esym(768,bits) */ 
    
 #include <stdio.h>
 #include <stdlib.h>
@@ -283,15 +284,10 @@ term
    : term '+' subterm       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
    | term '-' subterm       { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
    | subterm                { $$ = $1; }
-;
+   ;
 
 subterm
-   : summand '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
-   | summand '/' expr       {
-         $$ = code_new_inst(i_term_coeff, 2, $1,
-            code_new_inst(i_expr_div, 2, code_new_numb(1.0), $3));
-      }
-   | summand                { $$ = $1; }
+   : summand                { $$ = $1; }
    | expr %prec TERMOP      { $$ = code_new_inst(i_term_expr, 1, $1); }
    | expr '+' summand       { $$ = code_new_inst(i_term_const, 2, $3, $1); }
    | expr '-' summand       {
@@ -303,6 +299,11 @@ subterm
 
 summand
    : factor                 { $$ = $1; }
+   | factor '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
+   | factor '/' expr       {
+         $$ = code_new_inst(i_term_coeff, 2, $1,
+            code_new_inst(i_expr_div, 2, code_new_numb(1.0), $3));
+      }
    | SUM idxset DO summand %prec SUM {
          $$ = code_new_inst(i_term_sum, 2, $2, $4);
       }

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.6 2002/07/28 07:03:33 bzfkocht Exp $"
+#ident "@(#) $Id: tuple.c,v 1.7 2002/10/20 09:17:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -222,12 +222,12 @@ unsigned int tuple_hash(const Tuple* tuple)
 
 char* tuple_tostr(const Tuple* tuple)
 {
-   int   size = TUPLE_STR_SIZE;
-   int   len  = 1; /* fuer die '\0' */
-   char* str  = malloc(size);
-   char* selem;
-   int   selemlen;
-   int   i;
+   unsigned int   size = TUPLE_STR_SIZE;
+   unsigned int   len  = 1; /* fuer die '\0' */
+   char*          str  = malloc(size);
+   char*          selem;
+   unsigned int   selemlen;
+   int            i;
    
    assert(tuple_is_valid(tuple));
    assert(str != NULL);
