@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.11 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.12 2003/03/17 09:32:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -51,22 +51,23 @@ struct set
    Tuple** member;
 };
 
-Set* set_new(int dim)
+Set* set_new(int dim, int estimated_size)
 {
    Set* set;
 
-   assert(dim >= 0);
+   assert(dim            >= 0);
+   assert(estimated_size >= 0);
    
    set = calloc(1, sizeof(*set));
 
    assert(set != NULL);
-
+   
    set->size    = 1;
    set->used    = 0;
    set->extend  = SET_EXTEND_SIZE;
    set->refc    = 1;
    set->dim     = dim;
-   set->hash    = hash_new(HASH_TUPLE);
+   set->hash    = hash_new(HASH_TUPLE, estimated_size);
    
    /* Falls wir dim == 0 haben, liefert das nachfolgende calloc je
     * nach Implementierung einen pointer oder NULL zurueck.
@@ -249,7 +250,7 @@ Set* set_range(double start, double end, double step)
    Tuple*    tuple;
    double    x;
    
-   set = set_new(1);
+   set = set_new(1, (int)(fabs(end - start) / fabs(step)) + 1);
 
    for(x = start; LE(x, end); x += step)
    {
@@ -277,7 +278,7 @@ Set* set_cross(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_b));
 
    dim = set_a->dim + set_b->dim;
-   set = set_new(dim);
+   set = set_new(dim, set_a->used * set_b->used);
 
    assert(set != NULL);
    
@@ -313,7 +314,7 @@ Set* set_union(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_b));
    assert(set_a->dim == set_b->dim);
    
-   set = set_new(set_a->dim);
+   set = set_new(set_a->dim, set_a->used + set_b->used);
 
    assert(set != NULL);
    
@@ -338,7 +339,7 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_b));
    assert(set_a->dim == set_b->dim);
    
-   set = set_new(set_a->dim);
+   set = set_new(set_a->dim, Min(set_a->used, set_b->used));
 
    assert(set != NULL);
    
@@ -361,7 +362,7 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_b));
    assert(set_a->dim == set_b->dim);
    
-   set = set_new(set_a->dim);
+   set = set_new(set_a->dim, set_a->used);
 
    assert(set != NULL);
    
@@ -384,7 +385,7 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_b));
    assert(set_a->dim == set_b->dim);
    
-   set = set_new(set_a->dim);
+   set = set_new(set_a->dim, set_a->used + set_b->used);
 
    assert(set != NULL);
    
@@ -416,7 +417,7 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
    assert(tuple_is_valid(pattern));
 
    dim = tuple_get_dim(pattern);
-   set = set_new(dim);
+   set = set_new(dim, set_a->used);
    idx = malloc(sizeof(*idx) * dim);
 
    assert(set != NULL);
@@ -538,7 +539,7 @@ List* set_subsets_list(
 
    do
    {
-      subset = set_new(set->dim);
+      subset = set_new(set->dim, subset_size);
 
       for(i = 0; i < subset_size; i++)
          set_add_member(subset, set->member[counter[i]],

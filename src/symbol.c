@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.14 2003/02/11 12:19:22 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.15 2003/03/17 09:32:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -65,14 +65,16 @@ Symbol* symbol_new(
    const char*  name,
    SymbolType   type,
    const Set*   set,
+   int          estimated_size,
    const Entry* deflt)
 {
    Symbol* sym;
 
-   assert(name         != NULL);
-   assert(strlen(name) >  0);
-   assert(set          != NULL);
-
+   assert(name           != NULL);
+   assert(strlen(name)   >  0);
+   assert(set            != NULL);
+   assert(estimated_size >= 0);
+   
    sym = calloc(1, sizeof(*sym));
 
    assert(sym != NULL);
@@ -83,7 +85,7 @@ Symbol* symbol_new(
    sym->used    = 0;
    sym->extend  = SYMBOL_EXTEND_SIZE;
    sym->set     = set_copy(set);
-   sym->hash    = hash_new(HASH_ENTRY);
+   sym->hash    = hash_new(HASH_ENTRY, estimated_size);
    sym->entry   = calloc(1, sizeof(*sym->entry));
    sym->deflt   = (deflt != ENTRY_NULL) ? entry_copy(deflt) : ENTRY_NULL;
    sym->next    = anchor.next;
@@ -214,6 +216,8 @@ void symbol_add_entry(Symbol* sym, const Entry* entry)
       if ((sym->type == SYM_ERR) && (sym->used == 0))
          sym->type = entry_get_type(entry);
 
+      assert(sym->type != SYM_ERR);
+      
       hash_add_entry(sym->hash, entry);
       
       sym->entry[sym->used] = entry_copy(entry);      

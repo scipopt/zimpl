@@ -1,8 +1,3 @@
-Bug in par initialisierung.
-es wird diret das set von idxset genommen. Dann geht aber 
-<1,i> in B schief. set_from_idxset verwenden.
-
-
 Sollte man auf 0 fixierte Variablen entfernen ?
 ------------------------
 idxset und sexpr vereinheitlichen, eigendlich ist ein
@@ -51,7 +46,6 @@ include gucken auch innerhalt eines ; ausdrucks.
 
 ewtl bei lp_format etwas längere Dateinamen
 
-default für parameter
 
 shortcummings and Tips&Trick Abschnitt
 
@@ -62,10 +56,6 @@ Im LP reihenfolge der sets beibehalten
 bessere fehlermeldungen
 
 Warning wenn locale Variable eine globale uerbschreibt.
-
-sparse symbols. Dazu brauchen wir das urspüngliche indexset.
-Dann können wir für alle derefs mit einem index für den kein Wert
-vorliegt, der aber zulässig wäre, den default zurück liefern.
 
 
 

@@ -1,3 +1,20 @@
+ - Fixed bug in print statement that accured when trying to 
+   print a indexed set, without giving an index.
+
+ - It is now allowed to use a WITH clause in the initialisation 
+   of parameters, variables and sets, like
+   param x[<i> in I with i > 5] := i * 4;
+
+ - Fixed bug that accured in the following case:
+   param x[<"1", i> in A] := i * 4;
+
+ - The number of elements in a set is now estimated and the
+   hash table is sized accordingly. This should same some
+   memory especially with the powerset function.
+
+ - Fixed bug in param initialisation which set the type
+   of the param always to NUMB.
+
  - Changes param initialsation. STRG values are allowed
    within indexed intialiszations. 
 

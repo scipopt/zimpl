@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.25 2003/02/17 16:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.26 2003/03/17 09:32:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -149,8 +149,8 @@ extern void         list_print(FILE* fp, const List* list);
 
 /* hash.c
  */
-/*lint -sem(        hash_new, @p == 1) */
-extern Hash*        hash_new(HashType type);
+/*lint -sem(        hash_new, @p == 1 && 2n >= 0) */
+extern Hash*        hash_new(HashType type, int size);
 /*lint -sem(        hash_free, 1p == 1) */
 extern void         hash_free(Hash* hash);
 /*lint -sem(        hash_is_valid, 1p == 1) */
@@ -233,8 +233,8 @@ extern char*        tuple_tostr(const Tuple* tuple);
 
 /* set.c
  */
-/*lint -sem(        set_new, 1n >= 0, @p == 1) */
-extern Set*         set_new(int dim);
+/*lint -sem(        set_new, 1n >= 0 && 2n >= 0, @p == 1) */
+extern Set*         set_new(int dim, int estimated_size);
 /*lint -sem(        set_free, 1p == 1) */
 extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */
@@ -316,9 +316,9 @@ extern void         entry_print(FILE* fp, const Entry* entry);
 
 /* symbol.c
  */
-/*lint -sem(        symbol_new, 1p && nulterm(1) && 3p == 1, @p == 1) */
-extern Symbol*      symbol_new(
-   const char* name, SymbolType type, const Set* set, const Entry* deflt);
+/*lint -sem(        symbol_new, 1p && nulterm(1) && 3p == 1 && 4n >= 0, @p == 1) */
+extern Symbol*      symbol_new(const char* name,
+   SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
 extern void         symbol_exit(void);
 /*lint -sem(        symbol_is_valid, 1p == 1) */
 extern Bool         symbol_is_valid(const Symbol* symbol);

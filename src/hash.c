@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.9 2002/07/31 06:58:42 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.10 2003/03/17 09:32:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -34,7 +34,6 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define HASH_BUCKETS  65521U
 #define HASH_SID      0x48617368
 
 typedef struct hash_element HElem;
@@ -60,13 +59,30 @@ struct hash
 
 static void hash_statist(FILE* fp, const Hash* hash);
 
-Hash* hash_new(HashType type)
+Hash* hash_new(HashType type, int size)
 {
+   static unsigned int bucket_size[] =
+   {
+      53U, 103U, 503U, 1009U, 5003U, 10007U, 50021U, 100003U, 500009U, 1000003U, 0U
+      /* 5000011U */
+   };
+   
    Hash* hash = calloc(1, sizeof(*hash));
-
+   int   i;
+   
    assert(hash != NULL);
+   assert(size >= 0);
+   
+   /* This is a linear search, but if the number of elements is large,
+    * it will hardly matter ;-)
+    */
+   for(i = 0; bucket_size[i] < (unsigned int)size && bucket_size[i + 1] != 0; i++)
+      ;
 
-   hash->size   = HASH_BUCKETS;
+   hash->size = bucket_size[i];
+
+   assert(hash->size > 11);
+   
    hash->elems  = 0;
    hash->type   = type;
    hash->bucket = calloc(hash->size, sizeof(*hash->bucket));

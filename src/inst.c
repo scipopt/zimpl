@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.34 2003/02/19 15:55:52 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.35 2003/03/17 09:32:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -805,8 +805,8 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    ListElem*    le    = NULL;
    const Tuple* tuple = list_get_tuple(list, &le);
    int          dim   = tuple_get_dim(tuple);
-   Set*         set   = set_new(dim);
    int          n     = list_get_elems(list);
+   Set*         set   = set_new(dim, n);
    int          i;
    
    Trace("i_set_new_tuple");
@@ -833,8 +833,8 @@ CodeNode* i_set_new_elem(CodeNode* self)
 {
    const List* list  = code_eval_child_list(self, 0);
    ListElem*   le    = NULL;
-   Set*        set   = set_new(1);
    int         n     = list_get_elems(list);
+   Set*        set   = set_new(1, n);
    Tuple*      tuple;
    const Elem* elem;
    int         i;
@@ -875,7 +875,7 @@ CodeNode* i_set_empty(CodeNode* self)
    assert(code_is_valid(self));
 
    dim = code_eval_child_size(self, 0);
-   set = set_new(dim);
+   set = set_new(dim, 1);
 
    if (dim == 0)
    {
@@ -1159,63 +1159,6 @@ CodeNode* i_tuple_empty(CodeNode* self)
  * Symbol Funktionen
  * ----------------------------------------------------------------------------
  */
-#if 0
-CodeNode* i_newsym_set1(CodeNode* self)
-{
-   const char*   name    = code_eval_child_name(self, 0);
-   const Set*    iset    = code_eval_child_set(self, 1);
-   const IdxSet* idxset  = code_eval_child_idxset(self, 2);
-
-   const Set*    set     = idxset_get_set(idxset);
-   CodeNode*     lexpr   = idxset_get_lexpr(idxset);
-   Symbol*       sym     = symbol_new(name, SYM_SET, iset);
-   Tuple*        empty   = tuple_new(0);   
-
-   const Tuple*  pattern;
-   const Tuple*  tuple;
-   Set*          newset;
-   Entry*        entry;
-   int           idx;
-   
-   Trace("i_newsym_set1");
-
-   assert(code_is_valid(self));
-
-   /* Is it a simple set ?
-    */
-   if (code_get_inst(lexpr) == (Inst)i_bool_true)
-   {
-      entry = entry_new_set(empty, set);
-   }
-   else
-   {
-      pattern = idxset_get_tuple(idxset);
-      newset  = set_new(tuple_get_dim(pattern));
-      idx     = 0;
-      
-      while((tuple = set_match_next(set, pattern, &idx)) != NULL)
-      {
-         local_install_tuple(pattern, tuple);
-
-         if (code_get_bool(code_eval(lexpr)))
-            set_add_member(newset, tuple, SET_ADD_END, SET_CHECK_WARN);
-
-         local_drop_frame();
-      }
-      entry = entry_new_set(empty, newset);
-
-      set_free(newset);
-   }
-   symbol_add_entry(sym, entry);
-
-   tuple_free(empty);
-   entry_free(entry);
-   
-   code_value_void(self);
-
-   return self;
-}
-#else /* new */
 static Set* set_from_idxset(const IdxSet* idxset)
 {
    const Tuple*  pattern;
@@ -1230,7 +1173,7 @@ static Set* set_from_idxset(const IdxSet* idxset)
    set     = idxset_get_set(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    pattern = idxset_get_tuple(idxset);
-   newset  = set_new(tuple_get_dim(pattern));
+   newset  = set_new(tuple_get_dim(pattern), set_get_used(set));
    idx     = 0;
       
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
@@ -1264,7 +1207,7 @@ CodeNode* i_newsym_set1(CodeNode* self)
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    iset    = set_from_idxset(idxset);
-   sym     = symbol_new(name, SYM_SET, iset, NULL);
+   sym     = symbol_new(name, SYM_SET, iset, set_get_used(iset), NULL);
 
    assert(code_is_valid(self));
 
@@ -1292,7 +1235,6 @@ CodeNode* i_newsym_set1(CodeNode* self)
    return self;
 }
 
-#endif
 static Set* iset_from_list(const CodeNode* self, const List* list)
 {
    const Entry* entry;
@@ -1306,7 +1248,7 @@ static Set* iset_from_list(const CodeNode* self, const List* list)
    
    entry  = list_get_entry(list, &lelem);
    tuple  = entry_get_tuple(entry);
-   set    = set_new(tuple_get_dim(tuple));
+   set    = set_new(tuple_get_dim(tuple), list_get_elems(list));
 
    assert(set != NULL);
 
@@ -1361,14 +1303,14 @@ CodeNode* i_newsym_set2(CodeNode* self)
    /* Empty set ?
     */
    if (set_get_dim(iset) > 0)
-      sym  = symbol_new(name, SYM_SET, iset, NULL);
+      sym  = symbol_new(name, SYM_SET, iset, count, NULL);
    else
    {
       Set* set;
       
       /*set  = set_range(0.0, (double)list_get_elems(list) - 1.0, 1.0);*/
       set  = iset_from_list(code_get_child(self, 2), list);
-      sym  = symbol_new(name, SYM_SET, set, NULL);
+      sym  = symbol_new(name, SYM_SET, set, count, NULL);
       iset = symbol_get_iset(sym);
       set_free(set);
    }
@@ -1401,7 +1343,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
 CodeNode* i_newsym_para1(CodeNode* self)
 {
    const char*   name;
-   const Set*    set;
+   Set*          iset;
    const IdxSet* idxset;
    Symbol*       sym;
    const List*   list;
@@ -1419,11 +1361,14 @@ CodeNode* i_newsym_para1(CodeNode* self)
 
    name   = code_eval_child_name(self, 0);
    idxset = code_eval_child_idxset(self, 1);
-   set    = idxset_get_set(idxset);
+   iset   = set_from_idxset(idxset);
    list   = code_eval_child_list(self, 2);
    child3 = code_eval_child(self, 3);
-   deflt  = (code_get_type(child3) == CODE_VOID)
-          ? ENTRY_NULL : code_get_entry(code_eval(child3));
+
+   if (code_get_type(child3) == CODE_VOID)
+      deflt = ENTRY_NULL;
+   else
+      deflt = code_get_entry(code_eval(child3));
          
    if (!list_is_entrylist(list))
    {
@@ -1440,17 +1385,16 @@ CodeNode* i_newsym_para1(CodeNode* self)
    
    /* First element will determine the type
     */
-   sym  = symbol_new(name, SYM_ERR, set, deflt);
-   
    lelem = NULL;
    count = list_get_elems(list);
+   sym  = symbol_new(name, SYM_ERR, iset, count, deflt);
    
    for(i = 0; i < count; i++)
    {
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
       
-      if (set_lookup(set, tuple))
+      if (set_lookup(iset, tuple))
          symbol_add_entry(sym, entry);
       else
       {
@@ -1463,6 +1407,8 @@ CodeNode* i_newsym_para1(CodeNode* self)
    }
    code_value_void(self);
 
+   set_free(iset);
+
    return self;
 }
 
@@ -1471,7 +1417,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
 CodeNode* i_newsym_para2(CodeNode* self)
 {
    const char*   name;
-   const Set*    set;
+   Set*          iset;
    const IdxSet* idxset;
    Symbol*       sym;
    Entry*        entry;
@@ -1488,24 +1434,21 @@ CodeNode* i_newsym_para2(CodeNode* self)
 
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
-   set     = idxset_get_set(idxset);
+   iset    = set_from_idxset(idxset);
    child3  = code_eval_child(self, 3);
-   deflt   = (code_get_type(child3) == CODE_VOID)
-           ? ENTRY_NULL : code_get_entry(code_eval(child3));
-   sym     = symbol_new(name, SYM_NUMB, set, deflt);
+
+   if (code_get_type(child3) == CODE_VOID)
+      deflt = ENTRY_NULL;
+   else
+      deflt = code_get_entry(code_eval(child3));
+   
+   sym     = symbol_new(name, SYM_ERR, iset, set_get_used(iset), deflt);
    pattern = idxset_get_tuple(idxset);
 
-   /* Why did I this for the variables ??? Is it neccessary ?
-    */
-   if ((!code_get_bool(code_eval(idxset_get_lexpr(idxset)))))
+   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
    {
-      fprintf(stderr, "*** Error: WITH not allowed here\n");
-      code_errmsg(self);
-      abort();
-   }
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
-   {
+      /* bool is not needed, because iset has only true elemens
+       */
       local_install_tuple(pattern, tuple);
 
       child = code_eval_child(self, 2);
@@ -1531,6 +1474,8 @@ CodeNode* i_newsym_para2(CodeNode* self)
    }
    code_value_void(self);
 
+   set_free(iset);
+
    return self;
 }
 
@@ -1538,7 +1483,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 {
    const char*   name;
    const IdxSet* idxset;
-   const Set*    set;
+   Set*          iset;
    Symbol*       sym;
    const Tuple*  tuple;
    const Tuple*  pattern;
@@ -1561,18 +1506,11 @@ CodeNode* i_newsym_var(CodeNode* self)
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    vartype = code_eval_child_vartype(self, 2);
-   set     = idxset_get_set(idxset);
+   iset    = set_from_idxset(idxset);
    pattern = idxset_get_tuple(idxset);
-   sym     = symbol_new(name, SYM_VAR, set, NULL);
+   sym     = symbol_new(name, SYM_VAR, iset, set_get_used(iset), NULL);
 
-   if ((!code_get_bool(code_eval(idxset_get_lexpr(idxset)))))
-   {
-      fprintf(stderr, "*** Error: WITH not allowed here\n");
-      code_errmsg(self);
-      abort();
-   }
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
    {
       local_install_tuple(pattern, tuple);
       
@@ -1639,6 +1577,8 @@ CodeNode* i_newsym_var(CodeNode* self)
       entry_free(entry);
    }
    code_value_void(self);
+
+   set_free(iset);
 
    return self;
 }
@@ -2245,7 +2185,7 @@ CodeNode* i_print(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   child = code_get_child(self, 0);
+   child = code_eval(code_get_child(self, 0));
 
    switch(code_get_type(child))
    {
