@@ -1,0 +1,5 @@
+*** Error 188: Index tuple has wrong dimension
+<i,k> should have dimension 1
+*** File: e188.zpl Line 2
+*** set I := { <i,k> in {1..5} };
+***                            ^^^

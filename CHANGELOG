@@ -1,3 +1,13 @@
+ - New function ordinal ord(s,t,c) implemented.
+   While there is no specific order, all sets
+   have one. That is ord will evaluate to the 
+   c-th component of the t-th tuple in set s.
+   ord({1..10}*{"a","b"}, 3, 1) is something
+   between 1 and 10, possibly 3. But doing 
+   do forall <i> in {1..card(I)} do print ord(E,i,1);
+   will print every element in I if it is one 
+   domensional.
+
  - Improved detection of incorrect initialization
    of sets and params.
 

@@ -1,0 +1,4 @@
+*** Error 197: Empty index set for set
+*** File: e197_1.zpl Line 2
+*** set K[{}] := { <1>, <2> };
+***                          ^^^

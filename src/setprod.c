@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.7 2004/05/03 11:35:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -189,8 +189,8 @@ static void set_prod_get_tuple(
    b       = set->prod.set_b;
    offset2 = offset + a->head.dim;
 
-   set_get_tuple_intern(a, idx / a->head.members, tuple, offset);
-   set_get_tuple_intern(b, idx % a->head.members, tuple, offset2);
+   set_get_tuple_intern(a, idx / b->head.members, tuple, offset);
+   set_get_tuple_intern(b, idx % b->head.members, tuple, offset2);
 }
 
 /* ------------------------------------------------------------------------- 

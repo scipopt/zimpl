@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.16 2004/04/23 07:39:18 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.17 2004/05/03 11:35:15 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -235,6 +235,8 @@ any of the following operators and functions:
 \code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
 \code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\max (a,b,c,\ldots,n)$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
+\code{ord(A,n,c)}                &ordinal                   &c-th component of the n-th\\ 
+                                 &                          & element of set $A$.\\
 \code{if a then b else c}        &conditional               &\\
 \end{tabular}
 
@@ -260,14 +262,17 @@ floating point arithmetic. So be careful:
 A string is delimited by double quotation marks \code{"},
 \eg, \code{"Hallo"}. 
 
+\subsubsection{Variant expressions}
 The following is either a numeric or a string expression, depending if
 \emph{expression} is a string or a numeric expression.
 
 \code{if} \emph{boolean-expression} \code{then}
 \emph{expression} \code{else} \emph{expression} \code{end}.
 
-At this time no further functions or operators
-for strings are implemented.
+The same is true for the
+\code{ord}\emph{(set,tuple-number,component-number)} function, 
+which evaluates to a specific element of a set. Please note, that
+sets have no specific order.
 
 \subsubsection{Boolean expressions}
 These evaluate either to \emph{true} or \emph{false}. For numbers and
@@ -342,7 +347,7 @@ operators are defined:
    &$t=(e_1,\ldots,e_n)$&
    the $i$-th component being the $e_i$-th component of $A$.\\
 \code{if a then}\\
-\code{\ b else c}        &conditional               &\\
+\code{\ b else c}        &Conditional               &\\
 %\hline
 \end{tabular}
 
@@ -1385,7 +1390,7 @@ can produce:
 % zimpl.c
 %
 \item[175 Illegal syntax for command line define \code{"xxx"} --
-  ignored] (warning)\ \\
+  ignored] (warning)\\
   A parameter definition using the command line \code{-D} flag, must
   have the form \code{name=value}. The \code{name} must be a legal
   identifier, \ie it has to start with a letter and may consist only out
@@ -1440,6 +1445,23 @@ can produce:
   The tuple number must be between one and the cardinality of the set.
 \item[192 Component number \code{xxx} is not a valid value between 1..\code{yyy}]\ \\
   The component number must be between one and the dimension of the set.
+\item[193 Different dimension tuples in set initialisation]\ \\
+  The tuples that should be part of th elist have different dimension.
+\item[194: Indexing tuple \code{xxx} has wrong dimension
+           \code{yyy}, expected \code{zzz}]\ \\
+  The index tuple of an entry in a paramter initialization list must
+  have the same dimension as the indexing set of the parameter. This
+  is just another kind of error 134.
+\item[195: Empty index set for parameter]\ \\
+  The index set for a parameter is empty.
+\item[196: Indexing tuple \code{xxx} has wrong dimension
+           \code{yyy}, expected \code{zzz}]\ \\
+  The index tuple of an entry in a set initialization list must
+  have the same dimension as the indexing set of the set. 
+  If you use a \code{powerset} or \code{subset} instruction, the index
+  set has to be one dimension.
+\item[197: Empty index set for set]\ \\
+  The index set for a set is empty.
 %
 % numbgmp.c
 %

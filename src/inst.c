@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.77 2004/05/01 09:44:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.78 2004/05/03 11:35:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1323,7 +1323,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
       if (tuple_get_dim(tuple) != dim)
       {
          le = NULL;
-         fprintf(stderr, "*** Error xxx: Different dimension tuples in set initialisation\n");
+         fprintf(stderr, "*** Error 193: Different dimension tuples in set initialisation\n");
          tuple_print(stderr, tuple);
          fprintf(stderr, " vs. ");
          tuple_print(stderr, list_get_tuple(list, &le));
@@ -1759,6 +1759,12 @@ CodeNode* i_newsym_set1(CodeNode* self)
 
    assert(code_is_valid(self));
 
+   if (set_get_members(iset) == 0)
+   {
+      fprintf(stderr, "*** Error 197: Empty index set for set\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
 
@@ -1809,6 +1815,15 @@ CodeNode* i_newsym_set2(CodeNode* self)
 
    /* Empty set ?
     */
+   if (set_get_members(iset) == 0)
+   {
+      fprintf(stderr, "*** Error 197: Empty index set for set\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   
+   /* Pseudo set ?
+    */
    if (set_get_dim(iset) > 0)
       sym  = symbol_new(name, SYM_SET, iset, count, NULL);
    else
@@ -1819,6 +1834,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
       sym  = symbol_new(name, SYM_SET, set, count, NULL);
       iset = symbol_get_iset(sym);
       set_free(set);
+
    }
 
    lelem = NULL;
@@ -1827,18 +1843,18 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
-#if 1 // ???????
+
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
-         fprintf(stderr, "*** Warning xxx: Tuple ");
+         fprintf(stderr, "*** Error 196: Indexing Tuple ");
          tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d -- ignored\n",
+         fprintf(stderr, " has wrong dimension %d, expected %d\n",
             tuple_get_dim(tuple),
             set_get_dim(iset));
          code_errmsg(self);
-         continue;
+         exit(EXIT_FAILURE);
       }
-#endif
+
       if (set_lookup(iset, tuple))
          symbol_add_entry(sym, entry_copy(entry));
       else
@@ -1886,7 +1902,14 @@ CodeNode* i_newsym_para1(CodeNode* self)
       deflt = ENTRY_NULL;
    else
       deflt = code_get_entry(code_eval(child3));
-         
+
+   if (set_get_members(iset) == 0)
+   {
+      fprintf(stderr, "*** Error 195: Empty index set for parameter\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   
    if (!list_is_entrylist(list))
    {
       /* This errors occurs, if the parameter is mssing in the template
@@ -1933,13 +1956,13 @@ n",
 
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
-         fprintf(stderr, "*** Warning xxx: Indexing tuple of entry ");
+         fprintf(stderr, "*** Error 194: Indexing tuple ");
          tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d -- ignored\n",
+         fprintf(stderr, " has wrong dimension %d, expected %d\n",
             tuple_get_dim(tuple),
             set_get_dim(iset));
          code_errmsg(self);
-         continue;
+         exit(EXIT_FAILURE);
       }
       if (!set_lookup(iset, tuple))
       {

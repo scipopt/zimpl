@@ -1,0 +1,4 @@
+*** Error 194: Indexing tuple <2,4> has wrong dimension 2, expected 1
+*** File: e194.zpl Line 2
+*** param x[{1..10}] := <1> 5, <2,4> 6, <3> 7;
+***                                          ^^^

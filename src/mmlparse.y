@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.63 2004/04/23 07:39:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.64 2004/05/03 11:35:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -690,7 +690,7 @@ sexpr
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
-   | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
+   | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(1)); }
    | '{' cexpr TO cexpr BY cexpr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
       }

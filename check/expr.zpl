@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.8 2003/10/03 09:02:26 bzfkocht Exp $
+# $Id: expr.zpl,v 1.9 2004/05/03 11:35:14 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -43,3 +43,4 @@ subto c10: x[1] * if sum <i> in I : a[i] > 20 then 2 else -4 end >= 5;
 subto c11: a[1]^-a[2] >= x[2] / 100;
 subto c12: x[3] >= min(6, 2/7, a[1], a[3]);
 subto c13: x[3] <= max(6, 2/7, a[1], a[3]);
+subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;

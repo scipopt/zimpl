@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.6 2003/09/19 08:30:15 bzfkocht Exp $
+# $Id: set.zpl,v 1.7 2004/05/03 11:35:14 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -98,7 +98,7 @@ subto w1: forall <i> in B do
    sum <w> in W[i]: n[w] >= 0; 
 subto x1: sum <i> in X : xabcdefghijklmno[i] >= 0;
 subto y1: sum <i> in Y : y[i] >= 0;
-
+subto z1: sum <i> in {1..card(E)} do e[ord(E,i,1),ord(E,i,2)] >= 5;
 
 
 
