@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.9 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.10 2002/06/11 16:15:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -128,7 +128,10 @@ decl_set
  * ----------------------------------------------------------------------------
  */
 decl_par
-   : DECLPAR NAME '[' sexpr ']' ASGN entry_list ';' {
+   : DECLPAR NAME '[' idxset ']' ASGN entry_list ';' {
+         $$ = code_new_inst(i_newsym_para, 3, code_new_name($2), $4, $7);
+      }
+   | DECLPAR NAME '[' idxset ']' ASGN expr ';' {
          $$ = code_new_inst(i_newsym_para, 3, code_new_name($2), $4, $7);
       }
    | DECLPAR NAME ASGN expr ';' {
