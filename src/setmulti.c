@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.5 2004/04/14 13:04:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.6 2004/04/14 14:54:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -245,13 +245,9 @@ static int subset_idx_cmp(const void* a, const void* b)
    assert(key    != NULL);
    assert(subset != NULL);
    
-   dim = *key;
+   assert(subset_cmp_dim > 0);
 
-   key++;
-
-   assert(dim > 0);
-
-   for(i = 0; i < dim; i++)
+   for(i = 0; i < subset_cmp_dim; i++)
    {
       d = key[i] - subset[i];
 
@@ -261,6 +257,17 @@ static int subset_idx_cmp(const void* a, const void* b)
    return 0;
 }
 
+static int subset_select_cmp(const void* a, const void* b)
+{
+   const int* key    = (const int*)a;
+   const int* subset = (const int*)b;
+   
+   assert(key    != NULL);
+   assert(subset != NULL);
+   
+   return *key - *subset;
+}
+
 /* return the index of the element, -1 if not found
  */
 static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
@@ -268,28 +275,29 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    int*       idx;
    ptrdiff_t  result;
    int        i;
+   int        k;
    
    assert(set_multi_is_valid(set));
    assert(tuple_is_valid(tuple));
    assert(offset >= 0);
    assert(offset <  tuple_get_dim(tuple));
 
-   idx = malloc(((size_t)set->head.dim + 1) * sizeof(*idx));
+   idx = malloc((size_t)set->head.dim * sizeof(*idx));
 
    assert(idx != NULL);
 
-   idx[0] = set->head.dim;
-   
    for(i = 0; i < set->head.dim; i++)
    {
-      idx[i + 1] = set_lookup_idx(set->multi.set[i], tuple, offset + i);
+      idx[i] = set_lookup_idx(set->multi.set[i], tuple, offset + i);
 
-      if (idx[i + 1] < 0)
+      if (idx[i] < 0)
       {
          free(idx);
          return -1;
       }
    }
+   subset_cmp_dim = set->head.dim;
+   
    result = (ptrdiff_t)bsearch(idx, set->multi.subset, (size_t)set->head.members,
       (size_t)set->head.dim * sizeof(set->multi.subset[0]), subset_idx_cmp);
    
@@ -298,16 +306,21 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    if (result == 0)
       return -1;
 
-   assert((result - (ptrdiff_t)set->multi.subset) % set->head.dim == 0);
-   
-   return (result - (ptrdiff_t)set->multi.subset) / set->head.dim;
+   assert((result - (ptrdiff_t)set->multi.subset) % (set->head.dim * sizeof(set->multi.subset[0])) == 0);
+
+   k = (result - (ptrdiff_t)set->multi.subset) / (set->head.dim * sizeof(set->multi.subset[0]));
+
+   assert(k >= 0);
+   assert(k <  set->head.members);
+
+   return k;
 }
 
 /* ------------------------------------------------------------------------- 
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
-static SetIter* iter_init(
+static SetIter* multi_iter_init(
    const Set*   set,
    const Tuple* pattern,
    int          offset)
@@ -317,7 +330,10 @@ static SetIter* iter_init(
    int          i;
    int          j;
    int          k;
-
+   int          first;
+   int          last;
+   ptrdiff_t    result;
+   
    assert(set_multi_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset      >= 0);
@@ -359,9 +375,44 @@ static SetIter* iter_init(
       assert(iter->multi.subset);
       
       j = 0;
-      
-      for(k = 0; k < set->head.members; k++)
+
+      if (idx[0] < 0)
       {
+         first = 0;
+         last  = set->head.members;
+      }
+      else
+      {
+         result = (ptrdiff_t)bsearch(
+            idx,
+            set->multi.subset,
+            (size_t)set->head.members,
+            (size_t)set->head.dim * sizeof(set->multi.subset[0]),
+            subset_select_cmp);
+         
+         k = (result - (ptrdiff_t)set->multi.subset)
+            / (set->head.dim * sizeof(set->multi.subset[0]));
+
+         assert(k >= 0);
+         assert(k <  set->head.members);
+         assert(idx[0] == set->multi.subset[k * set->head.dim]);
+         
+         for(first = k; first >= 0; first--)
+            if (idx[0] < set->multi.subset[first * set->head.dim])
+               break;
+         first++;
+
+         for(last = k; last < set->head.members; last++)
+            if (idx[0] > set->multi.subset[last * set->head.dim])
+               break;
+         last--;
+      }
+      
+      for(k = first; k < last; k++)
+      {
+         assert(k == 0
+            || set->multi.subset[(k - 1) * set->head.dim] <= set->multi.subset[k * set->head.dim]);
+
          for(i = 0; i < set->head.dim; i++)
          {
             /* can entry match ?
@@ -371,14 +422,17 @@ static SetIter* iter_init(
 
             iter->multi.subset[j * set->head.dim + i] = set->multi.subset[k * set->head.dim + i];
          }
+         
          if (i == set->head.dim)
             j++;
       }
       iter->multi.members = j;
       iter->multi.now     = 0;
    }
-#if 0
-   fprintf(stderr, "set_multi_iter_init members=%d\n", iter->multi.members);
+
+   fprintf(stderr, "set_multi_iter_init dim=%d members=%d\n",
+      set->head.dim, iter->multi.members);
+#if 1
    for(i = 0; i < set->head.dim; i++)
       fprintf(stderr, "idx[%d]=%d\n", i, idx[i]);
 #endif
@@ -458,7 +512,7 @@ void set_multi_init(SetVTab* vtab)
    vtab[SET_MULTI].set_free       = set_multi_free;
    vtab[SET_MULTI].set_is_valid   = set_multi_is_valid;
    vtab[SET_MULTI].set_lookup_idx = set_multi_lookup_idx;
-   vtab[SET_MULTI].iter_init      = iter_init;
+   vtab[SET_MULTI].iter_init      = multi_iter_init;
    vtab[SET_MULTI].iter_next      = iter_next;
    vtab[SET_MULTI].iter_exit      = iter_exit;
    vtab[SET_MULTI].iter_reset     = iter_reset;
