@@ -1,4 +1,4 @@
-#ident "@(#) $Id: elem.c,v 1.2 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: elem.c,v 1.3 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -227,7 +227,7 @@ void elem_print(FILE* fp, const Elem* elem)
    switch(elem->type)
    {
    case ELEM_NUMB :
-      fprintf(fp, "%g", elem->value.numb);
+      fprintf(fp, "%.16g", elem->value.numb);
       break;
    case ELEM_STRG :
       fprintf(fp, "\"%s\"", elem->value.strg);
@@ -269,6 +269,7 @@ unsigned int elem_hash(const Elem* elem)
       break;
    default :
       assert(0);
+      abort();
    }
    return hcode;
 }

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.5 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -134,7 +134,7 @@ void term_print(FILE* fp, const Term* term, int flag)
       fprintf(fp, " %s ", GE(te->coeff, 0.0) ? "+" : "-");
       
       if (NE(coeff, 1.0))
-         fprintf(fp, "%g ", coeff);
+         fprintf(fp, "%.16g ", coeff);
 
       tuple = entry_get_tuple(te->entry);
       
@@ -151,9 +151,9 @@ void term_print(FILE* fp, const Term* term, int flag)
    if (NE(term->constant, 0.0))
    {
       if (GE(term->constant, 0.0))
-         fprintf(fp, " + %g ", term->constant);
+         fprintf(fp, " + %.16g ", term->constant);
       else
-         fprintf(fp, " - %g ", -term->constant);
+         fprintf(fp, " - %.16g ", -term->constant);
    }
 }
 

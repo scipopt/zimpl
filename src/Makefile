@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.5 2001/01/29 17:14:38 thor Exp $
+# $Id: Makefile,v 1.6 2001/01/30 08:23:44 thor Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   Type....: Makefile                                                      *
@@ -20,7 +20,7 @@ OPTI_FLAGS      =       -O
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline
-DEBU_FLAGS      =       -g #-pg -DNO_MSHELL #-DNDEBUG 
+DEBU_FLAGS      =       -g #-DNDEBUG #-pg -DNO_MSHELL #  
 LDFLAGS		=	-lm
 DFLAGS		=	-MM
 YFLAGS		=	-v -d -t

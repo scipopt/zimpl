@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.5 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: symbol.c,v 1.6 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -283,6 +283,7 @@ void symbol_print_bounds(FILE* fp)
    Var*    var;
    int     i;
    Bool    flag;
+   Bool    first;
    
    assert(fp != NULL);
    
@@ -297,15 +298,15 @@ void symbol_print_bounds(FILE* fp)
       {
          var = entry_get_var(sym->entry[i]);
          
-         fprintf(fp, " %g <= ", var_get_lower(var));
+         fprintf(fp, " %.16g <= ", var_get_lower(var));
          fprintf(fp, "%s", sym->name);
          fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
-         fprintf(fp, " <= %g\n", var_get_upper(var));
+         fprintf(fp, " <= %.16g\n", var_get_upper(var));
          
          var_free(var);
       }
    }
-   fprintf(fp, "Integer\n");
+   first = TRUE;
    
    for(sym = anchor.next; sym != NULL; sym = sym->next)
    {
@@ -320,10 +321,15 @@ void symbol_print_bounds(FILE* fp)
 
          if (var_get_type(var) == VAR_INT)
          {
-            flag = TRUE;
-
+            if (first)
+            {
+               fprintf(fp, "Integer\n");
+               first = FALSE;
+            }
             fprintf(fp, " %s", sym->name);
             fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
+
+            flag = TRUE;
 
             if (i % 8 == 7)
                fputc('\n', fp);
@@ -333,7 +339,7 @@ void symbol_print_bounds(FILE* fp)
       if (flag)
          fputc('\n', fp);
    }
-   fprintf(fp, "Binary\n");
+   first = TRUE;
    
    for(sym = anchor.next; sym != NULL; sym = sym->next)
    {
@@ -348,11 +354,16 @@ void symbol_print_bounds(FILE* fp)
 
          if (var_get_type(var) == VAR_BIN)
          {
-            flag = TRUE;
-            
+            if (first)
+            {
+               fprintf(fp, "Binary\n");
+               first = FALSE;
+            }
             fprintf(fp, " %s", sym->name);
             fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
 
+            flag = TRUE;
+            
             if (i % 8 == 7)
                fputc('\n', fp);
          }

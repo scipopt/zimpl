@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ineq.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: ineq.c,v 1.4 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ineq.c                                                        */
@@ -96,6 +96,7 @@ void ineq_print(FILE* fp, const Ineq* ineq)
       break;
    default :
       assert(0);
+      abort();
    }
-   fprintf(fp, "%s %g", sign, ineq->rhs);
+   fprintf(fp, "%s %.16g", sign, ineq->rhs);
 }

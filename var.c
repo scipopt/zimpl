@@ -1,4 +1,4 @@
-#ident "@(#) $Id: var.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: var.c,v 1.4 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: var.c                                                         */
@@ -115,6 +115,6 @@ void var_print(FILE* fp, const Var* var)
       text = "Var-ERR";
       break;
    }
-   fprintf(fp, "%s [%g..%g]", text, var->lower, var->upper);
+   fprintf(fp, "%s [%.16g..%.16g]", text, var->lower, var->upper);
 }
 

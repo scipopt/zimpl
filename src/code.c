@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.5 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -317,7 +317,7 @@ void code_execute(CodeNode* node)
    case CODE_VOID :
       return;
    case CODE_NUMB :
-      fprintf(stderr, "%g\n", code_get_numb(node));
+      fprintf(stderr, "%.16g\n", code_get_numb(node));
       break;
    case CODE_STRG :
       fprintf(stderr, "%s\n", code_get_strg(node));

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.5 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -140,6 +140,14 @@ void i_expr_div(CodeNode* self)
       / code_get_numb(code_get_child(self, 1)));
 }
 
+void i_expr_neg(CodeNode* self)
+{
+   Trace("i_neg");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self, -code_get_numb(code_get_child(self, 0)));
+}
 /* ----------------------------------------------------------------------------
  * Logische Funktionen
  * ----------------------------------------------------------------------------
@@ -797,6 +805,7 @@ void i_entry(CodeNode* self)
       break;
    default :
       assert(0);
+      abort();
    }
    code_value_entry(self, entry);
 
@@ -831,6 +840,7 @@ void i_elem_list_new(CodeNode* self)
       break;
    default :
       assert(0);
+      abort();
    }
    list = list_new_elem(elem);
    
@@ -865,6 +875,7 @@ void i_elem_list_add(CodeNode* self)
       break;
    default :
       assert(0);
+      abort();
    }
    list_add_elem(list, elem);   
    code_value_list(self, list);
@@ -944,19 +955,17 @@ void i_entry_list_add(CodeNode* self)
    list_free(list);
 }
 
-void i_object_min(CodeNode* self)
+static void objective(CodeNode* self, Bool minimize)
 {
    const char* name;
    Term*       term;
    
-   Trace("i_object_min");
-
    assert(code_is_valid(self));
 
    name = code_get_name(code_get_child(self, 0));
    term = code_get_term(code_get_child(self, 1));
-
-   printf("Minimize\n");
+   
+   printf("%s\n", minimize ? "Minimize" : "Maximize");
    printf("%s: ", name);
    term_print(stdout, term, TERM_PRINT_INDEX);
    printf("\nSubject To\n");
@@ -966,6 +975,23 @@ void i_object_min(CodeNode* self)
    code_value_void(self);
 }
 
+void i_object_min(CodeNode* self)
+{
+   Trace("i_object_min");
+
+   assert(code_is_valid(self));
+
+   objective(self, TRUE);
+}
+
+void i_object_max(CodeNode* self)
+{
+   Trace("i_object_max");
+
+   assert(code_is_valid(self));
+
+   objective(self, FALSE);
+}
 
 
 

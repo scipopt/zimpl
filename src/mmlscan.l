@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.2 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.3 2001/01/30 08:23:46 thor Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -46,6 +46,7 @@ static int yycolumn = 0;
 "set"                     { yycolumn += yyleng; return DECLSET; }
 "param"                   { yycolumn += yyleng; return DECLPAR; }
 "var"                     { yycolumn += yyleng; return DECLVAR; }
+"maximize"                { yycolumn += yyleng; return DECLMAX; }
 "minimize"                { yycolumn += yyleng; return DECLMIN; }
 "subto"                   { yycolumn += yyleng; return DECLSUB; }
 "in"                      { yycolumn += yyleng; return IN; }
@@ -57,12 +58,12 @@ static int yycolumn = 0;
 "<>"                      { yycolumn += yyleng; return EMPTY_TUPLE; }
 "sum"                     { yycolumn += yyleng; return SUM; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
-[0-9]+("."[0-9]+)?([eEdD]-?[0-9]+)?  { 
+[0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       sscanf(yytext, "%lf", &lval->numb);
       return NUMB; 
    }
-"."[0-9]+([eEdD]-?[0-9]+)?  { 
+"."[0-9]+([eEdD][-+]-?[0-9]+)?  { 
       yycolumn += yyleng; 
       sscanf(yytext, "%lf", &lval->numb);
       return NUMB; 

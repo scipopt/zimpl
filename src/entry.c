@@ -1,4 +1,4 @@
-#ident "@(#) $Id: entry.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: entry.c,v 1.4 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -242,7 +242,7 @@ void entry_print(FILE* fp, const Entry* entry)
    switch(entry->type)
    {
    case SYM_NUMB :
-      fprintf(fp, "%g", entry->value.numb);
+      fprintf(fp, "%.16g", entry->value.numb);
       break;
    case SYM_STRG :
       fprintf(fp, "\"%s\"", entry->value.strg);

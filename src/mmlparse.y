@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.2 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.3 2001/01/30 08:23:46 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -38,7 +38,7 @@ extern void yyerror(const char* s);
    CodeNode*   code;
 };
 
-%token DECLSET DECLPAR DECLVAR DECLMIN DECLSUB
+%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN FORALL EMPTY_TUPLE
 %token CMP_LE CMP_GE CMP_EQ
@@ -51,7 +51,7 @@ extern void yyerror(const char* s);
 %token <strg> STRG
 %token <numb> NUMB
 
-%type <code> stmt decl_set decl_par decl_var decl_min decl_sub
+%type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> expr expr_list symidx tuple tuple_list sexpr 
 %type <code> idxset product factor term ineq entry entry_list
 %type <code> var_type ineq_type lower upper;
@@ -67,7 +67,7 @@ stmt
    : decl_set   { code_set_root($1); }
    | decl_par   { code_set_root($1); }
    | decl_var   { code_set_root($1); }
-   | decl_min   { code_set_root($1); }
+   | decl_obj   { code_set_root($1); }
    | decl_sub   { code_set_root($1); }
    ;
 
@@ -99,24 +99,27 @@ decl_par
  * ----------------------------------------------------------------------------
  */
 decl_var
-   : DECLVAR NAME '[' sexpr ']' ',' var_type ',' lower ',' upper ';' {
+   : DECLVAR NAME '[' sexpr ']' var_type lower upper ';' {
          $$ = code_new_inst(i_newsym_var, 5,
-            code_new_name($2), $4, $7, $9, $11);
+            code_new_name($2), $4, $6, $7, $8);
       }
    ;
 
 var_type
-   : BINARY   { $$ = code_new_vartype(VAR_BIN); }
-   | INTEGER  { $$ = code_new_vartype(VAR_INT); }
-   | REAL     { $$ = code_new_vartype(VAR_CON); }
+   : /* empty */ { $$ = code_new_vartype(VAR_CON); }
+   | REAL        { $$ = code_new_vartype(VAR_CON); }
+   | INTEGER     { $$ = code_new_vartype(VAR_INT); }
+   | BINARY      { $$ = code_new_vartype(VAR_BIN); }
    ;
 
 lower
-   : CMP_GE expr { $$ = $2; }
+   : /* empty */ { $$ = code_new_numb(0.0); }
+   | CMP_GE expr { $$ = $2; }
    ;
 
 upper
-   : CMP_LE expr { $$ = $2; }
+   : /* empty */ { $$ = code_new_numb(INFINITY); }
+   | CMP_LE expr { $$ = $2; }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -137,9 +140,12 @@ entry
  * ----------------------------------------------------------------------------
  */
 
-decl_min
+decl_obj
    : DECLMIN NAME DO term ';' {
          $$ = code_new_inst(i_object_min, 2, code_new_name($2), $4);
+      }
+   | DECLMAX NAME DO term ';' {
+         $$ = code_new_inst(i_object_max, 2, code_new_name($2), $4);
       }
    ;
 
@@ -253,6 +259,7 @@ expr
    | expr '*' expr         { $$ = code_new_inst(i_expr_mul, 2, $1, $3); }
    | expr '/' expr         { $$ = code_new_inst(i_expr_div, 2, $1, $3); }
    | '+' expr %prec UNARY  { $$ = $2; }
+   | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }
    ;
 
