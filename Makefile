@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.8 2003/08/19 13:11:40 bzfloebe Exp $
+# $Id: Makefile,v 1.9 2003/08/20 14:45:20 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 #
-.PHONY:		depend clean lint doc check
+.PHONY:		depend clean lint doc check valgrind
 
 ARCH            :=      $(shell uname -m | \
                         sed \
@@ -50,6 +50,8 @@ DCC		=	gcc
 LINT		=	flexelint
 AR		=	ar
 RANLIB		=	ranlib
+VALGRIND	=	valgrind --skin=memcheck --leak-check=yes \
+			--show-reachable=yes 
 
 SRCDIR		=	src
 BINDIR		=	bin
@@ -114,6 +116,10 @@ doc:
 check:
 		cd check; \
 		/bin/sh ./check.sh ../$(BINARY) 
+
+valgrind:
+		cd check; \
+		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)" 
 
 $(OBJDIR):	
 		-mkdir -p $(OBJDIR)

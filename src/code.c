@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.20 2003/07/16 08:48:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.21 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -537,14 +537,14 @@ inline const Bound* code_get_bound(CodeNode* node)
  * Value Funktionen
  * ----------------------------------------------------------------------------
  */
-void code_value_numb(CodeNode* node, const Numb* numb)
+void code_value_numb(CodeNode* node, Numb* numb)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
    
    node->type       = CODE_NUMB;
-   node->value.numb = numb_copy(numb);
+   node->value.numb = numb;
 }
 
 void code_value_strg(CodeNode* node, const char* strg)
@@ -569,7 +569,7 @@ void code_value_name(CodeNode* node, const char* name)
    node->value.name = name;
 }
 
-void code_value_tuple(CodeNode* node, const Tuple* tuple)
+void code_value_tuple(CodeNode* node, Tuple* tuple)
 {
    assert(code_is_valid(node));
    assert(tuple_is_valid(tuple));
@@ -577,10 +577,10 @@ void code_value_tuple(CodeNode* node, const Tuple* tuple)
    code_free_value(node);
 
    node->type        = CODE_TUPLE;
-   node->value.tuple = tuple_copy(tuple);
+   node->value.tuple = tuple;
 }
 
-void code_value_set(CodeNode* node, const Set* set)
+void code_value_set(CodeNode* node, Set* set)
 {
    assert(code_is_valid(node));
    assert(set_is_valid(set));
@@ -588,10 +588,10 @@ void code_value_set(CodeNode* node, const Set* set)
    code_free_value(node);
 
    node->type      = CODE_SET;
-   node->value.set = set_copy(set);
+   node->value.set = set;
 }
 
-void code_value_idxset(CodeNode* node, const IdxSet* idxset)
+void code_value_idxset(CodeNode* node, IdxSet* idxset)
 {
    assert(code_is_valid(node));
    assert(idxset_is_valid(idxset));
@@ -599,10 +599,10 @@ void code_value_idxset(CodeNode* node, const IdxSet* idxset)
    code_free_value(node);
 
    node->type         = CODE_IDXSET;
-   node->value.idxset = idxset_copy(idxset);
+   node->value.idxset = idxset;
 }
 
-void code_value_entry(CodeNode* node, const Entry* entry)
+void code_value_entry(CodeNode* node, Entry* entry)
 {
    assert(code_is_valid(node));
    assert(entry_is_valid(entry));
@@ -610,10 +610,10 @@ void code_value_entry(CodeNode* node, const Entry* entry)
    code_free_value(node);
 
    node->type        = CODE_ENTRY;
-   node->value.entry = entry_copy(entry);
+   node->value.entry = entry;
 }
 
-void code_value_term(CodeNode* node, const Term* term)
+void code_value_term(CodeNode* node, Term* term)
 {
    assert(code_is_valid(node));
    assert(term_is_valid(term));
@@ -621,7 +621,7 @@ void code_value_term(CodeNode* node, const Term* term)
    code_free_value(node);
 
    node->type       = CODE_TERM;
-   node->value.term = term_copy(term);
+   node->value.term = term;
 }
 
 void code_value_bool(CodeNode* node, Bool bool)
@@ -644,7 +644,7 @@ void code_value_size(CodeNode* node, int size)
    node->value.size = size;
 }
 
-void code_value_list(CodeNode* node, const List* list)
+void code_value_list(CodeNode* node, List* list)
 {
    assert(code_is_valid(node));
    assert(list_is_valid(list));
@@ -652,7 +652,7 @@ void code_value_list(CodeNode* node, const List* list)
    code_free_value(node);
 
    node->type       = CODE_LIST;
-   node->value.list = list_copy(list);
+   node->value.list = list;
 }
 
 void code_value_varclass(CodeNode* node, VarClass varclass)
@@ -675,7 +675,7 @@ void code_value_contype(CodeNode* node, ConType contype)
    node->value.contype = contype;
 }
 
-void code_value_rdef(CodeNode* node, const RDef* rdef)
+void code_value_rdef(CodeNode* node, RDef* rdef)
 {
    assert(code_is_valid(node));
    assert(rdef_is_valid(rdef));
@@ -683,10 +683,10 @@ void code_value_rdef(CodeNode* node, const RDef* rdef)
    code_free_value(node);
 
    node->type       = CODE_RDEF;
-   node->value.rdef = rdef_copy(rdef);
+   node->value.rdef = rdef;
 }
 
-void code_value_rpar(CodeNode* node, const RPar* rpar)
+void code_value_rpar(CodeNode* node, RPar* rpar)
 {
    assert(code_is_valid(node));
    assert(rpar_is_valid(rpar));
@@ -694,7 +694,7 @@ void code_value_rpar(CodeNode* node, const RPar* rpar)
    code_free_value(node);
 
    node->type       = CODE_RPAR;
-   node->value.rpar = rpar_copy(rpar);
+   node->value.rpar = rpar;
 }
 
 void code_value_bits(CodeNode* node, unsigned int bits)
@@ -707,14 +707,14 @@ void code_value_bits(CodeNode* node, unsigned int bits)
    node->value.bits = bits;
 }
 
-void code_value_bound(CodeNode* node, const Bound* bound)
+void code_value_bound(CodeNode* node, Bound* bound)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
    
    node->type        = CODE_BOUND;
-   node->value.bound = bound_copy(bound);
+   node->value.bound = bound;
 }
 
 void code_value_void(CodeNode* node)

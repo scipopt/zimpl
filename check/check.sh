@@ -26,6 +26,7 @@
 #*
 # $1 = Binary
 PASS=0
+echo XXX $1 XXX
 for i in expr param set subto
 do
    $1 $i.zpl

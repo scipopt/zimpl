@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.12 2003/08/02 08:44:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.13 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -154,7 +154,7 @@ int tuple_get_dim(const Tuple* tuple)
    return tuple->dim;
 }
 
-void tuple_set_elem(const Tuple* tuple, int idx, const Elem* elem)
+void tuple_set_elem(Tuple* tuple, int idx, Elem* elem)
 {
    assert(tuple_is_valid(tuple));
    assert(idx         >= 0);
@@ -163,7 +163,7 @@ void tuple_set_elem(const Tuple* tuple, int idx, const Elem* elem)
    
    assert(tuple->element[idx] == NULL);
    
-   tuple->element[idx] = elem_copy(elem);
+   tuple->element[idx] = elem;
 }
 
 const Elem* tuple_get_elem(const Tuple* tuple, int idx)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.17 2003/08/05 06:43:51 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.18 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -125,7 +125,7 @@ Set* set_copy(const Set* source)
 
 void set_add_member(
    Set*         set,
-   const Tuple* tuple,
+   Tuple*       tuple,
    SetAddType   where,
    SetCheckType check)
 {
@@ -160,6 +160,7 @@ void set_add_member(
          tuple_print(stderr, tuple);
          fprintf(stderr, " for set rejected\n");
       }
+      tuple_free(tuple);
    }
    else
    {
@@ -175,7 +176,7 @@ void set_add_member(
             set->member[i] = set->member[i - 1];
          idx = 0;
       }
-      set->member[idx] = tuple_copy(tuple);
+      set->member[idx] = tuple;
       
       hash_add_tuple(set->hash, set->member[idx]);
       
@@ -249,7 +250,6 @@ Set* set_range(int start, int end, int step)
 {
    Set*      set;
    Tuple*    tuple;
-   Elem*     elem;
    Numb*     numb;
    int       x;
    
@@ -259,12 +259,9 @@ Set* set_range(int start, int end, int step)
    {
       tuple = tuple_new(1);
       numb  = numb_new_integer(x);
-      elem  = elem_new_numb(numb);
-      tuple_set_elem(tuple, 0, elem);
+      tuple_set_elem(tuple, 0, elem_new_numb(numb));
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
-      elem_free(elem);
       numb_free(numb);
-      tuple_free(tuple);
    }
    assert(set_is_valid(set));
 
@@ -297,14 +294,12 @@ Set* set_cross(const Set* set_a, const Set* set_b)
          idx   = 0;
          
          for(k = 0; k < set_a->dim; k++)
-            tuple_set_elem(tuple, idx++, tuple_get_elem(set_a->member[i], k));
+            tuple_set_elem(tuple, idx++, elem_copy(tuple_get_elem(set_a->member[i], k)));
 
          for(k = 0; k < set_b->dim; k++)            
-            tuple_set_elem(tuple, idx++, tuple_get_elem(set_b->member[j], k));
+            tuple_set_elem(tuple, idx++, elem_copy(tuple_get_elem(set_b->member[j], k)));
 
          set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
-         
-         tuple_free(tuple);
       }
    }
    assert(set_is_valid(set));
@@ -326,10 +321,10 @@ Set* set_union(const Set* set_a, const Set* set_b)
    assert(set != NULL);
    
    for(i = 0; i < set_a->used; i++)
-      set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);    
+      set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);    
 
    for(i = 0; i < set_b->used; i++)
-      set_add_member(set, set_b->member[i], SET_ADD_END, SET_CHECK_QUIET);    
+      set_add_member(set, tuple_copy(set_b->member[i]), SET_ADD_END, SET_CHECK_QUIET);    
 
    assert(set_is_valid(set));
 
@@ -352,7 +347,7 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);   
+         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);   
 
    assert(set_is_valid(set));
 
@@ -375,7 +370,7 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE); 
+         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE); 
 
    assert(set_is_valid(set));
 
@@ -398,11 +393,11 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);  
+         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);  
 
    for(i = 0; i < set_b->used; i++)
       if (!set_lookup(set_a, set_b->member[i]))
-         set_add_member(set, set_b->member[i], SET_ADD_END, SET_CHECK_NONE); 
+         set_add_member(set, tuple_copy(set_b->member[i]), SET_ADD_END, SET_CHECK_NONE); 
 
    assert(set_is_valid(set));
 
@@ -442,11 +437,9 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
       tuple = tuple_new(dim);
 
       for(i = 0; i < dim; i++)
-         tuple_set_elem(tuple, i, tuple_get_elem(set_a->member[k], idx[i])); 
+         tuple_set_elem(tuple, i, elem_copy(tuple_get_elem(set_a->member[k], idx[i]))); 
 
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_QUIET);
-
-      tuple_free(tuple);
    }
    free(idx);
    
@@ -533,7 +526,6 @@ List* set_subsets_list(
    int*   counter;
    int    i;
    Set*   subset;
-   Elem*  elem;
    Tuple* tuple;
    Entry* entry;
    Numb*  numb;
@@ -554,14 +546,13 @@ List* set_subsets_list(
       subset = set_new(set->dim, subset_size);
 
       for(i = 0; i < subset_size; i++)
-         set_add_member(subset, set->member[counter[i]],
+         set_add_member(subset, tuple_copy(set->member[counter[i]]),
             SET_ADD_END, SET_CHECK_NONE);
 
       numb  = numb_new_integer(*idx);
-      elem  = elem_new_numb(numb);
       *idx += 1;
       tuple = tuple_new(1);
-      tuple_set_elem(tuple, 0, elem);
+      tuple_set_elem(tuple, 0, elem_new_numb(numb));
       entry = entry_new_set(tuple, subset);
 
       if (list == NULL)
@@ -572,7 +563,6 @@ List* set_subsets_list(
       numb_free(numb);
       entry_free(entry);
       tuple_free(tuple);
-      elem_free(elem);
       set_free(subset);
    }
    while(!counter_inc(counter, set->used, subset_size, 0));

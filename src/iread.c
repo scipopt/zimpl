@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.7 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.8 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -46,7 +46,6 @@
 
 CodeNode* i_read_new(CodeNode* self)
 {
-   RDef*       rdef;
    const char* filename;
    const char* template;
    
@@ -56,11 +55,8 @@ CodeNode* i_read_new(CodeNode* self)
 
    filename = code_eval_child_strg(self, 0);
    template = code_eval_child_strg(self, 1);   
-   rdef     = rdef_new(filename, template);
 
-   code_value_rdef(self, rdef);
-
-   rdef_free(rdef);
+   code_value_rdef(self, rdef_new(filename, template));
 
    return self;
 }
@@ -81,14 +77,11 @@ CodeNode* i_read_param(CodeNode* self)
    
    code_value_rdef(self, rdef);
 
-   rdef_free(rdef);
-
    return self;
 }
 
 CodeNode* i_read_comment(CodeNode* self)
 {
-   RPar*       rpar;
    const char* comment;
    
    Trace("i_read_comment");
@@ -96,49 +89,54 @@ CodeNode* i_read_comment(CodeNode* self)
    assert(code_is_valid(self));
 
    comment = code_eval_child_strg(self, 0);
-   rpar     = rpar_new_comment(comment);   
 
-   code_value_rpar(self, rpar);
-
-   rpar_free(rpar);
+   code_value_rpar(self, rpar_new_comment(comment));
 
    return self;
 }
 
 CodeNode* i_read_use(CodeNode* self)
 {
-   RPar* rpar;
-   int   use;
+   const Numb* use;
    
    Trace("i_read_use");
    
    assert(code_is_valid(self));
 
-   use  = (int)code_eval_child_numb(self, 0);
-   rpar = rpar_new_use(use);   
+   use = code_eval_child_numb(self, 0);
 
-   code_value_rpar(self, rpar);
-
-   rpar_free(rpar);
+   if (!numb_is_int(use))
+   {
+      fprintf(stderr, "*** Error: use value ");
+      numb_print(stderr, use);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   code_value_rpar(self, rpar_new_use(numb_toint(use)));
 
    return self;
 }
 
 CodeNode* i_read_skip(CodeNode* self)
 {
-   RPar* rpar;
-   int   skip;
+   const Numb* skip;
    
    Trace("i_read_skip");
    
    assert(code_is_valid(self));
 
-   skip = (int)code_eval_child_numb(self, 0);
-   rpar = rpar_new_skip(skip);   
+   skip = code_eval_child_numb(self, 0);
 
-   code_value_rpar(self, rpar);
-
-   rpar_free(rpar);
+   if (!numb_is_int(skip))
+   {
+      fprintf(stderr, "*** Error: skip value ");
+      numb_print(stderr, skip);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   code_value_rpar(self, rpar_new_skip(numb_toint(skip)));
 
    return self;
 }
@@ -410,8 +408,6 @@ CodeNode* i_read(CodeNode* self)
                elem = elem_new_strg(str_new(t));
             }
             tuple_set_elem(tuple, i, elem);
-
-            elem_free(elem);
          }
          
          if (is_tuple_list)
@@ -466,7 +462,6 @@ CodeNode* i_read(CodeNode* self)
    }
    code_value_list(self, list);
 
-   list_free(list);
    free(comment);
 
    return self;

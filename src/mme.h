@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.36 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.37 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -345,8 +345,7 @@ extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
 /*lint -sem(        tuple_get_dim, 1p == 1, @n >= 0) */
 extern int          tuple_get_dim(const Tuple* tuple);
 /*lint -sem(        tuple_set_elem, 1p == 1 && 2n >= 0 && 3p == 1) */
-extern void         tuple_set_elem(
-   const Tuple* tuple, int idx, const Elem* elem);
+extern void         tuple_set_elem(Tuple* tuple, int idx, Elem* elem);
 /*lint -sem(        tuple_get_elem, 1p == 1 && 2n >= 0, @p == 1) */
 extern const Elem*  tuple_get_elem(const Tuple* tuple, int idx);
 /*lint -sem(        tuple_combine, 1p == 1 && 2p == 1, @p == 1) */
@@ -369,7 +368,7 @@ extern Bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
 extern Set*         set_copy(const Set* set);
 /*lint -sem(        set_add_member, 1p == 1 && 2p == 1, @p == 1) */
-extern void         set_add_member(Set* set, const Tuple* tuple,
+extern void         set_add_member(Set* set, Tuple* tuple,
    SetAddType where, SetCheckType check);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
 extern Bool         set_lookup(const Set* set, const Tuple* tuple);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.1 2003/08/02 08:44:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.2 2003/08/20 14:45:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -38,8 +38,6 @@
 #include "ratlp.h"
 #include "ratlpstore.h"
 #include "mme.h"
-
-#define MPS_NAME_LEN  8
 
 /* A specification for the ORD file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 545.

@@ -1,18 +1,11 @@
-presolve ??? bug
-
 checks auf für MPS
 
-Tests für { <a> in A } 
-Tests für ranges
-Tests für preprocessing
-
-Da jetzt   { <a> in A with a > 5 } geht, 
-funktionen mit idxset die eigendlich sein sexpr 
-brauchen wieder umstellen.
+check: Tests für ranges
+check: Tests für preprocessing
 
 ranges: MPS write fehlt noch
 
-zugrif auf set elemente nach ordnungsnummer, so das
+zugriff auf set elemente nach ordnungsnummer, so das
 for <i> in { 1 .. card(A) } do
    A[ord(i)] 
 geht.
