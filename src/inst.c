@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.24 2002/08/22 07:20:01 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.25 2002/08/27 07:04:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1324,7 +1324,10 @@ CodeNode* i_newsym_var(CodeNode* self)
          fprintf(stderr,
             "*** Warning: Priority/Startval for continous var %s ignored\n",
             name);
-         
+
+      if ((vartype == VAR_INT) && EQ(lower, 0.0) && EQ(upper, 1.0))
+         vartype = VAR_BIN;
+      
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
       tuplestr = tuple_tostr(tuple);
