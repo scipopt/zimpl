@@ -34,6 +34,8 @@ var b4 real >= 2 <= 7/3;
 var c1 <= 10;
 var c2 >= -5/4;
 var c3 >= 2 <= 7;
+var c4 <= infinity;
+var c5 >= -infinity <= -30;
 var d1 binary;
 var d2 binary priority 50;
 var d3 binary startval 1;
@@ -51,7 +53,7 @@ var z[K];
 
 subto ca1: a1 + sum <i> in I : x[i] >= 17;
 subto cb1: b1 + b2 + b3 + b4 <= 99;
-subto cc1: c1 + c2 + c3 <= 77;
+subto cc1: c1 + c2 + c3 + c4 + c5 <= 77;
 subto cd1: d1 + d2 + d3 + d4>= 2;
 subto ce1: e1 + e2 + e3 + e4 + e5 + e6 + e7 <= 18;
 subto cy: sum <i> in I : y[i] == -6;
