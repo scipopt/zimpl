@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.17 2002/07/29 09:21:59 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.18 2002/08/18 12:26:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -48,6 +48,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
+%expect 5
 
 %union
 {
@@ -61,14 +62,14 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
-%token RSCALE SEPARATE PRIORITY STARTVAL
+%token PRIORITY STARTVAL
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
 %token AND OR NOT
 %token SUM MIN MAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT
 %token MOD DIV POW
-%token CARD ABS FLOOR CEIL
+%token CARD ABS FLOOR CEIL LOG LN EXP
 %token READ AS SKIP USE COMMENT
 %token <name> NUMBSYM
 %token <name> STRGSYM
@@ -83,7 +84,7 @@ extern void yyerror(const char* s);
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
-%type <code> idxset product factor term entry entry_list
+%type <code> idxset subterm summand factor vexpr term entry entry_list
 %type <code> var_type con_type lower upper priority startval condition
 %type <bits> con_attr con_attr_list
 
@@ -237,7 +238,7 @@ decl_sub
    ;
 
 constraint
-   : term con_type expr con_attr_list {
+   : term con_type term con_attr_list {
         $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
      }   
    | FORALL idxset DO constraint {
@@ -245,6 +246,9 @@ constraint
      }
    ;
 /*
+   : term con_type expr con_attr_list {
+        $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
+     }   
 
    : DECLSUB NAME DO term con_type expr con_attr_list ';' {
          $$ = code_new_inst(i_once, 5, code_new_name($2),
@@ -274,20 +278,37 @@ con_type
    ;
 
 term
-   : term '+' product       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
-   | term '-' product       { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
-   | term '*' expr          { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
-   | product                { $$ = $1; }
+   : term '+' subterm       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
+   | term '-' subterm       { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
+   | subterm                { $$ = $1; }
    ;
 
-product
-   : SUM idxset DO factor %prec SUM {
+subterm
+   : summand '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
+   | summand                { $$ = $1; }
+   | expr                   { $$ = code_new_inst(i_term_expr, 1, $1); }
+   ;
+
+summand
+   : factor                 { $$ = $1; }
+   | SUM idxset DO summand %prec SUM {
          $$ = code_new_inst(i_term_sum, 2, $2, $4);
       }
-   | factor                 { $$ = $1; }
+   | expr '*' SUM idxset DO summand %prec SUM {
+         $$ = code_new_inst(i_term_coeff, 2, 
+            code_new_inst(i_term_sum, 2, $4, $6),
+            $1);
+      }
    ;
 
 factor
+   : vexpr                  { $$ = $1; }
+   | expr '*' vexpr         { $$ = code_new_inst(i_term_coeff, 2, $3, $1); }
+   | '(' term ')'           { $$ = $2; }   
+   | expr '*' '(' term ')'  { $$ = code_new_inst(i_term_coeff, 2, $4, $1); }
+   ;
+
+vexpr
    : VARSYM symidx          {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
       } 
@@ -299,12 +320,7 @@ factor
             code_new_inst(i_symbol_deref, 2, code_new_name($2), $3),
             code_new_numb(-1.0));
       } 
-   | expr '*' VARSYM symidx { 
-         $$ = code_new_inst(i_term_coeff, 2,
-            code_new_inst(i_symbol_deref, 2, code_new_name($3), $4), $1);
-      }
-   | '(' term ')'           { $$ = $2; }
-   ;
+   ;   
 
 idxset
    : tuple IN sexpr condition {

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.10 2002/07/28 07:03:33 bzfkocht Exp $"
+#ident "@(#) $Id: term.c,v 1.11 2002/08/18 12:26:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -159,6 +159,30 @@ Term* term_add_term(const Term* term_a, const Term* term_b)
    for(i = 0; i < term_b->used; i++)
       term_add_elem(term, term_b->elem[i].entry, term_b->elem[i].coeff);
 #endif
+   assert(term_is_valid(term));
+
+   return term;
+}
+
+Term* term_sub_term(const Term* term_a, const Term* term_b)
+{
+   Term* term;
+   int   i;
+   
+   assert(term_is_valid(term_a));
+   assert(term_is_valid(term_b));
+
+   term           = term_new(term_a->size + term_b->size);
+   term->constant = term_a->constant - term_b->constant;
+
+   assert(term->size >= term->used);
+
+   for(i = 0; i < term_a->used; i++)
+      term_add_elem(term, term_a->elem[i].entry, term_a->elem[i].coeff);
+
+   for(i = 0; i < term_b->used; i++)
+      term_add_elem(term, term_b->elem[i].entry, -term_b->elem[i].coeff);
+
    assert(term_is_valid(term));
 
    return term;

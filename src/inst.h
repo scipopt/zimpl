@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.10 2002/07/29 07:48:35 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.11 2002/08/18 12:26:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -88,12 +88,18 @@ extern CodeNode* i_expr_card(CodeNode* self);
 extern CodeNode* i_expr_ceil(CodeNode* self);
 /*lint -sem(     i_expr_div, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_div(CodeNode* self);
+/*lint -sem(     i_expr_exp, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_exp(CodeNode* self);
 /*lint -sem(     i_expr_floor, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_floor(CodeNode* self);
 /*lint -sem(     i_expr_if, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_if(CodeNode* self);
 /*lint -sem(     i_expr_intdiv, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_intdiv(CodeNode* self);
+/*lint -sem(     i_expr_ln, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_ln(CodeNode* self);
+/*lint -sem(     i_expr_log, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_log(CodeNode* self);
 /*lint -sem(     i_expr_sum, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_sum(CodeNode* self);
 /*lint -sem(     i_expr_max, 1p == 1, type(1), @p == 1p) */
@@ -160,6 +166,8 @@ extern CodeNode* i_term_add(CodeNode* self);
 extern CodeNode* i_term_sub(CodeNode* self);
 /*lint -sem(     i_term_sum, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_sum(CodeNode* self);
+/*lint -sem(     i_term_expr, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_term_expr(CodeNode* self);
 /*lint -sem(     i_tuple_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_tuple_new(CodeNode* self);
 /*lint -sem(     i_tuple_empty, 1p == 1, type(1), @p == 1p) */

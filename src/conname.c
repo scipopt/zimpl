@@ -1,4 +1,4 @@
-#ident "@(#) $Id: conname.c,v 1.1 2002/07/29 07:51:44 bzfkocht Exp $"
+#ident "@(#) $Id: conname.c,v 1.2 2002/08/18 12:26:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -46,8 +46,10 @@ void conname_free()
    cname = NULL;
    count = 0;
 }
-      
-void conname_set(const char* prefix)
+
+/* return False if already a constraint with the prefix exists.
+ */
+Bool conname_set(const char* prefix)
 {
    assert(prefix != NULL);
 
@@ -60,6 +62,10 @@ void conname_set(const char* prefix)
    count = 1;
    
    assert(cname != NULL);
+
+   sprintf(cname, "%s_%d", cpfix, count);
+
+   return NULL == lps_getcon(cname);
 }
 
 const char* conname_get()

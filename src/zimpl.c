@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.11 2002/07/29 07:48:35 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.12 2002/08/18 12:26:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -50,7 +50,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.03, Copyright (C)2002 by Thorsten Koch *\n" \
+"* Release 1.04, Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -63,7 +63,7 @@ static const char* banner =
 "  -d          enable zimpl debugging output.\n" \
 "  -f          enable flex debugging output.\n" \
 "  -r          write branching order file.\n" \
-"  -h          this help.\n" \
+"  -h          show this help.\n" \
 "  -v          enable verbose output.\n" \
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
 "  -o outfile  select name for the output file. Default is the name of\n" \

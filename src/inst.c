@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.21 2002/07/30 15:36:19 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.22 2002/08/18 12:26:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -59,8 +59,12 @@ CodeNode* i_subto(CodeNode* self)
 
    name = code_eval_child_name(self, 0);
 
-   conname_set(name);
-   
+   if (!conname_set(name))
+   {
+      fprintf(stderr, "*** Error: Duplicate constraint name \"%s\"\n", name);
+      code_errmsg(self);
+      abort();
+   }
    (void)code_eval_child(self, 1); /* constraint */
 
    conname_free();
@@ -72,27 +76,34 @@ CodeNode* i_subto(CodeNode* self)
 
 CodeNode* i_constraint(CodeNode* self)
 {
-   const Term*  term;
+   Term*        term;
+   const Term*  term_lhs;
+   const Term*  term_rhs;
    ConType      type;
-   double       rhs;
    Con*         con;
+   double       rhs;
    unsigned int flags;
    
    Trace("i_constraint");
    
    assert(code_is_valid(self));
-
-   term  = code_eval_child_term(self, 0);
-   type  = code_eval_child_contype(self, 1);
-   rhs   = code_eval_child_numb(self, 2);
-   flags = code_eval_child_bits(self, 3);
    
-   con   = lps_addcon(conname_get(), type, rhs, flags);
+   term_lhs   = code_eval_child_term(self, 0);
+   type       = code_eval_child_contype(self, 1);
+   term_rhs   = code_eval_child_term(self, 2);
+   flags      = code_eval_child_bits(self, 3);
 
+   rhs        = term_get_constant(term_rhs) - term_get_constant(term_lhs);
+   term       = term_sub_term(term_lhs, term_rhs);
+   con        = lps_addcon(conname_get(), type, rhs, flags);
+
+   term_add_constant(term, rhs);
    term_to_nzo(term, con);
    
    code_value_void(self);
 
+   term_free(term);
+   
    return self;
 }
 
@@ -269,6 +280,60 @@ CodeNode* i_expr_ceil(CodeNode* self)
 
    return self;
 }
+
+CodeNode* i_expr_log(CodeNode* self)
+{
+   double exponent;
+   
+   Trace("i_log");
+
+   assert(code_is_valid(self));
+
+   exponent = code_eval_child_numb(self, 0);
+   
+   if (EQ(exponent, 0.0))
+   {
+      fprintf(stderr, "*** Error: log of zero\n");
+      code_errmsg(self);
+      abort();
+   }      
+   code_value_numb(self, log10(exponent));
+
+   return self;
+}
+
+CodeNode* i_expr_ln(CodeNode* self)
+{
+   double exponent;
+   
+   Trace("i_ln");
+
+   assert(code_is_valid(self));
+
+   exponent = code_eval_child_numb(self, 0);
+   
+   if (EQ(exponent, 0.0))
+   {
+      fprintf(stderr, "*** Error: ln of zero\n");
+      code_errmsg(self);
+      abort();
+   }      
+   code_value_numb(self, log(exponent));
+
+   return self;
+}
+
+CodeNode* i_expr_exp(CodeNode* self)
+{
+   Trace("i_exp");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self, exp(code_eval_child_numb(self, 0)));
+
+   return self;
+}
+
 
 CodeNode* i_expr_card(CodeNode* self)
 {
@@ -1493,6 +1558,27 @@ CodeNode* i_term_sum(CodeNode* self)
    code_value_term(self, term_r);
 
    term_free(term_r);
+
+   return self;
+}
+
+CodeNode* i_term_expr(CodeNode* self)
+{
+   Term*  term;
+   double numb;
+   
+   Trace("i_term_expr");
+   
+   assert(code_is_valid(self));
+
+   term  = term_new(1);
+   numb  = code_eval_child_numb(self, 0);
+
+   term_add_constant(term, numb);
+   
+   code_value_term(self, term);
+
+   term_free(term);
 
    return self;
 }

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.17 2002/07/29 09:21:59 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.18 2002/08/18 12:26:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -382,6 +382,8 @@ extern Term*        term_copy(const Term* term);
 extern void         term_print(FILE* fp, const Term* term, int flag);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_add_term(const Term* term_a, const Term* term_b);
+/*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @p == 1) */
+extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_constant, 1p == 1) */
 extern void         term_add_constant(Term* term, double value);
 /*lint -sem(        term_mul_coeff, 1p == 1) */
@@ -435,7 +437,7 @@ extern RPar*       rpar_copy(const RPar* rpar);
  */
 extern void        conname_free(void);
 /*lint -sem(       conname_set, 1p && nulterm(1)) */
-extern void        conname_set(const char* prefix);
+extern Bool        conname_set(const char* prefix);
 /*lint -sem(       conname_set, @p && nulterm(@)) */
 extern const char* conname_get(void);
 

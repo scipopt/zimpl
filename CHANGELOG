@@ -1,3 +1,15 @@
+ - Bug fixed, dublicate constraint names now give an error message.
+
+ - new functions log(x), ln(x) and exp(x), meaning 
+   logarithm to base 10, natural logarithm and e^x.
+
+ - It is now possible to have variables on both sides of an 
+   inequality. "x[1] <= y[1]" is now supported.
+
+ - Changed the parser to (hopefully) correct parse inequalites in
+   all possible varietes. This includes nested sums and coefficents 
+   at all places.
+
 1.03 31.Jul 2002 Release
 
  - A division by Zero now gives an error message
