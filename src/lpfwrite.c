@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.5 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.6 2002/05/29 08:51:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -76,11 +76,11 @@ void lpf_write(
    /* ---------------------------------------------------------------------- */
 
    /* First loop run for normal constraints, secound one for
-    * user constraints, if any.
+    * lazy constraints, if any.
     */
    for(i = 0; i < 2; i++)
    {      
-      fprintf(fp, "\n%s\n", (i == 0) ? "Subject to" : "User Constraints");
+      fprintf(fp, "\n%s\n", (i == 0) ? "Subject to" : "Lazy Constraints");
 
       for(con = lp->con_root; con != NULL; con = con->next)
       {
