@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.74 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.75 2004/04/19 11:44:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1809,7 +1809,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
     */
    if (count == 0)
    {
-      fprintf(stderr, "*** Error xxx: Empty initialisation for parameter \"%s\
+      fprintf(stderr, "*** Error ???: Empty initialisation for parameter \"%s\
 n",
          name);
       code_errmsg(self);

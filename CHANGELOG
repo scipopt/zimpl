@@ -1,3 +1,5 @@
+ - Complete new Set implementation.
+
  - If verbose is >= 3, the local variable
    stack is printed if an error occurs.
 

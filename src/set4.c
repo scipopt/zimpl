@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.7 2004/04/19 11:44:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -79,7 +79,8 @@ Set* set_new_from_list(const List* list, SetCheckType check)
    ListElem* le  = NULL;
    int       dim;
    Set*      set = NULL;
-   
+
+   assert(list_is_valid(list));
    assert(list_get_elems(list) > 0);
    
    if (list_is_elemlist(list))
@@ -513,10 +514,20 @@ Set* set_proj(const Set* set, const Tuple* pattern)
    
    free(idx);
 
-   new_set = set_new_from_list(list, SET_CHECK_QUIET);
+   if (list == NULL)
+   {
+      assert(set_get_members(set) == 0);
 
-   list_free(list);
-   
+      new_set = set_empty_new(dim);
+   }
+   else
+   {
+      new_set = set_new_from_list(list, SET_CHECK_QUIET);
+
+      assert(set_get_members(new_set) <= set_get_members(set));
+
+      list_free(list);
+   }
    return new_set;
 }
 

@@ -113,6 +113,9 @@ zugriff auf set elemente nach ordnungsnummer, so das
 for <i> in { 1 .. card(A) } do
    A[ord(i)] 
 geht.
+Besser ORD(set, index, member) z.B, ord(A,2,3)
+bei A:=<1,2,"a">,<2,3,"b">,<3,4,"c"> gibt "b"
+
 
 
 Speedups:
