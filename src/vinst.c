@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.9 2003/10/23 09:22:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.10 2003/10/25 09:39:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -936,7 +936,6 @@ CodeNode* i_vabs(CodeNode* self)
    Entry*       entry_xplus;
    Entry*       entry_xminus;
    Entry*       entry_bplus;
-   Entry*       entry_bminus;
    Entry*       entry_result;
    Numb*        numb;
    
@@ -999,7 +998,6 @@ CodeNode* i_vabs(CodeNode* self)
    entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
    entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
    entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
-   entry_bminus = create_new_var_entry(cname, "_bm", VAR_BIN, bound_zero, bound_one);
    entry_result = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bigger);
 
    /* add term = x^+ + x^-
@@ -1007,18 +1005,6 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_xplus, numb_minusone());
    term_add_elem(term, entry_xminus, numb_one());
    create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
-   
-   /* bplus <= xplus */
-   term = term_new(2);
-   term_add_elem(term, entry_bplus, numb_one());
-   term_add_elem(term, entry_xplus, numb_minusone());
-   create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
-   
-   /* bminus <= xminus */
-   term = term_new(2);
-   term_add_elem(term, entry_bminus, numb_one());
-   term_add_elem(term, entry_xminus, numb_minusone());
-   create_new_constraint(cname, "_c", term, CON_RHS, numb_zero(), flags);
 
    /* bplus * upper >= xplus */
    term = term_new(2);
@@ -1027,12 +1013,16 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_xplus, numb_minusone());
    create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
 
-   /* bminus * lower >= xminus */
+   /* (1 - bplus) * lower >= xminus
+    * lower - bplus * lower - xminus >= 0
+    * - bplus * lower - xminus >= -lower
+    * xminus + bplus * lower <= lower
+    */
    term = term_new(2);
    if (!numb_equal(bound_get_value(lower), numb_zero()))
-      term_add_elem(term, entry_bminus, bound_get_value(lower));
-   term_add_elem(term, entry_xminus, numb_minusone());
-   create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
+      term_add_elem(term, entry_bplus, bound_get_value(lower));
+   term_add_elem(term, entry_xminus, numb_one());
+   create_new_constraint(cname, "_d", term, CON_RHS, bound_get_value(lower), flags);
 
    /* result - xplus - xminus == 0
     */
@@ -1057,7 +1047,6 @@ CodeNode* i_vabs(CodeNode* self)
    symbol_add_entry(sym, entry_xplus);
    symbol_add_entry(sym, entry_xminus);
    symbol_add_entry(sym, entry_bplus);
-   symbol_add_entry(sym, entry_bminus);
    symbol_add_entry(sym, entry_result);
    
    bound_free(bound_one);
