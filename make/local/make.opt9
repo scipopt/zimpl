@@ -1,4 +1,4 @@
-#--- $Id: make.opt9,v 1.1 2003/09/17 10:18:01 bzfkocht Exp $
-CPPFLAGS        +=      -I/sw/sun4_57/gmp-4.1.2/include
-LDFLAGS         +=      -L/sw/sun4_57/gmp-4.1.2/lib
+#--- $Id: make.opt9,v 1.2 2003/09/17 11:33:08 bzfkocht Exp $
+CPPFLAGS        +=      -I/sw/sun4_57/gmp-4.1.2/include -I/client/include
+LDFLAGS         =       -Bstatic -L/sw/sun4_57/gmp-4.1.2/lib -L/client/lib -lgmp -lz
 

@@ -1,0 +1,4 @@
+#--- $Id: make.linux.x86.gnu.opt-p4,v 1.1 2003/09/17 11:33:05 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL 
+CFLAGS		=	-O6 -march=pentium4 -mcpu=pentium4 -g
+LDFLAGS		=	-lgmp -lz -static

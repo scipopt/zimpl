@@ -1,0 +1,3 @@
+#--- $Id: make.opt40,v 1.1 2003/09/17 11:33:08 bzfkocht Exp $
+CPPFLAGS        +=      -I/tmp/gmp/include
+LDFLAGS         +=      -L/tmp/gmp/lib

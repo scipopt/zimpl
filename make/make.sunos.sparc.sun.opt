@@ -1,6 +1,6 @@
-#--- $Id: make.sunos.sparc.sun.opt,v 1.4 2003/09/17 10:18:01 bzfkocht Exp $
+#--- $Id: make.sunos.sparc.sun.opt,v 1.5 2003/09/17 11:33:05 bzfkocht Exp $
 CC		=	cc
-CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -Dinline=""
 CFLAGS		=	-fast -xprefetch=auto -xipo=2
 LDFLAGS		=	-Bstatic -lgmp -lz
 
