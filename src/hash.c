@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.19 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.20 2004/05/09 08:36:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -136,7 +136,6 @@ void hash_free(Hash* hash)
 
 Bool hash_is_valid(const Hash* hash)
 {
-         //         || hash->type == HASH_CON || hash->type == HASH_VAR)
    return ((hash != NULL)
       && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY || hash->type == HASH_ELEM_IDX)
       && SID_ok(hash, HASH_SID));

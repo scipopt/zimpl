@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.8 2004/04/23 07:39:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.9 2004/05/09 08:36:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -44,7 +44,6 @@ enum set_type {
 };
 
 typedef enum set_type      SetType;
-//typedef union set          Set;
 typedef struct set_vtab    SetVTab;
 
 typedef struct set_empty   SetEmpty;
