@@ -1,3 +1,12 @@
+2.01 29.Oct 2003 Release
+
+ - min/max over a indexed set of numbers,
+   will now issue a warning, if the index set
+   is empty.
+
+ - Preprocessing is now switched on with the -O
+   (optimize) switch.
+
  - Fixed a major bug that occured, if two number
    were subtracted from a constraint like in
    x - 5 + 3 >= 1

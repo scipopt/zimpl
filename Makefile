@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.15 2003/10/27 17:19:32 bzfkocht Exp $
+# $Id: Makefile,v 1.16 2003/10/29 15:04:49 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -41,7 +41,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
-VERSION		=	2.01c
+VERSION		=	2.01
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc

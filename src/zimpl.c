@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.50 2003/10/27 08:43:53 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.51 2003/10/29 15:04:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -55,16 +55,16 @@ int verbose = VERB_NORMAL;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 2.01c Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 2.01  Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n";
 
-static const char* options = "bD:fF:hn:o:prt:v:";
+static const char* options = "bD:fF:hn:o:Ort:v:";
 static const char* usage =
-"usage: %s [-bfhpr][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
+"usage: %s [-bfhOr][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
 
 static const char* help =
 "\n" \
@@ -76,7 +76,7 @@ static const char* help =
 "  -n cm|cn|cf    name column make/name/full\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
 "                 the input file without extension.\n" \
-"  -p             presolve LP.\n" \
+"  -O             optimize LP by preprocessing.\n" \
 "  -r             write branching order file.\n" \
 "  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
 "                 or human readable HUM.\n" \
@@ -287,7 +287,7 @@ int main(int argc, char* const* argv)
       case 'o' :
          basefile = strdup(optarg);
          break;
-      case 'p' :
+      case 'O' :
          presolve = TRUE;
          break;
       case 'r' :
