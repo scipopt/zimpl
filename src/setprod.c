@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -160,17 +160,46 @@ static int set_prod_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 }
 
 /* ------------------------------------------------------------------------- 
+ * --- get_tuple                 
+ * -------------------------------------------------------------------------
+ */
+void set_prod_get_tuple(
+   const Set* set,
+   int        idx,
+   Tuple*     tuple,
+   int        offset)
+{
+   const Set* a;
+   const Set* b;
+   int        offset2;
+   
+   assert(set_prod_is_valid(set));
+   assert(idx >= 0);
+   assert(idx <= set->head.members);
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset + set->head.dim <= tuple_get_dim(tuple));
+
+   a       = set->prod.set_a;
+   b       = set->prod.set_b;
+   offset2 = offset + a->head.dim;
+
+   set_get_tuple_intern(a, idx / a->head.members, tuple, offset);
+   set_get_tuple_intern(b, idx % a->head.members, tuple, offset2);
+}
+
+/* ------------------------------------------------------------------------- 
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
 /* Initialise Iterator. Write into iter
  */
-static SetIter* iter_init(
+static SetIter* set_prod_iter_init(
    const Set*   set,
    const Tuple* pattern,
    int          offset)
 {
-   SetIter*       iter;
+   SetIter*     iter;
 
    assert(set_prod_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));
@@ -235,7 +264,7 @@ static Bool get_both_parts(
 
 /* FALSE means, there is no further element
  */
-static Bool iter_next(
+static Bool set_prod_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -250,6 +279,9 @@ static Bool iter_next(
    
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset + set->head.dim <= tuple_get_dim(tuple));
 
    a       = set->prod.set_a;
    b       = set->prod.set_b;
@@ -288,7 +320,7 @@ static Bool iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
-static void iter_exit(SetIter* iter, const Set* set)
+static void set_prod_iter_exit(SetIter* iter, const Set* set)
 {
    int i;
    
@@ -312,7 +344,7 @@ static void iter_exit(SetIter* iter, const Set* set)
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
-static void iter_reset(SetIter* iter, const Set* set)
+static void set_prod_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
@@ -331,9 +363,10 @@ void set_prod_init(SetVTab* vtab)
    vtab[SET_PROD].set_free       = set_prod_free;
    vtab[SET_PROD].set_is_valid   = set_prod_is_valid;
    vtab[SET_PROD].set_lookup_idx = set_prod_lookup_idx;
-   vtab[SET_PROD].iter_init      = iter_init;
-   vtab[SET_PROD].iter_next      = iter_next;
-   vtab[SET_PROD].iter_exit      = iter_exit;
-   vtab[SET_PROD].iter_reset     = iter_reset;
+   vtab[SET_PROD].set_get_tuple  = set_prod_get_tuple;
+   vtab[SET_PROD].iter_init      = set_prod_iter_init;
+   vtab[SET_PROD].iter_next      = set_prod_iter_next;
+   vtab[SET_PROD].iter_exit      = set_prod_iter_exit;
+   vtab[SET_PROD].iter_reset     = set_prod_iter_reset;
 }
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.c,v 1.8 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.c,v 1.9 2004/04/18 14:32:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -235,7 +235,8 @@ void* mem_calloc(
    
    if (item == 0 || size == 0)
    {
-      fprintf(stderr, errmsg2, size, file, line);
+      fprintf(stderr, errmsg2, item, size, file, line);
+      abort();
       exit(EXIT_FAILURE);
    }
    if ((p = calloc(mem_alloc_size(size * item), sizeof(char))) == MHDR_NIL)

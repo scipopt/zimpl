@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.5 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.6 2004/04/18 14:32:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -190,6 +190,7 @@ struct set_vtab
    Set*     (*set_copy)      (const Set* set);
    Bool     (*set_is_valid)  (const Set* set);
    int      (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
+   void     (*set_get_tuple) (const Set* set, int idx, Tuple* tuple, int offset);
    SetIter* (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
    Bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
    void     (*iter_exit)     (SetIter* iter, const Set* set);
@@ -207,11 +208,13 @@ extern SetVTab* set_vtab_global;
 
 /* set4.c
  */
-extern int set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
+extern int      set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
+extern void     set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset);
+extern Tuple*   set_get_tuple(const Set* set, int idx);
 extern SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
-extern Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
-extern void set_iter_exit_intern(SetIter* iter, const Set* set);
-extern void set_iter_reset_intern(SetIter* iter, const Set* set);
+extern Bool     set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
+extern void     set_iter_exit_intern(SetIter* iter, const Set* set);
+extern void     set_iter_reset_intern(SetIter* iter, const Set* set);
 
 /* setempty.c
  */
@@ -230,19 +233,23 @@ extern Set* set_list_new_from_elems(const List* list, SetCheckType check);
 extern Set* set_list_new_from_tuples(const List* list, SetCheckType check);
 extern Set* set_list_new_from_entries(const List* list, SetCheckType check);
 extern const Elem* set_list_get_elem(const Set* set, int idx);
+extern void set_list_get_tuple(const Set* set, int idx, Tuple* tuple, int offset);
 
 /* setrange.c
  */
 extern void set_range_init(SetVTab* vtab);
+extern void set_range_get_tuple(const Set* set, int idx, Tuple* tuple, int offset);
 
 /* setprod.c
  */
 extern void set_prod_init(SetVTab* vtab);
+extern void set_prod_get_tuple(const Set* set, int idx, Tuple* tuple, int offset);
 
 /* set multi.c
  */
 extern void set_multi_init(SetVTab* vtab);
 extern Set* set_multi_new_from_list(const List* list, SetCheckType check);
+extern void set_multi_get_tuple(const Set* set, int idx, Tuple* tuple, int offset);
 
 
 #endif /* _SET4_H_ */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -189,12 +189,40 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 }
 
 /* ------------------------------------------------------------------------- 
+ * --- get_tuple                 
+ * -------------------------------------------------------------------------
+ */
+void set_range_get_tuple(
+   const Set* set,
+   int        idx,
+   Tuple*     tuple,
+   int        offset)
+{
+   int   val;
+   Numb* numb;
+      
+   assert(set_range_is_valid(set));
+   assert(idx >= 0);
+   assert(idx <= set->head.members);
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset <  tuple_get_dim(tuple));
+
+   val  = idx_to_val(set->range.begin, set->range.step, idx);
+   numb = numb_new_integer(val);
+
+   tuple_set_elem(tuple, offset, elem_new_numb(numb));
+
+   numb_free(numb);
+}
+
+/* ------------------------------------------------------------------------- 
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
 /* Initialise Iterator. Write into iter
  */
-static SetIter* iter_init(
+static SetIter* set_range_iter_init(
    const Set*   set,
    const Tuple* pattern,
    int          offset)
@@ -264,7 +292,7 @@ static SetIter* iter_init(
  */
 /* FALSE means, there is no further element
  */
-static Bool iter_next(
+static Bool set_range_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -275,6 +303,9 @@ static Bool iter_next(
 
    assert(set_range_iter_is_valid(iter));
    assert(set_range_is_valid(set));
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset <  tuple_get_dim(tuple));
 
    if (iter->range.now > iter->range.last)
       return FALSE;
@@ -296,7 +327,7 @@ static Bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, const Set* set)
+static void set_range_iter_exit(SetIter* iter, const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
 
@@ -310,7 +341,7 @@ static void iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, const Set* set)
+static void set_range_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
    
@@ -327,21 +358,11 @@ void set_range_init(SetVTab* vtab)
    vtab[SET_RANGE].set_free       = set_range_free;
    vtab[SET_RANGE].set_is_valid   = set_range_is_valid;
    vtab[SET_RANGE].set_lookup_idx = set_range_lookup_idx;
-   vtab[SET_RANGE].iter_init      = iter_init;
-   vtab[SET_RANGE].iter_next      = iter_next;
-   vtab[SET_RANGE].iter_exit      = iter_exit;
-   vtab[SET_RANGE].iter_reset     = iter_reset;
+   vtab[SET_RANGE].set_get_tuple  = set_range_get_tuple;
+   vtab[SET_RANGE].iter_init      = set_range_iter_init;
+   vtab[SET_RANGE].iter_next      = set_range_iter_next;
+   vtab[SET_RANGE].iter_exit      = set_range_iter_exit;
+   vtab[SET_RANGE].iter_reset     = set_range_iter_reset;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 

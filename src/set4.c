@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.4 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -134,6 +134,26 @@ Bool set_lookup(const Set* set, const Tuple* tuple)
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
 
+void set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset)
+{
+   return set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
+}
+
+Tuple* set_get_tuple(const Set* set, int idx)
+{
+   Tuple* tuple;
+
+   tuple = tuple_new(set->head.dim);
+
+   assert(set_is_valid(set));
+   assert(idx >= 0);
+   assert(idx <  set->head.members);
+
+   set_get_tuple_intern(set, idx, tuple, 0);
+   
+   return tuple;
+}
+     
 SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
 {
    return set_vtab_global[set->head.type].iter_init(set, pattern, offset);
@@ -191,17 +211,6 @@ int set_get_members(const Set* set)
 
    return set->head.members;   
 }
-
-List* set_subsets_list(
-   const Set* set,
-   int        subset_size,
-   List*      list,
-   int*       idx)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
 
 void set_print(FILE* fp, const Set* set)
 {
@@ -540,7 +549,6 @@ Bool set_is_equal(const Set* set_a, const Set* set_b)
    return set_is_subseteq(set_a, set_b);
 }
 
-#if 0
 /* n elements in set
  * k elements in subset
  * i index for counter
@@ -576,6 +584,7 @@ List* set_subsets_list(
    Tuple* tuple;
    Entry* entry;
    Numb*  numb;
+   List*  subset_list;
    
    assert(set_is_valid(set));
    assert(subset_size <= set->head.members);
@@ -590,17 +599,28 @@ List* set_subsets_list(
 
    do
    {
-      subset = set_new(set->dim, subset_size, SET_NO_HASH);
+      subset_list = NULL;
 
       for(i = 0; i < subset_size; i++)
-         set_add_member(subset, tuple_copy(set->member[counter[i]]),
-            SET_ADD_END, SET_CHECK_NONE);
+      {
+         tuple = set_get_tuple(set, counter[i]);
+         
+         if (subset_list == NULL)
+            subset_list = list_new_tuple(tuple);
+         else
+            list_add_tuple(subset_list, tuple);
 
-      numb  = numb_new_integer(*idx);
-      *idx += 1;
-      tuple = tuple_new(1);
+         tuple_free(tuple);
+      }
+      subset = set_new_from_list(subset_list, SET_CHECK_NONE); /* NO_HASH ? */
+
+      list_free(subset_list);
+      
+      numb   = numb_new_integer(*idx);
+      *idx  += 1;
+      tuple  = tuple_new(1);
       tuple_set_elem(tuple, 0, elem_new_numb(numb));
-      entry = entry_new_set(tuple, subset);
+      entry  = entry_new_set(tuple, subset);
 
       if (list == NULL)
          list = list_new_entry(entry);
@@ -620,16 +640,4 @@ List* set_subsets_list(
 
    return list;
 }
-
-#endif
-
-
-
-
-
-
-
-
-
-
 

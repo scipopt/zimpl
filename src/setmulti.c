@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.7 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.8 2004/04/18 14:32:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -125,10 +125,10 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    int          k;
    int          dim;
    Bool         is_entrylist;
-   Hash*        hash;
+   Hash*        hash = NULL;
    
    assert(list_is_valid(list));
-
+   
    is_entrylist = list_is_entrylist(list);
    
    n     = list_get_elems(list);
@@ -159,7 +159,9 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    for(k = 0; k < dim; k++)
       set->multi.set  [k] = set_list_new(n, SET_DEFAULT);
 
-   hash = hash_new(HASH_TUPLE, n);
+   if (check != SET_CHECK_NONE)
+      hash = hash_new(HASH_TUPLE, n);
+   
    le   = NULL;
    
    for(i = 0; i < n; i++)
@@ -168,12 +170,15 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          ? entry_get_tuple(list_get_entry(list, &le))
          : list_get_tuple(list, &le);
 
-      if (hash_has_tuple(hash, tuple))
-         /* check hier auswertemn ???? */
-         fprintf(stderr, "??? Doublicate found!!\n");
+      if (check != SET_CHECK_NONE && hash_has_tuple(hash, tuple))
+      {
+         if (check == SET_CHECK_WARN)
+            fprintf(stderr, "??? Doublicate found!!\n");
+      }
       else
       {
-         hash_add_tuple(hash, tuple);
+         if (check != SET_CHECK_NONE)
+            hash_add_tuple(hash, tuple);
          
          for(k = 0; k < dim; k++)
             set->multi.subset[set->head.members * dim + k] =
@@ -183,7 +188,8 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          set->head.members++;
       }
    }
-   hash_free(hash);
+   if (check != SET_CHECK_NONE)
+      hash_free(hash);
 
    /* Bloody hack!
     */
@@ -374,10 +380,37 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 }
 
 /* ------------------------------------------------------------------------- 
+ * --- get_tuple                 
+ * -------------------------------------------------------------------------
+ */
+void set_multi_get_tuple(
+   const Set* set,
+   int        idx,
+   Tuple*     tuple,
+   int        offset)
+{
+   int i;
+   
+   assert(set_multi_is_valid(set));
+   assert(idx >= 0);
+   assert(idx <= set->head.members);
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset + set->head.dim <= tuple_get_dim(tuple));
+
+   for(i = 0; i < set->head.dim; i++)
+   {
+      tuple_set_elem(tuple, offset + i,
+         elem_copy(set_list_get_elem(set->multi.set[i],
+            set->multi.subset[idx * set->head.dim + i])));
+   }
+}
+
+/* ------------------------------------------------------------------------- 
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
-static SetIter* multi_iter_init(
+static SetIter* set_multi_iter_init(
    const Set*   set,
    const Tuple* pattern,
    int          offset)
@@ -556,14 +589,20 @@ static SetIter* multi_iter_init(
  */
 /* FALSE means, there is no further element
  */
-static Bool iter_next(
-   SetIter*    iter,
-   const Set*  set,
+static Bool set_multi_iter_next(
+   SetIter*   iter,
+   const Set* set,
    Tuple*     tuple,
    int        offset)
 {
    int i;
    
+   assert(set_multi_iter_is_valid(iter));
+   assert(set_multi_is_valid(set));
+   assert(tuple_is_valid(tuple));
+   assert(offset >= 0);
+   assert(offset + set->head.dim <= tuple_get_dim(tuple));
+
    if (iter->multi.now >= iter->multi.members)
       return FALSE;
 
@@ -583,7 +622,7 @@ static Bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, const Set* set)
+static void set_multi_iter_exit(SetIter* iter, const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
 
@@ -600,7 +639,7 @@ static void iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, const Set* set)
+static void set_multi_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
    
@@ -617,10 +656,11 @@ void set_multi_init(SetVTab* vtab)
    vtab[SET_MULTI].set_free       = set_multi_free;
    vtab[SET_MULTI].set_is_valid   = set_multi_is_valid;
    vtab[SET_MULTI].set_lookup_idx = set_multi_lookup_idx;
-   vtab[SET_MULTI].iter_init      = multi_iter_init;
-   vtab[SET_MULTI].iter_next      = iter_next;
-   vtab[SET_MULTI].iter_exit      = iter_exit;
-   vtab[SET_MULTI].iter_reset     = iter_reset;
+   vtab[SET_MULTI].set_get_tuple  = set_multi_get_tuple;
+   vtab[SET_MULTI].iter_init      = set_multi_iter_init;
+   vtab[SET_MULTI].iter_next      = set_multi_iter_next;
+   vtab[SET_MULTI].iter_exit      = set_multi_iter_exit;
+   vtab[SET_MULTI].iter_reset     = set_multi_iter_reset;
 }
 
 
