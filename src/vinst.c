@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.13 2003/10/27 13:57:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.14 2003/10/29 17:07:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -462,7 +462,6 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
       symbol_add_entry(sym, entry_bplus);
       symbol_add_entry(sym, entry_bminus);
    }
-   //------------------------------------------------------
    term = term_new(1);
    term_add_elem(term, entry_result, numb_one());
 
@@ -1060,7 +1059,6 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_xminus, numb_minusone());
    create_new_constraint(cname, "_d", term, CON_EQUAL, numb_zero(), flags);
 
-   //------------------------------------------------------
    term = term_new(1);
    term_add_elem(term, entry_result, numb_one());
 
