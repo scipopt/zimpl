@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.7 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.8 2003/08/20 11:34:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -56,9 +56,9 @@ void xlp_write(FILE* fp, LpFormat format, const char* text)
    lps_write(lp, fp, format, text);
 }
 
-void xlp_transtable(FILE* fp)
+void xlp_transtable(FILE* fp, LpFormat format)
 {
-   lps_transtable(lp, fp, 8, "zimpl");
+   lps_transtable(lp, fp, format == LP_FORM_LPF ? LPF_NAME_LEN : MPS_NAME_LEN, "zimpl");
 }
 
 void xlp_orderfile(FILE* fp)

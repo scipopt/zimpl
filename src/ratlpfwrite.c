@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.3 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.4 2003/08/20 11:34:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -59,22 +59,25 @@ static void write_rhs(FILE* fp, const Con* con, ConType type)
    }
 }
 
-static void write_row(FILE* fp, const Con* con)
+static void write_row(FILE* fp, const Con* con, int namelen, char* name)
 {
    const Nzo* nzo;
    int        cnt = 0;
 
-   assert(fp  != NULL);
-   assert(con != NULL);
+   assert(fp   != NULL);
+   assert(con  != NULL);
+   assert(name != NULL);
    
    for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
    {
+      lps_makename(name, namelen + 1, nzo->var->name, nzo->var->number);
+
       if (mpq_equal(nzo->value, const_one))
-         fprintf(fp, " + %s", nzo->var->name);
+         fprintf(fp, " + %s", name);
       else if (mpq_equal(nzo->value, const_minus_one))
-         fprintf(fp, " - %s", nzo->var->name);
+         fprintf(fp, " - %s", name);
       else
-         fprintf(fp, " %+.15g %s", mpq_get_d(nzo->value), nzo->var->name);
+         fprintf(fp, " %+.15g %s", mpq_get_d(nzo->value), name);
       
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");         
@@ -87,14 +90,18 @@ static void write_row(FILE* fp, const Con* con)
 void lpf_write(
    const Lps*  lp,
    FILE*       fp,
-   const char* text)
+   const char* text,
+   int         namelen)
 {
    const Var* var;
    const Con* con;
    int   cnt;
-
-   assert(lp != NULL);
-   assert(fp != NULL);
+   char* name = malloc(namelen + 1);
+   
+   assert(lp       != NULL);
+   assert(fp       != NULL);
+   assert(namelen  >= 8);
+   assert(name     != NULL);
 
    if (text != NULL)
       fprintf(fp, "\\%s\n", text);   
@@ -110,12 +117,14 @@ void lpf_write(
       if (mpq_equal(var->cost, const_zero))
          continue;
 
+      lps_makename(name, namelen + 1, var->name, var->number);
+      
       if (mpq_equal(var->cost, const_one))
-         fprintf(fp, " + %s", var->name);
+         fprintf(fp, " + %s", name);
       else if (mpq_equal(var->cost, const_minus_one))
-         fprintf(fp, " - %s", var->name);
+         fprintf(fp, " - %s", name);
       else
-         fprintf(fp, " %+.15g %s", mpq_get_d(var->cost), var->name);
+         fprintf(fp, " %+.15g %s", mpq_get_d(var->cost), name);
       
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");
@@ -128,21 +137,23 @@ void lpf_write(
    {
       if (con->size > 0)
       {
+         lps_makename(name, namelen + 1, con->name, con->number);
+
          if (con->type == CON_RANGE)
          {
             /* Split ranges, because LP format can't handle them.
              */
-            fprintf(fp, " %sR:\n ", con->name);
-            write_row(fp, con);
+            fprintf(fp, " %sR:\n ", name);
+            write_row(fp, con, namelen, name);
             write_rhs(fp, con, CON_RHS);
-            fprintf(fp, " %sL:\n ", con->name);
-            write_row(fp, con);
+            fprintf(fp, " %sL:\n ", name);
+            write_row(fp, con, namelen, name);
             write_rhs(fp, con, CON_LHS);
          }
          else
          {
-            fprintf(fp, " %s:\n ", con->name);
-            write_row(fp, con);
+            fprintf(fp, " %s:\n ", name);
+            write_row(fp, con, namelen, name);
             write_rhs(fp, con, con->type);
          }
       }
@@ -154,16 +165,24 @@ void lpf_write(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
+      lps_makename(name, namelen + 1, var->name, var->number);
+
       if (var->type == VAR_FIXED)
-         fprintf(fp, " %s = %.15g", var->name, mpq_get_d(var->lower));
+         fprintf(fp, " %s = %.15g", name, mpq_get_d(var->lower));
       else
       {
+         /* A non fixed variable without any entries in the matrix
+          * or the objective function can be ignored.
+          */
+         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+            continue;
+
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             fprintf(fp, " %.15g", mpq_get_d(var->lower));
          else
             fprintf(fp, " -Inf");
          
-         fprintf(fp, " <= %s <= ", var->name);
+         fprintf(fp, " <= %s <= ", name);
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
             fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
@@ -172,6 +191,8 @@ void lpf_write(
       }
    }
    fprintf(fp, "End\n");
+
+   free(name);
 }   
 
 /* ------------------------------------------------------------------------- */

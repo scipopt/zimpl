@@ -33,7 +33,7 @@ subto c01: (3 * a[1] + 5) * x[1] >= a[2] * 2 - 4;
 subto c02: a[1] mod 2 >= x[1] / 7;
 subto c03: a[1] div 2 >= x[1] - 3;
 subto c04: card(I) * x[1] >= abs(a[1] - a[2]);
-#subto c05: a[1]^a[2] <= x[1] * 3!;
+subto c05: a[1]^a[2] <= x[1] * 3!;
 subto c06: floor(a[1] / 3) <= x[2] * ceil(a[2] / 7);
 #subto c07: -exp(ln(a[4])) >= -x[3];
 #subto c08: x[3] + log(10) == -6;

@@ -31,7 +31,7 @@ set E := (B + C) * A;
 set F := B inter C;
 set G := { 1 .. 5 } union D without B;
 set H := C symdiff { <1>, <2>, <7>, <8> };
-set J := <g> in G with g > 3; 
+set J := { <g> in G with g > 3 }; 
 set K := { <"a", 1>, <"b", 7>, <"c", 9> };
 set L[B] := <1> { "a", "b" },
             <2> { "c", "d", "e" },
@@ -44,7 +44,9 @@ set R   := indexset(P);
 set S   := R;
 set T := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
 set U := proj(T, <3,1>);
-set V := <a,2> in A*B with a == "a" or a == "b";
+set V := { <a,2> in A*B with a == "a" or a == "b" };
+set W[<i> in B] := { <c> in C with c <= i };
+set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
 
 var a[A];
 var b[B];
@@ -63,6 +65,7 @@ var p[C];
 var q[C];
 var u[U];
 var v[V];
+var xabcdefghijklmno[X];
 
 subto a1: sum <i> in A : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= 0;
@@ -85,7 +88,9 @@ subto q1: forall <i1> in indexset(Q) do
    sum <i2> in Q[i1] : q[i2] >= 0;
 subto u1: forall <i1,i2> in U do u[i1,i2] >= 0;
 subto v1: sum <i1,i2> in V : v[i1,i2] >= 0;
-
+subto w1: forall <i> in B do
+   sum <w> in W[i]: n[w] >= 0; 
+subto x1: sum <i> in X : xabcdefghijklmno[i] >= 0;
 
 
 

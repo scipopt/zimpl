@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.38 2003/08/19 11:27:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.39 2003/08/20 11:34:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -126,20 +126,20 @@ stmt
  * ----------------------------------------------------------------------------
  */
 decl_set
-   : DECLSET NAME ASGN idxset ';' {
+   : DECLSET NAME ASGN sexpr ';' {
          $$ = code_new_inst(i_newsym_set1, 3,
             code_new_name($2),                                       /* Name */
             code_new_inst(i_idxset_new, 3,                      /* index set */
                code_new_inst(i_tuple_empty, 0),
                code_new_inst(i_set_empty, 1, code_new_size(0)),
                code_new_inst(i_bool_true, 0)),
-            $4);                                                  /* initial */
+            $4);                                              /* initial set */
       }
-   | DECLSET NAME '[' idxset ']' ASGN idxset ';' {
+   | DECLSET NAME '[' idxset ']' ASGN sexpr ';' {
          $$ = code_new_inst(i_newsym_set1, 3,
             code_new_name($2),                                       /* Name */
             $4,                                                 /* index set */
-            $7);                                                   /* idxset */
+            $7);                                                      /* set */
       }
    | DECLSET NAME '[' idxset ']' ASGN set_entry_list ';' {
          $$ = code_new_inst(i_newsym_set2, 3,
@@ -306,28 +306,18 @@ constraint
            code_new_inst(i_term_expr, 1, $1),
            $2, $3, code_new_bits($4));
      }
-   | expr con_type term con_type expr con_attr_list {
-        $$ = code_new_inst(i_rangeconst, 6, $1, $2, $3, $4, $5, code_new_bits($6)); 
+   | expr con_type term CMP_LE expr con_attr_list {
+        $$ = code_new_inst(i_rangeconst, 6, $1, $3, $5, $2,
+           code_new_contype(CON_RHS), code_new_bits($6)); 
+     }
+   | expr con_type term CMP_GE expr con_attr_list {
+        $$ = code_new_inst(i_rangeconst, 6, $5, $3, $1, $2,
+           code_new_contype(CON_LHS), code_new_bits($6)); 
      }
    | FORALL idxset DO constraint {
         $$ = code_new_inst(i_forall, 2, $2, $4);
      }
    ;
-/*
-   : term con_type expr con_attr_list {
-        $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
-     }   
-
-   : DECLSUB NAME DO term con_type expr con_attr_list ';' {
-         $$ = code_new_inst(i_once, 5, code_new_name($2),
-            $4, $5, $6, code_new_bits($7));
-      }
-   | DECLSUB NAME DO FORALL idxset DO term con_type expr con_attr_list ';' {
-         $$ = code_new_inst(i_forall, 6, code_new_name($2),
-            $5, $7, $8, $9, code_new_bits($10)); 
-      }
-   ;
-*/
 
 con_attr_list
    : /* empty */                { $$ = 0; }

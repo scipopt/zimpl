@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.31 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.32 2003/08/20 11:34:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -57,7 +57,7 @@ Bool mangling  = TRUE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.99a Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 1.99b Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -301,7 +301,7 @@ int main(int argc, char* const* argv)
       perror(" ");
       abort();
    }
-   xlp_transtable(fp);
+   xlp_transtable(fp, format);
 
    check_write_ok(fp, tblfile);
 

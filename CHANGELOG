@@ -1,5 +1,20 @@
+ - Changed gererated numbers for long names to 
+   hex. This needs less space.
+
+ - Names are now 8 characters long for MPS output,
+   but 16 for LPF. This is accroding to the CPLEX 7.0
+   specification. Starting at 8.0 it is possible to 
+   have 255 character long names, we want to stay 
+   compatible with the older versions.
+
+ - Changed the syntax for set initialisation.
+   if an indexset is assigned it has to be included in
+   braces like set A := { <i> in I with i > 5 }
+
  - It is now possible to write { <a> in A with a > 5 }
-   whenever a set is needed.
+   whenever a set is needed. This means also it is now
+   possible to nest indexsets, like in 
+   { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }
 
  - Ranges are now possible: 7 <= 5x + 6 y <= 99
    (MPS output not yet here)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.3 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.4 2003/08/20 11:34:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -34,18 +34,9 @@
 #include <gmp.h>
 
 #include "bool.h"
-
+#include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
-
-#if 0
-#include "mshell.h"
-#include "portab.h"
-#include "mme.h"
-#include "lpstore.h"
-#endif
-
-#define MPS_NAME_LEN  8
 
 static void write_data(
    FILE*        fp,
@@ -80,13 +71,11 @@ static void write_vars(
    const Nzo*  nzo;
    char  vtmp  [13];
    char  ctmp  [13];
-   mpq_t zero;
    mpq_t temp;
    
    assert(lp != NULL);
    assert(fp != NULL);
 
-   mpq_init(zero);
    mpq_init(temp);
    
    for(var = lp->var_root; var != NULL; var = var->next)
@@ -97,7 +86,7 @@ static void write_vars(
       /* Only variables with a cost not equal zero, need to be included
        * in the objective function
        */
-      if (!mpq_equal(var->cost, zero))
+      if (!mpq_equal(var->cost, const_zero))
       {
          lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
@@ -116,7 +105,7 @@ static void write_vars(
       for(nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {
          assert(nzo->var == var);
-         assert(!mpq_equal(nzo->value, zero));
+         assert(!mpq_equal(nzo->value, const_zero));
 
          lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
          lps_makename(ctmp, MPS_NAME_LEN + 1, nzo->con->name, nzo->con->number);
@@ -124,7 +113,6 @@ static void write_vars(
          write_data(fp, TRUE, ' ', ' ', vtmp, ctmp, nzo->value);
       }
    }   
-   mpq_clear(zero);
    mpq_clear(temp);
 }
 
@@ -137,13 +125,10 @@ void mps_write(
    const Con*  con;
    char  vtmp  [13];
    char  ctmp  [13];
-   mpq_t zero;
    int   indicator;
    
    assert(lp != NULL);
    assert(fp != NULL);
-
-   mpq_init(zero);
 
    if (text != NULL)
       fprintf(fp, "* %s\n", text);
@@ -151,7 +136,7 @@ void mps_write(
    fprintf(fp, "NAME        %8.8s\n", lp->name);
    fprintf(fp, "ROWS\n");
    
-   write_data(fp, FALSE, 'N', ' ', "OBJECTIV", "", zero);
+   write_data(fp, FALSE, 'N', ' ', "OBJECTIV", "", const_zero);
 
    for(con = lp->con_root; con != NULL; con = con->next)
    {
@@ -177,7 +162,7 @@ void mps_write(
          default :
             abort();
          }
-         write_data(fp, FALSE, indicator, ' ', ctmp, "", zero);
+         write_data(fp, FALSE, indicator, ' ', ctmp, "", const_zero);
       }
    }
    fprintf(fp, "COLUMNS\n");
@@ -201,7 +186,7 @@ void mps_write(
    
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      if (!mpq_equal(con->rhs, zero))
+      if (!mpq_equal(con->rhs, const_zero))
       {
          lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
          write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
@@ -228,20 +213,24 @@ void mps_write(
          write_data(fp, TRUE, 'F', 'X', "BOUND", vtmp, var->lower);
       else
       {
+         /* A non fixed variable without any entries in the matrix
+          * or the objective function can be ignored.
+          */
+         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+            continue;
+
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             write_data(fp, TRUE, 'L', 'O', "BOUND", vtmp, var->lower);
          else
-            write_data(fp, FALSE, 'M', 'I', "BOUND", vtmp, zero);
+            write_data(fp, FALSE, 'M', 'I', "BOUND", vtmp, const_zero);
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
             write_data(fp, TRUE, 'U', 'P', "BOUND", vtmp, var->upper);
          else
-            write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, zero);
+            write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, const_zero);
       }
    }
    fprintf(fp, "ENDATA\n");
-
-   mpq_clear(zero);
 }   
 
 

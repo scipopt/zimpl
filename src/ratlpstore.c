@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.7 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.8 2003/08/20 11:34:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -34,6 +34,7 @@
 
 #include "lint.h"
 #include "bool.h"
+#include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
 
@@ -1474,7 +1475,7 @@ void lps_write(
    switch(format)
    {
    case LP_FORM_LPF :
-      lpf_write(lp, fp, text);
+      lpf_write(lp, fp, text, LPF_NAME_LEN);
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);
@@ -1513,7 +1514,7 @@ void lps_makename(
 
       assert(temp != NULL);
       
-      sprintf(temp, "%d", no);
+      sprintf(temp, "%x", no);
 
       /* -2 : fuer '#' und '\0'
        */
@@ -1534,44 +1535,42 @@ void lps_makename(
    }
 }
 
-void lps_transtable(const Lps* lp, FILE* fp, int size, const char* head)
+void lps_transtable(const Lps* lp, FILE* fp, int namelen, const char* head)
 {
    Var*  var;
    Con*  con;
-   char* temp = malloc((size_t)size + 1);
-   mpq_t zero;
+   char* temp = malloc((size_t)namelen + 1);
    
    assert(lps_valid(lp));
-   assert(fp   != NULL);
-   assert(size >  0);
-   assert(head != NULL);
-   assert(temp != NULL);
+   assert(fp      != NULL);
+   assert(namelen >= 8);
+   assert(head    != NULL);
+   assert(temp    != NULL);
 
-   mpq_init(zero);
-   
    lps_number(lp);
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      lps_makename(temp, size + 1, var->name, var->number);
+      lps_makename(temp, namelen + 1, var->name, var->number);
 
       if (var->type == VAR_FIXED)
          fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\t%.16e\n",
-            head, var->number, size, temp, var->name, mpq_get_d(var->lower));
+            head, var->number, namelen, temp, var->name, mpq_get_d(var->lower));
       else
-         fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
-            head, var->number, size, temp, var->name);
+      {
+         if (var->size > 0 || !mpq_equal(var->cost, const_zero))
+            fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
+               head, var->number, namelen, temp, var->name);
+      }
    }
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      lps_makename(temp, size + 1, con->name, con->number);
+      lps_makename(temp, namelen + 1, con->name, con->number);
       
       fprintf(fp, "%s\tc %7d\t%-*s\t\"%s\"\t%.16e\n",
-         head, con->number, size, temp, con->name, mpq_get_d(con->scale));
+         head, con->number, namelen, temp, con->name, mpq_get_d(con->scale));
    }
    free(temp);
-   
-   mpq_clear(zero);
 }
 
 void lps_scale(const Lps* lp)

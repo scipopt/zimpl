@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.4 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.5 2003/08/20 11:34:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -133,7 +133,7 @@ extern void         lps_setstartval(Var* var, const mpq_t startval);
 /*lint -sem(        lps_write, 1p == 1 && 2p == 1 && nulterm(4)) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, 1p == 1 && 2p == 1 && 3n > 0 && 4p && nulterm(4)) */
-extern void         lps_transtable(const Lps* lp, FILE* fp, int size, const char* head);
+extern void         lps_transtable(const Lps* lp, FILE* fp, int namelen, const char* head);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern void         lps_scale(const Lps* lp);
 
@@ -145,11 +145,15 @@ extern Lps*         lps_readmps(const char* filename);
 
 /* ratlpfwrite.c
  */
+#define LPF_NAME_LEN  16
+
 /*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
-extern void         lpf_write(const Lps* lp, FILE* fp, const char* text);
+extern void         lpf_write(const Lps* lp, FILE* fp, const char* text, int namelen);
 
 /* ratmpswrite.c
  */
+#define MPS_NAME_LEN  8
+
 /*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
 extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
 

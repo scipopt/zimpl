@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.46 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.47 2003/08/20 11:34:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -94,7 +94,7 @@ CodeNode* i_constraint(CodeNode* self)
    Trace("i_constraint");
    
    assert(code_is_valid(self));
-   
+
    term_lhs   = code_eval_child_term(self, 0);
    type       = code_eval_child_contype(self, 1);
    term_rhs   = code_eval_child_term(self, 2);
@@ -143,33 +143,26 @@ CodeNode* i_rangeconst(CodeNode* self)
    Term*        term;
    Numb*        lhs;
    Numb*        rhs;
-   const Numb*  numb;
-   ConType      type1;
-   ConType      type2;
    Con*         con;
    unsigned int flags;
-   int          res1;
-   int          res2;
    
-   Trace("i_constraint");
+   Trace("i_rangeconst");
    
    assert(code_is_valid(self));
    
-   lhs        = numb_copy(code_eval_child_numb(self, 0));
-   type1      = code_eval_child_contype(self, 1);
-   term       = term_copy(code_eval_child_term(self, 2));
-   type2      = code_eval_child_contype(self, 3);
-   rhs        = numb_copy(code_eval_child_numb(self, 4));
-   flags      = code_eval_child_bits(self, 5);
-
-   if (type1 != type2 || type1 == CON_EQUAL)
+   /* It has to be either l <= x <= u, or u >= x >= l
+    */
+   if (code_eval_child_contype(self, 4) != code_eval_child_contype(self, 5))
    {
-      fprintf(stderr, "*** Error: Ranged constraint with different comparison operators\n");
+      fprintf(stderr, "*** Error: Range must be l <= x <= u, or u >= x >= l\n");
       code_errmsg(self);
       abort();
    }
-   assert(type1 == type2);
-   assert(type1 == CON_LHS || type1 == CON_RHS);
+   
+   lhs        = numb_copy(code_eval_child_numb(self, 0));
+   term       = term_copy(code_eval_child_term(self, 1));
+   rhs        = numb_copy(code_eval_child_numb(self, 2));
+   flags      = code_eval_child_bits(self, 3);
 
    numb_sub(lhs, term_get_constant(term));
    numb_sub(rhs, term_get_constant(term));
@@ -178,13 +171,9 @@ CodeNode* i_rangeconst(CodeNode* self)
     */
    if (term_get_elements(term) == 0)
    {
-      res1 = numb_cmp(lhs, numb_zero());
-      res2 = numb_cmp(rhs, numb_zero());
-
       /* If zero, trival ok, otherwise ...
        */
-      if (  (type1 == CON_LHS && (res1 < 0 || res2 > 0))
-         || (type1 == CON_RHS && (res1 > 0 || res2 < 0)))
+      if (numb_cmp(lhs, numb_zero()) > 0 || numb_cmp(rhs, numb_zero()) < 0)
       {
          fprintf(stderr, "*** Error: Empty Term with nonempty LHS/RHS, contraint trivally violated\n");
          code_errmsg(self);
@@ -193,20 +182,13 @@ CodeNode* i_rangeconst(CodeNode* self)
    }
    else
    {
-      res1 = numb_cmp(lhs, rhs);
-
-      if (  (type1 == CON_LHS && res1 < 0)
-         || (type1 == CON_RHS && res1 > 0))
+      if (numb_cmp(lhs, rhs) > 0)
       {
          fprintf(stderr, "*** Error: LHS/RHS contradiction, contraint trivally violated\n");
          code_errmsg(self);
          abort();
       }
-
-      if (type1 == CON_LHS)
-         con = xlp_addcon(conname_get(), CON_RANGE, lhs, rhs, flags);
-      else
-         con = xlp_addcon(conname_get(), CON_RANGE, rhs, lhs, flags);
+      con = xlp_addcon(conname_get(), CON_RANGE, lhs, rhs, flags);
          
       term_sub_constant(term, term_get_constant(term));
       term_to_nzo(term, con);
@@ -569,7 +551,7 @@ CodeNode* i_expr_fac(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   fac = code_eval_child_numb(self, 1);
+   fac = code_eval_child_numb(self, 0);
 
    if (!numb_is_int(fac))
    {
@@ -1505,7 +1487,7 @@ CodeNode* i_newsym_set1(CodeNode* self)
 
    const Tuple*  pattern;
    const Tuple*  tuple;
-   Set*          newset;
+   const Set*    newset;
    Entry*        entry;
    int           idx;
    
@@ -1525,12 +1507,13 @@ CodeNode* i_newsym_set1(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
 
-      newset  = set_from_idxset(code_eval_child_idxset(self, 2)); 
+      //      newset  = set_from_idxset(code_eval_child_idxset(self, 2));
+      newset  = code_eval_child_set(self, 2);
       entry   = entry_new_set(tuple, newset);
 
       symbol_add_entry(sym, entry);
 
-      set_free(newset);
+      // set_free(newset);
       entry_free(entry);
 
       local_drop_frame();
