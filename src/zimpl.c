@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.18 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.19 2003/02/11 07:46:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -219,7 +219,7 @@ int main(int argc, char* const* argv)
    outfile = change_extention(basefile,
       (format == LP_FORM_LPF) ? ".lp" : ".mps");
    tblfile = change_extention(basefile, ".tbl");
-   ordfile = change_extention(basefile, ".orf");
+   ordfile = change_extention(basefile, ".ord");
 
    if (filter == NULL)
       filter = strdup("cat >%s");
