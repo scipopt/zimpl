@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.34 2003/08/04 08:15:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.35 2003/08/07 08:56:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -169,6 +169,10 @@ extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b);
 extern void         numb_intdiv(Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_new_intdiv, 1p == 1 && 2p == 1, @p == 1) */
 extern Numb*        numb_new_intdiv(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_pow, 1p == 1 && 2n >= 0, @p == 1) */
+extern Numb*        numb_new_pow(const Numb* base, int expo);
+/*lint -sem(        numb_new_fac, 1n >= 0, @p == 1) */
+extern Numb*        numb_new_fac(int n);
 /*lint -sem(        numb_mod, 1p == 1 && 2p == 1) */
 extern void         numb_mod(Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_new_mod, 1p == 1 && 2p == 1, @p == 1) */

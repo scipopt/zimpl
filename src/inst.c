@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.44 2003/08/04 08:15:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.45 2003/08/07 08:56:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -178,7 +178,7 @@ CodeNode* i_expr_add(CodeNode* self)
 {
    Numb* numb;
    
-   Trace("i_add");
+   Trace("i_expr_add");
 
    assert(code_is_valid(self));
 
@@ -195,7 +195,7 @@ CodeNode* i_expr_sub(CodeNode* self)
 {
    Numb* numb;
 
-   Trace("i_sub");
+   Trace("i_expr_sub");
 
    assert(code_is_valid(self));
 
@@ -212,7 +212,7 @@ CodeNode* i_expr_mul(CodeNode* self)
 {
    Numb* numb;
 
-   Trace("i_mul");
+   Trace("i_expr_mul");
 
    assert(code_is_valid(self));
 
@@ -230,7 +230,7 @@ CodeNode* i_expr_div(CodeNode* self)
    Numb*       numb;
    const Numb* divisor;
    
-   Trace("i_div");
+   Trace("i_expr_div");
 
    assert(code_is_valid(self));
 
@@ -256,7 +256,7 @@ CodeNode* i_expr_mod(CodeNode* self)
    Numb*       numb;
    const Numb* divisor;
    
-   Trace("i_mod");
+   Trace("i_expr_mod");
 
    assert(code_is_valid(self));
 
@@ -282,7 +282,7 @@ CodeNode* i_expr_intdiv(CodeNode* self)
    Numb*       numb;
    const Numb* divisor;
    
-   Trace("i_intdiv");
+   Trace("i_expr_intdiv");
 
    assert(code_is_valid(self));
 
@@ -305,16 +305,37 @@ CodeNode* i_expr_intdiv(CodeNode* self)
 
 CodeNode* i_expr_pow(CodeNode* self)
 {
-   Trace("i_pow");
+   const Numb* expo;
+   Numb*       numb;
+   int         ex;
+   
+   Trace("i_expr_pow");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self,
-      pow(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
-#endif
+   expo = code_eval_child_numb(self, 1);
+
+   if (!numb_is_int(expo))
+   {
+      fprintf(stderr, "*** Error: exponent value ");
+      numb_print(stderr, expo);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   ex = numb_toint(expo);
+
+   if (ex < 0)
+   {
+      fprintf(stderr, "*** Error: negative exponent\n");
+      code_errmsg(self);
+      abort();
+   }
+   numb = numb_new_pow(code_eval_child_numb(self, 0), ex);
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
    
    return self;
 }
@@ -323,7 +344,7 @@ CodeNode* i_expr_neg(CodeNode* self)
 {
    Numb* numb;
    
-   Trace("i_neg");
+   Trace("i_expr_neg");
 
    assert(code_is_valid(self));
 
@@ -341,7 +362,7 @@ CodeNode* i_expr_abs(CodeNode* self)
 {
    Numb* numb;
    
-   Trace("i_abs");
+   Trace("i_expr_abs");
 
    assert(code_is_valid(self));
 
@@ -359,7 +380,7 @@ CodeNode* i_expr_floor(CodeNode* self)
 {
    Numb* numb;
    
-   Trace("i_floor");
+   Trace("i_expr_floor");
 
    assert(code_is_valid(self));
 
@@ -377,7 +398,7 @@ CodeNode* i_expr_ceil(CodeNode* self)
 {
    Numb* numb;
    
-   Trace("i_ceil");
+   Trace("i_expr_ceil");
 
    assert(code_is_valid(self));
 
@@ -395,7 +416,7 @@ CodeNode* i_expr_log(CodeNode* self)
 {
    double exponent;
    
-   Trace("i_log");
+   Trace("i_expr_log");
 
    assert(code_is_valid(self));
 
@@ -420,7 +441,7 @@ CodeNode* i_expr_ln(CodeNode* self)
 {
    double exponent;
    
-   Trace("i_ln");
+   Trace("i_expr_ln");
 
    assert(code_is_valid(self));
 
@@ -443,7 +464,7 @@ CodeNode* i_expr_ln(CodeNode* self)
 
 CodeNode* i_expr_exp(CodeNode* self)
 {
-   Trace("i_exp");
+   Trace("i_expr_exp");
 
    assert(code_is_valid(self));
 
@@ -458,27 +479,44 @@ CodeNode* i_expr_exp(CodeNode* self)
 
 CodeNode* i_expr_fac(CodeNode* self)
 {
-   double x;
-   double y = 1.0;
-   double z;
+   const Numb* fac;
+   Numb*       numb;
+   int         n;
    
-   Trace("i_exp");
+   Trace("i_expr_fac");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   /* do this in numb.c
-    */
-   x = code_eval_child_numb(self, 0);
+   fac = code_eval_child_numb(self, 1);
 
-   for(z = 2.0; z <= x; z += 1.0)
-      y *= z;
+   if (!numb_is_int(fac))
+   {
+      fprintf(stderr, "*** Error: factorial value ");
+      numb_print(stderr, fac);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   n = numb_toint(fac);
 
-   code_value_numb(self, y);
-#endif
-   
+   if (n < 0)
+   {
+      fprintf(stderr, "*** Error: negative exponent\n");
+      code_errmsg(self);
+      abort();
+   }
+   if (n > 1000)
+   {
+      fprintf(stderr, "*** Error: Timeout!\n");
+      code_errmsg(self);
+      abort();
+   }
+   numb = numb_new_fac(n);
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+
    return self;
 }
 
