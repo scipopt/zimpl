@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.17 2004/05/01 09:44:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.18 2004/05/09 09:12:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -532,16 +532,17 @@ void numb_floor(Numb* numb)
 
 Numb* numb_new_log(const Numb* numb)
 {
-   char   temp[32];
+   char   temp[256];
    double d;
    
    assert(numb_is_valid(numb));
 
    d = log10(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || !finite(d))
+   if (!finite(d))
    {
-      perror("*** Error 700: log()");
+      sprintf(temp, "*** Error 700: log(%f)", mpq_get_d(numb->value.numb));
+      perror(temp);
       return NULL;
    }
    sprintf(temp, "%.16e", d);
@@ -551,16 +552,17 @@ Numb* numb_new_log(const Numb* numb)
 
 Numb* numb_new_sqrt(const Numb* numb)
 {
-   char   temp[32];
+   char   temp[256];
    double d;
    
    assert(numb_is_valid(numb));
 
    d = sqrt(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || !finite(d))
+   if (!finite(d))
    {
-      perror("*** Error 701: sqrt()");
+      sprintf(temp, "*** Error 701: sqrt(%f)", mpq_get_d(numb->value.numb));
+      perror(temp);
       return NULL;
    }
    sprintf(temp, "%.16e", d);
@@ -581,16 +583,17 @@ Numb* numb_new_exp(const Numb* numb)
 
 Numb* numb_new_ln(const Numb* numb)
 {
-   char   temp[32];
+   char   temp[256];
    double d;
    
    assert(numb_is_valid(numb));
 
    d = log(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || !finite(d))
+   if (!finite(d))
    {
-      perror("*** Error 702: ln()");
+      sprintf(temp, "*** Error 702: ln(%f)", mpq_get_d(numb->value.numb));
+      perror(temp);
       return NULL;
    }
    sprintf(temp, "%.16e", d);

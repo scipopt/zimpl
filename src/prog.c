@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.9 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.10 2004/05/09 09:12:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -25,11 +25,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
+#include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -135,6 +138,14 @@ void prog_execute(const Prog* prog)
    {
       stmt_parse(prog->stmt[i]);
       stmt_execute(prog->stmt[i]);
+
+      /* These calls should make sure, that all output is really
+       * flushed out, even in a Batch environment.
+       */
+      fflush(stdout);
+      fflush(stderr);
+      (void)fsync(fileno(stdout));
+      (void)fsync(fileno(stderr));
    }
    if (verbose >= VERB_NORMAL)
       printf("Instructions evaluated: %u\n", code_get_inst_count());

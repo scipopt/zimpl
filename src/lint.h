@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.7 2003/10/29 17:47:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.8 2004/05/09 09:12:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -58,6 +58,8 @@ extern FILE* popen(const char *command, const char *type);
 /*lint -function(fclose, pclose) */
 /*lint -esym(534, pclose) */
 extern int   pclose(FILE *stream);
+/*lint -sem(fsync, 1n >= 0, @n <= 0) */
+extern int   fsync(int fd);
 
 /* zlib support
  */

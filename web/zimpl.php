@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.26 2004/05/03 12:06:58 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.27 2004/05/09 09:12:07 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2004/05/03 12:06:58 $">
+<meta name="date" content="$Date: 2004/05/09 09:12:07 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -78,6 +78,7 @@ is available. Zimpl has even been successfully compiled for Windows using
 <h3>What's new in 2.02</h3>
 <ul>
 <li>Much faster set implementation
+<li>Zimpl can write .mst files
 <li>Bug fixes and enhancements.
 </ul>
 <h3>Download</h3>
@@ -177,7 +178,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2004/05/03 12:06:58 $ by
+Last Update $Date: 2004/05/09 09:12:07 $ by
 <a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch,
 <a href="/impressum.en.html">Imprint</a>
