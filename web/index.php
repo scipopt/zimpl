@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.22 2003/10/31 08:58:12 bzfkocht Exp $ -->
+<!-- $Id: index.php,v 1.1 2003/10/31 08:58:12 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
