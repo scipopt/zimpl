@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.6 2002/05/29 08:51:38 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.7 2002/06/09 14:15:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -67,7 +67,7 @@ void lpf_write(
          if (EQ(var->cost, 1.0))
             fprintf(fp, " + %s", tmp);
          else
-            fprintf(fp, " %+.16g %s", var->cost, tmp);
+            fprintf(fp, " %+.15g %s", var->cost, tmp);
 
          if (++cnt % 6 == 0)
             fprintf(fp, "\n ");
@@ -107,7 +107,7 @@ void lpf_write(
             if (EQ(nzo->value, 1.0))
                fprintf(fp, " + %s", tmp);
             else
-               fprintf(fp, " %+.16g %s", nzo->value, tmp);
+               fprintf(fp, " %+.15g %s", nzo->value, tmp);
             
             /* if (++cnt % 6 == 0) */
                fprintf(fp, "\n ");         
@@ -126,7 +126,7 @@ void lpf_write(
          default :
             abort();
          }
-         fprintf(fp, "%.16g\n", con->rhs);
+         fprintf(fp, "%.15g\n", con->rhs);
       }
       if (!separate)
          break;
@@ -143,7 +143,7 @@ void lpf_write(
          if (LE(var->lower, -INFINITY))
             fprintf(fp, " -Inf");
          else
-            fprintf(fp, " %.16g", var->lower);
+            fprintf(fp, " %.15g", var->lower);
 
          lps_makename(tmp, MPS_NAME_LEN + 1, var->name, var->number);
          fprintf(fp, " <= %s <= ", tmp);
@@ -151,7 +151,7 @@ void lpf_write(
          if (GE(var->upper, INFINITY))
             fprintf(fp, "+Inf\n");
          else
-            fprintf(fp, "%.16g\n", var->upper);
+            fprintf(fp, "%.15g\n", var->upper);
       }
    }
    for(first = TRUE, var = lp->var_root; var != NULL; var = var->next)
