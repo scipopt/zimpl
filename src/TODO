@@ -1,3 +1,6 @@
+Einige Systeme zählen in check.sh nur die
+ersten 16, dann nicht weiter.
+
 Zugriff auf die Bounds der Variablen einbauen. Z.B. mit
 getupper(x), getlower(x). Geht das überhaupt?
 

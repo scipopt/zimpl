@@ -1,0 +1,3 @@
+#--- $Id: make.onyx3,v 1.1 2003/12/06 10:55:58 bzfkocht Exp $
+CPPFLAGS        +=	-I/home/vis/bzfkocht/gmp/include 
+LDFLAGS         =	-Bstatic -L/home/vis/bzfkocht/gmp/lib -L/home/vis/bzfkocht/zlib-1.2.1 -lgmp -lz -lm
