@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.10 2002/09/15 08:53:20 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.11 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -240,7 +240,7 @@ void set_print(FILE* fp, const Set* set)
       tuple_print(fp, set->member[i]);
       fprintf(fp, "%s", (i < set->used - 1) ? "," : "");
    }
-   fprintf(fp, "}\n");
+   fprintf(fp, "}");
 }
 
 Set* set_range(double start, double end, double step)
@@ -489,3 +489,93 @@ Bool set_is_equal(const Set* set_a, const Set* set_b)
 
    return set_is_subseteq(set_a, set_b);
 }
+
+/* n elements in set
+ * k elements in subset
+ * i index for counter
+ */
+static int counter_inc(int* counter, int n, int k, int i)
+{
+   int ret = 0;
+   
+   counter[i]++;
+
+   if (counter[i] == n - i)
+   {
+      if (i == k - 1)
+         return 1;
+      
+      ret = counter_inc(counter, n, k, i + 1);
+
+      counter[i] = counter[i + 1] + 1;
+   }
+   return ret;
+}
+
+List* set_subsets_list(
+   const Set* set,
+   int        subset_size,
+   List*      list,
+   double*    idx)
+{
+   int*   counter;
+   int    i;
+   Set*   subset;
+   Elem*  elem;
+   Tuple* tuple;
+   Entry* entry;
+
+   assert(set_is_valid(set));
+   assert(subset_size <= set->used);
+   assert(idx         != NULL);
+   
+   counter = malloc(sizeof(*counter) * subset_size);
+
+   assert(counter != NULL);
+   
+   for(i = 0; i < subset_size; i++)
+      counter[i] = subset_size - 1 - i;
+
+   do
+   {
+      subset = set_new(set->dim);
+
+      for(i = 0; i < subset_size; i++)
+         set_add_member(subset, set->member[counter[i]],
+            SET_ADD_END, SET_CHECK_NONE);
+
+      elem  = elem_new_numb(*idx);
+      *idx += 1.0;
+      tuple = tuple_new(1);
+      tuple_set_elem(tuple, 0, elem);
+      entry = entry_new_set(tuple, subset);
+
+      if (list == NULL)
+         list = list_new_entry(entry);
+      else
+         list_add_entry(list, entry);
+
+      entry_free(entry);
+      tuple_free(tuple);
+      elem_free(elem);
+      set_free(subset);
+   }
+   while(!counter_inc(counter, set->used, subset_size, 0));
+
+   free(counter);
+
+   assert(list != NULL);
+
+   return list;
+}
+
+
+
+
+
+
+
+
+
+
+

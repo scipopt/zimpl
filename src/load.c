@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.8 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: load.c,v 1.9 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -153,10 +153,10 @@ static void add_stmt(
       type = STMT_MIN;
    else if (!strcmp(s, "maximize"))
       type = STMT_MAX;
-   else if (!strcmp(s, "data"))
-      type = STMT_DATA;
    else if (!strcmp(s, "subto"))
       type = STMT_CONS;
+   else if (!strcmp(s, "print"))
+      type = STMT_PRINT;
    else
       goto syntax_error;
 

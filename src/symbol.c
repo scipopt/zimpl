@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.12 2002/07/28 07:03:33 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.13 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -276,7 +276,7 @@ void symbol_print(FILE* fp, const Symbol* sym)
 
    fprintf(fp, "Index : ");
    set_print(fp, sym->set);
-   fprintf(fp, "Entries:\n");
+   fprintf(fp, "\nEntries:\n");
    
    for(i = 0; i < sym->used; i++)
    {

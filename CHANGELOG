@@ -1,3 +1,17 @@
+ - New function powerset(N) implemented. This generates all subsets
+   of N. Example: set S[] = powerset(N);
+
+ - New statement print started.
+
+ - Function subsets(N, k) implemented. This generates all
+   subsets of N with k elements. It is now possible to leave out
+   the indexing subset in a set declaration. So 
+   set S[] := subsets(N, 3);
+   is valid. Additional the new function indexset(S) returns the
+   index set of S.
+   
+ - Indizierte Sets implementiert.
+
  - added "!" factorial fucntion.
 
  - log, ln, exp where missing in the parser and the documentation.
@@ -38,7 +52,7 @@
 
  - New function proj(set,tuple) wich projects a set to the elements
    of the tuple given. Example: 
-   set A := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+   set A := { 1 to 9 } * { 10 to 19 } * { "A","B" };
    set B := proj(A, <3,1>) 
    will give: <"A",1>, <"A",2"> ... <"B",9>
 

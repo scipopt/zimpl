@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.27 2002/10/29 10:42:47 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.28 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1075,6 +1075,25 @@ CodeNode* i_set_proj(CodeNode* self)
    return self;
 }
 
+CodeNode* i_set_indexset(CodeNode* self)
+{
+   const char*   name;
+   const Symbol* sym;
+   
+   Trace("i_set_indexset");
+
+   assert(code_is_valid(self));
+
+   name  = code_eval_child_name(self, 0);
+   sym   = symbol_lookup(name);
+
+   assert(sym != NULL);
+
+   code_value_set(self, symbol_get_iset(sym));
+
+   return self;
+}
+
 /* ----------------------------------------------------------------------------
  * Tupel Funktionen
  * ----------------------------------------------------------------------------
@@ -1118,7 +1137,7 @@ CodeNode* i_tuple_empty(CodeNode* self)
  * Symbol Funktionen
  * ----------------------------------------------------------------------------
  */
-CodeNode* i_newsym_set(CodeNode* self)
+CodeNode* i_newsym_set1(CodeNode* self)
 {
    const char*   name    = code_eval_child_name(self, 0);
    const Set*    iset    = code_eval_child_set(self, 1);
@@ -1135,7 +1154,7 @@ CodeNode* i_newsym_set(CodeNode* self)
    Entry*        entry;
    int           idx;
    
-   Trace("i_newsym_set");
+   Trace("i_newsym_set1");
 
    assert(code_is_valid(self));
 
@@ -1169,6 +1188,109 @@ CodeNode* i_newsym_set(CodeNode* self)
    tuple_free(empty);
    entry_free(entry);
    
+   code_value_void(self);
+
+   return self;
+}
+
+static Set* iset_from_list(const CodeNode* self, const List* list)
+{
+   const Entry* entry;
+   const Tuple* tuple;
+   ListElem*    lelem = NULL;
+   Set*         set;
+
+   assert(self                 != NULL);
+   assert(list                 != NULL);
+   assert(list_get_elems(list) > 0);
+   
+   entry  = list_get_entry(list, &lelem);
+   tuple  = entry_get_tuple(entry);
+   set    = set_new(tuple_get_dim(tuple));
+
+   assert(set != NULL);
+
+   for(;;)
+   {
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
+      
+      entry  = list_get_entry(list, &lelem);
+
+      if (entry == NULL)
+         break;
+      
+      tuple  = entry_get_tuple(entry);
+
+      if (set_lookup(set, tuple))
+      {
+         fprintf(stderr, "*** Error: Duplicate index  ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " for initialisation\n");
+         code_errmsg(self);
+         abort();
+      }
+   }
+   return set;
+}
+   
+CodeNode* i_newsym_set2(CodeNode* self)
+{
+   const char*   name;
+   const IdxSet* idxset;
+   const Set*    iset;
+   Symbol*       sym;
+   const List*   list;
+   ListElem*     lelem;
+   const Entry*  entry;
+   const Tuple*  tuple;
+   int           count;
+   int           i;
+   
+   Trace("i_newsym_set2");
+
+   assert(code_is_valid(self));
+
+   name   = code_eval_child_name(self, 0);
+   idxset = code_eval_child_idxset(self, 1);
+   iset   = idxset_get_set(idxset);
+   list   = code_eval_child_list(self, 2);
+   count  = list_get_elems(list);
+
+   assert(list_is_entrylist(list));
+
+   /* Empty set ?
+    */
+   if (set_get_dim(iset) > 0)
+      sym  = symbol_new(name, SYM_SET, iset);
+   else
+   {
+      Set* set;
+      
+      /*set  = set_range(0.0, (double)list_get_elems(list) - 1.0, 1.0);*/
+      set  = iset_from_list(code_get_child(self, 2), list);
+      sym  = symbol_new(name, SYM_SET, set);
+      iset = symbol_get_iset(sym);
+      set_free(set);
+   }
+
+   lelem = NULL;
+   
+   for(i = 0; i < count; i++)
+   {
+      entry  = list_get_entry(list, &lelem);
+      tuple  = entry_get_tuple(entry);
+      
+      if (set_lookup(iset, tuple))
+         symbol_add_entry(sym, entry);
+      else
+      {
+         fprintf(stderr, "*** Error: Illegal element ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " for symbol\n");
+         code_errmsg(self);
+         abort();
+      }
+   }
    code_value_void(self);
 
    return self;
@@ -1395,13 +1517,17 @@ CodeNode* i_symbol_deref(CodeNode* self)
    tuple = code_eval_child_tuple(self, 1);   
    sym   = symbol_lookup(name);
 
+   /* wurde schon in mmlscan ueberprueft
+    */
+   assert(sym != NULL);
+#if 0
    if (sym == NULL)
    {
       fprintf(stderr, "*** Error: Unknown symbol \"%s\"\n", name);
       code_errmsg(self);
       abort();
    }
-
+#endif
    entry = symbol_lookup_entry(sym, tuple);
 
    if (NULL == entry)
@@ -1704,6 +1830,9 @@ CodeNode* i_entry(CodeNode* self)
    case CODE_STRG :
       entry = entry_new_strg(tuple, code_get_strg(child));
       break;
+   case CODE_SET :
+      entry = entry_new_set(tuple, code_get_set(child));
+      break;
    default :
       abort();
    }
@@ -1864,6 +1993,83 @@ CodeNode* i_entry_list_add(CodeNode* self)
    return self;
 }
 
+CodeNode* i_entry_list_subsets(CodeNode* self)
+{
+   const Set* set;
+   int        subset_size;
+   List*      list;
+   double     idx  = 0.0;
+   int        used;
+   
+   Trace("i_entry_list_subsets");
+
+   assert(code_is_valid(self));
+
+   set         = code_eval_child_set(self, 0);
+   used        = set_get_used(set);
+   subset_size = (int)code_eval_child_numb(self, 1);
+   
+   if (used < 1)
+   {
+      fprintf(stderr, "*** Error: Tried to build subsets of empty set\n");
+      code_errmsg(self);
+      abort();
+   }
+   assert(set_get_dim(set) > 0);
+   
+   if ((subset_size < 1) || (subset_size > used))
+   {
+      fprintf(stderr, "*** Error: Illegal size for subsets %d,\n",
+         subset_size);
+      fprintf(stderr, "           should be between 1 and %d\n",
+         set_get_used(set));
+      code_errmsg(self);
+      abort();
+   }
+   list = set_subsets_list(set, subset_size, NULL, &idx);
+
+   code_value_list(self, list);
+   
+   list_free(list);
+
+   return self;
+}
+
+CodeNode* i_entry_list_powerset(CodeNode* self)
+{
+   const Set* set;
+   List*      list = NULL;
+   double     idx  = 0.0;
+   int        i;
+   int        used;
+
+   Trace("i_entry_list_powerset");
+
+   assert(code_is_valid(self));
+
+   set  = code_eval_child_set(self, 0);
+   used = set_get_used(set);
+   
+   if (used < 1)
+   {
+      fprintf(stderr, "*** Error: Tried to build powerset of empty set\n");
+      code_errmsg(self);
+      abort();
+   }
+   assert(set_get_dim(set) > 0);
+
+   for(i = 1; i <= used; i++)
+      list = set_subsets_list(set, i, list, &idx);
+
+   assert(list != NULL);
+   
+   code_value_list(self, list);
+   
+   list_free(list);
+
+   return self;
+}
+
 static void objective(CodeNode* self, Bool minimize)
 {
    const char* name;
@@ -1899,6 +2105,50 @@ CodeNode* i_object_max(CodeNode* self)
    assert(code_is_valid(self));
 
    objective(self, FALSE);
+
+   return self;
+}
+
+CodeNode* i_print(CodeNode* self)
+{
+   CodeNode*     child;
+   const Symbol* sym;
+   const char*   name;
+
+   Trace("i_print");
+
+   assert(code_is_valid(self));
+
+   child = code_get_child(self, 0);
+
+   switch(code_get_type(child))
+   {
+   case CODE_NUMB :
+      printf("%.16g", code_get_numb(child));
+      break;
+   case CODE_STRG :
+      printf("\"%s\"", code_get_strg(child));
+      break;
+   case CODE_TUPLE :
+      tuple_print(stdout, code_get_tuple(child));
+      break;
+   case CODE_SET :
+      set_print(stdout, code_get_set(child));
+      break;
+   case CODE_NAME :
+      name = code_get_name(child);
+
+      if (NULL != (sym = symbol_lookup(name)))
+         symbol_print(stdout, sym);
+      else
+         printf("%s", name);
+      break;
+   default :
+      abort();
+   }
+   fputc('\n', stdout);
+   
+   code_value_void(self);
 
    return self;
 }

@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.24 2002/10/29 10:42:47 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.25 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -59,7 +59,7 @@ extern void yyerror(const char* s);
    CodeNode*    code;
 };
 
-%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
+%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB PRINT
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
 %token PRIORITY STARTVAL
@@ -71,6 +71,7 @@ extern void yyerror(const char* s);
 %token MOD DIV POW
 %token CARD ABS FLOOR CEIL LOG LN EXP
 %token READ AS SKIP USE COMMENT
+%token SUBSETS INDEXSET POWERSET
 %token <name> NUMBSYM
 %token <name> STRGSYM
 %token <name> VARSYM
@@ -82,9 +83,11 @@ extern void yyerror(const char* s);
 %token <bits> SEPARATE
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
+%type <code> stmt_print
 %type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
-%type <code> idxset subterm summand factor vexpr term entry entry_list
+%type <code> idxset subterm summand factor vexpr term
+%type <code> expr_entry expr_entry_list set_entry set_entry_list
 %type <code> var_type con_type lower upper priority startval condition
 %type <bits> con_attr con_attr_list
 
@@ -116,6 +119,7 @@ stmt
    | decl_var   { code_set_root($1); }
    | decl_obj   { code_set_root($1); }
    | decl_sub   { code_set_root($1); }
+   | stmt_print { code_set_root($1); }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -124,19 +128,52 @@ stmt
  */
 decl_set
    : DECLSET NAME ASGN idxset ';' {
-         $$ = code_new_inst(i_newsym_set, 3,
+         $$ = code_new_inst(i_newsym_set1, 3,
             code_new_name($2),                                /* Name */
             code_new_inst(i_set_empty, 1, code_new_size(0)),  /* index set */
             $4);                                              /* initial */
       }
+   | DECLSET NAME '[' idxset ']' ASGN set_entry_list ';' {
+         $$ = code_new_inst(i_newsym_set2, 3,
+            code_new_name($2),                                       /* Name */
+            $4,                                                 /* index set */
+            $7);                                   /* initial set_entry_list */
+      }
+   | DECLSET NAME '[' ']' ASGN set_entry_list ';' {
+         $$ = code_new_inst(i_newsym_set2, 3,
+            code_new_name($2),                                       /* Name */
+            code_new_inst(i_idxset_new, 3,                      /* index set */
+               code_new_inst(i_tuple_empty, 0),
+               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_bool_true, 0)),
+            $6);                                   /* initial set_entry_list */
+      }
    ;
+
+set_entry_list
+   : set_entry             { $$ = code_new_inst(i_entry_list_new, 1, $1); }
+   | set_entry_list ',' set_entry  {
+         $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
+      }
+   | SUBSETS '(' sexpr ',' expr ')' {
+         $$ = code_new_inst(i_entry_list_subsets, 2, $3, $5);
+      }
+   | POWERSET '(' sexpr ')' {
+         $$ = code_new_inst(i_entry_list_powerset, 1, $3);
+      }
+   ;
+
+set_entry
+   : tuple sexpr           { $$ = code_new_inst(i_entry, 2, $1, $2); }
+   ;
+
 
 /* ----------------------------------------------------------------------------
  * --- PARAM Declaration
  * ----------------------------------------------------------------------------
  */
 decl_par
-   : DECLPAR NAME '[' idxset ']' ASGN entry_list ';' {
+   : DECLPAR NAME '[' idxset ']' ASGN expr_entry_list ';' {
          $$ = code_new_inst(i_newsym_para1, 3, code_new_name($2), $4, $7);
       }
    | DECLPAR NAME '[' idxset ']' ASGN expr ';' {
@@ -207,18 +244,20 @@ startval
  * --- DATA 
  * ----------------------------------------------------------------------------
  */
-entry_list
-   : entry                 { $$ = code_new_inst(i_entry_list_new, 1, $1); }
-   | entry_list ',' entry  { $$ = code_new_inst(i_entry_list_add, 2, $1, $3); }
+expr_entry_list
+   : expr_entry            { $$ = code_new_inst(i_entry_list_new, 1, $1); }
+   | expr_entry_list ',' expr_entry  {
+         $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
+      }
    | read                  { $$ = code_new_inst(i_read, 1, $1); } 
    ;
 
-entry
+expr_entry
    : tuple expr            { $$ = code_new_inst(i_entry, 2, $1, $2); }
    ;
 
 /* ----------------------------------------------------------------------------
- * --- 
+ * --- Objective Declaration
  * ----------------------------------------------------------------------------
  */
 
@@ -232,7 +271,7 @@ decl_obj
    ;
 
 /* ----------------------------------------------------------------------------
- * --- 
+ * --- Subto Declaration
  * ----------------------------------------------------------------------------
  */
 decl_sub
@@ -336,6 +375,22 @@ vexpr
       } 
    ;   
 
+/* ----------------------------------------------------------------------------
+ * --- Print Statement
+ * ----------------------------------------------------------------------------
+ */
+stmt_print
+   : PRINT expr ';'    { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT tuple ';'   { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT sexpr ';'   { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT SETSYM ';'  { $$ = code_new_inst(i_print, 1, code_new_name($2)); }
+   ;
+
+
+/* ----------------------------------------------------------------------------
+ * --- 
+ * ----------------------------------------------------------------------------
+ */
 idxset
    : tuple IN sexpr condition {
          $$ = code_new_inst(i_idxset_new, 3, $1, $3, $4);
@@ -380,6 +435,9 @@ sexpr
    | '{' expr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
+      }
+   | INDEXSET '(' SETSYM ')' {
+         $$ = code_new_inst(i_set_indexset, 1, code_new_name($3));
       }
    ;
 
@@ -468,13 +526,13 @@ expr
    | expr DIV expr         { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
    | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
    | expr FAC              { $$ = code_new_inst(i_expr_fac, 1, $1); }
-   | CARD sexpr            { $$ = code_new_inst(i_expr_card, 1, $2); }
-   | ABS expr              { $$ = code_new_inst(i_expr_abs, 1, $2); }
-   | FLOOR expr            { $$ = code_new_inst(i_expr_floor, 1, $2); }
-   | CEIL expr             { $$ = code_new_inst(i_expr_ceil, 1, $2); }
-   | LOG expr              { $$ = code_new_inst(i_expr_log, 1, $2); }
-   | LN expr               { $$ = code_new_inst(i_expr_ln, 1, $2); }
-   | EXP expr              { $$ = code_new_inst(i_expr_exp, 1, $2); }
+   | CARD '(' sexpr ')'    { $$ = code_new_inst(i_expr_card, 1, $3); }
+   | ABS '(' expr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
+   | FLOOR '(' expr ')'    { $$ = code_new_inst(i_expr_floor, 1, $3); }
+   | CEIL '(' expr ')'     { $$ = code_new_inst(i_expr_ceil, 1, $3); }
+   | LOG '(' expr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }
+   | LN '(' expr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
+   | EXP '(' expr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }

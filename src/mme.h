@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.21 2002/10/13 16:05:21 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.22 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -42,7 +42,7 @@ enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
-   STMT_CONS, STMT_DATA
+   STMT_CONS, STMT_PRINT
 };
 
 enum code_type
@@ -138,11 +138,11 @@ extern void         list_add_tuple(List* list, const Tuple* tuple);
 extern void         list_add_entry(List* list, const Entry* entry);
 /*lint -sem(        list_get_elems, 1p == 1, @n >= 0) */
 extern int          list_get_elems(const List* list);
-/*lint -sem(        list_get_elem,  1p == 1, @p == 1) */
+/*lint -sem(        list_get_elem,  1p == 1) */
 extern const Elem*  list_get_elem(const List* list, ListElem** idxp);
-/*lint -sem(        list_get_tuple, 1p == 1, @p == 1) */
+/*lint -sem(        list_get_tuple, 1p == 1) */
 extern const Tuple* list_get_tuple(const List* list, ListElem** idxp);
-/*lint -sem(        list_get_entry, 1p == 1, @p == 1) */
+/*lint -sem(        list_get_entry, 1p == 1) */
 extern const Entry* list_get_entry(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
@@ -274,6 +274,10 @@ extern Bool         set_is_subseteq(const Set* set_a, const Set* set_b);
 extern Bool         set_is_subset(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_is_equal, 1p == 1 && 2p == 1) */
 extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_subset_list, 1p == 1 && 2n > 0 && 4p == 1, @p == 1) */
+extern List*        set_subsets_list(
+   const Set* set, int subset_size, List* list, double* idx);
+
 
 /* entry.c
  */

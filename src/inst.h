@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.14 2002/10/29 10:42:47 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.15 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -78,6 +78,10 @@ extern CodeNode* i_entry(CodeNode* self);
 extern CodeNode* i_entry_list_add(CodeNode* self);
 /*lint -sem(     i_entry_list_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_entry_list_new(CodeNode* self);
+/*lint -sem(     i_entry_list_powerset, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_entry_list_powerset(CodeNode* self);
+/*lint -sem(     i_entry_list_subsets, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_entry_list_subsets(CodeNode* self);
 /*lint -sem(     i_expr_abs, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_abs(CodeNode* self);
 /*lint -sem(     i_expr_add, 1p == 1, type(1), @p == 1p) */
@@ -128,8 +132,10 @@ extern CodeNode* i_local_deref(CodeNode* self);
 extern CodeNode* i_newsym_para1(CodeNode* self);
 /*lint -sem(     i_newsym_para2, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_newsym_para2(CodeNode* self);
-/*lint -sem(     i_newsym_set, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_newsym_set(CodeNode* self);
+/*lint -sem(     i_newsym_set1, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_newsym_set1(CodeNode* self);
+/*lint -sem(     i_newsym_set2, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_newsym_set2(CodeNode* self);
 /*lint -sem(     i_newsym_var, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_newsym_var(CodeNode* self);
 /*lint -sem(     i_nop, 1p == 1, type(1), @p == 1p) */
@@ -138,10 +144,14 @@ extern CodeNode* i_nop(CodeNode* self);
 extern CodeNode* i_object_max(CodeNode* self);
 /*lint -sem(     i_object_min, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_object_min(CodeNode* self);
+/*lint -sem(     i_print, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_print(CodeNode* self);
 /*lint -sem(     i_set_cross, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_cross(CodeNode* self);
 /*lint -sem(     i_set_empty, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_empty(CodeNode* self);
+/*lint -sem(     i_set_indexset, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_indexset(CodeNode* self);
 /*lint -sem(     i_set_inter, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_inter(CodeNode* self);
 /*lint -sem(     i_set_minus, 1p == 1, type(1), @p == 1p) */

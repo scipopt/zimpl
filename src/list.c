@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.9 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: list.c,v 1.10 2002/10/31 09:28:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -73,6 +73,7 @@ static void list_add_data(List* list, const ListData* data)
 
    assert(list_is_valid(list));
    assert(elem != NULL);
+   assert(data != NULL);
    
    elem->data = *data;
 
