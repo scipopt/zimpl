@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -46,9 +46,9 @@
 static Bool set_prod_is_valid(const Set* set)
 {
    return set != NULL
-      && SID_ok2(set, SET_PROD_SID)
+      && SID_ok2(set->prod, SET_PROD_SID)
       && set->head.refc > 0
-      && set->head.dim > 1;
+      && set->head.dim > 1
       && set_is_valid(set->prod.set_a)
       && set_is_valid(set->prod.set_b);
 }
@@ -56,32 +56,30 @@ static Bool set_prod_is_valid(const Set* set)
 static Bool set_prod_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
-      && SID_ok2(iter, SET_PROD_ITER_SID);
-#if 0
+      && SID_ok2(iter->prod, SET_PROD_ITER_SID)
       && iter->prod.iter_a != NULL
       && iter->prod.iter_b != NULL;
-#endif
 }
 
 /* ------------------------------------------------------------------------- 
  * --- set_new                 
  * -------------------------------------------------------------------------
  */
-Set* set_prod_new(Set* a, Set* b)
+Set* set_prod_new(const Set* a, const Set* b)
 {
    Set* set;
 
    assert(set_is_valid(a));
    assert(set_is_valid(b));
    
-   set = calloc(1, sizeof(set->prod));
+   set = calloc(1, sizeof(*set));
 
    assert(set != NULL);
 
-   set.head->refc    = 1;
-   set.head->dim     = a->head.dim + b->head.dim;
-   set.head->members = a->head.members * b->head.members;
-   set.head->type    = SET_PROD;
+   set->head.refc    = 1;
+   set->head.dim     = a->head.dim + b->head.dim;
+   set->head.members = a->head.members * b->head.members;
+   set->head.type    = SET_PROD;
 
    set->prod.set_a   = set_copy(a);
    set->prod.set_b   = set_copy(b);
@@ -143,15 +141,15 @@ static int set_prod_lookup_idx(const Set* set, const Tuple* tuple, int offset)
       
    assert(set_prod_is_valid(set));
    assert(tuple_is_valid(tuple));
-   assert(offset               >= 0);
-   assert(tuple_get_dim(tuple) <  offset);
+   assert(offset >= 0);
+   assert(offset <  tuple_get_dim(tuple));
 
    idx_a = set_lookup_idx(set->prod.set_a, tuple, offset);
 
    if (idx_a < 0)
       return -1;
 
-   offset += a.head->dim;
+   offset += set->prod.set_a->head.dim;
 
    idx_b = set_lookup_idx(set->prod.set_b, tuple, offset);
 
@@ -172,28 +170,20 @@ static SetIter* iter_init(
    const Tuple* pattern,
    int          offset)
 {
-   const SetVTab* vtab = set_get_vtab();
    SetIter*       iter;
-   Set*           a;
-   Set*           b;
 
-   assert(set_prod_is_valid(set.prod));
-   assert(tuple_is_valid(pattern));
+   assert(set_prod_is_valid(set));
+   assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset     >= 0);
-   assert(offset     <  tuple_get_dim(pattern));
+   assert(pattern == NULL || offset <  tuple_get_dim(pattern));
 
-   iter = calloc(1, sizeof(iter->prod));
+   iter = calloc(1, sizeof(*iter));
 
    assert(iter != NULL);
    
-   a = set->prod.set_a;
-   b = set->prod.set_b;
-
-   iter->prod.type_a = a.head->type;
-   iter->prod.type_b = b.head->type;
-   
-   iter->prod.iter_a = vtab[a.head->type].iter_init(a, pattern, offset);
-   iter->prod.iter_b = vtab[b.head->type].iter_init(b, pattern, offset + a.head->dim);
+   iter->prod.iter_a = set_iter_init_intern(set->prod.set_a, pattern, offset);
+   iter->prod.iter_b = set_iter_init_intern(set->prod.set_b, pattern,
+      offset + set->prod.set_a->head.dim);
 
    SID_set2(iter->prod, SET_PROD_ITER_SID);
 
@@ -209,35 +199,34 @@ static SetIter* iter_init(
 /* FALSE means, there is no further element
  */
 static Bool iter_next(
-   SetIter    iter,
+   SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
    int        offset)
 {
-   const SetVTab* vtab = set_get_vtab();
-   Set*            a;
-   Set*            b;
-   SetIter        iter_a;
-   SetIter        iter_b;
-   int            offset2;
+   Set*       a;
+   Set*       b;
+   SetIter*   iter_a;
+   SetIter*   iter_b;
+   int        offset2;
    
-   assert(set_prod_iter_is_valid(iter.prod));
-   assert(set_prod_is_valid(set.prod));
+   assert(set_prod_iter_is_valid(iter));
+   assert(set_prod_is_valid(set));
 
    a       = set->prod.set_a;
    b       = set->prod.set_b;
-   iter_a  = iter.prod.iter_a;
-   iter_b  = iter.prod.iter_b;
-   offset2 = offset + a.head->dim;
+   iter_a  = iter->prod.iter_a;
+   iter_b  = iter->prod.iter_b;
+   offset2 = offset + a->head.dim;
    
-   if (!vtab[b.head->type].iter_next(iter_b, b, tuple, offset2))
+   if (!set_iter_next_intern(iter_b, b, tuple, offset2))
    {
-      vtab[b.head->type].iter_reset(iter_b);
+      set_iter_reset_intern(iter_b, b);
       
-      if (!vtab[b.head->type].iter_next(iter_b, b, tuple, offset2))
+      if (!set_iter_next_intern(iter_b, b, tuple, offset2))
          return FALSE;
 
-      if (!vtab[a.head->type].iter_next(iter_a, a, tuple, offset))
+      if (!set_iter_next_intern(iter_a, a, tuple, offset))
          return FALSE;
    }
    return TRUE;
@@ -247,42 +236,42 @@ static Bool iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
-static void iter_exit(SetIter iter)
+static void iter_exit(SetIter* iter, const Set* set)
 {
-   const SetVTab* vtab = set_get_vtab();
+   assert(set_prod_iter_is_valid(iter));
+   assert(set_prod_is_valid(set));
 
-   assert(set_prod_iter_is_valid(iter.prod));
+   SID_del2(iter->prod);
 
-   vtab[iter.prod->type_a].iter_exit(iter.prod->iter_a);
-   vtab[iter.prod->type_b].iter_exit(iter.prod->iter_b);
+   set_iter_exit_intern(iter->prod.iter_a, set->prod.set_a);
+   set_iter_exit_intern(iter->prod.iter_b, set->prod.set_a);
       
-   free(iter.prod);
+   free(iter);
 }
 
 /* ------------------------------------------------------------------------- 
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
-static void iter_reset(SetIter iter)
+static void iter_reset(SetIter* iter, const Set* set)
 {
-   const SetVTab* vtab = set_get_vtab();
-
-   assert(set_prod_iter_is_valid(iter.prod));
-
-   vtab[iter.prod->type_a].iter_reset(iter.prod->iter_a);
-   vtab[iter.prod->type_b].iter_reset(iter.prod->iter_b);
+   assert(set_prod_iter_is_valid(iter));
+   assert(set_prod_is_valid(set));
+   
+   set_iter_reset_intern(iter->prod.iter_a, set->prod.set_a);
+   set_iter_reset_intern(iter->prod.iter_b, set->prod.set_b);
 }
 
 /* ------------------------------------------------------------------------- 
  * --- vtab_init
  * -------------------------------------------------------------------------
  */
-void setprod_init(SetVTab* vtab)
+void set_prod_init(SetVTab* vtab)
 {
    vtab[SET_PROD].set_copy       = set_prod_copy;
    vtab[SET_PROD].set_free       = set_prod_free;
    vtab[SET_PROD].set_is_valid   = set_prod_is_valid;
-   vtab[SET_PROD].set_lookup_idx = set_prod_lookup;
+   vtab[SET_PROD].set_lookup_idx = set_prod_lookup_idx;
    vtab[SET_PROD].iter_init      = iter_init;
    vtab[SET_PROD].iter_next      = iter_next;
    vtab[SET_PROD].iter_exit      = iter_exit;

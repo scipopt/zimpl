@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.1 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.2 2004/04/13 13:59:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -45,103 +45,249 @@ static
 #endif
 SetVTab* set_vtab_global = NULL;
 
-SetVTab* set_get_vtab(void)
+void set_init()
 {
-   return set_vtab_global;
+   assert(set_vtab_global == NULL);
+
+   set_vtab_global = calloc((size_t)SET_TYPES, sizeof(*set_vtab_global));
+
+   assert(set_vtab_global != NULL);
+
+   set_empty_init(set_vtab_global);
+   set_pseudo_init(set_vtab_global);
+   set_list_init(set_vtab_global);
+   set_range_init(set_vtab_global);
+   set_prod_init(set_vtab_global);
+   set_multi_init(set_vtab_global);
+#if 0
+   set_union_init(set_vtab_global);
+   set_inter_init(set_vtab_global);
+   set_minus_init(set_vtab_global);
+   set_sdiff_init(set_vtab_global);
+#endif
 }
 
-Set set_new_from_list(const List* list)
+void set_exit()
 {
-   ListElem* le = NULL;
+   assert(set_vtab_global != NULL);
+   
+   free(set_vtab_global);
+}
 
+Set* set_new_from_list(const List* list)
+{
+   ListElem* le  = NULL;
+   int       dim;
+   Set*      set = NULL;
+   
    assert(list_get_elems(list) > 0);
    
    if (list_is_elemlist(list))
-      return set_list_new_from_elems(list);
+      set = set_list_new_from_elems(list);
+   else if (list_is_tuplelist(list))
+   {
+      dim = tuple_get_dim(list_get_tuple(list, &le));
 
-   assert(list_is_tuplelist(list));
+      if (dim == 1)
+         set = set_list_new_from_tuples(list);
+      else
+         set = set_multi_new_from_list(list);
+   }
+   else
+   {
+      assert(list_is_entrylist(list));
 
-   dim = tuple_get_dim(list_get_tuple(list, &le));
+      dim = tuple_get_dim(entry_get_tuple(list_get_entry(list, &le)));
+   
+      if (dim == 1)
+         set = set_list_new_from_entries(list);
+      else
+         set = set_multi_new_from_list(list);
+   }
+   assert(set_is_valid(set));
 
-   if (dim == 1)
-      return set_list_new_from_tuples(list);
-
-   return set_multi_new_from_tuples(list);
+   return set;
 }
 
 void set_free(Set* set)
 {
-   set_vtab_gobal[set.head->type].set_free(set);
+   set_vtab_global[set->head.type].set_free(set);
 }
 
 Bool set_is_valid(const Set* set)
 {
-   set_vtab_gobal[set.head->type].set_is_valid(set);
+   return set != NULL && set_vtab_global[set->head.type].set_is_valid(set);
 }
 
 Set* set_copy(const Set* set)
 {
-   return set_vtab_gobal[set.head->type].set_copy(set);
+   return set_vtab_global[set->head.type].set_copy(set);
 }
 
 int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
-   return set_vtab_gobal[set.head->type].set_lookup_idx(set, tuple, offset);
+   return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, offset);
 }
 
 Bool set_lookup(const Set* set, const Tuple* tuple)
 {
-   return set_vtab_gobal[set.head->type].set_lookup_idx(set, tuple, 0) >= 0;
+   return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
+}
+
+SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
+{
+   return set_vtab_global[set->head.type].iter_init(set, pattern, offset);
 }
 
 SetIter* set_iter_init(const Set* set, const Tuple* pattern)
 {
-   return set_vtab_gobal[set.head->type].set_iter_init(set, pattern, 0);
+   return set_iter_init_intern(set, pattern, 0);
 }
 
-Bool set_iter_next(SetIter* iter, const Set* set, Tuple* tuple)
+Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
 {
-   return set_vtab_gobal[set.head->type].set_iter_next(iter, set, tuple, 0);
+   return set_vtab_global[set->head.type].iter_next(iter, set, tuple, offset);
+}
+
+Tuple* set_iter_next(SetIter* iter, const Set* set)
+{
+   Tuple* tuple;
+
+   tuple = tuple_new(set->head.dim);
+   
+   if (set_iter_next_intern(iter, set, tuple, 0))
+      return tuple;
+
+   tuple_free(tuple);
+
+   return NULL;
 }
      
-void set_iter_exit(SetIter* iter)
+void set_iter_exit_intern(SetIter* iter, const Set* set)
 {
-   set_vtab_gobal[set.head->type].set_iter_next(iter);
+   set_vtab_global[set->head.type].iter_exit(iter, set);
+}
+
+void set_iter_exit(SetIter* iter, const Set* set)
+{
+   set_iter_exit_intern(iter, set);
 }
      
+void set_iter_reset_intern(SetIter* iter, const Set* set)
+{
+   set_vtab_global[set->head.type].iter_reset(iter, set);
+}
+
 int set_get_dim(const Set* set)
 {
    assert(set_is_valid(set));
 
-   return set.head->dim;   
+   return set->head.dim;   
 }
 
-int set_get_used(const Set* set)
+int set_get_members(const Set* set)
 {
    assert(set_is_valid(set));
 
-   return set.head->members;   
+   return set->head.members;   
 }
+
+Set* set_union(const Set* set_a, const Set* set_b)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
+Set* set_inter(const Set* set_a, const Set* set_b)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
+Set* set_minus(const Set* set_a, const Set* set_b)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
+Set* set_sdiff(const Set* set_a, const Set* set_b)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
+Set* set_proj(const Set* set_a, const Tuple* pattern)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
+List* set_subsets_list(
+   const Set* set,
+   int        subset_size,
+   List*      list,
+   int*       idx)
+{
+   fprintf(stderr, "Set not yet implemented\n");
+   exit(EXIT_FAILURE);
+}
+
 
 void set_print(FILE* fp, const Set* set)
 {
-   int i;
+   SetIter* iter;
+   Tuple*   tuple;
+   Bool     first = TRUE;
 
    assert(fp != NULL);
    assert(set_is_valid(set));
 
-   fprintf(fp, "|%d|", set->dim);
+   switch(set->head.type)
+   {
+   case SET_EMPTY :
+      fprintf(fp, "Empty: ");
+      break;
+   case SET_PSEUDO :
+      fprintf(fp, "Pseudo: ");
+      break;
+   case SET_LIST :
+      fprintf(fp, "List: ");
+      break;
+   case SET_RANGE :
+      fprintf(fp, "Range: ");
+      break;
+   case SET_PROD :
+      fprintf(fp, "Product: ");
+      break;
+   case SET_MULTI :
+      fprintf(fp, "Multi: ");
+      break;
+   default :
+      abort();
+   }
+   
+   fprintf(fp, "|%d|", set->head.dim);
    fprintf(fp, "{");
 
-   for(i = 0; i < set->used; i++)
+   iter = set_iter_init(set, NULL);
+
+   while(NULL != (tuple = set_iter_next(iter, set)))
    {
-      tuple_print(fp, set->member[i]);
-      fprintf(fp, "%s", (i < set->used - 1) ? "," : "");
+      if (first)
+         first = FALSE;
+      else
+         fprintf(fp, ",");
+      
+      tuple_print(fp, tuple);
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+   
    fprintf(fp, "}");
 }
 
 #if 0
+
 Set* set_union(const Set* set_a, const Set* set_b)
 {
    Set* set;
@@ -282,11 +428,14 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
 
    return set;
 }
+#endif
 
 /* Is A subset (or equal) of B */
 Bool set_is_subseteq(const Set* set_a, const Set* set_b)
 {
-   int  i;
+   SetIter* iter;
+   Tuple*   tuple;
+   Bool     is_subset = TRUE;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
@@ -294,10 +443,10 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
    /* If A is the empty set and B is non empty,
     * A is a subset of B
     */
-   if (set_a->used == 0)
+   if (set_a->head.members == 0)
       return TRUE;
    
-   if (set_a->dim != set_b->dim)
+   if (set_a->head.dim != set_b->head.dim)
    {
       fprintf(stderr, "--- Warning 165: Comparison of different dimension sets.\n");
       set_print(stderr, set_a);
@@ -306,14 +455,20 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
       fputc('\n', stderr);
       return FALSE;
    }
-   if (set_a->used > set_b->used)
+   if (set_a->head.members > set_b->head.members)
       return FALSE;
+
+   iter = set_iter_init(set_a, NULL);
    
-   for(i = 0; i < set_a->used; i++)
-      if (!set_lookup(set_b, set_a->member[i]))
-         return FALSE;
+   while(is_subset && NULL != (tuple = set_iter_next(iter, set_a)))
+   {
+      is_subset = set_lookup(set_b, tuple);
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_a);
    
-   return TRUE;
+   return is_subset;
 }
 
 /* A is real subset of B */
@@ -322,7 +477,7 @@ Bool set_is_subset(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
 
-   if (set_a->used >= set_b->used)
+   if (set_a->head.members >= set_b->head.members)
       return FALSE;
 
    return set_is_subseteq(set_a, set_b);
@@ -334,12 +489,13 @@ Bool set_is_equal(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
 
-   if (set_a->used != set_b->used)
+   if (set_a->head.members != set_b->head.members)
       return FALSE;
 
    return set_is_subseteq(set_a, set_b);
 }
 
+#if 0
 /* n elements in set
  * k elements in subset
  * i index for counter
@@ -377,7 +533,7 @@ List* set_subsets_list(
    Numb*  numb;
    
    assert(set_is_valid(set));
-   assert(subset_size <= set->used);
+   assert(subset_size <= set->head.members);
    assert(idx         != NULL);
    
    counter = malloc(sizeof(*counter) * subset_size);
@@ -411,7 +567,7 @@ List* set_subsets_list(
       tuple_free(tuple);
       set_free(subset);
    }
-   while(!counter_inc(counter, set->used, subset_size, 0));
+   while(!counter_inc(counter, set->head.members, subset_size, 0));
 
    free(counter);
 

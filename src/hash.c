@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.16 2004/04/12 07:04:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.17 2004/04/13 13:59:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -32,6 +32,7 @@
 
 #include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define HASH_SID      0x48617368
@@ -135,9 +136,9 @@ void hash_free(Hash* hash)
 
 Bool hash_is_valid(const Hash* hash)
 {
+         //         || hash->type == HASH_CON || hash->type == HASH_VAR)
    return ((hash != NULL)
-      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
-         || hash->type == HASH_CON || hash->type == HASH_VAR)
+      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY)
       && SID_ok(hash, HASH_SID));
 }
 
@@ -242,12 +243,12 @@ void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
-   assert(tuple_is_valid(tuple));
+   assert(elem_is_valid(elem));
    assert(he != NULL);
    
    hcode               = elem_hash(elem) % hash->size;
-   he->elem            = elem;
-   he->idx             = idx;
+   he->value.elem_idx.elem   = elem;
+   he->value.elem_idx.idx    = idx;
    he->next            = hash->bucket[hcode];
    hash->bucket[hcode] = he;
    hash->elems++;
@@ -264,7 +265,7 @@ int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
    assert(elem_is_valid(elem));
 
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
-      if (!elem_cmp(he->elem, elem))
+      if (!elem_cmp(he->value.elem_idx.elem, elem))
          break;
 
    if (he == NULL)
@@ -272,7 +273,7 @@ int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
 
    assert(he != NULL);
 
-   return he->idx;
+   return he->value.elem_idx.idx;
 }
 
 static void hash_statist(FILE* fp, const Hash* hash)

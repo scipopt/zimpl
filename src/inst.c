@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.69 2003/10/27 13:57:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.70 2004/04/13 13:59:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -210,9 +210,9 @@ CodeNode* i_forall(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx   = 0;
+   SetIter*      iter;
    
    Trace("i_forall");
    
@@ -222,8 +222,9 @@ CodeNode* i_forall(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
    
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -231,7 +232,11 @@ CodeNode* i_forall(CodeNode* self)
          (void)code_eval_child(self, 1); /* z.B. constraint */
 
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+   
    code_value_void(self);
 
    return self;
@@ -570,7 +575,7 @@ CodeNode* i_expr_card(CodeNode* self)
 
    set = code_eval_child_set(self, 0);
 
-   code_value_numb(self, numb_new_integer(set_get_used(set)));
+   code_value_numb(self, numb_new_integer(set_get_members(set)));
 
    return self;
 }
@@ -619,9 +624,9 @@ CodeNode* i_expr_min(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx   = 0;
+   SetIter*      iter;
    const Numb*   value;
    Numb*         min   = numb_new();
    Bool          first = TRUE;
@@ -634,8 +639,9 @@ CodeNode* i_expr_min(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   iter    = set_iter_init(set, pattern);
+   
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -650,7 +656,11 @@ CodeNode* i_expr_min(CodeNode* self)
          }
       }
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+   
    if (first)
    {
       fprintf(stderr, "-- Warning 186: Minimizing over empty set -- zero assumed\n");
@@ -666,9 +676,9 @@ CodeNode* i_expr_max(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx   = 0;
+   SetIter*      iter;
    const Numb*   value;
    Numb*         max   = numb_new();
    Bool          first = TRUE;
@@ -681,8 +691,9 @@ CodeNode* i_expr_max(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   iter    = set_iter_init(set, pattern);
+   
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -697,7 +708,11 @@ CodeNode* i_expr_max(CodeNode* self)
          }
       }
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+   
    if (first)
    {
       fprintf(stderr, "-- Warning 187: Maximizing over empty set -- zero assumed\n");
@@ -713,9 +728,9 @@ CodeNode* i_expr_sum(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx = 0;
+   SetIter*      iter;
    Numb*         sum = numb_new();
 
    Trace("i_expr_sum");
@@ -726,8 +741,9 @@ CodeNode* i_expr_sum(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   iter    = set_iter_init(set, pattern);
+   
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -735,7 +751,11 @@ CodeNode* i_expr_sum(CodeNode* self)
          numb_add(sum, code_eval_child_numb(self, 1));      
 
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+
    code_value_numb(self, sum);
 
    return self;
@@ -1174,9 +1194,9 @@ CodeNode* i_bool_exists(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx   = 0;
+   SetIter*      iter;
    Bool          exists = FALSE;
 
    Trace("i_bool_exists");
@@ -1187,15 +1207,20 @@ CodeNode* i_bool_exists(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-
-   while(!exists && (tuple = set_match_next(set, pattern, &idx)) != NULL)
+   iter    = set_iter_init(set, pattern);
+   
+   while(!exists && (tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
       exists = code_get_bool(code_eval(lexpr));
 
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+
    code_value_bool(self, exists);
 
    return self;
@@ -1207,83 +1232,39 @@ CodeNode* i_bool_exists(CodeNode* self)
  */
 CodeNode* i_set_new_tuple(CodeNode* self)
 {
-   const List*  list  = code_eval_child_list(self, 0);
-   ListElem*    le    = NULL;
-   const Tuple* tuple = list_get_tuple(list, &le);
-   int          dim   = tuple_get_dim(tuple);
-   int          n     = list_get_elems(list);
-   Set*         set   = set_new(dim, n, SET_DEFAULT);
-   int          i;
-   
    Trace("i_set_new_tuple");
-
+   
    assert(code_is_valid(self));
 
-   /* Und jetzt noch mal alle.
-    */
-   le  = NULL;
-
-   for(i = 0; i < n; i++)
-   {
-      tuple = list_get_tuple(list, &le);
-      set_add_member(set, tuple_copy(tuple), SET_ADD_END, SET_CHECK_WARN);
-   }
-   code_value_set(self, set);
+   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0)));
 
    return self;
 }
 
 CodeNode* i_set_new_elem(CodeNode* self)
 {
-   const List* list  = code_eval_child_list(self, 0);
-   ListElem*   le    = NULL;
-   int         n     = list_get_elems(list);
-   Set*        set   = set_new(1, n, SET_DEFAULT);
-   Tuple*      tuple;
-   const Elem* elem;
-   int         i;
-   
    Trace("i_set_new_elem");
 
    assert(code_is_valid(self));
 
-   /* Und jetzt noch mal alle.
-    */
-   le  = NULL;
-
-   for(i = 0; i < n; i++)
-   {
-      elem  = list_get_elem(list, &le);
-      tuple = tuple_new(1);
-
-      tuple_set_elem(tuple, 0, elem_copy(elem));
-      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_WARN);
-   }
-   code_value_set(self, set);
+   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0)));
 
    return self;
 }
 
 CodeNode* i_set_pseudo(CodeNode* self)
 {
-   Set* set;
-   
    Trace("i_set_pseudo");
 
    assert(code_is_valid(self));
 
-   set = set_new(0, 1, SET_NO_HASH);
-
-   set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
-
-   code_value_set(self, set);
+   code_value_set(self, set_pseudo_new());
 
    return self;
 }
 
 CodeNode* i_set_empty(CodeNode* self)
 {
-   Set* set;
    int  dim;
    
    Trace("i_set_empty");
@@ -1291,9 +1272,8 @@ CodeNode* i_set_empty(CodeNode* self)
    assert(code_is_valid(self));
 
    dim = code_eval_child_size(self, 0);
-   set = set_new(dim, 1, SET_NO_HASH);
 
-   code_value_set(self, set);
+   code_value_set(self, set_empty_new(dim));
 
    return self;
 }
@@ -1402,7 +1382,7 @@ CodeNode* i_set_cross(CodeNode* self)
    set_a = code_eval_child_set(self, 0);
    set_b = code_eval_child_set(self, 1);
 
-   code_value_set(self, set_cross(set_a, set_b));
+   code_value_set(self, set_prod_new(set_a, set_b));
 
    return self;
 }
@@ -1464,7 +1444,7 @@ CodeNode* i_set_range(CodeNode* self)
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
-   code_value_set(self, set_range(int_from, int_upto, int_step));
+   code_value_set(self, set_range_new(int_from, int_upto, int_step));
 
    return self;
 }
@@ -1587,28 +1567,57 @@ CodeNode* i_tuple_empty(CodeNode* self)
 static Set* set_from_idxset(const IdxSet* idxset)
 {
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    Set*          newset;
-   int           idx;
+   SetIter*      iter;
    const Set*    set;
    CodeNode*     lexpr;
-
+   Bool          first = TRUE;
+   List*         list  = NULL;
+   
    assert(idxset != NULL);
    
    set     = idxset_get_set(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    pattern = idxset_get_tuple(idxset);
-   newset  = set_new(tuple_get_dim(pattern), set_get_used(set), SET_DEFAULT);
-   idx     = 0;
+   iter    = set_iter_init(set, pattern);
       
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
       if (code_get_bool(code_eval(lexpr)))
-         set_add_member(newset, tuple_copy(tuple), SET_ADD_END, SET_CHECK_WARN);
-
+      {
+         if (first)
+            list = list_new_tuple(tuple);
+         else
+         {
+            assert(list != NULL);
+            
+            list_add_tuple(list, tuple);
+         }
+      }
       local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set);
+   
+   if (first)
+   {
+      if (tuple_get_dim(pattern) == 0)
+         newset = set_pseudo_new();
+      else
+         newset = set_empty_new(tuple_get_dim(pattern));
+      /* ???? ob da !!! oben stimmt ??? */
+   }
+   else
+   {
+      assert(list != NULL);
+
+      newset = set_new_from_list(list);
+
+      list_free(list);
    }
    return newset;
 }
@@ -1621,22 +1630,22 @@ CodeNode* i_newsym_set1(CodeNode* self)
    Symbol*       sym;
 
    const Tuple*  pattern;
-   const Tuple*  tuple;
-   int           idx;
+   Tuple*        tuple;
+   SetIter*      iter;
    
    Trace("i_newsym_set1");
 
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    iset    = set_from_idxset(idxset);
-   sym     = symbol_new(name, SYM_SET, iset, set_get_used(iset), NULL);
+   sym     = symbol_new(name, SYM_SET, iset, set_get_members(iset), NULL);
 
    assert(code_is_valid(self));
 
    pattern = idxset_get_tuple(idxset);
-   idx     = 0;
+   iter    = set_iter_init(iset, pattern);
       
-   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
+   while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -1645,52 +1654,15 @@ CodeNode* i_newsym_set1(CodeNode* self)
             code_eval_child_set(self, 2)));
 
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, iset);
    set_free(iset);
 
    code_value_void(self);
 
    return self;
-}
-
-static Set* iset_from_list(const CodeNode* self, const List* list)
-{
-   const Entry* entry;
-   const Tuple* tuple;
-   ListElem*    lelem = NULL;
-   Set*         set;
-
-   assert(self                 != NULL);
-   assert(list                 != NULL);
-   assert(list_get_elems(list) > 0);
-   
-   entry  = list_get_entry(list, &lelem);
-   tuple  = entry_get_tuple(entry);
-   set    = set_new(tuple_get_dim(tuple), list_get_elems(list), SET_DEFAULT);
-
-   assert(set != NULL);
-
-   for(;;)
-   {
-      set_add_member(set, tuple_copy(tuple), SET_ADD_END, SET_CHECK_NONE);
-      
-      entry = list_get_entry(list, &lelem);
-
-      if (entry == NULL)
-         break;
-      
-      tuple  = entry_get_tuple(entry);
-
-      if (set_lookup(set, tuple))
-      {
-         fprintf(stderr, "*** Error 130: Duplicate index ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " for initialization\n");
-         code_errmsg(self);
-         exit(EXIT_FAILURE);
-      }
-   }
-   return set;
 }
    
 CodeNode* i_newsym_set2(CodeNode* self)
@@ -1726,7 +1698,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       Set* set;
       
-      set  = iset_from_list(code_get_child(self, 2), list);
+      set  = set_new_from_list(list);
       sym  = symbol_new(name, SYM_SET, set, count, NULL);
       iset = symbol_get_iset(sym);
       set_free(set);
@@ -1833,6 +1805,7 @@ n",
       
       if (!set_lookup(iset, tuple))
       {
+         set_print(stderr, iset);
          fprintf(stderr, "*** Error 134: Illegal element ");
          tuple_print(stderr, tuple);
          fprintf(stderr, " for symbol\n");
@@ -1868,9 +1841,9 @@ CodeNode* i_newsym_para2(CodeNode* self)
    const Entry*  deflt;
    CodeNode*     child3;
    CodeNode*     child;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    const Tuple*  pattern;
-   int           idx   = 0;
+   SetIter*      iter;
    int           count = 0;
    
    Trace("i_newsym_para2");
@@ -1882,7 +1855,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
    iset    = set_from_idxset(idxset);
    child3  = code_eval_child(self, 3);
 
-   if (set_get_used(iset) == 0)
+   if (set_get_members(iset) == 0)
    {
       fprintf(stderr, "*** Error 135: Index set for parameter \"%s\" is empty\n",
          name);
@@ -1895,10 +1868,11 @@ CodeNode* i_newsym_para2(CodeNode* self)
    else
       deflt = code_get_entry(code_eval(child3));
    
-   sym     = symbol_new(name, SYM_ERR, iset, set_get_used(iset), deflt);
+   sym     = symbol_new(name, SYM_ERR, iset, set_get_members(iset), deflt);
    pattern = idxset_get_tuple(idxset);
-
-   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
+   iter    = set_iter_init(iset, pattern);
+   
+   while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       /* bool is not needed, because iset has only true elemens
        */
@@ -1934,8 +1908,12 @@ CodeNode* i_newsym_para2(CodeNode* self)
       
       local_drop_frame();
 
+      tuple_free(tuple);
+      
       count++;
    }
+   set_iter_exit(iter, iset);
+
    code_value_void(self);
 
    set_free(iset);
@@ -1949,12 +1927,12 @@ CodeNode* i_newsym_var(CodeNode* self)
    const IdxSet* idxset;
    Set*          iset;
    Symbol*       sym;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    const Tuple*  pattern;
    VarClass      varclass;
    VarClass      usevarclass;
    Var*          var;
-   int           idx = 0;
+   SetIter*      iter;
    Bound*        lower;
    Bound*        upper;
    const Numb*   priority;
@@ -1972,9 +1950,10 @@ CodeNode* i_newsym_var(CodeNode* self)
    varclass = code_eval_child_varclass(self, 2);
    iset     = set_from_idxset(idxset);
    pattern  = idxset_get_tuple(idxset);
-   sym      = symbol_new(name, SYM_VAR, iset, set_get_used(iset), NULL);
-
-   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
+   sym      = symbol_new(name, SYM_VAR, iset, set_get_members(iset), NULL);
+   iter    = set_iter_init(iset, pattern);
+   
+   while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
       
@@ -2097,9 +2076,12 @@ CodeNode* i_newsym_var(CodeNode* self)
       
       local_drop_frame();
 
+      tuple_free(tuple);
       bound_free(lower);
       bound_free(upper);
    }
+   set_iter_exit(iter, iset);
+
    code_value_void(self);
 
    set_free(iset);
@@ -2407,9 +2389,9 @@ CodeNode* i_term_sum(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   const Tuple*  tuple;
+   Tuple*        tuple;
    CodeNode*     lexpr;
-   int           idx = 0;
+   SetIter*      iter;
    Term*         term_r;
 
    Trace("i_term_sum");
@@ -2420,9 +2402,10 @@ CodeNode* i_term_sum(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
    term_r  = term_new(1);
-
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   
+   while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
 
@@ -2430,7 +2413,11 @@ CodeNode* i_term_sum(CodeNode* self)
          term_append_term(term_r, code_eval_child_term(self, 1));
 
       local_drop_frame();
+
+      tuple_free(tuple);
    }
+   set_iter_exit(iter, set);
+   
    code_value_term(self, term_r);
 
    return self;
@@ -2641,7 +2628,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    assert(code_is_valid(self));
 
    set         = code_eval_child_set(self, 0);
-   used        = set_get_used(set);
+   used        = set_get_members(set);
    numb        = code_eval_child_numb(self, 1);
 
    if (!numb_is_int(numb))
@@ -2667,7 +2654,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
       fprintf(stderr, "*** Error 145: Illegal size for subsets %d,\n",
          subset_size);
       fprintf(stderr, "               should be between 1 and %d\n",
-         set_get_used(set));
+         set_get_members(set));
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
@@ -2689,7 +2676,7 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
    assert(code_is_valid(self));
 
    set  = code_eval_child_set(self, 0);
-   used = set_get_used(set);
+   used = set_get_members(set);
    
    if (used < 1)
    {

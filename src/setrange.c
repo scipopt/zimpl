@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -69,7 +69,7 @@ Set* set_range_new(int begin, int end, int step)
 {
    Set* set;
 
-   set = calloc(1, sizeof(set->range));
+   set = calloc(1, sizeof(*set));
 
    assert(set != NULL);
 
@@ -134,8 +134,8 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    
    assert(set_range_is_valid(set));
    assert(tuple_is_valid(tuple));
-   assert(offset               >= 0);
-   assert(tuple_get_dim(tuple) <  offset);
+   assert(offset >= 0);
+   assert(offset <  tuple_get_dim(tuple));
 
    elem = tuple_get_elem(tuple, offset);
 
@@ -178,55 +178,64 @@ static SetIter* iter_init(
    int             val;
    
    assert(set_range_is_valid(set));
-   assert(tuple_is_valid(pattern));
+   assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset      >= 0);
-   assert(offset      <  tuple_get_dim(pattern));
+   assert(pattern == NULL || offset <  tuple_get_dim(pattern));
 
-   elem        = tuple_get_elem(pattern, offset);
-   iter        = calloc(1, sizeof(iter->range));
+   iter = calloc(1, sizeof(*iter));
 
    assert(iter != NULL);
-   
-   switch(elem_get_type(elem))
+
+   if (pattern == NULL)
    {
-   case ELEM_NAME :
       iter->range.first = set->range.begin;
       iter->range.last  = set->range.end;
-      break;
-   case ELEM_NUMB :
-      numb = elem_get_numb(elem);
+   }
+   else
+   {
+      elem = tuple_get_elem(pattern, offset);
 
-      if (!numb_is_int(numb))
+      switch(elem_get_type(elem))
       {
-         fprintf(stderr, "Minor shit! %d\n", offset);
-         iter->range.first = 1;
-         iter->range.last  = 0;
-      }
-      else
-      {
-         val = numb_toint(numb);
+      case ELEM_NAME :
+         iter->range.first = set->range.begin;
+         iter->range.last  = set->range.end;
+         break;
+      case ELEM_NUMB :
+         numb = elem_get_numb(elem);
 
-         if (  val < set->range.begin
-            || val > set->range.end
-            || ((val - set->range.begin) % set->range.step) != 0)
+         if (!numb_is_int(numb))
          {
+            fprintf(stderr, "Minor shit! %d\n", offset);
             iter->range.first = 1;
             iter->range.last  = 0;
          }
          else
          {
-            iter->range.first = (val - set->range.begin) / set->range.step;
-            iter->range.last  = iter->range.first;
+            val = numb_toint(numb);
+
+            if (  val < set->range.begin
+               || val > set->range.end
+               || ((val - set->range.begin) % set->range.step) != 0)
+            {
+               iter->range.first = 1;
+               iter->range.last  = 0;
+            }
+            else
+            {
+               iter->range.first = (val - set->range.begin) / set->range.step;
+               iter->range.last  = iter->range.first;
+            }
          }
+         break;
+      case ELEM_STRG :
+         fprintf(stderr, "Shit! %d\n", offset);
+         iter->range.first = 1;
+         iter->range.last  = 0;
+         break;
+      default :
+         abort();
       }
-      break;
-   case ELEM_STRG :
-      fprintf(stderr, "Shit! %d\n", offset);
-      iter->range.first = 1;
-      iter->range.last  = 0;
-      break;
-   default :
-      abort();
    }
    iter->range.now = iter->range.first;
 
@@ -274,9 +283,12 @@ static Bool iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
-static void iter_exit(SetIter* iter)
+/*ARGSUSED*/
+static void iter_exit(SetIter* iter, const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
+
+   SID_del2(iter->range);
    
    free(iter);
 }
@@ -285,7 +297,8 @@ static void iter_exit(SetIter* iter)
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
-static void iter_reset(SetIter* iter)
+/*ARGSUSED*/
+static void iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
    
@@ -296,7 +309,7 @@ static void iter_reset(SetIter* iter)
  * --- vtab_init
  * -------------------------------------------------------------------------
  */
-void setrange_init(SetVTab* vtab)
+void set_range_init(SetVTab* vtab)
 {
    vtab[SET_RANGE].set_copy       = set_range_copy;
    vtab[SET_RANGE].set_free       = set_range_free;

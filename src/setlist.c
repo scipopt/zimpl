@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -99,7 +99,7 @@ Set* set_list_new(int size, int flags)
 
    assert(size > 0);
    
-   set = calloc(1, sizeof(set->list));
+   set = calloc(1, sizeof(*set));
 
    assert(set != NULL);
 
@@ -202,6 +202,31 @@ Set* set_list_new_from_tuples(const List* list)
    return set;
 }
 
+Set* set_list_new_from_entries(const List* list)
+{
+   ListElem*    le = NULL;
+   const Tuple* tuple;
+   Set*         set;
+   int          n;
+
+   assert(list_is_valid(list));
+
+   n   = list_get_elems(list);
+   set = set_list_new(n, SET_DEFAULT);
+
+   while(n-- > 0)
+   {
+      tuple = entry_get_tuple(list_get_entry(list, &le));
+
+      assert(tuple_get_dim(tuple) == 1);
+      
+      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), SET_CHECK_WARN);
+   }
+   assert(set_list_is_valid(set));
+
+   return set;
+}
+
 /* ------------------------------------------------------------------------- 
  * --- copy
  * -------------------------------------------------------------------------
@@ -252,8 +277,8 @@ static int set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_list_is_valid(set));
    assert(tuple_is_valid(tuple));
-   assert(offset               >= 0);
-   assert(tuple_get_dim(tuple) <  offset);
+   assert(offset >= 0);
+   assert(offset <  tuple_get_dim(tuple));
    
    return lookup_elem_idx(set, tuple_get_elem(tuple, offset));
 }
@@ -274,31 +299,40 @@ static SetIter* iter_init(
    int          i;
 
    assert(set_list_is_valid(set));
-   assert(tuple_is_valid(pattern));
+   assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset        >= 0);
-   assert(offset        <  tuple_get_dim(pattern));
+   assert(pattern == NULL || offset < tuple_get_dim(pattern));
 
-   elem = tuple_get_elem(pattern, offset);
-   iter = calloc(1, sizeof(iter->list));
+   iter = calloc(1, sizeof(*iter));
    
    assert(iter != NULL);
-   
-   if (elem_get_type(elem) == ELEM_NAME)
+
+   if (pattern == NULL)
    {
       iter->list.first = 0;
       iter->list.last  = set->head.members - 1;
    }
    else
    {
-      for(i = 0; i < set->head.members; i++)
-         if (!elem_cmp(elem, set->list.member[i]))
-            break;
+      elem = tuple_get_elem(pattern, offset);
+   
+      if (elem_get_type(elem) == ELEM_NAME)
+      {
+         iter->list.first = 0;
+         iter->list.last  = set->head.members - 1;
+      }
+      else
+      {
+         for(i = 0; i < set->head.members; i++)
+            if (!elem_cmp(elem, set->list.member[i]))
+               break;
 
-      iter->list.first = i;
-      iter->list.last  = i;
+         iter->list.first = i;
+         iter->list.last  = i;
 
-      if (iter->list.last >= set->head.members)
-         iter->list.last = set->head.members - 1;
+         if (iter->list.last >= set->head.members)
+            iter->list.last = set->head.members - 1;
+      }
    }
    iter->list.now = iter->list.first;
 
@@ -338,9 +372,12 @@ static Bool iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
-static void iter_exit(SetIter* iter)
+/*ARGSUSED*/
+static void iter_exit(SetIter* iter, const Set* set)
 {
    assert(set_list_iter_is_valid(iter));
+
+   SID_del2(iter->list);
    
    free(iter);
 }
@@ -349,7 +386,8 @@ static void iter_exit(SetIter* iter)
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
-static void iter_reset(SetIter* iter)
+/*ARGSUSED*/
+static void iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_list_iter_is_valid(iter));
    
@@ -360,7 +398,7 @@ static void iter_reset(SetIter* iter)
  * --- vtab_init
  * -------------------------------------------------------------------------
  */
-void setlist_init(SetVTab* vtab)
+void set_list_init(SetVTab* vtab)
 {
    vtab[SET_LIST].set_copy       = set_list_copy;
    vtab[SET_LIST].set_free       = set_list_free;

@@ -30,9 +30,22 @@ $(OBJDIR)/prog.o: src/prog.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h 
  src/code.h
 $(OBJDIR)/rdefpar.o: src/rdefpar.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
-$(OBJDIR)/set.o: src/set.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
 $(OBJDIR)/source.o: src/source.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
+$(OBJDIR)/setempty.o: src/setempty.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/setpseudo.o: src/setpseudo.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/setlist.o: src/setlist.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/setrange.o: src/setrange.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/setprod.o: src/setprod.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/setmulti.o: src/setmulti.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/set4.h
+$(OBJDIR)/set4.o: src/set4.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+ src/set4.h
 $(OBJDIR)/stmt.o: src/stmt.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h src/code.h src/inst.h
 $(OBJDIR)/strstore.o: src/strstore.c src/lint.h src/bool.h src/mshell.h \

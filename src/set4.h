@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -29,29 +29,40 @@
 #define _SET4_H_
 
 enum set_type {
-   SET_ERROR   = 0,
-   SET_EMPTY   = 1, /* dim = 0, Empty Set */
-   SET_LIST    = 2, /* dim = 1, Explicit enumeration of members */
-   SET_RANGE   = 3, /* dim = 1, Range: Start to End by Increment */
-   SET_PROD    = 4, /* dim > 1, Cross Product of two or more sets */
-   SET_MULTI   = 5, /* dim > 1, Multidimensional Subset */
-   SET_UNION   = 6, /* dim > 1, Union of two sets */
-   SET_INTER   = 7, /* dim > 1, Intersection of two sets */
-   SET_MINUS   = 8, /* dim > 1, Subtraction of two sets */
-   SET_SYMDIFF = 9  /* dim > 1, Symetric difference of two sets */
+   SET_ERROR   =  0,
+   SET_EMPTY   =  1, /* dim = ?, Empty Set */
+   SET_PSEUDO  =  2, /* dim = 0, Has only empty tuple as element */
+   SET_LIST    =  3, /* dim = 1, Explicit enumeration of members */
+   SET_RANGE   =  4, /* dim = 1, Range: Start to End by Increment */
+   SET_PROD    =  5, /* dim > 1, Cross Product of two or more sets */
+   SET_MULTI   =  6, /* dim > 1, Multidimensional Subset */
+   SET_UNION   =  7, /* dim > 1, Union of two sets */
+   SET_INTER   =  8, /* dim > 1, Intersection of two sets */
+   SET_MINUS   =  9, /* dim > 1, Subtraction of two sets */
+   SET_SYMDIFF = 10, /* dim > 1, Symetric difference of two sets */
+   SET_TYPES   = 11  /* marker */
+};
+
+enum set_check_type
+{
+   SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
 };
 
 typedef enum set_type      SetType;
 //typedef union set          Set;
-typedef union set_iter     SetIter;
 typedef struct set_vtab    SetVTab;
+typedef enum set_check_type      SetCheckType;
 
+typedef struct set_empty   SetEmpty;
+typedef struct set_pseudo  SetPseudo;
 typedef struct set_head    SetHead;
 typedef struct set_list    SetList;
 typedef struct set_range   SetRange;
 typedef struct set_prod    SetProd;
 typedef struct set_multi   SetMulti;
 
+typedef struct set_empty_iter   SetEmptyIter;
+typedef struct set_pseudo_iter  SetPseudoIter;
 typedef struct set_list_iter    SetListIter;
 typedef struct set_range_iter   SetRangeIter;
 typedef struct set_prod_iter    SetProdIter;
@@ -63,6 +74,18 @@ struct set_head
    int        dim;
    int        members;
    SetType    type;
+};
+
+struct set_empty
+{
+   SetHead head;
+   SID
+};
+
+struct set_pseudo
+{
+   SetHead head;
+   SID
 };
 
 struct set_list
@@ -91,13 +114,35 @@ struct set_prod
    SID
 };
 
+struct set_multi
+{
+   SetHead  head;   /* head.dim > 1  */
+   Set**    set;    /* dim times, type == SET_LIST */
+   int*     subset; /* members * dim */
+   SID
+};
+
 union set
 {
    SetHead    head;
+   SetEmpty   empty;
+   SetPseudo  pseudo;
    SetList    list;
    SetRange   range;
    SetProd    prod;
-   //   SetMulti   multi;
+   SetMulti   multi;
+};
+
+struct set_empty_iter
+{
+   int dummy;
+   SID
+};
+
+struct set_pseudo_iter
+{
+   Bool first;
+   SID
 };
 
 struct set_list_iter
@@ -125,71 +170,85 @@ struct set_prod_iter
    SID
 };
 
+struct set_multi_iter
+{
+   int  dim;
+   int  members;
+   int  now;
+   int* subset;
+   SID
+};
+
 union set_iter
 {
+   SetEmptyIter   empty;
+   SetPseudoIter  pseudo;
    SetListIter    list;
    SetRangeIter   range;
    SetProdIter    prod;
-   //   SetMultiIter   multi;
+   SetMultiIter   multi;
 };
 
 struct set_vtab
 {
-   void (*set_free)    (Set* set);
-   Set* (*set_copy)    (const Set* set);
-   Bool (*set_is_valid)(const Set* set);
-   int  (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
-   void (*iter_init) (SetIter** iter, const Set* set, const Tuple* pattern, int offset);
-   Bool (*iter_next) (SetIter* iter, const Set* set, Tuple* tuple, int offset);
-   void (*iter_exit) (SetIter* iter);
-   void (*iter_reset)(SetIter* iter);
+   void     (*set_free)      (Set* set);
+   Set*     (*set_copy)      (const Set* set);
+   Bool     (*set_is_valid)  (const Set* set);
+   int      (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
+   SetIter* (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
+   Bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
+   void     (*iter_exit)     (SetIter* iter, const Set* set);
+   void     (*iter_reset)    (SetIter* iter, const Set* set);
 };
 
+#define SET_DEFAULT 0x0
+#define SET_NO_HASH 0x1
 
+
+
+#ifdef NDEBUG
 extern SetVTab* set_vtab_global;
-
-#ifndef NDEBUG
-extern SetVTab* set_get_vtab(void);
-#else
-#define set_get_vtab()  set_vtab_global
 #endif
 
-extern void setlist_init(SetVTab* vtab);
-extern void setrange_init(SetVTab* vtab);
-extern void setprod_init(SetVTab* vtab);
-extern void setmulti_init(SetVTab* vtab);
+/* set4.c
+ */
+extern int set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
+extern SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
+extern Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
+extern void set_iter_exit_intern(SetIter* iter, const Set* set);
+extern void set_iter_reset_intern(SetIter* iter, const Set* set);
 
-extern Set set_new_from_list(const List* list);
-
-
+/* setempty.c
+ */
+extern void set_empty_init(SetVTab* vtab);
+   
+/* setpseudo.c
+ */
+extern void set_pseudo_init(SetVTab* vtab);
+   
 /* setlist.c
  */
+extern void set_list_init(SetVTab* vtab);
 extern Set* set_list_new(int size, int flags);
 extern int  set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
 extern Set* set_list_new_from_elems(const List* list);
 extern Set* set_list_new_from_tuples(const List* list);
-
+extern Set* set_list_new_from_entries(const List* list);
 extern const Elem* set_list_get_elem(const Set* set, int idx);
 
 /* setrange.c
  */
-extern Set* set_range_new(int begin, int end, int step);
+extern void set_range_init(SetVTab* vtab);
+
+/* setprod.c
+ */
+extern void set_prod_init(SetVTab* vtab);
 
 /* set multi.c
  */
-#if 0
-extern Set set_multi_new_from_tuples(const List* list);
+extern void set_multi_init(SetVTab* vtab);
+extern Set* set_multi_new_from_list(const List* list);
 
-extern Set set_range_new(int begin, int end, int step);
-
-extern Set set_prod_new(Set a, Set b);
-#endif
 
 #endif /* _SET4_H_ */
-
-
-
-
-
-
 

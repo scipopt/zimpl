@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.17 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -85,7 +85,8 @@ void tuple_free(Tuple* tuple)
    if (tuple->refc == 0)
    {
       for(i = 0; i < tuple->dim; i++)
-         elem_free(tuple->element[i]);
+         if (tuple->element[i] != NULL)
+            elem_free(tuple->element[i]);
 
       SID_del(tuple);
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.53 2004/04/12 07:04:16 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.54 2004/04/13 13:59:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -196,9 +196,7 @@ static void add_parameter(const char* def)
       free(name);
       return;
    }
-   set   = set_new(0, 1, SET_NO_HASH);
-   set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
-
+   set   = set_pseudo_new();
    sym   = symbol_new(str_new(name), SYM_ERR, set, 1, ENTRY_NULL);
    tuple = tuple_new(0);   
 
@@ -373,10 +371,11 @@ int main(int argc, char* const* argv)
    str_init();
    numb_init();
    elem_init();
+   set_init();
 
    /* Make symbol to hold entries of internal variables
     */
-   set = set_new(0, 0, SET_NO_HASH);
+   set = set_pseudo_new();
    (void)symbol_new("@@", SYM_VAR, set, 100, NULL);
    set_free(set);
    
@@ -495,6 +494,7 @@ int main(int argc, char* const* argv)
    xlp_free();
    symbol_exit();
    define_exit();
+   set_exit();
    elem_exit();
    numb_exit();
    str_exit();

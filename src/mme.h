@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.56 2004/04/12 19:17:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.57 2004/04/13 13:59:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -50,16 +50,6 @@ enum statement_type
    STMT_CONS, STMT_DEF, STMT_DO
 };
 
-enum set_check_type
-{
-   SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
-};
-
-enum set_add_type
-{
-   SET_ADD_BEGIN, SET_ADD_END
-};
-
 enum bound_type
 {
    BOUND_ERROR = 0, BOUND_VALUE, BOUND_INFTY, BOUND_MINUS_INFTY
@@ -87,11 +77,8 @@ typedef struct bound             Bound;
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
-//???!!!typedef struct set               Set;
-typedef union set          Set;
-/////////////////////////////
-typedef enum set_add_type        SetAddType;
-typedef enum set_check_type      SetCheckType;
+typedef union set                Set;
+typedef union set_iter           SetIter;
 typedef struct entry             Entry;
 typedef enum symbol_type         SymbolType;
 typedef struct symbol            Symbol;
@@ -394,34 +381,53 @@ extern char*        tuple_tostr(const Tuple* tuple);
 
 /* set.c
  */
-#define SET_DEFAULT 0x0
-#define SET_NO_HASH 0x1
+extern void set_init(void);
+extern void set_exit(void);
+extern void set_free(Set* set);
+extern Bool set_is_valid(const Set* set);
+extern Set* set_copy(const Set* set);
+extern Bool set_lookup(const Set* set, const Tuple* tuple);
+extern SetIter* set_iter_init(const Set* set, const Tuple* pattern);
+extern Tuple* set_iter_next(SetIter* iter, const Set* set);
+extern void set_iter_exit(SetIter* iter, const Set* set);
+extern int  set_get_dim(const Set* set);
+extern int  set_get_members(const Set* set);
+extern void set_print(FILE* fp, const Set* set);
 
+extern Set* set_empty_new(int dim);
+extern Set* set_pseudo_new(void);
+extern Set* set_new_from_list(const List* list);
+extern Set* set_range_new(int begin, int end, int step);
+extern Set* set_prod_new(const Set* a, const Set* b);
+
+#if 0
 /*lint -sem(        set_new, 1n >= 0 && 2n >= 0, @p == 1) */
-extern Set*         set_new(int dim, int estimated_size, unsigned int flags);
+//extern Set*         set_new(int dim, int estimated_size, unsigned int flags);
 /*lint -sem(        set_free, custodial(1), 1p == 1) */
-extern void         set_free(Set* set);
+//extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */
-extern Bool         set_is_valid(const Set* set);
+//extern Bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
-extern Set*         set_copy(const Set* set);
+//extern Set*         set_copy(const Set* set);
 /*lint -sem(        set_add_member, custodial(2), 1p == 1 && 2p == 1, @p == 1) */
-extern void         set_add_member(Set* set, Tuple* tuple,
-   SetAddType where, SetCheckType check);
+//extern void         set_add_member(Set* set, Tuple* tuple,
+//   SetAddType where, SetCheckType check);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
-extern Bool         set_lookup(const Set* set, const Tuple* tuple);
+//extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 /*lint -sem(        set_match, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
-extern const Tuple* set_match_next(const Set* set, const Tuple* pat, int* idx);
+//extern const Tuple* set_match_next(const Set* set, const Tuple* pat, int* idx);
 /*lint -sem(        set_get_dim, 1p == 1, @n >= 0) */
-extern int          set_get_dim(const Set* set);
+//extern int          set_get_dim(const Set* set);
 /*lint -sem(        set_get_used, 1p == 1, @n >= 0) */
-extern int          set_get_used(const Set* set);
+//extern int          set_get_used(const Set* set);
 /*lint -sem(        set_print, 1p == 1 && 2p == 1) */
-extern void         set_print(FILE* fp, const Set* set);
+//extern void         set_print(FILE* fp, const Set* set);
 /*lint -sem(        set_range, @p == 1) */
 extern Set*         set_range(int start, int end, int step);
 /*lint -sem(        set_cross, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_cross(const Set* seta, const Set* setb);
+#endif
+
 /*lint -sem(        set_union, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_union(const Set* seta, const Set* setb);
 /*lint -sem(        set_inter, 1p == 1 && 2p == 1, @p == 1) */
