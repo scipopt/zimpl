@@ -1,3 +1,5 @@
+1.03 31.Jul 2002 Release
+
  - A division by Zero now gives an error message
    (instead of an exception or whatever)
 
