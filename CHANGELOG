@@ -1,3 +1,8 @@
+ - Change the implementation of SUM command. Major speedup.
+
+ - Implemented random(min, max) generates a random number
+   between min and max. At the moment rand() is used,
+   but this will change.
 
  - It is now possible to have a default value for a parameter.
    param p[A] := <1> 1, <2> 2 default 99
