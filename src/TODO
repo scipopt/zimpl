@@ -1,3 +1,11 @@
+MPSwrite Warning objective invertet maximal einmal 
+
+TeX output?
+
+Matrxi einlesen rowwise or columwise. Nur die Werte,
+und die indizes werden automatisch weitergezählt.
+
+
 var/con macht einzeln mallocs
 sto_size ist fix 1000
 Hash size ist fix 1000003

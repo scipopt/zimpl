@@ -1,2 +1,3 @@
-# $Id: w162.zpl,v 1.1 2003/09/17 10:18:01 bzfkocht Exp $
+# $Id: w162.zpl,v 1.2 2004/05/29 11:29:36 bzfkocht Exp $
+set I := { 1..4};
 param x = 5

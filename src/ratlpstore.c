@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.20 2004/05/11 19:16:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.21 2004/05/29 11:29:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -124,10 +124,11 @@ static void lps_hash_free(LpsHash* hash)
       
    assert(hash_valid(hash));
 
+#if 0
 #ifndef NDEBUG
    hash_statist(stdout, hash);
 #endif
-   
+#endif
    for(i = 0; i < hash->size; i++)
    {
       for(he = hash->bucket[i]; he != NULL; he = hq)

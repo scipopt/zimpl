@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.78 2004/05/03 11:35:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.79 2004/05/29 11:29:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -2398,12 +2398,14 @@ CodeNode* i_idxset_new(CodeNode* self)
 {
    Tuple*       tuple;
    Tuple*       t0;
+   Tuple*       t1;
+   ElemType     elem_type;
    CodeNode*    lexpr;
    const Set*   set;
    char         name[13]; /* "@-2000000000" */
    int          dim;
    int          i;
-   Bool         is_unrestricted = FALSE;
+   Bool         is_unrestricted;
          
    Trace("i_idxset_new");
 
@@ -2415,11 +2417,14 @@ CodeNode* i_idxset_new(CodeNode* self)
    lexpr  = code_get_child(self, 2);
    dim    = set_get_dim(set);
 
+   is_unrestricted = code_get_inst(lexpr) == (Inst)i_bool_true;
+   
    /* Attention: set_get_members(set) == 0 is possible!
     */
    assert(set_get_dim(set) > 0);
    
-   /* Wenn kein Index tuple angegeben wurde, konstruieren wir eins.
+   /* If no index tuple was given, we construct one.
+    * This will always be ok.
     */
    if (!tuple_cmp(tuple, t0))
    {
@@ -2432,11 +2437,14 @@ CodeNode* i_idxset_new(CodeNode* self)
          sprintf(name, "@%d", i + 1);
          tuple_set_elem(tuple, i, elem_new_name(str_new(name)));
       }
-      if (code_get_inst(lexpr) == (Inst)i_bool_true)
-         is_unrestricted = TRUE;
    }
    else
    {
+      /* If a index tuple was given, check if
+       * - the dimension is correct
+       * - any not NAME type entries are compatible.
+       * - the set is unrestricted, ie all NAMES, no WITH.
+       */
       if (tuple_get_dim(tuple) != dim)
       {
          fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
@@ -2445,13 +2453,31 @@ CodeNode* i_idxset_new(CodeNode* self)
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
-      if (code_get_inst(lexpr) == (Inst)i_bool_true)
+      if (dim > 0 && set_get_members(set) > 0)
       {
-         for(i = 0; i < dim; i++)
-            if (elem_get_type(tuple_get_elem(tuple, i)) != ELEM_NAME)
-               break;
+         t1 = set_get_tuple(set, 0);
 
-         is_unrestricted = (i == dim);
+         for(i = 0; i < dim; i++)
+         {
+            elem_type = elem_get_type(tuple_get_elem(tuple, i));
+               
+            if (elem_type != ELEM_NAME)
+            {
+               is_unrestricted = FALSE;
+               
+               if (elem_type != elem_get_type(tuple_get_elem(t1, i)))
+               {
+                  fprintf(stderr, "*** Error 198: Incompatible index tuple\n");
+                  tuple_print(stderr, tuple);
+                  fprintf(stderr, " component %d is not compatible with ", i + 1);
+                  tuple_print(stderr, t1);
+                  fprintf(stderr, "\n");
+                  code_errmsg(self);
+                  exit(EXIT_FAILURE);
+               }
+            }
+         }
+         tuple_free(t1);
       }
    }
    code_value_idxset(self, idxset_new(tuple, set, lexpr, is_unrestricted));

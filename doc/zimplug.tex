@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.18 2004/05/15 15:18:08 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.19 2004/05/29 11:29:36 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -1042,7 +1042,7 @@ plant \code{C}. Total cost would be 1457.
 
 \clearpage
 \subsection{$n$-Queens Problem}
-
+\label{ssec:example:n-queens-problem}
 We now show two formulations of the $n$-Queens problems using 
 extended constraints and functions. 
 
@@ -1310,11 +1310,9 @@ can produce:
 % elem.c
 % 
 \item[160 Comparison of elements with different types \code{xxx} /
-  \code{yyy}] (warning)\ \\
+  \code{yyy}]\ \\
   Two elements from different tuples were compared and found to be 
-  of different types. Probably you have an index expression with a 
-  constant element, that does not match the elements of the set.
-  Example: \code{set B:=\{$<$i,"a"$>$ in \{$<$1,2$>$\}\};}
+  of different types. 
 %
 % load.c
 %
@@ -1347,9 +1345,6 @@ can produce:
 %
 \item[167 Comparison of different dimension tuples] (warning)\ \\
   Two tuples with different dimensions were compared.
-  Probably you have an index expression which does not match the  
-  dimension of the tuples in the set.
-  Example: \code{set B:=\{$<$1$>$ in \{$<$1,2$>$\}\};}
 %
 % zimpl.c
 %
@@ -1463,6 +1458,10 @@ can produce:
   set has to be one dimension.
 \item[197: Empty index set for set]\ \\
   The index set for a set is empty.
+\item[198: Incompatible index tuple]\ \\
+  The index tuple given had fixed components. The type of such a
+  component was not the same as the type of the same component of tuples
+  from the set.
 %
 % numbgmp.c
 %

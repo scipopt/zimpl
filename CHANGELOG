@@ -1,3 +1,6 @@
+ - Improved error handling for wrong components in
+   sets.
+
 2.02 15.May 2004 Release
 
  - New function ordinal ord(s,t,c) implemented.

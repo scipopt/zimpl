@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.prf,v 1.4 2003/09/28 11:08:56 bzfkocht Exp $
+#--- $Id: make.linux.x86.gnu.prf,v 1.5 2004/05/29 11:29:36 bzfkocht Exp $
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
-CFLAGS		=	-O2 -march=pentiumpro -g -pg $(GCCWARN)
+CFLAGS		=	-march=pentiumpro -g -pg $(GCCWARN)
 LDFLAGS		=	-lgmp -lz -lm -static 

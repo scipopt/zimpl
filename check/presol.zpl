@@ -1,14 +1,14 @@
-# $Id: expr.zpl,v 1.10 2004/05/29 11:29:35 bzfkocht Exp $
+# $Id: presol.zpl,v 1.1 2004/05/29 11:29:35 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
-#*   File....: expr.zpl                                                      *
-#*   Name....: Expression test                                               *
+#*   File....: presol.zpl                                                    *
+#*   Name....: Presolve test                                                 *
 #*   Author..: Thorsten Koch                                                 *
 #*   Copyright by Author, All rights reserved                                *
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2004 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -24,24 +24,18 @@
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
-set I := { 1 .. 10 };
+set I := { 1..5 };
 
-param a[<i> in I] := i + 3;
+var x[<i> in I] binary startval i mod 2;
+var y[<i> in I] integer <= 2 * i priority i * 10 startval istart;
+var z[<i> in I] <= 4 * i;
 
-var x[I];
-
-subto c01: (3 * a[1] + 5) * x[1] >= a[2] * 2 - 4;
-subto c02: a[1] mod 2 >= x[1] / 7;
-subto c03: a[1] div 2 >= x[1] - 3;
-subto c04: card(I) * x[1] >= abs(a[1] - a[2]);
-subto c05: a[1]^a[2] <= x[1] * 3!;
-subto c06: floor(a[1] / 3) <= x[2] * ceil(a[2] / 7);
-subto c07: -exp(ln(a[4])) >= -x[3];
-subto c08: x[3] + log(10) == -6;
-subto c09: (min <i> in I : a[i]) * x[1] >= x[2] * max <i> in I : a[i];
-subto c10: x[1] * if sum <i> in I : a[i] > 20 then 2 else -4 end >= 5;
-subto c11: a[1]^-a[2] >= x[2] / 100;
-subto c12: x[3] >= min(6, 2/7, a[1], a[3]);
-subto c13: x[3] <= max(6, 2/7, a[1], a[3]);
-subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;
-subto c15: sum <i> in I do sgn(5 - i) * x[i] >= 3;
+minimize cost: sum <i> in I : -(x[i] + y[i]);
+ 
+subto c1: forall <i> in I: x[i] <= 1;
+subto c2: y[1] + y[2] == 6;
+subto c3: sum <i> in I: x[i] <= 3;
+subto c4: sum <i> in I: y[i] == 15;
+subto c5: forall <i> in I: y[i] >= z[i];
+subto c6: forall <i> in I with i < 3: x[i] <= z[i];
+subto c7: forall <i> in I with i >= 3: 1 <= x[i] + y[i] <= 100;

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.10 2004/05/15 15:09:38 bzfkocht Exp $
+# $Id: check.sh,v 1.11 2004/05/29 11:29:35 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -47,7 +47,77 @@ do
    esac
    rm $i.tbl $i.lp
 done 
+for i in presol
+do
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 -Distart=5 -O -t mps -r -m -n cm $i.zpl
+   diff $i.mps $i.mps.ref >/dev/null
+   case $? in
+    0) echo Test $i "(mps)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test $i "(mps)" FAIL ;;
+    *) echo Test $i "(mps)" ERROR ;;
+   esac
+   COUNT=`expr $COUNT + 1` 
+   diff $i.tbl $i.tbl.ref >/dev/null
+   case $? in
+    0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(tbl)" FAIL ;;
+    *) echo Test $i "(tbl)" ERROR ;;
+   esac
+   COUNT=`expr $COUNT + 1` 
+   diff $i.mst $i.mst.ref >/dev/null
+   case $? in
+    0) echo Test $i "(mst)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(mst)" FAIL ;;
+    *) echo Test $i "(mst)" ERROR ;;
+   esac
+   COUNT=`expr $COUNT + 1` 
+   diff $i.ord $i.ord.ref >/dev/null
+   case $? in
+    0) echo Test $i "(ord)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(ord)" FAIL ;;
+    *) echo Test $i "(ord)" ERROR ;;
+   esac
+   rm $i.tbl $i.mps $i.mst $i.ord
+done 
 #
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 -Distart=4 -t hum -n cf presol.zpl
+   diff presol.hum presol.hum.ref >/dev/null
+   case $? in
+    0) echo Test presol.zpl "(hum)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test presol.zpl "(hum)" FAIL ;;
+    *) echo Test presol.zpl "(hum)" ERROR ;;
+   esac
+   rm presol.hum
+# 
+#
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 print.zpl >print.out
+   diff print.out print.out.ref >/dev/null
+   case $? in
+    0) echo Test print.zpl "(out)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test print.zpl "(out)" FAIL ;;
+    *) echo Test print.zpl "(out)" ERROR ;;
+   esac
+   rm print.out print.tbl print.lp
+# 
+#
+cd warnings
+for i in w*.zpl
+do
+   COUNT=`expr $COUNT + 1` 
+   NAME=`basename $i .zpl`
+   ../$1 -v0 $i 2>$NAME.warn
+   diff $NAME.warn $NAME.warn.ref >/dev/null
+   case $? in
+    0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(warn)" FAIL ;;
+    *) echo Test $i "(warn)" ERROR ;;
+   esac
+   rm $NAME.warn $NAME.tbl $NAME.lp
+done 2>/dev/null
+cd ..
 cd errors
 #
 for i in e[1-6]*.zpl

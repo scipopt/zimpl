@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.57 2004/05/07 08:43:01 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.58 2004/05/29 11:29:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -85,6 +85,24 @@ static const char* help =
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
 "\n" ; 
+
+#ifdef WITH_CALLTRACE /* Does only work with gcc */
+void __cyg_profile_func_enter(void *this_fn, void *call_site) __attribute__((no_instrument_function));
+void __cyg_profile_func_exit(void *this_fn, void *call_site) __attribute__((no_instrument_function));
+static int call_depth = 0;
+
+void __cyg_profile_func_enter(void *this_fn, void *call_site)
+{
+   call_depth++;
+   
+   fprintf(stderr, "%p %d\n", this_fn, call_depth);
+}
+
+void __cyg_profile_func_exit(void *this_fn, void *call_site) 
+{
+   call_depth--;
+}
+#endif
 
 static char* add_extention(const char* filename, const char* extension)
 {
@@ -420,9 +438,75 @@ int main(int argc, char* const* argv)
    
    xlp_scale();
    
+   /* We do not need the translation table for human readable format
+    * In any case we write it first to allow for a inline retranslation
+    */
+   if (format != LP_FORM_HUM)
+   {
+      /* Write translation table
+       */
+      sprintf(cmdpipe, filter, tblfile, "tbl");
+
+      if (verbose >= VERB_NORMAL)
+         printf("Writing [%s]\n", cmdpipe);
+
+      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+      {
+         fprintf(stderr, "*** Error 104: File open failed");
+         perror(tblfile);
+         exit(EXIT_FAILURE);
+      }
+      xlp_transtable(fp, format);
+
+      check_write_ok(fp, tblfile);
+
+      (void)(*closefile)(fp);
+   }
+   /* Write order file 
+    */
+   if (write_order)
+   {
+      sprintf(cmdpipe, filter, ordfile, "ord");
+
+      if (verbose >= VERB_NORMAL)
+         printf("Writing [%s]\n", cmdpipe);
+
+      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+      {
+         fprintf(stderr, "*** Error 104: File open failed ");
+         perror(ordfile);
+         exit(EXIT_FAILURE);
+      }
+      xlp_orderfile(fp, format);
+         
+      check_write_ok(fp, ordfile);
+         
+      (void)(*closefile)(fp);
+   }
+   /* Write MST file 
+    */
+   if (write_mst)
+   {
+      sprintf(cmdpipe, filter, mstfile, "mst");
+
+      if (verbose >= VERB_NORMAL)
+         printf("Writing [%s]\n", cmdpipe);
+
+      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+      {
+         fprintf(stderr, "*** Error 104: File open failed ");
+         perror(mstfile);
+         exit(EXIT_FAILURE);
+      }
+      xlp_mstfile(fp, format);
+         
+      check_write_ok(fp, mstfile);
+         
+      (void)(*closefile)(fp);
+   }
    /* Write Output
     */
-   sprintf(cmdpipe, filter, outfile);
+   sprintf(cmdpipe, filter, outfile, "lp");
 
    if (verbose >= VERB_NORMAL)
       printf("Writing [%s]\n", cmdpipe);
@@ -439,73 +523,6 @@ int main(int argc, char* const* argv)
 
    (void)(*closefile)(fp);
 
-   /* We do not need the translation table for human readable format
-    * (And the orderfile and mstffile are also senseless)
-    */
-   if (format != LP_FORM_HUM)
-   {
-      /* Write translation table
-       */
-      sprintf(cmdpipe, filter, tblfile);
-
-      if (verbose >= VERB_NORMAL)
-         printf("Writing [%s]\n", cmdpipe);
-
-      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
-      {
-         fprintf(stderr, "*** Error 104: File open failed");
-         perror(tblfile);
-         exit(EXIT_FAILURE);
-      }
-      xlp_transtable(fp, format);
-
-      check_write_ok(fp, tblfile);
-
-      (void)(*closefile)(fp);
-
-      /* Write order file 
-       */
-      if (write_order)
-      {
-         sprintf(cmdpipe, filter, ordfile);
-
-         if (verbose >= VERB_NORMAL)
-            printf("Writing [%s]\n", cmdpipe);
-
-         if (NULL == (fp = (*openfile)(cmdpipe, "w")))
-         {
-            fprintf(stderr, "*** Error 104: File open failed ");
-            perror(ordfile);
-            exit(EXIT_FAILURE);
-         }
-         xlp_orderfile(fp, format);
-         
-         check_write_ok(fp, ordfile);
-         
-         (void)(*closefile)(fp);
-      }
-      /* Write MST file 
-       */
-      if (write_mst)
-      {
-         sprintf(cmdpipe, filter, mstfile);
-
-         if (verbose >= VERB_NORMAL)
-            printf("Writing [%s]\n", cmdpipe);
-
-         if (NULL == (fp = (*openfile)(cmdpipe, "w")))
-         {
-            fprintf(stderr, "*** Error 104: File open failed ");
-            perror(mstfile);
-            exit(EXIT_FAILURE);
-         }
-         xlp_mstfile(fp, format);
-         
-         check_write_ok(fp, mstfile);
-         
-         (void)(*closefile)(fp);
-      }
-   }  
    if (verbose >= VERB_DEBUG) 
       symbol_print_all(stderr);
 
@@ -536,7 +553,9 @@ int main(int argc, char* const* argv)
    free(filter);
    free(cmdpipe);
    
-   mem_display(stderr);
+   if (verbose >= VERB_NORMAL)
+      mem_display(stdout);
+   
 #endif /* __INSURE__ || !NDEBUG || FREEMEM */
    return 0;
 }
