@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.19 2002/08/22 07:20:01 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.20 2002/09/15 08:53:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -53,10 +53,22 @@ enum code_type
    CODE_RDEF, CODE_RPAR, CODE_BITS
 };
 
+enum set_check_type
+{
+   SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
+};
+
+enum set_add_type
+{
+   SET_ADD_BEGIN, SET_ADD_END
+};
+
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
 typedef struct set               Set;
+typedef enum set_add_type        SetAddType;
+typedef enum set_check_type      SetCheckType;
 typedef struct entry             Entry;
 typedef enum symbol_type         SymbolType;
 typedef struct symbol            Symbol;
@@ -220,9 +232,6 @@ extern char*        tuple_tostr(const Tuple* tuple);
 
 /* set.c
  */
-#define SET_ADD_BEGIN  0
-#define SET_ADD_END    1
-
 /*lint -sem(        set_new, 1n >= 0, @p == 1) */
 extern Set*         set_new(int dim);
 /*lint -sem(        set_free, 1p == 1) */
@@ -231,8 +240,9 @@ extern void         set_free(Set* set);
 extern Bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
 extern Set*         set_copy(const Set* set);
-/*lint -sem(        set_add_member, 1p == 1 && 2p == 1 && 3n >= 0, @p == 1) */
-extern void         set_add_member(Set* set, const Tuple* tuple, int where);
+/*lint -sem(        set_add_member, 1p == 1 && 2p == 1, @p == 1) */
+extern void         set_add_member(Set* set, const Tuple* tuple,
+   SetAddType where, SetCheckType check);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
 extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 /*lint -sem(        set_match, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */

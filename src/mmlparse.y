@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.20 2002/08/22 07:20:01 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.21 2002/09/15 08:53:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -48,7 +48,6 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
-%expect 5
 
 %union
 {
@@ -89,7 +88,10 @@ extern void yyerror(const char* s);
 %type <bits> con_attr con_attr_list
 
 %right ASGN
+%left  TERMOP
 %left  ','
+%right '('
+%left  ')'
 %left  OR
 %left  EXISTS
 %left  AND
@@ -286,7 +288,7 @@ term
 subterm
    : summand '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
    | summand                { $$ = $1; }
-   | expr                   { $$ = code_new_inst(i_term_expr, 1, $1); }
+   | expr %prec TERMOP      { $$ = code_new_inst(i_term_expr, 1, $1); }
    | expr '+' summand       { $$ = code_new_inst(i_term_const, 2, $3, $1); }
    | expr '-' summand       {
          $$ = code_new_inst(i_term_sub, 2,

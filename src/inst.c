@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.25 2002/08/27 07:04:07 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.26 2002/09/15 08:53:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -776,7 +776,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    for(i = 0; i < n; i++)
    {
       tuple = list_get_tuple(list, &le);
-      set_add_member(set, tuple, SET_ADD_END);
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_WARN);
    }
    code_value_set(self, set);
 
@@ -809,7 +809,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
       tuple = tuple_new(1);
 
       tuple_set_elem(tuple, 0, elem);      
-      set_add_member(set, tuple, SET_ADD_END);
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_WARN);
 
       tuple_free(tuple);
    }
@@ -836,7 +836,7 @@ CodeNode* i_set_empty(CodeNode* self)
    if (dim == 0)
    {
       tuple = tuple_new(0);
-      set_add_member(set, tuple, SET_ADD_END);
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
       tuple_free(tuple);
    }
    code_value_set(self, set);
@@ -1136,7 +1136,7 @@ CodeNode* i_newsym_set(CodeNode* self)
          local_install_tuple(pattern, tuple);
 
          if (code_get_bool(code_eval(lexpr)))
-            set_add_member(newset, tuple, SET_ADD_END);
+            set_add_member(newset, tuple, SET_ADD_END, SET_CHECK_WARN);
 
          local_drop_frame();
       }

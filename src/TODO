@@ -1,3 +1,16 @@
+Mal überlegen ob es nicht eine ide wäre 
+Metakontruckte eiinzuführen wie
+
+IF x[i] > y[i] AND z[i] == 0 THEN
+   x[i] + y[i] == 5
+ELSE
+   x[i] + y[i] + z[i] == 7
+Was im prinzip ein bedingtes ODER ist.
+
+   x[i] + y[i] == 5 OR x[i] + y[i] + z[i] == 7
+
+------------------------------------------
+
 Da ist noch ein bug in rbt_search. Manchmal wird nichts gefunden,
 scheint aber zufällig. Compilerfehler???
 
@@ -52,6 +65,7 @@ Warning wenn locale Variable eine globale uerbschreibt.
 sparse symbols. Dazu brauchen wir das urspüngliche indexset.
 Dann können wir für alle derefs mit einem index für den kein Wert
 vorliegt, der aber zulässig wäre, den default zurück liefern.
+
 
 
 

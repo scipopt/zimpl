@@ -1,4 +1,4 @@
-#ident "@(#) $Id: iread.c,v 1.4 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: iread.c,v 1.5 2002/09/15 08:53:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -166,12 +166,19 @@ static int parse_template(
    /* Is this a tuple_list "<1n,2s>" or
     * an entry_list "<1n,2n> 3s" template ?
     */
-   if (NULL == (s = strchr(temp, '>')))
+   if (  (NULL               == strchr(temp, '>'))
+      || (NULL               == strchr(temp, '<'))
+      || (strrchr(temp, '>') != strchr(temp, '>'))
+      || (strrchr(temp, '<') != strchr(temp, '<')))
    {
       fprintf(stderr, "*** Error: Not a valid read template\n");
       code_errmsg(self);
       abort();
    }
+   s = strchr(temp, '>');
+
+   assert(s != NULL);
+   
    for(++s; isspace(*s); s++)
       ;
 

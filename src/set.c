@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.9 2002/08/22 07:20:01 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.10 2002/09/15 08:53:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -121,7 +121,11 @@ Set* set_copy(const Set* source)
    return set;
 }
 
-void set_add_member(Set* set, const Tuple* tuple, int where)
+void set_add_member(
+   Set*         set,
+   const Tuple* tuple,
+   SetAddType   where,
+   SetCheckType check)
 {
    int idx;
    int i;
@@ -144,14 +148,21 @@ void set_add_member(Set* set, const Tuple* tuple, int where)
 
    assert(set->dim == tuple_get_dim(tuple));
 
-   if (hash_has_tuple(set->hash, tuple))
+   if (check != SET_CHECK_NONE && hash_has_tuple(set->hash, tuple))
    {
-      fprintf(stderr, "*** Warning: Dublicate element ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, " for set rejected\n");
+      if (check != SET_CHECK_QUIET)
+      {
+         assert(check == SET_CHECK_WARN);
+
+         fprintf(stderr, "*** Warning: Dublicate element ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " for set rejected\n");
+      }
    }
    else
    {
+      assert(!hash_has_tuple(set->hash, tuple));
+      
       if (where == SET_ADD_END)
          idx = set->used;
       else
@@ -244,7 +255,7 @@ Set* set_range(double start, double end, double step)
    {
       tuple = tuple_new(1);
       tuple_set_elem(tuple, 0, elem_new_numb(x));
-      set_add_member(set, tuple, SET_ADD_END);
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
       tuple_free(tuple);
    }
    assert(set_is_valid(set));
@@ -283,7 +294,8 @@ Set* set_cross(const Set* set_a, const Set* set_b)
          for(k = 0; k < set_b->dim; k++)            
             tuple_set_elem(tuple, idx++, tuple_get_elem(set_b->member[j], k));
 
-         set_add_member(set, tuple, SET_ADD_END);
+         set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
+         
          tuple_free(tuple);
       }
    }
@@ -306,10 +318,10 @@ Set* set_union(const Set* set_a, const Set* set_b)
    assert(set != NULL);
    
    for(i = 0; i < set_a->used; i++)
-      set_add_member(set, set_a->member[i], SET_ADD_END);         
+      set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);    
 
    for(i = 0; i < set_b->used; i++)
-      set_add_member(set, set_b->member[i], SET_ADD_END);         
+      set_add_member(set, set_b->member[i], SET_ADD_END, SET_CHECK_QUIET);    
 
    assert(set_is_valid(set));
 
@@ -332,7 +344,7 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END);         
+         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);   
 
    assert(set_is_valid(set));
 
@@ -355,7 +367,7 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END);         
+         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE); 
 
    assert(set_is_valid(set));
 
@@ -378,11 +390,11 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    
    for(i = 0; i < set_a->used; i++)
       if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, set_a->member[i], SET_ADD_END);         
+         set_add_member(set, set_a->member[i], SET_ADD_END, SET_CHECK_NONE);  
 
    for(i = 0; i < set_b->used; i++)
       if (!set_lookup(set_a, set_b->member[i]))
-         set_add_member(set, set_b->member[i], SET_ADD_END);         
+         set_add_member(set, set_b->member[i], SET_ADD_END, SET_CHECK_NONE); 
 
    assert(set_is_valid(set));
 
@@ -420,10 +432,7 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
       for(i = 0; i < dim; i++)
          tuple_set_elem(tuple, i, tuple_get_elem(set_a->member[k], idx[i])); 
 
-      /* This is suboptimal, because set_add_member look again.
-       */
-      if (!hash_has_tuple(set->hash, tuple))
-         set_add_member(set, tuple, SET_ADD_END);
+      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_QUIET);
 
       tuple_free(tuple);
    }
