@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
-<!-- $Id: zimpl.php,v 1.1 2001/05/06 11:43:21 thor Exp $ -->
+<!-- $Id: zimpl.php,v 1.2 2001/10/09 20:27:10 thor Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -35,7 +35,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Langanguage, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2001/05/06 11:43:21 $">
+<meta name="date" content="$Date: 2001/10/09 20:27:10 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8559-1">
 <title>Zimpl</title> 
@@ -124,6 +124,10 @@ border="0" height="36" width="90" align="bottom"></a>
 <img src="images/msfree.gif" alt="100% Microsoft Free" 
 border="0" width="100" height="31" align="bottom"></a>    
 <!-- ---------------------------------------------------------------------- -->
+<a href="http://www.php.net">
+<img src="images/phpsmall.gif" alt="Powered by PHP" 
+border="0" height="31" width="88" align="bottom"></a>
+<!-- ---------------------------------------------------------------------- -->
 <a href="http://petition.eurolinux.org">
 <img src="images/patent_button.gif" alt="No ePatents" 
 border="0" width="88" height="36" align="bottom"></a>    
@@ -133,7 +137,7 @@ border="0" width="88" height="36" align="bottom"></a>
  border="0" width="100" height="36" align="bottom"></a>
 <!-- ---------------------------------------------------------------------- -->
 <hr noshade><address><font size=-1>
-Last Update $Date: 2001/05/06 11:43:21 $ by
+Last Update $Date: 2001/10/09 20:27:10 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2001 by Thorsten Koch
 <br>URL:<a href=index.html>http://www.zib.de/koch/zimpl.html</a>
