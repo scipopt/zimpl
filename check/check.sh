@@ -26,15 +26,18 @@
 #*
 # $1 = Binary
 PASS=0
+COUNT=0
 for i in expr param set subto var
 do
-   $1 $i.zpl
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 $i.zpl
    diff $i.lp $i.lp.ref >/dev/null
    case $? in
     0) echo Test $i "(lp)" OK; PASS=`expr $PASS + 1` ;;
     1) echo Test $i "(lp)" FAIL ;;
     *) echo Test $i "(lp)" ERROR ;;
    esac
+   COUNT=`expr $COUNT + 1` 
    diff $i.tbl $i.tbl.ref >/dev/null
    case $? in
     0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
@@ -43,6 +46,35 @@ do
    esac
    rm $i.tbl $i.lp
 done 
-if [ $PASS -eq 10 ] ; then echo All $PASS tests passed; 
+if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
 else echo FAILURE!; 
 fi
+#
+PASS=0
+COUNT=0
+#
+cd errors
+#
+for i in *.zpl
+do
+   COUNT=`expr $COUNT + 1` 
+   NAME=`basename $i .zpl`
+   ../$1 -v0 $i 2>$NAME.err
+   diff $NAME.err $NAME.err.ref >/dev/null
+   case $? in
+    0) echo Test $i "(err)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(err)" FAIL ;;
+    *) echo Test $i "(err)" ERROR ;;
+   esac
+   rm $NAME.err
+done 2>/dev/null
+if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
+else echo FAILURE!; 
+fi
+
+
+
+
+
+
+

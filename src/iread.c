@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.11 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.12 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -119,7 +119,7 @@ CodeNode* i_read_use(CodeNode* self)
       numb_print(stderr, use);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    int_use = numb_toint(use);
 
@@ -127,7 +127,7 @@ CodeNode* i_read_use(CodeNode* self)
    {
       fprintf(stderr, "*** Error 148: use value %d is not positive\n", int_use);
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    code_value_rpar(self, rpar_new_use(int_use));
 
@@ -151,7 +151,7 @@ CodeNode* i_read_skip(CodeNode* self)
       numb_print(stderr, skip);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    int_skip = numb_toint(skip);
    
@@ -159,7 +159,7 @@ CodeNode* i_read_skip(CodeNode* self)
    {
       fprintf(stderr, "*** Error 150: skip value %d is negative\n", int_skip);
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    code_value_rpar(self, rpar_new_skip(int_skip));
 
@@ -197,7 +197,7 @@ static int parse_template(
    {
       fprintf(stderr, "*** Error 151: Not a valid read template\n");
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    s = strchr(temp, '>');
 
@@ -218,7 +218,7 @@ static int parse_template(
       {
          fprintf(stderr, "*** Error 152: Invalid read template syntax\n");
          code_errmsg(self);
-         abort();
+         exit(EXIT_FAILURE);
       }
       field--;
       
@@ -226,13 +226,13 @@ static int parse_template(
       {
          fprintf(stderr, "*** Error 153: Invalid field number [%d]\n", field + 1);
          code_errmsg(self);
-         abort();
+         exit(EXIT_FAILURE);
       }
       if ((type != 'n') && (type != 's'))
       {
          fprintf(stderr, "*** Error 154: Invalid field type [%c]\n", type);
          code_errmsg(self);
-         abort();
+         exit(EXIT_FAILURE);
       }
       param_field[params] = field;
       param_type [params] = type;
@@ -244,7 +244,7 @@ static int parse_template(
    {
       fprintf(stderr, "*** Error 155: Invalid read template, not enough fields\n");
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
       
    }
    return params;
@@ -366,14 +366,14 @@ CodeNode* i_read(CodeNode* self)
          strcpy(filename, rdef_get_filename(rdef));
    }
 
-   if (verbose)
+   if (verbose >= VERB_NORMAL)
       printf("Reading %s\n", filename);
 
    if (NULL == (fp = gzopen(filename, "r")))
    {
       perror(filename);
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    else
    {
@@ -430,7 +430,7 @@ CodeNode* i_read(CodeNode* self)
                fprintf(stderr, "***            File: %s line %d\n",
                   rdef_get_filename(rdef), line);
                code_errmsg(self);
-               abort();
+               exit(EXIT_FAILURE);
             }
             t    = field[param_field[i]];
             if (param_type[i] == 'n')
@@ -461,7 +461,7 @@ CodeNode* i_read(CodeNode* self)
                fprintf(stderr, "***            File: %s line %d\n",
                   rdef_get_filename(rdef), line);
                code_errmsg(self);
-               abort();
+               exit(EXIT_FAILURE);
             }
             t     = field[param_field[i]];
             if (param_type[i] == 'n')
@@ -494,7 +494,7 @@ CodeNode* i_read(CodeNode* self)
    {
       fprintf(stderr, "*** Error 158: Read from file found no data\n");
       code_errmsg(self);
-      abort();
+      exit(EXIT_FAILURE);
    }
    code_value_list(self, list);
 

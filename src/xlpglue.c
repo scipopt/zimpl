@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.12 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.13 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -71,6 +71,11 @@ void xlp_free()
 {
    lps_free(lp);
    lp = NULL;
+}
+
+void xlp_stat()
+{
+   lps_stat(lp);
 }
 
 Bool xlp_conname_exists(const char* conname)
@@ -244,7 +249,7 @@ void xlp_presolve()
 {
    PSResult res;
    
-   res = lps_presolve(lp, verbose ? 3 : 0);
+   res = lps_presolve(lp, verbose);
 
    switch(res)
    {

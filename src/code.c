@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.23 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.24 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -77,7 +77,8 @@ struct code_node
 
 #define CODE_SID  0x436f6465
 
-static CodeNode* root;
+static CodeNode*    root;
+static unsigned int inst_count = 0;
 
 inline Bool code_is_valid(const CodeNode* node)
 {
@@ -398,6 +399,11 @@ CodeNode* code_get_root(void)
    return root;
 }
 
+unsigned int code_get_inst_count()
+{
+   return inst_count;
+}
+     
 static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
 {
    static const char* tname[] =
@@ -416,7 +422,7 @@ static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
       fprintf(stderr, "*** Error 159: Type error, expected %s got %s\n",
          tname[expected], tname[node->type]);
       code_errmsg(node);
-      abort();
+      exit(EXIT_FAILURE);
    }
    return node;
 }
@@ -434,6 +440,8 @@ inline CodeNode* code_eval(CodeNode* node)
 {
    assert(code_is_valid(node));
 
+   inst_count++;
+   
    return (*node->eval)(node);
 }
 

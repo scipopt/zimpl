@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.41 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.42 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -107,7 +107,12 @@ typedef enum statement_type      StmtType;
 typedef struct statement         Stmt;
 typedef struct program           Prog;
 
-extern Bool         verbose;
+#define VERB_QUIET    0
+#define VERB_NORMAL   1
+#define VERB_VERBOSE  2
+#define VERB_CHATTER  3
+
+extern int          verbose;
 extern Bool         zpldebug;
 
 /* strstore.c

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.38 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.39 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -50,7 +50,7 @@
 extern int yydebug;
 extern int yy_flex_debug;
 
-Bool verbose   = FALSE;
+int  verbose   = VERB_NORMAL;
 Bool zpldebug  = FALSE;
 
 static const char* banner = 
@@ -74,7 +74,7 @@ static const char* help =
 "  -r             write branching order file.\n" \
 "  -h             show this help.\n" \
 "  -p             presolve LP.\n" \
-"  -v             enable verbose output.\n" \
+"  -v[0123]       enable verbose output.\n" \
 "  -n cm|cn|cf    name column make/name/full\n" \
 "  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
 "                 or human readable HUM.\n" \
@@ -132,7 +132,7 @@ static char* strip_extension(char* filename)
    if (i == 0 || filename[i - 1] == DIRSEP)
    {
       fprintf(stderr, "*** Error 101: Bad filename\n");
-      abort();
+      exit(EXIT_FAILURE);
    }
    return filename;
 }
@@ -165,12 +165,10 @@ int main(int argc, char* const* argv)
    FILE*       (*openfile)(const char*, const char*) = fopen;
    int         (*closefile)(FILE*)                   = fclose;
 
-   puts(banner);
-   
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfF:hn:o:prt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfF:hn:o:prt:v:")) != -1)
    {
       switch(c)
       {
@@ -246,7 +244,7 @@ int main(int argc, char* const* argv)
          }
          break;
       case 'v' :
-         verbose = TRUE;
+         verbose = atoi(optarg);
          break;
       case '?':
          fprintf(stderr, usage, argv[0]);
@@ -260,6 +258,10 @@ int main(int argc, char* const* argv)
       fprintf(stderr, usage, argv[0]);      
       exit(0);
    }
+
+   if (verbose >= VERB_NORMAL)
+      puts(banner);
+   
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));
 
@@ -285,7 +287,7 @@ int main(int argc, char* const* argv)
 
    assert(cmdpipe != NULL);
 
-   gmp_init(verbose);
+   gmp_init(verbose >= VERB_VERBOSE);
    str_init();
    numb_init();
    elem_init();
@@ -306,6 +308,9 @@ int main(int argc, char* const* argv)
     */
    if (presolve)
       xlp_presolve();
+
+   if (verbose >= VERB_NORMAL)
+      xlp_stat();
    
    xlp_scale();
    
@@ -313,14 +318,14 @@ int main(int argc, char* const* argv)
     */
    sprintf(cmdpipe, filter, outfile);
 
-   if (verbose)
+   if (verbose >= VERB_NORMAL)
       printf("Writing [%s]\n", cmdpipe);
 
    if (NULL == (fp = (*openfile)(cmdpipe, "w")))
    {
       fprintf(stderr, "*** Error 104: File open failed ");
       perror(outfile);
-      abort();
+      exit(EXIT_FAILURE);
    }
    xlp_write(fp, format);
 
@@ -337,14 +342,14 @@ int main(int argc, char* const* argv)
        */
       sprintf(cmdpipe, filter, tblfile);
 
-      if (verbose)
+      if (verbose >= VERB_NORMAL)
          printf("Writing [%s]\n", cmdpipe);
 
       if (NULL == (fp = (*openfile)(cmdpipe, "w")))
       {
          fprintf(stderr, "*** Error 104: File open failed");
          perror(tblfile);
-         abort();
+         exit(EXIT_FAILURE);
       }
       xlp_transtable(fp, format);
 
@@ -358,14 +363,14 @@ int main(int argc, char* const* argv)
       {
          sprintf(cmdpipe, filter, ordfile);
 
-         if (verbose)
+         if (verbose >= VERB_NORMAL)
             printf("Writing [%s]\n", cmdpipe);
 
          if (NULL == (fp = (*openfile)(cmdpipe, "w")))
          {
             fprintf(stderr, "*** Error 104: File open failed ");
             perror(ordfile);
-            abort();
+            exit(EXIT_FAILURE);
          }
          xlp_orderfile(fp, format);
          
@@ -373,8 +378,7 @@ int main(int argc, char* const* argv)
          
          (void)(*closefile)(fp);
       }
-   }
-   
+   }  
    if (zpldebug) 
       symbol_print_all(stderr);
 

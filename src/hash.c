@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.14 2003/08/22 07:06:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.15 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -109,7 +109,7 @@ void hash_free(Hash* hash)
       
    assert(hash_is_valid(hash));
 
-   if (verbose)
+   if (verbose >= VERB_CHATTER)
       hash_statist(stderr, hash);
    
    SID_del(hash);

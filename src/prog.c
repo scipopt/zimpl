@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.7 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.8 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -34,6 +34,7 @@
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
+#include "code.h"
 
 #define PROG_SID         0x50726f67
 #define PROG_EXTEND_SIZE 100
@@ -130,5 +131,7 @@ void prog_execute(const Prog* prog)
       stmt_parse(prog->stmt[i]);
       stmt_execute(prog->stmt[i]);
    }
+   if (verbose >= VERB_NORMAL)
+      printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.11 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.12 2003/09/09 11:13:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -138,7 +138,7 @@ void stmt_parse(Stmt* stmt)
 
    assert(stmt_is_valid(stmt));
    
-   if (verbose)
+   if (verbose >= VERB_VERBOSE)
       printf("Parsing %s %d\n", stmt->filename, stmt->lineno);
 
    parse_stmt(stmt);
@@ -152,7 +152,7 @@ void stmt_execute(const Stmt* stmt)
    
    assert(stmt_is_valid(stmt));
 
-   if (verbose)
+   if (verbose >= VERB_VERBOSE)
       printf("Executing %s %d\n", stmt->filename, stmt->lineno);
 
    assert(code_get_type(code_eval(stmt->node)) == CODE_VOID);
@@ -162,7 +162,7 @@ void stmt_execute(const Stmt* stmt)
    if (code_get_type(code_eval(stmt->node)) != CODE_VOID)
    {
       fprintf(stderr, "*** Error: Execute must return void element\n");
-      abort();
+      exit(EXIT_FAILURE);
    }
 #endif
 }
