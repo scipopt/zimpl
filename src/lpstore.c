@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.6 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.7 2002/06/18 20:37:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -408,8 +408,8 @@ Var* lps_addvar(
    VarType     type,
    double      lower,
    double      upper,
-   int         prio_up,
-   int         prio_down)
+   int         priority,
+   double      startval)
 {
    Var* v;
    
@@ -428,8 +428,8 @@ Var* lps_addvar(
    v->cost      = 0.0;
    v->lower     = (type == VAR_BIN) ? 0.0 : lower;
    v->upper     = (type == VAR_BIN) ? 1.0 : upper;
-   v->prio_up   = prio_up;
-   v->prio_down = prio_down;
+   v->priority  = priority;
+   v->startval  = startval;
    v->first     = NULL;
    v->prev      = NULL;   
    v->next      = lp->var_root;

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.5 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.6 2002/06/18 20:37:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -50,8 +50,8 @@ struct variable
    double  cost;
    double  lower;
    double  upper;
-   int     prio_up;
-   int     prio_down;
+   int     priority;
+   double  startval;
    Var*    prev;
    Var*    next;   
    Nzo*    first;

@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.12 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.13 2002/06/18 20:37:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -61,7 +61,7 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
-%token RSCALE SEPARATE PRIO_UP PRIO_DOWN
+%token RSCALE SEPARATE PRIORITY STARTVAL
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
 %token AND OR NOT
 %token SUM MIN MAX
@@ -83,7 +83,7 @@ extern void yyerror(const char* s);
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset product factor term entry entry_list
-%type <code> var_type con_type lower upper prio_up prio_down condition
+%type <code> var_type con_type lower upper priority startval condition
 %type <bits> con_attr con_attr_list
 
 %right ASGN
@@ -155,11 +155,11 @@ decl_par
  * ----------------------------------------------------------------------------
  */
 decl_var
-   : DECLVAR NAME '[' idxset ']' var_type lower upper prio_up prio_down ';' {
+   : DECLVAR NAME '[' idxset ']' var_type lower upper priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2), $4, $6, $7, $8, $9, $10);
       }
-   | DECLVAR NAME var_type lower upper prio_up prio_down ';' {
+   | DECLVAR NAME var_type lower upper priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
@@ -187,14 +187,14 @@ upper
    | CMP_LE expr { $$ = $2; }
    ;
 
-prio_up
-   : /* empty */  { $$ = code_new_numb(0.0); }
-   | PRIO_UP expr { $$ = $2; }
+priority
+   : /* empty */   { $$ = code_new_numb(0.0); }
+   | PRIORITY expr { $$ = $2; }
    ;
 
-prio_down
-   : /* empty */    { $$ = code_new_numb(0.0); }
-   | PRIO_DOWN expr { $$ = $2; }
+startval
+   : /* empty */   { $$ = code_new_numb(INFINITY); }
+   | STARTVAL expr { $$ = $2; }
    ;
 
 /* ----------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.12 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.13 2002/06/18 20:37:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -448,7 +448,7 @@ extern Con*         lps_getcon(const char* name);
 extern Nzo*         lps_getnzo(const Con* con, const Var* var);
 /*lint -sem(        lps_addvar, 1p, @p == 1) */
 extern Var*         lps_addvar(const char* name, VarType type,
-   double lower, double upper, int prio_up, int prio_down); 
+   double lower, double upper, int priority, double startval); 
 /*lint -sem(        lps_addcon, 1p, @p == 1) */
 extern Con*         lps_addcon(
    const char* name, ConType sense, double rhs, unsigned int flags);

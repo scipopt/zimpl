@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.13 2002/06/18 09:13:09 bzfkocht Exp $
+# $Id: Makefile,v 1.14 2002/06/18 20:37:21 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -41,7 +41,7 @@ LDFLAGS		=	-lm
 DFLAGS		=	-MM 
 YFLAGS		=	-d -t #-v  
 LFLAGS		=	-d
-LINT		=	lintgcc
+LINT		=	flexelint
 #
 # -----------------------------------------------------------------------------
 # --- nothing to change from here on                                        ---
@@ -66,7 +66,8 @@ mmlscan.c:	mmlscan.l mme.h
 include		$(OBJECT:.o=.d)
 
 lint:		$(OBJECT:.o=.c)
-		$(LINT) project.lnt -os\(lint.out\) $(CPPFLAGS) -DNO_MSHELL $^ 
+		$(LINT) project.lnt -os\(lint.out\) $(CPPFLAGS) \
+		-UNDEBUG -DNO_MSHELL $^ 
 
 clean:
 		-rm -f *.o *.d $(NAME) mmlscan.c mmlparse.[ch] \
