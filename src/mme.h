@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.30 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.31 2003/07/16 08:48:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -32,7 +32,7 @@
 #endif
 
 #ifndef _RATLPTYPES_H_
-#error "Need to include ratlptypes.h before code.h"
+#error "Need to include ratlptypes.h before mme.h"
 #endif
 
 enum element_type
@@ -64,6 +64,11 @@ enum set_add_type
    SET_ADD_BEGIN, SET_ADD_END
 };
 
+enum bound_type
+{
+   BOUND_ERROR = 0, BOUND_VALUE, BOUND_INFTY, BOUND_MINUS_INFTY
+};
+
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.
  */
@@ -72,7 +77,7 @@ enum code_type
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
    CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARCLASS, CODE_CONTYPE,
-   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM
+   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM, CODE_BOUND
 };
 
 typedef enum code_type           CodeType;
@@ -81,6 +86,8 @@ typedef struct code_node         CodeNode;
 typedef CodeNode*              (*Inst)(CodeNode* self);
 
 typedef struct number            Numb;
+typedef enum bound_type          BoundType;
+typedef struct bound             Bound;
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
@@ -211,6 +218,22 @@ extern const Numb*  numb_minusone(void);
 #ifdef __GMP_H__
 extern void         numb_get_mpq(const Numb* numb, mpq_t value);
 #endif
+
+/* bound.c
+ */
+/*lint -sem(        bound_new, @p == 1) */
+extern Bound*       bound_new(BoundType type, const Numb* value);
+/*lint -sem(        bound_free, 1p == 1) */
+extern void         bound_free(Bound* bound);
+/*lint -sem(        bound_is_valid, 1p == 1) */
+extern Bool         bound_is_valid(const Bound* bound);
+/*lint -sem(        bound_copy, 1p == 1, @p == 1) */
+extern Bound*       bound_copy(const Bound* source);
+/*lint -sem(        bound_get_type, 1p == 1) */
+extern BoundType    bound_get_type(const Bound* bound);
+/*lint -sem(        bound_get_value, 1p == 1) */
+extern const Numb*  bound_get_value(const Bound* bound);
+
 
 /* list.c
  */

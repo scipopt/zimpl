@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.17 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.18 2003/07/16 08:48:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -66,6 +66,8 @@ extern CodeNode* i_bool_sseq(CodeNode* self);
 extern CodeNode* i_bool_subs(CodeNode* self);
 /*lint -sem(     i_bool_true, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_bool_true(CodeNode* self);
+/*lint -sem(     i_bound_new, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_bound_new(CodeNode* self);
 /*lint -sem(     i_constraint, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_constraint(CodeNode* self);
 /*lint -sem(     i_elem_list_add, 1p == 1, type(1), @p == 1p) */
@@ -194,6 +196,7 @@ extern CodeNode* i_tuple_empty(CodeNode* self);
 extern CodeNode* i_tuple_list_add(CodeNode* self);
 /*lint -sem(     i_tuple_list_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_tuple_list_new(CodeNode* self);
+
 
 /* iread.c
  */

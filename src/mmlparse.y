@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.35 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.36 2003/07/16 08:48:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -55,7 +55,6 @@ extern void yyerror(const char* s);
 {
    unsigned int bits;
    Numb*        numb;
-   /*   double       numb;*/
    const char*  strg;
    const char*  name;
    Symbol*      sym;
@@ -235,15 +234,17 @@ var_type
    ;
 
 lower
-   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
-   | CMP_GE expr      { $$ = $2; }
-   | CMP_GE '-' INFTY { $$ = code_new_numb(numb_new_integer(-100000000)); }
+   : /* empty */      {
+         $$ = code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0)));
+      }
+   | CMP_GE expr      { $$ = code_new_inst(i_bound_new, 1, $2); }
+   | CMP_GE '-' INFTY { $$ = code_new_bound(BOUND_MINUS_INFTY); }
    ;
 
 upper
-   : /* empty */      { $$ = code_new_numb(numb_new_integer(10000000)); }
-   | CMP_LE expr      { $$ = $2; }
-   | CMP_LE INFTY     { $$ = code_new_numb(numb_new_integer(10000000)); }
+   : /* empty */      { $$ = code_new_bound(BOUND_INFTY); }
+   | CMP_LE expr      { $$ = code_new_inst(i_bound_new, 1, $2); }
+   | CMP_LE INFTY     { $$ = code_new_bound(BOUND_INFTY); }
    ;
 
 priority
@@ -252,7 +253,7 @@ priority
    ;
 
 startval
-   : /* empty */      { $$ = code_new_numb(numb_new_integer(10000000)); }
+   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
    | STARTVAL expr    { $$ = $2; }
    ;
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.12 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.13 2003/07/16 08:48:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -58,6 +58,8 @@ extern CodeNode*    code_new_contype(ConType contype);
 extern CodeNode*    code_new_bits(unsigned int bits);
 /*lint -sem(        code_new_symbol, @p == 1) */
 extern CodeNode*    code_new_symbol(Symbol* sym);
+/*lint -sem(        code_new_bound, @p == 1) */
+extern CodeNode*    code_new_bound(BoundType type);
 /*lint -sem(        code_free, 1p == 1) */
 extern void         code_free(CodeNode* node);
 /*lint -sem(        code_is_valid, 1p == 1) */
@@ -116,6 +118,8 @@ extern const RPar*  code_get_rpar(CodeNode* node);
 extern unsigned int code_get_bits(CodeNode* node);
 /*lint -sem(        code_get_symbol, 1p == 1) */
 extern Symbol*      code_get_symbol(CodeNode* node);
+/*lint -sem(        code_get_bound, 1p == 1) */
+extern const Bound* code_get_bound(CodeNode* node);
 /*lint -sem(        code_value_numb, 1p == 1) */
 extern void         code_value_numb(CodeNode* node, const Numb* numb);
 /*lint -sem(        code_value_strg, 1p == 1 && 2p && nulterm(2)) */
@@ -148,6 +152,8 @@ extern void         code_value_rdef(CodeNode* node, const RDef* rdef);
 extern void         code_value_rpar(CodeNode* node, const RPar* rpar);
 /*lint -sem(        code_value_bits, 1p == 1) */
 extern void         code_value_bits(CodeNode* node, unsigned int bits);
+/*lint -sem(        code_value_bound, 1p == 1 && 2p == 1) */
+extern void         code_value_bound(CodeNode* node, const Bound* bound);
 /*lint -sem(        code_value_void, 1p == 1) */
 extern void         code_value_void(CodeNode* node);
 /*lint -sem(        code_copy_value, 1p == 1 && 2p == 1) */
@@ -191,6 +197,8 @@ extern const RPar*  code_eval_child_rpar(const CodeNode* node, int no);
 extern unsigned int code_eval_child_bits(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_symbol, 1p == 1 && 2n >= 0) */
 extern Symbol*      code_eval_child_symbol(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_bound, 1p == 1 && 2n >= 0) */
+extern const Bound* code_eval_child_bound(const CodeNode* node, int no);
 
 #endif /* _CODE_H_ */
 

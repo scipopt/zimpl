@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.2 2003/07/16 08:48:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -119,30 +119,36 @@ Con* xlp_addcon(
 }
 
 Var* xlp_addvar(
-   const char* name,
-   VarClass    varclass,
-   const Numb* lower,
-   const Numb* upper,
-   const Numb* priority,
-   const Numb* startval)
+   const char*  name,
+   VarClass     varclass,
+   const Bound* lower,
+   const Bound* upper,
+   const Numb*  priority,
+   const Numb*  startval)
 {
-   Var*  var;
-   mpq_t temp;
+   Var*      var;
+   Numb*     value;
+   BoundType bt;
+   mpq_t     temp;
    
    assert(name  != NULL);
    assert(lower != NULL);
    assert(upper != NULL);
-   
+
    var = lps_addvar(lp, name);
 
    mpq_init(temp);
 
-   numb_get_mpq(lower, temp);
-   lps_setlower(var, temp);
-
-   numb_get_mpq(upper, temp);
-   lps_setupper(var, temp);
-
+   if (bound_get_type(lower) == BOUND_VALUE)
+   {
+      numb_get_mpq(bound_get_value(lower), temp);
+      lps_setlower(var, temp);
+   }
+   if (bound_get_type(upper) == BOUND_VALUE)
+   {
+      numb_get_mpq(bound_get_value(upper), temp);
+      lps_setupper(var, temp);
+   }
    mpq_clear(temp);
    
    return var;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.19 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.20 2003/07/16 08:48:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -59,6 +59,7 @@ union code_value
    RPar*        rpar;
    unsigned int bits;
    Symbol*      sym;
+   Bound*       bound;
 };
 
 #define MAX_CHILDS 7
@@ -268,6 +269,27 @@ CodeNode* code_new_symbol(Symbol* sym)
    return node;
 }
 
+/* We eat the bound, i.e. we will free it!
+ */
+CodeNode* code_new_bound(BoundType type)
+{
+   CodeNode* node = calloc(1, sizeof(*node));
+
+   assert(node != NULL);
+   assert(type == BOUND_INFTY || type == BOUND_MINUS_INFTY);
+
+   node->type        = CODE_BOUND;
+   node->eval        = i_nop;
+   node->value.bound = bound_new(type, NULL); 
+   node->stmt        = scan_get_stmt();
+   node->column      = scan_get_column();
+
+   SID_set(node, CODE_SID);
+   assert(code_is_valid(node));
+   
+   return node;
+}
+
 static inline void code_free_value(const CodeNode* node)
 {
    assert(code_is_valid(node));
@@ -319,6 +341,9 @@ static inline void code_free_value(const CodeNode* node)
    case CODE_BITS :
       break;
    case CODE_SYM :
+      break;
+   case CODE_BOUND :
+      bound_free(node->value.bound);
       break;
    default :
       abort();
@@ -503,6 +528,11 @@ inline Symbol* code_get_symbol(CodeNode* node)
    return code_check_type(node, CODE_SYM)->value.sym;
 }
 
+inline const Bound* code_get_bound(CodeNode* node)
+{
+   return code_check_type(node, CODE_BOUND)->value.bound;
+}
+
 /* ----------------------------------------------------------------------------
  * Value Funktionen
  * ----------------------------------------------------------------------------
@@ -677,6 +707,16 @@ void code_value_bits(CodeNode* node, unsigned int bits)
    node->value.bits = bits;
 }
 
+void code_value_bound(CodeNode* node, const Bound* bound)
+{
+   assert(code_is_valid(node));
+
+   code_free_value(node);
+   
+   node->type        = CODE_BOUND;
+   node->value.bound = bound_copy(bound);
+}
+
 void code_value_void(CodeNode* node)
 {
    assert(code_is_valid(node));
@@ -742,6 +782,9 @@ void code_copy_value(CodeNode* dst, const CodeNode* src)
       break;
    case CODE_BITS :
       dst->value.bits = src->value.bits;
+      break;
+   case CODE_BOUND :
+      dst->value.bound = bound_copy(src->value.bound);
       break;
    case CODE_VOID :
       break;
@@ -843,6 +886,11 @@ unsigned int code_eval_child_bits(const CodeNode* node, int no)
 Symbol* code_eval_child_symbol(const CodeNode* node, int no)
 {
    return code_get_symbol(code_eval(code_get_child(node, no)));
+}
+
+const Bound* code_eval_child_bound(const CodeNode* node, int no)
+{
+   return code_get_bound(code_eval(code_get_child(node, no)));
 }
 
 

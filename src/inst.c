@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.38 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.39 2003/07/16 08:48:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1589,8 +1589,8 @@ CodeNode* i_newsym_var(CodeNode* self)
    Var*          var;
    Entry*        entry;
    int           idx = 0;
-   const Numb*   lower;
-   const Numb*   upper;
+   const Bound*  lower;
+   const Bound*  upper;
    const Numb*   priority;
    const Numb*   startval;
    char*         tuplestr;
@@ -1611,26 +1611,37 @@ CodeNode* i_newsym_var(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
       
-      lower       = code_eval_child_numb(self, 3);
-      upper       = code_eval_child_numb(self, 4);
+      lower       = code_eval_child_bound(self, 3);
+      upper       = code_eval_child_bound(self, 4);
       priority    = code_eval_child_numb(self, 5);
       startval    = code_eval_child_numb(self, 6);
       usevarclass = varclass;
-      
+
+      if (bound_get_type(lower) == BOUND_INFTY)
+      {
+         fprintf(stderr,
+            "*** Warning: lower bound for var %s set to infinity -- ignored\n",
+            name);
+      }
+      if (bound_get_type(upper) == BOUND_MINUS_INFTY)
+      {
+         fprintf(stderr,
+            "*** Warning: upper bound for var %s set to -infinity -- ignored\n",
+            name);
+      }
+#if 0 /* noch reparieren, lower ist nict mehr numb */
       if ((varclass == VAR_BIN)
          && !numb_equal(lower, numb_zero()) && !numb_equal(upper, numb_one()))
          fprintf(stderr,
             "*** Warning: Bounds for binary variable %s ignored\n",
             name);
-
-#if 0 /* ??? */
+     /* ??? */
       if ((varclass == VAR_CON)
          && (NE(priority, 0.0) || LT(startval, INFINITY)))
          fprintf(stderr,
             "*** Warning: Priority/Startval for continous var %s ignored\n",
             name);
-#endif
-#if 0 /* ??? TODO */
+      /* ??? TODO */
       
       /* Integral bounds for integral variables ?
        */
@@ -1648,10 +1659,10 @@ CodeNode* i_newsym_var(CodeNode* self)
             "*** Warning: Upper bound for integral var %s truncated to %g\n",
             name, upper);
       }
-#endif
       if ((varclass == VAR_INT)
          && numb_equal(lower, numb_zero()) && numb_equal(upper, numb_zero()))
          usevarclass = VAR_BIN;
+#endif
 
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
@@ -2320,7 +2331,22 @@ CodeNode* i_print(CodeNode* self)
    return self;
 }
 
+CodeNode* i_bound_new(CodeNode* self)
+{
+   Bound* bound;
+   
+   Trace("i_bound_new");
 
+   assert(code_is_valid(self));
+
+   bound = bound_new(BOUND_VALUE, code_eval_child_numb(self, 0));
+
+   code_value_bound(self, bound);
+
+   bound_free(bound);
+   
+   return self;
+}
 
 
 

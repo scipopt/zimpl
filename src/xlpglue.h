@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.2 2003/07/16 08:48:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -48,7 +48,7 @@ extern void xlp_orderfile(FILE* fp);
 extern Bool xlp_conname_exists(const char* conname);
 extern Con* xlp_addcon(const char* name, VarType type, const Numb* rhs, unsigned int flags);
 extern Var* xlp_addvar(const char* name, VarClass usevarclass,
-   const Numb* lower, const Numb* upper, const Numb* priority, const Numb* startval);
+   const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
 extern void xlp_objname(const char* name);
 extern void xlp_setdir(Bool minimize);
 extern void xlp_addtonzo(Var* var, Con* von, const Numb* numb);
