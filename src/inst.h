@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.15 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.16 2003/02/17 16:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -106,6 +106,8 @@ extern CodeNode* i_expr_intdiv(CodeNode* self);
 extern CodeNode* i_expr_ln(CodeNode* self);
 /*lint -sem(     i_expr_log, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_log(CodeNode* self);
+/*lint -sem(     i_expr_rand, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_rand(CodeNode* self);
 /*lint -sem(     i_expr_sum, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_sum(CodeNode* self);
 /*lint -sem(     i_expr_max, 1p == 1, type(1), @p == 1p) */

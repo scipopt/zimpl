@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.11 2002/08/18 12:26:34 bzfkocht Exp $"
+#ident "@(#) $Id: term.c,v 1.12 2003/02/17 16:13:48 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -34,7 +34,7 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define TERM_EXTEND_SIZE 8
+#define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d
 
 typedef struct term_element TermElem;
@@ -81,10 +81,6 @@ void term_add_elem(Term* term, const Entry* entry, double coeff)
    
    if (term->used == term->size)
    {
-      /* Die Routine ist ok, aber dieser Fall sollte nie eintreten.
-       */
-      abort();
-      
       term->size   += TERM_EXTEND_SIZE;
       term->elem    = realloc(
          term->elem, (size_t)term->size * sizeof(*term->elem));
@@ -132,6 +128,21 @@ Term* term_copy(const Term* term)
    return tnew;
 }
 
+void term_append_term(Term* term_a, const Term* term_b)
+{
+   int i;
+   
+   assert(term_is_valid(term_a));
+   assert(term_is_valid(term_b));
+
+   term_a->constant += term_b->constant;
+
+   for(i = 0; i < term_b->used; i++)
+      term_add_elem(term_a, term_b->elem[i].entry, term_b->elem[i].coeff);
+
+   assert(term_is_valid(term_a));
+}
+
 Term* term_add_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
@@ -151,14 +162,6 @@ Term* term_add_term(const Term* term_a, const Term* term_b)
    memcpy(&term->elem[term_a->used], term_b->elem,
       (size_t)term_b->used * sizeof(*term->elem));
 
-
-#if 0
-   for(i = 0; i < term_a->used; i++)
-      term_add_elem(term, term_a->elem[i].entry, term_a->elem[i].coeff);
-
-   for(i = 0; i < term_b->used; i++)
-      term_add_elem(term, term_b->elem[i].entry, term_b->elem[i].coeff);
-#endif
    assert(term_is_valid(term));
 
    return term;

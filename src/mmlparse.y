@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.30 2003/02/11 12:19:22 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.31 2003/02/17 16:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -70,7 +70,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW
-%token CARD ABS FLOOR CEIL LOG LN EXP
+%token CARD ABS FLOOR CEIL LOG LN EXP RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
@@ -552,9 +552,13 @@ expr
    | LOG '(' expr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }
    | LN '(' expr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
    | EXP '(' expr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
+
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }
+   | RANDOM '(' expr ',' expr ')' {
+         $$ = code_new_inst(i_expr_rand, 2, $3, $5);
+      }
    | IF lexpr THEN expr ELSE expr END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }

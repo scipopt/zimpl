@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.32 2003/02/11 12:19:21 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.33 2003/02/17 16:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -369,6 +369,27 @@ CodeNode* i_expr_card(CodeNode* self)
    set = code_eval_child_set(self, 0);
    
    code_value_numb(self, (double)set_get_used(set));
+
+   return self;
+}
+
+CodeNode* i_expr_rand(CodeNode* self)
+{
+   double mini;
+   double maxi;
+   double val;
+   
+   Trace("i_rand");
+
+   assert(code_is_valid(self));
+
+   mini = code_eval_child_numb(self, 0);
+   maxi = code_eval_child_numb(self, 1);
+
+   val = (double)rand() / (double)RAND_MAX;
+   val = val * (maxi - mini) + mini;
+
+   code_value_numb(self, val);
 
    return self;
 }
@@ -1867,12 +1888,16 @@ CodeNode* i_term_sum(CodeNode* self)
 
       if (code_get_bool(code_eval(lexpr)))
       {
+#if 0
          term_b = term_copy(code_eval_child_term(self, 1));      
          term_a = term_add_term(term_r, term_b);
 
          term_free(term_r);
          term_free(term_b);
          term_r = term_a;
+#else
+         term_append_term(term_r, code_eval_child_term(self, 1));
+#endif
       }
       local_drop_frame();
    }

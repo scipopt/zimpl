@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.24 2003/02/11 12:19:21 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.25 2003/02/17 16:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -399,6 +399,8 @@ extern Bool         term_is_valid(const Term* term);
 extern Term*        term_copy(const Term* term);
 /*lint -sem(        term_print, 1p == 1 && 2p == 1 && 3n >= 1) */
 extern void         term_print(FILE* fp, const Term* term, int flag);
+/*lint -sem(        term_append_term, 1p == 1 && 2p == 1) */
+extern void         term_append_term(Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @p == 1) */
