@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.40 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.41 2003/09/05 13:53:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -732,6 +732,7 @@ extern int          scan_get_column(void);
 extern int          yylen(void);
 
 #define Min(a, b)    (((a) <= (b)) ? (a) : (b)) 
+#define Sgn(a)       (((a) > 0) ? 1 : (((a) < 0) ? -1 : 0))
 
 /* Directory separator, so we could redefine it for Windoof.
  */

@@ -1,3 +1,6 @@
+ - It is now possible to omit the .zpl extension on 
+   the input files.
+
  - Changed output routine , so that it should work 
    even with with braindead OS like Windoof.
    Also allowed to use a different directory

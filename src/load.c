@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.14 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.15 2003/09/05 13:53:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -25,11 +25,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/types.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <fcntl.h>
 
 #include "lint.h"
 #include "bool.h"
@@ -197,28 +200,41 @@ void prog_load(Prog* prog, const char* filename)
    int   lineno  = 1;
    char  newname [1024];
    char* temp;
+   char* myfilename;
    
    assert(prog     != NULL);
    assert(filename != NULL);
    assert(buf      != NULL);
+   assert(filename != NULL);
 
-   if (verbose)
-      printf("Reading %s\n", filename);
+   /* Allow for omission of the .zpl extension
+    */
+   myfilename = malloc(strlen(filename) + 5); /* ".zpl" + '\0' */
+   assert(myfilename != NULL);
+   strcpy(myfilename, filename);
    
-   if ((fp = fopen(filename, "r")) == NULL)
+   if (access(myfilename, R_OK) != 0)
    {
-      perror(filename);
+      strcat(myfilename, ".zpl");
+
+      /* If .zpl also does not work, revert to the old name
+       * to get a better error message.
+       */
+      if (access(myfilename, R_OK) != 0)
+         strcpy(myfilename, filename);
+   }
+   if (verbose)
+      printf("Reading %s\n", myfilename);
+
+   if ((fp = fopen(myfilename, "r")) == NULL)
+   {
+      perror(myfilename);
       abort();
    }
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
       assert(!isspace(*s));
-
-#if 0
-      while(isspace(*s))
-         s++;
-#endif
 
       /* This could happen if we have a ;; somewhere.
        */
@@ -227,17 +243,18 @@ void prog_load(Prog* prog, const char* filename)
 
       if (1 == sscanf(s, "include \"%1023[^\"]\"", newname))
       {
-         temp = malloc(strlen(filename) + strlen(newname) + 2);
-         prog_load(prog, make_pathname(temp, filename, newname));
+         temp = malloc(strlen(myfilename) + strlen(newname) + 2);
+         prog_load(prog, make_pathname(temp, myfilename, newname));
          free(temp);
       }
       else
       { 
-         add_stmt(prog, filename, lineno, s);
+         add_stmt(prog, myfilename, lineno, s);
       }
    }
    fclose(fp);
    free(buf);
+   free(myfilename);
 }
 
 

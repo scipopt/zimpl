@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.14 2003/08/25 08:24:05 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.15 2003/09/05 13:53:55 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.14 2003/08/25 08:24:05 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.15 2003/09/05 13:53:55 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -733,6 +733,176 @@ can produce:
  another \code{subto} statement. Either change the name, or use 
  \code{-n cm} or \code{-n cf}.
 \end{description}
+
+\begin{description}
+%
+% zimpl.c
+%
+\item[101 Bad filename]\ \\
+   The name given with the \code{-o} option is either missing, 
+   a directory name, or starts with a dot.
+\item[102 File write error]\ \\
+   Some error occured when writing to an output file. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+\item[103 Output format not supported, using LP format]\ \\
+   You tried to select another format then \code{lp}, \code{mps}, or \code{hum}.
+\item[104 File open failed]\ \\
+   Some error occured when trying to open a file for writing. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+%
+% inst.c
+%
+\item[105 Dublicate constraint name ``xxx'']\ \\
+   Two \code{subto} statements have the same name.
+\item[106 Empty LHS, contraint trivally violated]\ \\
+   One side of your constraint is empty and the other not equal to
+   zero. This mostly happens if a set to sum up is empty.
+\item[107 Range must be $l\leq x\leq u$, or $u \geq x\geq l$]\ \\
+   If you specify a range you must have the same comparison operators
+   on both sides.
+\item[108 Empty Term with nonempty LHS/RHS, contraint trivally
+   violated]\ \\
+   The middle of your constraint is empty and either the left- or
+   right-hand side of the range is not zero.
+   This mostly happens if a set to sum up is empty.
+\item[109 LHS/RHS contradiction, contraint trivally violated]\ \\
+   The lower side of your range is bigger than the upper side, e.g.
+   $15\leq x\leq 2$. 
+\item[110 Division by zero]\ \\
+   You tried to divide by zero. This is not a good idea.
+\item[111 Modulo by zero]\ \\
+   You tried to compute a number modulo zero. This does not work well.
+\item[112 Exponent value \code{xxx} is too big or not an integer]\ \\
+   It is only allowed to raise a number to the power of integers. Also trying to
+   raise a number to the power of more than two billion is 
+   prohibited.\footnote{The behaviour of this operation could 
+   easily be imlemented as \code{for(;;)} or more elaborate as 
+   \code{void f()\{f();\}}.}
+\item[113 Factorial value \code{xxx} is too big or not an integer]\ \\
+   You can only compute the factorial of integers.
+   Also computing the factorial of a number bigger then two billion
+   is generaly a bad idea. See also Error 115.
+\item[114 Negative factorial value]\ \\
+   To compute the factorial of a number it has to be positive.
+   In case you need it from a negative number, remember that for all 
+   even numbers the outcome will be positive and for all odd number negative.
+\item[115 Timeout!]\ \\
+   You tried to compute a number bigger than $1000!$. 
+   See also the footnote to Error 112.
+\item[116 Illegal value type in min: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the minimum of some strings.
+\item[117 Illegal value type in max: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the maximum of some strings.
+\item[118 Comparison of different types]\ \\
+   You tried to compare apples with oranges, i.e, numbers with strings.
+\item[119 Union of incompatible sets]\ \\
+   To unite two sets, both must have the same dimension tuples.
+\item[120 Minus of incompatible sets]\ \\
+   To subtract two sets, both must have the same dimension tuples.
+\item[121 Intersection of incompatible sets]\ \\
+   To intersect two sets, both must have the same dimension tuples.
+\item[122 Symetric Difference of incompatible sets]\ \\
+   Two build the symetric difference of two sets, 
+   both must have the same dimension tuples.
+\item[123 ``from'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``from'' number must be an integer with an
+   absolute value of less than two billion.
+\item[124 ``upto'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``upto'' number must be an integer with an
+   absolute value of less than two billion.
+\item[125 ``step'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``step'' number must be an integer with an
+   absolute value of less than two billion.
+\item[126 ``step'' value \code{xxx} in range not moving from
+   \code{yyy} to \code{zzz}]\ \\
+   If the given ``step'' value for the generation of a set is
+   repeatedly added to the ``from'' value, the ``upto'' value 
+   will never be reached. 
+\item[127 Illegal value type in tuple: \code{xxx} only numbers are
+   possible]\ \\
+   The selection typle in a call to the \code{proj} function can
+   only contain numbers.
+\item[128 Index value \code{xxx} in proj too big or not an integer]\ \\
+   The value given in a selection tuple of a \code{proj} function is
+   not an integer or bigger than two billion.
+\item[129 Illegal index \code{xxx}, set has only dimension
+   \code{yyy}]\ \\
+   The index value given in a selection tuple is bigger than the
+   dimension of the tuples in the set.
+\item[130 Duplicate index \code{xxx} for initialisation]\ \\
+   In the initialisation of a indexed set, two initialisation elements
+   have the same index. 
+   E.g, \code{set A[] := $<$1$>$ \{ 1 \}, $<$1$>$ \{ 2 \};}
+\item[131 Illegal element \code{xxx} for symbol]\ \\
+   The index tuple used in the initialisation list of a index set, is
+   not member of the index set of the set.
+   E.g, \code{set A[\{ 1 to 5 \}] := $<$1$>$ \{ 1 \}, $<$6$>$ \{ 2 \};}
+\item[132 Values in parameter list missing, probably wrong read
+  template]\ \\
+  As the message said, probable the template of a read statement looks
+  like \code{"$<$1n$>$"} instead of \code{"$<$1n$>$ 2n"}.
+\item[133 Unknown local symbol \code{xxx}]\ \\
+  A local symbol was used, that is not defined anywhere in scope.
+\item[134 Illegal element \code{xxx} for symbol]\ \\
+  The index tuple given in the initialisation is not member of the
+  index set of the parameter.
+\item[135 Index set for parameter \code{xxx} is empty]\ \\
+  The attempt was made to declare an indexed parameter with the
+  empty set as index set. Most likely the index set has a \code{with}
+  clause which has rejected all elements.
+\item[136 Lower bound for var \code{xxx} set to infinity -- ignored]\ \\
+  In the zimpl code something like \code{$\ge$ infinity} must have
+  been appeared. This makes no sense and is therefore ignored.
+\item[137 Upper bound for var \code{xxx} set to -infinity -- ignored]\ \\
+  In the zimpl code something like \code{$\le$ -infinity} must have 
+  been appeared. This makes no sense and is therefore ignored.
+\item[138 Priority/Startval for continous var \code{xxx} ignored]\ \\
+  There has been set a priority or a starting value for a continous 
+  (\code{real}) variable. This is not possible and therefore ignored.
+\item[139 Lower bound for integral var \code{xxx} truncated to
+  \code{yyy}]\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was ajusted.
+\item[140 Upper bound for integral var \code{xxx} truncated to
+  \code{yyy}]\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was ajusted.
+\item[141 Infeasible due to conflicting bounds for var \code{xxx}]\ \\
+  The upper bound given for a variable was smaller than the lower bound.
+\item[142 Unknown index \code{xxx} for symbol \code{yyy}]\ \\
+  The index tuple given is not member of the index set of the symbol.
+\item[143 Size for subsets \code{xxx} is too big or not an integer]\ \\
+  The cardinality for the subsets to generate must be given as an
+  integer smaller than two billion.
+\item[144 Tried to build subsets of empty set]\ \\
+  The set given to build the subsets of, was the empty set.
+\item[145 Illegal size for subsets \code{xxx}, should be between 1 
+  and \code{yyy}]\ \\
+  The cardinality for the subsets to generate must be between 1 
+  and the cardinality of the base set.
+\item[146 Tried to build powerset of empty set ]\ \\
+  The set given to build the powerset of, was the empty set.
+%
+% iread.c
+%
+%\item[147 use value ]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+\end{description}
+
 
 \section{Remarks}
 \zimpl is licensed under the GNU general public licence version 2.

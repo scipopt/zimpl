@@ -36,6 +36,9 @@ set K := { <"a", 1>, <"b", 7>, <"c", 9> };
 set L[B] := <1> { "a", "b" },
             <2> { "c", "d", "e" },
             <3> { "f" };
+set L2[] := <1> { "a", "b" },
+            <2> { "c", "d", "e" },
+            <3> { "f" };
 set M[<i> in D] := { <3 * i, 7, "d">, <i + 2, 9, "c"> };
 set N[<i,j> in C * B with i > j] := { i + j, i - j, i * j };
 set P[] := powerset(C);
@@ -47,6 +50,7 @@ set U := proj(T, <3,1>);
 set V := { <a,2> in A*B with a == "a" or a == "b" };
 set W[<i> in B] := { <c> in C with c <= i };
 set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
+
 
 var a[A];
 var b[B];
@@ -77,7 +81,7 @@ subto g1: sum <i> in G : g[i] >= 0;
 subto h1: sum <i> in H : h[i] >= 0;
 subto j1: sum <i> in J : j[i] >= 0;
 subto k1: sum <i1,i2> in K : k[i1,i2] >= 0;
-subto l1: forall <i1> in indexset(L) do
+subto l1: forall <i1> in indexset(L) with L[i1] == L2[i1] do
    sum <i2> in L[i1] : l[i2] >= 0;
 subto m1: sum <i1,i2,i3> in M[7] : m[i1,i2,i3] >= 0;
 subto n1: forall <i1,i2> in indexset(N) do

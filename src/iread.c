@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.9 2003/08/22 08:21:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.10 2003/09/05 13:53:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -105,6 +105,7 @@ CodeNode* i_read_comment(CodeNode* self)
 CodeNode* i_read_use(CodeNode* self)
 {
    const Numb* use;
+   int         int_use;
    
    Trace("i_read_use");
    
@@ -114,13 +115,21 @@ CodeNode* i_read_use(CodeNode* self)
 
    if (!numb_is_int(use))
    {
-      fprintf(stderr, "*** Error: use value ");
+      fprintf(stderr, "*** Error 147: use value ");
       numb_print(stderr, use);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
       abort();
    }
-   code_value_rpar(self, rpar_new_use(numb_toint(use)));
+   int_use = numb_toint(use);
+
+   if (int_use < 0)
+   {
+      fprintf(stderr, "*** Error 148: use value %d is negative\n", int_use);
+      code_errmsg(self);
+      abort();
+   }
+   code_value_rpar(self, rpar_new_use(int_use));
 
    return self;
 }
@@ -128,6 +137,7 @@ CodeNode* i_read_use(CodeNode* self)
 CodeNode* i_read_skip(CodeNode* self)
 {
    const Numb* skip;
+   int         int_skip;
    
    Trace("i_read_skip");
    
@@ -137,13 +147,21 @@ CodeNode* i_read_skip(CodeNode* self)
 
    if (!numb_is_int(skip))
    {
-      fprintf(stderr, "*** Error: skip value ");
+      fprintf(stderr, "*** Error 149: skip value ");
       numb_print(stderr, skip);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
       abort();
    }
-   code_value_rpar(self, rpar_new_skip(numb_toint(skip)));
+   int_skip = numb_toint(skip);
+   
+   if (int_skip < 0)
+   {
+      fprintf(stderr, "*** Error 150: skip value %d is negative\n", int_skip);
+      code_errmsg(self);
+      abort();
+   }
+   code_value_rpar(self, rpar_new_skip(int_skip));
 
    return self;
 }
@@ -177,7 +195,7 @@ static int parse_template(
       || (strrchr(temp, '>') != strchr(temp, '>'))
       || (strrchr(temp, '<') != strchr(temp, '<')))
    {
-      fprintf(stderr, "*** Error: Not a valid read template\n");
+      fprintf(stderr, "*** Error 151: Not a valid read template\n");
       code_errmsg(self);
       abort();
    }
@@ -198,7 +216,7 @@ static int parse_template(
    {
       if (2 != sscanf(s, "%d%c", &field, &type))
       {
-         fprintf(stderr, "*** Error: Invalid read template syntax\n");
+         fprintf(stderr, "*** Error 152: Invalid read template syntax\n");
          code_errmsg(self);
          abort();
       }
@@ -206,13 +224,13 @@ static int parse_template(
       
       if ((field < 0) || (field >= MAX_FIELDS))
       {
-         fprintf(stderr, "*** Error: Invalid field number [%d]\n", field + 1);
+         fprintf(stderr, "*** Error 153: Invalid field number [%d]\n", field + 1);
          code_errmsg(self);
          abort();
       }
       if ((type != 'n') && (type != 's'))
       {
-         fprintf(stderr, "*** Error: Invalid field type [%c]\n", type);
+         fprintf(stderr, "*** Error 154: Invalid field type [%c]\n", type);
          code_errmsg(self);
          abort();
       }
@@ -224,7 +242,7 @@ static int parse_template(
 
    if (params - (is_tuple_list ? 0 : 1) < 1)
    {
-      fprintf(stderr, "*** Error: Invalid read template, not enough fields\n");
+      fprintf(stderr, "*** Error 155: Invalid read template, not enough fields\n");
       code_errmsg(self);
       abort();
       
@@ -408,8 +426,8 @@ CodeNode* i_read(CodeNode* self)
          {
             if (param_field[i] >= fields)
             {
-               fprintf(stderr, "*** Error: Not enough fields in data\n");
-               fprintf(stderr, "***        File: %s line %d\n",
+               fprintf(stderr, "*** Error 156: Not enough fields in data\n");
+               fprintf(stderr, "***            File: %s line %d\n",
                   rdef_get_filename(rdef), line);
                code_errmsg(self);
                abort();
@@ -439,8 +457,8 @@ CodeNode* i_read(CodeNode* self)
          {
             if (param_field[i] >= fields)
             {
-               fprintf(stderr, "*** Error: Not enough fields in data\n");
-               fprintf(stderr, "***        File: %s line %d\n",
+               fprintf(stderr, "*** Error 156: Not enough fields in data\n");
+               fprintf(stderr, "***            File: %s line %d\n",
                   rdef_get_filename(rdef), line);
                code_errmsg(self);
                abort();
@@ -474,7 +492,7 @@ CodeNode* i_read(CodeNode* self)
    
    if (list == NULL)
    {
-      fprintf(stderr, "*** Error: Read from file found no data\n");
+      fprintf(stderr, "*** Error 157: Read from file found no data\n");
       code_errmsg(self);
       abort();
    }
@@ -485,3 +503,5 @@ CodeNode* i_read(CodeNode* self)
    
    return self;
 }
+
+

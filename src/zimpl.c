@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.37 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.38 2003/09/05 13:53:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -56,14 +56,17 @@ Bool zpldebug  = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.99d Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 1.99e Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
-"****************************************************\n" \
-"\n" \
-"usage: zimpl [-bdfhv][-t lp|mps|hum][-o outfile] files\n" \
+"****************************************************\n";
+
+static const char* usage =
+"usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps|hum][-o outfile][-F filter] filename\n";
+
+static const char* help =
 "\n" \
 "  -b             enable bison debugging output.\n" \
 "  -d             enable zimpl debugging output.\n" \
@@ -128,7 +131,7 @@ static char* strip_extension(char* filename)
    
    if (i == 0 || filename[i - 1] == DIRSEP)
    {
-      fprintf(stderr, "*** Error: Bad filename\n");
+      fprintf(stderr, "*** Error 101: Bad filename\n");
       abort();
    }
    return filename;
@@ -138,16 +141,13 @@ static void check_write_ok(FILE* fp, const char* filename)
 {
    if (ferror(fp))
    {
-      fprintf(stderr, "*** Error: while writing file %s", filename);
-      perror(" ");
+      fprintf(stderr, "*** Error 102: File write error\n");
+      perror(filename);
    }
 }
 
 int main(int argc, char* const* argv)
 {
-   const char* usage =
-      "usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps|hum][-o outfile][-F filter] filename\n";
-
    Prog*       prog;
    const char* extension;
    char*       filter   = strdup("%s");
@@ -164,6 +164,8 @@ int main(int argc, char* const* argv)
    int         i;
    FILE*       (*openfile)(const char*, const char*) = fopen;
    int         (*closefile)(FILE*)                   = fclose;
+
+   puts(banner);
    
    yydebug       = 0;
    yy_flex_debug = 0;
@@ -179,7 +181,8 @@ int main(int argc, char* const* argv)
          zpldebug = TRUE;
          break;
       case 'h' :
-         printf(banner);
+         printf(usage, argv[0]);
+         puts(help);
          exit(0);
       case 'f' :
          yy_flex_debug = 1;
@@ -235,7 +238,8 @@ int main(int argc, char* const* argv)
             format = LP_FORM_LPF;
             break;
          default :
-            fprintf(stderr, "Output format \"%s\" not supported, using LP format\n",
+            fprintf(stderr,
+               "--- Warning 103: Output format \"%s\" not supported, using LP format\n",
                optarg);
             format = LP_FORM_LPF;
             break;
@@ -314,8 +318,8 @@ int main(int argc, char* const* argv)
 
    if (NULL == (fp = (*openfile)(cmdpipe, "w")))
    {
-      fprintf(stderr, "*** Error: when writing file %s", outfile);
-      perror(" ");
+      fprintf(stderr, "*** Error 104: File open failed ");
+      perror(outfile);
       abort();
    }
    xlp_write(fp, format);
@@ -338,8 +342,8 @@ int main(int argc, char* const* argv)
 
       if (NULL == (fp = (*openfile)(cmdpipe, "w")))
       {
-         fprintf(stderr, "*** Error: when writing file %s", tblfile);
-         perror(" ");
+         fprintf(stderr, "*** Error 104: File open failed");
+         perror(tblfile);
          abort();
       }
       xlp_transtable(fp, format);
@@ -359,8 +363,8 @@ int main(int argc, char* const* argv)
 
          if (NULL == (fp = (*openfile)(cmdpipe, "w")))
          {
-            fprintf(stderr, "*** Error: when writing file %s", ordfile);
-            perror(" ");
+            fprintf(stderr, "*** Error 104: File open failed ");
+            perror(ordfile);
             abort();
          }
          xlp_orderfile(fp, format);

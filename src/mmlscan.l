@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.27 2003/09/03 14:30:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.28 2003/09/05 13:53:56 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -251,7 +251,7 @@ void parse_stmt(const Stmt* stmt)
 
    if (yyparse() != 0)
    {
-      fprintf(stderr, "*** Parsing error\n");
+      fprintf(stderr, "*** Error 800: Parsing error\n");
       exit(1);
    }
    yy_delete_buffer(state);

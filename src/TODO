@@ -1,6 +1,10 @@
-check füer read/include siehe example
+check, that   -2^4 + 3! * 2 - 3 has the right value.
 
-wenn -m gesetzt wird keine .tbl/.ord schreiben.
+
+wenn lpfcpy meldet das ein unmapbares zeichen in einem
+string war, dann @num anhängen.
+
+check füer read/include siehe example
 
 option fuer gerneiruung von kurzen variablenamen (nur x#262626)
 überprüfen ob man mit unterschiedlichen strings gleiche namen bekommen kann.
@@ -36,8 +40,6 @@ if (....) constraint else constraint endif
 und/oder
 if (....) term else term endif 
 einbauen
-
-print set/param[] einbauen.
 
 Bug mit datei ohne ; keine Ausgabe.
 Falscher Dateityp sollte früher erkannt werden.
