@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.12 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.13 2003/09/10 11:33:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -155,16 +155,13 @@ void stmt_execute(const Stmt* stmt)
    if (verbose >= VERB_VERBOSE)
       printf("Executing %s %d\n", stmt->filename, stmt->lineno);
 
-   assert(code_get_type(code_eval(stmt->node)) == CODE_VOID);
-   /* I don't think this can happen without a parse error.
+   /* I don't think this can happen without a parse error first.
     */
-#if 0
    if (code_get_type(code_eval(stmt->node)) != CODE_VOID)
-   {
-      fprintf(stderr, "*** Error: Execute must return void element\n");
+   {  /*             ^^^^^^^^^^^^^^^^^^^^ */
+      fprintf(stderr, "*** Error 169: Execute must return void element\n");
       exit(EXIT_FAILURE);
    }
-#endif
 }
 
 void stmt_print(FILE* fp, const Stmt* stmt)

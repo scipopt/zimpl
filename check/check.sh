@@ -46,12 +46,6 @@ do
    esac
    rm $i.tbl $i.lp
 done 
-if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
-else echo FAILURE!; 
-fi
-#
-PASS=0
-COUNT=0
 #
 cd errors
 #
@@ -69,7 +63,7 @@ do
    rm $NAME.err
 done 2>/dev/null
 if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
-else echo FAILURE!; 
+else echo FAILURE! Only $PASS of $COUNT tests passed; 
 fi
 
 

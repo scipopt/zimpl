@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.40 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.41 2003/09/10 11:33:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -50,8 +50,7 @@
 extern int yydebug;
 extern int yy_flex_debug;
 
-int  verbose   = VERB_NORMAL;
-Bool zpldebug  = FALSE;
+int verbose = VERB_NORMAL;
 
 static const char* banner = 
 "****************************************************\n" \
@@ -63,24 +62,24 @@ static const char* banner =
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n";
 
+static const char* options = "bfF:hn:o:prt:v:";
 static const char* usage =
-"usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps|hum][-o outfile][-F filter] filename\n";
+"usage: %s [-bfhpr][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
 
 static const char* help =
 "\n" \
 "  -b             enable bison debugging output.\n" \
-"  -d             enable zimpl debugging output.\n" \
 "  -f             enable flex debugging output.\n" \
-"  -r             write branching order file.\n" \
+"  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \
-"  -p             presolve LP.\n" \
-"  -v[0123]       enable verbose output.\n" \
 "  -n cm|cn|cf    name column make/name/full\n" \
-"  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
-"                 or human readable HUM.\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
 "                 the input file without extension.\n" \
-"  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
+"  -p             presolve LP.\n" \
+"  -r             write branching order file.\n" \
+"  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
+"                 or human readable HUM.\n" \
+"  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  filename       is the name of the input ZPL file.\n" \
 "\n" ; 
 
@@ -168,15 +167,12 @@ int main(int argc, char* const* argv)
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfF:hn:o:prt:v:")) != -1)
+   while((c = getopt(argc, argv, options)) != -1)
    {
       switch(c)
       {
       case 'b' :
          yydebug = 1;
-         break;
-      case 'd' :
-         zpldebug = TRUE;
          break;
       case 'h' :
          printf(usage, argv[0]);
@@ -302,7 +298,7 @@ int main(int argc, char* const* argv)
       fprintf(stderr, "*** Error 168: No program statements to execute\n");
       exit(EXIT_FAILURE);
    }
-   if (zpldebug)
+   if (verbose >= VERB_DEBUG)
       prog_print(stderr, prog);
    
    xlp_alloc(argv[optind]);
@@ -384,7 +380,7 @@ int main(int argc, char* const* argv)
          (void)(*closefile)(fp);
       }
    }  
-   if (zpldebug) 
+   if (verbose >= VERB_DEBUG) 
       symbol_print_all(stderr);
 
 #if defined(__INSURE__) || !defined(NDEBUG) || defined(FREEMEM)

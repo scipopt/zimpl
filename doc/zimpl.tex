@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.17 2003/09/10 09:38:39 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.18 2003/09/10 11:33:38 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.17 2003/09/10 09:38:39 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.18 2003/09/10 11:33:38 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -230,7 +230,8 @@ of interest):
 \begin{tabular}{lp{115mm}}
 %\hline
 -t {\em format} & Selects the output format. Can be either \code{lp}
-                  which is default or \code{mps}.\\
+                  which is default, or \code{mps} or \code{hum} which
+                  is only human readable.\\
 -o {\em name}   & Sets the base-name for the output files.\\ 
                 & Defaults to the name of the first input file striped 
                   of the path and
@@ -247,16 +248,14 @@ of interest):
                   {\em cf} will use the name given with the \code{subto},
                   then a $1\ldots n$ number like in \emph{cm} and then 
                   append all the local variables from the forall statements.\\
+-v {\em 1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
+                  2 is verbose, 3 is chatter, and 5 is debug.\\
 %\hline
--p & Does some presolve analysis to fix variables.\\
--m & Writes the output file with unmangled variable names. This file
-     can usually not be optimizized because the format is invalid.\\
--r & Writes an \cplex \code{ord} branching order file.\\
 -b & Enables bison debugging output.\\
--d & Enables zimpl debugging output.\\
 -f & Enables flex debugging output.\\
--h & Prints a usage message.\\
--v & Enables verbose mode.\\
+-h & Prints a help message.\\
+-p & Does some presolve analysis to fix variables.\\
+-r & Writes an \cplex \code{ord} branching order file.\\
 %\hline
 \end{tabular}
 
@@ -980,7 +979,12 @@ can produce:
 %
 \item[168 No program statements to execute]\ \\
   No \zimpl statements were found in the files loaded.
-\item[]\ \\
+%
+% code.c
+%
+\item[169 Execute must return void element]\ \\
+  This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
 \item[]\ \\
 \item[]\ \\
 \item[]\ \\

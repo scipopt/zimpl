@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.43 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.44 2003/09/10 11:33:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -111,9 +111,9 @@ typedef struct program           Prog;
 #define VERB_NORMAL   1
 #define VERB_VERBOSE  2
 #define VERB_CHATTER  3
+#define VERB_DEBUG    5
 
 extern int          verbose;
-extern Bool         zpldebug;
 
 /* strstore.c
  */

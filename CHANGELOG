@@ -1,3 +1,13 @@
+ - Fixed bugs with MPS format.
+
+ - New output format "hum" for -t parameter
+   generates unmangled human readable, maschine
+   unreadble LP format output. This replaces
+   the -m switch.
+
+ - Changed -v switch to -v0..3
+   and also the outputs that appear by default.
+
  - It is now possible to omit the .zpl extension on 
    the input files.
 
