@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.53 2003/08/27 20:23:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.54 2003/09/01 06:31:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -824,6 +824,8 @@ CodeNode* i_bool_false(CodeNode* self)
 
 CodeNode* i_bool_not(CodeNode* self)
 {
+   Bool val;
+   
    Trace("i_bool_not");
 
    assert(code_is_valid(self));

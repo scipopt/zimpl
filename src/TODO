@@ -1,11 +1,15 @@
-bug suchen bei steinerbaum.
+{} EMPTY SET ist drin, funktioniert aber nicht, weil
+die definition von EmptySet nicht klar ist 
+(hat ein tuple dimension 0 ?) Was kommt bei set_inter raus
+wenn die menge leer ist.
+
+
+Tests für boolsche operatoren. z.B. not wird nirgends getestet.
 
 Funktion statistik Anzahl vars/Cons/Boxed/Fixed/NZOs etc, 
          (bei soplex/extr gibts schon so was)
 
 Funktion timing.
-
-{} als EMPTYSET einführen. (zum vergleich)
 
 define fun(name_list) := expr | term? | constraint?
               ^
@@ -160,7 +164,7 @@ Im LP reihenfolge der sets beibehalten
 bessere fehlermeldungen
 
 Warning wenn locale Variable eine globale uerbschreibt.
-
+(Was passiert da eigendlich. Geht das überhaupt?)
 
 
 

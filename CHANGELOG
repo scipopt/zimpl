@@ -1,3 +1,5 @@
+ - Fixed internal bug with bool not function.
+
  - We now get an error message instead of an abort()
    if the initialisation list of an parameter is empty.
 

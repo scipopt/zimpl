@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.43 2003/08/25 08:24:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.44 2003/09/01 06:31:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -64,7 +64,7 @@ extern void yyerror(const char* s);
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB PRINT
 %token BINARY INTEGER REAL
-%token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
+%token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR NOT
@@ -452,6 +452,7 @@ sexpr
    : SETSYM symidx  {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
+   | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
    | '{' expr TO expr BY expr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
       }
@@ -520,7 +521,7 @@ sexpr
     | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
     | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
     | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
-    | NOT lexpr          { $$ = code_new_inst(i_bool_not, 2, $2); }
+    | NOT lexpr          { $$ = code_new_inst(i_bool_not, 1, $2); }
     | '(' lexpr ')'      { $$ = $2; }
     | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
     | EXISTS '(' idxset ')' %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $3); } 
