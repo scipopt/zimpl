@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.6 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.7 2004/05/15 14:45:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -597,8 +597,9 @@ PSResult lps_presolve(Lps* lp, int verbose_level)
 
    again = (ret == OKAY) && (rcagain || rragain);
 
-   // This has to be a loop, otherwise we could end up with
-   // empty rows.
+   /* This has to be a loop, otherwise we could end up with
+    * empty rows.
+    */
    while(again)
    {
       again = false;
@@ -619,10 +620,10 @@ PSResult lps_presolve(Lps* lp, int verbose_level)
                         << std::endl; });
 
 #endif
-   /* ??? funktioniert nicht, weil vars nicht geloescht werden. */
+   /* ??? does not work, because vars are not deleted */
    if (lp->vars == 0 || lp->cons == 0)
    {
-      /* ??? Checken ob das so ok ist.
+      /* ??? Check if this is ok.
        */
       assert(lp->vars == 0 && lp->cons == 0);
       

@@ -26,8 +26,8 @@ $(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h src/mmlparse.h
 $(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h \
  src/gmpmisc.h src/ratlptypes.h src/mme.h
-$(OBJDIR)/prog.o: src/prog.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
- src/code.h
+$(OBJDIR)/prog.o: src/prog.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/code.h
 $(OBJDIR)/rdefpar.o: src/rdefpar.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
 $(OBJDIR)/source.o: src/source.c src/bool.h src/mshell.h src/ratlptypes.h \
