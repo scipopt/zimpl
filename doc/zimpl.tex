@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.13 2003/08/21 08:39:22 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.14 2003/08/25 08:24:05 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.13 2003/08/21 08:39:22 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.14 2003/08/25 08:24:05 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -327,6 +327,8 @@ any of the following operators and functions:
 %\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
 \code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
+\code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
+\code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\min (a,b,c,\ldots,n)$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
 \code{if a then b else c}        &conditional               &\\
 \end{tabular}

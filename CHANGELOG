@@ -1,3 +1,7 @@
+ - New functions min/max that take a list of expression,
+   like min(2, 5, a[4], b[7] / 2);
+   (a and b are parameters)
+
  - Included zlib. It is now possible to read in 
    .gz transparantly. 
 

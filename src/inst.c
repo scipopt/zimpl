@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.51 2003/08/22 15:01:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.52 2003/08/25 08:24:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -702,6 +702,96 @@ CodeNode* i_expr_sum(CodeNode* self)
       local_drop_frame();
    }
    code_value_numb(self, sum);
+
+   return self;
+}
+
+CodeNode* i_expr_min2(CodeNode* self)
+{
+   const List*   list;
+   const Numb*   numb;
+   const Elem*   elem;
+   Numb*         min;
+   ListElem*     le    = NULL;
+   int           n;
+   Bool          first = TRUE;
+   
+   Trace("i_expr_min2");
+   
+   assert(code_is_valid(self));
+
+   list  = code_eval_child_list(self, 0);
+   n     = list_get_elems(list);
+   min   = numb_new();
+   
+   while(n-- > 0)
+   {
+      elem = list_get_elem(list, &le);
+
+      /* Are there only number in the selection tuple ?
+       */
+      if (ELEM_NUMB != elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error: Illegal value type in min: ");
+         elem_print(stderr, elem);
+         fprintf(stderr, " only numbers are possible\n");
+         code_errmsg(self);
+         abort();
+      }
+      numb = elem_get_numb(elem);
+
+      if (first || numb_cmp(min, numb) > 0)
+      {
+         numb_set(min, numb);
+         first = FALSE;
+      }
+   }
+   code_value_numb(self, min);
+
+   return self;
+}
+
+CodeNode* i_expr_max2(CodeNode* self)
+{
+   const List*   list;
+   const Numb*   numb;
+   const Elem*   elem;
+   Numb*         max;
+   ListElem*     le    = NULL;
+   int           n;
+   Bool          first = TRUE;
+   
+   Trace("i_expr_max2");
+   
+   assert(code_is_valid(self));
+
+   list  = code_eval_child_list(self, 0);
+   n     = list_get_elems(list);
+   max   = numb_new();
+   
+   while(n-- > 0)
+   {
+      elem = list_get_elem(list, &le);
+
+      /* Are there only number in the selection tuple ?
+       */
+      if (ELEM_NUMB != elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error: Illegal value type in max: ");
+         elem_print(stderr, elem);
+         fprintf(stderr, " only numbers are possible\n");
+         code_errmsg(self);
+         abort();
+      }
+      numb = elem_get_numb(elem);
+
+      if (first || numb_cmp(max, numb) < 0)
+      {
+         numb_set(max, numb);
+         first = FALSE;
+      }
+   }
+   code_value_numb(self, max);
 
    return self;
 }

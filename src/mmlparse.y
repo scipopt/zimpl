@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.42 2003/08/21 10:59:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.43 2003/08/25 08:24:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -592,9 +592,16 @@ expr
    | MAX idxset DO expr %prec MAX {
          $$ = code_new_inst(i_expr_max, 2, $2, $4);
       }
+
    | SUM idxset DO expr %prec SUM {
          $$ = code_new_inst(i_expr_sum, 2, $2, $4);
-      }   
+      }
+   | MIN '(' expr_list ')' {
+         $$ = code_new_inst(i_expr_min2, 1, $3);
+      }
+   | MAX '(' expr_list ')' {
+         $$ = code_new_inst(i_expr_max2, 1, $3);
+      }
    ;
 
 
