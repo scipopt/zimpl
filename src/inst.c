@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.20 2002/07/29 09:21:59 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.21 2002/07/30 15:36:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -170,12 +170,22 @@ CodeNode* i_expr_mul(CodeNode* self)
 
 CodeNode* i_expr_div(CodeNode* self)
 {
+   double divisor;
+   
    Trace("i_div");
 
    assert(code_is_valid(self));
 
+   divisor = code_eval_child_numb(self, 1);
+
+   if (EQ(divisor, 0.0))
+   {
+      fprintf(stderr, "*** Error: Division by zero\n");
+      code_errmsg(self);
+      abort();
+   }      
    code_value_numb(self,
-      code_eval_child_numb(self, 0) / code_eval_child_numb(self, 1));
+      code_eval_child_numb(self, 0) / divisor);
 
    return self;
 }
