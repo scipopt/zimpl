@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.13 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.14 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -84,7 +84,7 @@ typedef struct program           Prog;
 typedef enum code_type           CodeType;
 typedef struct code_node         CodeNode;
 
-typedef void                   (*Inst)(CodeNode* self);
+typedef CodeNode*              (*Inst)(CodeNode* self);
 
 extern Bool         verbose;
 extern Bool         zpldebug;
@@ -147,7 +147,7 @@ extern void         hash_add_entry(Hash* hash, const Entry* entry);
 extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
-/*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 
 /* element.c
@@ -293,8 +293,6 @@ extern Set*         entry_get_set(const Entry* entry);
 extern Var*         entry_get_var(const Entry* entry);
 /*lint -sem(        entry_print, 1p == 1 && 2p == 1) */
 extern void         entry_print(FILE* fp, const Entry* entry);
-/*lint -sem(        entry_hash, 1p == 1) */
-extern unsigned int entry_hash(const Entry* entry);
 
 /* symbol.c
  */
@@ -307,7 +305,7 @@ extern Bool         symbol_is_valid(const Symbol* symbol);
 extern Symbol*      symbol_lookup(const char* name);
 /*lint -sem(        symbol_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
-/*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
@@ -331,8 +329,6 @@ extern Var*         symbol_get_var(const Symbol* sym, int idx);
 extern void         symbol_print(FILE* fp, const Symbol* sym);
 /*lint -sem(        symbol_print_all, 1p == 1) */
 extern void         symbol_print_all(FILE* fp);
-/*lint -sem(        symbol_print_bounds, 1p == 1) */
-extern void         symbol_print_bounds(FILE* fp);
 
 /* idxset.c
  */

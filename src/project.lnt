@@ -8,7 +8,12 @@
 -esym(534,printf,puts,scanf,sprintf,sscanf,strcat,strcpy)
 -esym(534,strncat,strncpy,unlink,write)
 //
+-e749 // local enumeration constant not referenced
+-e758 // Operator followed by operator is confusing
 -e766
+-e788 // enum constant not used within defaulted switch
+-e801 // Use of goto is deprecated
+-e834 // Operator followed by operator is confusing.  Use parentheses
 //
 -efile(766,mshell.h)
 -efile(537,stdarg.h,float.h,alloca.h,math.h,stdio.h)
@@ -41,3 +46,14 @@
 /* iread.c */
 -esym(771,field) // Symbol 'field' (line 227) conceivably not initialized
 //-e429
+//--- Bison ---
+-esym(424, yyss, yyvs) // klappt nicht
+-esym(613, yyss, yyvs)
+-esym(673, yyss, yyvs) // klappt nicht
+//-------------- NOCH ZU TUN --------------------------------
+-e714 // Symbol not referenced
+-e765 // external could be made static
+-e759 // header declaration for symbol could be moved from header to module
+-e769 // global enumeration constant not referenced
+-e755 // global macro not referenced
+

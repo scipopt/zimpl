@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.8 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.9 2002/07/24 13:39:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -25,6 +25,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +33,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "lint.h"
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"
@@ -48,7 +50,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.02, Copyright (C)2002 by Thorsten Koch *\n" \
+"* Release 1.03, Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -228,7 +230,7 @@ int main(int argc, char* const* argv)
    if (zpldebug) 
       symbol_print_all(stderr);
 
-#if defined(__INSURE__) || !defined(NDEBUG)
+#if defined(__INSURE__) || !defined(NDEBUG) || defined(FREEMEM)
    
    /* Now clean up. 
     */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rbt.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: rbt.c,v 1.3 2002/07/24 13:39:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   Datei...: rbt.c                                                         */
@@ -52,8 +52,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
-#include <memory.h>
+
 #include "mshell.h"
 #include "portab.h"
 
@@ -456,7 +457,7 @@ static struct rbt_node* rbt_split(
    const void*      key,
    struct rbt_node* xppp,
    struct rbt_node* xpp,
-   struct rbt_node* xp,
+   const struct rbt_node* xp,
    struct rbt_node* x)
 {
    Bool key_xppkey;
@@ -611,8 +612,8 @@ void* rbt_search(
 /*--- Returns  : Nothing.                                                 ---*/
 /*---------------------------------------------------------------------------*/
 static void rbt_traverse(
-   RBT*             rbt,
-   struct rbt_node* x,
+   RBT*                   rbt,
+   const struct rbt_node* x,
    void                 (*apply)(void*))
 {
    assert(rbt_valid(rbt));

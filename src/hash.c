@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.6 2001/03/09 16:12:35 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.7 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -179,6 +179,8 @@ Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
+/* Liefert NULL wenn nicht gefunden.
+ */
 const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
@@ -190,6 +192,9 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
       if (!entry_cmp(he->value.entry, tuple))
          break;
+
+   if (he == NULL)
+      return NULL;
 
    assert(he != NULL);
 
@@ -207,6 +212,7 @@ static void hash_statist(FILE* fp, const Hash* hash)
    int    zeros  = 0;
    int    filled = 0;
    int    count;
+   double avg    = 0.0;
    unsigned int i;
 
    assert(fp != NULL);
@@ -232,11 +238,12 @@ static void hash_statist(FILE* fp, const Hash* hash)
    }
    assert(sum == hash->elems);
 
+   if (filled > 0)
+      avg = (double)sum / (double)filled;
+   
    fprintf(fp,
       "HashStat: size=%u sum=%d min=%d max=%d avg=%.1f zero=%d filled=%d\n",
-      hash->size, sum, min, max,
-      (double)sum / (double)filled,
-      zeros, filled);
+      hash->size, sum, min, max, avg, zeros, filled);
 }
 
 

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: iread.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: iread.c,v 1.3 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <ctype.h>
 
+#include "lint.h"
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"
@@ -42,7 +43,7 @@
 #define MAX_LINE_LEN 8192
 #define MAX_FIELDS    256
 
-void i_read_new(CodeNode* self)
+CodeNode* i_read_new(CodeNode* self)
 {
    RDef*       rdef;
    const char* filename;
@@ -52,16 +53,18 @@ void i_read_new(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   filename = Code_eval_child_strg(self, 0);
-   template = Code_eval_child_strg(self, 1);   
+   filename = code_eval_child_strg(self, 0);
+   template = code_eval_child_strg(self, 1);   
    rdef     = rdef_new(filename, template);
 
    code_value_rdef(self, rdef);
 
    rdef_free(rdef);
+
+   return self;
 }
 
-void i_read_param(CodeNode* self)
+CodeNode* i_read_param(CodeNode* self)
 {
    RDef* rdef;
    RPar* rpar;
@@ -70,8 +73,8 @@ void i_read_param(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   rdef = Code_eval_child_rdef(self, 0);
-   rpar = Code_eval_child_rpar(self, 1);   
+   rdef = code_eval_child_rdef(self, 0);
+   rpar = code_eval_child_rpar(self, 1);   
 
    rdef_set_param(rdef, rpar);
    
@@ -79,9 +82,11 @@ void i_read_param(CodeNode* self)
 
    rdef_free(rdef);
    rpar_free(rpar);
+
+   return self;
 }
 
-void i_read_comment(CodeNode* self)
+CodeNode* i_read_comment(CodeNode* self)
 {
    RPar*       rpar;
    const char* comment;
@@ -90,15 +95,17 @@ void i_read_comment(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   comment = Code_eval_child_strg(self, 0);
+   comment = code_eval_child_strg(self, 0);
    rpar     = rpar_new_comment(comment);   
 
    code_value_rpar(self, rpar);
 
    rpar_free(rpar);
+
+   return self;
 }
 
-void i_read_use(CodeNode* self)
+CodeNode* i_read_use(CodeNode* self)
 {
    RPar* rpar;
    int   use;
@@ -107,15 +114,17 @@ void i_read_use(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   use  = (int)Code_eval_child_numb(self, 0);
+   use  = (int)code_eval_child_numb(self, 0);
    rpar = rpar_new_use(use);   
 
    code_value_rpar(self, rpar);
 
    rpar_free(rpar);
+
+   return self;
 }
 
-void i_read_skip(CodeNode* self)
+CodeNode* i_read_skip(CodeNode* self)
 {
    RPar* rpar;
    int   skip;
@@ -124,12 +133,14 @@ void i_read_skip(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   skip = (int)Code_eval_child_numb(self, 0);
+   skip = (int)code_eval_child_numb(self, 0);
    rpar = rpar_new_skip(skip);   
 
    code_value_rpar(self, rpar);
 
    rpar_free(rpar);
+
+   return self;
 }
 
 static int parse_template(
@@ -266,7 +277,7 @@ static int split_fields(char* s, char* field[])
    return fields;
 }
 
-void i_read(CodeNode* self)
+CodeNode* i_read(CodeNode* self)
 {
    FILE*       fp;
    char*       s;
@@ -294,7 +305,7 @@ void i_read(CodeNode* self)
    
    assert(code_is_valid(self));
    
-   rdef     = Code_eval_child_rdef(self, 0);
+   rdef     = code_eval_child_rdef(self, 0);
    use      = rdef_get_use(rdef);
    skip     = rdef_get_skip(rdef);
    filename = rdef_get_filename(rdef);
@@ -436,4 +447,6 @@ void i_read(CodeNode* self)
    rdef_free(rdef);
    list_free(list);
    free(comment);
+
+   return self;
 }

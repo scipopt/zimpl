@@ -1,8 +1,8 @@
-#ident "@(#) $Id: strstore.c,v 1.4 2002/07/24 13:39:42 bzfkocht Exp $"
+#ident "@(#) $Id: lint.h,v 1.1 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: strstore.c                                                    */
-/*   Name....: String Storage Functions                                      */
+/*   File....: lint.h                                                        */
+/*   Name....: Lint defines                                                  */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
@@ -25,68 +25,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+/* Use this file only if we are linting
+ */
+#ifdef _lint
 
-#include "lint.h"
-#include "portab.h"
-#include "mshell.h"
-#include "mme.h"
+#ifndef _LINT_H_
+#define _LINT_H_
 
-typedef struct string Str;
+/* Unfortunately strdup() is not a POSIX function.
+ */
+/*lint -esym(526, strdup) */
+/*lint -sem(strdup, nulterm(1), malloc(1p), 1p, @p > 0) */ 
+extern char* strdup(const char* s);
 
-struct string
-{
-   char* value;
-   Str*  next;
-};
+/*lint -esym(757, optarg, optind, opterr, optopt) */
+/*lint -esym(526, getopt, optarg, optind, opterr, optopt) */
+/*lint -sem(getopt, 1n > 0 && 2p && 3p) */
+extern int getopt(int argc, char* const argv[], const char* optstring);
+extern char* optarg;
+extern int optind;
+extern int opterr;
+extern int optopt;
 
-static Str* anchor = NULL;
-
-const char* str_new(const char* s)
-{
-   Str* str = malloc(sizeof(*str));
-
-   assert(s   != NULL);
-   assert(str != NULL);
-
-   str->value = strdup(s);
-   str->next  = anchor;
-   anchor     = str;
-
-   assert(str->value != NULL);
-   
-   return str->value;
-}
-
-void str_init(void)
-{
-}
-
-void str_exit(void)
-{
-   Str* p;
-   Str* q;
-
-   for(p = anchor; p != NULL; p = q)
-   {
-      q = p->next;
-      free(p->value);
-      free(p);
-   }
-   anchor = NULL;
-}
-
-unsigned int str_hash(const char* s)
-{
-   unsigned int sum;
-   int          i;
-   
-   for(sum = 0, i = 0; s[i] != '\0'; i++)
-      sum = DISPERSE(sum + s[i]);
-
-   return sum;
-}
-
+#endif /* _LINT_H_ */
+#endif /* _lint */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: stmt.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: stmt.c,v 1.6 2002/07/24 13:39:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -30,6 +30,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "lint.h"
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"

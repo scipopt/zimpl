@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.7 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.8 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <ctype.h>
 
+#include "lint.h"
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"

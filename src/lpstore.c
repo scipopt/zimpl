@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.7 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.8 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -30,6 +30,8 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+
+#include "lint.h"
 #include "mshell.h"
 #include "portab.h"
 #include "rbt.h"
@@ -808,7 +810,6 @@ void lps_scale()
    Con*   con;
    Nzo*   nzo;
    double maximum;
-   double scale;
    
    for(con = lp->con_root; con != NULL; con = con->next)
    {

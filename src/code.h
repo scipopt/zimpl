@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.h,v 1.5 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: code.h,v 1.6 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -28,25 +28,6 @@
 #ifndef _CODE_H_
 #define _CODE_H_
 
-#define Code_eval_child(node, no)      code_eval(code_get_child(node, no))
-
-#define Code_eval_child_numb(n, i)     code_get_numb(Code_eval_child(n, i))
-#define Code_eval_child_strg(n, i)     code_get_strg(Code_eval_child(n, i))
-#define Code_eval_child_name(n, i)     code_get_name(Code_eval_child(n, i))
-#define Code_eval_child_tuple(n, i)    code_get_tuple(Code_eval_child(n, i))
-#define Code_eval_child_set(n, i)      code_get_set(Code_eval_child(n, i))
-#define Code_eval_child_idxset(n, i)   code_get_idxset(Code_eval_child(n, i))
-#define Code_eval_child_entry(n, i)    code_get_entry(Code_eval_child(n, i))
-#define Code_eval_child_term(n, i)     code_get_term(Code_eval_child(n, i))
-#define Code_eval_child_size(n, i)     code_get_size(Code_eval_child(n, i))
-#define Code_eval_child_bool(n, i)     code_get_bool(Code_eval_child(n, i))
-#define Code_eval_child_list(n, i)     code_get_list(Code_eval_child(n, i))
-#define Code_eval_child_vartype(n, i)  code_get_vartype(Code_eval_child(n, i))
-#define Code_eval_child_contype(n, i)  code_get_contype(Code_eval_child(n, i))
-#define Code_eval_child_rdef(n, i)     code_get_rdef(Code_eval_child(n, i))
-#define Code_eval_child_rpar(n, i)     code_get_rpar(Code_eval_child(n, i))
-#define Code_eval_child_bits(n, i)     code_get_bits(Code_eval_child(n, i))
-
 /*lint -sem(        code_new_inst, 1p == 1 && 2n >= 0, @p == 1) */
 extern CodeNode*    code_new_inst(Inst inst, int childs, ...);
 /*lint -sem(        code_new_numb, 1p == 1, @p == 1) */
@@ -67,20 +48,24 @@ extern CodeNode*    code_new_bits(unsigned int bits);
 extern void         code_free(CodeNode* node);
 /*lint -sem(        code_is_valid, 1p == 1) */
 extern Bool         code_is_valid(const CodeNode* node);
-/*lint -sem(        code_set_child, 1p == 1 && 2n >= 0 && 3p == 1) */
-extern void         code_set_child(CodeNode* node, int idx, CodeNode* child);
 /*lint -sem(        code_get_type, 1p == 1) */
 extern CodeType     code_get_type(const CodeNode* node);
 /*lint -sem(        code_set_root, 1p == 1) */
 extern void         code_set_root(CodeNode* node);
 /*lint -sem(        code_get_root, @p == 1) */
 extern CodeNode*    code_get_root(void);
-/*lint -sem(        code_eval, 1p == 1, @p == 1) */
+/*lint -sem(        code_set_child, 1p == 1 && 2n >= 0 && 3p == 1) */
+extern void         code_set_child(CodeNode* node, int idx, CodeNode* child);
+/*lint -sem(        code_errmsg, 1p == 1) */
+extern void         code_errmsg(const CodeNode* node);
+#if 0
+/*lint -sem(        code_check_type, 1p == 1, @p == 1p) */
+extern CodeNode*    code_check_type(CodeNode* node, CodeType expected);
+#endif
+/*lint -sem(        code_eval, 1p == 1, @p == 1p) */
 extern CodeNode*    code_eval(CodeNode* node);
 /*lint -sem(        code_get_child, 1p == 1 && 2n >= 0, @p == 1) */
 extern CodeNode*    code_get_child(const CodeNode* node, int no);
-/*lint -sem(        code_errmsg, 1p == 1) */
-extern void         code_errmsg(const CodeNode* node);
 /*lint -sem(        code_get_numb, 1p == 1) */
 extern double       code_get_numb(CodeNode* node);
 /*lint -sem(        code_get_strg, 1p == 1, @p) */
@@ -147,6 +132,41 @@ extern void         code_value_rpar(CodeNode* node, const RPar* rpar);
 extern void         code_value_bits(CodeNode* node, unsigned int bits);
 /*lint -sem(        code_value_void, 1p == 1) */
 extern void         code_value_void(CodeNode* node);
+
+/*lint -sem(        code_eval_child, 1p == 1 && 2n >= 0, @p == 1p) */
+extern CodeNode*    code_eval_child(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_numb, 1p == 1 && 2n >= 0) */
+extern double       code_eval_child_numb(const CodeNode* node, int no);
+/*lint -sem(        char* code_eval_child_strg, 1p == 1 && 2n >= 0, @p) */
+extern const char*  code_eval_child_strg(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_name, 1p == 1 && 2n >= 0, @p) */
+extern const char*  code_eval_child_name(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_tuple, 1p == 1 && 2n >= 0, @p == 1) */
+extern Tuple*       code_eval_child_tuple(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_set, 1p == 1 && 2n >= 0, @p == 1) */
+extern Set*         code_eval_child_set(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_idxset, 1p == 1 && 2n >= 0, @p == 1) */
+extern IdxSet*      code_eval_child_idxset(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_entry, 1p == 1 && 2n >= 0, @p == 1) */
+extern Entry*       code_eval_child_entry(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_term, 1p == 1 && 2n >= 0, @p == 1) */
+extern Term*        code_eval_child_term(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_size, 1p == 1 && 2n >= 0, @n >= 0) */
+extern int          code_eval_child_size(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_bool, 1p == 1 && 2n >= 0) */
+extern Bool         code_eval_child_bool(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_list, 1p == 1 && 2n >= 0, @p == 1) */
+extern List*        code_eval_child_list(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_vartype, 1p == 1 && 2n >= 0) */
+extern VarType      code_eval_child_vartype(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_contype, 1p == 1 && 2n >= 0) */
+extern ConType      code_eval_child_contype(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_rdef, 1p == 1 && 2n >= 0, @p == 1) */
+extern RDef*        code_eval_child_rdef(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_rpar, 1p == 1 && 2n >= 0, @p == 1) */
+extern RPar*        code_eval_child_rpar(const CodeNode* node, int no);
+/*lint -sem(        int code_eval_child_bits, 1p == 1 && 2n >= 0) */
+extern unsigned     int code_eval_child_bits(const CodeNode* node, int no);
 
 #endif /* _CODE_H_ */
 

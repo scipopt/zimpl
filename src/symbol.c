@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.10 2002/06/12 09:09:11 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.11 2002/07/24 13:39:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -144,6 +144,8 @@ Bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
    return hash_has_entry(sym->hash, tuple);
 }
 
+/* Liefert NULL wenn nicht gefunden.
+ */
 const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
 {
    assert(symbol_is_valid(sym));

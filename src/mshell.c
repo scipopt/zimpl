@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mshell.c,v 1.2 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: mshell.c,v 1.3 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -39,6 +39,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
+#include "lint.h"
 #include "mshell.h"
 
 #define ALIGN_SIZE   sizeof(double)

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.8 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.9 2002/07/24 13:39:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -110,7 +110,7 @@ void lpf_write(
                fprintf(fp, " %+.15g %s", nzo->value, tmp);
             
             /* if (++cnt % 6 == 0) */
-               fprintf(fp, "\n ");         
+            fprintf(fp, "\n ");         
          }
          switch(con->type)
          {
