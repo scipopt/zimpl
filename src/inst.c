@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.72 2004/04/14 13:04:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.73 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1236,7 +1236,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0)));
+   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0), SET_CHECK_WARN));
 
    return self;
 }
@@ -1247,7 +1247,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0)));
+   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0), SET_CHECK_WARN));
 
    return self;
 }
@@ -1637,7 +1637,7 @@ static Set* set_from_idxset(const IdxSet* idxset)
       {
          assert(list != NULL);
 
-         newset = set_new_from_list(list);
+         newset = set_new_from_list(list, SET_CHECK_WARN);
 
          list_free(list);
       }
@@ -1721,7 +1721,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       Set* set;
       
-      set  = set_new_from_list(list);
+      set  = set_new_from_list(list, SET_CHECK_WARN);
       sym  = symbol_new(name, SYM_SET, set, count, NULL);
       iset = symbol_get_iset(sym);
       set_free(set);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.3 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.4 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -74,7 +74,7 @@ void set_exit()
    free(set_vtab_global);
 }
 
-Set* set_new_from_list(const List* list)
+Set* set_new_from_list(const List* list, SetCheckType check)
 {
    ListElem* le  = NULL;
    int       dim;
@@ -83,15 +83,15 @@ Set* set_new_from_list(const List* list)
    assert(list_get_elems(list) > 0);
    
    if (list_is_elemlist(list))
-      set = set_list_new_from_elems(list);
+      set = set_list_new_from_elems(list, check);
    else if (list_is_tuplelist(list))
    {
       dim = tuple_get_dim(list_get_tuple(list, &le));
 
       if (dim == 1)
-         set = set_list_new_from_tuples(list);
+         set = set_list_new_from_tuples(list, check);
       else
-         set = set_multi_new_from_list(list);
+         set = set_multi_new_from_list(list, check);
    }
    else
    {
@@ -100,9 +100,9 @@ Set* set_new_from_list(const List* list)
       dim = tuple_get_dim(entry_get_tuple(list_get_entry(list, &le)));
    
       if (dim == 1)
-         set = set_list_new_from_entries(list);
+         set = set_list_new_from_entries(list, check);
       else
-         set = set_multi_new_from_list(list);
+         set = set_multi_new_from_list(list, check);
    }
    assert(set_is_valid(set));
 
@@ -192,30 +192,6 @@ int set_get_members(const Set* set)
    return set->head.members;   
 }
 
-Set* set_union(const Set* set_a, const Set* set_b)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
-Set* set_inter(const Set* set_a, const Set* set_b)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
-Set* set_minus(const Set* set_a, const Set* set_b)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
-Set* set_sdiff(const Set* set_a, const Set* set_b)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
 List* set_subsets_list(
    const Set* set,
    int        subset_size,
@@ -280,105 +256,169 @@ void set_print(FILE* fp, const Set* set)
    fprintf(fp, "}");
 }
 
-#if 0
-
+/* In A or in B */
 Set* set_union(const Set* set_a, const Set* set_b)
 {
-   Set* set;
-   int  i;
+   Set*     set;
+   SetIter* iter;
+   List*    list = NULL;
+   Tuple*   tuple;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->dim == set_b->dim);
+   assert(set_a->head.dim == set_b->head.dim);
    
-   set = set_new(set_a->dim, set_a->used + set_b->used, SET_DEFAULT);
+   iter = set_iter_init(set_a, NULL);
 
-   assert(set != NULL);
+   while(NULL != (tuple = set_iter_next(iter, set_a)))
+   {
+      if (list == NULL)
+         list  = list_new_tuple(tuple);
+      else
+         list_add_tuple(list, tuple);
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_a);
    
-   for(i = 0; i < set_a->used; i++)
-      set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);    
+   iter = set_iter_init(set_b, NULL);
 
-   for(i = 0; i < set_b->used; i++)
-      set_add_member(set, tuple_copy(set_b->member[i]), SET_ADD_END, SET_CHECK_QUIET);    
+   while(NULL != (tuple = set_iter_next(iter, set_b)))
+   {
+      if (!set_lookup(set_a, tuple))
+      {
+         if (list == NULL)
+            list  = list_new_tuple(tuple);
+         else
+            list_add_tuple(list, tuple);
+      }
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_b);
 
-   assert(set_is_valid(set));
+   set = set_new_from_list(list, SET_CHECK_NONE);
 
+   list_free(list);
+   
    return set;
 }
 
 /* In A and in B */
 Set* set_inter(const Set* set_a, const Set* set_b)
 {
-   Set* set;
-   int  i;
+   Set*     set;
+   SetIter* iter;
+   List*    list = NULL;
+   Tuple*   tuple;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->dim == set_b->dim);
+   assert(set_a->head.dim == set_b->head.dim);
    
-   set = set_new(set_a->dim, Min(set_a->used, set_b->used), SET_DEFAULT);
+   iter = set_iter_init(set_a, NULL);
 
-   assert(set != NULL);
+   while(NULL != (tuple = set_iter_next(iter, set_a)))
+   {
+      if (set_lookup(set_b, tuple))
+      {
+         if (list == NULL)
+            list  = list_new_tuple(tuple);
+         else
+            list_add_tuple(list, tuple);
+      }
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_a);
    
-   for(i = 0; i < set_a->used; i++)
-      if (set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);   
+   set = set_new_from_list(list, SET_CHECK_NONE);
 
-   assert(set_is_valid(set));
-
+   list_free(list);
+   
    return set;
 }
 
 /* In A but not in B */
 Set* set_minus(const Set* set_a, const Set* set_b)
 {
-   Set* set;
-   int  i;
+   Set*     set;
+   SetIter* iter;
+   List*    list = NULL;
+   Tuple*   tuple;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->dim == set_b->dim);
+   assert(set_a->head.dim == set_b->head.dim);
    
-   set = set_new(set_a->dim, set_a->used, SET_DEFAULT);
+   iter = set_iter_init(set_a, NULL);
 
-   assert(set != NULL);
+   while(NULL != (tuple = set_iter_next(iter, set_a)))
+   {
+      if (!set_lookup(set_b, tuple))
+      {
+         if (list == NULL)
+            list  = list_new_tuple(tuple);
+         else
+            list_add_tuple(list, tuple);
+      }
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_a);
    
-   for(i = 0; i < set_a->used; i++)
-      if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE); 
+   set = set_new_from_list(list, SET_CHECK_NONE);
 
-   assert(set_is_valid(set));
-
+   list_free(list);
+   
    return set;
 }
 
 /* In A and not in B or in B and not in A  (Symetric difference) */
 Set* set_sdiff(const Set* set_a, const Set* set_b)
 {
-   Set* set;
-   int  i;
+   Set*     set;
+   SetIter* iter;
+   List*    list = NULL;
+   Tuple*   tuple;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->dim == set_b->dim);
+   assert(set_a->head.dim == set_b->head.dim);
    
-   set = set_new(set_a->dim, set_a->used + set_b->used, SET_DEFAULT);
+   iter = set_iter_init(set_a, NULL);
 
-   assert(set != NULL);
+   while(NULL != (tuple = set_iter_next(iter, set_a)))
+   {
+      if (!set_lookup(set_b, tuple))
+      {
+         if (list == NULL)
+            list  = list_new_tuple(tuple);
+         else
+            list_add_tuple(list, tuple);
+      }
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_a);
    
-   for(i = 0; i < set_a->used; i++)
-      if (!set_lookup(set_b, set_a->member[i]))
-         set_add_member(set, tuple_copy(set_a->member[i]), SET_ADD_END, SET_CHECK_NONE);  
+   iter = set_iter_init(set_b, NULL);
 
-   for(i = 0; i < set_b->used; i++)
-      if (!set_lookup(set_a, set_b->member[i]))
-         set_add_member(set, tuple_copy(set_b->member[i]), SET_ADD_END, SET_CHECK_NONE); 
+   while(NULL != (tuple = set_iter_next(iter, set_b)))
+   {
+      if (!set_lookup(set_a, tuple))
+      {
+         if (list == NULL)
+            list  = list_new_tuple(tuple);
+         else
+            list_add_tuple(list, tuple);
+      }
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set_b);
 
-   assert(set_is_valid(set));
+   set = set_new_from_list(list, SET_CHECK_NONE);
 
+   list_free(list);
+   
    return set;
 }
-#endif
 
 /* project set_a to a new set, using the elements index in the tuple.
  */
@@ -391,7 +431,6 @@ Set* set_proj(const Set* set, const Tuple* pattern)
    int      i;
    int      dim;
    int*     idx;
-   Bool     first = TRUE;
    Set*     new_set;
    
    assert(set_is_valid(set));
@@ -417,17 +456,11 @@ Set* set_proj(const Set* set, const Tuple* pattern)
       for(i = 0; i < dim; i++)
          tuple_set_elem(new_tuple, i, elem_copy(tuple_get_elem(tuple, idx[i]))); 
 
-      if (first)
-      {
+      if (list == NULL)
          list  = list_new_tuple(new_tuple);
-         first = FALSE;
-      }
       else
-      {
-         assert(list != NULL);
-         
          list_add_tuple(list, new_tuple);
-      }
+
       tuple_free(tuple);
       tuple_free(new_tuple);
    }
@@ -435,7 +468,7 @@ Set* set_proj(const Set* set, const Tuple* pattern)
    
    free(idx);
 
-   new_set = set_new_from_list(list);
+   new_set = set_new_from_list(list, SET_CHECK_QUIET);
 
    list_free(list);
    
@@ -589,6 +622,8 @@ List* set_subsets_list(
 }
 
 #endif
+
+
 
 
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.54 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.55 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -69,7 +69,7 @@ static const char* usage =
 static const char* help =
 "\n" \
 "  -b             enable bison debugging output.\n" \
-"  -D name=value  Setzt einen Parameter auf einen Wert.\n" \
+"  -D name=value  Assign value to parameter name.\n" \
 "  -f             enable flex debugging output.\n" \
 "  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \

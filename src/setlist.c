@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.5 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -164,7 +164,7 @@ int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
    return idx;
 }
 
-Set* set_list_new_from_elems(const List* list)
+Set* set_list_new_from_elems(const List* list, SetCheckType check)
 {
    ListElem*   le = NULL;
    Set*         set;
@@ -176,14 +176,14 @@ Set* set_list_new_from_elems(const List* list)
    set = set_list_new(n, SET_DEFAULT);
 
    while(n-- > 0)
-      (void)set_list_add_elem(set, list_get_elem(list, &le), SET_CHECK_WARN);
+      (void)set_list_add_elem(set, list_get_elem(list, &le), check);
 
    assert(set_list_is_valid(set));
 
    return set;
 }
 
-Set* set_list_new_from_tuples(const List* list)
+Set* set_list_new_from_tuples(const List* list, SetCheckType check)
 {
    ListElem*    le = NULL;
    const Tuple* tuple;
@@ -201,14 +201,14 @@ Set* set_list_new_from_tuples(const List* list)
 
       assert(tuple_get_dim(tuple) == 1);
       
-      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), SET_CHECK_WARN);
+      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), check);
    }
    assert(set_list_is_valid(set));
 
    return set;
 }
 
-Set* set_list_new_from_entries(const List* list)
+Set* set_list_new_from_entries(const List* list, SetCheckType check)
 {
    ListElem*    le = NULL;
    const Tuple* tuple;
@@ -226,7 +226,7 @@ Set* set_list_new_from_entries(const List* list)
 
       assert(tuple_get_dim(tuple) == 1);
       
-      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), SET_CHECK_WARN);
+      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), check);
    }
    assert(set_list_is_valid(set));
 

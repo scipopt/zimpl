@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.58 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.59 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -39,6 +39,12 @@ enum element_type
 {
    ELEM_ERR = 0, ELEM_FREE, ELEM_NUMB, ELEM_STRG, ELEM_NAME
 };
+
+enum set_check_type
+{
+   SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
+};
+
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX };
 enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_SET };
@@ -79,6 +85,7 @@ typedef struct element           Elem;
 typedef struct tuple             Tuple;
 typedef union set                Set;
 typedef union set_iter           SetIter;
+typedef enum set_check_type      SetCheckType;
 typedef struct entry             Entry;
 typedef enum symbol_type         SymbolType;
 typedef struct symbol            Symbol;
@@ -396,7 +403,7 @@ extern void set_print(FILE* fp, const Set* set);
 
 extern Set* set_empty_new(int dim);
 extern Set* set_pseudo_new(void);
-extern Set* set_new_from_list(const List* list);
+extern Set* set_new_from_list(const List* list, SetCheckType check);
 extern Set* set_range_new(int begin, int end, int step);
 extern Set* set_prod_new(const Set* a, const Set* b);
 

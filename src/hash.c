@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.18 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.19 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -50,7 +50,7 @@ struct hash_element
 {
    union
    {
-      //      const Tuple* tuple;
+      const Tuple* tuple;
       const Entry* entry;
       SetElemIdx   elem_idx;
    } value;
@@ -142,7 +142,6 @@ Bool hash_is_valid(const Hash* hash)
       && SID_ok(hash, HASH_SID));
 }
 
-#if 0 // wird nicht gebraucht !!! ???
 void hash_add_tuple(Hash* hash, const Tuple* tuple)
 {
    HElem*       he = calloc(1, sizeof(*he));
@@ -159,7 +158,6 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
    hash->bucket[hcode] = he;
    hash->elems++;
 }
-#endif
 
 
 void hash_add_entry(Hash* hash, const Entry* entry)
@@ -181,7 +179,6 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    hash->elems++;
 }
 
-#if 0 // wird im moment nicht gebraucht !!!???
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
@@ -196,7 +193,6 @@ Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 
    return he != NULL;
 }
-#endif
 
 Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 {

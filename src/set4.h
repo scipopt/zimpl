@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.5 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -43,15 +43,9 @@ enum set_type {
    SET_TYPES   = 11  /* marker */
 };
 
-enum set_check_type
-{
-   SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
-};
-
 typedef enum set_type      SetType;
 //typedef union set          Set;
 typedef struct set_vtab    SetVTab;
-typedef enum set_check_type      SetCheckType;
 
 typedef struct set_empty   SetEmpty;
 typedef struct set_pseudo  SetPseudo;
@@ -119,6 +113,7 @@ struct set_multi
    SetHead  head;   /* head.dim > 1  */
    Set**    set;    /* dim times, type == SET_LIST */
    int*     subset; /* members * dim */
+   int**    order;  /* dim * members */
    SID
 };
 
@@ -231,9 +226,9 @@ extern void set_pseudo_init(SetVTab* vtab);
 extern void set_list_init(SetVTab* vtab);
 extern Set* set_list_new(int size, int flags);
 extern int  set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
-extern Set* set_list_new_from_elems(const List* list);
-extern Set* set_list_new_from_tuples(const List* list);
-extern Set* set_list_new_from_entries(const List* list);
+extern Set* set_list_new_from_elems(const List* list, SetCheckType check);
+extern Set* set_list_new_from_tuples(const List* list, SetCheckType check);
+extern Set* set_list_new_from_entries(const List* list, SetCheckType check);
 extern const Elem* set_list_get_elem(const Set* set, int idx);
 
 /* setrange.c
@@ -247,8 +242,17 @@ extern void set_prod_init(SetVTab* vtab);
 /* set multi.c
  */
 extern void set_multi_init(SetVTab* vtab);
-extern Set* set_multi_new_from_list(const List* list);
+extern Set* set_multi_new_from_list(const List* list, SetCheckType check);
 
 
 #endif /* _SET4_H_ */
+
+
+
+
+
+
+
+
+
 

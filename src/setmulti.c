@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.6 2004/04/14 14:54:45 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.7 2004/04/18 10:08:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -43,7 +43,8 @@
 /* This is a bloody hack. But there seems to be no easy way to give
  * additional information to the compare routine needed for qsort().
  */
-static int subset_cmp_dim = 0;
+static const Set* cmp_set = NULL;
+static int        cmp_dim = 0;  
 
 /* ------------------------------------------------------------------------- 
  * --- valid                 
@@ -82,7 +83,7 @@ static int subset_cmp(const void* a, const void* b)
    int i;
    int d;
 
-   for(i = 0; i < subset_cmp_dim; i++)
+   for(i = 0; i < cmp_dim; i++)
    {
       d = aa[i] - bb[i];
 
@@ -92,11 +93,29 @@ static int subset_cmp(const void* a, const void* b)
    return 0;
 }
 
+static int order_cmp(const void* a, const void* b)
+{
+   const int* aa = (const int*)a;
+   const int* bb = (const int*)b;
+
+   int ai;
+   int bi;
+
+   assert(cmp_set != NULL);
+   assert(cmp_dim >= 0);
+   assert(cmp_dim <  cmp_set->head.dim);
+   
+   ai = *aa * cmp_set->head.dim + cmp_dim;
+   bi = *bb * cmp_set->head.dim + cmp_dim;
+
+   return cmp_set->multi.subset[ai] - cmp_set->multi.subset[bi];
+}
+
 /* ------------------------------------------------------------------------- 
  * --- new                 
  * -------------------------------------------------------------------------
  */
-Set* set_multi_new_from_list(const List* list)
+Set* set_multi_new_from_list(const List* list, SetCheckType check)
 {
    const Tuple* tuple;
    ListElem*    le = NULL;
@@ -106,6 +125,7 @@ Set* set_multi_new_from_list(const List* list)
    int          k;
    int          dim;
    Bool         is_entrylist;
+   Hash*        hash;
    
    assert(list_is_valid(list));
 
@@ -130,54 +150,82 @@ Set* set_multi_new_from_list(const List* list)
    set->head.type    = SET_MULTI;
    set->multi.set    = calloc((size_t)dim, sizeof(*set->multi.set));
    set->multi.subset = calloc((size_t)(n * dim), sizeof(*set->multi.subset));
-
+   set->multi.order  = calloc((size_t)dim, sizeof(*set->multi.order));
+      
    assert(set->multi.set    != NULL);
    assert(set->multi.subset != NULL);
-
-   for(k = 0; k < dim; k++)
-      set->multi.set[k] = set_list_new(n, SET_DEFAULT);
+   assert(set->multi.order  != NULL);
    
-   le  = NULL;
+   for(k = 0; k < dim; k++)
+      set->multi.set  [k] = set_list_new(n, SET_DEFAULT);
 
+   hash = hash_new(HASH_TUPLE, n);
+   le   = NULL;
+   
    for(i = 0; i < n; i++)
    {
       tuple = is_entrylist
          ? entry_get_tuple(list_get_entry(list, &le))
          : list_get_tuple(list, &le);
 
-      for(k = 0; k < dim; k++)
-         set->multi.subset[i * dim + k] =
-            set_list_add_elem(set->multi.set[k], tuple_get_elem(tuple, k), SET_CHECK_QUIET);
+      if (hash_has_tuple(hash, tuple))
+         /* check hier auswertemn ???? */
+         fprintf(stderr, "??? Doublicate found!!\n");
+      else
+      {
+         hash_add_tuple(hash, tuple);
+         
+         for(k = 0; k < dim; k++)
+            set->multi.subset[set->head.members * dim + k] =
+               set_list_add_elem(set->multi.set[k],
+                  tuple_get_elem(tuple, k), SET_CHECK_QUIET);
 
-      set->head.members++;
+         set->head.members++;
+      }
    }
-   /* Sort entries
-    */
+   hash_free(hash);
+
    /* Bloody hack!
     */
-   subset_cmp_dim = dim;
-   
+   cmp_set = set;
+   cmp_dim = dim;
+
+   /* Sort subset
+    */
    qsort(set->multi.subset, (size_t)set->head.members,
       (size_t)dim * sizeof(*set->multi.subset), subset_cmp);
    
-   /* Remove doubles
+   /* This could be done also later On-Demand
     */
-   i = 1;
-   
-   while(i < set->head.members)
+   for(k = 0; k < dim; k++)
    {
-      if (subset_cmp(
-         &set->multi.subset[i       * dim],
-         &set->multi.subset[(i - 1) * dim]) == 0)
-      {
-         for(k = i * dim; k < (set->head.members - 1) * dim; k++)
-            set->multi.subset[k] = set->multi.subset[k + dim];
+      set->multi.order[k] = calloc(set->head.members, sizeof(**set->multi.order));
+      
+      assert(set->multi.order[k] != NULL);
 
-         fprintf(stderr, "Doublicate found!!\n");
-         set->head.members--;
+      for(i = 0; i < set->head.members; i++)
+         set->multi.order[k][i] = i;
+
+      /* No need to sort order[0] because subset ist already sorted.
+       */
+      if (k > 0)
+      {
+         cmp_dim = k;
+      
+         qsort(set->multi.order[k], (size_t)set->head.members,
+            sizeof(**set->multi.order), order_cmp);
       }
-      else
-         i++;
+#ifndef NDEBUG
+      /* Make sure order is sorted
+       */
+      for(i = 0; i < set->head.members - 1; i++)
+      {
+         int a = set->multi.order[k][i]     * set->head.dim + k;
+         int b = set->multi.order[k][i + 1] * set->head.dim + k;
+         
+         assert(set->multi.subset[a] <= set->multi.subset[b]);
+      }
+#endif /* !NDEBUG */
    }
    SID_set2(set->multi, SET_MULTI_SID);
 
@@ -224,6 +272,10 @@ static void set_multi_free(Set* set)
    {
       SID_del2(set->multi);
 
+      for(i = 0; i < set->head.dim; i++)
+         free(set->multi.order[i]);
+
+      free(set->multi.order);
       free(set->multi.set);
       free(set->multi.subset);
       free(set);
@@ -245,9 +297,9 @@ static int subset_idx_cmp(const void* a, const void* b)
    assert(key    != NULL);
    assert(subset != NULL);
    
-   assert(subset_cmp_dim > 0);
+   assert(cmp_dim > 0);
 
-   for(i = 0; i < subset_cmp_dim; i++)
+   for(i = 0; i < cmp_dim; i++)
    {
       d = key[i] - subset[i];
 
@@ -257,15 +309,20 @@ static int subset_idx_cmp(const void* a, const void* b)
    return 0;
 }
 
-static int subset_select_cmp(const void* a, const void* b)
+static int order_idx_cmp(const void* a, const void* b)
 {
-   const int* key    = (const int*)a;
-   const int* subset = (const int*)b;
-   
-   assert(key    != NULL);
-   assert(subset != NULL);
-   
-   return *key - *subset;
+   const int* key   = (const int*)a;
+   const int* order = (const int*)b;
+
+   assert(key     != NULL);
+   assert(order   != NULL);
+   assert(cmp_set != NULL);
+   assert(cmp_dim >= 0);
+   assert(cmp_dim <  cmp_set->head.dim);
+   assert(*order  >= 0);
+   assert(*order  <  cmp_set->head.members);
+
+   return *key - cmp_set->multi.subset[*order * cmp_set->head.dim + cmp_dim];
 }
 
 /* return the index of the element, -1 if not found
@@ -296,19 +353,19 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
          return -1;
       }
    }
-   subset_cmp_dim = set->head.dim;
+   cmp_dim = set->head.dim;
    
    result = (ptrdiff_t)bsearch(idx, set->multi.subset, (size_t)set->head.members,
-      (size_t)set->head.dim * sizeof(set->multi.subset[0]), subset_idx_cmp);
+      (size_t)set->head.dim * sizeof(*set->multi.subset), subset_idx_cmp);
    
    free(idx);
 
    if (result == 0)
       return -1;
 
-   assert((result - (ptrdiff_t)set->multi.subset) % (set->head.dim * sizeof(set->multi.subset[0])) == 0);
+   assert((result - (ptrdiff_t)set->multi.subset) % (set->head.dim * sizeof(*set->multi.subset)) == 0);
 
-   k = (result - (ptrdiff_t)set->multi.subset) / (set->head.dim * sizeof(set->multi.subset[0]));
+   k = (result - (ptrdiff_t)set->multi.subset) / (set->head.dim * sizeof(*set->multi.subset));
 
    assert(k >= 0);
    assert(k <  set->head.members);
@@ -330,9 +387,11 @@ static SetIter* multi_iter_init(
    int          i;
    int          j;
    int          k;
+   int          m;
    int          first;
    int          last;
    ptrdiff_t    result;
+   int          fixed_idx = -1;
    
    assert(set_multi_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));
@@ -358,8 +417,12 @@ static SetIter* multi_iter_init(
          
          if (idx[i] < 0)
             break;
+
+         fixed_idx = i;
       }
    }
+   /* Impossible pattern ?
+    */
    if (i < set->head.dim)
    {
       iter->multi.members = 0;
@@ -373,66 +436,108 @@ static SetIter* multi_iter_init(
          (size_t)set->head.dim * sizeof(*iter->multi.subset));
 
       assert(iter->multi.subset);
-      
-      j = 0;
 
-      if (idx[0] < 0)
+      /* Pattern matches all members ?
+       */
+      if (fixed_idx < 0)
       {
-         first = 0;
-         last  = set->head.members;
+         iter->multi.members = set->head.members;
+         iter->multi.now     = 0;
+
+         memcpy(iter->multi.subset, set->multi.subset,
+            (size_t)(iter->multi.members * iter->multi.dim) * sizeof(*iter->multi.subset));
       }
       else
       {
-         result = (ptrdiff_t)bsearch(
-            idx,
-            set->multi.subset,
-            (size_t)set->head.members,
-            (size_t)set->head.dim * sizeof(set->multi.subset[0]),
-            subset_select_cmp);
+         assert(fixed_idx >= 0);
+
+         cmp_set = set;
+         cmp_dim = fixed_idx;
          
-         k = (result - (ptrdiff_t)set->multi.subset)
-            / (set->head.dim * sizeof(set->multi.subset[0]));
+         result = (ptrdiff_t)bsearch(
+            &idx[fixed_idx],
+            set->multi.order[fixed_idx],
+            (size_t)set->head.members,
+            sizeof(**set->multi.order),
+            order_idx_cmp);
+
+#if 0
+         if (result == 0)
+         {
+            for(i = 0; i < set->head.members; i++)
+               fprintf(stderr, "%d %d %d\n", i, set->multi.order[fixed_idx][i],
+                  set->multi.subset[set->multi.order[fixed_idx][i] * set->head.dim + fixed_idx]);
+         }
+#endif
+         assert(result != 0);
+
+         k = (result - (ptrdiff_t)set->multi.order[fixed_idx]) / sizeof(**set->multi.order);
 
          assert(k >= 0);
          assert(k <  set->head.members);
-         assert(idx[0] == set->multi.subset[k * set->head.dim]);
+
+         j = set->multi.order[fixed_idx][k];
          
+         assert(j >= 0);
+         assert(j <  set->head.members);
+         
+         assert(idx[fixed_idx] == set->multi.subset[j * set->head.dim + fixed_idx]);
+
+#if 0
+         fprintf(stderr, "@ fixe_idx: %d idx[]=%d k=%d j=%d\n",
+            fixed_idx, idx[fixed_idx], k, j);
+#endif     
          for(first = k; first >= 0; first--)
-            if (idx[0] < set->multi.subset[first * set->head.dim])
-               break;
-         first++;
-
-         for(last = k; last < set->head.members; last++)
-            if (idx[0] > set->multi.subset[last * set->head.dim])
-               break;
-         last--;
-      }
-      
-      for(k = first; k < last; k++)
-      {
-         assert(k == 0
-            || set->multi.subset[(k - 1) * set->head.dim] <= set->multi.subset[k * set->head.dim]);
-
-         for(i = 0; i < set->head.dim; i++)
          {
-            /* can entry match ?
-             */
-            if (idx[i] >= 0 && idx[i] != set->multi.subset[k * set->head.dim + i])
+            j = set->multi.order[fixed_idx][first] * set->head.dim + fixed_idx;
+            
+            if (idx[fixed_idx] != set->multi.subset[j])
+            {
+               assert(idx[fixed_idx] > set->multi.subset[j]);
                break;
-
-            iter->multi.subset[j * set->head.dim + i] = set->multi.subset[k * set->head.dim + i];
+            }
          }
+         for(last = k; last < set->head.members; last++)
+         {
+            j = set->multi.order[fixed_idx][last] * set->head.dim + fixed_idx;
+            
+            if (idx[fixed_idx] != set->multi.subset[j])
+            {
+               assert(idx[fixed_idx] < set->multi.subset[j]);
+               break;
+            }
+         }
+         assert(first + 1 < last);
          
-         if (i == set->head.dim)
-            j++;
-      }
-      iter->multi.members = j;
-      iter->multi.now     = 0;
-   }
+         m = 0;
 
+         for(k = first + 1; k < last; k++)
+         {
+            j = set->multi.order[fixed_idx][k];
+         
+            assert(idx[fixed_idx] == set->multi.subset[j * set->head.dim + fixed_idx]);
+
+            for(i = 0; i < set->head.dim; i++)
+            {
+               /* can entry match ?
+                */
+               if (idx[i] >= 0 && idx[i] != set->multi.subset[j * set->head.dim + i])
+                  break;
+
+               iter->multi.subset[m * set->head.dim + i] =
+                  set->multi.subset[j * set->head.dim + i];
+            }
+            if (i == set->head.dim)
+               m++;
+         }
+         iter->multi.members = m;
+         iter->multi.now     = 0;
+      }
+   }
+#if 0
    fprintf(stderr, "set_multi_iter_init dim=%d members=%d\n",
       set->head.dim, iter->multi.members);
-#if 1
+
    for(i = 0; i < set->head.dim; i++)
       fprintf(stderr, "idx[%d]=%d\n", i, idx[i]);
 #endif
