@@ -1,4 +1,4 @@
-#ident "@(#) $Id: strstore.c,v 1.4 2002/07/24 13:39:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore.c,v 1.5 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore.c                                                    */

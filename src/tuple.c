@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.8 2002/11/11 21:17:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */

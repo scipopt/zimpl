@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mshell.c,v 1.4 2002/07/28 07:03:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.c,v 1.6 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@
 typedef struct memnod
 {
    unsigned short tag1;
-   size_t         size;
+   unsigned long  size;
    struct memnod* next;
    struct memnod* prev;
    char const*    file;
@@ -69,9 +69,9 @@ typedef struct memnod
 #define CLIENT_2_HDR(a) ((MHDR*)(((char*)(a)) - RESERVE_SIZE))
 #define HDR_2_CLIENT(a) ((void*)(((char*)(a)) + RESERVE_SIZE))
 
-static size_t mem_size = 0;
-static size_t mem_maxi = 0;
-static MHDR*  memlist  = MHDR_NIL;
+static unsigned long mem_size = 0;
+static unsigned long mem_maxi = 0;
+static MHDR*         memlist  = MHDR_NIL;
 
 #define Mem_tag_err(a, b, c, d)  mem_tag_err((a), (b), (c), (d), file, line)
 
@@ -144,15 +144,9 @@ static void mem_tag_err(
    
    assert((typ >= 0) && (typ <= 2));
    
-#if defined(MSDOS) || defined(WIN32)
-   (void)fprintf(stderr, "Memory tag error (%s) - %p - %s(%d) at %s(%d)\n",
+   (void)fprintf(stderr, "Memory tag error (%s) - %lx - %s(%d) at %s(%d)\n",
       errtyp[typ],
-      p,
-#else
-   (void)fprintf(stderr, "Memory tag error (%s) - %x - %s(%d) at %s(%d)\n",
-      errtyp[typ],
-      (unsigned int)p,
-#endif
+      (unsigned long)p,
       file1,
       line1,
       file2,
@@ -193,10 +187,17 @@ void* mem_malloc(
 {
    const char* errmsg1 =
       "mem_malloc(size=%u, file=%s, line=%d): out of memory";
+   const char* errmsg2 =
+      "mem_malloc(size=%u, file=%s, line=%d): zero size";
 
    MHDR* p;
    size_t alloc_size;
 
+   if (size == 0)
+   {
+      fprintf(stderr, errmsg2, size, file, line);
+      abort();
+   }
    alloc_size = mem_alloc_size(size);
 
    assert(alloc_size > 0);
@@ -227,9 +228,16 @@ void* mem_calloc(
 {
    const char* errmsg1 =
       "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory";
+   const char* errmsg2 =
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): zero item/size";
 
    MHDR* p;
    
+   if (item == 0 || size == 0)
+   {
+      fprintf(stderr, errmsg2, size, file, line);
+      abort();
+   }
    if ((p = calloc(mem_alloc_size(size * item), sizeof(char))) == MHDR_NIL)
    {
       fprintf(stderr, errmsg1, item, size, file, line);
@@ -258,6 +266,8 @@ void* mem_realloc(
       "mem_realloc(size=%u, file=%s, line=%d): out of memory";
    const char* errmsg2 =
       "mem_realloc(file=%s, line=%d): null pointer";
+   const char* errmsg3 =
+      "mem_realloc(size=%u, file=%s, line=%d): zero size";
 
    MHDR* p;
 
@@ -270,7 +280,12 @@ void* mem_realloc(
 
    mem_valid(p, file, line);   
    mem_del_list(p);
-   
+
+   if (size == 0)
+   {
+      fprintf(stderr, errmsg3, size, file, line);
+      abort();
+   }
    if ((p = realloc(p, mem_alloc_size(size))) == MHDR_NIL)
    {
       fprintf(stderr, errmsg1, size, file, line);
@@ -358,7 +373,7 @@ size_t mem_used()
 void mem_maximum(
    FILE* fp)
 {
-   (void)fprintf(fp, "Maximum amount of memory used = %d bytes\n",
+   (void)fprintf(fp, "Maximum amount of memory used = %lu bytes\n",
       mem_maxi);
 }
 
@@ -367,13 +382,13 @@ void mem_display(
 {
    MHDR* p;
       
-   (void)fprintf(fp, "\nAddress     Size  File(Line) - total size %u\n",
+   (void)fprintf(fp, "\nAddress     Size  File(Line) - total size %lu\n",
       mem_size);
    
    for(p = memlist; p != MHDR_NIL; p = p->next)
    {
-      (void)fprintf(fp, "%8x  %6u  %s(%d) %s %s\n",
-         (unsigned int)p,
+      (void)fprintf(fp, "%8lx  %6lu  %s(%d) %s %s\n",
+         (unsigned long)p,
          p->size,
          p->file,
          p->line,
@@ -498,5 +513,13 @@ void mem_free(
 
 #endif /* !NO_MSHELL */
 
+/* ------------------------------------------------------------------------- */
+/* Emacs Local Variables:                                                    */
+/* Emacs mode:c                                                              */
+/* Emacs c-basic-offset:3                                                    */
+/* Emacs tab-width:8                                                         */
+/* Emacs indent-tabs-mode:nil                                                */
+/* Emacs End:                                                                */
+/* ------------------------------------------------------------------------- */
 
 

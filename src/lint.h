@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lint.h,v 1.2 2002/11/25 09:08:37 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.3 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */

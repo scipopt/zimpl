@@ -1,4 +1,4 @@
-#ident "@(#) $Id: iread.c,v 1.5 2002/09/15 08:53:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.6 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */

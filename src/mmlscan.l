@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.20 2003/02/17 16:13:48 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.21 2003/03/18 11:47:59 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>

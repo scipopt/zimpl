@@ -1,4 +1,4 @@
-#ident "@(#) $Id: idxset.c,v 1.6 2002/07/28 07:03:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: idxset.c,v 1.7 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ordwrite.c,v 1.3 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ordwrite.c,v 1.4 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.8 2002/10/20 09:17:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.8 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lpstore.h,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mpswrite.c,v 1.6 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mpswrite.c,v 1.7 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */

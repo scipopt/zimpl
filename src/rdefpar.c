@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rdefpar.c,v 1.4 2002/07/31 06:58:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rdefpar.c,v 1.5 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.13 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lpfwrite.c,v 1.14 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */

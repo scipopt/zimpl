@@ -1,4 +1,4 @@
-#ident "@(#) $Id: prog.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.6 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */

@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.22 2003/03/17 09:32:01 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.23 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */

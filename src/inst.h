@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.16 2003/02/17 16:13:47 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.17 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.27 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.28 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */

@@ -1,4 +1,4 @@
-/* $Id: portab.h,v 1.3 2002/05/26 12:44:57 bzfkocht Exp $ */
+#pragma ident "@(#) $Id: portab.h,v 1.4 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: portab.h                                                      */

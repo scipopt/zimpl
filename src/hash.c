@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.11 2003/03/18 09:37:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.12 2003/03/18 11:47:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -74,6 +74,11 @@ Hash* hash_new(HashType type, int size)
    
    assert(hash != NULL);
    assert(size >= 0);
+
+   /* We double the size, to make sure that there are at least two times
+    * the number of hash buckets than the numbre of elements.
+    */
+   size += size;
    
    /* This is a linear search, but if the number of elements is large,
     * it will hardly matter ;-)
