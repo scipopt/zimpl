@@ -1,0 +1,384 @@
+\begin{description}
+%
+% zimpl.c
+%
+\item[101 Bad filename]\ \\
+   The name given with the \code{-o} option is either missing, 
+   a directory name, or starts with a dot.
+\item[102 File write error]\ \\
+   Some error occurred when writing to an output file. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+\item[103 Output format not supported, using LP format]\ \\
+   You tried to select another format then \code{lp}, \code{mps}, or \code{hum}.
+\item[104 File open failed]\ \\
+   Some error occurred when trying to open a file for writing. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+%
+% inst.c
+%
+\item[105 Duplicate constraint name ``xxx'']\ \\
+   Two \code{subto} statements have the same name.
+\item[106 Empty LHS, constraint trivially violated]\ \\
+   One side of your constraint is empty and the other not equal to
+   zero. Most frequently this happens, when a set to be summed up is empty.
+\item[107 Range must be $l\leq x\leq u$, or $u \geq x\geq l$]\ \\
+   If you specify a range you must have the same comparison operators
+   on both sides.
+\item[108 Empty Term with nonempty LHS/RHS, constraint trivially
+   violated]\ \\
+   The middle of your constraint is empty and either the left- or
+   right-hand side of the range is not zero.
+   This most frequently happens, when a set to be summed up is empty.
+\item[109 LHS/RHS contradiction, constraint trivially violated]\ \\
+   The lower side of your range is bigger than the upper side, e.g.
+   $15\leq x\leq 2$. 
+\item[110 Division by zero]\ \\
+   You tried to divide by zero. This is not a good idea.
+\item[111 Modulo by zero]\ \\
+   You tried to compute a number modulo zero. This does not work well.
+\item[112 Exponent value \code{xxx} is too big or not an integer]\ \\
+   It is only allowed to raise a number to the power of integers. Also trying to
+   raise a number to the power of more than two billion is 
+   prohibited.\footnote{The behavior of this operation could 
+   easily be implemented as \code{for(;;)} or more elaborate as 
+   \code{void f()\{f();\}}.}
+\item[113 Factorial value \code{xxx} is too big or not an integer]\ \\
+   You can only compute the factorial of integers.
+   Also computing the factorial of a number bigger then two billion
+   is generally a bad idea. See also Error 115.
+\item[114 Negative factorial value]\ \\
+   To compute the factorial of a number it has to be positive.
+   In case you need it for a negative number, remember that for all 
+   even numbers the outcome will be positive and for all odd number negative.
+\item[115 Timeout!]\ \\
+   You tried to compute a number bigger than $1000!$. 
+   See also the footnote to Error 112.
+\item[116 Illegal value type in min: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the minimum of some strings.
+\item[117 Illegal value type in max: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the maximum of some strings.
+\item[118 Comparison of different types]\ \\
+   You tried to compare apples with oranges, i.e, numbers with
+   strings. Note that the use of an undefined parameter could also
+   lead to this message.
+\item[119 Union of incompatible sets]\ \\
+   To unite two sets, both must have the same dimension tuples,\ie
+   the tuples must have the same number of components.
+\item[120 Minus of incompatible sets]\ \\
+   To subtract two sets, both must have the same dimension tuples.
+\item[121 Intersection of incompatible sets]\ \\
+   To intersect two sets, both must have the same dimension tuples.
+\item[122 Symmetric Difference of incompatible sets]\ \\
+   Two build the symmetric difference of two sets, 
+   both must have the same dimension tuples.
+\item[123 ``from'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``from'' number must be an integer with an
+   absolute value of less than two billion.
+\item[124 ``upto'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``upto'' number must be an integer with an
+   absolute value of less than two billion.
+\item[125 ``step'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``step'' number must be an integer with an
+   absolute value of less than two billion.
+\item[126 Zero ``step'' value in range]\ \\
+   The given ``step'' value for the generation of a set is
+   zero. So the ``upto'' value can never be reached. 
+\item[127 Illegal value type in tuple: \code{xxx} only numbers are
+   possible]\ \\
+   The selection tuple in a call to the \code{proj} function can
+   only contain numbers.
+\item[128 Index value \code{xxx} in proj too big or not an integer]\ \\
+   The value given in a selection tuple of a \code{proj} function is
+   not an integer or bigger than two billion.
+\item[129 Illegal index \code{xxx}, set has only dimension
+   \code{yyy}]\ \\
+   The index value given in a selection tuple is bigger than the
+   dimension of the tuples in the set.
+% Removed in 2.02
+%\item[130 Duplicate index \code{xxx} for initialization]\ \\
+%   In the initialization of a indexed set, two initialization elements
+%   have the same index. 
+%   E.g, \code{set A[] := $<$1$>$ \{ 1 \}, $<$1$>$ \{ 2 \};}
+\item[131 Illegal element \code{xxx} for symbol]\ \\
+   The index tuple used in the initialization list of a index set, is
+   not member of the index set of the set.
+   E.g, \code{set A[\{ 1 to 5 \}] := $<$1$>$ \{ 1 \}, $<$6$>$ \{ 2 \};}
+\item[132 Values in parameter list missing, probably wrong read
+  template]\ \\
+  Probably the template of a read statement looks
+  like \code{"$<$1n$>$"} only having a tuple, instead of \code{"$<$1n$>$ 2n"}.
+\item[133 Unknown local symbol \code{xxx}]\ \\
+  A (local) symbol was used, that is not defined anywhere in scope.
+\item[134 Illegal element \code{xxx} for symbol]\ \\
+  The index tuple given in the initialization is not member of the
+  index set of the parameter.
+\item[135 Index set for parameter \code{xxx} is empty]\ \\
+  The attempt was made to declare an indexed parameter with the
+  empty set as index set. Most likely the index set has a \code{with}
+  clause which has rejected all elements.
+\item[136 Lower bound for var \code{xxx} set to infinity -- ignored] (warning)\ \\
+  In the \zimpl code something like \code{$\ge$ infinity} must have
+  appeared. This makes no sense and is therefore ignored.
+\item[137 Upper bound for var \code{xxx} set to -infinity -- ignored] (warning)\ \\
+  In the \zimpl code something like \code{$\le$ -infinity} must have 
+  appeared. This makes no sense and is therefore ignored.
+\item[138 Priority/Startval for continuous var \code{xxx} ignored] (warning)\ \\
+  There has been set a priority or a starting value for a continuous 
+  (\code{real}) variable. This is not possible and therefore ignored.
+\item[139 Lower bound for integral var \code{xxx} truncated to
+  \code{yyy}] (warning)\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was adjusted.
+\item[140 Upper bound for integral var \code{xxx} truncated to
+  \code{yyy}] (warning)\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was adjusted.
+\item[141 Infeasible due to conflicting bounds for var \code{xxx}]\ \\
+  The upper bound given for a variable was smaller than the lower bound.
+\item[142 Unknown index \code{xxx} for symbol \code{yyy}]\ \\
+  The index tuple given is not member of the index set of the symbol.
+\item[143 Size for subsets \code{xxx} is too big or not an integer]\ \\
+  The cardinality for the subsets to generate must be given as an
+  integer smaller than two billion.
+\item[144 Tried to build subsets of empty set]\ \\
+  The set given to build the subsets of, was the empty set.
+\item[145 Illegal size for subsets \code{xxx}, should be between 1 
+  and \code{yyy}]\ \\
+  The cardinality for the subsets to generate must be between 1 
+  and the cardinality of the base set.
+\item[146 Tried to build powerset of empty set ]\ \\
+  The set given to build the powerset of, was the empty set.
+%
+% iread.c
+%
+\item[147 use value \code{xxx} is too big or not an integer]\ \\
+  The use value must be given as an integer smaller than two billion.
+\item[148 use value \code{xxx} is not positive]\ \\
+  Negative or zero values for the use parameter are not allowed.
+\item[149 skip value \code{xxx} is too big or not an integer]\ \\
+  The skip value must be given as an integer smaller than two billion.
+\item[150 skip value \code{xxx} is not positive]\ \\
+  Negative or zero values for the skip parameter are not allowed.
+\item[151 Not a valid read template]\ \\
+  A read template must look something like \code{"$<$1n,2n$>$"}.
+  There have to be a $<$ and a $>$ in this order.
+\item[152 Invalid read template syntax]\ \\
+  Apart from any delimiters like \code{$<$}, \code{$>$}, and commas a
+  template must consists of number character pairs like \code{1n}, \code{3s}.
+\item[153 Invalid field number \code{xxx}]\ \\
+  The field numbers in a template have to be between 1 and 255.
+\item[154 Invalid field type \code{xxx}]\ \\
+  The only possible field types are \code{n} and \code{s}.
+\item[155 Invalid read template, not enough fields]\ \\
+  There has to be at least one field inside the delimiters.
+\item[156 Not enough fields in data]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. 
+\item[157 Not enough fields in data (value)]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. The error occurred after the 
+  index tuple in the value field.
+\item[158 Read from file found no data]\ \\
+  Not a single record could be read out of the data file. Either the
+  file is empty, or all lines are comments.
+%
+% code.c
+%  
+\item[159 Type error, expected \code{xxx} got \code{yyy}]\ \\
+  The type found was not the expected one, e.g. subtracting 
+  a string from a number would result in this message.
+%
+% elem.c
+% 
+\item[160 Comparison of elements with different types \code{xxx} /
+  \code{yyy}]\ \\
+  Two elements from different tuples were compared and found to be 
+  of different types. 
+%
+% load.c
+%
+\item[161 Line \code{xxx}: Unterminated string]\ \\
+  This line has an odd number of \code{"} characters. 
+  A String was started, but not ended.
+\item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored] (warning)\ \\
+  Something was found after the last semicolon in the file.
+\item[163 Line \code{xxx}: Syntax Error]\ \\
+  A new statement was not started with one of the keywords:
+  \code{set}, \code{param}, \code{var}, \code{minimize}, 
+  \code{maximize}, \code{subto}, or \code{do}.
+%
+% set.c
+%
+\item[164 Duplicate element \code{xxx} for set rejected] (warning)\ \\
+   An element was added to a set that was already in it.
+\item[165 Comparison of different dimension sets] (warning)\ \\
+   Two sets were compared, but have different dimension tuples.
+   (This means they never had a chance to
+   be equal, other then being empty sets.)
+%
+% symbol.c
+%
+\item[166 Duplicate element \code{xxx} for symbol \code{yyy} rejected]
+   (warning)\ \\
+  An element that was already there was added to a symbol.
+%
+% tuple.c
+%
+\item[167 Comparison of different dimension tuples] (warning)\ \\
+  Two tuples with different dimensions were compared.
+%
+% zimpl.c
+%
+\item[168 No program statements to execute]\ \\
+  No \zimpl statements were found in the files loaded.
+%
+% code.c
+%
+\item[169 Execute must return void element]\ \\
+  This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+%
+% inst.c
+%
+\item[170 Use of uninitialized local variable \code{xxx} in call of
+  define \code{yyy}]\ \\
+  A define was called and one of the arguments was a ``name'' 
+  (of a variable) for which no value was defined.
+\item[171 Wrong number of arguments (\code{xxx} instead of \code{yyy})
+  for call of define \code{zzz}]\ \\
+  A define was called with a different number of arguments than in
+  its definition.
+\item[172 Wrong number of entries (\code{xxx}) in table line, 
+  expected \code{yyy} entries]\ \\
+  Each line of a parameter initialization table must have
+  exactly the same number of entries as the index (first) line of
+  the table.
+\item[173 Illegal type in element \code{xxx} for symbol]\ \\
+  A parameter can only have a single value type. Either numbers or
+  strings. In the initialization both types were present.
+%
+% iread.c
+%
+\item[174 Numeric field \code{xxx} read as \code{"yyy"}. This is not a
+  number]\ \\
+  It was tried to read a field with an 'n' designation in the template,
+  but what was read is not a valid number.
+%
+% zimpl.c
+%
+\item[175 Illegal syntax for command line define \code{"xxx"} --
+  ignored] (warning)\\
+  A parameter definition using the command line \code{-D} flag, must
+  have the form \code{name=value}. The \code{name} must be a legal
+  identifier, \ie it has to start with a letter and may consist only out
+  of letters and numbers including the underscore. 
+%
+% vinst.c
+%
+\item[176 Empty LHS, in Boolean constraint] (warning)\ \\
+   The left hand side, \ie the term with the variables, is empty. 
+\item[177 Boolean constraint not all integer]\ \\
+   No continuous (real) variables are allowed in a Boolean constraint.
+\item[178 Conditional always true or false due to bounds] (warning)\ \\
+   All or part of a Boolean constraint are always either true or
+   false, due to the bounds of variables.
+\item[179 Conditional only possible on bounded constraints]\ \\
+   A Boolean constraint has at least one variable without finite bounds.
+\item[180 Conditional constraint always true due to bounds] (warning)\ \\
+   The result part of a conditional constraint is always true anyway. 
+   This is due to the bounds of the variables involved.
+\item[181 Empty LHS, not allowed in conditional constraint]\ \\
+   The result part of a conditional constraint may not be empty.
+\item[182 Empty LHS, in variable vabs]\ \\
+   There are no variables in the argument to a \code{vabs} function.
+   Either everything is zero, or just use \code{abs}.
+\item[183 vabs term not all integer]\ \\
+   There are non integer variables in the argument to a \code{vabs} function.
+   Due to numerical reasons continuous variables are not allowed as
+   arguments to \code{vabs}. 
+\item[184 vabs term not bounded]\ \\
+   The term inside a \code{vabs} has at least one unbounded variable.
+\item[185 Term in Boolean constraint not bounded]\ \\
+   The term inside a \code{vif} has at least one unbounded variable.
+%
+% inst.c
+%
+\item[186 Minimizing over empty set -- zero assumed] (warning)\ \\
+   The index expression for the minimization was empty. The result
+   used for this expression was zero.
+\item[187 Maximizing over empty set -- zero assumed] (warning)\ \\
+   The index expression for the maximization was empty. The result
+   used for this expression was zero.
+\item[188 Index tuple has wrong dimension]\ \\
+   The number of elements in an index tuple is different from the
+   dimension of the tuples in the set that is indexed.
+\item[189 Tuple number \code{xxx} is too big or not an integer]\ \\
+  The tuple number must be given as an integer smaller than two
+  billion.
+\item[190 Component number \code{xxx} is too big or not an integer]\ \\
+  The component number must be given as an integer smaller than two
+  billion.
+\item[191 Tuple number \code{xxx} is not a valid value between 1..\code{yyy}]\ \\
+  The tuple number must be between one and the cardinality of the set.
+\item[192 Component number \code{xxx} is not a valid value between 1..\code{yyy}]\ \\
+  The component number must be between one and the dimension of the set.
+\item[193 Different dimension tuples in set initialization]\ \\
+  The tuples that should be part of the list have different dimension.
+\item[194: Indexing tuple \code{xxx} has wrong dimension
+           \code{yyy}, expected \code{zzz}]\ \\
+  The index tuple of an entry in a parameter initialization list must
+  have the same dimension as the indexing set of the parameter. This
+  is just another kind of error 134.
+\item[195: Empty index set for parameter]\ \\
+  The index set for a parameter is empty.
+\item[196: Indexing tuple \code{xxx} has wrong dimension
+           \code{yyy}, expected \code{zzz}]\ \\
+  The index tuple of an entry in a set initialization list must
+  have the same dimension as the indexing set of the set. 
+  If you use a \code{powerset} or \code{subset} instruction, the index
+  set has to be one dimension.
+\item[197: Empty index set for set]\ \\
+  The index set for a set is empty.
+\item[198: Incompatible index tuple]\ \\
+  The index tuple given had fixed components. The type of such a
+  component was not the same as the type of the same component of tuples
+  from the set.
+%
+% numbgmp.c
+%
+\item[700 log(): \code{OS specific domain or range error message}]\ \\
+Function \code{log} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+\item[701 sqrt(): \code{OS specific domain error message}]\ \\
+Function \code{sqrt} was called with a negative argument.
+\item[702 ln(): \code{OS specific domain or range error message}]\ \\
+Function \code{ln} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+% mmlscan.l
+\item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
+  Parsing error. What was found was not what was expected.
+  The statement you entered is not valid.
+\item[801 Parser failed]\ \\
+  The parsing routine failed. This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+%
+% inst.c
+%
+\item[900 Check failed!]\ \\
+  A \code{check} instruction did not evaluate to true. 
+\end{description}
+
