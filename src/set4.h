@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -163,10 +163,10 @@ struct set_range_iter
 
 struct set_prod_iter
 {
-   SetType  type_a;
-   SetType  type_b;
+   Bool     first;
    SetIter* iter_a;
    SetIter* iter_b;
+   Elem**   elem;
    SID
 };
 

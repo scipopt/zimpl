@@ -1,0 +1,144 @@
+.\" Process this file with
+.\" groff -man -Tascii zimpl.1
+.\"
+.TH ZIMPL 1 "12 Nov 2003" Linux "User Manuals"
+.SH NAME
+zimpl \- Zuse Institute Mathematical Programming Language
+.SH SYNOPSIS
+.B zimp  [ -b ] [ -D
+.I name=value
+.B ] [ -f ] [ -F
+.I filter
+.B ] [ -h ] [ -n
+.I cm|cn|cf
+.B ] [ -o
+.I outfile
+.B ] [ -O ] [ -r ] [ -t
+.I lp|mps|hum
+.B ] [ -v
+.I 0-5
+.B ] [ -V ]
+.I file
+.B ...
+.SH DESCRIPTION
+.B Zimpl
+is a little language to translate the mathematical model of a problem
+into a linear or (mixed-)integer mathematical program expressed in LPF
+or MPS file format which can be read by a LP or MIP solver.
+
+None of the options is neccessary. All input files in 
+.Z zpl
+format that are given are concatenated and processed as if they are
+one big file. This makes is possible to combine different parts of a
+model on the command line. In this case the first filename given will
+be used as basename for the output files in absence of an 
+.B -o
+option.
+
+The 
+.B -t
+option is to select the output format. 
+.B mps 
+can be read by every
+solver. 
+.B LPF 
+is an CPLEX format, but can also read by several solvers.
+BE aware that for example Range-rows can not be expressed in 
+.B LPF . 
+If you want to inspected the output yourself, 
+.B hum
+format is a variant of 
+.B LPF
+with no name mangeling whatever, but unfortunately this violates
+several format restrictions, so no solver will read this in.
+
+.SH OPTIONS
+.IP -b
+Enable 
+.BR bison (1)
+debugging output.
+.IP "-D name=value"
+Sets the parameter
+.I name
+to the specified value. This is equivalent with having this line in the
+Zimpl program: param name:=val .
+.IP -f
+Enable
+.BR flex (1)
+debugging output.
+.IP "-F filter"
+The output is piped through a filter. A %s in the
+string is replaced by the output filename. For example: 
+-F "gzip -c >%s.gz" would compress all the 
+output files.
+.IP -h
+Show program help.
+.IP "-n cm|cn|cf"
+Select the format for the generation of constraint
+names. Can be either 
+.I cm 
+which will number them 
+1 ... n with a `c' in front. 
+.I cn 
+will use the name supplied in the subto statement and 
+number them 1 ... n within the statement. 
+.I cf 
+will use the name given with the subto,
+then a 1 .. n number like in 
+.I cm 
+and then append all the local variables from the forall statements.
+.IP "-o outfile"
+Sets the base-name for the output files. Default is the name of the
+input file without extension.
+.IP -O 
+Optimize the generated LP by doing some presolve analysis (experimental).
+.IP -r 
+Write a CPLEX .ord branching order file.
+.IP "-t lp|mps|hum"
+Selects the output format. Can be either 
+.I lp
+which is default, or 
+.I mps 
+, or
+.I hum 
+, which is (only) human readable.
+.IP "-v 0-5"
+Set the verbosity level. 0 is quiet, 1 is default,
+2 is verbose, 3 is chatter, and 5 is debug.
+.IP -V
+Prints the version number.
+.\".SH FILES
+.\".SH ENVIRONMENT
+.SH DIAGNOSTICS
+The following diagnostics may be issued on stderr:
+
+101 Bad filename
+.RS
+The name given with the 
+.B -o option 
+is either missing, a directory name, or starts with a dot.
+.RE
+175 Illegal syntax for command line define -- ignored
+.RS
+The parameter of a 
+.B -D 
+option was either not of the form 
+.I "name=value"
+or the name was not a legal identifier.
+.RE
+There are about a hundred other possible error messages, but these are
+either about the contend of the input file, or system messages.
+.SH BUGS
+Please report any bug to the author.
+.SH AUTHOR
+Thorsten Koch <koch@zib.de>
+.SH "WEBSITE"
+The lastest version of Zimpl is always available at <http://www.zib.de/koch/zimpl>.
+.SH "SEE ALSO"
+The Zimpl User Guide at <http://www.zib.de/koch/download/zimpl.pdf>.
+.\".BR zpl (5),
+.\".BR lpf (5),
+.\".BR mps (5)
+
+
+

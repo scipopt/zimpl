@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.70 2004/04/13 13:59:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.71 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1580,44 +1580,67 @@ static Set* set_from_idxset(const IdxSet* idxset)
    set     = idxset_get_set(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    pattern = idxset_get_tuple(idxset);
-   iter    = set_iter_init(set, pattern);
-      
-   while((tuple = set_iter_next(iter, set)) != NULL)
-   {
-      local_install_tuple(pattern, tuple);
 
-      if (code_get_bool(code_eval(lexpr)))
-      {
-         if (first)
-            list = list_new_tuple(tuple);
-         else
-         {
-            assert(list != NULL);
-            
-            list_add_tuple(list, tuple);
-         }
-      }
-      local_drop_frame();
-
-      tuple_free(tuple);
-   }
-   set_iter_exit(iter, set);
-   
-   if (first)
+   /* Is this an pseudo(idx)set ?
+    */
+   if (set_get_dim(set) == 0)
    {
-      if (tuple_get_dim(pattern) == 0)
-         newset = set_pseudo_new();
-      else
-         newset = set_empty_new(tuple_get_dim(pattern));
-      /* ???? ob da !!! oben stimmt ??? */
+      assert(tuple_get_dim(pattern) == 0);
+      assert(code_get_bool(code_eval(lexpr)));
+
+      newset = set_pseudo_new();
    }
+#if 1 // ???? HIER DAS sollte laufen, tuts aber nicht
+   else if (idxset_is_unrestricted(idxset))
+   {
+      assert(code_get_bool(code_eval(lexpr)));
+
+      newset = set_copy(set);
+   }
+#endif
    else
    {
-      assert(list != NULL);
+      assert(tuple_get_dim(pattern) > 0);
 
-      newset = set_new_from_list(list);
+      iter = set_iter_init(set, pattern);
+      
+      while((tuple = set_iter_next(iter, set)) != NULL)
+      {
+         local_install_tuple(pattern, tuple);
 
-      list_free(list);
+         if (code_get_bool(code_eval(lexpr)))
+         {
+            if (first)
+            {
+               list  = list_new_tuple(tuple);
+               first = FALSE;
+            }
+            else
+            {
+               assert(list != NULL);
+
+               list_add_tuple(list, tuple);
+            }
+         }
+         local_drop_frame();
+
+         tuple_free(tuple);
+      }
+      set_iter_exit(iter, set);
+   
+      if (first)
+      {
+         newset = set_empty_new(tuple_get_dim(pattern));
+         /* ??? maybe we need an error here ? */
+      }
+      else
+      {
+         assert(list != NULL);
+
+         newset = set_new_from_list(list);
+
+         list_free(list);
+      }
    }
    return newset;
 }
@@ -1644,7 +1667,7 @@ CodeNode* i_newsym_set1(CodeNode* self)
 
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
-      
+
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -1802,10 +1825,9 @@ n",
    {
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
-      
+
       if (!set_lookup(iset, tuple))
       {
-         set_print(stderr, iset);
          fprintf(stderr, "*** Error 134: Illegal element ");
          tuple_print(stderr, tuple);
          fprintf(stderr, " for symbol\n");
@@ -2109,12 +2131,14 @@ CodeNode* i_symbol_deref(CodeNode* self)
 
    entry = symbol_lookup_entry(sym, tuple);
 
+   
    if (NULL == entry)
    {
       fprintf(stderr, "*** Error 142: Unknown index ");
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
       code_errmsg(self);
+      abort(); // ???????
       exit(EXIT_FAILURE);
    }
 
@@ -2237,10 +2261,12 @@ CodeNode* i_idxset_new(CodeNode* self)
 {
    Tuple*       tuple;
    Tuple*       t0;
+   CodeNode*    lexpr;
    const Set*   set;
    char         name[13]; /* "@-2000000000" */
    int          dim;
    int          i;
+   Bool         is_unrestricted = FALSE;
          
    Trace("i_idxset_new");
 
@@ -2249,14 +2275,26 @@ CodeNode* i_idxset_new(CodeNode* self)
    t0     = tuple_new(0);
    tuple  = tuple_copy(code_eval_child_tuple(self, 0));
    set    = code_eval_child_set(self, 1);
-
+   lexpr  = code_get_child(self, 2);
+   dim    = set_get_dim(set);
+   
+   if (set_get_members(set) == 0)
+   {
+      /* Is this a problem or not ?
+       */
+      fprintf(stderr, "*** Error ???: Empty index set\n");
+      code_errmsg(self);
+      abort(); // ?????
+      exit(EXIT_FAILURE);
+   }
+   assert(set_get_dim(set) > 0);
+   
    /* Wenn kein Index tuple angegeben wurde, konstruieren wir eins.
     */
    if (!tuple_cmp(tuple, t0))
    {
       tuple_free(tuple);
 
-      dim   = set_get_dim(set);
       tuple = tuple_new(dim);
       
       for(i = 0; i < dim; i++)
@@ -2264,10 +2302,50 @@ CodeNode* i_idxset_new(CodeNode* self)
          sprintf(name, "@%d", i + 1);
          tuple_set_elem(tuple, i, elem_new_name(str_new(name)));
       }
+      if (code_get_inst(lexpr) == i_bool_true)
+         is_unrestricted = TRUE;
    }
-   code_value_idxset(self, idxset_new(tuple, set, code_get_child(self, 2)));
+   else
+   {
+      if (tuple_get_dim(tuple) != dim)
+      {
+         fprintf(stderr, "*** Error ???: Index tuple has wrong dimension\n");
+         tuple_print(stderr, tuple);
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+      if (code_get_inst(lexpr) == i_bool_true)
+      {
+         for(i = 0; i < dim; i++)
+            if (elem_get_type(tuple_get_elem(tuple, i)) != ELEM_NAME)
+               break;
+
+         is_unrestricted = (i == dim);
+      }
+   }
+   code_value_idxset(self, idxset_new(tuple, set, lexpr, is_unrestricted));
 
    tuple_free(t0);
+   tuple_free(tuple);
+
+   return self;
+}
+
+CodeNode* i_idxset_pseudo_new(CodeNode* self)
+{
+   Tuple*    tuple;
+   Set*      set;
+         
+   Trace("i_idxset_pseudo_new");
+
+   assert(code_is_valid(self));
+
+   tuple = tuple_new(0);
+   set   = set_pseudo_new();
+   
+   code_value_idxset(self, idxset_new(tuple, set, code_get_child(self, 0), TRUE));
+
+   set_free(set);
    tuple_free(tuple);
 
    return self;

@@ -1,3 +1,3 @@
-#--- $Id: make.rei,v 1.1 2003/08/27 20:24:57 bzfkocht Exp $
+#--- $Id: make.rei,v 1.2 2004/04/14 11:56:40 bzfkocht Exp $
 CPPFLAGS        +=      -I/tmp/gmp/include
-LDFLAGS         +=      -L/tmp/gmp/lib
+LDFLAGS         =       -L/tmp/gmp/lib -lgmp -lz -lm -static

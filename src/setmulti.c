@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -182,7 +182,7 @@ Set* set_multi_new_from_list(const List* list)
    SID_set2(set->multi, SET_MULTI_SID);
 
    assert(set_multi_is_valid(set));
-   
+
    return set;
 }
 
@@ -215,15 +215,16 @@ static void set_multi_free(Set* set)
    
    assert(set_multi_is_valid(set));
 
+   for(i = 0; i < set->head.dim; i++)
+      set_free(set->multi.set[i]);
+
    set->head.refc--;
 
    if (set->head.refc == 0)
    {
       SID_del2(set->multi);
 
-      for(i = 0; i < set->head.dim; i++)
-         set_free(set->multi.set[i]);
-
+      free(set->multi.set);
       free(set->multi.subset);
       free(set);
    }
@@ -283,7 +284,7 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    {
       idx[i + 1] = set_lookup_idx(set->multi.set[i], tuple, offset + i);
 
-      if (idx[i] < 0)
+      if (idx[i + 1] < 0)
       {
          free(idx);
          return -1;
@@ -316,7 +317,7 @@ static SetIter* iter_init(
    int          i;
    int          j;
    int          k;
-   
+
    assert(set_multi_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset      >= 0);

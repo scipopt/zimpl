@@ -1,3 +1,13 @@
+ - If verbose is >= 3, the local variable
+   stack is printed if an error occurs.
+
+ - Makefile changed to support Mac OS-X
+
+ - New -V flag to show the version number.
+   -h now also prints the banner text.
+
+ - man page created
+
 2.01 29.Oct 2003 Release
 
  - min/max over a indexed set of numbers,

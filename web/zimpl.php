@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.24 2003/11/03 08:20:34 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.25 2004/04/14 11:56:40 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/11/03 08:20:34 $">
+<meta name="date" content="$Date: 2004/04/14 11:56:40 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -55,8 +55,9 @@ fclose($fp);
 <p>
 Zimpl is a little language to translate the mathematical model of a 
 problem into a linear or (mixed-) integer mathematical program
-expressed in .lp or .mps file format which can be read
-by a LP or MIP solver.
+expressed in .lp or 
+<a href="http://www.ibm.com/software/data/bi/osl/pubs/Library/featur11.htm">.mps</a> 
+file format which can be read by a LP or MIP solver.
 </p>
 <h3>Where does is run?</h3>
 <p>
@@ -65,7 +66,7 @@ program written in plain C and released under
 <a href="http://www.gnu.org">GNU</a>
 <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>. 
 It has been tested to compile under
-Linux/Intel, Solaris, Tru64, HPUX and AIX. 
+Linux/Intel, Solaris, Tru64, HPUX, IRIX, AIX and MacOS-X. 
 Probably it will compile and run wherever 
 <a href="http://www.swox.com/gmp/">GMP</a> 
 is available. Zimpl has even been successfully compiled for Windows using 
@@ -179,7 +180,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2003/11/03 08:20:34 $ by
+Last Update $Date: 2004/04/14 11:56:40 $ by
 <a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch,
 <a href="/impressum.en.html">Imprint</a>

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -47,6 +47,12 @@
  */
 static Bool set_list_is_valid(const Set* set)
 {
+   int i;
+
+   for(i = 0; i < set->head.members; i++)
+      if (!elem_is_valid(set->list.member[i]))
+         return FALSE;
+
    return set != NULL
       && SID_ok2(set->list, SET_LIST_SID)
       && set->head.refc    >  0
@@ -60,10 +66,10 @@ static Bool set_list_iter_is_valid(const SetIter*iter)
 {
    return iter != NULL
       && SID_ok2(iter->list, SET_LIST_ITER_SID)
-      && iter->list.first >= 0
-      && iter->list.last  >= 0
-      && iter->list.now   >= 0
-      && iter->list.now   >= iter->list.first;
+      && iter->list.first >=  0
+      && iter->list.last  >= -1
+      && iter->list.now   >=  0
+      && iter->list.now   >=  iter->list.first;
 }
 
 /* ------------------------------------------------------------------------- 
@@ -147,7 +153,7 @@ int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
       set->list.member[idx] = elem_copy(elem); 
 
       if (set->list.hash != NULL)
-         hash_add_elem_idx(set->list.hash, elem, idx);
+         hash_add_elem_idx(set->list.hash, set->list.member[idx], idx);
       
       set->head.members++;
 
@@ -323,15 +329,15 @@ static SetIter* iter_init(
       }
       else
       {
-         for(i = 0; i < set->head.members; i++)
-            if (!elem_cmp(elem, set->list.member[i]))
-               break;
+         iter->list.first = lookup_elem_idx(set, elem);
 
-         iter->list.first = i;
-         iter->list.last  = i;
-
-         if (iter->list.last >= set->head.members)
-            iter->list.last = set->head.members - 1;
+         if (iter->list.first >= 0)
+            iter->list.last  = iter->list.first;
+         else
+         {
+            iter->list.first = 1;
+            iter->list.last  = 0;
+         }
       }
    }
    iter->list.now = iter->list.first;
@@ -362,7 +368,7 @@ static Bool iter_next(
       return FALSE;
 
    tuple_set_elem(tuple, offset, elem_copy(set->list.member[iter->list.now]));
-   
+
    iter->list.now++;
 
    return TRUE;

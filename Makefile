@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.16 2003/10/29 15:04:49 bzfkocht Exp $
+# $Id: Makefile,v 1.17 2004/04/14 11:56:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -33,6 +33,7 @@ ARCH            :=      $(shell uname -m | \
 			-e s/i.86/x86/ \
 			-e s/IP../mips/ \
 			-e s/9000..../hppa/ \
+			-e s/Power\ Macintosh/ppc/ \
 			-e s/00........../pwr4/)
 OSTYPE          :=      $(shell uname -s | \
                         tr A-Z a-z | \
@@ -41,7 +42,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
-VERSION		=	2.01
+VERSION		=	2.02a
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -58,7 +59,7 @@ SRCDIR		=	src
 BINDIR		=	bin
 LIBDIR		=	lib
 
-CPPFLAGS	=	-I$(SRCDIR) 
+CPPFLAGS	=	-I$(SRCDIR) -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lz -lm
 YFLAGS		=	-d -t -v  
@@ -82,7 +83,9 @@ DEPEND		=	$(SRCDIR)/depend
 OBJECT  =       	bound.o code.o conname.o define.o elem.o entry.o \
 			hash.o idxset.o iread.o list.o load.o local.o \
 			mmlparse.o mmlscan.o numbgmp.o \
-			prog.o rdefpar.o set.o source.o \
+			prog.o rdefpar.o source.o \
+			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
+			setmulti.o set4.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o \
 			mshell.o inst.o ratordwrite.o xlpglue.o gmpmisc.o \

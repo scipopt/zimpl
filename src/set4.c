@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.2 2004/04/13 13:59:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.3 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -216,12 +216,6 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    exit(EXIT_FAILURE);
 }
 
-Set* set_proj(const Set* set_a, const Tuple* pattern)
-{
-   fprintf(stderr, "Set not yet implemented\n");
-   exit(EXIT_FAILURE);
-}
-
 List* set_subsets_list(
    const Set* set,
    int        subset_size,
@@ -384,26 +378,28 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
 
    return set;
 }
+#endif
 
 /* project set_a to a new set, using the elements index in the tuple.
  */
-Set* set_proj(const Set* set_a, const Tuple* pattern)
+Set* set_proj(const Set* set, const Tuple* pattern)
 {
-   Set*   set;
-   Tuple* tuple;
-   int    i;
-   int    k;
-   int    dim;
-   int*   idx;
+   Tuple*   tuple;
+   Tuple*   new_tuple;
+   SetIter* iter;
+   List*    list = NULL;
+   int      i;
+   int      dim;
+   int*     idx;
+   Bool     first = TRUE;
+   Set*     new_set;
    
-   assert(set_is_valid(set_a));
+   assert(set_is_valid(set));
    assert(tuple_is_valid(pattern));
 
    dim = tuple_get_dim(pattern);
-   set = set_new(dim, set_a->used, SET_DEFAULT);
    idx = malloc(sizeof(*idx) * dim);
 
-   assert(set != NULL);
    assert(idx != NULL);
    
    for(i = 0; i < dim; i++)
@@ -412,23 +408,39 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
       
       idx[i] = numb_toint(elem_get_numb(tuple_get_elem(pattern, i))) - 1;
    }
-      
-   for(k = 0; k < set_a->used; k++)
+   iter = set_iter_init(set, NULL);
+
+   while(NULL != (tuple = set_iter_next(iter, set)))
    {
-      tuple = tuple_new(dim);
+      new_tuple = tuple_new(dim);
 
       for(i = 0; i < dim; i++)
-         tuple_set_elem(tuple, i, elem_copy(tuple_get_elem(set_a->member[k], idx[i]))); 
+         tuple_set_elem(new_tuple, i, elem_copy(tuple_get_elem(tuple, idx[i]))); 
 
-      set_add_member(set, tuple, SET_ADD_END, SET_CHECK_QUIET);
+      if (first)
+      {
+         list  = list_new_tuple(new_tuple);
+         first = FALSE;
+      }
+      else
+      {
+         assert(list != NULL);
+         
+         list_add_tuple(list, new_tuple);
+      }
+      tuple_free(tuple);
+      tuple_free(new_tuple);
    }
-   free(idx);
+   set_iter_exit(iter, set);
    
-   assert(set_is_valid(set));
+   free(idx);
 
-   return set;
+   new_set = set_new_from_list(list);
+
+   list_free(list);
+   
+   return new_set;
 }
-#endif
 
 /* Is A subset (or equal) of B */
 Bool set_is_subseteq(const Set* set_a, const Set* set_b)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: idxset.c,v 1.8 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: idxset.c,v 1.9 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -43,9 +43,14 @@ struct index_set
    Tuple*        tuple;
    Set*          set;
    CodeNode*     lexpr;
+   Bool          is_unrestricted;
 };
 
-IdxSet* idxset_new(const Tuple* tuple, const Set* set, CodeNode* lexpr)
+IdxSet* idxset_new(
+   const Tuple* tuple,
+   const Set*   set,
+   CodeNode*    lexpr,
+   Bool         is_unrestricted)
 {
    IdxSet* idxset = calloc(1, sizeof(*idxset));
    
@@ -54,10 +59,11 @@ IdxSet* idxset_new(const Tuple* tuple, const Set* set, CodeNode* lexpr)
    assert(lexpr  != NULL);
    assert(idxset != NULL);
 
-   idxset->tuple = tuple_copy(tuple);
-   idxset->set   = set_copy(set);
-   idxset->lexpr = lexpr;
-
+   idxset->tuple           = tuple_copy(tuple);
+   idxset->set             = set_copy(set);
+   idxset->lexpr           = lexpr;
+   idxset->is_unrestricted = is_unrestricted;
+   
    SID_set(idxset, IDXSET_SID);
    assert(idxset_is_valid(idxset));
 
@@ -84,7 +90,7 @@ IdxSet* idxset_copy(const IdxSet* source)
 {
    assert(idxset_is_valid(source));
 
-   return idxset_new(source->tuple, source->set, source->lexpr);   
+   return idxset_new(source->tuple, source->set, source->lexpr, source->is_unrestricted);   
 }
 
 CodeNode* idxset_get_lexpr(const IdxSet* idxset)
@@ -106,6 +112,13 @@ const Set* idxset_get_set(const IdxSet* idxset)
    assert(idxset_is_valid(idxset));
    
    return idxset->set;
+}
+
+Bool idxset_is_unrestricted(const IdxSet* idxset)
+{
+   assert(idxset_is_valid(idxset));
+   
+   return idxset->is_unrestricted;
 }
 
 void idxset_print(FILE* fp, const IdxSet* idxset)

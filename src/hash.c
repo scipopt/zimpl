@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.17 2004/04/13 13:59:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.18 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -138,7 +138,7 @@ Bool hash_is_valid(const Hash* hash)
 {
          //         || hash->type == HASH_CON || hash->type == HASH_VAR)
    return ((hash != NULL)
-      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY)
+      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY || hash->type == HASH_ELEM_IDX)
       && SID_ok(hash, HASH_SID));
 }
 
@@ -246,11 +246,11 @@ void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
    assert(elem_is_valid(elem));
    assert(he != NULL);
    
-   hcode               = elem_hash(elem) % hash->size;
-   he->value.elem_idx.elem   = elem;
-   he->value.elem_idx.idx    = idx;
-   he->next            = hash->bucket[hcode];
-   hash->bucket[hcode] = he;
+   hcode                   = elem_hash(elem) % hash->size;
+   he->value.elem_idx.elem = elem;
+   he->value.elem_idx.idx  = idx;
+   he->next                = hash->bucket[hcode];
+   hash->bucket[hcode]     = he;
    hash->elems++;
 }
 

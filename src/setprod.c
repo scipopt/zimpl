@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -87,7 +87,7 @@ Set* set_prod_new(const Set* a, const Set* b)
    SID_set2(set->prod, SET_PROD_SID);
 
    assert(set_prod_is_valid(set));
-   
+
    return set;
 }
 
@@ -115,14 +115,14 @@ static void set_prod_free(Set* set)
 {
    assert(set_prod_is_valid(set));
 
+   set_free(set->prod.set_a);
+   set_free(set->prod.set_b);
+
    set->head.refc--;
 
    if (set->head.refc == 0)
    {
       SID_del2(set->prod);
-
-      set_free(set->prod.set_a);
-      set_free(set->prod.set_b);
       
       free(set);
    }
@@ -180,6 +180,12 @@ static SetIter* iter_init(
    iter = calloc(1, sizeof(*iter));
 
    assert(iter != NULL);
+
+   iter->prod.elem = calloc(set->head.dim, sizeof(*iter->prod.elem));
+
+   assert(iter->prod.elem != NULL);
+
+   iter->prod.first = TRUE;
    
    iter->prod.iter_a = set_iter_init_intern(set->prod.set_a, pattern, offset);
    iter->prod.iter_b = set_iter_init_intern(set->prod.set_b, pattern,
@@ -196,6 +202,37 @@ static SetIter* iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
+/* This gets the fore part of the product and saves it and
+ * also gets the back part
+ */
+static Bool get_both_parts(
+   Set* a,
+   Set* b,
+   SetIter* iter,
+   SetIter* iter_a,
+   SetIter* iter_b,
+   Tuple*   tuple,
+   int      offset,
+   int      offset2)
+{
+   int i;
+   
+   if (!set_iter_next_intern(iter_a, a, tuple, offset))
+      return FALSE;
+
+   for(i = 0; i < a->head.dim; i++)
+   {
+      iter->prod.elem[i] = elem_copy(tuple_get_elem(tuple, i + offset));
+
+      assert(elem_is_valid(iter->prod.elem[i]));
+   }
+   if (!set_iter_next_intern(iter_b, b, tuple, offset2))
+      return FALSE;
+
+   return TRUE;
+}
+
+
 /* FALSE means, there is no further element
  */
 static Bool iter_next(
@@ -209,6 +246,7 @@ static Bool iter_next(
    SetIter*   iter_a;
    SetIter*   iter_b;
    int        offset2;
+   int        i;
    
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
@@ -218,18 +256,32 @@ static Bool iter_next(
    iter_a  = iter->prod.iter_a;
    iter_b  = iter->prod.iter_b;
    offset2 = offset + a->head.dim;
-   
-   if (!set_iter_next_intern(iter_b, b, tuple, offset2))
-   {
-      set_iter_reset_intern(iter_b, b);
-      
-      if (!set_iter_next_intern(iter_b, b, tuple, offset2))
-         return FALSE;
 
-      if (!set_iter_next_intern(iter_a, a, tuple, offset))
-         return FALSE;
+   if (iter->prod.first)
+   {
+      iter->prod.first = FALSE;
+
+      return get_both_parts(a, b, iter, iter_a, iter_b, tuple, offset, offset2);
    }
-   return TRUE;
+   assert(!iter->prod.first);
+   
+   /* Get back part
+    */
+   if (set_iter_next_intern(iter_b, b, tuple, offset2))
+   {
+      /* copy fore part
+       */
+      for(i = 0; i < a->head.dim; i++)
+         tuple_set_elem(tuple, i + offset, elem_copy(iter->prod.elem[i]));
+
+      return TRUE;
+   }
+
+   /* No back part, so reset it
+    */
+   set_iter_reset_intern(iter_b, b);
+
+   return get_both_parts(a, b, iter, iter_a, iter_b, tuple, offset, offset2);
 }
 
 /* ------------------------------------------------------------------------- 
@@ -238,14 +290,21 @@ static Bool iter_next(
  */
 static void iter_exit(SetIter* iter, const Set* set)
 {
+   int i;
+   
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
 
    SID_del2(iter->prod);
 
    set_iter_exit_intern(iter->prod.iter_a, set->prod.set_a);
-   set_iter_exit_intern(iter->prod.iter_b, set->prod.set_a);
-      
+   set_iter_exit_intern(iter->prod.iter_b, set->prod.set_b);
+
+   for(i = 0; i < set->head.dim; i++)
+      if (iter->prod.elem[i] != NULL)
+         elem_free(iter->prod.elem[i]);
+
+   free(iter->prod.elem);
    free(iter);
 }
 

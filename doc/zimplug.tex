@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.13 2003/12/11 16:14:36 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.14 2004/04/14 11:56:40 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -140,7 +140,7 @@ of interest):
                   off its path and extension.\\ 
 -F {\em filter} & The output is piped through a filter. A \%s in the
                   string is replaced by the output filename. For example 
-                  \code{-p "gzip -c >\%s.gz"} would compress all the 
+                  \code{-F "gzip -c >\%s.gz"} would compress all the 
                   output files.\\
 -n {\em cform}  & Select the format for the generation of constraint
                   names. Can be either {\em cm} which will number them 
@@ -161,6 +161,7 @@ of interest):
 -h & Prints a help message.\\
 -O & Optimize the generated \lp by doing some presolve analysis.\\
 -r & Writes a \cplex \code{ord} branching order file.\\
+-V & Prints the version number.\\
 %\hline
 \end{tabular}
 

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.61 2003/10/27 13:57:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.62 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -139,10 +139,8 @@ decl_set
    : DECLSET NAME ASGN sexpr ';' {
          $$ = code_new_inst(i_newsym_set1, 3,
             code_new_name($2),                                       /* Name */
-            code_new_inst(i_idxset_new, 3,                      /* index set */
-               code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_pseudo, 0),
-               code_new_inst(i_bool_true, 0)),
+            code_new_inst(i_idxset_pseudo_new, 1,               /* index set */
+               code_new_inst(i_bool_true, 0)),              
             $4);                                              /* initial set */
       }
    | DECLSET NAME '[' idxset ']' ASGN sexpr ';' {
@@ -160,10 +158,8 @@ decl_set
    | DECLSET NAME '[' ']' ASGN set_entry_list ';' {
          $$ = code_new_inst(i_newsym_set2, 3,
             code_new_name($2),                                       /* Name */
-            code_new_inst(i_idxset_new, 3,                      /* index set */
-               code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_pseudo, 0),
-               code_new_inst(i_bool_true, 0)),
+            code_new_inst(i_idxset_pseudo_new, 1,               /* index set */
+               code_new_inst(i_bool_true, 0)),              
             $6);                                   /* initial set_entry_list */
       }
    ;
@@ -240,10 +236,8 @@ decl_par
    | DECLPAR NAME ASGN cexpr ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
-            code_new_inst(i_idxset_new, 3,
-               code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_pseudo, 0),
-               code_new_inst(i_bool_true, 0)),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
             code_new_inst(i_entry_list_new, 1,
                code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
             code_new_inst(i_nop, 0));
@@ -276,19 +270,15 @@ decl_var
    | DECLVAR NAME var_type lower upper priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
-            code_new_inst(i_idxset_new, 3,
-               code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_pseudo, 0),
-               code_new_inst(i_bool_true, 0)),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
             $3, $4, $5, $6, $7);
       }
    | DECLVAR NAME BINARY priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
-            code_new_inst(i_idxset_new, 3,
-               code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_pseudo, 0),
-               code_new_inst(i_bool_true, 0)),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
             code_new_varclass(VAR_BIN),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),

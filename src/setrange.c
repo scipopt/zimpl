@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.3 2004/04/13 13:59:57 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -53,11 +53,9 @@ static Bool set_range_is_valid(const Set* set)
 
 static Bool set_range_iter_is_valid(const SetIter* iter)
 {
-   return iter != NULL
-      && SID_ok2(iter->range, SET_RANGE_ITER_SID)
+   return iter != NULL && SID_ok2(iter->range, SET_RANGE_ITER_SID)
       && iter->range.first >= 0
       && iter->range.last  >= 0
-      && iter->range.now   >= 0
       && iter->range.now   >= iter->range.first;
 }
 
@@ -75,7 +73,7 @@ Set* set_range_new(int begin, int end, int step)
 
    set->head.refc    = 1;
    set->head.dim     = 1;
-   set->head.members = (end - begin) / step;
+   set->head.members = 1 + (end - begin) / step;
    set->head.type    = SET_RANGE;
 
    set->range.begin  = begin;
@@ -126,6 +124,24 @@ static void set_range_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
+static int idx_to_val(int begin, int step, int idx)
+{
+#if 0
+   fprintf(stderr, "idx_to_val: %d %d %d = %d\n",
+      begin, step, idx, begin + idx * step);
+#endif
+   return begin + idx * step;
+}
+
+static int val_to_idx(int begin, int step, int val)
+{
+#if 0
+   fprintf(stderr, "val_to_idx: %d %d %d = %d\n",
+      begin, step, val, (val - begin) / step);
+#endif
+   return (val - begin) / step;
+}
+
 static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    const Elem* elem;
@@ -136,7 +152,7 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    assert(tuple_is_valid(tuple));
    assert(offset >= 0);
    assert(offset <  tuple_get_dim(tuple));
-
+   
    elem = tuple_get_elem(tuple, offset);
 
    if (elem_get_type(elem) != ELEM_NUMB)
@@ -153,12 +169,23 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    }
    val = numb_toint(numb);
 
-   if (  val >= set->range.begin 
-      || val <= set->range.end
-      || ((val - set->range.begin) % set->range.step) != 0)
-      return -1;
-
-   return (val - set->range.begin) / set->range.step;
+   if (set->range.step > 0)
+   {
+      if (  val < set->range.begin 
+         || val > set->range.end
+         || ((val - set->range.begin) % set->range.step) != 0)
+         return -1;
+   }
+   else
+   {
+      assert(set->range.step < 0);
+      
+      if (  val > set->range.begin 
+         || val < set->range.end
+         || ((set->range.begin - val) % set->range.step) != 0)
+         return -1;
+   }
+   return val_to_idx(set->range.begin, set->range.step, val);
 }
 
 /* ------------------------------------------------------------------------- 
@@ -188,8 +215,8 @@ static SetIter* iter_init(
 
    if (pattern == NULL)
    {
-      iter->range.first = set->range.begin;
-      iter->range.last  = set->range.end;
+      iter->range.first = 0;
+      iter->range.last  = val_to_idx(set->range.begin, set->range.step, set->range.end);
    }
    else
    {
@@ -198,38 +225,23 @@ static SetIter* iter_init(
       switch(elem_get_type(elem))
       {
       case ELEM_NAME :
-         iter->range.first = set->range.begin;
-         iter->range.last  = set->range.end;
+         iter->range.first = 0;
+         iter->range.last  = val_to_idx(set->range.begin, set->range.step, set->range.end);
          break;
       case ELEM_NUMB :
-         numb = elem_get_numb(elem);
+         iter->range.first = set_range_lookup_idx(set, pattern, offset);
 
-         if (!numb_is_int(numb))
-         {
-            fprintf(stderr, "Minor shit! %d\n", offset);
-            iter->range.first = 1;
-            iter->range.last  = 0;
-         }
+         if (iter->range.first >= 0)
+            iter->range.last = iter->range.first;
          else
          {
-            val = numb_toint(numb);
-
-            if (  val < set->range.begin
-               || val > set->range.end
-               || ((val - set->range.begin) % set->range.step) != 0)
-            {
-               iter->range.first = 1;
-               iter->range.last  = 0;
-            }
-            else
-            {
-               iter->range.first = (val - set->range.begin) / set->range.step;
-               iter->range.last  = iter->range.first;
-            }
+            iter->range.first = 1;
+            iter->range.last  = 0;
          }
          break;
       case ELEM_STRG :
          fprintf(stderr, "Shit! %d\n", offset);
+
          iter->range.first = 1;
          iter->range.last  = 0;
          break;
@@ -263,18 +275,18 @@ static Bool iter_next(
 
    assert(set_range_iter_is_valid(iter));
    assert(set_range_is_valid(set));
-   
+
    if (iter->range.now > iter->range.last)
       return FALSE;
 
-   val  = iter->range.now;
+   val  = idx_to_val(set->range.begin, set->range.step, iter->range.now);
    numb = numb_new_integer(val);
 
    tuple_set_elem(tuple, offset, elem_new_numb(numb));
 
    numb_free(numb);
 
-   iter->range.now += set->range.step;
+   iter->range.now++;
 
    return TRUE;
 }
@@ -320,6 +332,16 @@ void set_range_init(SetVTab* vtab)
    vtab[SET_RANGE].iter_exit      = iter_exit;
    vtab[SET_RANGE].iter_reset     = iter_reset;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

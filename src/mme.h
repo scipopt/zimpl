@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.57 2004/04/13 13:59:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.58 2004/04/14 11:56:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -549,7 +549,7 @@ extern CodeNode*    define_get_code(const Define* def);
  */
 /*lint -sem(        idxset_new, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
 extern IdxSet*      idxset_new(
-   const Tuple* tuple, const Set* set, CodeNode* lexpr);
+   const Tuple* tuple, const Set* set, CodeNode* lexpr, Bool is_unrestricted);
 /*lint -sem(        idxset_free, custodial(1), 1p == 1) */
 extern void         idxset_free(IdxSet* idxset);
 /*lint -sem(        idxset_is_valid, 1p == 1) */
@@ -562,6 +562,8 @@ extern CodeNode*    idxset_get_lexpr(const IdxSet* idxset);
 extern const Tuple* idxset_get_tuple(const IdxSet* idxset);
 /*lint -sem(        idxset_get_set, 1p == 1, @p == 1) */
 extern const Set*   idxset_get_set(const IdxSet* idxset);
+/*lint -sem(        idxset_is_unrestricted, 1p == 1) */
+extern Bool         idxset_is_unrestricted(const IdxSet* idxset);
 /*lint -sem(        idxset_print, 1p == 1 && 2p == 1) */
 extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 

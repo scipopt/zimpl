@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.opt,v 1.6 2003/10/29 15:04:49 bzfkocht Exp $
+#--- $Id: make.linux.x86.gnu.opt,v 1.7 2004/04/14 11:56:40 bzfkocht Exp $
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
-CFLAGS		=	-O6 -g
+CFLAGS		=	-O6
 LDFLAGS		=	-lgmp -lz -lm -static
