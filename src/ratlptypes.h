@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlptypes.h,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlptypes.h,v 1.2 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlptypes.h                                                  */
@@ -39,6 +39,11 @@ enum var_class       { VAR_CON     = 0, VAR_INT,   VAR_BIN };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
 enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
+enum presolve_result
+{
+   PRESOLVE_ERROR = 0, PRESOLVE_OKAY, PRESOLVE_INFEASIBLE,
+   PRESOLVE_UNBOUNDED, PRESOLVE_VANISHED
+};
 
 typedef struct nonzero       Nzo;
 typedef struct variable      Var;
@@ -54,7 +59,14 @@ typedef enum   lp_direct     LpDirect;
 typedef enum   lp_type       LpType;
 typedef enum   lp_format     LpFormat;
 
+typedef enum presolve_result PSResult;
+
 #define LP_FLAG_CON_SCALE    0x1
 #define LP_FLAG_CON_SEPAR    0x2
+
+#define HAS_LOWER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_UPPER)
+#define HAS_UPPER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_LOWER)
+#define HAS_LHS(con)    ((con)->type != CON_FREE && (con)->type != CON_RHS)
+#define HAS_RHS(con)    ((con)->type != CON_FREE && (con)->type != CON_LHS)
 
 #endif /* _RATLPTYPES_H_ */

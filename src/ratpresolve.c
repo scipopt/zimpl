@@ -1,0 +1,527 @@
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.1 2003/08/18 12:55:58 bzfkocht Exp $"
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                           */
+/*   File....: lpstore.c                                                     */
+/*   Name....: Store Linear Programm                                         */
+/*   Author..: Thorsten Koch                                                 */
+/*   Copyright by Author, All rights reserved                                */
+/*                                                                           */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <assert.h>
+
+#include <gmp.h>
+
+#include "lint.h"
+#include "bool.h"
+#include "gmpmisc.h"
+#include "ratlp.h"
+#include "ratlpstore.h"
+
+static void remove_fixed_var(
+   Lps* lp,
+   Var* var,
+   int  verbose_level)
+{
+   Nzo*  nzo;
+   mpq_t x;
+   mpq_t temp;
+   Bool  is_zero;
+   
+   assert(lp  != NULL);
+   assert(var != NULL);
+   
+   assert(var->type == VAR_FIXED && mpq_equal(var->lower, var->upper));
+
+   if (verbose_level > 0)
+      printf("Removing variable %s fixed to %g\n", var->name, mpq_get_d(var->lower));
+   
+   mpq_init(x);
+   mpq_init(temp);
+
+   is_zero = mpq_equal(var->lower, x /* zero */);
+
+   while(var->first != NULL)
+   {
+      nzo = var->first;
+
+      /* Do we have to ajust the lhs/rhs ?
+       */
+      if (!is_zero)
+      {
+         mpq_mul(x, var->lower, nzo->value);
+
+         /* do we have a valid rhs ?
+          */
+         if (HAS_RHS(nzo->con))
+         {
+            mpq_sub(temp, nzo->con->rhs, x);
+            lps_setrhs(nzo->con, temp);
+         }
+         /* do we have a valid lhs ?
+          */
+         if (HAS_LHS(nzo->con))
+         {
+            mpq_sub(temp, nzo->con->lhs, x);
+            lps_setlhs(nzo->con, temp);
+         }
+      }
+      lps_delnzo(lp, nzo);
+   }
+   mpq_clear(temp);
+   mpq_clear(x);
+}
+
+static PSResult simple_rows(
+   Lps*  lp,
+   Bool* again,
+   int   verbose_level)
+{
+   Bool  have_up;
+   Bool  have_lo;
+   mpq_t up;
+   mpq_t lo;
+   Nzo*  nzo;
+   Var*  var;
+   Con*  con;
+   Con*  con_next;
+   int   rem_rows = 0;
+   int   rem_nzos = 0;
+   
+   mpq_init(up);
+   mpq_init(lo);
+   
+   for(con = lp->con_root; con != NULL; con = con_next)
+   {
+      con_next = con->next;
+      
+      /* infeasible range row
+       */
+      if (con->type == CON_RANGE && mpq_cmp(con->lhs, con->rhs) > 0)
+      {
+         printf("Infeasible range row %s lhs=%g rhs=%g\n",
+            con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
+
+         return PRESOLVE_INFEASIBLE;
+      }
+      /* empty row ?
+       */
+      if (con->size == 0)
+      {
+         if (  (HAS_RHS(con) && mpq_cmp(con->rhs, const_zero) < 0)
+            || (HAS_LHS(con) && mpq_cmp(con->lhs, const_zero) > 0))
+         {
+            printf("Infeasible empty row %s lhs=%g rhs=%g\n", 
+               con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
+
+            return PRESOLVE_INFEASIBLE;
+         }         
+         if (verbose_level > 0)
+            printf("Empty row %s removed\n", con->name);
+
+         lps_delcon(lp, con);
+         
+         rem_rows++;
+         continue;
+      }
+      /* unconstraint constraint
+       */
+      if (con->type == CON_FREE)
+      {
+         if (verbose_level > 0)
+            printf("Unconstraint row %s removed\n", con->name);
+
+         rem_rows++;
+         rem_nzos += con->size;
+
+         lps_delcon(lp, con);
+         continue;
+      }
+      /* row singleton
+       */
+      if (con->size == 1)
+      {
+         have_up = FALSE;
+         have_lo = FALSE;
+         nzo     = con->first;
+         var     = nzo->var;
+
+         if (mpq_cmp(nzo->value, const_zero) > 0) /* x > 0 */
+         {
+            if (HAS_RHS(con)) 
+            {
+               mpq_div(up, con->rhs, nzo->value);
+               have_up = TRUE;
+            }
+            if (HAS_LHS(con))
+            {
+               mpq_div(lo, con->lhs, nzo->value);
+               have_lo = TRUE;
+            }
+         }
+         else if (mpq_cmp(nzo->value, const_zero) < 0) /* x < 0 */
+         {
+            if (HAS_RHS(con))
+            {
+               mpq_div(lo, con->rhs, nzo->value);
+               have_lo = TRUE;
+            }
+            if (HAS_LHS(con))
+            {
+               mpq_div(up, con->lhs, nzo->value);
+               have_up = TRUE;
+            }
+         }
+         else if ((HAS_RHS(con) && !mpq_equal(con->rhs, const_zero))
+            ||    (HAS_LHS(con) && !mpq_equal(con->lhs, const_zero)))  
+         {
+            /* x == 0 rhs/lhs != 0 */
+            printf("Infeasibel row %s Zero row singleton with non zero lhs or rhs\n",
+               con->name);
+            
+            return PRESOLVE_INFEASIBLE;
+         }
+         assert(mpq_cmp(var->lower, var->upper) <= 0);
+
+         if (have_up && (!HAS_UPPER(var) || mpq_cmp(up, var->upper) < 0))
+            lps_setupper(var, up);
+
+         if (have_lo && (!HAS_LOWER(var) || mpq_cmp(lo, var->lower) > 0))
+            lps_setlower(var, lo);
+         
+         assert(mpq_cmp(var->lower, var->upper) <= 0);
+
+         if (verbose_level > 1)
+            printf("Row %s singleton var %s set to lower=%g upper=%g\n",
+               con->name, var->name, mpq_get_d(var->lower), mpq_get_d(var->upper));
+         
+         rem_rows++;
+         rem_nzos++;
+
+         lps_delcon(lp, con);
+         continue;
+      }
+   }
+   assert(rem_rows != 0 || rem_nzos == 0);
+
+   if (rem_rows > 0)
+   {
+      *again = TRUE;
+
+      if (verbose_level > 0)
+         printf("Simple row presolve removed %d rows and %d non-zeros\n",
+            rem_rows, rem_nzos);
+   }
+
+   mpq_clear(up);
+   mpq_clear(lo);
+   
+   return PRESOLVE_OKAY;
+}
+
+static PSResult simple_cols(
+   Lps*  lp,
+   Bool* again,
+   int   verbose_level)
+{
+   mpq_t maxobj;
+   int   rem_cols = 0;
+   int   rem_nzos = 0;
+   Nzo*  nzo;
+   Con*  con;
+   Var*  var;
+
+   mpq_init(maxobj);
+   
+   for(var = lp->var_root; var != NULL; var = var->next)
+   {
+      if (var->type == VAR_FIXED || var->size == 0)
+         continue;
+      
+      /* Empty column ?
+       */
+      if (var->size == 0)
+      {
+         mpq_set(maxobj, var->cost);
+         
+         if (lp->direct == LP_MIN)
+            mpq_neg(maxobj, maxobj);
+         
+         if (mpq_cmp(maxobj, const_zero) > 0)
+         {
+            /* Do we not have an upper bound ?
+             */
+            if (!HAS_UPPER(var))
+            {
+               printf("Var %s unbounded\n", var->name);
+
+               return PRESOLVE_UNBOUNDED;
+            }
+            lps_setlower(var, var->upper);
+         }
+         else if (mpq_cmp(maxobj, const_zero) < 0)
+         {
+            /* Do we not have an lower bound ?
+             */
+            if (!HAS_LOWER(var))
+            {
+               printf("Var %s unbounded\n", var->name);
+
+               return PRESOLVE_UNBOUNDED;
+            }
+            lps_setupper(var, var->lower);
+         }
+         else 
+         {
+            assert(mpq_equal(maxobj, const_zero));
+            
+            /* any value within the bounds is ok
+             */
+            if (HAS_LOWER(var))
+               lps_setupper(var, var->lower);
+            else if (HAS_UPPER(var))
+               lps_setlower(var, var->upper);
+            else
+            {
+               lps_setlower(var, const_zero);
+               lps_setupper(var, const_zero);
+            }
+         }
+         if (verbose_level > 1)
+            printf("Empty var %s fixed\n", var->name);
+         
+         rem_cols++;
+         continue;
+      }
+
+      /* infeasible bounds ?
+       */
+      if (var->type == VAR_BOXED && mpq_cmp(var->lower, var->upper) > 0)
+      {
+         printf("Var %s infeasible bounds lower=%g upper=%g\n",
+            var->name, mpq_get_d(var->lower), mpq_get_d(var->upper));
+
+         return PRESOLVE_INFEASIBLE;
+      }
+      /* Fixed column ?
+       */
+      if (var->type == VAR_FIXED)
+      {
+         assert(var->size > 0);
+
+         rem_cols++;
+         rem_nzos += var->size;
+
+         remove_fixed_var(lp, var, verbose_level);
+
+         continue;
+      }
+      // ??? a lot of this is also done in redundantRows.
+
+      if (var->size == 1)
+      {
+         nzo = var->first;
+         con = nzo->con;
+         
+         assert(!mpq_equal(nzo->value, const_zero));
+
+         if (mpq_cmp(nzo->value, const_zero) > 0.0)
+         {
+            mpq_set(maxobj, var->cost);
+         
+            if (lp->direct == LP_MIN)
+               mpq_neg(maxobj, maxobj);
+            
+            // max -3 x
+            // s.t. 5 x <= 8
+            // l <= x
+            if (!HAS_LHS(con) && HAS_RHS(con) && mpq_cmp(maxobj, const_zero) <= 0 && HAS_LOWER(var))
+            {
+               lps_setupper(var, var->lower);
+
+               remove_fixed_var(lp, var, verbose_level);
+               
+               rem_cols++;
+               rem_nzos++;
+               continue;
+            }
+            // max  3 x
+            // s.t. 5 x >= 8
+            // x <= u
+            if (HAS_LHS(con) && !HAS_RHS(con) && mpq_cmp(maxobj, const_zero) >= 0 && HAS_UPPER(var))
+            {
+               lps_setlower(var, var->upper);
+
+               remove_fixed_var(lp, var, verbose_level);
+
+               rem_cols++;
+               rem_nzos++;
+               continue;
+            }
+         }
+      }
+#if 0 // a lot of this is allready done in redundantRows.
+
+      // Column singleton without objective
+      else if (col.size() == 1 && isZero(lp.maxObj(i), epsilonSimplifier()))
+      {
+         Real x = col.value(0);
+         int  j = col.index(0);
+         
+         Real           up;
+         Real           lo;
+
+
+         if (GT(x, 0.0, epsilonSimplifier()))
+         {
+            if (lp.lower(i) > -infinity)
+               // TODO here should be checked if rhs < infinity
+               up = lp.rhs(j) - lp.lower(i) * x;
+            else
+               up = infinity;
+            
+            if (lp.upper(i) < infinity)
+               lo = lp.lhs(j) - lp.upper(i) * x;
+            else
+               lo = -infinity;
+         }
+         else if (LT(x, 0.0, epsilonSimplifier()))
+         {
+            if (lp.lower(i) > -infinity)
+               lo = lp.lhs(j) - lp.lower(i) * x;
+            else
+               lo = -infinity;
+            
+            if (lp.upper(i) < infinity)
+               up = lp.rhs(j) - lp.upper(i) * x;
+            else
+               up = infinity;
+         }
+         else
+         {
+            up = lp.rhs(j);
+            lo = lp.lhs(j);
+         }
+         
+         if (isZero(lo, epsilonSimplifier()))
+            lo = 0.0;
+         if (isZero(up, epsilonSimplifier()))
+            up = 0.0;
+         
+         lp.changeRange(j, lo, up);
+         rem[i] = -1;
+         num++;
+      }
+#endif // 0
+   }
+   assert(rem_cols != 0 || rem_nzos == 0);
+
+   if (rem_cols > 0)
+   {
+      *again = TRUE;
+
+      if (verbose_level > 0)
+         printf("Simple col presolve removed %d cols and %d non-zeros\n",
+            rem_cols, rem_nzos);
+   }
+
+   mpq_clear(maxobj);
+   
+   return PRESOLVE_OKAY;
+}
+
+
+
+PSResult lps_presolve(Lps* lp, int verbose_level)
+{
+   PSResult ret = PRESOLVE_OKAY;
+   Bool     again;
+   Bool     rcagain;
+   Bool     rragain;
+   
+   do
+   {
+      again = FALSE;
+ 
+      if (ret == PRESOLVE_OKAY)
+         ret = simple_rows(lp, &again, verbose_level);
+
+      if (ret == PRESOLVE_OKAY)
+         ret = simple_cols(lp, &again, verbose_level);
+
+      assert(ret == PRESOLVE_OKAY || again == FALSE);
+   }
+   while(again);
+
+#if 0
+   if (ret == OKAY)
+      ret = redundantCols(lp, rcagain);
+
+   if (ret == OKAY)
+      ret = redundantRows(lp, rragain);
+
+   again = (ret == OKAY) && (rcagain || rragain);
+
+   // This has to be a loop, otherwise we could end up with
+   // empty rows.
+   while(again)
+   {
+      again = false;
+
+      if (ret == OKAY)
+         ret = simpleRows(lp, again);
+
+      if (ret == OKAY)
+         ret = simpleCols(lp, again);
+
+      assert(ret == OKAY || again == false);
+   }
+   VERBOSE1({ std::cout << "IREDSM25 redundant simplifier removed "
+                        << m_remRows << " rows, "
+                        << m_remNzos << " nzos, changed "
+                        << m_chgBnds << " col bounds " 
+                        << m_chgLRhs << " row bounds,"
+                        << std::endl; });
+
+#endif
+   /* ??? funktioniert nicht, weil vars nicht geloescht werden. */
+   if (lp->vars == 0 || lp->cons == 0)
+   {
+      /* ??? Checken ob das so ok ist.
+       */
+      assert(lp->vars == 0 && lp->cons == 0);
+      
+      printf("Simplifier removed all variables and constraints\n");
+      ret = PRESOLVE_VANISHED;
+   }
+   return ret;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Emacs Local Variables:                                                    */
+/* Emacs mode:c                                                              */
+/* Emacs c-basic-offset:3                                                    */
+/* Emacs tab-width:8                                                         */
+/* Emacs indent-tabs-mode:nil                                                */
+/* Emacs End:                                                                */
+/* ------------------------------------------------------------------------- */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.4 2003/08/02 08:44:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.5 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -228,6 +228,9 @@ void xlp_addtocost(Var* var, const Numb* cost)
    mpq_clear(val2);
 }
 
-
+void xlp_presolve()
+{
+   lps_presolve(lp, verbose ? 3 : 0);
+}
 
      

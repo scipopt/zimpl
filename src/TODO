@@ -1,3 +1,18 @@
+ranges: expr <= constraint <= expr;
+
+
+check fits in double vor ausgabe nach mps/lp
+
+zugrif auf set elemente nach ordnungsnummer, so das
+for <i> in { 1 .. card(A) } do
+   A[ord(i)] 
+geht.
+
+
+check:  errors.zpl felft, einer fuer jeden error/warnin
+        außerdem errors warning durchnummeriern.
+        dann err007.zpl
+
 check:  var.zpl fehlt
 
 Speedups:

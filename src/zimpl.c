@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.30 2003/08/02 08:44:11 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.31 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -71,13 +71,14 @@ static const char* banner =
 "  -f          enable flex debugging output.\n" \
 "  -r          write branching order file.\n" \
 "  -h          show this help.\n" \
+"  -p          presolve LP.\n" \
 "  -v          enable verbose output.\n" \
 "  -n cm|cn|cf name column make/name/full\n" \
 "  -m          do not mangle variable names\n" \
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
 "  -o outfile  select name for the output file. Default is the name of\n" \
 "              the input file without extension.\n" \
-"  -p filter   filter output, for example \"gzip -c >%%s.gz\"\n" \
+"  -F filter   filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  filename    is the name of the input ZPL file.\n" \
 "\n" ; 
 
@@ -137,7 +138,7 @@ static void check_write_ok(FILE* fp, const char* filename)
 int main(int argc, char* const* argv)
 {
    const char* usage =
-      "usage: %s [-hvr][-n cs|cn|cf][-t lp|mps][-o outfile][-p filter] filename\n";
+      "usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps][-o outfile][-F filter] filename\n";
    
    Prog*       prog;
    char*       filter   = NULL;
@@ -149,13 +150,14 @@ int main(int argc, char* const* argv)
    LpFormat    format   = LP_FORM_LPF;
    FILE*       fp;
    Bool        write_order = FALSE;
+   Bool        presolve    = FALSE;
    int         c;
    int         i;
    
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfhmn:o:p:rt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfF:hmn:o:prt:v")) != -1)
    {
       switch(c)
       {
@@ -170,6 +172,9 @@ int main(int argc, char* const* argv)
          exit(0);
       case 'f' :
          yy_flex_debug = 1;
+         break;
+      case 'F' :
+         filter = strdup(optarg);
          break;
       case 'm' :
          fprintf(stderr,
@@ -202,7 +207,7 @@ int main(int argc, char* const* argv)
          basefile = strdup(optarg);
          break;
       case 'p' :
-         filter = strdup(optarg);
+         presolve = TRUE;
          break;
       case 'r' :
          write_order = TRUE;
@@ -257,6 +262,11 @@ int main(int argc, char* const* argv)
 
    prog_execute(prog);
 
+   /* Presolve
+    */
+   if (presolve)
+      xlp_presolve();
+   
    xlp_scale();
    
    /* Write Output

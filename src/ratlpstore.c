@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.4 2003/08/02 08:44:10 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.5 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -194,6 +194,36 @@ static void hash_add_var(LpsHash* hash, Var* var)
    assert(hash_lookup_var(hash, var->name) == var);
 }
 
+static void hash_del_var(LpsHash* hash, Var* var)
+{
+   LpsHElem*    he;
+   LpsHElem*    next;
+   unsigned int hcode;
+
+   assert(hash_valid(hash));
+   assert(var        != NULL);
+   assert(hash->type == LHT_VAR);
+   
+   hcode = hashit(var->name) % hash->size;
+
+   for(he = hash->bucket[hcode], next = NULL; he != NULL; next = he, he = he->next)
+      if (he->value.var == var)
+         break;
+
+   assert(he != NULL);
+
+   if (next == NULL)
+      hash->bucket[hcode] = he->next;
+   else
+      next->next = he->next;
+
+   hash->elems--;
+
+   free(he);
+
+   assert(hash_valid(hash));
+}
+
 static void hash_add_con(LpsHash* hash, Con* con)
 {
    LpsHElem*    he = calloc(1, sizeof(*he));
@@ -211,6 +241,36 @@ static void hash_add_con(LpsHash* hash, Con* con)
    hash->elems++;
 
    assert(hash_lookup_con(hash, con->name) == con);
+}
+
+static void hash_del_con(LpsHash* hash, Con* con)
+{
+   LpsHElem*    he;
+   LpsHElem*    next;
+   unsigned int hcode;
+
+   assert(hash_valid(hash));
+   assert(con        != NULL);
+   assert(hash->type == LHT_CON);
+   
+   hcode = hashit(con->name) % hash->size;
+
+   for(he = hash->bucket[hcode], next = NULL; he != NULL; next = he, he = he->next)
+      if (he->value.con == con)
+         break;
+
+   assert(he != NULL);
+
+   if (next == NULL)
+      hash->bucket[hcode] = he->next;
+   else
+      next->next = he->next;
+
+   hash->elems--;
+
+   free(he);
+
+   assert(hash_valid(hash));
 }
 
 static void hash_statist(FILE* fp, const LpsHash* hash)
@@ -285,12 +345,9 @@ static Bool lps_valid(const Lps* lp)
    int  con_count;
    int  nzo_count;
    int  sto_count;
-   mpq_t zero;
    
    assert(lp != NULL);
 
-   mpq_init(zero);
-   
    /* Variable Test
     */
    var_count = lp->vars;
@@ -430,8 +487,6 @@ static Bool lps_valid(const Lps* lp)
          err11, sto_count, sto_size, lp->nonzeros);
       return FALSE;
    }
-   mpq_clear(zero);
-   
    return TRUE;
 }
 #endif /* !NDEBUG */
@@ -547,10 +602,8 @@ void lps_free(Lps* lp)
    for(var = lp->var_root; var != NULL; var = var_next) 
    {
       var_next = var->next;
-
-#ifndef NDEBUG
       var->sid = 0x0;
-#endif
+
       mpq_clear(var->cost);
       mpq_clear(var->lower);
       mpq_clear(var->upper);
@@ -563,10 +616,8 @@ void lps_free(Lps* lp)
    for(con = lp->con_root; con != NULL; con = con_next)
    {
       con_next = con->next;
-
-#ifndef NDEBUG
       con->sid = 0x0;
-#endif
+
       mpq_clear(con->lhs);
       mpq_clear(con->rhs);
       mpq_clear(con->scale);
@@ -754,6 +805,70 @@ Var* lps_addvar(
    return v;
 }
 
+void lps_delvar(
+   Lps* lp,
+   Var* var)
+{
+   assert(lps_valid(lp));
+
+   /* remove non-zeros
+    */
+   while(var->first != NULL)
+      lps_delnzo(lp, var->first);
+
+   assert(var->size == 0);
+
+   /* Correkt "next" links
+    */
+   if (var->prev != NULL)
+   {
+      var->prev->next = var->next;
+
+      assert(lp->var_root != var);
+   }
+   else
+   {
+      assert(lp->var_root == var);
+
+      lp->var_root = var->next;
+
+      assert(lp->var_root != NULL || lp->vars == 0);
+   }
+
+   /* Correkt "prev" links
+    */
+   if (var->next != NULL)
+   {
+      var->next->prev = var->prev;
+
+      assert(lp->var_last != var);
+   }
+   else
+   {
+      assert(lp->var_last == var);
+
+      lp->var_last = var->prev;
+
+      assert(lp->var_last != NULL || lp->vars == 0);
+   }
+   hash_del_var(lp->var_hash, var);
+      
+   mpq_clear(var->cost);
+   mpq_clear(var->lower);
+   mpq_clear(var->upper);
+   mpq_clear(var->value);
+   mpq_clear(var->startval);
+
+   var->sid = 0;
+   
+   free(var->name);
+   free(var);
+
+   lp->vars--;
+   
+   assert(lps_valid(lp));
+}
+
 Con* lps_addcon(
    Lps*         lp,
    const char*  name)
@@ -801,6 +916,68 @@ Con* lps_addcon(
    return c;
 }
   
+void lps_delcon(
+   Lps* lp,
+   Con* con)
+{
+   assert(lps_valid(lp));
+
+   /* remove non-zeros
+    */
+   while(con->first != NULL)
+      lps_delnzo(lp, con->first);
+
+   assert(con->size == 0);
+
+   /* Correkt "next" links
+    */
+   if (con->prev != NULL)
+   {
+      con->prev->next = con->next;
+
+      assert(lp->con_root != con);
+   }
+   else
+   {
+      assert(lp->con_root == con);
+
+      lp->con_root = con->next;
+
+      assert(lp->con_root != NULL || lp->cons == 0);
+   }
+
+   /* Correkt "prev" links
+    */
+   if (con->next != NULL)
+   {
+      con->next->prev = con->prev;
+
+      assert(lp->con_last != con);
+   }
+   else
+   {
+      assert(lp->con_last == con);
+
+      lp->con_last = con->prev;
+
+      assert(lp->con_last != NULL || lp->cons == 0);
+   }
+   hash_del_con(lp->con_hash, con);
+
+   con->sid = 0x0;
+
+   mpq_clear(con->lhs);
+   mpq_clear(con->rhs);
+   mpq_clear(con->scale);
+   
+   free(con->name);
+   free(con);
+
+   lp->cons--;
+   
+   assert(lps_valid(lp));
+}
+
 void lps_addnzo(
    Lps*        lp,
    Con*        con,

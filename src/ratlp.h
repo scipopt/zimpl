@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.3 2003/08/02 08:44:10 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.4 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -52,10 +52,14 @@ extern Var*         lps_getvar(const Lps* lp, const char* name);
 extern Con*         lps_getcon(const Lps* lp, const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
-/*lint -sem(        lps_addvar, 1p && 2p && nulterm(2), @p == 1) */
+/*lint -sem(        lps_addvar, 1p == 1 && 2p && nulterm(2), @p == 1) */
 extern Var*         lps_addvar(Lps* lp, const char* name); 
-/*lint -sem(        lps_addcon, 1p && 2p && nulterm(2), @p == 1) */
+/*lint -sem(        lps_delvar, 1p == 1 && 2p == 1) */
+extern void         lps_delvar(Lps* lp, Var* var);
+/*lint -sem(        lps_addcon, 1p == 1 && 2p && nulterm(2), @p == 1) */
 extern Con*         lps_addcon(Lps* lp, const char* name);
+/*lint -sem(        lps_delcon, 1p == 1 && 2p == 1) */
+extern void         lps_delcon(Lps* lp, Con* con);
 /*lint -sem(        lps_addnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value);
 /*lint -sem(        lps_delnzo, 1p == 1 && 2p == 2) */
@@ -153,5 +157,10 @@ extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
  */
 /*lint -sem(        lps_ordwrite, 1p == 1 && 2p == 1) */
 extern void         lps_orderfile(const Lps* lp, FILE* fp);
+
+/* ratpresolve.c
+ */
+/*lint -sem(        lps_presolve, 1p == 1 && 2n >= 0) */
+extern PSResult     lps_presolve(Lps* lp, int verbose_level);
 
 #endif /* _RATLP_H_ */

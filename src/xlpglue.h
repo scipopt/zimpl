@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.3 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.4 2003/08/18 12:55:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -63,6 +63,7 @@ extern void     xlp_setdir(Bool minimize);
 extern void     xlp_addtonzo(Var* var, Con* von, const Numb* numb);
 /*lint -sem(    xlp_addtocost, 1p == 1 && 2p == 1) */
 extern void     xlp_addtocost(Var* var, const Numb* cost);
+extern void     xlp_presolve(void);
 
 #endif /* _XLPGLUE_H */
 
