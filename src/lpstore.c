@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.4 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.5 2002/06/09 11:05:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -471,6 +471,7 @@ Con* lps_addcon(
    c->type      = type;
    c->flags     = flags;
    c->rhs       = rhs;
+   c->scale     = 1.0;
    c->first     = NULL;
    c->prev      = NULL;
    c->next      = lp->con_root;
@@ -788,8 +789,8 @@ void lps_transtable(FILE* fp)
    {
       lps_makename(temp, MPS_NAME_LEN + 1, con->name, con->number);
 
-      fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\n",
-         con->number, MPS_NAME_LEN, temp, con->name);
+      fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\t%.16e\n",
+         con->number, MPS_NAME_LEN, temp, con->name, con->scale);
    }
 }
 
@@ -810,11 +811,11 @@ void lps_scale()
             if (fabs(nzo->value) > maximum)
                maximum = fabs(nzo->value);
 
-         scale     = 1.0 / maximum;
-         con->rhs *= scale;
+         con->scale = 1.0 / maximum;
+         con->rhs  *= con->scale;
 
          for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
-            nzo->value *= scale;
+            nzo->value *= con->scale;
       }
    }
 }

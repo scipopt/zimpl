@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.3 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.4 2002/06/09 11:05:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -63,6 +63,7 @@ struct constraint
    unsigned int flags;
    int          size;
    double       rhs;
+   double       scale;
    Con*         prev;
    Con*         next;
    Nzo*         first;
