@@ -1,3 +1,9 @@
+ - Better diagnosis if a variable/parameter/set name
+   is used a second time.
+
+ - It is now possible to have contraint/obective names
+   that are identical to variable/parameter/set names.
+
  - Changed gererated numbers for long names to 
    hex. This needs less space.
 

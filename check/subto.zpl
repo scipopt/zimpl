@@ -78,7 +78,8 @@ subto c38: x[1] == a[1] + sum <i> in A do a[i]*x[i];
 subto c39: x[1] == a[1] + sum <i> in A do x[i]*a[i];
 subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
 subto c41: x[1] == a[1] + 2 * sum <i> in A do 2*x[i]*a[i]*3 + 4;
-
+subto c42: 17 <= x[1] + x[2] <= 23;
+subto c43: 13 * a[1] / 2 >= sum <i> in A do a[i]*x[i] + 6 >= a[2];
 
 
 
