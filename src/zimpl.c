@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.25 2003/05/04 07:22:35 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.26 2003/05/20 12:40:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -52,7 +52,7 @@ Bool mangling  = TRUE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.05  Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 1.06a Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \

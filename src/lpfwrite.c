@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lpfwrite.c,v 1.15 2003/05/04 07:22:35 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lpfwrite.c,v 1.16 2003/05/20 12:40:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -70,6 +70,11 @@ void lpf_write(
       if (fabs(var->cost) < EPS_ZERO)
          continue;
 
+#if 0 /* We should do this in the preprocessing step
+       * otherwise we have problems in case of variable
+       * that have only bounds, but are not part of any
+       * constraint.
+       */
       /* If the variable is free and when minimizing the lower or
        * when maximizing the upper bound is zero,
        * it can be discarded.
@@ -77,7 +82,7 @@ void lpf_write(
       if ((var->size == 0) && (fabs((lp->direct == LP_MIN) ?
          var->lower : var->upper) < EPS_ZERO))
          continue;
-      
+#endif      
       lps_makename(name, namesize, var->name, var->number);
 
       if (EQ(var->cost, 1.0))
@@ -154,28 +159,37 @@ void lpf_write(
 
    fprintf(fp, "Bounds\n");
 
+   /* Variables with size == 0, have to be included because
+    * they might contain bounds. Detailed checking should
+    * be done in a preprocessing routine.
+    */
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->size > 0)
-      {
-         if (LE(var->lower, -INFINITY))
-            fprintf(fp, " -Inf");
-         else
-            fprintf(fp, " %.15g", var->lower);
+      /* This could be put into a preprocessor
+       */
+      if (var->size == 0 && fabs(var->cost) < EPS_ZERO)
+         continue;
 
-         lps_makename(name, namesize, var->name, var->number);
-         fprintf(fp, " <= %s <= ", name);
+      if (LE(var->lower, -INFINITY))
+         fprintf(fp, " -Inf");
+      else
+         fprintf(fp, " %.15g", var->lower);
+
+      lps_makename(name, namesize, var->name, var->number);
+      fprintf(fp, " <= %s <= ", name);
          
-         if (GE(var->upper, INFINITY))
-            fprintf(fp, "+Inf\n");
-         else
-            fprintf(fp, "%.15g\n", var->upper);
-      }
+      if (GE(var->upper, INFINITY))
+         fprintf(fp, "+Inf\n");
+      else
+         fprintf(fp, "%.15g\n", var->upper);
    }
    for(first = TRUE, var = lp->var_root; var != NULL; var = var->next)
    {
-      if ((var->size > 0) && (var->type == VAR_INT))
+      if (var->type == VAR_INT)
       {
+         if (var->size == 0 && fabs(var->cost) < EPS_ZERO)
+            continue;
+         
          if (first)
          {
             fprintf(fp, "General\n");
@@ -187,8 +201,11 @@ void lpf_write(
    }
    for(first = TRUE, var = lp->var_root; var != NULL; var = var->next)
    {
-      if ((var->size > 0) && (var->type == VAR_BIN))
+      if (var->type == VAR_BIN)
       {
+         if (var->size == 0 && fabs(var->cost) < EPS_ZERO)
+            continue;
+
          if (first)
          {
             fprintf(fp, "Binary\n");

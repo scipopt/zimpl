@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mpswrite.c,v 1.7 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mpswrite.c,v 1.8 2003/05/20 12:40:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -82,23 +82,28 @@ static void write_vars(
        */
       if (fabs(var->cost) > EPS_ZERO)
       {
+#if 0    /* We should do this in the preprocessing step
+          * otherwise we have problems in case of variable
+          * that have only bounds, but are not part of any
+          * constraint.
+          */
          /* If the variable not free or when minimizing the lower or
           * when maximizing the upper bound is not zero,
           * we have to include it.
           */
          if ((var->size != 0) || (fabs((lp->direct == LP_MIN) ?
             var->lower : var->upper) > EPS_ZERO))
-         {
-            lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
+         
+#endif
+         lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
-            write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV",
-               (lp->direct == LP_MIN) ? var->cost : -var->cost);
+         write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV",
+            (lp->direct == LP_MIN) ? var->cost : -var->cost);
 
-            if (lp->direct == LP_MAX)
-               fprintf(stderr, "%s\n%s\n",
-                  "*** Warning: Objective function inverted to make",
-                  "             minimization problem for MPS output\n");
-         }
+         if (lp->direct == LP_MAX)
+            fprintf(stderr, "%s\n%s\n",
+               "*** Warning: Objective function inverted to make",
+               "             minimization problem for MPS output\n");
       }
       for(nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {
@@ -167,11 +172,15 @@ void mps_write(
    }
    fprintf(fp, "BOUNDS\n");
 
+   /* Variables with size == 0, have to be included because
+    * they might contain bounds. Detailed checking should
+    * be done in a preprocessing routine.
+    */
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      /* Is the variable not used at all ?
+      /* This could be put into a preprocessor
        */
-      if (var->first == NULL)
+      if (var->size == 0 && fabs(var->cost) < EPS_ZERO)
          continue;
       
       /*   0, oo  -> nix

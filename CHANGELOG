@@ -1,3 +1,6 @@
+ - Fixed that variable which were not part of a constraint, 
+   were omitted in the Bounds section of the LPF/MPS file.
+   
  - new -m switch to write unmangled lp file.
 
 1.05 23.Mar 2003 Release
