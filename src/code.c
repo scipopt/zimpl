@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.10 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.11 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -61,7 +61,7 @@ union code_value
    unsigned int bits;
 };
 
-#define MAX_CHILDS 6
+#define MAX_CHILDS 7
 
 struct code_node
 {

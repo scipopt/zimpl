@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.7 2002/06/09 14:15:25 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.8 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -182,6 +182,7 @@ void lpf_write(
    }
    fprintf(fp, "End\n");
 }   
+
 
 
 

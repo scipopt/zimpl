@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.5 2002/06/09 11:05:00 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.6 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -407,7 +407,9 @@ Var* lps_addvar(
    const char* name,
    VarType     type,
    double      lower,
-   double      upper)
+   double      upper,
+   int         prio_up,
+   int         prio_down)
 {
    Var* v;
    
@@ -426,6 +428,8 @@ Var* lps_addvar(
    v->cost      = 0.0;
    v->lower     = (type == VAR_BIN) ? 0.0 : lower;
    v->upper     = (type == VAR_BIN) ? 1.0 : upper;
+   v->prio_up   = prio_up;
+   v->prio_down = prio_down;
    v->first     = NULL;
    v->prev      = NULL;   
    v->next      = lp->var_root;
@@ -792,6 +796,11 @@ void lps_transtable(FILE* fp)
       fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\t%.16e\n",
          con->number, MPS_NAME_LEN, temp, con->name, con->scale);
    }
+}
+
+void lps_orderfile(FILE* fp)
+{
+   ord_write(lp, fp);
 }
 
 void lps_scale()

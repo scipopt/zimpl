@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.11 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.12 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -232,6 +232,8 @@ extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 extern Tuple*       set_match_next(const Set* set, const Tuple* pat, int* idx);
 /*lint -sem(        set_get_dim, 1p == 1, @n >= 0) */
 extern int          set_get_dim(const Set* set);
+/*lint -sem(        set_get_used, 1p == 1, @n >= 0) */
+extern int          set_get_used(const Set* set);
 /*lint -sem(        set_print, 1p == 1 && 2p == 1) */
 extern void         set_print(FILE* fp, const Set* set);
 /*lint -sem(        set_range, @p == 1) */
@@ -446,7 +448,7 @@ extern Con*         lps_getcon(const char* name);
 extern Nzo*         lps_getnzo(const Con* con, const Var* var);
 /*lint -sem(        lps_addvar, 1p, @p == 1) */
 extern Var*         lps_addvar(const char* name, VarType type,
-                       double lower, double upper); 
+   double lower, double upper, int prio_up, int prio_down); 
 /*lint -sem(        lps_addcon, 1p, @p == 1) */
 extern Con*         lps_addcon(
    const char* name, ConType sense, double rhs, unsigned int flags);
@@ -483,6 +485,8 @@ extern void         lps_makename(
    char* target, int size, const char* name, int no);
 /*lint -sem(        lps_transtable, 1p == 1) */
 extern void         lps_transtable(FILE* fp);
+/*lint -sem(        lps_orderfile, 1p == 1) */
+extern void         lps_orderfile(FILE* fp);
 extern void         lps_scale(void);
 
 /* lpfwrite.c
@@ -494,6 +498,11 @@ extern void         lpf_write(const Lps* lp, FILE* fp);
  */
 /*lint -sem(        mps_write, 1p == 1 && 2p == 1) */
 extern void         mps_write(const Lps* lp, FILE* fp);
+
+/* ordwrite.c
+ */
+/*lint -sem(        ord_write, 1p == 1 && 2p == 1) */
+extern void         ord_write(const Lps* lp, FILE* fp);
 
 /* stmt.c
  */

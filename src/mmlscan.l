@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.8 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.9 2002/06/18 09:13:09 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -106,6 +106,11 @@ static int yycolumn = 0;
 "comment"                 { yycolumn += yyleng; return COMMENT; }
 "scale"                   { yycolumn += yyleng; return SCALE; }
 "separate"                { yycolumn += yyleng; return SEPARATE; }
+"card"                    { yycolumn += yyleng; return CARD; }
+"abs"                     { yycolumn += yyleng; return ABS; }
+"prioup"                  { yycolumn += yyleng; return PRIO_UP; }
+"priodown"                { yycolumn += yyleng; return PRIO_DOWN; }
+
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       sscanf(yytext, "%lf", &lval->numb);

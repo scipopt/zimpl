@@ -1,3 +1,11 @@
+Initialisierung von set's
+1. ASGN idxset statt sexpr 
+2. Indizierung der sets erlauben.
+
+Warnung bei set operationen auf sets mit inkompatiblen tupeln
+z.B. { 1, 2, 3 } \ { "3" }
+
+-------------------------------
 
 Es sollte eine Meldung bei "Out of Memory" kommen.
 

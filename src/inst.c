@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.13 2002/06/12 09:09:11 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.14 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -213,6 +213,30 @@ void i_expr_neg(CodeNode* self)
    assert(code_is_valid(self));
 
    code_value_numb(self, -Code_eval_child_numb(self, 0));
+}
+
+void i_expr_abs(CodeNode* self)
+{
+   Trace("i_abs");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self, fabs(Code_eval_child_numb(self, 0)));
+}
+
+void i_expr_card(CodeNode* self)
+{
+   Set* set;
+   
+   Trace("i_abs");
+
+   assert(code_is_valid(self));
+
+   set = Code_eval_child_set(self, 0);
+   
+   code_value_numb(self, (double)set_get_used(set));
+
+   set_free(set);
 }
 
 void i_expr_if(CodeNode* self)
@@ -1065,6 +1089,8 @@ void i_newsym_var(CodeNode* self)
    int         idx = 0;
    double      lower;
    double      upper;
+   double      prio_up;
+   double      prio_down;
    char*       tuplestr;
    char*       varname;
    
@@ -1090,9 +1116,21 @@ void i_newsym_var(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
       
-      lower = Code_eval_child_numb(self, 3);
-      upper = Code_eval_child_numb(self, 4);
+      lower     = Code_eval_child_numb(self, 3);
+      upper     = Code_eval_child_numb(self, 4);
+      prio_up   = Code_eval_child_numb(self, 5);
+      prio_down = Code_eval_child_numb(self, 6);
 
+      if ((vartype == VAR_BIN) && NE(lower, 0.0) && NE(upper, 1.0))
+         fprintf(stderr,
+            "*** Warning: Bounds for binary variable %s ignored\n",
+            name);
+
+      if ((vartype == VAR_CON) && (NE(prio_up, 0.0) || NE(prio_down, 0.0)))
+         fprintf(stderr,
+            "*** Warning: Priority for continous variable %s ignored\n",
+            name);
+         
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
       tuplestr = tuple_tostr(tuple);
@@ -1104,7 +1142,8 @@ void i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = lps_addvar(varname, vartype, lower, upper);
+      var = lps_addvar(varname, vartype, lower, upper,
+         (int)prio_up, (int)prio_down);
 
       entry = entry_new_var(tuple, var);
 

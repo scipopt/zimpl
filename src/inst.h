@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.6 2002/06/12 09:09:11 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.7 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -78,8 +78,12 @@ extern void i_entry(CodeNode* self);
 extern void i_entry_list_add(CodeNode* self);
 /*lint -sem(i_entry_list_new, 1p == 1) */
 extern void i_entry_list_new(CodeNode* self);
+/*lint -sem(i_expr_abs, 1p == 1) */
+extern void i_expr_abs(CodeNode* self);
 /*lint -sem(i_expr_add, 1p == 1) */
 extern void i_expr_add(CodeNode* self);
+/*lint -sem(i_expr_card, 1p == 1) */
+extern void i_expr_card(CodeNode* self);
 /*lint -sem(i_expr_div, 1p == 1) */
 extern void i_expr_div(CodeNode* self);
 /*lint -sem(i_expr_if, 1p == 1) */

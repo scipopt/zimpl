@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: set.c,v 1.7 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -204,6 +204,13 @@ int set_get_dim(const Set* set)
    assert(set_is_valid(set));
 
    return set->dim;   
+}
+
+int set_get_used(const Set* set)
+{
+   assert(set_is_valid(set));
+
+   return set->used;   
 }
 
 void set_print(FILE* fp, const Set* set)

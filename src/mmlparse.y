@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.11 2002/06/12 09:09:11 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.12 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -61,13 +61,14 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
-%token RSCALE SEPARATE
+%token RSCALE SEPARATE PRIO_UP PRIO_DOWN
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
 %token AND OR NOT
 %token SUM MIN MAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT
 %token MOD DIV POW
+%token CARD ABS
 %token READ AS SKIP USE COMMENT
 %token <name> NUMBSYM
 %token <name> STRGSYM
@@ -82,7 +83,7 @@ extern void yyerror(const char* s);
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset product factor term entry entry_list
-%type <code> var_type con_type lower upper condition
+%type <code> var_type con_type lower upper prio_up prio_down condition
 %type <bits> con_attr con_attr_list
 
 %right ASGN
@@ -101,6 +102,7 @@ extern void yyerror(const char* s);
 %left  '*' '/' MOD DIV
 %left  UNARY
 %left  POW
+%left  ABS CARD
 %%
 stmt
    : decl_set   { code_set_root($1); }
@@ -153,18 +155,18 @@ decl_par
  * ----------------------------------------------------------------------------
  */
 decl_var
-   : DECLVAR NAME '[' idxset ']' var_type lower upper ';' {
-         $$ = code_new_inst(i_newsym_var, 5,
-            code_new_name($2), $4, $6, $7, $8);
+   : DECLVAR NAME '[' idxset ']' var_type lower upper prio_up prio_down ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2), $4, $6, $7, $8, $9, $10);
       }
-   | DECLVAR NAME var_type lower upper ';' {
-         $$ = code_new_inst(i_newsym_var, 5,
+   | DECLVAR NAME var_type lower upper prio_up prio_down ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
                code_new_inst(i_tuple_empty, 0),
                code_new_inst(i_set_empty, 1, code_new_size(0)),
                code_new_inst(i_bool_true, 0)),
-            $3, $4, $5);
+            $3, $4, $5, $6, $7);
       }
    ;
 
@@ -183,6 +185,16 @@ lower
 upper
    : /* empty */ { $$ = code_new_numb(INFINITY); }
    | CMP_LE expr { $$ = $2; }
+   ;
+
+prio_up
+   : /* empty */  { $$ = code_new_numb(0.0); }
+   | PRIO_UP expr { $$ = $2; }
+   ;
+
+prio_down
+   : /* empty */    { $$ = code_new_numb(0.0); }
+   | PRIO_DOWN expr { $$ = $2; }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -405,6 +417,8 @@ expr
    | expr MOD expr         { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
    | expr DIV expr         { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
    | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
+   | CARD sexpr            { $$ = code_new_inst(i_expr_card, 1, $2); }
+   | ABS expr              { $$ = code_new_inst(i_expr_abs, 1, $2); }
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }
@@ -421,4 +435,11 @@ expr
          $$ = code_new_inst(i_expr_sum, 2, $2, $4);
       }
    ;
+
+
+
+
+
+
+
 

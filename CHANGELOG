@@ -1,3 +1,12 @@
+ - new flag -r that write a CPLEX branching order file (.ord).
+   Two new attributes for variables: 
+   prio_up expr and prio_down expr that set the branching priority for
+   the variable. 
+
+ - new function ABS(expr) that returns the absolut value of expr.
+
+ - new function CARD(set) that computes the cardinality of a set.
+
  - memory leak pugged, that occured when summing over a restricted set.
 
  - added possiblility to initialise parameter per set element, 

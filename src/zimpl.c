@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.7 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.8 2002/06/18 09:13:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -60,6 +60,7 @@ static const char* banner =
 "  -b          enable bison debugging output.\n" \
 "  -d          enable zimpl debugging output.\n" \
 "  -f          enable flex debugging output.\n" \
+"  -r          write branching order file.\n" \
 "  -h          this help.\n" \
 "  -v          enable verbose output.\n" \
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
@@ -106,22 +107,24 @@ static char* extend_basename(const char* filename, const char* extension)
 
 int main(int argc, char* const* argv)
 {
-   const char* usage = "usage: %s [-h][-v][-t lp|mps][-o outfile] filename\n";
+   const char* usage =
+      "usage: %s [-h][-v][-r][-t lp|mps][-o outfile] filename\n";
    
    Prog*  prog;
    char*  outfile  = NULL;
    char*  tblfile  = NULL;
+   char*  ordfile  = NULL;
    char*  basefile = NULL;
    LpForm format   = LP_FORM_LPF;
-   FILE*  fp_out;
-   FILE*  fp_tbl;
+   FILE*  fp;
+   Bool   write_order = FALSE;
    int    c;
    int    i;
    
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfho:t:v")) != -1)
+   while((c = getopt(argc, argv, "bdfho:rt:v")) != -1)
    {
       switch(c)
       {
@@ -139,6 +142,9 @@ int main(int argc, char* const* argv)
          break;
       case 'o' :
          basefile = strdup(optarg);
+         break;
+      case 'r' :
+         write_order = TRUE;
          break;
       case 't' :
          format = (tolower(*optarg) == 'm') ? LP_FORM_MPS : LP_FORM_LPF;
@@ -163,6 +169,8 @@ int main(int argc, char* const* argv)
       (format == LP_FORM_LPF) ? ".lp" : ".mps");
    tblfile = extend_basename(
       (basefile == NULL) ? argv[optind] : basefile, ".tbl");
+   ordfile = extend_basename(
+      (basefile == NULL) ? argv[optind] : basefile, ".ord");
    
    str_init();
    elem_init();
@@ -183,26 +191,40 @@ int main(int argc, char* const* argv)
    
    /* Write Output
     */
-   if (NULL == (fp_out = fopen(outfile, "w")))
+   if (NULL == (fp = fopen(outfile, "w")))
    {
       perror(outfile);
       abort();
    }
-   lps_write(fp_out, format);
+   lps_write(fp, format);
 
-   fclose(fp_out);
+   fclose(fp);
 
    /* Write translation table
     */
-   if (NULL == (fp_tbl = fopen(tblfile, "w")))
+   if (NULL == (fp = fopen(tblfile, "w")))
    {
       perror(tblfile);
       abort();
    }
-   lps_transtable(fp_tbl);
+   lps_transtable(fp);
 
-   fclose(fp_tbl);
+   fclose(fp);
 
+   /* Write order file 
+    */
+   if (write_order)
+   {
+      if (NULL == (fp = fopen(ordfile, "w")))
+      {
+         perror(ordfile);
+         abort();
+      }
+      lps_orderfile(fp);
+
+      fclose(fp);
+   }
+   
    if (zpldebug) 
       symbol_print_all(stderr);
 
@@ -216,6 +238,7 @@ int main(int argc, char* const* argv)
    symbol_exit();
    elem_exit();
    str_exit();
+   free(ordfile);
    free(outfile);
    free(tblfile);
 

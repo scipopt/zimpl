@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.12 2002/06/12 09:09:11 bzfkocht Exp $
+# $Id: Makefile,v 1.13 2002/06/18 09:13:09 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -50,8 +50,8 @@ LINT		=	lintgcc
 CFLAGS	=	$(OPTI_FLAGS) $(DEBU_FLAGS) $(PROG_FLAGS) $(WARN_FLAGS) 
 OBJECT  =       code.o elem.o entry.o hash.o idxset.o inst.o iread.o list.o \
 		load.o local.o lpstore.o lpfwrite.o mmlparse.o mmlscan.o \
-		mpswrite.o prog.o rbt.o rdefpar.o set.o source.o stmt.o \
-		strstore.o symbol.o term.o tuple.o zimpl.o \
+		mpswrite.o ordwrite.o prog.o rbt.o rdefpar.o set.o source.o \
+		stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
 		mshell.o
 
 $(NAME):	$(OBJECT)
