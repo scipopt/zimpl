@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.84 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.85 2005/03/02 20:58:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1424,7 +1424,6 @@ static void check_sets_compatible(
    const Set*  set_b,
    const char* op_name)
 {
-   const Elem* elem;
    Tuple*      tuple_a;
    Tuple*      tuple_b;
    ElemType    elem_type_a;
@@ -1472,12 +1471,6 @@ CodeNode* i_set_union(CodeNode* self)
 {
    const Set*  set_a;
    const Set*  set_b;
-   const Elem* elem;
-   Tuple*      tuple_a;
-   Tuple*      tuple_b;
-   ElemType    elem_type_a;
-   ElemType    elem_type_b;
-   int         i;
    
    Trace("i_set_union");
 
