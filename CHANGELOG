@@ -1,3 +1,8 @@
+ - memory leak pugged, that occured when summing over a restricted set.
+
+ - added possiblility to initialise parameter per set element, 
+   the same way as variables.
+
  - the row scaling factor is now also printed in the .tbl file.
 
  - Added "attributes" to the constraints. At the moment the following 

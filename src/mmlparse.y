@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.10 2002/06/11 16:15:39 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.11 2002/06/12 09:09:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -129,15 +129,18 @@ decl_set
  */
 decl_par
    : DECLPAR NAME '[' idxset ']' ASGN entry_list ';' {
-         $$ = code_new_inst(i_newsym_para, 3, code_new_name($2), $4, $7);
+         $$ = code_new_inst(i_newsym_para1, 3, code_new_name($2), $4, $7);
       }
    | DECLPAR NAME '[' idxset ']' ASGN expr ';' {
-         $$ = code_new_inst(i_newsym_para, 3, code_new_name($2), $4, $7);
+         $$ = code_new_inst(i_newsym_para2, 3, code_new_name($2), $4, $7);
       }
    | DECLPAR NAME ASGN expr ';' {
-         $$ = code_new_inst(i_newsym_para, 3,
+         $$ = code_new_inst(i_newsym_para1, 3,
             code_new_name($2),
-            code_new_inst(i_set_empty, 1, code_new_size(0)),
+            code_new_inst(i_idxset_new, 3,
+               code_new_inst(i_tuple_empty, 0),
+               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_bool_true, 0)),
             code_new_inst(i_entry_list_new, 1,
                code_new_inst(i_entry, 2,
                   code_new_inst(i_tuple_empty, 0),

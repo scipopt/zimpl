@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.9 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: symbol.c,v 1.10 2002/06/12 09:09:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -67,7 +67,6 @@ Symbol* symbol_new(const char* name, SymbolType type, Set* set)
    assert(name         != NULL);
    assert(strlen(name) >  0);
    assert(set          != NULL);
-   assert((type >= SYM_ERR) && (type <= SYM_VAR));
 
    sym = calloc(1, sizeof(*sym));
 

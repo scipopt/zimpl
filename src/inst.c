@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.12 2002/05/26 12:44:57 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.13 2002/06/12 09:09:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -930,10 +930,13 @@ void i_newsym_set(CodeNode* self)
    code_value_void(self);
 }
 
-void i_newsym_para(CodeNode* self)
+/* initialisation per list
+ */
+void i_newsym_para1(CodeNode* self)
 {
    const char*  name;
    Set*         set;
+   IdxSet*      idxset;
    Symbol*      sym;
    List*        list;
    ListElem*    lelem;
@@ -942,12 +945,13 @@ void i_newsym_para(CodeNode* self)
    int          count;
    int          i;
    
-   Trace("i_newsym_para");
+   Trace("i_newsym_para1");
 
    assert(code_is_valid(self));
 
-   name = Code_eval_child_name(self, 0);
-   set  = Code_eval_child_set(self, 1);
+   name   = Code_eval_child_name(self, 0);
+   idxset = Code_eval_child_idxset(self, 1);
+   set    = idxset_get_set(idxset);
    list = Code_eval_child_list(self, 2);
 
    if (!list_is_entrylist(list))
@@ -988,9 +992,62 @@ void i_newsym_para(CodeNode* self)
       tuple_free(tuple);
       entry_free(entry);
    }
-   set_free(set);
    list_free(list);
+   set_free(set);
+   idxset_free(idxset);
+   
+   code_value_void(self);
+}
 
+/* initialisation per element
+ */
+void i_newsym_para2(CodeNode* self)
+{
+   const char*  name;
+   Set*         set;
+   IdxSet*      idxset;
+   Symbol*      sym;
+   Entry*       entry;
+   Tuple*       tuple;
+   Tuple*       pattern;
+   int          idx = 0;
+   
+   Trace("i_newsym_para2");
+
+   assert(code_is_valid(self));
+
+   name   = Code_eval_child_name(self, 0);
+   idxset = Code_eval_child_idxset(self, 1);
+   set    = idxset_get_set(idxset);
+   sym     = symbol_new(name, SYM_NUMB, set);
+   pattern = idxset_get_tuple(idxset);
+
+   /* Why did I this for the variables ??? Is it neccessary ?
+    */
+   if ((!code_get_bool(code_eval(idxset_get_lexpr(idxset)))))
+   {
+      fprintf(stderr, "*** Error: WITH not allowed here\n");
+      code_errmsg(self);
+      abort();
+   }
+
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+      
+      entry = entry_new_numb(tuple, Code_eval_child_numb(self, 2));
+      
+      symbol_add_entry(sym, entry);
+      
+      local_drop_frame();
+      
+      entry_free(entry);
+      tuple_free(tuple);
+   }
+   tuple_free(pattern);
+   set_free(set);
+   idxset_free(idxset);
+   
    code_value_void(self);
 }
 
@@ -1296,7 +1353,7 @@ void i_term_sum(CodeNode* self)
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-   term_a  = term_new(1);
+   term_r  = term_new(1);
 
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
    {
@@ -1305,11 +1362,11 @@ void i_term_sum(CodeNode* self)
       if (code_get_bool(code_eval(lexpr)))
       {
          term_b = Code_eval_child_term(self, 1);      
-         term_r = term_add_term(term_a, term_b);
+         term_a = term_add_term(term_r, term_b);
 
-         term_free(term_a);
+         term_free(term_r);
          term_free(term_b);
-         term_a = term_r;
+         term_r = term_a;
       }
       local_drop_frame();
 
@@ -1317,9 +1374,6 @@ void i_term_sum(CodeNode* self)
    }
    tuple_free(pattern);
 
-   if (term_r == NULL)
-      term_r = term_new(1);
-   
    code_value_term(self, term_r);
 
    set_free(set);   

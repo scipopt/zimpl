@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.5 2002/05/11 07:44:56 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.6 2002/06/12 09:09:11 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -108,8 +108,10 @@ extern void i_forall(CodeNode* self);
 extern void i_idxset_new(CodeNode* self);
 /*lint -sem(i_local_deref, 1p == 1) */
 extern void i_local_deref(CodeNode* self);
-/*lint -sem(i_newsym_para, 1p == 1) */
-extern void i_newsym_para(CodeNode* self);
+/*lint -sem(i_newsym_para1, 1p == 1) */
+extern void i_newsym_para1(CodeNode* self);
+/*lint -sem(i_newsym_para2, 1p == 1) */
+extern void i_newsym_para2(CodeNode* self);
 /*lint -sem(i_newsym_set, 1p == 1) */
 extern void i_newsym_set(CodeNode* self);
 /*lint -sem(i_newsym_var, 1p == 1) */
