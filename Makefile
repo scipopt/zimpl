@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.2 2003/03/18 09:37:03 bzfkocht Exp $
+# $Id: Makefile,v 1.3 2003/03/23 12:12:15 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -106,7 +106,7 @@ lint:		$(OBJSRC)
 		$(CPPFLAGS) -UNDEBUG -DNO_MSHELL $^
 
 doc:
-		cd doc; $(DOXY) sip.dxy
+		cd doc; make -f Makefile
 
 check:
 		cd check; \

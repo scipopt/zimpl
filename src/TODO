@@ -1,3 +1,10 @@
+VAR setktion in check
+
+es fehlt noch sowas wie sum of sets (Big Uninion)
+
+macht es sinn  "idxset : sexpr condition" zu haben ?
+condition kann in keiner weise auf das element zugreifen.
+
 macht es einen Sinn param x[<i> in I ...] := 3 * i mit default zu haben.
 Es sind doch alle indices initialisiert.
 

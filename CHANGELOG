@@ -1,3 +1,12 @@
+1.05 23.Mar 2003 Release
+
+ - make check now works.
+
+ - Removed senseless default in non indexed parameter.
+
+ - New Makefile that allows different architectures in 
+   parallel.
+
  - Replaced rbt functions by a hash table. Mainly for
    portability.
 
@@ -82,7 +91,7 @@
 
  - log, ln, exp where missing in the parser and the documentation.
 
-1.04 20.Oct 2002 Release
+1.04 20. Oct 2002 Release
 
  - Bug fixed in storage of variable and constraint names.
 
@@ -134,7 +143,7 @@
    all possible varietes. This includes nested sums and coefficents 
    at all places.
 
-1.03 31.Jul 2002 Release
+1.03 31. Jul 2002 Release
 
  - A division by Zero now gives an error message
    (instead of an exception or whatever)
@@ -157,7 +166,7 @@
  - changed to not copy in principle const objects, this should
    have improved speed.
 
-1.02 05.Jul 2002 Release
+1.02 05. Jul 2002 Release
 
  - new functions FLOOR(expr) and CEIL(expr) which find the
    next integer down and up.
@@ -197,7 +206,7 @@
  - Wrong template in read now gives an error message instead of
    an segment violation.
 
-1.01 30.Oct 2001 Bug fix release
+1.01 30. Oct 2001 Bug fix release
 
  - Added several missing const's to the code.
 
@@ -230,6 +239,6 @@
 
  - String valued parameters now work.
 
-1.00 09.Oct 2001 Initial release
+1.00 09. Oct 2001 Initial release
 
 

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.32 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.33 2003/03/23 12:12:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -186,7 +186,7 @@ decl_par
    | DECLPAR NAME '[' idxset ']' ASGN expr par_default ';' {
          $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME ASGN expr par_default ';' {
+   | DECLPAR NAME ASGN expr ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
@@ -196,7 +196,7 @@ decl_par
             code_new_inst(i_entry_list_new, 1,
                code_new_inst(i_entry, 2,
                   code_new_inst(i_tuple_empty, 0),
-                  $4)), $5);
+                  $4)), code_new_inst(i_nop, 0));
       }
    ;
 

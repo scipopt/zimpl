@@ -5,64 +5,78 @@ problem into a linear or (mixed-)integer mathematical program
 expressed in .lp or .mps file format which can be read by a LP or MIP
 solver.
 
+
+COMPILING
+---------
+On a Linux system you might succeed with just saying: make
+
+Otherwise:
+
+  Linux/x86 with GNU C     :  gmake COMP=gnu
+  Linux/x86 with Intel C   :  gmake COMP=intel
+  Tru64 with Compaq C      :  gmake COMP=compaq
+  Solaris with SUN Forte C :  gmake COMP=sun
+  AIX with VisualAge C     :  gmake COMP=ibm
+
+If your configuration is not in the list or does not work,
+you have to change the Makefile. Go to make/local
+an add a file make.<hostname_of_your_computer>
+There you can set the usual suspects like CC, CFLAGS, LDFLAG,
+and so on. Have a look at Makefile and make/make.* to
+get an idea. 
+
+CHECKING
+--------
+Do a "make check" and look if it works. If not, compile again
+with an added "OPT=dbg" to the gmake invocation. 
+
+
 INSTALLATION
 ------------
-GNU Make is needed to use the makefiles. 
-If gcc is installed just say "make" in zimpl/src . 
-This will build the program zimpl.
+Copy bin/zimpl.*.opt to wherever you like.
 
-
-SPECIAL MASCHINE DEPENDEND INSTRUCTIONS 
----------------------------------------
-Compaq C Compiler on Tru64
-in src/Makefile, change
-CC    = cc
-CFLAGS= -O3 -fast
-DFLAGS= -M
-
-Compaq C Compiler on Linux/Alpha
-same as above, but CC=ccc.
-
-Sun with Sun Workshop Compiler
-in src/Makefile, change
-CC    = cc
-CFLAGS= -fast -xO3
-DFLAGS= -xM1
 
 ALL GNULESS
 -----------
 if you don't have gcc and gmake etc. You can try the following.
 Go to src and say "cc -O *.c -o zimpl".  
 
+
 LICENSE
 -------
 ZIMPL is under the GNU Public License Version 2. 
 See the file LICENSE for details.
 
+
 LATEST VERSION
 --------------
 Can be found at http://www.zib.de/koch/zimpl
 
+
 BUGS
 ----
-Probably several more. If you find one, send a description 
+Probably several. If you find one, send a description 
 with runnable example .zpl file to koch@zib.de
 (Better even, send a working fix ;-)
 
+
 REMARK
 ------
-If anything is changed in the code I would recommend recompiling without
-NDEBUG and NO_MSHELL defined. This will slow down the code considerably but
-will do a lot of consistency checking.
+If anything is changed in the code I would recommend recompiling
+without NDEBUG and NO_MSHELL defined. This will slow down the code
+considerably but will do a lot of consistency checking.
 In the source code are a lot of comments starting with
 /*lint ... and also a target in the Makefile.
-These are for flexelint (see http://www.gimpel.com) a very good version of
-lint. If you are interested in my settings used for this project,
-send me an email.
+These are for flexelint (see http://www.gimpel.com) a very good
+version of lint. If you are interested in my settings used for this
+project, send me an email.
 
-THANKS
-------
-To Armin Fügenschuh and Marc Pfetsch for there comments and bug reports.
+
+THANKS 
+------ 
+To Armin Fügenschuh, Marc Pfetsch and Sascha Lukac for there comments
+and bug reports.
+
 
 COMPLAINS
 ---------

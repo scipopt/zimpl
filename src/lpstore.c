@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lpstore.c,v 1.13 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lpstore.c,v 1.14 2003/03/23 12:12:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -51,7 +51,7 @@ static const unsigned int sto_size  = 1000;
 static Lps* lp = NULL;
 
 #ifndef NDEBUG
-static Bool lps_valid()
+static Bool lps_valid(void)
 {
    const char* err1  = "Wrong Previous Variable";
    const char* err2  = "Wrong Variable Previous Nonzero";
@@ -199,7 +199,7 @@ static Bool lps_valid()
 }
 #endif /* !NDEBUG */
 
-static void lps_storage()
+static void lps_storage(void)
 {
    Sto*         s;
    Nzo*         n;
