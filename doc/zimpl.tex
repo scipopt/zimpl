@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.12 2003/05/26 08:30:24 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.13 2003/08/21 08:39:22 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.12 2003/05/26 08:30:24 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.13 2003/08/21 08:39:22 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -74,7 +74,7 @@ pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimizati
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small for Version 1.05\\18. March 2003}
+\date{\small for Version 2.00\\21. August 2003}
 \maketitle
 \vfill
 \begin{abstract}
@@ -229,30 +229,34 @@ of interest):
 \medskip
 \begin{tabular}{lp{115mm}}
 %\hline
--t {\em format}& Selects the output format. Can be either \code{lp}
-which is default or \code{mps}.\\
--o {\em name} & Sets the base-name for the output files.\\ 
-& Defaults to the name of the first input file striped of the path and
-extension.\\ 
--p {\em filter} & The output is piped through a filter. A \%s in the
-string is replaced by the output filename. For example 
-\code{-p "gzip -c >\%s.gz"} would compress all the output files.\\
--n {\em cform}& Select the format for the generation of constraint
-names. Can be either {\em cm} which will number them $1\ldots n$ with
-a `c' in front. {\em cn} will use the name supplied in the
-\code{subto} statement and number them $1\ldots n$ within the
-statement. {\em cf} will use the name given with the \code{subto},
-then a $1\ldots n$ number like in \emph{cm} and then append all the
-local variables from the forall statements.\\
+-t {\em format} & Selects the output format. Can be either \code{lp}
+                  which is default or \code{mps}.\\
+-o {\em name}   & Sets the base-name for the output files.\\ 
+                & Defaults to the name of the first input file striped 
+                  of the path and
+                  extension.\\ 
+-F {\em filter} & The output is piped through a filter. A \%s in the
+                  string is replaced by the output filename. For example 
+                  \code{-p "gzip -c >\%s.gz"} would compress all the 
+                  output files.\\
+-n {\em cform}  & Select the format for the generation of constraint
+                  names. Can be either {\em cm} which will number them 
+                  $1\ldots n$ with a `c' in front. {\em cn} will use 
+                  the name supplied in the \code{subto} statement and 
+                  number them $1\ldots n$ within the statement. 
+                  {\em cf} will use the name given with the \code{subto},
+                  then a $1\ldots n$ number like in \emph{cm} and then 
+                  append all the local variables from the forall statements.\\
 %\hline
--m&Writes the output file with unmangled variable names. This file
-   can usually not be optimizized because the format is invalid.\\
--r&Writes an \cplex \code{ord} branching order file.\\
--b&Enables bison debugging output.\\
--d&Enables zimpl debugging output.\\
--f&Enables flex debugging output.\\
--h&Prints a usage message.\\
--v&Enables verbose mode.\\
+-p & Does some presolve analysis to fix variables.\\
+-m & Writes the output file with unmangled variable names. This file
+     can usually not be optimizized because the format is invalid.\\
+-r & Writes an \cplex \code{ord} branching order file.\\
+-b & Enables bison debugging output.\\
+-d & Enables zimpl debugging output.\\
+-f & Enables flex debugging output.\\
+-h & Prints a usage message.\\
+-v & Enables verbose mode.\\
 %\hline
 \end{tabular}
 
@@ -317,10 +321,10 @@ any of the following operators and functions:
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
-\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
-\code{ln(a)}                     &natural logarithm         & $\ln a$\\
-\code{exp(a)}                    &exponential function      & $e^a$\\
-\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
+%\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
+%\code{ln(a)}                     &natural logarithm         & $\ln a$\\
+%\code{exp(a)}                    &exponential function      & $e^a$\\
+%\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
 \code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
@@ -403,15 +407,15 @@ operators are defined:
 \code{A$\setminus$B, A-B},&\\
 \code{A without B} &Difference & $\{ x |x\in A\wedge x\not\in B\}$\\
 \code{A symdiff B} &Symmetric difference & 
-$\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
+   $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
 \code{\{n\,{..}\,m\}},&\\
 \code{\{n to m {\em by s}\}}& Generate, & 
-$\{ x | x=n + is \leq m, i\in\N_0\}$\\
-&(default $s = 1$)&\\ 
+   $\{ x | x=n + is \leq m, i\in\N_0\}$\\
+   &(default $s = 1$)&\\ 
 \code{proj(A, t)}& Projection & 
-The new set will consist of $n$-tuples, with\\
-&$t=(e_1,\ldots,e_n)$&
-the $i$-th component beeing the $e_i$-th component of $A$.\\
+   The new set will consist of $n$-tuples, with\\
+   &$t=(e_1,\ldots,e_n)$&
+   the $i$-th component beeing the $e_i$-th component of $A$.\\
 %\hline
 \end{tabular}
 
@@ -435,10 +439,10 @@ which the expression evaluated to \emph{true} are included in the new set.
 \paragraph{Examples}
 {\small 
 \begin{verbatim}
-set F := <i,j> in Q with i > j and i < 5;
+set F := { <i,j> in Q with i > j and i < 5 };
 set A := { "a", "b", "c" };
 set B := { 1, 2, 3 };
-set V := <a,2> in A*B with a == "a" or a == "b";
+set V := { <a,2> in A*B with a == "a" or a == "b" };
 # will give: <"a",2>, <"b",2>
 \end{verbatim}
 }
@@ -536,7 +540,7 @@ var z[<a,b,c> in C] integer
 \fbox{Remember: if nothing is specified a lower bounds of zero is assumed.}
 
 \subsection{Objective}
-There must be exactly one objective statement in a model. The objective
+There must be at most one objective statement in a model. The objective
 can be either \code{minimize} or \code{maximize}. Following the
 keyword is a name, a colon (\code{:}) and then a term consisting 
 of variables.
