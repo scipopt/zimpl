@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.28 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.29 2002/11/05 12:48:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1419,6 +1419,7 @@ CodeNode* i_newsym_var(CodeNode* self)
    const Tuple*  tuple;
    const Tuple*  pattern;
    VarType       vartype;
+   VarType       usevartype;
    Var*          var;
    Entry*        entry;
    int           idx = 0;
@@ -1451,11 +1452,12 @@ CodeNode* i_newsym_var(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
       
-      lower     = code_eval_child_numb(self, 3);
-      upper     = code_eval_child_numb(self, 4);
-      priority  = code_eval_child_numb(self, 5);
-      startval  = code_eval_child_numb(self, 6);
-
+      lower      = code_eval_child_numb(self, 3);
+      upper      = code_eval_child_numb(self, 4);
+      priority   = code_eval_child_numb(self, 5);
+      startval   = code_eval_child_numb(self, 6);
+      usevartype = vartype;
+      
       if ((vartype == VAR_BIN) && NE(lower, 0.0) && NE(upper, 1.0))
          fprintf(stderr,
             "*** Warning: Bounds for binary variable %s ignored\n",
@@ -1467,9 +1469,26 @@ CodeNode* i_newsym_var(CodeNode* self)
             "*** Warning: Priority/Startval for continous var %s ignored\n",
             name);
 
+      /* Integral bounds for integral variables ?
+       */
+      if ((vartype != VAR_CON) && NE(ceil(lower), lower))
+      {
+         lower = ceil(lower);
+         fprintf(stderr,
+            "*** Warning: Lower bound for integral var %s truncated to %g\n",
+            name, lower);
+      }
+      if ((vartype != VAR_CON) && NE(floor(upper), upper))
+      {
+         upper = floor(upper);
+         fprintf(stderr,
+            "*** Warning: Upper bound for integral var %s truncated to %g\n",
+            name, upper);
+      }
+
       if ((vartype == VAR_INT) && EQ(lower, 0.0) && EQ(upper, 1.0))
-         vartype = VAR_BIN;
-      
+         usevartype = VAR_BIN;
+
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
       tuplestr = tuple_tostr(tuple);
@@ -1481,7 +1500,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = lps_addvar(varname, vartype, lower, upper,
+      var = lps_addvar(varname, usevartype, lower, upper,
          (int)priority, startval);
 
       entry = entry_new_var(tuple, var);

@@ -1,3 +1,5 @@
+Sollte man auf 0 fixierte Variablen entfernen ?
+------------------------
 idxset und sexpr vereinheitlichen, eigendlich ist ein
 idxset immer eine sexpr
 

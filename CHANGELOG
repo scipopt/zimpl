@@ -1,3 +1,9 @@
+ - Non integral variable bounds for integral Variables are 
+   Warned about and fixed.
+
+ - Bug fixed, that would not only set one variable from integer
+   to binary, but all that would follow in the set also.
+
  - New function powerset(N) implemented. This generates all subsets
    of N. Example: set S[] = powerset(N);
 
@@ -10,9 +16,9 @@
    is valid. Additional the new function indexset(S) returns the
    index set of S.
    
- - Indizierte Sets implementiert.
+ - Indexed Sets implemented.
 
- - added "!" factorial fucntion.
+ - added "!" factorial function.
 
  - log, ln, exp where missing in the parser and the documentation.
 
