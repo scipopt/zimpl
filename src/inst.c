@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.49 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.50 2003/08/21 08:12:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -152,7 +152,7 @@ CodeNode* i_rangeconst(CodeNode* self)
    
    /* It has to be either l <= x <= u, or u >= x >= l
     */
-   if (code_eval_child_contype(self, 4) != code_eval_child_contype(self, 5))
+   if (code_eval_child_contype(self, 3) != code_eval_child_contype(self, 4))
    {
       fprintf(stderr, "*** Error: Range must be l <= x <= u, or u >= x >= l\n");
       code_errmsg(self);
@@ -162,7 +162,7 @@ CodeNode* i_rangeconst(CodeNode* self)
    lhs        = numb_copy(code_eval_child_numb(self, 0));
    term       = term_copy(code_eval_child_term(self, 1));
    rhs        = numb_copy(code_eval_child_numb(self, 2));
-   flags      = code_eval_child_bits(self, 3);
+   flags      = code_eval_child_bits(self, 5);
 
    numb_sub(lhs, term_get_constant(term));
    numb_sub(rhs, term_get_constant(term));

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.24 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.25 2003/08/21 08:12:58 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -43,13 +43,15 @@ extern void yyerror(const char* s);
 
 YY_DECL;
 
-static int yycolumn = 0;
+static int  yycolumn = 0;
+static int  yydecl   = 0;
 
 /*lint -e506 -e525 -e528 -e527 -e551 -e553 -e613 -e633 */
 /*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
 /*lint -e825 */
 /*lint -esym(613,b,buf) -esym(563,find_rule) */
 /*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
+/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 %}
 %option noyylineno
 %option never-interactive
@@ -71,12 +73,12 @@ static int yycolumn = 0;
 "not"                     { yycolumn += yyleng; return NOT; }
 "and"                     { yycolumn += yyleng; return AND; }
 "or"                      { yycolumn += yyleng; return OR; }
-"set"                     { yycolumn += yyleng; return DECLSET; }
-"param"                   { yycolumn += yyleng; return DECLPAR; }
-"var"                     { yycolumn += yyleng; return DECLVAR; }
-"maximize"                { yycolumn += yyleng; return DECLMAX; }
-"minimize"                { yycolumn += yyleng; return DECLMIN; }
-"subto"                   { yycolumn += yyleng; return DECLSUB; }
+"set"                     { yycolumn += yyleng; yydecl = DECLSET; return DECLSET; }
+"param"                   { yycolumn += yyleng; yydecl = DECLPAR; return DECLPAR; }
+"var"                     { yycolumn += yyleng; yydecl = DECLVAR; return DECLVAR; }
+"maximize"                { yycolumn += yyleng; yydecl = DECLMAX; return DECLMAX; }
+"minimize"                { yycolumn += yyleng; yydecl = DECLMIN; return DECLMIN; }
+"subto"                   { yycolumn += yyleng; yydecl = DECLSUB; return DECLSUB; }
 "in"                      { yycolumn += yyleng; return IN; }
 "with"|"|"                { yycolumn += yyleng; return WITH; }
 "do"|":"                  { yycolumn += yyleng; return DO; }
@@ -145,22 +147,48 @@ static int yycolumn = 0;
 
       yycolumn += yyleng; 
 
-      if (NULL != (sym = symbol_lookup(yytext)))
-      {
-         lval->sym = sym;
+      /* If it is sure that this is the name for a constraint or 
+       * objective, we do not need to lookup the name.
+       */
+      if (yydecl == DECLSUB || yydecl == DECLMIN || yydecl == DECLMAX)
+         yydecl     = 0;
 
-         switch(symbol_get_type(sym))
+      /* If it is sure that this is the name for a set, param or var
+       * we check only if the name is unused and otherwise give
+       * an appropriate error message.
+       */
+      else if (yydecl == DECLSET || yydecl == DECLPAR || yydecl == DECLVAR)
+      {
+         if (NULL != symbol_lookup(yytext))
          {
-         case SYM_NUMB :
-            return NUMBSYM;
-         case SYM_STRG :
-            return STRGSYM;
-         case SYM_VAR :
-            return VARSYM;
-         case SYM_SET :
-            return SETSYM;
-         default :
-            abort();
+            char errmsg[256];
+
+            sprintf(errmsg, "Name \"%s\" already in use\n", yytext);
+            yyerror(errmsg);
+         }
+         yydecl = 0;
+      }
+      else
+      {
+         assert(yydecl == 0);
+
+         if (NULL != (sym = symbol_lookup(yytext)))
+         {
+            lval->sym = sym;
+
+            switch(symbol_get_type(sym))
+            {
+            case SYM_NUMB :
+               return NUMBSYM;
+            case SYM_STRG :
+               return STRGSYM;
+            case SYM_VAR :
+               return VARSYM;
+            case SYM_SET :
+               return SETSYM;
+            default :
+               abort();
+            }
          }
       }
       lval->name = str_new(yytext);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.38 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.39 2003/08/21 08:12:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -41,11 +41,6 @@ enum element_type
 };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_VAR, HASH_CON };
-//enum lp_direct       { LP_MIN = 0, LP_MAX };
-//enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
-//enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
-//enum con_type        { CON_ERR = 0, CON_EQ, CON_LE, CON_GE };
-//enum var_type        { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
 
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type

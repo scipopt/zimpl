@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.40 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.41 2003/08/21 08:12:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,7 +25,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e574 -e525 -e662 -e750 -e737 -e734 -e744 -e732 -e713 */
+/*lint -e428 -e574 -e525 -e527 -e662 -e750 -e737 -e734 -e744 -e732 -e713 */
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
 /*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
@@ -45,7 +45,8 @@
 #include "inst.h"
    
 #define YYERROR_VERBOSE 1
-   
+
+/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 extern void yyerror(const char* s);
  
 %}

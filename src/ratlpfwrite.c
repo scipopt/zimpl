@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.5 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.6 2003/08/21 08:12:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -159,22 +159,27 @@ void lpf_write(
          else if (i == 1)
             continue;
     
-         lps_makename(name, namelen + 1, con->name, con->number);
-            
          if (con->type == CON_RANGE)
          {
             /* Split ranges, because LP format can't handle them.
              */
+            lps_makename(name, namelen + 1, con->name, con->number);
             fprintf(fp, " %sR:\n ", name);
-            write_row(fp, con, namelen, name);
+
+            write_row(fp, con, namelen, name); /* changes name */
             write_rhs(fp, con, CON_RHS);
+
+            lps_makename(name, namelen + 1, con->name, con->number);
             fprintf(fp, " %sL:\n ", name);
-            write_row(fp, con, namelen, name);
+
+            write_row(fp, con, namelen, name); /* changes name */
             write_rhs(fp, con, CON_LHS);
          }
          else
          {
+            lps_makename(name, namelen + 1, con->name, con->number);
             fprintf(fp, " %s:\n ", name);
+
             write_row(fp, con, namelen, name);
             write_rhs(fp, con, con->type);
          }
