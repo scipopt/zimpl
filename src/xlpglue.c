@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.15 2003/10/08 08:03:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.16 2003/10/27 11:13:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -107,7 +107,7 @@ Con* xlp_addcon(
    assert(name != NULL);
    assert(lhs  != NULL);
    assert(rhs  != NULL);
-   
+
    con = lps_addcon(lp, name);
 
    assert(con != NULL);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.11 2003/10/27 08:43:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.12 2003/10/27 11:13:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -932,7 +932,7 @@ CodeNode* i_vabs(CodeNode* self)
    Symbol*      sym;
    Term*        term;
    const Term*  term_abs;
-   const Numb*  rhs;
+   Numb*        rhs;
    unsigned int flags;
    const char*  cname;
    Bound*       lower;
@@ -952,7 +952,7 @@ CodeNode* i_vabs(CodeNode* self)
 
    term_abs = code_eval_child_term(self, 0);
    flags    = 0;
-   rhs      = term_get_constant(term_abs);
+   rhs      = numb_copy(term_get_constant(term_abs));
    term     = term_copy(term_abs);
 
    /* Check if trival infeasible
@@ -975,19 +975,21 @@ CodeNode* i_vabs(CodeNode* self)
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
 
+#if 0
    printf("[%s] ", cname);
    numb_print(stdout, rhs);
    term_print(stdout, term, TERM_PRINT_SYMBOL);
    printf("---\n");
-
-
+#endif
+   
    if (bound_get_type(lower) != BOUND_VALUE || bound_get_type(upper) != BOUND_VALUE)
    {
       fprintf(stderr, "*** Error 184: vabs term not bounded\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
-   term_sub_constant(term, rhs);
+   numb_neg(rhs);
+   term_add_constant(term, rhs);
 
    if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
    {
@@ -1073,6 +1075,7 @@ CodeNode* i_vabs(CodeNode* self)
    bound_free(bound_zero);
    bound_free(lower);
    bound_free(upper);
+   numb_free(rhs);
    
    return self;
 }

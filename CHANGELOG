@@ -1,3 +1,7 @@
+ - Fixed a major bug that occured, if two number
+   were subtracted from a constraint like in
+   x - 5 + 3 >= 1
+
  - Documentation update. Many spelling errors removed.
    do print and do check statements documented.
 
