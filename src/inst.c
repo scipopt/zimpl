@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.61 2003/09/19 08:30:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.62 2003/09/26 15:32:48 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1647,99 +1647,6 @@ CodeNode* i_newsym_set2(CodeNode* self)
    return self;
 }
 
-/* initialisation per list
- */
-CodeNode* i_newsym_para1(CodeNode* self)
-{
-   const char*   name;
-   Set*          iset;
-   const IdxSet* idxset;
-   Symbol*       sym;
-   const List*   list;
-   ListElem*     lelem;
-   const Entry*  entry;
-   const Tuple*  tuple;
-   CodeNode*     child3;
-   const Entry*  deflt;
-   int           count;
-   int           i;
-   
-   Trace("i_newsym_para1");
-
-   assert(code_is_valid(self));
-
-   name   = code_eval_child_name(self, 0);
-   idxset = code_eval_child_idxset(self, 1);
-   iset   = set_from_idxset(idxset);
-   list   = code_eval_child_list(self, 2);
-   child3 = code_eval_child(self, 3);
-
-   if (code_get_type(child3) == CODE_VOID)
-      deflt = ENTRY_NULL;
-   else
-      deflt = code_get_entry(code_eval(child3));
-         
-   if (!list_is_entrylist(list))
-   {
-      /* This errors occurs, if the parameter is mssing in the template
-       * for a "read" statement.
-       */
-      assert(list_is_tuplelist(list));
-      
-      fprintf(stderr, "*** Error 132: Values in parameter list missing,\n");
-      fprintf(stderr, "               probably wrong read template\n");      
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
-   
-   /* First element will determine the type (see SYM_ERR below)
-    */
-   count = list_get_elems(list);
-
-   /* I found no way to make the following error happen.
-    * You will get either an error 157 or an parse error.
-    * In case there is a way a parse error with
-    * message "Symbol xxx not initialised" will result.
-    * In this case the code below should be reactivated.
-    */
-   assert(count > 0);
-#if 0
-   /* So if there is no first element, we are in trouble.
-    */
-   if (count == 0)
-   {
-      fprintf(stderr, "*** Error xxx: Empty initialisation for parameter \"%s\"\n",
-         name);
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
-#endif
-   sym   = symbol_new(name, SYM_ERR, iset, count, deflt);
-   lelem = NULL;
-   
-   for(i = 0; i < count; i++)
-   {
-      entry  = list_get_entry(list, &lelem);
-      tuple  = entry_get_tuple(entry);
-      
-      if (set_lookup(iset, tuple))
-         symbol_add_entry(sym, entry_copy(entry));
-      else
-      {
-         fprintf(stderr, "*** Error 134: Illegal element ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " for symbol\n");
-         code_errmsg(self);
-         exit(EXIT_FAILURE);
-      }
-   }
-   code_value_void(self);
-
-   set_free(iset);
-
-   return self;
-}
-
 /* initialisation per element
  */
 CodeNode* i_newsym_para2(CodeNode* self)
@@ -2579,6 +2486,59 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
    
    code_value_list(self, list);
    
+   return self;
+}
+
+CodeNode* i_list_matrix(CodeNode* self)
+{
+   List* head;
+   List* lines;
+   List* list;
+   
+   Trace("i_matrix_list_new");
+
+   assert(code_is_valid(self));
+
+   head  = code_eval_child_list(self, 0);
+   lines = code_eval_child_list(self, 1);
+
+   /* make new list, make new tuple, etc
+    */
+   code_value_list(self, list);
+
+   return self;
+}
+
+CodeNode* i_matrix_list_new(CodeNode* self)
+{
+   List* list;
+   
+   Trace("i_matrix_list_new");
+
+   assert(code_is_valid(self));
+
+   list = list_new_list(code_eval_child_list(self, 0));
+   list_add_list(list, code_eval_child_list(self, 1));
+
+   code_value_list(self, list);
+
+   return self;
+}
+
+CodeNode* i_matrix_list_add(CodeNode* self)
+{
+   List* list;
+  
+   Trace("i_matrix_list_add");
+
+   assert(code_is_valid(self));
+
+   list = list_copy(code_eval_child_list(self, 0));
+   list_add_list(list, code_eval_child_list(self, 1));
+   list_add_list(list, code_eval_child_list(self, 2));
+
+   code_value_list(self, list);
+
    return self;
 }
 

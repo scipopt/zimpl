@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.23 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.24 2003/09/26 15:32:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -138,8 +138,14 @@ extern CodeNode* i_expr_sub(CodeNode* self);
 extern CodeNode* i_forall(CodeNode* self);
 /*lint -sem(     i_idxset_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_idxset_new(CodeNode* self);
+/*lint -sem(     i_list_matrix, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_list_matrix(CodeNode* self);
 /*lint -sem(     i_local_deref, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_local_deref(CodeNode* self);
+/*lint -sem(     i_matrix_list_new, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_matrix_list_new(CodeNode* self);
+/*lint -sem(     i_matrix_list_add, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_matrix_list_add(CodeNode* self);
 /*lint -sem(     i_newdef, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_newdef(CodeNode* self);
 /*lint -sem(     i_newsym_para1, 1p == 1, type(1), @p == 1p) */

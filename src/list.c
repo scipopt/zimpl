@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.12 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.13 2003/09/26 15:32:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -39,7 +39,7 @@
 
 enum list_type
 {
-   LIST_ERR = 0, LIST_ELEM, LIST_TUPLE, LIST_ENTRY, LIST_IDXELEM
+   LIST_ERR = 0, LIST_ELEM, LIST_TUPLE, LIST_ENTRY, LIST_IDXELEM, LIST_LIST
 };
 
 typedef enum list_type      ListType;
@@ -50,6 +50,7 @@ union list_data
    Entry* entry;
    Tuple* tuple;
    Elem*  elem;
+   List*  list;
 };
 
 struct list_element
@@ -139,6 +140,17 @@ List* list_new_entry(const Entry* entry)
    return list_new(LIST_ENTRY, &data);
 }
 
+List* list_new_list(const List* list)
+{
+   ListData data;
+   
+   assert(list_is_valid(list));
+
+   data.list = list_copy(list);
+
+   return list_new(LIST_LIST, &data);
+}
+
 void list_free(List* list)
 {   
    ListElem* p;
@@ -168,6 +180,9 @@ void list_free(List* list)
             entry_free(p->data.entry);
             break;
          case LIST_IDXELEM :
+            break;
+         case LIST_LIST :
+            list_free(p->data.list);
             break;
          default :
             abort();
@@ -247,6 +262,19 @@ void list_add_entry(List* list, const Entry* entry)
    list_add_data(list, &data);
 }
 
+void list_add_list(List* list, const List* ll)
+{
+   ListData data;
+
+   assert(list_is_valid(list));
+   assert(list_is_valid(ll));
+   assert(list->type == LIST_LIST);
+   
+   data.list = list_copy(ll);
+
+   list_add_data(list, &data);
+}
+
 int list_get_elems(const List* list)
 {
    assert(list_is_valid(list));
@@ -305,6 +333,18 @@ const Entry* list_get_entry(const List* list, ListElem** idxp)
    return (data == NULL) ? ENTRY_NULL : data->entry;
 }
 
+const List* list_get_list(const List* list, ListElem** idxp)
+{
+   ListData* data;
+   
+   assert(list_is_valid(list));
+   assert(list->type == LIST_LIST);
+
+   data = list_get_data(list, idxp);
+
+   return (data == NULL) ? LIST_NULL : data->list;
+}
+
 void list_print(FILE* fp, const List* list)
 {
    ListElem* le;
@@ -323,6 +363,9 @@ void list_print(FILE* fp, const List* list)
          break;
       case LIST_ENTRY :
          entry_print(fp, le->data.entry);
+         break;
+      case LIST_LIST :
+         list_print(fp, le->data.list);
          break;
       default :
          abort();

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.47 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.48 2003/09/26 15:32:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -230,12 +230,16 @@ extern const Numb*  bound_get_value(const Bound* bound);
 
 /* list.c
  */
+#define LIST_NULL ((List*)0)
+
 /*lint -sem(        list_new_elem, 1p == 1, @p == 1) */
 extern List*        list_new_elem(const Elem* elem);
 /*lint -sem(        list_new_tuple, 1p == 1, @p == 1) */
 extern List*        list_new_tuple(const Tuple* tuple);
 /*lint -sem(        list_new_entry, 1p == 1, @p == 1) */
 extern List*        list_new_entry(const Entry* entry);
+/*lint -sem(        list_new_list, 1p == 1, @p == 1) */
+extern List*        list_new_list(const List* list);
 /*lint -sem(        list_free, custodial(1), 1p == 1) */
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
@@ -252,6 +256,8 @@ extern void         list_add_elem(List* list, const Elem* elem);
 extern void         list_add_tuple(List* list, const Tuple* tuple);
 /*lint -sem(        list_add_entry, 1p == 1 && 2p == 1) */
 extern void         list_add_entry(List* list, const Entry* entry);
+/*lint -sem(        list_add_list, 1p == 1 && 2p == 1) */
+extern void         list_add_list(List* list, const List* ll);
 /*lint -sem(        list_get_elems, 1p == 1, @n >= 0) */
 extern int          list_get_elems(const List* list);
 /*lint -sem(        list_get_elem,  1p == 1, @p == 1) */
@@ -260,6 +266,8 @@ extern const Elem*  list_get_elem(const List* list, ListElem** idxp);
 extern const Tuple* list_get_tuple(const List* list, ListElem** idxp);
 /*lint -sem(        list_get_entry, 1p == 1, @p == 1) */
 extern const Entry* list_get_entry(const List* list, ListElem** idxp);
+/*lint -sem(        list_get_list, 1p == 1, @p == 1) */
+extern const List*  list_get_list(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
 

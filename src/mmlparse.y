@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.51 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.52 2003/09/26 15:32:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -94,6 +94,7 @@ extern void yyerror(const char* s);
 %type <code> idxset subterm summand factor vexpr term name_list
 %type <code> expr_entry expr_entry_list set_entry set_entry_list par_default
 %type <code> var_type con_type lower upper priority startval condition
+%type <code> matrix_body matrix_head
 %type <bits> con_attr con_attr_list
 
 %right ASGN
@@ -248,12 +249,33 @@ decl_par
                   code_new_inst(i_tuple_empty, 0),
                   $4)), code_new_inst(i_nop, 0));
       }
+   | DECLPAR NAME '[' idxset ']' ASGN matrix_head matrix_body ';' {
+         $$ = code_new_inst(i_newsym_para1, 4,
+            code_new_name($2),
+            $4,
+            code_new_inst(i_list_matrix, 2, $7, $8),
+            code_new_inst(i_nop, 0)); /* no default */
+      }
    ;
 
 par_default
    : /* empty */   { $$ = code_new_inst(i_nop, 0); }
    | DEFAULT expr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
    ;
+
+matrix_head
+   : WITH expr_list WITH { $$ = $2; }
+   ;
+
+matrix_body
+   : matrix_head expr_list {
+         $$ = code_new_inst(i_matrix_list_new, 2, $1, $2);
+      }
+   | matrix_body matrix_head expr_list  {
+         $$ = code_new_inst(i_matrix_list_add, 3, $1, $2, $3);
+      }
+   ;
+
 
 /* ----------------------------------------------------------------------------
  * --- Var Declaration
