@@ -3,8 +3,12 @@ IndexOptions NameWidth=*
 HeaderName header.html
 IndexIgnore .. header.html
 AddDescription "Linux, optimized for P4" *linux.x86.*.opt-p4 
-AddDescription "Linux, PPro and later" *linux.x86.*.opt 
-AddDescription "Use this for Windooze" *win*opt*exe
+AddDescription "Linux/Intel" *linux.x86.* 
+AddDescription "Solaris" *sunos*
+AddDescription "AIX Power4" *aix.pwr4*
+AddDescription "HP-UX" *hp-ux*
+AddDescription "Tru64/OSF1" *osf1*
+AddDescription "Use this for Windooze" *win*exe
 AddDescription "Zimpl User Guide" zimpl.pdf
 AddDescription "List of recent changes" CHANGELOG*
 AddDescription "Source code" zimpl*tgz
