@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.5 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: tuple.c,v 1.6 2002/07/28 07:03:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -40,9 +40,9 @@
 struct tuple
 {
    SID
-   int          dim;
-   int          refc;
-   const Elem** element;
+   int    dim;
+   int    refc;
+   Elem** element;
 };
 
 Tuple* tuple_new(int dim)
@@ -74,6 +74,8 @@ Tuple* tuple_new(int dim)
 
 void tuple_free(Tuple* tuple)
 {
+   int i;
+   
    assert(tuple_is_valid(tuple));
    assert(tuple->element != NULL);
 
@@ -81,6 +83,9 @@ void tuple_free(Tuple* tuple)
 
    if (tuple->refc == 0)
    {
+      for(i = 0; i < tuple->dim; i++)
+         elem_free(tuple->element[i]);
+
       SID_del(tuple);
 
       free(tuple->element);   
@@ -93,8 +98,10 @@ Bool tuple_is_valid(const Tuple* tuple)
    return ((tuple != NULL) && SID_ok(tuple, TUPLE_SID) && (tuple->refc > 0));
 }
 
-Tuple* tuple_copy(Tuple* tuple)
+Tuple* tuple_copy(const Tuple* source)
 {
+   Tuple* tuple = (Tuple*)source;
+   
    assert(tuple_is_valid(tuple));
 
    tuple->refc++;
@@ -150,7 +157,7 @@ void tuple_set_elem(const Tuple* tuple, int idx, const Elem* elem)
    
    assert(tuple->element[idx] == NULL);
    
-   tuple->element[idx] = elem;
+   tuple->element[idx] = elem_copy(elem);
 }
 
 const Elem* tuple_get_elem(const Tuple* tuple, int idx)
@@ -177,10 +184,10 @@ Tuple* tuple_combine(const Tuple* ta, const Tuple* tb)
    tuple = tuple_new(ta->dim + tb->dim);
 
    for(i = 0; i < ta->dim; i++)
-      tuple->element[i] = ta->element[i];
+      tuple->element[i] = elem_copy(ta->element[i]);
 
    for(i = 0; i < tb->dim; i++)
-      tuple->element[ta->dim + i] = tb->element[i];
+      tuple->element[ta->dim + i] = elem_copy(tb->element[i]);
    
    return tuple;
 }

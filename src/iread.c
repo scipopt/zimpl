@@ -1,4 +1,4 @@
-#ident "@(#) $Id: iread.c,v 1.3 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: iread.c,v 1.4 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -66,14 +66,14 @@ CodeNode* i_read_new(CodeNode* self)
 
 CodeNode* i_read_param(CodeNode* self)
 {
-   RDef* rdef;
-   RPar* rpar;
+   RDef*       rdef;
+   const RPar* rpar;
    
    Trace("i_read_param");
    
    assert(code_is_valid(self));
 
-   rdef = code_eval_child_rdef(self, 0);
+   rdef = rdef_copy(code_eval_child_rdef(self, 0));
    rpar = code_eval_child_rpar(self, 1);   
 
    rdef_set_param(rdef, rpar);
@@ -81,7 +81,6 @@ CodeNode* i_read_param(CodeNode* self)
    code_value_rdef(self, rdef);
 
    rdef_free(rdef);
-   rpar_free(rpar);
 
    return self;
 }
@@ -289,9 +288,9 @@ CodeNode* i_read(CodeNode* self)
    int         param_type [MAX_FIELDS];  /* template parameter field type */
    Bool        is_tuple_list;
    int         dim;
-   RDef*       rdef;
+   const RDef* rdef;
    List*       list = NULL;
-   const Elem* elem;
+   Elem*       elem;
    Tuple*      tuple;
    Entry*      entry;
    const char* filename;
@@ -397,6 +396,8 @@ CodeNode* i_read(CodeNode* self)
                : elem_new_strg(str_new(t));
             
             tuple_set_elem(tuple, i, elem);
+
+            elem_free(elem);
          }
          
          if (is_tuple_list)
@@ -444,7 +445,6 @@ CodeNode* i_read(CodeNode* self)
    }
    code_value_list(self, list);
 
-   rdef_free(rdef);
    list_free(list);
    free(comment);
 

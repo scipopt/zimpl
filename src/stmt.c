@@ -1,4 +1,4 @@
-#ident "@(#) $Id: stmt.c,v 1.6 2002/07/24 13:39:42 bzfkocht Exp $"
+#ident "@(#) $Id: stmt.c,v 1.7 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -133,8 +133,9 @@ const char* stmt_get_text(const Stmt* stmt)
 
 void stmt_parse(Stmt* stmt)
 {
-   assert(stmt_is_valid(stmt));
+   Trace("stmt_parse");
 
+   assert(stmt_is_valid(stmt));
    
    if (verbose)
       printf("Parsing %s %d\n", stmt->filename, stmt->lineno);
@@ -146,6 +147,8 @@ void stmt_parse(Stmt* stmt)
 
 void stmt_execute(const Stmt* stmt)
 {
+   Trace("stmt_execute");
+   
    assert(stmt_is_valid(stmt));
 
    if (verbose)

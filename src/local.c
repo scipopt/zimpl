@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: local.c,v 1.6 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -37,13 +37,13 @@
 struct local
 {
    const char*  name;
-   const Elem*  element;
+   Elem*        element;
    Local*       next;
 };
 
 static Local anchor  = { "", NULL, NULL };
 
-static void local_new(const char* name, const Elem* element)
+static void local_new(const char* name, const Elem* elem)
 {
    Local* local;
 
@@ -54,14 +54,14 @@ static void local_new(const char* name, const Elem* element)
    assert(local != NULL);
    
    local->name    = name;
-   local->element = element;
+   local->element = (elem == ELEM_NULL) ? ELEM_NULL : elem_copy(elem);
    local->next    = anchor.next;
    anchor.next    = local;
 }
 
 static void local_new_frame(void)
 {
-   local_new("", NULL);
+   local_new("", ELEM_NULL);
 }
 
 void local_drop_frame(void)
@@ -74,8 +74,10 @@ void local_drop_frame(void)
    {
       q = p->next;
 
-      if (p->element == NULL)
+      if (p->element == ELEM_NULL)
          frame = TRUE;
+      else
+         elem_free(p->element);
       
       free(p);
    }

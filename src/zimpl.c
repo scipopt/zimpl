@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.9 2002/07/24 13:39:42 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.10 2002/07/28 07:03:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -189,6 +189,8 @@ int main(int argc, char* const* argv)
 
    prog_execute(prog);
 
+   //mem_display(stderr);
+   
    lps_scale();
    
    /* Write Output

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mshell.c,v 1.3 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: mshell.c,v 1.4 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -28,10 +28,6 @@
  * This is base on the routines from Jim Schimandle,
  * published in Dr. Dobbs Journal #167 09/90 p.110+.
  */
-#if !defined(NO_MSHELL) && !defined(NDEBUG)
-
-#define __MSHELL__
-
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -41,7 +37,12 @@
 #include <string.h>
 
 #include "lint.h"
+
+#define _MSHELL_C_
+
 #include "mshell.h"
+
+#if !defined(NO_MSHELL) 
 
 #define ALIGN_SIZE   sizeof(double)
 #define MEMTAG1      0xa55a
@@ -63,7 +64,8 @@ typedef struct memnod
 #define MHDR_NIL        ((MHDR*)0)
 
 #define HDR_SIZE        sizeof(MHDR)
-#define RESERVE_SIZE    (((HDR_SIZE + (ALIGN_SIZE - 1)) / ALIGN_SIZE) * ALIGN_SIZE)
+#define RESERVE_SIZE    (((HDR_SIZE + (ALIGN_SIZE - 1)) \
+                         / ALIGN_SIZE) * ALIGN_SIZE)
 #define CLIENT_2_HDR(a) ((MHDR*)(((char*)(a)) - RESERVE_SIZE))
 #define HDR_2_CLIENT(a) ((void*)(((char*)(a)) + RESERVE_SIZE))
 
@@ -201,7 +203,7 @@ void* mem_malloc(
 
    if ((p = malloc(alloc_size)) == MHDR_NIL)
    {
-      (void)fprintf(stderr, errmsg1, size, file, line);
+      fprintf(stderr, errmsg1, size, file, line);
       abort();
    }
    p->tag1        = MEMTAG1;
@@ -230,7 +232,7 @@ void* mem_calloc(
    
    if ((p = calloc(mem_alloc_size(size * item), sizeof(char))) == MHDR_NIL)
    {
-      (void)fprintf(stderr, errmsg1, item, size, file, line);
+      fprintf(stderr, errmsg1, item, size, file, line);
       abort();
    }
    p->tag1        = MEMTAG1;
@@ -261,7 +263,7 @@ void* mem_realloc(
 
    if (ptr == NULL)
    {
-      (void)fprintf(stderr, errmsg2, file, line);
+      fprintf(stderr, errmsg2, file, line);
       abort();
    }
    p = CLIENT_2_HDR(ptr);
@@ -271,7 +273,7 @@ void* mem_realloc(
    
    if ((p = realloc(p, mem_alloc_size(size))) == MHDR_NIL)
    {
-      (void)fprintf(stderr, errmsg1, size, file, line);
+      fprintf(stderr, errmsg1, size, file, line);
       abort();
    }
    p->tag1        = MEMTAG1;
@@ -370,13 +372,8 @@ void mem_display(
    
    for(p = memlist; p != MHDR_NIL; p = p->next)
    {
-#if defined(MSDOS) || defined(WIN32)
-      (void)fprintf(fp, "%p %6u  %s(%d) %s %s\n",
-         p,
-#else
       (void)fprintf(fp, "%8x  %6u  %s(%d) %s %s\n",
          (unsigned int)p,
-#endif
          p->size,
          p->file,
          p->line,
@@ -396,5 +393,110 @@ void mem_check(
       mem_valid(p, file, line);
 }      
 
-#endif /* !defined(NO_MSHELL) && !defined(NDEBUG) */
+#else /* NO_MSHELL */
+
+void* mem_malloc(
+   size_t       size,
+   const char*  file,
+   const int    line) 
+{
+   const char* errmsg1 =
+      "mem_malloc(size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(size > 0);
+   
+   if (NULL == (p = malloc(size)))
+   {
+      fprintf(stderr, errmsg1, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+void* mem_calloc(
+   size_t       item,
+   size_t       size,
+   const char*  file,
+   const int    line)
+{
+   const char* errmsg1 =
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(item > 0);
+   assert(size > 0);
+   
+   if (NULL == (p = calloc(item, size)))
+   {
+      fprintf(stderr, errmsg1, item, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+void* mem_realloc(
+   void*        ptr,
+   size_t       size,
+   const char*  file,
+   const int    line)
+{
+   const char* errmsg1 =
+      "mem_realloc(size=%u, file=%s, line=%d): out of memory";
+
+   void* p;
+
+   assert(ptr  != NULL);
+   assert(size >  0);
+   
+   if (NULL == (p = realloc(ptr, size)))
+   {
+      fprintf(stderr, errmsg1, size, file, line);
+      abort();
+   }
+   return p;
+}
+
+char* mem_strdup(
+   const char* str,
+   const char* file,
+   const int   line)
+{
+   const char* errmsg1 =
+      "mem_strdup(size=%u, file=%s, line=%d): out of memory";
+
+   char* s;
+   
+   assert(str != NULL);
+   
+   if (NULL == (s = strdup(str)))
+   {
+      fprintf(stderr, errmsg1, strlen(str), file, line);
+      abort();
+   }
+   return s;
+}
+
+void mem_free(
+   void*       ptr,
+   const char* file,
+   const int   line)
+{
+   const char *errmsg = "mem_free(file=%s, line=%d): null pointer";
+
+#ifndef NDEBUG
+   if (ptr == NULL)
+   {
+      fprintf(stderr, errmsg, file, line);
+      abort();
+   }
+#endif
+   free(ptr);
+}
+
+#endif /* !NO_MSHELL */
+
+
 

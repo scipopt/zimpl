@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.11 2002/07/05 12:47:47 bzfkocht Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.12 2002/07/28 07:03:32 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -46,6 +46,7 @@ static int yycolumn = 0;
 
 /*lint -e506 -e525 -e528 -e527 -e551 -e553 -e633 */
 /*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
+/*lint -e825 */
 /*lint -esym(613,b,buf) -esym(563,find_rule) */
 /*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
 %}

@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.14 2002/07/05 12:47:47 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.15 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -45,7 +45,7 @@
 #define YYERROR_VERBOSE 1
    
 extern void yyerror(const char* s);
-
+ 
 %}
 %pure_parser
 

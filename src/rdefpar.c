@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rdefpar.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: rdefpar.c,v 1.3 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -111,8 +111,10 @@ Bool rdef_is_valid(const RDef* rdef)
       && (rdef->comment  != NULL));
 }
 
-RDef* rdef_copy(RDef* rdef)
+RDef* rdef_copy(const RDef* source)
 {
+   RDef* rdef = (RDef*)source;
+   
    assert(rdef_is_valid(rdef));
 
    rdef->refc++;

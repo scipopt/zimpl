@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.11 2002/07/24 13:39:42 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.12 2002/07/28 07:03:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -60,7 +60,7 @@ static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
 static Symbol anchor  = { "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
 #endif
 
-Symbol* symbol_new(const char* name, SymbolType type, Set* set)
+Symbol* symbol_new(const char* name, SymbolType type, const Set* set)
 {
    Symbol* sym;
 
@@ -156,9 +156,9 @@ const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
 
 /* Entry wird gefressen.
  */
-void symbol_add_entry(Symbol* sym, Entry* entry)
+void symbol_add_entry(Symbol* sym, const Entry* entry)
 {
-   Tuple* tuple;
+   const Tuple* tuple;
    
    assert(symbol_is_valid(sym));
    assert(entry_is_valid(entry));
@@ -192,13 +192,11 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
       if ((sym->type == SYM_ERR) && (sym->used == 0))
          sym->type = entry_get_type(entry);
 
-      entry_set_index(entry, sym->used);      
       hash_add_entry(sym->hash, entry);
       
       sym->entry[sym->used] = entry_copy(entry);      
       sym->used++;
    }
-   tuple_free(tuple);
 }
 
 int symbol_get_dim(const Symbol* sym)
@@ -247,7 +245,7 @@ const char* symbol_get_strg(const Symbol* sym, int idx)
    return entry_get_strg(sym->entry[idx]);
 }
 
-Set* symbol_get_set(const Symbol* sym, int idx)
+const Set* symbol_get_set(const Symbol* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);

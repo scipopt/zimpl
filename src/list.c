@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.8 2002/02/24 11:05:29 bzfkocht Exp $"
+#ident "@(#) $Id: list.c,v 1.9 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -46,9 +46,9 @@ typedef union list_data     ListData;
 
 union list_data
 {
-   Entry*      entry;
-   Tuple*      tuple;
-   const Elem* elem;
+   Entry* entry;
+   Tuple* tuple;
+   Elem*  elem;
 };
 
 struct list_element
@@ -110,12 +110,12 @@ List* list_new_elem(const Elem* elem)
    
    assert(elem_is_valid(elem));
 
-   data.elem = elem;
+   data.elem = elem_copy(elem);
 
    return list_new(LIST_ELEM, &data);
 }
 
-List* list_new_tuple(Tuple* tuple)
+List* list_new_tuple(const Tuple* tuple)
 {
    ListData data;
    
@@ -126,7 +126,7 @@ List* list_new_tuple(Tuple* tuple)
    return list_new(LIST_TUPLE, &data);
 }
 
-List* list_new_entry(Entry* entry)
+List* list_new_entry(const Entry* entry)
 {
    ListData data;
    
@@ -157,6 +157,7 @@ void list_free(List* list)
          switch(list->type)
          {
          case LIST_ELEM :
+            elem_free(p->data.elem);
             break;
          case LIST_TUPLE :
             tuple_free(p->data.tuple);
@@ -194,8 +195,10 @@ Bool list_is_tuplelist(const List* list)
    return list->type == LIST_TUPLE;
 }
 
-List* list_copy(List* list)
+List* list_copy(const List* source)
 {
+   List* list = (List*)source;
+   
    assert(list_is_valid(list));
 
    list->refc++;
@@ -211,12 +214,12 @@ void list_add_elem(List* list, const Elem* elem)
    assert(elem_is_valid(elem));
    assert(list->type == LIST_ELEM);
    
-   data.elem = elem;
+   data.elem = elem_copy(elem);
 
    list_add_data(list, &data);
 }
 
-void list_add_tuple(List* list, Tuple* tuple)
+void list_add_tuple(List* list, const Tuple* tuple)
 {
    ListData data;
 
@@ -229,7 +232,7 @@ void list_add_tuple(List* list, Tuple* tuple)
    list_add_data(list, &data);
 }
 
-void list_add_entry(List* list, Entry* entry)
+void list_add_entry(List* list, const Entry* entry)
 {
    ListData data;
 
@@ -276,7 +279,7 @@ const Elem* list_get_elem(const List* list, ListElem** idxp)
    return (data == NULL) ? ELEM_NULL : data->elem;
 }
 
-Tuple* list_get_tuple(const List* list, ListElem** idxp)
+const Tuple* list_get_tuple(const List* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -285,10 +288,10 @@ Tuple* list_get_tuple(const List* list, ListElem** idxp)
 
    data = list_get_data(list, idxp);
 
-   return (data == NULL) ? TUPLE_NULL : tuple_copy(data->tuple);
+   return (data == NULL) ? TUPLE_NULL : data->tuple;
 }
 
-Entry* list_get_entry(const List* list, ListElem** idxp)
+const Entry* list_get_entry(const List* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -297,7 +300,7 @@ Entry* list_get_entry(const List* list, ListElem** idxp)
 
    data = list_get_data(list, idxp);
 
-   return (data == NULL) ? ENTRY_NULL : entry_copy(data->entry);
+   return (data == NULL) ? ENTRY_NULL : data->entry;
 }
 
 void list_print(FILE* fp, const List* list)
@@ -326,6 +329,13 @@ void list_print(FILE* fp, const List* list)
    }
    fprintf(fp, "---------------------\n");
 }
+
+
+
+
+
+
+
 
 
 

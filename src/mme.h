@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.14 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.15 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -27,7 +27,10 @@
 #ifndef _MME_H_
 #define _MME_H_
 
-enum element_type    { ELEM_ERR = 0, ELEM_NUMB, ELEM_STRG, ELEM_NAME };
+enum element_type
+{
+   ELEM_ERR = 0, ELEM_FREE, ELEM_NUMB, ELEM_STRG, ELEM_NAME
+};
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY };
 enum lp_direct       { LP_MIN = 0, LP_MAX };
@@ -101,9 +104,9 @@ extern unsigned int str_hash(const char* s);
 /*lint -sem(        list_new_elem, 1p == 1, @p == 1) */
 extern List*        list_new_elem(const Elem* elem);
 /*lint -sem(        list_new_tuple, 1p == 1, @p == 1) */
-extern List*        list_new_tuple(Tuple* tuple);
+extern List*        list_new_tuple(const Tuple* tuple);
 /*lint -sem(        list_new_entry, 1p == 1, @p == 1) */
-extern List*        list_new_entry(Entry* entry);
+extern List*        list_new_entry(const Entry* entry);
 /*lint -sem(        list_free, 1p == 1) */
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
@@ -113,21 +116,21 @@ extern Bool         list_is_entrylist(const List* list);
 /*lint -sem(        list_is_tuplelist, 1p == 1) */
 extern Bool         list_is_tuplelist(const List* list);
 /*lint -sem(        list_copy, 1p == 1, @P == 1) */
-extern List*        list_copy(List* list);
+extern List*        list_copy(const List* list);
 /*lint -sem(        list_add_elem, 1p == 1 && 2p == 1) */
 extern void         list_add_elem(List* list, const Elem* elem);
 /*lint -sem(        list_add_tuple, 1p == 1 && 2p == 1) */
-extern void         list_add_tuple(List* list, Tuple* tuple);
+extern void         list_add_tuple(List* list, const Tuple* tuple);
 /*lint -sem(        list_add_entry, 1p == 1 && 2p == 1) */
-extern void         list_add_entry(List* list, Entry* entry);
+extern void         list_add_entry(List* list, const Entry* entry);
 /*lint -sem(        list_get_elems, 1p == 1, @n >= 0) */
 extern int          list_get_elems(const List* list);
 /*lint -sem(        list_get_elem,  1p == 1, @p == 1) */
 extern const Elem*  list_get_elem(const List* list, ListElem** idxp);
 /*lint -sem(        list_get_tuple, 1p == 1, @p == 1) */
-extern Tuple*       list_get_tuple(const List* list, ListElem** idxp);
+extern const Tuple* list_get_tuple(const List* list, ListElem** idxp);
 /*lint -sem(        list_get_entry, 1p == 1, @p == 1) */
-extern Entry*       list_get_entry(const List* list, ListElem** idxp);
+extern const Entry* list_get_entry(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
 
@@ -157,13 +160,17 @@ extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 extern void         elem_init(void);
 extern void         elem_exit(void);
 /*lint -sem(        elem_new_numb, @p == 1) */
-extern const Elem*  elem_new_numb(double n);
+extern Elem*        elem_new_numb(double n);
 /*lint -sem(        elem_new_strg, 1p, @p == 1) */
-extern const Elem*  elem_new_strg(const char* s);
+extern Elem*        elem_new_strg(const char* s);
 /*lint -sem(        elem_new_name, 1p, @p == 1) */
-extern const Elem*  elem_new_name(const char* s);
+extern Elem*        elem_new_name(const char* s);
+/*lint -sem(        elem_free, 1p == 1) */
+extern void         elem_free(Elem* elem);
 /*lint -sem(        elem_is_valid, 1p == 1) */
 extern Bool         elem_is_valid(const Elem* elem);
+/*lint -sem(        elem_copy, 1p == 1, @p == 1) */
+extern Elem*        elem_copy(const Elem* elem);
 /*lint -sem(        elem_cmp, 1p == 1 && 2p == 1) */
 extern Bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
 /*lint -sem(        elem_get_type, 1p == 1) */
@@ -192,7 +199,7 @@ extern void         tuple_free(Tuple* tuple);
 /*lint -sem(        tuple_is_valid, 1p == 1) */
 extern Bool         tuple_is_valid(const Tuple* tuple);
 /*lint -sem(        tuple_copy, 1p == 1, @p == 1) */
-extern Tuple*       tuple_copy(Tuple* tuple);
+extern Tuple*       tuple_copy(const Tuple* tuple);
 /*lint -sem(        tuple_cmp, 1p == 1 && 2p == 1) */
 extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
 /*lint -sem(        tuple_get_dim, 1p == 1, @n >= 0) */
@@ -223,13 +230,13 @@ extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */
 extern Bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
-extern Set*         set_copy(Set* set);
+extern Set*         set_copy(const Set* set);
 /*lint -sem(        set_add_member, 1p == 1 && 2p == 1 && 3n >= 0, @p == 1) */
-extern void         set_add_member(Set* set, Tuple* tuple, int where);
+extern void         set_add_member(Set* set, const Tuple* tuple, int where);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
 extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 /*lint -sem(        set_match, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
-extern Tuple*       set_match_next(const Set* set, const Tuple* pat, int* idx);
+extern const Tuple* set_match_next(const Set* set, const Tuple* pat, int* idx);
 /*lint -sem(        set_get_dim, 1p == 1, @n >= 0) */
 extern int          set_get_dim(const Set* set);
 /*lint -sem(        set_get_used, 1p == 1, @n >= 0) */
@@ -260,35 +267,31 @@ extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
 #define ENTRY_NULL ((Entry*)0)
 
 /*lint -sem(        entry_new_numb, 1p == 1, @p == 1) */
-extern Entry*       entry_new_numb(Tuple* tuple, double numb);
+extern Entry*       entry_new_numb(const Tuple* tuple, double numb);
 /*lint -sem(        entry_new_strg, 1p == 1 && 2p, @p == 1) */
-extern Entry*       entry_new_strg(Tuple* tuple, const char* strg);
+extern Entry*       entry_new_strg(const Tuple* tuple, const char* strg);
 /*lint -sem(        entry_new_set, 1p == 1 && 2p == 1, @p == 1) */
-extern Entry*       entry_new_set(Tuple* tuple, Set* set);
+extern Entry*       entry_new_set(const Tuple* tuple, const Set* set);
 /*lint -sem(        entry_new_var, 1p == 1 && 2p == 1, @p == 1) */
-extern Entry*       entry_new_var(Tuple* tuple, Var* var);
+extern Entry*       entry_new_var(const Tuple* tuple, Var* var);
 /*lint -sem(        entry_free, 1p == 1) */
 extern void         entry_free(Entry* entry);
 /*lint -sem(        entry_is_valid, 1p == 1) */
 extern Bool         entry_is_valid(const Entry* entry);
 /*lint -sem(        entry_copy, 1p == 1, @p == 1) */
-extern Entry*       entry_copy(Entry* entry);
+extern Entry*       entry_copy(const Entry* entry);
 /*lint -sem(        entry_cmp, 1p == 1 && 2p == 1) */
 extern Bool         entry_cmp(const Entry* entry, const Tuple* tuple);
-/*lint -sem(        entry_set_index, 1p == 1 && 2n >= 0) */
-extern void         entry_set_index(Entry* entry, int idx);
 /*lint -sem(        entry_get_type, 1p == 1, @n >= 0) */
 extern SymbolType   entry_get_type(const Entry* entry);
 /*lint -sem(        entry_get_tuple, 1p == 1, @p == 1) */
-extern Tuple*       entry_get_tuple(const Entry* entry);
-/*lint -sem(        entry_get_index, 1p == 1, @n >= 0) */
-extern int          entry_get_index(const Entry* entry);
+extern const Tuple* entry_get_tuple(const Entry* entry);
 /*lint -sem(        entry_get_numb, 1p == 1) */
 extern double       entry_get_numb(const Entry* entry);
 /*lint -sem(        entry_get_strg, 1p == 1, @p == 1) */
 extern const char*  entry_get_strg(const Entry* entry);
 /*lint -sem(        entry_get_set, 1p == 1, @p == 1) */
-extern Set*         entry_get_set(const Entry* entry);
+extern const Set*   entry_get_set(const Entry* entry);
 /*lint -sem(        entry_get_var, 1p == 1, @p == 1) */
 extern Var*         entry_get_var(const Entry* entry);
 /*lint -sem(        entry_print, 1p == 1 && 2p == 1) */
@@ -297,7 +300,8 @@ extern void         entry_print(FILE* fp, const Entry* entry);
 /* symbol.c
  */
 /*lint -sem(        symbol_new, 1p == 1 && 3p == 1, @p == 1) */
-extern Symbol*      symbol_new(const char* name, SymbolType type, Set* set);
+extern Symbol*      symbol_new(
+   const char* name, SymbolType type, const Set* set);
 extern void         symbol_exit(void);
 /*lint -sem(        symbol_is_valid, 1p == 1) */
 extern Bool         symbol_is_valid(const Symbol* symbol);
@@ -308,7 +312,7 @@ extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
-extern void         symbol_add_entry(Symbol* sym, Entry* entry);
+extern void         symbol_add_entry(Symbol* sym, const Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
 extern int          symbol_get_dim(const Symbol* sym);
 /*lint -sem(        symbol_get_iset, 1p == 1, @p == 1) */
@@ -322,7 +326,7 @@ extern double       symbol_get_numb(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_strg, 1p == 1, @p) */
 extern const char*  symbol_get_strg(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_set, 1p == 1, @p == 1) */
-extern Set*         symbol_get_set(const Symbol* sym, int idx);
+extern const Set*   symbol_get_set(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_var, 1p == 1, @p == 1) */
 extern Var*         symbol_get_var(const Symbol* sym, int idx);
 /*lint -sem(        symbol_print, 1p == 1 && 2p == 1) */
@@ -333,7 +337,8 @@ extern void         symbol_print_all(FILE* fp);
 /* idxset.c
  */
 /*lint -sem(        idxset_new, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
-extern IdxSet*      idxset_new(Tuple* tuple, Set* set, CodeNode* lexpr);
+extern IdxSet*      idxset_new(
+   const Tuple* tuple, const Set* set, CodeNode* lexpr);
 /*lint -sem(        idxset_free, 1p == 1) */
 extern void         idxset_free(IdxSet* idxset);
 /*lint -sem(        idxset_is_valid, 1p == 1) */
@@ -343,9 +348,9 @@ extern IdxSet*      idxset_copy(const IdxSet* source);
 /*lint -sem(        idxset_get_lexpr, 1p == 1, @p == 1) */
 extern CodeNode*    idxset_get_lexpr(const IdxSet* idxset);
 /*lint -sem(        idxset_get_tuple, 1p == 1, @p == 1) */
-extern Tuple*       idxset_get_tuple(const IdxSet* idxset);
+extern const Tuple* idxset_get_tuple(const IdxSet* idxset);
 /*lint -sem(        idxset_get_set, 1p == 1, @p == 1) */
-extern Set*         idxset_get_set(const IdxSet* idxset);
+extern const Set*   idxset_get_set(const IdxSet* idxset);
 /*lint -sem(        idxset_print, 1p == 1 && 2p == 1) */
 extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 
@@ -362,7 +367,6 @@ extern void         local_print_all(FILE* fp);
 /* term.c
  */
 #define TERM_PRINT_SYMBOL  1
-#define TERM_PRINT_INDEX   2
 
 /*lint -sem(        term_new, 1n > 0, @p == 1) */
 extern Term*        term_new(int size);
@@ -400,7 +404,7 @@ extern void        rdef_free(RDef* rdef);
 /*lint -sem(       rdef_is_valid, 1p == 1) */
 extern Bool        rdef_is_valid(const RDef* rdef);
 /*lint -sem(       rdef_copy, 1p == 1, @p == 1) */
-extern RDef*       rdef_copy(RDef* rdef);
+extern RDef*       rdef_copy(const RDef* rdef);
 /*lint -sem(       rdef_set_param, 1p == 1 && 2p == 1) */
 extern void        rdef_set_param(RDef* rdef, const RPar* rpar);
 /*lint -sem(       rdef_get_filename, 1p == 1, @p) */

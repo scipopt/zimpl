@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.9 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.10 2002/07/28 07:03:33 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -255,9 +255,9 @@ void term_to_objective(const Term* term)
 #ifndef NDEBUG
 void term_print(FILE* fp, const Term* term, int flag)
 {
-   Tuple* tuple;
-   int    i;
-   double coeff;
+   const Tuple* tuple;
+   int          i;
+   double       coeff;
    
    assert(term_is_valid(term));
 
@@ -276,14 +276,8 @@ void term_print(FILE* fp, const Term* term, int flag)
       
       /* fprintf(fp, "%s", symbol_get_name(term->elem[i].symbol));
        */
-
       if (flag & TERM_PRINT_SYMBOL)
          tuple_print(fp, tuple);
-
-      if (flag & TERM_PRINT_INDEX)
-         fprintf(fp, "_%d", entry_get_index(term->elem[i].entry));      
-
-      tuple_free(tuple);
    }
    if (NE(term->constant, 0.0))
    {

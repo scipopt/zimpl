@@ -1,4 +1,4 @@
-#ident "@(#) $Id: idxset.c,v 1.5 2001/03/09 16:12:35 bzfkocht Exp $"
+#ident "@(#) $Id: idxset.c,v 1.6 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -44,7 +44,7 @@ struct index_set
    CodeNode*     lexpr;
 };
 
-IdxSet* idxset_new(Tuple* tuple, Set* set, CodeNode* lexpr)
+IdxSet* idxset_new(const Tuple* tuple, const Set* set, CodeNode* lexpr)
 {
    IdxSet* idxset = calloc(1, sizeof(*idxset));
    
@@ -93,18 +93,18 @@ CodeNode* idxset_get_lexpr(const IdxSet* idxset)
    return idxset->lexpr;
 }
 
-Tuple* idxset_get_tuple(const IdxSet* idxset)
+const Tuple* idxset_get_tuple(const IdxSet* idxset)
 {
    assert(idxset_is_valid(idxset));
 
-   return tuple_copy(idxset->tuple);
+   return idxset->tuple;
 }
 
-Set* idxset_get_set(const IdxSet* idxset)
+const Set* idxset_get_set(const IdxSet* idxset)
 {
    assert(idxset_is_valid(idxset));
    
-   return set_copy(idxset->set);
+   return idxset->set;
 }
 
 void idxset_print(FILE* fp, const IdxSet* idxset)

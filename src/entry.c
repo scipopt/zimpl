@@ -1,4 +1,4 @@
-#ident "@(#) $Id: entry.c,v 1.6 2001/03/09 16:12:35 bzfkocht Exp $"
+#ident "@(#) $Id: entry.c,v 1.7 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -50,13 +50,12 @@ struct entry
 {
    SID
    int        refc;
-   int        index;
    Tuple*     tuple;
    SymbolType type;
    EntryValue value;
 };
 
-Entry* entry_new_numb(Tuple* tuple, double numb)
+Entry* entry_new_numb(const Tuple* tuple, double numb)
 {
    Entry* entry = calloc(1, sizeof(*entry));
 
@@ -64,7 +63,6 @@ Entry* entry_new_numb(Tuple* tuple, double numb)
    assert(tuple != NULL);
 
    entry->refc       = 1;
-   entry->index      = -1;
    entry->tuple      = tuple_copy(tuple);
    entry->type       = SYM_NUMB;
    entry->value.numb = numb;
@@ -75,7 +73,7 @@ Entry* entry_new_numb(Tuple* tuple, double numb)
    return entry;
 }
 
-Entry* entry_new_strg(Tuple* tuple, const char* strg)
+Entry* entry_new_strg(const Tuple* tuple, const char* strg)
 {
    Entry* entry = calloc(1, sizeof(*entry));
 
@@ -84,7 +82,6 @@ Entry* entry_new_strg(Tuple* tuple, const char* strg)
    assert(strg  != NULL);
    
    entry->refc       = 1;
-   entry->index      = -1;
    entry->tuple      = tuple_copy(tuple);
    entry->type       = SYM_STRG;
    entry->value.strg = strg;
@@ -95,7 +92,7 @@ Entry* entry_new_strg(Tuple* tuple, const char* strg)
    return entry;
 }
 
-Entry* entry_new_set(Tuple* tuple, Set* set)
+Entry* entry_new_set(const Tuple* tuple, const Set* set)
 {
    Entry* entry = calloc(1, sizeof(*entry));
 
@@ -104,7 +101,6 @@ Entry* entry_new_set(Tuple* tuple, Set* set)
    assert(set   != NULL);
    
    entry->refc      = 1;
-   entry->index     = -1;
    entry->tuple     = tuple_copy(tuple);
    entry->type      = SYM_SET;
    entry->value.set = set_copy(set);
@@ -115,7 +111,7 @@ Entry* entry_new_set(Tuple* tuple, Set* set)
    return entry;
 }
 
-Entry* entry_new_var(Tuple* tuple, Var* var)
+Entry* entry_new_var(const Tuple* tuple, Var* var)
 {
    Entry* entry = calloc(1, sizeof(*entry));
 
@@ -124,7 +120,6 @@ Entry* entry_new_var(Tuple* tuple, Var* var)
    assert(var   != NULL);
    
    entry->refc      = 1;
-   entry->index     = -1;
    entry->tuple     = tuple_copy(tuple);
    entry->type      = SYM_VAR;
    entry->value.var = var;
@@ -169,8 +164,10 @@ Bool entry_is_valid(const Entry* entry)
    return ((entry != NULL) && SID_ok(entry, ENTRY_SID));
 }
 
-Entry* entry_copy(Entry* entry)
+Entry* entry_copy(const Entry* source)
 {
+   Entry* entry = (Entry*)source;
+   
    assert(entry_is_valid(entry));
 
    entry->refc++;
@@ -186,14 +183,6 @@ Bool entry_cmp(const Entry* entry, const Tuple* tuple)
    return tuple_cmp(entry->tuple, tuple);
 }
 
-void entry_set_index(Entry* entry, int idx)
-{
-   assert(entry_is_valid(entry));
-   assert(entry->index == -1); /* Muss man nicht fordern */
-   
-   entry->index = idx;
-}
-
 SymbolType entry_get_type(const Entry* entry)
 {
    assert(entry_is_valid(entry));
@@ -201,19 +190,12 @@ SymbolType entry_get_type(const Entry* entry)
    return entry->type;
 }
 
-Tuple* entry_get_tuple(const Entry* entry)
+const Tuple* entry_get_tuple(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    assert(tuple_is_valid(entry->tuple));
    
-   return tuple_copy(entry->tuple);
-}
-
-int entry_get_index(const Entry* entry)
-{
-   assert(entry_is_valid(entry));
-   
-   return entry->index;
+   return entry->tuple;
 }
 
 double entry_get_numb(const Entry* entry)
@@ -232,12 +214,12 @@ const char* entry_get_strg(const Entry* entry)
    return entry->value.strg;
 }
 
-Set* entry_get_set(const Entry* entry)
+const Set* entry_get_set(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_SET);
    
-   return set_copy(entry->value.set);
+   return entry->value.set;
 }
 
 Var* entry_get_var(const Entry* entry)

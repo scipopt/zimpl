@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.7 2002/06/18 09:13:09 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.8 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -110,8 +110,10 @@ Bool set_is_valid(const Set* set)
    return ((set != NULL) && SID_ok(set, SET_SID) && (set->refc > 0));
 }
 
-Set* set_copy(Set* set)
+Set* set_copy(const Set* source)
 {
+   Set* set = (Set*)source;
+   
    assert(set_is_valid(set));
 
    set->refc++;
@@ -119,7 +121,7 @@ Set* set_copy(Set* set)
    return set;
 }
 
-void set_add_member(Set* set, Tuple* tuple, int where)
+void set_add_member(Set* set, const Tuple* tuple, int where)
 {
    int idx;
    int i;
@@ -176,9 +178,9 @@ Bool set_lookup(const Set* set, const Tuple* tuple)
    return hash_has_tuple(set->hash, tuple);
 }
 
-Tuple* set_match_next(const Set* set, const Tuple* pattern, int* idx)
+const Tuple* set_match_next(const Set* set, const Tuple* pattern, int* idx)
 {
-   Tuple* tuple;
+   const Tuple* tuple;
    
    assert(set_is_valid(set));
    assert(tuple_is_valid(pattern));
@@ -196,7 +198,7 @@ Tuple* set_match_next(const Set* set, const Tuple* pattern, int* idx)
    
    (*idx)++;
 
-   return tuple_copy(tuple);
+   return tuple;
 }
      
 int set_get_dim(const Set* set)

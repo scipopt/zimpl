@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.7 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.8 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -131,7 +131,7 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
 void hash_add_entry(Hash* hash, const Entry* entry)
 {
    HElem*       he = calloc(1, sizeof(*he));
-   Tuple*       tuple;
+   const Tuple* tuple;
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
@@ -145,8 +145,6 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    he->next            = hash->bucket[hcode];
    hash->bucket[hcode] = he;
    hash->elems++;
-   
-   tuple_free(tuple);
 }
 
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: elem.c,v 1.6 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: elem.c,v 1.7 2002/07/28 07:03:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -35,7 +35,7 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define STORE_SIZE  1000
+#define STORE_SIZE  100
 #define ELEM_SID    0x456c656d
 
 typedef union element_value    ElemValue;
@@ -46,6 +46,7 @@ union element_value
    double      numb;
    const char* strg;
    const char* name;
+   Elem*       next;
 };
 
 struct element
@@ -57,69 +58,83 @@ struct element
 
 struct element_storage
 {
-   int         size;
-   int         used;
    Elem*       begin;
    ElemStore*  next;
 };
 
 static ElemStore* store_anchor = NULL;
+static Elem*      store_free   = NULL;
 
 static void extend_storage(void)
 {
-   ElemStore* store;
-         
-   store = calloc(1, sizeof(*store));
+   ElemStore* store = calloc(1, sizeof(*store));
+   Elem*      elem;
+   int        i;
    
    assert(store != NULL);
    
-   store->size  = STORE_SIZE;
-   store->used  = 0;
-   store->begin = calloc(STORE_SIZE, sizeof(*store->begin));
+   store->begin = malloc(STORE_SIZE * sizeof(*store->begin));
    store->next  = store_anchor;
    store_anchor = store;
+
+   for(i = 0; i < STORE_SIZE - 1; i++)
+   {
+      elem             = &store->begin[i];
+      elem->type       = ELEM_FREE;
+      elem->value.next = &store->begin[i + 1];
+      SID_set(elem, ELEM_SID);
+      assert(elem_is_valid(elem));
+   }
+   elem             = &store->begin[i];
+   elem->type       = ELEM_FREE;
+   elem->value.next = store_free;
+   SID_set(elem, ELEM_SID);
+   assert(elem_is_valid(elem));
+   
+   store_free       = &store->begin[0];
    
    assert(store->begin != NULL);
+   assert(store_anchor != NULL);
+   assert(store_free   != NULL);
 }
 
 static Elem* new_elem(void)
 {
-   assert(store_anchor != NULL);
+   Elem* elem;
    
-   if (store_anchor->size == store_anchor->used)
+   if (store_free == NULL)
       extend_storage();
 
-   assert(store_anchor->size > store_anchor->used);
+   assert(store_free != NULL);
 
-   return &store_anchor->begin[store_anchor->used++];
+   elem       = store_free;
+   store_free = elem->value.next;
+
+   assert(elem->type == ELEM_FREE);
+   assert(elem_is_valid(elem));
+   
+   return elem;
 }
 
 void elem_init()
 {
-   extend_storage();
 }
 
 void elem_exit()
 {
    ElemStore* store;
    ElemStore* next;
-   int        i;
    
    for(store = store_anchor; store != NULL; store = next)
    {
       next = store->next;
 
-      for(i = 0; i < store->used; i++)
-      {
-         assert(elem_is_valid(&store->begin[i]));
-         SID_del(((Elem*)&store->begin[i]));
-      }
       free(store->begin);
       free(store);
    }
 }
 
-const Elem* elem_new_numb(double numb)
+Elem* elem_new_numb(double numb)
 {
    Elem* elem = new_elem();
    
@@ -128,13 +143,10 @@ const Elem* elem_new_numb(double numb)
    elem->type       = ELEM_NUMB;
    elem->value.numb = numb;
    
-   SID_set(elem, ELEM_SID);
-   assert(elem_is_valid(elem));
-   
    return elem;
 }
 
-const Elem* elem_new_strg(const char* strg)
+Elem* elem_new_strg(const char* strg)
 {
    Elem* elem = new_elem();
 
@@ -144,13 +156,10 @@ const Elem* elem_new_strg(const char* strg)
    elem->type       = ELEM_STRG;
    elem->value.strg = strg;
 
-   SID_set(elem, ELEM_SID);
-   assert(elem_is_valid(elem));
-
    return elem;
 }
 
-const Elem* elem_new_name(const char* name)
+Elem* elem_new_name(const char* name)
 {
    Elem* elem = new_elem();
 
@@ -160,15 +169,33 @@ const Elem* elem_new_name(const char* name)
    elem->type       = ELEM_NAME;
    elem->value.strg = name;
 
-   SID_set(elem, ELEM_SID);
+   return elem;
+}
+
+void elem_free(Elem* elem)
+{
    assert(elem_is_valid(elem));
 
-   return elem;
+   elem->type       = ELEM_FREE;
+   elem->value.next = store_free;
+   store_free       = elem;
 }
 
 Bool elem_is_valid(const Elem* elem)
 {
    return ((elem != NULL) && SID_ok(elem, ELEM_SID));
+}
+
+Elem* elem_copy(const Elem* source)
+{
+   Elem* elem = new_elem();
+
+   assert(elem_is_valid(source));
+   assert(elem_is_valid(elem));
+   
+   *elem = *source;
+
+   return elem;
 }
 
 /* 0 wenn gleich, sonst != 0
@@ -259,6 +286,7 @@ void elem_print(FILE* fp, const Elem* elem)
    case ELEM_NAME :
       fprintf(fp, "%s", elem->value.name);
       break;
+   case ELEM_FREE :
    default :
       abort();
    }
@@ -290,6 +318,7 @@ unsigned int elem_hash(const Elem* elem)
    case ELEM_NAME :
       hcode = str_hash(elem->value.name);
       break;
+   case ELEM_FREE :
    default :
       abort();
    }
@@ -317,6 +346,7 @@ char* elem_tostr(const Elem* elem)
    case ELEM_NAME :
       str = strdup(elem->value.name);
       break;
+   case ELEM_FREE :
    default :
       abort();
    }
@@ -324,3 +354,5 @@ char* elem_tostr(const Elem* elem)
 
    return str;
 }
+
+
