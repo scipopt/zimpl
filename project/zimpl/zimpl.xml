@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project version="1.0" 
+         author="Thorsten Koch" 
+         email="koch@zib.de" 
+         topic="Zimpl" 
+         keywords="ZIMPL,Mathematical Modeling Language,Mathematical Programming,Optimization,Algebraic Modeling Language">
+  <acronym>Zimpl</acronym>
+  <icon>
+    <img src="zimpl_icon.png" alt="Zimpl-Logo"/>
+  </icon>
+  <teaser>
+    <img src="zimpl_logo.jpg" alt="Zimpl-Logo"/>
+  </teaser>
+  <title xml:lang="en">Zimpl -- Mathematical Modeling Language</title>
+  <title xml:lang="de">Zimpl -- Mathematische Modellierungssprache</title>
+  <abstract xml:lang="en">
+    <p>
+      Zimpl is a little language to translate the mathematical model of a 
+      problem into a linear or (mixed-) integer mathematical program
+      expressed in .lp or .mps file format which can be read by a LP or MIP solver.
+    </p>
+  </abstract>
+  <abstract xml:lang="de">
+    <p>
+      Zimpl ist eine kleine Programmiersprache zur übersetzung von mathematischen Modellen
+      in lineare oder (gemischt-) ganzzahliges Programme. Diese können als .lp
+      oder .mps Dateien geschrieben werden.
+    </p>
+  </abstract>
+  <description xml:lang="en">
+      <part>
+      <title>ZIMPL</title>
+      <p>
+      Zimpl is a little language to translate the mathematical model of a 
+      problem into a linear or (mixed-) integer mathematical program
+      expressed in .lp or .mps file format which can be read by a LP or MIP solver.
+      </p>
+      <p> 
+      Zimpl is a command line 
+      program written in plain C and released under 
+      <a href="http://www.gnu.org">GNU</a>
+      <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>. 
+      It has been tested to compile under
+      Linux/Intel, Solaris, Tru64, HPUX, IRIX, AIX and MacOS-X. 
+      Probably it will compile and run wherever 
+      <a href="http://www.swox.com/gmp/">GMP</a> 
+      is available. Zimpl has even been successfully compiled for Windows using 
+      <a href="http://www.mingw.org">MinGW</a> and the 
+      <a href="http://gcc.gnu.org">GCC</a> as a cross compiler.
+      </p>
+      <p>Further details, the source code and precompiled binaries for various
+	platforms are available at the 
+        <a href="http://www.zib.de/koch/zimpl">Zimpl homepage</a>.
+      </p>
+    </part>
+    <part>
+      <title>Publications</title>
+            <publicationlist>
+            <publication>
+                <bibtex key="Koch2001TR"/>
+            </publication>
+            </publicationlist>
+    </part>
+  </description>
+  <description xml:lang="de">
+      <part>
+      <title>ZIMPL</title>
+      <p>
+      Zimpl ist eine kleine Programmiersprache zur übersetzung von mathematischen Modellen
+      in lineare oder (gemischt-) ganzzahliges Programme. Diese können als .lp
+      oder .mps Dateien geschrieben werden.
+      </p>
+      <p> 
+      Zimpl ist ein in ANSI C geschriebenes Kommandozeilenprogramm.
+      Der Quellcode ist verfügbar unter der 
+      <a href="http://www.gnu.org">GNU</a>
+      <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>. 
+      Zimpl wurde auf folgenden Architekturen erfolgreich kompiliert:
+      Linux/Intel, Solaris, Tru64, HPUX, IRIX, AIX and MacOS-X. 
+      Vermutlich läßt es sich auf allen System kompilieren auf denen
+      Probably it will compile and run wherever 
+      <a href="http://www.swox.com/gmp/">GMP</a> 
+      verfügbar ist.
+      Zimpl wurde auch unter Windows erfolgreich kompiliert mit Hilfe von
+      <a href="http://www.mingw.org">MinGW</a> und dem 
+      <a href="http://gcc.gnu.org">GCC</a>.
+      </p>
+      <p>Weitere Details, den Quellcode und vorkompilierte Programme für
+	verschiedene Plattformen sind auf der  
+        <a href="http://www.zib.de/koch/zimpl">Zimpl Homepage</a> zu finden.
+      </p>
+    </part>
+    <part>
+      <title>Veröffentlichungen</title>
+            <publicationlist>
+            <publication>
+                <bibtex key="Koch2001TR"/>
+            </publication>
+            </publicationlist>
+    </part>
+  </description>
+  <contact>
+    <zibmember email="koch">Thorsten Koch</zibmember>
+  </contact>
+  <members>
+    <zibmember email="koch">Thorsten Koch</zibmember>
+  </members>
+  <duration>
+    since 2001 
+  </duration>
+</project>
+
+
+
