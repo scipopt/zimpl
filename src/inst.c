@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.22 2002/08/18 12:26:33 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.23 2002/08/18 14:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1474,6 +1474,27 @@ CodeNode* i_term_coeff(CodeNode* self)
    return self;
 }
 
+CodeNode* i_term_const(CodeNode* self)
+{
+   Term*  term;
+   double numb;
+   
+   Trace("i_term_const");
+   
+   assert(code_is_valid(self));
+
+   term = term_copy(code_eval_child_term(self, 0));
+   numb = code_eval_child_numb(self, 1);
+
+   term_add_constant(term, numb);
+   
+   code_value_term(self, term);
+
+   term_free(term);
+
+   return self;
+}
+
 CodeNode* i_term_add(CodeNode* self)
 {
    const Term* term_a;
@@ -1507,8 +1528,7 @@ CodeNode* i_term_sub(CodeNode* self)
 
    term_a = code_eval_child_term(self, 0);
    term_b = term_copy(code_eval_child_term(self, 1));
-   term_negate(term_b);
-   term_r = term_add_term(term_a, term_b);
+   term_r = term_sub_term(term_a, term_b);
    
    code_value_term(self, term_r);
 

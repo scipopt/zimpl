@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.11 2002/08/18 12:26:34 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.12 2002/08/18 14:13:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -160,6 +160,8 @@ extern CodeNode* i_subto(CodeNode* self);
 extern CodeNode* i_symbol_deref(CodeNode* self);
 /*lint -sem(     i_term_coeff, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_coeff(CodeNode* self);
+/*lint -sem(     i_term_const, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_term_const(CodeNode* self);
 /*lint -sem(     i_term_add, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_add(CodeNode* self);
 /*lint -sem(     i_term_sub, 1p == 1, type(1), @p == 1p) */
