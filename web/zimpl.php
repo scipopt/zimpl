@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.16 2003/03/24 08:54:47 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.17 2003/09/17 10:18:02 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/03/24 08:54:47 $">
+<meta name="date" content="$Date: 2003/09/17 10:18:02 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -63,20 +63,29 @@ by a LP or MIP solver.
 Zimpl is a command line 
 program written in plain C and released under GNU GPL. 
 It has been tested to compile under
-Linux/Intel, Linux/Alpha, Solaris and Tru64. 
+Linux/Intel, Solaris and Tru64. 
 Probably it will compile and run wherever a decent OS and C compiler
-is available (I heard this includes AIX). There is even some
-documentation. There is <em>no</em> Windows version.</p>
+is available. Zimpl has been successfully compiled under Windows using 
+<a href="http://www.cygwin.com">Cygwin</a>.
+</p>
 <p>
 <hr noshade>
+<h3>What's new in 2.00</h3>
+<ul>
+<li>Zimpl now uses rational arithmetic. So it needs more memory and is slower.
+<li>Preprocessing is now implemented, but not yet tested.
+<li>Numerous bug fixes and enhancements.
+</ul>
 <h3>Download</h3>
 <p>
-The latest Version is 1.05. 
-<a href="zimpl-1.05.tgz">Download</a>
+The latest Version is 2.00. 
+<a href="download/zimpl-2.00.tgz">Download</a>
 complete source code and 
 <a href="zimpl.pdf">documentation</a>.
 <br>
-Differences to the older versions are in the 
+Older versions are still available <a href="download/">here</a>.
+<br>
+Differences to the older versions are described in the 
 <a href="CHANGELOG.txt">Changelog</a>.
 </p>
 <h3>Bugs</h3>
@@ -157,9 +166,10 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2003/03/24 08:54:47 $ by
+<a href="http://www.zib.de/impressum.en.html">Imprint</a>
+Last Update $Date: 2003/09/17 10:18:02 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
-<br>&copy; 2002 by Thorsten Koch
+<br>&copy; 2003 by Thorsten Koch
 </font>
 </address>
 </body>

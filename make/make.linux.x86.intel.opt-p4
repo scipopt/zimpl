@@ -1,3 +1,4 @@
+# $Id: make.linux.x86.intel.opt-p4,v 1.4 2003/09/17 10:18:01 bzfkocht Exp $
 CC              =       icc
 CPPFLAGS        +=      -DNDEBUG -DNO_MSHELL
 CFLAGS          =       -O3 -tpp7 -xW -ipo -Xc -w1 \

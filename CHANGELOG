@@ -1,3 +1,5 @@
+2.00 17.Sep 2003 Release
+
  - Function sgn(expr) implemented.
 
  - Fixed a bug in the set range routine. Now ranges with

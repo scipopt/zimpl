@@ -8,6 +8,18 @@ solver.
 
 COMPILING
 ---------
+To compile Zimpl you need two additional librarys:
+
+ - GNU Multiple Precision Arithmetic Library 
+   Version 4.1.2 or newer at http://www.swox.com/gmp
+ - zlib Version 1.1.4 or newer at http://www.gzip.org/zlib/
+
+Zimpl has not been tested with older versions of above librarys.
+GMP Version 3.x will not work for sure.
+
+If zlib.h and gmp.h and libgmp.a and libz.a are not at the usual
+places you have to adapt the Makefile, see below.
+
 On a Linux system you might succeed with just saying: make
 
 Otherwise:
@@ -17,6 +29,7 @@ Otherwise:
   Tru64 with Compaq C      :  gmake COMP=compaq
   Solaris with SUN Forte C :  gmake COMP=sun
   AIX with VisualAge C     :  gmake COMP=ibm
+  Windows with Cygwin/GCC  :  gmake COMP=gnu
 
 If your configuration is not in the list or does not work,
 you have to change the Makefile. Go to make/local
@@ -74,8 +87,8 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fügenschuh, Marc Pfetsch and Sascha Lukac for there comments
-and bug reports.
+To Armin Fügenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas
+and Tobias Achterberg for there comments and bug reports.
 
 
 COMPLAINS
