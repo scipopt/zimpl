@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.3 2003/10/03 09:02:27 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.4 2003/10/04 16:22:07 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -153,6 +153,9 @@ of interest):
                   append all the local variables from the forall statements.\\
 -v {\em 1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
                   2 is verbose, 3 is chatter, and 5 is debug.\\
+-D {\em name=val} & Sets the parameter \emph{par} to the secified
+                  value. This is equivalent with having this line in the
+                  \zimpl programm: \code{param param par:=value}.\\
 %\hline
 -b & Enables bison debugging output.\\
 -f & Enables flex debugging output.\\
@@ -896,8 +899,9 @@ The optimal solution in this case is to build plants \code{A} and
 \code{C}. Stores 2, 3, and 4 are served by plant \code{A}, the rest by
 plant \code{C}. Total cost would be 1457.
 
+\newpage
 \section{Error messages}
-Here is a list of the incomprehensible error messages \zimpl
+Here is a complete list of the incomprehensible error messages \zimpl
 can produce:
 
 \begin{description}
@@ -1113,10 +1117,9 @@ can produce:
 \item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored]\ \\
   Something was found after the last semicolon in the file.
 \item[163 Line \code{xxx}: Syntax Error]\ \\
-  Either a new statement was not started with one of the keywords:
+  A new statement was not started with one of the keywords:
   \code{set}, \code{param}, \code{var}, \code{minimize}, 
-  \code{maximize}, \code{subto}, and \code{print}, or no name
-  was given after the keyword.
+  \code{maximize}, \code{subto}, or \code{do}.
 %
 % set.c
 %
@@ -1171,10 +1174,20 @@ can produce:
   strings. In the initialisation both types were present.
 %
 % iread.c
+%
 \item[174 Numeric field \code{xxx} read as \code{"yyy"}. This is not a
   number]\ \\
   It was tried to read a field with a 'n' designation in the template,
   but what was read is not a valid number.
+%
+% zimpl.c
+%
+\item[175] Illegal syntax for command line define \code{"xxx"} --
+  ignored]\ \\
+  A parameter definition using the command line \code{-D} flag, must
+  have the form \code{name=value}. The \code{name} must be a legal
+  identifier, \ie it has to start with a letter and may consist only out
+  of letters and numbers including the underscore. 
 %
 % numbgmp.c
 %
@@ -1198,4 +1211,8 @@ the argument was too small to be represented as a \code{double}.
 \item[801 Parser failed]\ \\
   The parsing routine failed. This should not happen. If you encounter
   this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+%
+% inst.c
+%
+\item[900 Check failed!]\ \\
 \end{description}

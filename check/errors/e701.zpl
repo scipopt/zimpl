@@ -1,3 +1,2 @@
-# $Id: e701.zpl,v 1.1 2003/09/27 11:57:01 bzfkocht Exp $
+# $Id: e701.zpl,v 1.2 2003/10/04 16:22:07 bzfkocht Exp $
 param x := sqrt(-1);
-print x;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.20 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.21 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -139,63 +139,40 @@ static void add_stmt(
    const int   lineno,
    const char* text)
 {
-   const char* separ = " :;\t";
-
    StmtType type;
-   char*    copy;
-   char*    s;
-   char*    name;
 
    assert(prog     != NULL);
    assert(filename != NULL);
    assert(text     != NULL);
 
-   if (strlen(text) < 4)
-      goto syntax_error;
-
-   copy = strdup(text);
-
-   assert(copy != NULL);
-   
-   if (NULL == (s = strtok(copy, separ)))
-      goto syntax_error;
-
-   if (!strcmp(s, "set"))
+   if (!strncmp(text, "set ", 4))
       type = STMT_SET;
-   else if (!strcmp(s, "param"))
+   else if (!strncmp(text, "param ", 6))
       type = STMT_PARAM;
-   else if (!strcmp(s, "var"))
+   else if (!strncmp(text, "var ", 4))
       type = STMT_VAR;
-   else if (!strcmp(s, "minimize"))
+   else if (!strncmp(text, "minimize ", 9))
       type = STMT_MIN;
-   else if (!strcmp(s, "maximize"))
+   else if (!strncmp(text, "maximize ", 9))
       type = STMT_MAX;
-   else if (!strcmp(s, "subto"))
+   else if (!strncmp(text, "subto ", 6))
       type = STMT_CONS;
-   else if (!strcmp(s, "defnumb"))
+   else if (!strncmp(text, "defnumb ", 8))
       type = STMT_DEF;
-   else if (!strcmp(s, "defstrg"))
+   else if (!strncmp(text, "defstrg ", 8))
       type = STMT_DEF;
-   else if (!strcmp(s, "defset"))
+   else if (!strncmp(text, "defset ", 7))
       type = STMT_DEF;
-   else if (!strcmp(s, "print"))
-      type = STMT_PRINT;
+   else if (!strncmp(text, "do ", 3))
+      type = STMT_DO;
    else
-      goto syntax_error;
+   {
+      fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
+      show_source(stderr, text, 1);
 
-   if (NULL == (name = strtok(NULL, separ)))
-      goto syntax_error;
-
-   prog_add_stmt(prog, stmt_new(type, filename, lineno, name, text));
-
-   free(copy);
-   return;
-   
- syntax_error:
-   
-   /*lint -esym(429,copy) Custodial pointer 'copy' has not been freed or returned */
-   fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
-   exit(EXIT_FAILURE);
+      exit(EXIT_FAILURE);
+   }
+   prog_add_stmt(prog, stmt_new(type, filename, lineno, text));
 }
 
 void prog_load(Prog* prog, const char* filename)

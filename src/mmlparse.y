@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.54 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.55 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -65,7 +65,7 @@ extern void yyerror(const char* s);
 };
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
-%token DEFNUMB DEFSTRG DEFSET PRINT
+%token DEFNUMB DEFSTRG DEFSET PRINT CHECK
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
@@ -88,7 +88,7 @@ extern void yyerror(const char* s);
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> def_numb def_strg def_set
-%type <code> stmt_print
+%type <code> exec_do command
 %type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset subterm summand factor vexpr term name_list
@@ -128,7 +128,7 @@ stmt
    | def_numb   { code_set_root($1); }
    | def_strg   { code_set_root($1); }
    | def_set    { code_set_root($1); }
-   | stmt_print { code_set_root($1); }
+   | exec_do    { code_set_root($1); }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -486,15 +486,22 @@ vexpr
    ;   
 
 /* ----------------------------------------------------------------------------
- * --- Print Statement
+ * --- Do Statement
  * ----------------------------------------------------------------------------
  */
-stmt_print
-   : PRINT expr ';'    { $$ = code_new_inst(i_print, 1, $2); }
-   | PRINT tuple ';'   { $$ = code_new_inst(i_print, 1, $2); }
-   | PRINT sexpr ';'   { $$ = code_new_inst(i_print, 1, $2); }
+exec_do
+   : DO command ';' { $$ = $2; }
    ;
 
+command
+   : PRINT expr     { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT tuple    { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT sexpr    { $$ = code_new_inst(i_print, 1, $2); }
+   | CHECK lexpr    { $$ = code_new_inst(i_check, 1, $2); }
+   | FORALL idxset DO command {
+        $$ = code_new_inst(i_forall, 2, $2, $4);
+     }
+   ;
 
 /* ----------------------------------------------------------------------------
  * --- 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.14 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.15 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -46,7 +46,6 @@ struct statement
    StmtType    type;
    const char* filename;
    int         lineno;
-   const char* name;
    const char* text;
    CodeNode*   node;
 };
@@ -55,13 +54,11 @@ Stmt* stmt_new(
    StmtType    type,
    const char* filename,
    int         lineno,
-   const char* name,
    const char* text)
 {
    Stmt* stmt = calloc(1, sizeof(*stmt));;
 
    assert(filename != NULL);
-   assert(name     != NULL);
    assert(text     != NULL);
    assert(stmt     != NULL);
    assert(lineno   > 0);
@@ -69,7 +66,6 @@ Stmt* stmt_new(
    stmt->type     = type;
    stmt->filename = strdup(filename);
    stmt->lineno   = lineno;
-   stmt->name     = strdup(name);
    stmt->text     = strdup(text);
    stmt->node     = NULL;
    
@@ -89,7 +85,6 @@ void stmt_free(Stmt* stmt)
       code_free(stmt->node);
 
    free((void*)stmt->filename);
-   free((void*)stmt->name);
    free((void*)stmt->text);
    free(stmt);
 }
@@ -100,15 +95,7 @@ Bool stmt_is_valid(const Stmt* stmt)
       && SID_ok(stmt, STMT_SID)
       && (stmt->filename != NULL)
       && (stmt->lineno   >  0)
-      && (stmt->name     != NULL)
       && (stmt->text     != NULL));
-}
-
-const char* stmt_get_name(const Stmt* stmt)
-{
-   assert(stmt_is_valid(stmt));
-
-   return stmt->name;
 }
 
 const char* stmt_get_filename(const Stmt* stmt)
@@ -178,10 +165,16 @@ void stmt_print(FILE* fp, const Stmt* stmt)
    assert((unsigned int)stmt->type
       < (sizeof(type_name) / sizeof(type_name[0]))); /*lint !e650 */
 
-   fprintf(fp, "%s %04d %-7s %-10.10s [%s]\n",
+   fprintf(fp, "%s %04d %-7s [%s]\n",
       stmt->filename,
       stmt->lineno,
       type_name[(int)stmt->type],
-      stmt->name,
       stmt->text);
 }
+
+
+
+
+
+
+

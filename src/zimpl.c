@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.45 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.46 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -64,11 +64,12 @@ static const char* banner =
 
 static const char* options = "bD:fF:hn:o:prt:v:";
 static const char* usage =
-"usage: %s [-bfhpr][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
+"usage: %s [-bfhpr][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
 
 static const char* help =
 "\n" \
 "  -b             enable bison debugging output.\n" \
+"  -D name=value  Setzt einen Parameter auf einen Wert.\n" \
 "  -f             enable flex debugging output.\n" \
 "  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \
@@ -149,14 +150,14 @@ static Bool is_valid_identifier(const char* s)
 {
    assert(s != NULL);
 
-   /* Identifiers start with a  character
+   /* Identifiers start with a letter or a '_'
     */
-   if (!isalpha(*s))
+   if (!isalpha(*s) || *s == '_')
       return FALSE;
 
-   /* Then character or digits can follow.
+   /* Then letters, digits or '_' can follow.
     */
-   while(isalnum(*++s))
+   while(isalnum(*++s) || *s == '_')
       ;
 
    return *s == '\0';

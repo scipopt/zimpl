@@ -1,3 +1,13 @@
+ - Implemented "check" statement.
+
+ - Implemented the "do" statement. This changes the
+   syntax for print. It is now "do print".
+   Now "do forall <i> in I do print i; " is
+   possible.
+
+ - Error 163 now shows the location of the error. 
+   (Always start of the line ;-)
+
  - It is now possible to define non indexed parameters
    on the command line. -Dpeng=12 is equivalent to
    param peng := 12; in the Zimpl file.

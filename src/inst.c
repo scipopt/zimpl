@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.64 2003/10/03 09:02:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.65 2003/10/04 16:22:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -226,7 +226,7 @@ CodeNode* i_forall(CodeNode* self)
       local_install_tuple(pattern, tuple);
 
       if (code_get_bool(code_eval(lexpr)))
-         (void)code_eval_child(self, 1); /* constraint */
+         (void)code_eval_child(self, 1); /* z.B. constraint */
 
       local_drop_frame();
    }
@@ -2918,6 +2918,24 @@ CodeNode* i_bound_new(CodeNode* self)
    code_value_bound(self,
       bound_new(BOUND_VALUE,
          code_eval_child_numb(self, 0)));
+
+   return self;
+}
+
+CodeNode* i_check(CodeNode* self)
+{
+   Trace("i_check");
+
+   assert(code_is_valid(self));
+
+   if (!code_eval_child_bool(self, 0))
+   {
+      fprintf(stderr, "*** Error 900: Check failed!\n");
+      local_print_all(stderr);
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   code_value_void(self);
 
    return self;
 }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: local.c,v 1.10 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.11 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -135,11 +135,13 @@ void local_print_all(FILE* fp)
 
    for(local = anchor.next; local != NULL; local = local->next)
    {
-      fprintf(fp, "[%s] ", local->name);
       if (local->element == NULL)
          fprintf(fp, "New Frame");
       else
+      {
+         fprintf(fp, "%s = ", local->name);
          elem_print(fp, local->element);
+      }
       fprintf(fp, "\n");
    }
 }

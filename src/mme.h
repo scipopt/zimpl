@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.50 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.51 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -47,7 +47,7 @@ enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
-   STMT_CONS, STMT_DEF, STMT_PRINT
+   STMT_CONS, STMT_DEF, STMT_DO
 };
 
 enum set_check_type
@@ -639,16 +639,14 @@ extern const char* conname_get(void);
 
 /* stmt.c
  */
-/*lint -sem(        stmt_new, nulterm(2), nulterm(4), nulterm(5),
-                    2p && 3n >= 0 && 4p && 5p, @p == 1) */
+/*lint -sem(        stmt_new, nulterm(2), nulterm(4),
+                    2p && 3n >= 0 && 4p, @p == 1) */
 extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
-   const char* name, const char* text);
+   const char* text);
 /*lint -sem(        stmt_free, custodial(1), 1p == 1) */
 extern void         stmt_free(Stmt* stmt);
 /*lint -sem(        stmt_is_valid, 1p == 1) */
 extern Bool         stmt_is_valid(const Stmt* stmt);
-/*lint -sem(        stmt_get_name, 1p == 1, @p && nulterm(@)) */
-extern const char*  stmt_get_name(const Stmt* stmt);
 /*lint -sem(        stmt_get_filename, 1p == 1, @p && nulterm(@)) */
 extern const char*  stmt_get_filename(const Stmt* stmt);
 /*lint -sem(        stmt_get_lineno, 1p == 1, @n > 0) */

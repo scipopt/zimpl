@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.12 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.13 2003/10/04 16:22:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -30,6 +30,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <ctype.h>
 #include <errno.h>
 #include <gmp.h>
 

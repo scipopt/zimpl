@@ -1,5 +1,7 @@
-doc -D
-test warnings -D
+check dokumentieen
+check und print in checks expr? einbauen
+
+check.sh für warning erweitern
 
 test vergleich verbessern fuer 700er und 800er fehler.
 
@@ -87,7 +89,6 @@ weil sie nie zurueckgesetzt werden.
 Einleseroutinen für indizerte Sets
 
 tru64/opt INFINITY warnung
-hp complett
 ibm ggf -qwarn64
 
 
@@ -140,8 +141,6 @@ include gucken auch innerhalt eines ; ausdrucks.
 
 
 shortcummings and Tips&Trick Abschnitt
-
-check statement mit forall als reductionsoperator expr* -> bool
 
 Im LP reihenfolge der sets beibehalten
 
