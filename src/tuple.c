@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.13 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.14 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -154,6 +154,7 @@ int tuple_get_dim(const Tuple* tuple)
    return tuple->dim;
 }
 
+/*lint -e{818} supress "Pointer parameter could be declared as pointing to const" */
 void tuple_set_elem(Tuple* tuple, int idx, Elem* elem)
 {
    assert(tuple_is_valid(tuple));

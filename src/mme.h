@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.37 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.38 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -250,11 +250,11 @@ extern void         list_add_tuple(List* list, const Tuple* tuple);
 extern void         list_add_entry(List* list, const Entry* entry);
 /*lint -sem(        list_get_elems, 1p == 1, @n >= 0) */
 extern int          list_get_elems(const List* list);
-/*lint -sem(        list_get_elem,  1p == 1) */
+/*lint -sem(        list_get_elem,  1p == 1, @p == 1) */
 extern const Elem*  list_get_elem(const List* list, ListElem** idxp);
-/*lint -sem(        list_get_tuple, 1p == 1) */
+/*lint -sem(        list_get_tuple, 1p == 1, @p == 1) */
 extern const Tuple* list_get_tuple(const List* list, ListElem** idxp);
-/*lint -sem(        list_get_entry, 1p == 1) */
+/*lint -sem(        list_get_entry, 1p == 1, @p == 1) */
 extern const Entry* list_get_entry(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
@@ -455,7 +455,7 @@ extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
-extern void         symbol_add_entry(Symbol* sym, const Entry* entry);
+extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
 extern int          symbol_get_dim(const Symbol* sym);
 /*lint -sem(        symbol_get_iset, 1p == 1, @p == 1) */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.6 2003/08/20 11:34:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.7 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -39,25 +39,25 @@
 #error "Need to include mme.h before xlpglue.h"
 #endif
 
-/*lint -sem(    xlp_alloc, 1p == 1 && nulterm(1)) */
+/*lint -sem(    xlp_alloc, 1p && nulterm(1)) */
 extern void     xlp_alloc(const char* name);
 extern void     xlp_free(void);
 extern void     xlp_scale(void);
-/*lint -sem(    xlp_write, 1p == 1 && nulterm(3)) */
+/*lint -sem(    xlp_write, 1p == 1 && 3p && nulterm(3)) */
 extern void     xlp_write(FILE* fp, LpFormat format, const char* text);
 /*lint -sem(    xlp_transtable, 1p == 1) */
 extern void     xlp_transtable(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_orderfile, 1p == 1) */
 extern void     xlp_orderfile(FILE* fp);
-/*lint -sem(    xlp_conname, 1p == 1 && nulterm(1)) */
+/*lint -sem(    xlp_conname, 1p && nulterm(1)) */
 extern Bool     xlp_conname_exists(const char* conname);
-/*lint -sem(    xlp_addcon, 1p == 1 && nulterm(1) && 3p == 1 && 4p == 1, @p == 1) */
+/*lint -sem(    xlp_addcon, 1p && nulterm(1) && 3p == 1 && 4p == 1, @p == 1) */
 extern Con*     xlp_addcon(const char* name, ConType type,
    const Numb* lhs, const Numb* rhs, unsigned int flags);
-/*lint -sem(    xlp_addvar, 1p == 1 && nulterm(1) && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
+/*lint -sem(    xlp_addvar, 1p && nulterm(1) && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
-/*lint -sem(    xlp_objname, 1p == 1 && nulterm(1)) */
+/*lint -sem(    xlp_objname, 1p && nulterm(1)) */
 extern void     xlp_objname(const char* name);
 extern void     xlp_setdir(Bool minimize);
 /*lint -sem(    xlp_addtonzo, 1p == 1 && 2p == 1 && 3p == 1) */

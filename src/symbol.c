@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.17 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.18 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -179,7 +179,7 @@ const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
 
 /* Entry wird gefressen.
  */
-void symbol_add_entry(Symbol* sym, const Entry* entry)
+void symbol_add_entry(Symbol* sym, Entry* entry)
 {
    const Tuple* tuple;
    
@@ -208,6 +208,8 @@ void symbol_add_entry(Symbol* sym, const Entry* entry)
       fprintf(stderr, "*** Warning: Dublicate element ");
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol %s rejected\n", sym->name);
+
+      entry_free(entry);
    }
    else
    {
@@ -221,7 +223,7 @@ void symbol_add_entry(Symbol* sym, const Entry* entry)
       
       hash_add_entry(sym->hash, entry);
       
-      sym->entry[sym->used] = entry_copy(entry);      
+      sym->entry[sym->used] = entry;      
       sym->used++;
    }
 }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.4 2003/08/20 11:34:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.5 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -86,6 +86,8 @@ static void write_row(FILE* fp, const Con* con, int namelen, char* name)
 
 /* A specification for the LP file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 527.
+ * ILOG CPLEX 8.0 Reference Manual page 595.
+ * The "Lazy Constraints" section seems to be undocumented.
  */
 void lpf_write(
    const Lps*  lp,
@@ -95,7 +97,11 @@ void lpf_write(
 {
    const Var* var;
    const Con* con;
+   Bool  have_binary   = FALSE;
+   Bool  have_integer  = FALSE;
+   Bool  have_separate = FALSE;
    int   cnt;
+   int   i;
    char* name = malloc(namelen + 1);
    
    assert(lp       != NULL);
@@ -131,14 +137,30 @@ void lpf_write(
    }
    /* ---------------------------------------------------------------------- */
 
-   fprintf(fp, "\nSubject to\n");
+   /* First loop run for normal constraints, second one for
+    * lazy constraints, if any.
+    */
+   for(i = 0; i < 2; i++)
+   {      
+      fprintf(fp, "\n%s\n", (i == 0) ? "Subject to" : "Lazy Constraints");
 
-   for(con = lp->con_root; con != NULL; con = con->next)
-   {
-      if (con->size > 0)
+      for(con = lp->con_root; con != NULL; con = con->next)
       {
-         lps_makename(name, namelen + 1, con->name, con->number);
+         if (con->size == 0)
+            continue;
 
+         if ((con->flags & LP_FLAG_CON_SEPAR) == LP_FLAG_CON_SEPAR)
+         {
+            have_separate = TRUE;
+
+            if (i == 0)
+               continue;
+         }
+         else if (i == 1)
+            continue;
+    
+         lps_makename(name, namelen + 1, con->name, con->number);
+            
          if (con->type == CON_RANGE)
          {
             /* Split ranges, because LP format can't handle them.
@@ -157,6 +179,10 @@ void lpf_write(
             write_rhs(fp, con, con->type);
          }
       }
+      /* Shortcut to break out of the loop if there are no lazy constraints.
+       */
+      if (!have_separate)
+         break;
    }
 
    /* ---------------------------------------------------------------------- */
@@ -177,6 +203,14 @@ void lpf_write(
          if (var->size == 0 && mpq_equal(var->cost, const_zero))
             continue;
 
+         /* Check if we have binaries and/or integers variable
+          */
+         if (var->class == VAR_BIN)
+            have_binary = TRUE;
+
+         if (var->class == VAR_INT)
+            have_integer = TRUE;
+         
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             fprintf(fp, " %.15g", mpq_get_d(var->lower));
          else
@@ -188,6 +222,43 @@ void lpf_write(
             fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
          else
             fprintf(fp, "+Inf\n");
+      }
+   }
+
+   /* ---------------------------------------------------------------------- */
+
+   if (have_binary)
+   {
+      fprintf(fp, "Binary\n");
+      
+      for(var = lp->var_root; var != NULL; var = var->next)
+      {
+         if (var->class != VAR_BIN)
+            continue;
+
+         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+            continue;
+
+         lps_makename(name, namelen + 1, var->name, var->number);
+
+         fprintf(fp, " %s\n", name);
+      }
+   }
+   if (have_integer)
+   {
+      fprintf(fp, "General\n");
+      
+      for(var = lp->var_root; var != NULL; var = var->next)
+      {
+         if (var->class != VAR_INT)
+            continue;
+
+         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+            continue;
+         
+         lps_makename(name, namelen + 1, var->name, var->number);
+
+         fprintf(fp, " %s\n", name);
       }
    }
    fprintf(fp, "End\n");

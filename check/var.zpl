@@ -1,8 +1,7 @@
-#!/bin/sh
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
-#*   File....: check.sh                                                      */
-#*   Name....: check script                                                  */
+#*   File....: var.zpl                                                       */
+#*   Name....: Var test                                                      */
 #*   Author..: Thorsten Koch                                                 */
 #*   Copyright by Author, All rights reserved                                */
 #*                                                                           */
@@ -24,25 +23,34 @@
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
-# $1 = Binary
-PASS=0
-for i in expr param set subto var
-do
-   $1 $i.zpl
-   diff $i.lp $i.lp.ref >/dev/null
-   case $? in
-    0) echo Test $i "(lp)" OK; PASS=`expr $PASS + 1` ;;
-    1) echo Test $i "(lp)" FAIL ;;
-    *) echo Test $i "(lp)" ERROR ;;
-   esac
-   diff $i.tbl $i.tbl.ref >/dev/null
-   case $? in
-    0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
-    1) echo Test $i "(tbl)" FAIL ;;
-    *) echo Test $i "(tbl)" ERROR ;;
-   esac
-   rm $i.tbl $i.lp
-done 
-if [ $PASS -eq 10 ] ; then echo All $PASS tests passed; 
-else echo FAILURE!; 
-fi
+set I := { 1 .. 5 };
+
+var a1;
+var b1 real;
+var b2 real <= 10;
+var b3 real >= 5/2;
+var b4 real >= 2 <= 7/3;
+var c1 <= 10;
+var c2 >= -5/4;
+var c3 >= 2 <= 7;
+var d1 binary;
+var d2 binary priority 50;
+var d3 binary startval 1;
+var d4 binary priority 100 startval 1;
+var e1 integer;
+var e2 integer >= -5;
+var e3 integer <= 10;
+var e4 integer >= -2 <= 6;
+var e5 integer >= 5 priority 10;
+var e6 integer <= 10 startval 5;
+var e7 integer >= 2 <= 6 priority 15 startval 4;
+var x[I];
+var y[<i> in I] integer >= -5 * i <= 6 * i priority 3 startval i;
+
+subto ca1: a1 + sum <i> in I : x[i] >= 17;
+subto cb1: b1 + b2 + b3 + b4 <= 99;
+subto cc1: c1 + c2 + c3 <= 77;
+subto cd1: d1 + d2 + d3 + d4>= 2;
+subto ce1: e1 + e2 + e3 + e4 + e5 + e6 + e7 <= 18;
+subto cy: sum <i> in I : y[i] == -6;
+

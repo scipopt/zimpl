@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.8 2003/08/20 11:34:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.9 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1508,7 +1508,7 @@ void lps_makename(
       strcpy(target, name);
    else
    {
-      /* The 16 is to make sure the %d later has enough room
+      /* The 16 is to make sure the %x later has enough room
        */
       temp = malloc((size_t)size + 16);
 
@@ -1520,6 +1520,7 @@ void lps_makename(
        */
       len = size - (int)strlen(temp) - 2;
 
+      /* ??? Dasmacht keinen sinn zusammen mit der +16 oben. */
       assert(len >= 0);
    
       for(i = 0; i < len; i++)      

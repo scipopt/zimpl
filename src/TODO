@@ -1,3 +1,7 @@
+check separate, scale flag
+
+Warum sind subto names in gleichem namensraum wie variablen?
+
 checks auf für MPS
 
 check: Tests für ranges
@@ -15,14 +19,14 @@ check:  errors.zpl felft, einer fuer jeden error/warnin
         außerdem errors warning durchnummeriern.
         dann err007.zpl
 
-check:  var.zpl fehlt
-
 Speedups:
 
 numbgmp: mpq_clear aufrufen für verwendete oder schon erledigt.
 strstore: string table, jeder nur einmal und dann handle. Macht auch
           str_has und str_cmp schneller.
-auf explicite copys umstellen. Statt
+
+
+auf explicite copys umstellen. list elem entry
 
 numb = new_numb
 elem = new_elem(numb);
@@ -59,7 +63,7 @@ hp complett
 valgrind opt/expr meldung
 ibm ggf -qwarn64
 
-VAR setktion in check
+VAR section in check
 
 es fehlt noch sowas wie sum of sets (Big Uninion)
 
@@ -73,8 +77,6 @@ indexset sollte auch für variablen und parametergehen.
 -----------------------
 Sollte man auf 0 fixierte Variablen entfernen ?
 ------------------------
-idxset und sexpr vereinheitlichen, eigendlich ist ein
-idxset immer eine sexpr
 
 Mal überlegen ob es nicht eine ide wäre 
 Metakontruckte eiinzuführen wie

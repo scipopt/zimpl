@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.4 2003/08/20 11:34:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.5 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -38,6 +38,7 @@
 #include "ratlp.h"
 #include "ratlpstore.h"
 
+/*lint -e{818} supress "Pointer parameter 'var' could be declared as pointing to const" */
 static void remove_fixed_var(
    Lps* lp,
    Var* var,

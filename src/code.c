@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.21 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.22 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -105,7 +105,7 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    SID_set(node, CODE_SID);
    assert(code_is_valid(node));
 
-   /*lint -save -e826 -e662 */
+   /*lint -save -e826 */
    va_start(ap, childs);
 
    for(i = 0; i < childs; i++)

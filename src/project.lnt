@@ -1,4 +1,4 @@
--passes(1)
+-passes(2)
 -I/usr/local/lib/flexelint/posix
 +libh(lint.h)
 -function(exit,_assert)
@@ -56,6 +56,9 @@
 -esym(673, yyss, yyvs) // klappt nicht
 //--- GMP ---
 -esym(534,__gmpf_out_str,__gmpq_set_str,__gmpq_out_str)
+//--- ratlp
+-esym(757,lps_readmps) // global not referenced
+-efunc(662,code_new_inst)
 //-------------- NOCH ZU TUN --------------------------------
 -e714 // Symbol not referenced
 -e765 // external could be made static

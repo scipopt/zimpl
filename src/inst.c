@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.48 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.49 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1385,8 +1385,6 @@ CodeNode* i_newsym_set1(CodeNode* self)
 
    const Tuple*  pattern;
    const Tuple*  tuple;
-   const Set*    newset;
-   Entry*        entry;
    int           idx;
    
    Trace("i_newsym_set1");
@@ -1405,14 +1403,9 @@ CodeNode* i_newsym_set1(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
 
-      //      newset  = set_from_idxset(code_eval_child_idxset(self, 2));
-      newset  = code_eval_child_set(self, 2);
-      entry   = entry_new_set(tuple, newset);
-
-      symbol_add_entry(sym, entry);
-
-      // set_free(newset);
-      entry_free(entry);
+      symbol_add_entry(sym,
+         entry_new_set(tuple,
+            code_eval_child_set(self, 2)));
 
       local_drop_frame();
    }
@@ -1511,7 +1504,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
       tuple  = entry_get_tuple(entry);
       
       if (set_lookup(iset, tuple))
-         symbol_add_entry(sym, entry);
+         symbol_add_entry(sym, entry_copy(entry));
       else
       {
          fprintf(stderr, "*** Error: Illegal element ");
@@ -1583,7 +1576,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
       tuple  = entry_get_tuple(entry);
       
       if (set_lookup(iset, tuple))
-         symbol_add_entry(sym, entry);
+         symbol_add_entry(sym, entry_copy(entry));
       else
       {
          fprintf(stderr, "*** Error: Illegal element ");
@@ -1652,13 +1645,9 @@ CodeNode* i_newsym_para2(CodeNode* self)
          code_errmsg(self);
          abort();
       }
-      /*entry = entry_new_numb(tuple, code_eval_child_numb(self, 2));*/
-      
       symbol_add_entry(sym, entry);
       
       local_drop_frame();
-      
-      entry_free(entry);
    }
    code_value_void(self);
 
@@ -1678,7 +1667,6 @@ CodeNode* i_newsym_var(CodeNode* self)
    VarClass      varclass;
    VarClass      usevarclass;
    Var*          var;
-   Entry*        entry;
    int           idx = 0;
    Bound*        lower;
    Bound*        upper;
@@ -1709,36 +1697,32 @@ CodeNode* i_newsym_var(CodeNode* self)
       startval    = code_eval_child_numb(self, 6);
       usevarclass = varclass;
 
+      /* If it is a binary variable the bounds have to be 0 and 1.
+       */
+      assert(varclass != VAR_BIN || bound_get_type(lower) == BOUND_VALUE);
+      assert(varclass != VAR_BIN || bound_get_type(upper) == BOUND_VALUE);
+      assert(varclass != VAR_BIN || numb_equal(bound_get_value(lower), numb_zero()));
+      assert(varclass != VAR_BIN || numb_equal(bound_get_value(upper), numb_one()));
+
       if (bound_get_type(lower) == BOUND_INFTY)
       {
+         bound_free(lower);
+         lower = bound_new(BOUND_VALUE, numb_zero());
+
          fprintf(stderr,
             "*** Warning: lower bound for var %s set to infinity -- ignored\n",
             name);
       }
       if (bound_get_type(upper) == BOUND_MINUS_INFTY)
       {
+         bound_free(upper);
+         upper = bound_new(BOUND_INFTY, NULL);
+
          fprintf(stderr,
             "*** Warning: upper bound for var %s set to -infinity -- ignored\n",
             name);
       }
-      if (varclass == VAR_BIN)
-      {
-         if (  bound_get_type(lower) != BOUND_VALUE
-            || bound_get_type(upper) != BOUND_VALUE
-            || !numb_equal(bound_get_value(lower), numb_zero())
-            || !numb_equal(bound_get_value(upper), numb_one()))
-         {
-            fprintf(stderr,
-               "*** Warning: Bounds for binary variable %s ignored\n",
-               name);
 
-            bound_free(lower);
-            bound_free(upper);
-
-            lower = bound_new(BOUND_VALUE, numb_zero());
-            upper = bound_new(BOUND_VALUE, numb_one());
-         }
-      }
       if ((varclass == VAR_CON)
          && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
          fprintf(stderr,
@@ -1792,6 +1776,19 @@ CodeNode* i_newsym_var(CodeNode* self)
       {
          usevarclass = VAR_BIN;
       }
+
+      if (  bound_get_type(lower) == BOUND_VALUE
+         && bound_get_type(upper) == BOUND_VALUE
+         && numb_cmp(bound_get_value(lower), bound_get_value(upper)) > 0)
+      {
+         fprintf(stderr, "*** Error: Infeasible Variable, conflicting bounds\n");
+         fprintf(stderr, "           lower=%g > upper=%g\n",
+            numb_todbl(bound_get_value(lower)),
+            numb_todbl(bound_get_value(upper)));
+         code_errmsg(self);
+         abort();
+      }
+
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
       tuplestr = tuple_tostr(tuple);
@@ -1805,16 +1802,13 @@ CodeNode* i_newsym_var(CodeNode* self)
        */
       var = xlp_addvar(varname, usevarclass, lower, upper, priority, startval);
 
-      entry = entry_new_var(tuple, var);
-
-      symbol_add_entry(sym, entry);
+      symbol_add_entry(sym, entry_new_var(tuple, var));
 
       free(varname);
       free(tuplestr);
       
       local_drop_frame();
 
-      entry_free(entry);
       bound_free(lower);
       bound_free(upper);
    }
@@ -1873,8 +1867,6 @@ CodeNode* i_symbol_deref(CodeNode* self)
    default :
       abort();
    }
-   /* entry_free(entry); */
-
    return self;
 }
 

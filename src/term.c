@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.18 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.19 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -153,7 +153,9 @@ Term* term_copy(const Term* term)
    return tnew;
 }
 
-void term_append_term(Term* term_a, const Term* term_b)
+void term_append_term(
+   Term* term_a,
+   const Term* term_b)
 {
    int i;
    
@@ -237,7 +239,10 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
    return term;
 }
 
-void term_add_constant(Term* term, const Numb* value)
+/*lint -e{818} supress "Pointer parameter 'term' could be declared as pointing to const" */
+void term_add_constant(
+   Term* term, 
+   const Numb* value)
 {
    Trace("term_add_constant");
 
@@ -248,6 +253,7 @@ void term_add_constant(Term* term, const Numb* value)
    assert(term_is_valid(term));
 }
 
+/*lint -e{818} supress "Pointer parameter 'term' could be declared as pointing to const" */
 void term_sub_constant(Term* term, const Numb* value)
 {
    Trace("term_sub_constant");

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.39 2003/08/20 11:34:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.40 2003/08/20 19:32:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,7 +25,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e574 -e525 -e750 -e737 -e734 -e744 -e732 -e713 */
+/*lint -e428 -e574 -e525 -e662 -e750 -e737 -e734 -e744 -e732 -e713 */
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
 /*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
@@ -215,6 +215,15 @@ decl_var
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2), $4, $6, $7, $8, $9, $10);
       }
+   | DECLVAR NAME '[' idxset ']' BINARY priority startval ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            $4,
+            code_new_varclass(VAR_BIN),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
+            $7, $8);
+      }
    | DECLVAR NAME var_type lower upper priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
@@ -224,13 +233,25 @@ decl_var
                code_new_inst(i_bool_true, 0)),
             $3, $4, $5, $6, $7);
       }
+   | DECLVAR NAME BINARY priority startval ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            code_new_inst(i_idxset_new, 3,
+               code_new_inst(i_tuple_empty, 0),
+               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_bool_true, 0)),
+            code_new_varclass(VAR_BIN),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
+            $4, $5);
+      }
    ;
 
 var_type
    : /* empty */      { $$ = code_new_varclass(VAR_CON); }
    | REAL             { $$ = code_new_varclass(VAR_CON); }
    | INTEGER          { $$ = code_new_varclass(VAR_INT); }
-   | BINARY           { $$ = code_new_varclass(VAR_BIN); }
+/*   | BINARY           { $$ = code_new_varclass(VAR_BIN); }*/
    ;
 
 lower
