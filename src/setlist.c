@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.6 2004/04/18 14:32:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.7 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -173,6 +173,9 @@ Set* set_list_new_from_elems(const List* list, SetCheckType check)
    assert(list_is_valid(list));
 
    n   = list_get_elems(list);
+
+   assert(n > 0);
+
    set = set_list_new(n, SET_DEFAULT);
 
    while(n-- > 0)
@@ -193,6 +196,9 @@ Set* set_list_new_from_tuples(const List* list, SetCheckType check)
    assert(list_is_valid(list));
 
    n   = list_get_elems(list);
+
+   assert(n > 0);
+
    set = set_list_new(n, SET_DEFAULT);
 
    while(n-- > 0)
@@ -218,6 +224,9 @@ Set* set_list_new_from_entries(const List* list, SetCheckType check)
    assert(list_is_valid(list));
 
    n   = list_get_elems(list);
+
+   assert(n > 0);
+
    set = set_list_new(n, SET_DEFAULT);
 
    while(n-- > 0)
@@ -293,7 +302,7 @@ static int set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
-void set_list_get_tuple(
+static void set_list_get_tuple(
    const Set* set,
    int        idx,
    Tuple*     tuple,
@@ -322,7 +331,6 @@ static SetIter* set_list_iter_init(
 {
    const Elem*  elem;
    SetIter*     iter;
-   int          i;
 
    assert(set_list_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));

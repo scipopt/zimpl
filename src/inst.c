@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.73 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.74 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1590,14 +1590,12 @@ static Set* set_from_idxset(const IdxSet* idxset)
 
       newset = set_pseudo_new();
    }
-#if 1 // ???? HIER DAS sollte laufen, tuts aber nicht
    else if (idxset_is_unrestricted(idxset))
    {
       assert(code_get_bool(code_eval(lexpr)));
 
       newset = set_copy(set);
    }
-#endif
    else
    {
       assert(tuple_get_dim(pattern) > 0);
@@ -2138,7 +2136,6 @@ CodeNode* i_symbol_deref(CodeNode* self)
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
       code_errmsg(self);
-      abort(); // ???????
       exit(EXIT_FAILURE);
    }
 
@@ -2277,16 +2274,9 @@ CodeNode* i_idxset_new(CodeNode* self)
    set    = code_eval_child_set(self, 1);
    lexpr  = code_get_child(self, 2);
    dim    = set_get_dim(set);
-   
-   if (set_get_members(set) == 0)
-   {
-      /* Is this a problem or not ?
-       */
-      fprintf(stderr, "*** Error ???: Empty index set\n");
-      code_errmsg(self);
-      abort(); // ?????
-      exit(EXIT_FAILURE);
-   }
+
+   /* Attention: set_get_members(set) == 0 is possible!
+    */
    assert(set_get_dim(set) > 0);
    
    /* Wenn kein Index tuple angegeben wurde, konstruieren wir eins.
@@ -2302,19 +2292,20 @@ CodeNode* i_idxset_new(CodeNode* self)
          sprintf(name, "@%d", i + 1);
          tuple_set_elem(tuple, i, elem_new_name(str_new(name)));
       }
-      if (code_get_inst(lexpr) == i_bool_true)
+      if (code_get_inst(lexpr) == (Inst)i_bool_true)
          is_unrestricted = TRUE;
    }
    else
    {
       if (tuple_get_dim(tuple) != dim)
       {
-         fprintf(stderr, "*** Error ???: Index tuple has wrong dimension\n");
+         fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
          tuple_print(stderr, tuple);
+         fprintf(stderr, " should have dimension %d\n", dim);
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
-      if (code_get_inst(lexpr) == i_bool_true)
+      if (code_get_inst(lexpr) == (Inst)i_bool_true)
       {
          for(i = 0; i < dim; i++)
             if (elem_get_type(tuple_get_elem(tuple, i)) != ELEM_NAME)

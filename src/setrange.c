@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -192,7 +192,7 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
-void set_range_get_tuple(
+static void set_range_get_tuple(
    const Set* set,
    int        idx,
    Tuple*     tuple,
@@ -227,10 +227,8 @@ static SetIter* set_range_iter_init(
    const Tuple* pattern,
    int          offset)
 {
-   const Elem*     elem;
-   const Numb*     numb;
-   SetIter*        iter;
-   int             val;
+   const Elem*  elem;
+   SetIter*     iter;
    
    assert(set_range_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));

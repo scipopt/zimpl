@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -136,7 +136,7 @@ Bool set_lookup(const Set* set, const Tuple* tuple)
 
 void set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset)
 {
-   return set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
+   set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
 }
 
 Tuple* set_get_tuple(const Set* set, int idx)
@@ -276,7 +276,7 @@ Set* set_union(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
    assert(set_a->head.dim == set_b->head.dim);
-   
+
    iter = set_iter_init(set_a, NULL);
 
    while(NULL != (tuple = set_iter_next(iter, set_a)))
@@ -305,10 +305,20 @@ Set* set_union(const Set* set_a, const Set* set_b)
    }
    set_iter_exit(iter, set_b);
 
-   set = set_new_from_list(list, SET_CHECK_NONE);
+   if (list == NULL)
+   {
+      assert(set_get_members(set_a) + set_get_members(set_b) == 0);
 
-   list_free(list);
-   
+      set = set_empty_new(set_a->head.dim);
+   }
+   else
+   {
+      set = set_new_from_list(list, SET_CHECK_NONE);
+
+      assert(set_get_members(set) <= set_get_members(set_a) + set_get_members(set_b));
+
+      list_free(list);
+   }
    return set;
 }
 
@@ -323,7 +333,7 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
    assert(set_a->head.dim == set_b->head.dim);
-   
+
    iter = set_iter_init(set_a, NULL);
 
    while(NULL != (tuple = set_iter_next(iter, set_a)))
@@ -339,10 +349,16 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    }
    set_iter_exit(iter, set_a);
    
-   set = set_new_from_list(list, SET_CHECK_NONE);
+   if (list == NULL)
+      set = set_empty_new(set_a->head.dim);
+   else
+   {
+      set = set_new_from_list(list, SET_CHECK_NONE);
 
-   list_free(list);
-   
+      assert(set_get_members(set) <= set_get_members(set_a) + set_get_members(set_b));
+
+      list_free(list);
+   }
    return set;
 }
 
@@ -373,10 +389,20 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    }
    set_iter_exit(iter, set_a);
    
-   set = set_new_from_list(list, SET_CHECK_NONE);
+   if (list == NULL)
+   {
+      assert(set_is_subseteq(set_a, set_b));
 
-   list_free(list);
-   
+      set = set_empty_new(set_a->head.dim);
+   }
+   else
+   {
+      set = set_new_from_list(list, SET_CHECK_NONE);
+
+      assert(set_get_members(set) <= set_get_members(set_a));
+
+      list_free(list);
+   }
    return set;
 }
 
@@ -422,10 +448,20 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    }
    set_iter_exit(iter, set_b);
 
-   set = set_new_from_list(list, SET_CHECK_NONE);
+   if (list == NULL)
+   {
+      assert(set_is_equal(set_a, set_b));
 
-   list_free(list);
-   
+      set = set_empty_new(set_a->head.dim);
+   }
+   else
+   {
+      set = set_new_from_list(list, SET_CHECK_NONE);
+
+      assert(set_get_members(set) <= set_get_members(set_a) + set_get_members(set_b));
+
+      list_free(list);
+   }
    return set;
 }
 
@@ -587,6 +623,7 @@ List* set_subsets_list(
    List*  subset_list;
    
    assert(set_is_valid(set));
+   assert(subset_size >= 1);
    assert(subset_size <= set->head.members);
    assert(idx         != NULL);
    
@@ -612,6 +649,8 @@ List* set_subsets_list(
 
          tuple_free(tuple);
       }
+      assert(subset_list != NULL);
+      
       subset = set_new_from_list(subset_list, SET_CHECK_NONE); /* NO_HASH ? */
 
       list_free(subset_list);

@@ -63,6 +63,9 @@
 -esym(757,lps_readmps) // global not referenced
 -efunc(662,code_new_inst)
 -efunc(803,lps_makename)
+//--- set4.h ---
+-esym(768,set_empty::head,set_pseudo::head,set_range::head,set_prod::head,set_multi::head)
+-esym(768,set_empty_iter::dummy)
 //-------------- NOCH ZU TUN --------------------------------
 -e714 // Symbol not referenced
 -e765 // external could be made static

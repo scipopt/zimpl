@@ -1,4 +1,0 @@
-*** Error 130: Duplicate index <1> for initialization
-*** File: e130.zpl Line 2
-*** set A[] := <1> {1}, <1> {2};
-***                            ^^^

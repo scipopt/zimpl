@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.8 2004/04/18 14:32:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.9 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -170,16 +170,22 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          ? entry_get_tuple(list_get_entry(list, &le))
          : list_get_tuple(list, &le);
 
-      if (check != SET_CHECK_NONE && hash_has_tuple(hash, tuple))
+      assert(hash != NULL || check == SET_CHECK_NONE);
+      
+      if (hash != NULL && hash_has_tuple(hash, tuple))
       {
          if (check == SET_CHECK_WARN)
-            fprintf(stderr, "??? Doublicate found!!\n");
+         {
+            fprintf(stderr, "--- Warning 164: Duplicate element ");
+            tuple_print(stderr, tuple);
+            fprintf(stderr, " for set rejected\n");
+         }
       }
       else
       {
-         if (check != SET_CHECK_NONE)
+         if (hash != NULL)
             hash_add_tuple(hash, tuple);
-         
+
          for(k = 0; k < dim; k++)
             set->multi.subset[set->head.members * dim + k] =
                set_list_add_elem(set->multi.set[k],
@@ -188,9 +194,9 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          set->head.members++;
       }
    }
-   if (check != SET_CHECK_NONE)
+   if (hash != NULL)
       hash_free(hash);
-
+   
    /* Bloody hack!
     */
    cmp_set = set;
@@ -296,7 +302,6 @@ static int subset_idx_cmp(const void* a, const void* b)
 {
    const int* key    = (const int*)a;
    const int* subset = (const int*)b;
-   int        dim;
    int        i;
    int        d;
    
@@ -369,9 +374,11 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    if (result == 0)
       return -1;
 
-   assert((result - (ptrdiff_t)set->multi.subset) % (set->head.dim * sizeof(*set->multi.subset)) == 0);
+   assert((result - (ptrdiff_t)set->multi.subset)
+      % (ptrdiff_t)(set->head.dim * sizeof(*set->multi.subset)) == 0);
 
-   k = (result - (ptrdiff_t)set->multi.subset) / (set->head.dim * sizeof(*set->multi.subset));
+   k = (result - (ptrdiff_t)set->multi.subset)
+      / (ptrdiff_t)(set->head.dim * sizeof(*set->multi.subset));
 
    assert(k >= 0);
    assert(k <  set->head.members);
@@ -383,7 +390,7 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
-void set_multi_get_tuple(
+static void set_multi_get_tuple(
    const Set* set,
    int        idx,
    Tuple*     tuple,
@@ -504,7 +511,8 @@ static SetIter* set_multi_iter_init(
 #endif
          assert(result != 0);
 
-         k = (result - (ptrdiff_t)set->multi.order[fixed_idx]) / sizeof(**set->multi.order);
+         k = (result - (ptrdiff_t)set->multi.order[fixed_idx])
+            / (ptrdiff_t)sizeof(**set->multi.order);
 
          assert(k >= 0);
          assert(k <  set->head.members);

@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.14 2004/04/14 11:56:40 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.15 2004/04/19 08:28:38 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -1207,10 +1207,11 @@ can produce:
    \code{yyy}]\ \\
    The index value given in a selection tuple is bigger than the
    dimension of the tuples in the set.
-\item[130 Duplicate index \code{xxx} for initialization]\ \\
-   In the initialization of a indexed set, two initialization elements
-   have the same index. 
-   E.g, \code{set A[] := $<$1$>$ \{ 1 \}, $<$1$>$ \{ 2 \};}
+% Removed in 2.02
+%\item[130 Duplicate index \code{xxx} for initialization]\ \\
+%   In the initialization of a indexed set, two initialization elements
+%   have the same index. 
+%   E.g, \code{set A[] := $<$1$>$ \{ 1 \}, $<$1$>$ \{ 2 \};}
 \item[131 Illegal element \code{xxx} for symbol]\ \\
    The index tuple used in the initialization list of a index set, is
    not member of the index set of the set.
@@ -1426,6 +1427,9 @@ can produce:
 \item[187 Maximizing over empty set -- zero assumed] (warning)\ \\
    The index expression for the maximization was empty. The result
    used for this expression was zero.
+\item[188 Index tuple has wrong dimension]\ \\
+   The number of elements in an index tuple is different from the
+   dimension of the tuples in the set that is indexed.
 %
 % numbgmp.c
 %

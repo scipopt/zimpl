@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.5 2004/04/18 14:32:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -71,6 +71,11 @@ Set* set_prod_new(const Set* a, const Set* b)
 
    assert(set_is_valid(a));
    assert(set_is_valid(b));
+   assert(a->head.type != SET_PSEUDO);
+   assert(b->head.type != SET_PSEUDO);
+   
+   if (a->head.type == SET_EMPTY || b->head.type == SET_EMPTY)
+      return set_empty_new(a->head.dim + b->head.dim);
    
    set = calloc(1, sizeof(*set));
 
@@ -163,7 +168,7 @@ static int set_prod_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
-void set_prod_get_tuple(
+static void set_prod_get_tuple(
    const Set* set,
    int        idx,
    Tuple*     tuple,
@@ -235,14 +240,14 @@ static SetIter* set_prod_iter_init(
  * also gets the back part
  */
 static Bool get_both_parts(
-   Set* a,
-   Set* b,
-   SetIter* iter,
-   SetIter* iter_a,
-   SetIter* iter_b,
-   Tuple*   tuple,
-   int      offset,
-   int      offset2)
+   const Set* a,
+   const Set* b,
+   SetIter*   iter,
+   SetIter*   iter_a,
+   SetIter*   iter_b,
+   Tuple*     tuple,
+   int        offset,
+   int        offset2)
 {
    int i;
    
@@ -251,6 +256,8 @@ static Bool get_both_parts(
 
    for(i = 0; i < a->head.dim; i++)
    {
+      assert(iter->prod.elem[i] == NULL);
+      
       iter->prod.elem[i] = elem_copy(tuple_get_elem(tuple, i + offset));
 
       assert(elem_is_valid(iter->prod.elem[i]));
@@ -264,6 +271,7 @@ static Bool get_both_parts(
 
 /* FALSE means, there is no further element
  */
+/*ARGSUSED*/
 static Bool set_prod_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -313,6 +321,17 @@ static Bool set_prod_iter_next(
     */
    set_iter_reset_intern(iter_b, b);
 
+   /* Clear elem cache
+    */
+   for(i = 0; i < set->head.dim; i++)
+   {
+      if (iter->prod.elem[i] != NULL)
+      {
+         elem_free(iter->prod.elem[i]);
+
+         iter->prod.elem[i] = NULL;
+      }
+   }
    return get_both_parts(a, b, iter, iter_a, iter_b, tuple, offset, offset2);
 }
 
@@ -320,6 +339,7 @@ static Bool set_prod_iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
+/*ARGSUSED*/
 static void set_prod_iter_exit(SetIter* iter, const Set* set)
 {
    int i;
@@ -344,6 +364,7 @@ static void set_prod_iter_exit(SetIter* iter, const Set* set)
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
+/*ARGSUSED*/
 static void set_prod_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_prod_iter_is_valid(iter));
