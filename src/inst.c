@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.81 2005/02/12 09:53:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.82 2005/02/12 09:56:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1360,8 +1360,6 @@ CodeNode* i_set_new_elem(CodeNode* self)
    const Elem*  elem;
    ListElem*    le    = NULL;
    ElemType     elem_type;
-   int          dim;
-   int          i;
    
    Trace("i_set_new_elem");
 
