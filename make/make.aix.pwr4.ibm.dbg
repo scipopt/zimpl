@@ -1,6 +1,6 @@
-#--- $Id: make.aix.pwr4.ibm.dbg,v 1.4 2003/10/29 17:11:24 bzfkocht Exp $
+#--- $Id: make.aix.pwr4.ibm.dbg,v 1.5 2005/01/24 20:49:17 bzfkocht Exp $
 CC		=	xlc
-CPPFLAGS	+=	-DFREEMEM -Dinline=""
+CPPFLAGS	+=	-DFREEMEM -Dinline="" -DUSE_FSYNC
 CFLAGS		=	-g -q64 -qmaxmem=-1 -bnoquiet -qsuppress=1506-732 \
 			-qflttrap -qcheck=all 
 #-qwarn64 

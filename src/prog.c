@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.10 2004/05/09 09:12:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.11 2005/01/24 20:49:17 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -144,8 +144,16 @@ void prog_execute(const Prog* prog)
        */
       fflush(stdout);
       fflush(stderr);
+
+#ifdef USE_FSYNC
+      /* This is to force the output do disk. It is to my knowledge
+       * only needed on AIX batch systems that seem not to flush
+       * the output buffer. If then the job is killed for some reason
+       * no output is generated.
+       */
       (void)fsync(fileno(stdout));
       (void)fsync(fileno(stderr));
+#endif
    }
    if (verbose >= VERB_NORMAL)
       printf("Instructions evaluated: %u\n", code_get_inst_count());

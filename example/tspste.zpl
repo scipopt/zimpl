@@ -1,14 +1,14 @@
-# $Id: tspste.zpl,v 1.1 2004/12/23 12:53:18 bzfkocht Exp $
+# $Id: tspste.zpl,v 1.2 2005/01/24 20:49:16 bzfkocht Exp $
 #
 # Generic formulation of the Travelling Salesmen Problem
 #
-set V   := { read "city.dat" as "<1s>" comment "#" count cities };
+set V   := { read "city.dat" as "<1s>" comment "#" use cities };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
 set K   := indexset(P);
 
-param px[V] := read "city.dat" as "<1s> 2n" comment "#" count cities;
-param py[V] := read "city.dat" as "<1s> 3n" comment "#" count cities;
+param px[V] := read "city.dat" as "<1s> 2n" comment "#" use cities;
+param py[V] := read "city.dat" as "<1s> 3n" comment "#" use cities;
 
 defnumb dist(a,b) := sqrt((px[a] - px[b])^2 + (py[a] - py[b])^2);
 
