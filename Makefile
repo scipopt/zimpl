@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.7 2003/08/19 07:54:37 bzfkocht Exp $
+# $Id: Makefile,v 1.8 2003/08/19 13:11:40 bzfloebe Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -37,6 +37,7 @@ ARCH            :=      $(shell uname -m | \
 OSTYPE          :=      $(shell uname -s | \
                         tr A-Z a-z | \
                         sed \
+			-e s/cygwin_nt..../cygwin_nt/ \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
