@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.8 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.9 2002/08/18 14:58:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -358,6 +358,17 @@ Var* lps_getvar(
 
    assert((vr == NULL) || (!strcmp(vr->name, name)));
 
+#ifndef NDEBUG
+   {
+      Var* var;
+      
+      for(var = lp->var_root; var != NULL; var = var->next)
+         if (!strcmp(var->name, name))
+            break;
+
+      assert(var == vr);
+   }
+#endif
    return vr;
 }
    
@@ -373,6 +384,17 @@ Con* lps_getcon(
 
    assert((cr == NULL) || (!strcmp(cr->name, name)));
 
+#ifndef NDEBUG
+   {
+      Con* con;
+      
+      for(con = lp->con_root; con != NULL; con = con->next)
+         if (!strcmp(con->name, name))
+            break;
+
+      assert(con == cr);
+   }
+#endif
    return cr;   
 }
    

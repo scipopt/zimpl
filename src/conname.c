@@ -1,4 +1,4 @@
-#ident "@(#) $Id: conname.c,v 1.3 2002/08/18 14:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: conname.c,v 1.4 2002/08/18 14:58:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -65,9 +65,6 @@ Bool conname_set(const char* prefix)
 
    sprintf(cname, "%s_%d", cpfix, count);
 
-   printf("%s %d\n", cname, lps_getcon(cname) == NULL ? 1 : 0);
-   lps_stat();
-   
    return NULL == lps_getcon(cname);
 }
 

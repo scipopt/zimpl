@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rbt.c,v 1.3 2002/07/24 13:39:42 bzfkocht Exp $"
+#ident "@(#) $Id: rbt.c,v 1.4 2002/08/18 14:58:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   Datei...: rbt.c                                                         */
@@ -358,10 +358,12 @@ RBT* rbt_init(
    rbt->stop.key    = NULL;
    rbt->stop.left   = &rbt->stop;
    rbt->stop.right  = &rbt->stop;
+   rbt->stop.size   = 0;
    rbt->stop.color  = BLACK_NODE;
    rbt->start.key   = NULL;
    rbt->start.left  = &rbt->stop;
    rbt->start.right = &rbt->stop;
+   rbt->start.size  = 0;
    rbt->start.color = BLACK_NODE;
    rbt->store_size  = store_size;
    rbt->cmp         = cmp;
