@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "$Id: zimpl.c,v 1.2 2001/01/29 17:14:38 thor Exp $"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@
 extern int yydebug;
 extern int yy_flex_debug;
 
-int verbose = 0;
+Bool verbose = FALSE;
 
 int main(int argc, char** argv)
 {
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
          yy_flex_debug = 1;
          break;
       case 'v' :
-         verbose = 1;
+         verbose = TRUE;
          break;
       case '?':
          fprintf(stderr, usage, argv[0]);

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: entry.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: entry.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -148,7 +148,7 @@ void entry_free(Entry* entry)
    }
 }
 
-int entry_is_valid(const Entry* entry)
+Bool entry_is_valid(const Entry* entry)
 {
    return ((entry != NULL) && SID_ok(entry, ENTRY_SID));
 }
@@ -162,7 +162,7 @@ Entry* entry_copy(Entry* entry)
    return entry;
 }
 
-int entry_cmp(const Entry* entry, const Tuple* tuple)
+Bool entry_cmp(const Entry* entry, const Tuple* tuple)
 {
    assert(entry_is_valid(entry));
    assert(tuple_is_valid(tuple));

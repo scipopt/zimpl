@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.4 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: symbol.c,v 1.5 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -102,7 +102,7 @@ void symbol_exit(void)
    symbols     = 0;
 }
 
-int symbol_is_valid(const Symbol* symbol)
+Bool symbol_is_valid(const Symbol* symbol)
 {
    return ((symbol != NULL) && SID_ok(symbol, SYMBOL_SID));
 }
@@ -120,7 +120,7 @@ Symbol* symbol_lookup(const char* name)
    return sym;
 }
 
-int symbol_has_entry(const Symbol* sym, Tuple* tuple)
+Bool symbol_has_entry(const Symbol* sym, Tuple* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -282,7 +282,7 @@ void symbol_print_bounds(FILE* fp)
    Symbol* sym;
    Var*    var;
    int     i;
-   int     flag;
+   Bool    flag;
    
    assert(fp != NULL);
    
@@ -325,7 +325,7 @@ void symbol_print_bounds(FILE* fp)
             fprintf(fp, " %s", sym->name);
             fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
 
-            if (i % 10 == 0)
+            if (i % 8 == 7)
                fputc('\n', fp);
          }
          var_free(var);
@@ -353,7 +353,7 @@ void symbol_print_bounds(FILE* fp)
             fprintf(fp, " %s", sym->name);
             fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
 
-            if (i % 10 == 0)
+            if (i % 8 == 7)
                fputc('\n', fp);
          }
          var_free(var);

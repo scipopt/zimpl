@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.2 2001/01/29 17:14:38 thor Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -24,9 +24,9 @@ extern void yyerror(const char* s);
 
 YY_DECL;
 
-/*lint -e525 -e527 -e716 -e744 -e725 -e506 -e732 -e774 -e734 -e737 -e713 */
+/*lint -e506 -e525 -e528 -e527 -e551 -e553 -e633 */
+/*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
 /*lint -esym(613,b,buf) -esym(563,find_rule) */
-/*lint -e750 -e551 -e553 -e528 */
 /*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
 
 static int yycolumn = 0;

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -446,8 +446,8 @@ void i_newsym_var(CodeNode* self)
    Var*         var;
    Entry*       entry;
    int          idx = 0;
-   double       lower = 0.0;
-   double       upper = 1000.0;
+   double       lower;
+   double       upper;
    
    Trace("i_newsym_var");
 
@@ -455,12 +455,11 @@ void i_newsym_var(CodeNode* self)
 
    name    = code_get_name(code_get_child(self, 0));
    set     = code_get_set(code_get_child(self, 1));
-   vartype = code_get_vartype(code_get_child(self, 2)); 
+   vartype = code_get_vartype(code_get_child(self, 2));
+   lower   = code_get_numb(code_get_child(self, 3));
+   upper   = code_get_numb(code_get_child(self, 4));   
    sym     = symbol_new(name, SYM_VAR, set);
 
-   if (vartype == VAR_BIN)
-      upper = 1.0;
-      
    while((tuple = set_match_next(set, NULL, &idx)) != NULL)
    {
       var   = var_new(vartype, lower, upper);

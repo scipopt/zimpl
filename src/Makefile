@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2001/01/29 13:45:37 thor Exp $
+# $Id: Makefile,v 1.5 2001/01/29 17:14:38 thor Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   Type....: Makefile                                                      *
@@ -15,7 +15,7 @@ NAME		=	mme
 CC		=	gcc 
 YACC		=	bison
 LEX		=	flex
-CPPFLAGS	=	-I./ -I../optlib
+CPPFLAGS	=	-I./ 
 OPTI_FLAGS      =       -O
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
@@ -26,7 +26,6 @@ DFLAGS		=	-MM
 YFLAGS		=	-v -d -t
 LFLAGS		=	-d
 LINT		=	lintgcc
-VPATH		=	../optlib
 #
 # -----------------------------------------------------------------------------
 # --- nothing to change from here on                                        ---
@@ -50,7 +49,7 @@ mmlscan.c:	mmlscan.l mme.h
 include		$(OBJECT:.o=.d)
 
 lint:		$(OBJECT:.o=.c)
-		$(LINT) project.lnt -os\(lint.out\) $(CPPFLAGS) $^ 
+		$(LINT) project.lnt -os\(lint.out\) $(CPPFLAGS) -DNO_MSHELL $^ 
 
 clean:
 		-rm -f *.o *.d $(NAME) mmlscan.c mmlparse.[ch] lint.out 

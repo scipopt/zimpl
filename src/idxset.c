@@ -1,4 +1,4 @@
-#ident "@(#) $Id: idxset.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: idxset.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -103,7 +103,7 @@ void idxset_add_set(IdxSet* idxset, Tuple* tuple, Set* set)
    idxset->elements++;
 }
 
-int idxset_is_valid(const IdxSet* idxset)
+Bool idxset_is_valid(const IdxSet* idxset)
 {
    return ((idxset != NULL) && SID_ok(idxset, IDXSET_SID));
 }

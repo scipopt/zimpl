@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: tuple.c,v 1.2 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -70,7 +70,7 @@ void tuple_free(Tuple* tuple)
    }
 }
 
-int tuple_is_valid(const Tuple* tuple)
+Bool tuple_is_valid(const Tuple* tuple)
 {
    return ((tuple != NULL) && SID_ok(tuple, TUPLE_SID) && (tuple->refc > 0));
 }
@@ -87,7 +87,7 @@ Tuple* tuple_copy(Tuple* tuple)
 /* 1 = verschieden,
  * 0 = gleich.
  */
-int tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
+Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
 {   
    int i;
 
@@ -95,12 +95,12 @@ int tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
    assert(tuple_is_valid(tuple_b));
 
    if (tuple_a == tuple_b)
-      return 0;
+      return FALSE;
    
    if (tuple_a->dim != tuple_b->dim)
    {
       fprintf(stderr, "Warning: Comparison of different dimension tuples\n");
-      return 1;
+      return FALSE;
    }
    assert(tuple_a->dim == tuple_b->dim);
    

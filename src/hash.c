@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.3 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: hash.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -82,7 +82,7 @@ void hash_free(Hash* hash)
    free(hash);
 }
 
-int hash_is_valid(const Hash* hash)
+Bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
       && ((hash->type == HASH_TUPLE) || (hash->type == HASH_ENTRY))
@@ -97,7 +97,8 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
    assert(hash->type == HASH_TUPLE);
-
+   assert(he != NULL);
+   
    hcode               = tuple_hash(tuple) % hash->size;
    he->value.tuple     = tuple;
    he->next            = hash->bucket[hcode];
@@ -114,7 +115,8 @@ void hash_add_entry(Hash* hash, Entry* entry)
    assert(hash_is_valid(hash));
    assert(entry_is_valid(entry));
    assert(hash->type == HASH_ENTRY);
-
+   assert(he != NULL);
+   
    tuple               = entry_get_tuple(entry);
    hcode               = tuple_hash(tuple) % hash->size;
    he->value.entry     = entry;
@@ -125,7 +127,7 @@ void hash_add_entry(Hash* hash, Entry* entry)
    tuple_free(tuple);
 }
 
-int hash_has_tuple(Hash* hash, const Tuple* tuple)
+Bool hash_has_tuple(Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
@@ -140,7 +142,7 @@ int hash_has_tuple(Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-int hash_has_entry(Hash* hash, Tuple* tuple)
+Bool hash_has_entry(Hash* hash, Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;

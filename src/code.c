@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -36,7 +36,7 @@ union code_value
    Entry*      entry;
    Symbol*     symbol;
    IdxSet*     idxset;
-   int         bool;
+   Bool        bool;
    int         size;
    List*       list;
    VarType     vartype;
@@ -264,7 +264,7 @@ void code_free(CodeNode* node)
    free(node);
 }
 
-int code_is_valid(const CodeNode* node)
+Bool code_is_valid(const CodeNode* node)
 {
    return ((node != NULL) && SID_ok(node, CODE_SID));
 }
@@ -449,7 +449,7 @@ int code_get_size(CodeNode* node)
    return code_check_type(node, CODE_SIZE)->value.size;
 }
 
-int code_get_bool(CodeNode* node)
+Bool code_get_bool(CodeNode* node)
 {
    return code_check_type(node, CODE_BOOL)->value.bool;
 }
@@ -571,7 +571,7 @@ void code_value_ineq(CodeNode* node, Ineq* ineq)
    node->value.ineq = ineq_copy(ineq);
 }
 
-void code_value_bool(CodeNode* node, int bool)
+void code_value_bool(CodeNode* node, Bool bool)
 {
    assert(code_is_valid(node));
 

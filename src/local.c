@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: local.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -49,7 +49,7 @@ static void local_new_frame(void)
 
 void local_drop_frame(void)
 {
-   int    frame = FALSE;
+   Bool   frame = FALSE;
    Local* q     = NULL;
    Local* p;
    

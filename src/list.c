@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: list.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -158,7 +158,7 @@ void list_free(List* list)
    }
 }
 
-int list_is_valid(const List* list)
+Bool list_is_valid(const List* list)
 {
    return ((list != NULL) && SID_ok(list, LIST_SID) && (list->refc > 0));
 }

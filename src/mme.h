@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.3 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: mme.h,v 1.4 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -95,7 +95,7 @@ enum code_type
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_INEQTYPE
 };
 
-extern int          verbose;
+extern Bool          verbose;
 
 /*lint -sem(str_new,  1p, @p == 1p) */
 /*lint -sem(str_hash, 1p)           */
@@ -125,7 +125,7 @@ extern List*        list_new_elem(const Elem* elem);
 extern List*        list_new_tuple(Tuple* tuple);
 extern List*        list_new_entry(Entry* entry);
 extern void         list_free(List* list);
-extern int          list_is_valid(const List* list);
+extern Bool         list_is_valid(const List* list);
 extern List*        list_copy(List* list);
 extern void         list_add_elem(List* list, const Elem* elem);
 extern void         list_add_tuple(List* list, Tuple* tuple);
@@ -149,11 +149,11 @@ extern void         list_print(FILE* fp, const List* list);
 
 extern Hash*        hash_new(HashType type);
 extern void         hash_free(Hash* hash);
-extern int          hash_is_valid(const Hash* hash);
+extern Bool         hash_is_valid(const Hash* hash);
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 extern void         hash_add_entry(Hash* hash, Entry* entry);
-extern int          hash_has_tuple(Hash* hash, const Tuple* tuple);
-extern int          hash_has_entry(Hash* hash, Tuple* tuple);
+extern Bool         hash_has_tuple(Hash* hash, const Tuple* tuple);
+extern Bool         hash_has_entry(Hash* hash, Tuple* tuple);
 extern Entry*       hash_lookup_entry(Hash* hash, Tuple* tuple);
 
 /* element.c
@@ -177,8 +177,8 @@ extern void         elem_exit(void);
 extern const Elem*  elem_new_numb(double n);
 extern const Elem*  elem_new_strg(const char* s);
 extern const Elem*  elem_new_name(const char* s);
-extern int          elem_is_valid(const Elem* elem);
-extern int          elem_cmp(const Elem* elem_a, const Elem* elem_b);
+extern Bool         elem_is_valid(const Elem* elem);
+extern Bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
 extern ElemType     elem_get_type(const Elem* elem);
 extern double       elem_get_numb(const Elem* elem);
 extern const char*  elem_get_strg(const Elem* elem);
@@ -204,9 +204,9 @@ extern unsigned int elem_hash(const Elem* elem);
 
 extern Tuple*       tuple_new(int dim);
 extern void         tuple_free(Tuple* tuple);
-extern int          tuple_is_valid(const Tuple* tuple);
+extern Bool         tuple_is_valid(const Tuple* tuple);
 extern Tuple*       tuple_copy(Tuple* tuple);
-extern int          tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
+extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
 extern int          tuple_get_dim(const Tuple* tuple);
 extern void         tuple_set_elem(Tuple* tuple, int idx, const Elem* elem);
 extern const Elem*  tuple_get_elem(const Tuple* tuple, int idx);
@@ -234,10 +234,10 @@ extern unsigned int tuple_hash(const Tuple* tuple);
 
 extern Set*         set_new(int dim);
 extern void         set_free(Set* set);
-extern int          set_is_valid(const Set* set);
+extern Bool         set_is_valid(const Set* set);
 extern Set*         set_copy(Set* set);
 extern void         set_add_member(Set* set, Tuple* tuple, int where);
-extern int          set_lookup(const Set* set, const Tuple* tuple);
+extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 extern Tuple*       set_match_next(const Set* set, const Tuple* pat, int* idx);
 extern int          set_get_dim(const Set* set);
 extern void         set_print(FILE* fp, const Set* set);
@@ -258,7 +258,7 @@ extern Set*         set_union(const Set* seta, const Set* setb);
 
 extern Var*         var_new(VarType type, double lower, double upper);
 extern void         var_free(Var* var);
-extern int          var_is_valid(const Var* var);
+extern Bool         var_is_valid(const Var* var);
 extern Var*         var_copy(Var* var);
 extern VarType      var_get_type(const Var* var);
 extern double       var_get_lower(const Var* var);
@@ -293,9 +293,9 @@ extern Entry*       entry_new_strg(Tuple* tuple, const char* strg);
 extern Entry*       entry_new_set(Tuple* tuple, Set* set);
 extern Entry*       entry_new_var(Tuple* tuple, Var* var);
 extern void         entry_free(Entry* entry);
-extern int          entry_is_valid(const Entry* entry);
+extern Bool         entry_is_valid(const Entry* entry);
 extern Entry*       entry_copy(Entry* entry);
-extern int          entry_cmp(const Entry* entry, const Tuple* tuple);
+extern Bool         entry_cmp(const Entry* entry, const Tuple* tuple);
 extern void         entry_set_index(Entry* entry, int idx);
 extern SymbolType   entry_get_type(const Entry* entry);
 extern Tuple*       entry_get_tuple(const Entry* entry);
@@ -329,9 +329,9 @@ extern unsigned int entry_hash(const Entry* entry);
 
 extern Symbol*      symbol_new(const char* name, SymbolType type, Set* set);
 extern void         symbol_exit(void);
-extern int          symbol_is_valid(const Symbol* symbol);
+extern Bool         symbol_is_valid(const Symbol* symbol);
 extern Symbol*      symbol_lookup(const char* name);
-extern int          symbol_has_entry(const Symbol* sym, Tuple* tuple);
+extern Bool         symbol_has_entry(const Symbol* sym, Tuple* tuple);
 extern Entry*       symbol_lookup_entry(const Symbol* sym, Tuple* tuple);
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 extern int          symbol_get_dim(const Symbol* sym);
@@ -364,7 +364,7 @@ extern void         symbol_print_bounds(FILE* fp);
 extern IdxSet*      idxset_new(void);
 extern void         idxset_free(IdxSet* idxset);
 extern void         idxset_add_set(IdxSet* idxset, Tuple* tuple, Set* set);
-extern int          idxset_is_valid(const IdxSet* idxset);
+extern Bool         idxset_is_valid(const IdxSet* idxset);
 extern IdxSet*      idxset_copy(const IdxSet* source);
 extern void         idxset_set_lexpr(IdxSet* idxset, CodeNode* addr);
 extern CodeNode*    idxset_get_lexpr(const IdxSet* idxset);
@@ -406,7 +406,7 @@ extern Term*        term_new(void);
 extern void         term_add_elem(
    Term* term, const Symbol* sym, Entry* entry, double coeff);
 extern void         term_free(Term* term);
-extern int          term_is_valid(const Term* term);
+extern Bool         term_is_valid(const Term* term);
 extern Term*        term_copy(Term* term);
 extern void         term_print(FILE* fp, const Term* term, int flag);
 extern Term*        term_add_term(Term* term_a, Term* term_b);
@@ -425,7 +425,7 @@ extern void         term_negate(Term* term);
 
 extern Ineq*        ineq_new(IneqType type, Term* term, double rhs);
 extern void         ineq_free(Ineq* ineq);
-extern int          ineq_is_valid(const Ineq* ineq);
+extern Bool         ineq_is_valid(const Ineq* ineq);
 extern Ineq*        ineq_copy(Ineq* ineq);
 extern void         ineq_print(FILE* fp, const Ineq* ineq);
 
@@ -442,7 +442,7 @@ extern void         ineq_print(FILE* fp, const Ineq* ineq);
 extern Stmt*        stmt_new(StmtType type, int lineno, const char* name,
    const char* text);
 extern void         stmt_free(Stmt* stmt);
-extern int          stmt_is_valid(const Stmt* stmt);
+extern Bool         stmt_is_valid(const Stmt* stmt);
 extern const char*  stmt_get_name(const Stmt* stmt);
 extern int          stmt_parse(Stmt* stmt);
 extern int          stmt_execute(const Stmt* stmt);
@@ -460,7 +460,7 @@ extern void         stmt_print(FILE* fp, const Stmt* stmt);
 
 extern Prog*        prog_new(const char* filename);
 extern void         prog_free(Prog* prog);
-extern int          prog_is_valid(const Prog* prog);
+extern Bool         prog_is_valid(const Prog* prog);
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 extern const char*  prog_get_filename(const Prog* prog);
 extern void         prog_print(FILE* fp, const Prog* prog);
@@ -530,7 +530,7 @@ extern CodeNode*    code_new_size(int size);
 extern CodeNode*    code_new_vartype(VarType vartype);
 extern CodeNode*    code_new_ineqtype(IneqType ineqtype);
 extern void         code_free(CodeNode* node);
-extern int          code_is_valid(const CodeNode* node);
+extern Bool         code_is_valid(const CodeNode* node);
 extern void         code_set_child(CodeNode* node, int idx, CodeNode* child);
 extern CodeType     code_get_type(CodeNode* node);
 extern void         code_set_root(CodeNode* node);
@@ -550,7 +550,7 @@ extern Entry*       code_get_entry(CodeNode* node);
 extern Term*        code_get_term(CodeNode* node);
 extern Ineq*        code_get_ineq(CodeNode* node);
 extern int          code_get_size(CodeNode* node);
-extern int          code_get_bool(CodeNode* node);
+extern Bool         code_get_bool(CodeNode* node);
 extern List*        code_get_list(CodeNode* node);
 extern VarType      code_get_vartype(CodeNode* node);
 extern IneqType     code_get_ineqtype(CodeNode* node);
@@ -563,7 +563,7 @@ extern void         code_value_idxset(CodeNode* node, IdxSet* idxset);
 extern void         code_value_entry(CodeNode* node, Entry* entry);
 extern void         code_value_term(CodeNode* node, Term* term);
 extern void         code_value_ineq(CodeNode* node, Ineq* ineq);
-extern void         code_value_bool(CodeNode* node, int bool);
+extern void         code_value_bool(CodeNode* node, Bool bool);
 extern void         code_value_size(CodeNode* node, int size);
 extern void         code_value_list(CodeNode* node, List* list);
 extern void         code_value_vartype(CodeNode* node, VarType vartype);

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: var.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: var.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: var.c                                                         */
@@ -33,11 +33,12 @@ Var* var_new(VarType type, double lower, double upper)
    Var* var = calloc(1, sizeof(*var));
 
    assert(var != NULL);
-
+   assert(LE(lower, upper));
+   
    var->refc  = 1;
    var->type  = type;
-   var->lower = lower;
-   var->upper = upper;
+   var->lower = (type == VAR_BIN) ? 0.0 : lower;
+   var->upper = (type == VAR_BIN) ? 1.0 : upper;
 
    SID_set(var, VAR_SID);
    assert(var_is_valid(var));
@@ -58,7 +59,7 @@ void var_free(Var* var)
    }
 }
 
-int var_is_valid(const Var* var)
+Bool var_is_valid(const Var* var)
 {
    return ((var != NULL) && SID_ok(var, VAR_SID) && (var->refc > 0));
 }

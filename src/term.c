@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -96,7 +96,7 @@ void term_free(Term* term)
    free(term);
 }
 
-int term_is_valid(const Term* term)
+Bool term_is_valid(const Term* term)
 {
    return ((term != NULL) && SID_ok(term, TERM_SID));
 }

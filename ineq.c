@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ineq.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: ineq.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ineq.c                                                        */
@@ -61,7 +61,7 @@ void ineq_free(Ineq* ineq)
    }
 }
 
-int ineq_is_valid(const Ineq* ineq)
+Bool ineq_is_valid(const Ineq* ineq)
 {
    return ((ineq != NULL) && SID_ok(ineq, INEQ_SID) && (ineq->refc > 0));
 }

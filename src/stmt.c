@@ -1,4 +1,4 @@
-#ident "@(#) $Id: stmt.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: stmt.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -66,7 +66,7 @@ void stmt_free(Stmt* stmt)
    free(stmt);
 }
 
-int stmt_is_valid(const Stmt* stmt)
+Bool stmt_is_valid(const Stmt* stmt)
 {
    return ((stmt != NULL) && SID_ok(stmt, STMT_SID));
 }
@@ -115,7 +115,12 @@ void stmt_print(FILE* fp, const Stmt* stmt)
       "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Data"
    };
    assert(stmt_is_valid(stmt));
-   assert(((int)stmt->type) < (sizeof(type_name) / sizeof(type_name[0])));
+
+   /* Lint weiss hier dass das assert immer erfuellt sein muss.
+    * aber wir wollen es trotzdem.
+    */
+   assert((unsigned int)stmt->type
+      < (sizeof(type_name) / sizeof(type_name[0]))); /*lint !e650 */
 
    fprintf(fp, "%04d %-7s %-10.10s [%s]\n",
       stmt->lineno,

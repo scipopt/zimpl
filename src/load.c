@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -131,6 +131,7 @@ int prog_load(Prog* prog)
    if ((fp = fopen(prog_get_filename(prog), "r")) == NULL)
    {
       perror(prog_get_filename(prog));
+      free(buf);
       return FAILURE;
    }
    

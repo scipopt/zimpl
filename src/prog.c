@@ -1,4 +1,4 @@
-#ident "@(#) $Id: prog.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
+#ident "@(#) $Id: prog.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -67,7 +67,7 @@ void prog_free(Prog* prog)
    free(prog);
 }
 
-int prog_is_valid(const Prog* prog)
+Bool prog_is_valid(const Prog* prog)
 {
    return ((prog != NULL) && SID_ok(prog, PROG_SID));
 }

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: elem.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: elem.c,v 1.2 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -148,14 +148,14 @@ const Elem* elem_new_name(const char* name)
    return elem;
 }
 
-int elem_is_valid(const Elem* elem)
+Bool elem_is_valid(const Elem* elem)
 {
    return ((elem != NULL) && SID_ok(elem, ELEM_SID));
 }
 
 /* 0 wenn gleich, sonst != 0
  */
-int elem_cmp(const Elem* elem_a, const Elem* elem_b)
+Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
 {
    assert(elem_is_valid(elem_a));
    assert(elem_is_valid(elem_b));
@@ -165,22 +165,22 @@ int elem_cmp(const Elem* elem_a, const Elem* elem_b)
    /* Auf die schnelle vorweg.
     */
    if (elem_a == elem_b)
-      return 0;
+      return FALSE;
    
    /* Wenn einer ein Name ist, sind sie gleich.
     */
    if ((elem_a->type == ELEM_NAME) || (elem_b->type == ELEM_NAME))
-      return 0;
+      return FALSE;
 
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr, "Warning: Comparison of different type elements\n");
-      return 1;
+      return TRUE;
    }
    assert(elem_a->type == elem_b->type);
    
    if (elem_a->type == ELEM_STRG)
-      return strcmp(elem_a->value.strg, elem_b->value.strg);
+      return strcmp(elem_a->value.strg, elem_b->value.strg) != 0;
 
    assert(elem_a->type == ELEM_NUMB);
 

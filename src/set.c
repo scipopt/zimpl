@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: set.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -88,7 +88,7 @@ void set_free(Set* set)
    }
 }
 
-int set_is_valid(const Set* set)
+Bool set_is_valid(const Set* set)
 {
    return ((set != NULL) && SID_ok(set, SET_SID) && (set->refc > 0));
 }
@@ -147,7 +147,7 @@ void set_add_member(Set* set, Tuple* tuple, int where)
    }
 }
 
-int set_lookup(const Set* set, const Tuple* tuple)
+Bool set_lookup(const Set* set, const Tuple* tuple)
 {
    assert(set_is_valid(set));
    assert(tuple_is_valid(tuple));
