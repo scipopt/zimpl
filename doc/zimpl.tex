@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.31 2004/06/08 15:57:12 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.32 2005/02/09 08:56:12 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimpl.tex                                                     *
@@ -9,7 +9,12 @@
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %
 \documentclass[12pt]{article}
-\usepackage{times}
+\renewcommand{\rmdefault}{pmnj}
+\renewcommand{\ttdefault}{pcr}
+\renewcommand{\sfdefault}{pmy}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[small,euler-digits]{eulervm}
 \usepackage{a4}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath}
@@ -19,17 +24,18 @@
 \usepackage{fancyhdr}
 \usepackage{xspace}
 \usepackage{url}
+\usepackage{listings}
 %\usepackage{zibtitlepage}
 \usepackage[notoday,nofancy]{rcsinfo}
 \usepackage[dvips,%
 bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
 \hypersetup{%
 pdftitle={ZIMPL User Guide},
-pdfsubject={Zuse Institute Mathematical Programming Language Version 2.02},
+pdfsubject={Zuse Institute Mathematical Programming Language Version 2.03},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimization, Algebraic Modeling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.31 2004/06/08 15:57:12 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.32 2005/02/09 08:56:12 bzfkocht Exp $
 %
 %\parindent0ex
 \setcounter{tocdepth}{2}
@@ -75,7 +81,7 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \LARGE\zimpl User Guide\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small for Version 2.02\\15. May 2004}
+\date{\small for Version 2.03\\15. February 2005}
 \maketitle
 \vfill
 \tableofcontents
@@ -130,7 +136,7 @@ to include them in the main distribution.
 \include{zimplug}
 %--------------------------------------------------------------------------------------
 \section{Error messages}
-Here is a complete list of the incomprehensible error messages \zimpl
+Here is a (hopefully) complete list of the incomprehensible error messages \zimpl
 can produce:
 
 \input{zimplerr}

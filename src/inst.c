@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.79 2004/05/29 11:29:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.80 2005/02/09 08:56:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1541,6 +1541,68 @@ CodeNode* i_set_range(CodeNode* self)
       exit(EXIT_FAILURE);
    }
    code_value_set(self, set_range_new(int_from, int_upto, int_step));
+
+   return self;
+}
+
+CodeNode* i_set_range2(CodeNode* self)
+{
+   const Numb* from;
+   const Numb* upto;
+   const Numb* step;
+   int         int_from;
+   int         int_upto;
+   int         int_step;
+   int         diff;
+   
+   Trace("i_set_range2");
+
+   assert(code_is_valid(self));
+
+   from = code_eval_child_numb(self, 0);
+   upto = code_eval_child_numb(self, 1);
+   step = code_eval_child_numb(self, 2);
+
+   if (!numb_is_int(from))
+   {
+      fprintf(stderr, "*** Error 123: \"from\" value ");
+      numb_print(stderr, from);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if (!numb_is_int(upto))
+   {
+      fprintf(stderr, "*** Error 124: \"upto\" value ");
+      numb_print(stderr, upto);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if (!numb_is_int(step))
+   {
+      fprintf(stderr, "*** Error 125: \"step\" value ");
+      numb_print(stderr, step);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   int_from = numb_toint(from);
+   int_upto = numb_toint(upto);
+   int_step = numb_toint(step);
+   diff     = int_upto - int_from;
+
+   if (int_step == 0) 
+   {
+      fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if ((Sgn(int_step) > 0 && diff < 0)
+    || (Sgn(int_step) < 0 && diff > 0))
+      code_value_set(self, set_empty_new(1));
+   else
+      code_value_set(self, set_range_new(int_from, int_upto, int_step));
 
    return self;
 }

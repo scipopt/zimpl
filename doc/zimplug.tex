@@ -1,15 +1,9 @@
-% $Id: zimplug.tex,v 1.21 2004/06/17 08:18:33 bzfkocht Exp $
-%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-%*                                                                           *
-%*   File....: zimplug.tex                                                   *
-%*   Name....: Zimpl User Guide                                              *
-%*   Author..: Thorsten Koch                                                 *
-%*   Copyright (C) 2003 by Author, All rights reserved                       *
-%*                                                                           *
-%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+% TODO: Bei den SET examples koennte man parallel das
+%       Ergenis zeigen:
+%       set A := { 1..4}     |  { 1, 2, 3, 4 }
 %
 \section{Introduction}
-A linear program (\lp) might look like this:
+Consider the following linear program:
 $$
 \begin{array}{rll}
 \min& 2 x + 3 y\\
@@ -17,30 +11,41 @@ $$
 &x,y&\ge 0\\
 \end{array}
 $$
-The usual format to store the description of such a problem is \mps
-invented by \ibm \citep[see the][]{IBM1997} long ago. 
+The standard format used to feed such a problem into a solver 
+is called \mps.
+\ibm invented it for the Mathematical
+Programming System/360 \citep{Kallrath2004b,Spielberg2004} in the sixties.
 Nearly all available \lp and \mip solvers can read this format.
 While \mps is a nice format to punch into a punch card and at least a
-reasonable format to read for a computer it is quite unreadable
-for humans. 
+reasonable format to read for a computer, it is quite unreadable
+for humans. For instance, the \mps file of the above linear program
+looks as shown in Figure~\ref{fig:mps-file}. 
 
-{
-\small
-\begin{verbatim}
-   NAME        ex1.mps
-   ROWS
-    N  OBJECTIV          
-    L  c1                
-   COLUMNS
-       x         OBJECTIV             2
-       x         c1                   1
-       y         OBJECTIV             3
-       y         c1                   1
-   RHS
-       RHS       c1                   6
-   ENDATA
-\end{verbatim}
-}
+\begin{figure}[hbtp]
+\lstset{language=mps,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=b]{}
+    NAME        ex1.mps
+    ROWS
+     N  OBJECTIV          
+     L  c1                
+    COLUMNS
+        x         OBJECTIV             2
+        x         c1                   1
+        y         OBJECTIV             3
+        y         c1                   1
+    RHS
+        RHS       c1                   6
+    BOUNDS
+     LO BND       x                    0
+     LO BND       y                    0
+    ENDATA
+\end{lstlisting}
+\caption{\mps file format example}
+\label{fig:mps-file}
+\end{figure}
+
 Another possibility is the \lpf format \cite{CPlex80}, which is more
 readable\footnote{
 The \lpf format has also some idiosyncratic restrictions. For example
@@ -94,93 +99,95 @@ subto    cons: sum <i> in I : x[i] <= 6;
 \end{verbatim}
 }
 
-% -----------------------------------------------------------------------------
-% --- Invocation
-% -----------------------------------------------------------------------------
 \section{Invocation}
 
-To run \zimpl on a model given in the file \code{ex1.zpl} type the command
+In order to run \zimpl on a model given in the file \code{ex1.zpl} type the command:
 \begin{verbatim}
    zimpl ex1.zpl
 \end{verbatim}
-
-The general case is \code{zimpl} \code{[options]} $<$\code{input-files}$>$.
-
-\medskip
+In general terms the command is:
+\begin{verbatim}
+   zimpl [options] <input-files>
+\end{verbatim}
 It is possible to give more than one input file. They are read one
 after the other as if they were all one big file.
-If any error occurs while processing, \zimpl will print out an 
-error message and abort. In case everything goes well, the results 
-will be written into two or more files, depending on the options specified.
+If any error occurs while processing, \zimpl prints out an 
+error message and aborts. In case everything goes well, the results 
+are written into two or more files, depending on the specified options.
 
-The first file is the problem generated from the model in either 
-\lpf or \mps format with extension \code{.lp} or \code{.mps}.
-The next one is the ``table'' file, which has the extension \code{.tbl}.
-This file lists all variable and constraint names used in the model 
-and their corresponding names in the problem file. 
-
-The reason for this name translation is that the \mps format
-can only handle names up to eight characters long. Also the the \lp format
-restricts the length of names. The precise limit is depending on the
-version. \cplex~7.0 has a limit of 16 characters, and ignores
-silently the rest of the name, while \cplex~9.0 has a limit of 255
-characters, but will ony show the first 20 in the output of some commands.
-
-%The third file is and optional \cplex branching order file.
-
-\medskip
-The following options are possible (only the first two are normally
-of interest):
-
-\medskip
-\begin{tabular}{lp{105mm}}
-%\hline
--t \emph{format} & Selects the output format. Can be either \code{lp}
-                  which is default, or \code{mps} or \code{hum} which
+\begin{table}[hbtp]
+\centering
+{\sffamily\small
+\begin{tabular}{lp{96mm}}
+\toprule
+-t \emph{format} & Selects the output format. Can be either \code{lp},
+                  which is default, or \code{mps}, or \code{hum}, which
                   is only human readable.\\
 -o \emph{name}   & Sets the base-name for the output files.\\ 
-                & Defaults to the name of the first input file stripped 
-                  off its path and extension.\\ 
+                & Defaults to the name of the first input file with 
+                  its path and extension stripped off.\\ 
 -F \emph{filter} & The output is piped through a filter. A \%s in the
                   string is replaced by the output filename. For example 
                   \code{-F "gzip -c >\%s.gz"} would compress all the 
                   output files.\\
 -n \emph{cform}  & Select the format for the generation of constraint
-                  names. Can be either \emph{cm} which will number them 
-                  $1\ldots n$ with a `c' in front. \emph{cn} will use 
+                  names. Can be \code{cm}, which will number them 
+                  $1\ldots n$ with a `c' in front. \code{cn} will use 
                   the name supplied in the \code{subto} statement and 
                   number them $1\ldots n$ within the statement. 
-                  \emph{cf} will use the name given with the \code{subto},
-                  then a $1\ldots n$ number like in \emph{cm} and then 
+                  \code{cf} will use the name given with the \code{subto},
+                  then a $1\ldots n$ number like in \code{cm} and then 
                   append all the local variables from the forall statements.\\
 -v \emph{1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
-                  2 is verbose, 3 is chatter, and 5 is debug.\\
+                  2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
 -D \emph{name=val} & Sets the parameter \emph{name} to the specified
                   value. This is equivalent with having this line in the
                   \zimpl program: \code{param name:=val}.\\
 %\hline
--b & Enables bison debugging output.\\
--f & Enables flex debugging output.\\
+-b & Enables bison debug output.\\
+-f & Enables flex debug output.\\
 -h & Prints a help message.\\
--m & Writes a \cplex \code{mst} Mip STart file.\\
--O & Optimize the generated \lp by doing some presolve analysis.\\
--r & Writes a \cplex \code{ord} branching order file.\\
+-m & Writes a CPLEX \code{mst} (Mip STart) file.\\
+-O & Try to reduce the generated LP by doing some presolve analysis.\\
+-r & Writes a CPLEX \code{ord} branching order file.\\
 -V & Prints the version number.\\
-%\hline
+\bottomrule
 \end{tabular}
+}
+\caption{\zimpl options}
+\label{tab:zimpl-options}
+\end{table}
 
-\medskip
-A typical invocation is for example:
+The first output file is the problem generated from the model in either 
+\cplex \lp, \mps, or  a ``human readable'' format, 
+with extensions \emph{.lp}, \emph{.mps}, or \emph{.hum}, respectively.
+The next one is the \emph{table} file, which has the extension \emph{.tbl}.
+The table file lists all variable and constraint names used in the model 
+and their corresponding names in the problem file. 
+The reason for this name translation is the limitation of the length
+of names in the \mps format to 
+eight characters. Also the \lp format
+restricts the length of names. The precise limit is depending on the
+version. \cplex~7.0 has a limit of 16 characters, and ignores
+silently the rest of the name, while \cplex~9.0 has a limit of 255
+characters, but will for some commands only show the first 20 characters 
+in the output.
+
+%The third file is and optional \cplex branching order file.
+
+A complete list of all options understood by \zimpl can be found in
+Table~\ref{tab:zimpl-options}. 
+A typical invocation of \zimpl is for example:
 \begin{verbatim}
-   zimpl -o hardone -t mps data.zpl model.zpl
+   zimpl -o solveme -t mps data.zpl model.zpl
 \end{verbatim}
-This reads the files \code{data.zpl} and \code{model.zpl} and
-produces \code{hardone.mps} and \code{hardone.tbl}.
+This reads the files data.zpl and model.zpl as
+input and produces as output the files solveme.mps and solveme.tbl.
+Note that in case \mps-output is specified for a maximization problem,
+the objective function will be inverted, because the \mps format has no
+provision for stating the sense of the objective function. The default
+is to assume maximization.
 
-\medskip
-\fbox{\parbox{0.9\textwidth}{
-If \mps-output is specified for a maximization problem,
-the objective function will be inverted.}}
 % -----------------------------------------------------------------------------
 % --- Format
 % -----------------------------------------------------------------------------
@@ -188,6 +195,7 @@ the objective function will be inverted.}}
 
 Each \zpl-file consists of six types of statements: 
 \begin{itemize}
+\setlength{\itemsep}{0pt}%
 \item Sets
 \item Parameters
 \item Variables
@@ -195,42 +203,49 @@ Each \zpl-file consists of six types of statements:
 \item Constraints
 \item Function definitions
 \end{itemize}
-
-Each statement ends with a semicolon \code{;}. 
-Everything from a number-sign \code{\#} to 
+%
+Each statement ends with a semicolon. 
+Everything from a hash-sign \code{\#}, provided it is not part of a string, to 
 the end of the line is treated as a
 comment and is ignored.
-
 If a line starts with the word \code{include} followed by a filename in double
-quotation marks then this file is read instead of the line.
+quotation marks, then this file is read and processed instead of the line.
 
 %-----------------------------------------------------------------------------------------
 \subsection{Expressions}
 %-----------------------------------------------------------------------------------------
 \zimpl works on its lowest level with two types of data: Strings and
 numbers. 
-
-Wherever a number or string is required, it is also possible to use a
-parameter of the corresponding value type. Usually, expressions are
+Wherever a number or string is required it is also possible to use a
+parameter of the corresponding value type. In most cases expressions are
 allowed instead of just a number or a string.
-The precedence of operators should be the usual one, but
-parenthesis can always be used to specify the evaluation order explicitly.
-If in doubt use parenthesis.
+The precedence of operators is the usual one, but
+parentheses can always be used to specify the evaluation order explicitly.
+%If in doubt use parenthesis.
 
 \subsubsection{Numeric expressions}
 A number in \zimpl can be given in the usual format, \eg as 2, -6.5 or 5.234e-12. 
 Numeric expressions consist of numbers, numeric valued parameters, and
-any of the following operators and functions:
+any of the operators and functions listed in Table~\ref{tab:zimpl-functions}.
+Additionally the functions shown in Table~\ref{tab:zimpl-double} can be
+used. Note that those functions are only computed with normal double precision
+floating-point arithmetic and therefore have limited accuracy.
 
+\begin{table}[hbtp]
+\centering
+{\sffamily\small
 \begin{tabular}{lll}
+\toprule
 \code{a${}^\wedge$b}, \code{a**b}&$a$ to the power of $b$   & $a^b$\\
 \code{a+b}                       &addition                  & $a+b$\\
 \code{a-b}                       &subtraction               & $a-b$\\
 \code{a*b}                       &multiplication            & $a\cdot b$\\
 \code{a/b}                       &division                  & $a/b$\\
 \code{a mod b}                   &modulo                    & $a\mod b$\\
-\code{a div b}                   &integer division           & \\
+%\code{a div b}                   &integer division           & \\
 \code{abs(a)}                    &absolute value            & $|a|$\\
+\code{sgn(a)}                    &sign                      &
+$x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
@@ -241,78 +256,100 @@ any of the following operators and functions:
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
 \code{ord(A,n,c)}                &ordinal                   &c-th component of the n-th\\ 
                                  &                          & element of set $A$.\\
-\code{if a then b else c}        &conditional               &\\
+\code{if a then b}               &                          &\\
+\code{else c end}        &\raisebox{1ex}[0cm][0cm]{conditional}
+   &\raisebox{1ex}[0cm][0cm]{$\left\{\begin{array}{rl}b,&\text{if }
+   a=\text{true}\\c,&\text{if } a=\text{false}\end{array}\right.$}\\\\
+\bottomrule
 \end{tabular}
+}
+\caption{Rational arithmetic functions}
+\label{tab:zimpl-functions}
+\end{table}
 
-\medskip
 %With $\min$ and $\max$ it is possible to find the minimum/maximum
 %member of an one dimensional set of numeric values.
 %\code{card} gives the cardinality of a set.
 
-The following functions are only computed with normal double precision
-floating point arithmetic. So be careful:
-
-\medskip
+\begin{table}[hbtp]
+\centering
+{\sffamily\small
 \begin{tabular}{lll}
+\toprule
 \code{sqrt(a)}                   &square root               & $\sqrt a$\\
 \code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
 \code{ln(a)}                     &natural logarithm         & $\ln a$\\
 \code{exp(a)}                    &exponential function      & $e^a$\\
 %\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
+\bottomrule
 \end{tabular}
-
+}
+\caption{Double precision functions}
+\label{tab:zimpl-double}
+\end{table}
 
 \subsubsection{String expressions}
 A string is delimited by double quotation marks \code{"},
-\eg, \code{"Hallo"}. 
+\eg \code{"Hallo Keiken"}. 
 
 \subsubsection{Variant expressions}
-The following is either a numeric or a string expression, depending if
-\emph{expression} is a string or a numeric expression.
+The following is either a numeric or a string expression, depending on
+whether \emph{expression} is a string or a numeric expression:
 
+\smallskip
 \code{if} \emph{boolean-expression} \code{then}
-\emph{expression} \code{else} \emph{expression} \code{end}.
+\emph{expression} \code{else} \emph{expression} \code{end}
 
-The same is true for the
-\code{ord}\emph{(set,tuple-number,component-number)} function, 
-which evaluates to a specific element of a set. Please note, that
-sets have no specific order.
+\smallskip
+\noindent The same is true for the
+\code{ord(}{}\emph{set, tuple-number, component-number}\code{)} function, 
+which evaluates to a specific element of a set (details about sets are
+covered below). 
 
 \subsubsection{Boolean expressions}
-These evaluate either to \emph{true} or \emph{false}. For numbers and
+These evaluate either to \emph{true} or to \emph{false}. For numbers and
 strings the
-relational operators $<$, $<=$, $==$, $!=$, $>=$, and $>$ are
+relational operators $<$, $<=$, $==$, $!\!\!=$, $>=$, and $>$ are
 defined.
-Combinations of boolean expressions with \code{and},
+Combinations of Boolean expressions with \code{and},
 \code{or}, and 
-\code{xor}\footnote{$a\wedge\bar{b}\vee \bar{a}\wedge b$} 
+\code{xor}\footnote{$a \text{ xor } b :=a\wedge\neg b\vee \neg a\wedge b$} 
 and negation with \code{not} are possible.
-The expression \emph{tuple} \code{in} \emph{set-expression} can be used to test set
-membership of a tuple. 
+The expression \emph{tuple} \code{in} \emph{set-expression} (explained
+in the next section) can be used to test set membership of a tuple. 
 
 \subsection{Sets}
-Sets consist of tuples. The tuples in a sets are unordered, \ie, each tuple can only
-be once in a set. Sets are delimited by braces, \code{\{} and \code{\}},
-resp.
-Tuples consist of components. The components are ordered. 
-Each tuple of a specific set has the same number of components. 
-The components are either numbers or strings. The type of the $n$-th
-component for all tuples of a set must be the same. A tuple starts and ends with
-$<$ and $>$, resp., \eg \code{$<$1,2,"x"$>$}. The components are separated by commas.
+Sets consist of tuples. Each tuple can only
+be once in a set. The sets in \zimpl are all ordered, but there is no
+particular order of the tuples.
+Sets are delimited by braces, \code{\{} and~\code{\}},
+respectively.
+Tuples consist of components. 
+The components are either numbers or strings. 
+The components are ordered. 
+All tuples of a specific set have the same number of components. 
+The type of the $n$-th
+component for all tuples of a set must be the same, \ie they have to
+be either all numbers or all strings. 
+The definition of
+a tuple is enclosed in angle brackets 
+$<$ and $>$, \eg \code{$<$1,2,"x"$>$}. The components are separated by commas.
 If tuples are one-dimensional, it is possible 
-to omit the tuple delimiters in a list of elements, but then 
-they must be omitted from all tuples of the set, \eg \code{\{1,2,3}\}.
+to omit the tuple delimiters in a list of elements, but in this case  
+they must be omitted from all tuples in the definition, \eg
+\code{\{1,2,3}\} is valid while \code{\{1,2,$<$3$>$}\} is not.
 
 Sets can be defined with the set statement. It consists of
 the keyword \code{set}, the name of the set, an assignment operator
-(\code{:=}) and a valid set expression.
+\code{:=} and a valid set expression.
 
-Sets are referenced by use of an \emph{template} tuple, consisting
-of placeholders that are replaced by the value of the components of
-the respective tuple. For example a set $S$ consisting of two-dimensional
+Sets are referenced by the use of a \emph{template} tuple, consisting
+of placeholders, which are replaced by the values of the components of
+the respective tuple. For example, a set $S$ consisting of two-dimensional
 tuples could be referenced by \code{<a,b> in S}. If any of the
-placeholders are actual values, only those tuples will be extracted
-that match these values. For example \code{<1,b> in S} will only get
+placeholders are actual values, only those tuples matching these
+values will be extracted.
+For example, \code{<1,b> in S} will only get
 those tuples whose first component is \code{1}. Please note that if
 one of the placeholders is the name of an already defined parameter,
 set or variable, it will be substituted. This will result either in an
@@ -326,56 +363,64 @@ set B := { "hi", "ha", "ho" };
 set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 \end{verbatim}
 }
+\noindent For set expressions the functions and
+operators given in Table~\ref{tab:zimpl-set-functions} are defined.
 
-For set expressions these functions and
-operators are defined:
-
-\medskip
-\begin{tabular}{llp{5cm}}
-%\hline
-\code{A*B},&\\
-\code{A cross B}   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
-\code{A+B},&\\
-\code{A union B}   &Union & $\{x | x\in A\vee x\in B\}$\\
-\code{A inter B}   &Intersection & $\{x |x\in A\wedge x\in B\}$\\
-\code{A$\setminus$B, A-B},&\\
-\code{A without B} &Difference & $\{ x |x\in A\wedge x\not\in B\}$\\
-\code{A symdiff B} &Symmetric difference & 
-   $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
-\code{\{n\,{..}\,m\}},&\\
-\code{\{n to m \emph{by s}\}}& Generate, & 
-   $\{ x | x=n + is \leq m, i\in\N_0\}$\\
-   &(default $s = 1$)&\\ 
-\code{proj(A, t)}& Projection & 
-   The new set will consist of $n$-tuples, with\\
-   &$t=(e_1,\ldots,e_n)$&
-   the $i$-th component being the $e_i$-th component of $A$.\\
-\code{if a then}\\
-\code{\ b else c}        &Conditional               &\\
-%\hline
-\end{tabular}
-
-\medskip
 An example for the use of the \code{if} \emph{boolean-expression} \code{then}
-\emph{set expression} \code{else} \emph{set expression} \code{end} can
-be found below with the examples for indexed sets.
+\emph{set-expression} \code{else} \emph{set-expression} \code{end} can
+be found on page~\pageref{sec:indexed-sets} together with the examples for indexed sets.
 
 \paragraph{Examples}
 {\small 
 \begin{verbatim}
 set D := A cross B;
-set E := { 6 to 9 } union A without { <2>, <3> }; 
+set E := { 6 to 9 } union A without { 2, 3 }; 
 set F := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
-set G := proj(F, <3,1>) 
-# will give: <"A",1>, <"A",2"> ... <"B",9>
+set G := proj(F, <3,1>); 
+# will give: { <"A",1>, <"A",2"> ... <"B",9> }
 \end{verbatim}
 }
 
+\begin{table}[htbp]
+\centering
+{\sffamily\small
+\begin{tabular}{llp{56mm}}
+\toprule
+\code{A*B},&\\
+\code{A cross B}   &\raisebox{1ex}[0cm][0cm]{cross product} 
+                   &\raisebox{1ex}[0cm][0cm]{$\{(x,y)\mid x\in A\wedge y\in B\}$}\\
+\code{A+B},&\\
+\code{A union B}   &\raisebox{1ex}[0cm][0cm]{union} 
+                   &\raisebox{1ex}[0cm][0cm]{$\{x\mid x\in A\vee x\in B\}$}\\
+\code{A inter B}   &intersection & $\{x\mid x\in A\wedge x\in B\}$\\
+\code{A$\setminus$B, A-B},&\\
+\code{A without B} &\raisebox{1ex}[0cm][0cm]{difference} 
+                   &\raisebox{1ex}[0cm][0cm]{$\{x\mid x\in A\wedge x\not\in B\}$}\\
+\code{A symdiff B} &symmetric difference& 
+   $\{x\mid (x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
+\code{\{n\,{..}\,m\}},& generate, &\\
+\code{\{n to m \emph{by s}\}}&(default $s = 1$) & 
+   \raisebox{1ex}[0cm][0cm]{$\{x\mid x=n + is \leq m, i\in\NN_0, x,n,m,s\in\ZZ\}$}\\
+\code{proj(A, t)}& projection & 
+   The new set will consist of $n$-tuples, with\\
+   &$t=(e_1,\ldots,e_n)$&
+   the $i$-th component being the $e_i$-th component of $A$.\\
+\code{if a then b}\\
+\code{else c end}        &\raisebox{1ex}[0cm][0cm]{conditional}
+   &\raisebox{1ex}[0cm][0cm]{$\left\{\begin{array}{rl}b,&\text{if }
+   a=\text{true}\\c,&\text{if } a=\text{false}\end{array}\right.$}\\\\
+\bottomrule
+\end{tabular}
+}
+\caption{Set related functions}
+\label{tab:zimpl-set-functions}
+\end{table}
+
 \subsubsection{Conditional sets}
 It is possible to restrict a set to tuples that 
-satisfy a boolean expression. The expression given by the \code{with}
+satisfy a Boolean expression. The expression given by the \code{with}
 clause is evaluated for each tuple in the set and only tuples for
-which the expression evaluated to \emph{true} are included in the new set.
+which the expression evaluates to \emph{true} are included in the new set.
 
 \paragraph{Examples}
 {\small 
@@ -384,32 +429,24 @@ set F := { <i,j> in Q with i > j and i < 5 };
 set A := { "a", "b", "c" };
 set B := { 1, 2, 3 };
 set V := { <a,2> in A*B with a == "a" or a == "b" };
-# will give: <"a",2>, <"b",2>
+# will give: { <"a",2>, <"b",2> }
 \end{verbatim}
 }
 
-
 \subsubsection{Indexed sets}
-It is possible to index one set with another set.
-Here is a list of functions that use this:
-
-\medskip
-\begin{tabular}{llp{5cm}}
-\code{powerset(A)}& Generates all subsets of $A$&$\{X | X\subseteq A\}$\\
-\code{subset(A,n)}& Generates all subsets of $A$\\
-                    & with $n$ elements&$\{X | X\subseteq A\wedge |X|=n\}$\\
-\code{indexset(A)}&The index set of $A$&$\{1\ldots |A|\}$\\
-\end{tabular}
-
-\medskip
+\label{sec:indexed-sets}
+It is possible to index one set with another set resulting in a set of sets.
 Indexed sets are accessed by adding the index of the set in brackets
 \code{[} and \code{]}, like \code{S[7]}. 
+Table~\ref{tab:zimpl-idxset-fun} lists the available functions.
 There are three possibilities how to assign to an indexed set:
 \begin{itemize}
-\item The assignment expression is a list of comma separated pairs, 
+\setlength{\itemsep}{0pt}%
+\item The assignment expression is a list of comma-separated pairs, 
       consisting of a tuple from the index set and a set expression to assign.
-\item A set reference expression is given as index, then
-      the assignment expression is evaluated for each index tuple.
+\item If an index tuple is given as part of the index, 
+      \eg \verb|<i> in I|, the assignment is evaluated for each value
+      of index tuple.
 \item By use of a function that returns an indexed set.
 \end{itemize}
 
@@ -417,8 +454,7 @@ There are three possibilities how to assign to an indexed set:
 {\small 
 \begin{verbatim}
 set I           := { 1..3 };
-set A[I]        := <1> { "a", "b" }, 
-                   <2> { "c", "e" }, <3> { "f" };
+set A[I]        := <1> {"a","b"}, <2> {"c","e"}, <3> {"f"};
 set B[<i> in I] := { 3 * i };
 set P[]         := powerset(I);
 set J           := indexset(P);
@@ -427,49 +463,65 @@ set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 \end{verbatim}
 }
 
+\begin{table}[htbp]
+\centering
+{\sffamily\small
+\begin{tabular}{llp{5cm}}
+\toprule
+\code{powerset(A)}& generates all subsets of $A$&$\{X\mid X\subseteq A\}$\\
+\code{subset(A,n)}& generates all subsets of $A$\\
+                    & with $n$ elements&$\{X\mid X\subseteq A\wedge |X|=n\}$\\
+\code{indexset(A)}&the index set of $A$&$\{1\ldots |A|\}$\\
+\bottomrule
+\end{tabular}
+}
+\caption{Indexed set functions}
+\label{tab:zimpl-idxset-fun}
+\end{table}
+
 %------------------------------------------------------------------------------
 \subsection{Parameters}
 %------------------------------------------------------------------------------
-Parameters can be declared with or without an indexing
-set. Without indexing the parameter is just one value, which is either
+Parameters can be declared with or without an index
+set. Without indexing a parameter is just a single value, which is either
 a number or a string. For indexed parameters there is one
 value for each member of the set. It is possible to declare a
 \emph{default} value.
 
 Parameters are declared in the following way: 
 The keyword \code{param} is followed by the name of the parameter
-optionally followed by the indexing set. 
+optionally followed by the index set. 
 Then after the assignment sign comes a list of pairs. The first element of each
-pair is a tuple from the index set, the second element is the value of
+pair is a tuple from the index set, while the second element is the value of
 the parameter for this index.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
 set A := { 12 .. 30 };
-set C := { <1,2,"x">, <6,5,"y"> };
+set C := { <1,2,"x">, <6,5,"y">, <3,7,"z" };
 param q := 5;
-param u[A] := <1> 17, <2> 29, <3> 12 default 99;
+param u[A] := <13> 17, <17> 29, <23> 12 default 99;
 param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
 param x[<i> in { 1 .. 8 } with i mod 2 == 0] := 3 * i;
 \end{verbatim}
 }
 
-\medskip
-In the example, no value is given for index $<$787,12.6,"oh"$>$ of
-parameter \code{w}, that is assignments need not to be complete. This
+Assignments need not to be complete. 
+In the example, no value is given for index \code{$<$3,7,"z"$>$} of
+parameter \code{w}. This  
 is correct as long as it is never referenced.
 
 \subsubsection{Parameter tables}
 It is possible to initialize multi-dimensional indexed parameters from
 tables. This is especially useful for two-dimensional parameters.
 The data is put in a table structure with \code{$|$} signs on each
-margin. Then a head line with column indices has to be added, and one index
+margin. Then a headline with column indices has to be added, and one index
 for each row of the table is needed. The column index has to be
 one-dimensional, but the row index can be
 multi-dimensional. The complete index for the entry is built by
 appending the column index to the row index.
-The value entries are separated by commas. Any valid expression is
+The entries are separated by commas. Any valid expression is
 allowed here. As can be seen in the third example below, it is
 possible to add a list of entries after the table.
 
@@ -486,8 +538,6 @@ param h[I*J] :=   | "a", "c", "x", "z"   |
                 |9|   1,   2,  0,      3 | default -99;
 
 param g[I*I*I] :=     | 1, 2, 3 |
-                  |1,1| 0, 1, 0 |
-                  |1,2| 1, 1, 1 |
                   |1,3| 0, 0, 1 | 
                   |2,1| 1, 0, 1 |;
 
@@ -496,39 +546,46 @@ param k[I*I] :=  |  7,  8,  9 |
                |5| 12, 13, 14 |, <1,2> 17, <3,4> 99;
 \end{verbatim}
 }
+\noindent The last example is equivalent to:
+{\small 
+\begin{verbatim}
+param k[I*I] := <4,7> 89, <4,8> 67, <4,9> 44, <5,7> 12, 
+                <5,8> 13, <5,9> 14, <1,2> 17, <3,4> 99;
+\end{verbatim}
+}
+
 
 %------------------------------------------------------------------------------
 \subsection{Variables}
 %------------------------------------------------------------------------------
 Like parameters, variables can be indexed. 
 A variable has to be one out of three possible types: 
-Continuous (called \emph{real}), binary or integer. The default is real. 
+Continuous (called \emph{real}), binary or integer. The default type is real. 
 Variables may have lower and upper bounds. Defaults are
 zero as lower and infinity as upper bound. Binary variables are
 always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
-depending on the index for the variable (see last declaration in the
+depending on the index of the variable (see the last declaration in the
 example). Bounds can also be set to \code{infinity} and \code{-infinity}.
-
+\clearpage 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
 var x1;
 var x2 binary;
 var y[A] real >= 2 <= 18;
-var z[<a,b,c> in C] integer 
-    >= a * 10 
-    <= if b <= 3 then p[b] else 10 end; 
+var z[<a,b> in C] integer 
+      >= a * 10 <= if b <= 3 then p[b] else 10 end; 
 \end{verbatim}
 }
 
-\fbox{Remember: if nothing is specified a lower bound of zero is assumed.}
+%\fbox{Remember: if nothing is specified a lower bound of zero is assumed.}
 
 \subsection{Objective}
 There must be at most one objective statement in a model. The objective
 can be either \code{minimize} or \code{maximize}. Following the
-keyword is a name, a colon (\code{:}) and then a term consisting 
-of variables.
+keyword is a name, a colon : and then a linear term expressing the
+objective function.
 
 \subsubsection{Example}
 {\small 
@@ -536,53 +593,68 @@ of variables.
 minimize cost: 12 * x1 -4.4 * x2 
    + sum <a> in A : u[a] * y[a]
    + sum <a,b,c> in C with a in E and b > 3 : -a/2 * z[a,b,c];
+maximize profit: sum <i> in I : c[i] * x[i];
 \end{verbatim}
 }
 
 %------------------------------------------------------------------------------
 \subsection{Constraints}
 %------------------------------------------------------------------------------
-The general format for a constraint is
-\verb|subto name: term sense term|.\\
-Name can be any name starting with a letter. The term is defined
-as in the objective. Sense is one of
-\code{<=}, \code{>=} and \code{==}. 
+The general format for a constraint is:
+
+\smallskip
+\verb|subto name: term sense term|
+
+\smallskip
+\noindent Alternatively it is also possible to define \emph{ranged} constraints, 
+which have the form:
+
+\smallskip
+\verb|name: expr sense term sense expr|
+
+\smallskip
+\noindent \code{name} can be any name starting with a letter. \code{term} is defined
+as in the objective. \code{sense} is one of
+\code{<=}, \code{>=} and \code{==}. In case of ranged constraints
+both senses have to be equal and may not be \code{==}. \code{expr} is any
+valid expression that evaluates to a number.
 Many constraints can be generated with one statement by the use of the
-\code{forall} instruction, see below.
+\code{forall} instruction, as shown below.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-subto time : 3 * x1 + 4 * x2 <= 7;
-subto space: sum <a> in A : 2 * u[a] * y[a] >= 50;
-subto weird: forall <a> in A : 
-   sum <a,b,c> in C : z[a,b,c] == 55;
-subto c21: 6 * (sum <i> in A : x[i] 
-   + sum <j> in B : y[j]) >= 2;
-subto c40: x[1] == a[1] + 
-   2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
+subto time:  3 * x1 + 4 * x2 <= 7;
+subto space: 50 >= sum <a> in A: 2 * u[a] * y[a] >= 5;
+subto weird: forall <a> in A: sum <a,b,c> in C: z[a,b,c] == 55;
+subto c21: 6 * (sum <i> in A: x[i] + sum <j> in B : y[j]) >= 2;
+subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
 \end{verbatim}
 }
 
 %------------------------------------------------------------------------------
-\subsection{Details on \code{sum} and \code{forall}}
+\subsection{Details on \emph{sum} and \emph{forall}}
 %------------------------------------------------------------------------------
-The general forms are
+The general forms are:
 
-\qquad\code{forall} \emph{index} \code{do} \emph{term}
-and 
-\code{sum} \emph{index} \code{do} \emph{term}.
- 
-It is possible to nest several forall instructions.
+\smallskip
+\code{forall} \emph{index} \code{do} \emph{term}
+\quad and\quad 
+\code{sum} \emph{index} \code{do} \emph{term}
+
+\smallskip 
+\noindent It is possible to nest several forall instructions.
 %It should be noted, that a \code{sum}-expression is a \emph{term}
 %itself, so it is possible to nest or concatenate them.
-The general form of \emph{index} is 
+The general form of \emph{index} is: 
 
-\qquad\emph{tuple} \code{in} \emph{set} \code{with} \emph{boolean-expression}.
+\smallskip
+\emph{tuple} \code{in} \emph{set} \code{with} \emph{boolean-expression}
 
-It is allowed to write a colon (\code{:}) instead of \code{do} and a
-vertical bar (\code{|}) instead of \code{with}.
-The number of components in the \emph{tuple} and in the components of the
+\smallskip
+\noindent It is allowed to write a colon \code{:} instead of \code{do} and a
+vertical bar \code{|} instead of \code{with}.
+The number of components in the \emph{tuple} and in the
 members of the \emph{set} must match. The \code{with} part of an \emph{index} is
 optional. The \emph{set} can be any expression giving a set.
 
@@ -595,17 +667,16 @@ forall <i,j> in X cross { 1 to 5 } without { <2,3> }
          p[i] * q[j] * w[j,k] >= if i == 2 then 17 else 53;
 \end{verbatim}
 }
-
-Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
-instruction. So they are fixed for all invocations of \code{sum}.
+\noindent Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
+instruction. So they are fixed in all invocations of \code{sum}.
 
 %------------------------------------------------------------------------------
-\subsection{Details on \code{if} in constraints}
+\subsection{Details on \emph{if} in constraints}
 %------------------------------------------------------------------------------
 It is possible to put two variants of a constraint into an
 \code{if}-statement. The same applies  for \emph{terms}.
-It is also possible to have a \code{forall} statement inside
-the result part of an \code{if}.
+A \code{forall} statement inside the result part of an \code{if} is
+also possible.
 
 \subsubsection{Examples}
 {\small 
@@ -613,6 +684,7 @@ the result part of an \code{if}.
 subto c1: forall <i> in I do
   if (i mod 2 == 0) then  3 * x[i] >= 4
                     else -2 * y[i] <= 3 end;
+
 subto c2: sum <i> in I :
      if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
 \end{verbatim}
@@ -623,7 +695,7 @@ subto c2: sum <i> in I :
 \subsection{Initializing sets and parameters from a file}
 %------------------------------------------------------------------------------
 It is possible to load the values for a set or a parameter from a
-file. The syntax is
+file. The syntax is:
 
 \smallskip
 \code{read} \emph{filename} \code{as} \emph{template} 
@@ -631,21 +703,20 @@ file. The syntax is
 [\code{fs} \emph{s}] [\code{comment} \emph{s}]
 
 \smallskip
-\emph{filename} is the name of the file to read.
-
+\noindent\emph{filename} is the name of the file to read.
 \emph{template} is a string with a template for the tuples to
 generate. Each input line from the file is split into fields. The
 splitting is done according to the following rules:
 Whenever a space, tab, comma, semicolon or double colon is encountered
 a new field is started. Text that is enclosed in double quotes is not
-split, the quotes are always removed. When a field is split all space
-and tab characters around the splitting are removed. If the split is
+split and the quotes are always removed. When a field is split all space
+and tab characters around the splitting point are removed. If the split is
 due to a comma, semicolon or double colon, each occurrence of these
 characters starts a new field. 
 
 \subsubsection{Examples}
-{\small 
 All these lines have three fields:
+{\small 
 \begin{verbatim}
 Hallo;12;3    
 Moin   7  2
@@ -654,62 +725,62 @@ Moin   7  2
 \end{verbatim}
 }
 
-For each component of the tuple, the number of the field
-to use for the value is given, followed by either an \code{n} if the
+\noindent For each component of the tuple, the number of the field
+to use for the value is given, followed by either \code{n} if the
 field should be interpreted as a number or \code{s} for a string. 
-Have a look at the example, it is quite obvious how it works.
 After the template some optional modifiers can be given. The order
 does not matter. 
-
 \code{skip} \emph{n} instructs to skip the first
 \emph{n} lines of the file. 
-
 \code{use} \emph{n} limits the number of
 lines to use to \emph{n}. 
-
 \code{comment} \emph{s} sets a list of characters that start
 comments in the file. Each line is ended when any of the comment
 characters is found.
-
 When a file is read, empty lines are skipped and not counted for the
 \code{use} clause. They are counted for the \code{skip} clause.
  
 \subsubsection{Examples}
-{\small 
-\begin{verbatim}
-set P := { read "nodes.txt" as "<1s>" };
+{\small
+\verb|set P := { read "nodes.txt" as "<1s>" };|
 
-nodes.txt:
-   Hamburg   ->   <"Hamburg">
-   München   ->   <"München">
-   Berlin    ->   <"Berlin">
+\smallskip
+\noindent\verb|nodes.txt:|\\
+\verb|   Hamburg            | $\rightarrow$ $<$"Hamburg"$>$\\
+\verb|   München            | $\rightarrow$ $<$"München"$>$\\
+\verb|   Berlin             | $\rightarrow$ $<$"Berlin"$>$\\
 
-set Q := { read "blabla.txt" as "<1s,5n,2n>" skip 1 use 2 };
+\smallskip
+\noindent\verb|set Q := { read "blabla.txt" as "<1s,5n,2n>" skip 1 use 2 };|
 
-blabla.txt:
-   Name;Nr;X;Y;No     ->   skip   
-   Hamburg;12;x;y;7   ->   <"Hamburg",7,12>
-   Bremen;4;x;y;5     ->   <"Bremen,5,4>
-   Berlin;2;x;y;8     ->   skip
+\smallskip
+\noindent\verb|blabla.txt:|\\
+\verb|   Name;Nr;X;Y;No     | $\rightarrow$ skip\\   
+\verb|   Hamburg;12;x;y;7   | $\rightarrow$ $<$"Hamburg",7,12$>$\\
+\verb|   Bremen;4;x;y;5     | $\rightarrow$ $<$"Bremen,5,4$>$\\
+\verb|   Berlin;2;x;y;8     | $\rightarrow$ skip\\
    
-param cost[P] := read "cost.txt" as "<1s> 2n" comment "#";
+\smallskip
+\noindent\verb|param cost[P] := read "cost.txt" as "<1s> 2n" comment "#";|
 
-cost.txt:
-   # Name Price   ->   skip
-   Hamburg 1000   ->   <"Hamburg"> 1000
-   München 1200   ->   <"München"> 1200
-   Berlin  1400   ->   <"Berlin">  1400
+\smallskip
+\noindent\verb|cost.txt:|\\
+\verb|   # Name Price       | $\rightarrow$ skip\\
+\verb|   Hamburg 1000       | $\rightarrow$ $<$"Hamburg"$>$ 1000\\
+\verb|   München 1200       | $\rightarrow$ $<$"München"$>$ 1200\\
+\verb|   Berlin  1400       | $\rightarrow$ $<$"Berlin"$>$ 1400\\
 
-param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s";
+\smallskip
+\noindent\verb|param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s";|
 
-haha.txt:
-   1:2:ab:con1    ->   <"ab",1,2> "con1"
-   2:3:bc:con2    ->   <"bc",2,3> "con1"
-   4:5:de:con3    ->   <"de",4,5> "con1"
-\end{verbatim}
+\smallskip
+\noindent\verb|haha.txt:|\\
+\verb|      1:2:ab:con1     | $\rightarrow$ $<$"ab",1,2$>$ "con1"\\
+\verb|      2:3:bc:con2     | $\rightarrow$ $<$"bc",2,3$>$ "con2"\\
+\verb|      4:5:de:con3     | $\rightarrow$ $<$"de",4,5$>$ "con3"\\
 }  
 
-As with table format input, it is possible to add a list of tuples or
+\noindent As with table format input, it is possible to add a list of tuples or
 parameter entries after a read statement.
 \subsubsection{Examples}
 {\small 
@@ -722,7 +793,7 @@ param winniepoh[X] :=
 
 
 %------------------------------------------------------------------------------
-\subsection{Function Definitions}
+\subsection{Function definitions}
 %------------------------------------------------------------------------------
 It is possible to define functions within \zimpl. The value a
 function returns has to be either a number, a string or a set.
@@ -734,27 +805,25 @@ The definition of a function has to start with
 \code{defnumb}, \code{defstrg} or \code{defset}, depending on the
 return value.
 Then follows the name
-of the function and a list of argument names put in parenthesis.
-
-After this comes an assignment operator (\code{:=}) and a valid
+of the function and a list of argument names put in parentheses.
+Next is an assignment operator \code{:=} and a valid
 expression or set expression.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-defnumb dist(a,b)  := a*a + b*b;
+defnumb dist(a,b)  := sqrt(a*a + b*b);
 defstrg huehott(a) := if a < 0 then "hue" else "hott" end;
 defset  bigger(i)  := { <j> in K with j > i };
 \end{verbatim}
 }
 
-
 %------------------------------------------------------------------------------
-\subsection{Extended Constraints (experimental)}
+\subsection{Extended constraints}
 %------------------------------------------------------------------------------
 \zimpl has the possibility to generate systems of constraints that
-mimic conditional constraints. The general syntax is as  follows, note
-that the \code{else} part is optional:
+mimic conditional constraints. The general syntax is as follows (note
+that the \code{else} part is optional):
 
 \smallskip
 \centerline{
@@ -762,137 +831,121 @@ that the \code{else} part is optional:
 [ \code{else} \emph{constraint} ] \code{end}}
 
 \smallskip
-where \emph{boolean-constraint} consists of linear expression involving
+\noindent where \emph{boolean-constraint} consists of a linear expression involving
 variables. All these variables have to be bounded integer or binary
 variables. It is not possible to use any continuous variables or integer
-variables with infinite bounds in a boolean-constraint.
-All comparison operators ($<$, $\le$, $==$, $!\!\!\!=$, $\ge$, $>$) are
+variables with infinite bounds in a \emph{boolean-constraint}.
+All comparison operators ($<$, $\le$, $==$, $!\!\!=$, $\ge$, $>$) are
 allowed. Also combination of several terms with \code{and},
 \code{or}, and \code{xor} and negation with \code{not} is possible.
 The conditional constraints (those which follow after \code{then} or
-\code{else}, may include bounded continuous variables. 
-\begin{center}
-\fbox{\parbox{0.85\textwidth}{Be aware that using this construct will lead to
-the generation of several additional constraints and variables.}}
-\end{center}
+\code{else}) may include bounded continuous variables. 
+Be aware that using this construct will lead to
+the generation of several additional constraints and variables.
+
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-var x[i] integer >= 0 <= 20;
-
+var x[I] integer >= 0 <= 20;
 subto c1: vif 3 * x[1] + x[2] != 7 
    then sum <i> in I : y[i] <= 17
    else sum <k> in K : z[k] >= 5 end;
-
 subto c2: vif x[1] == 1 and x[2] > 5 then x[3] == 7 end;
-
-subto c3: forall <i> in I : 
-             vif x[i] >= 2 then x[i + 1] <= 4 end;
+subto c3: forall <i> in I with i < max(I) : 
+   vif x[i] >= 2 then x[i + 1] <= 4 end;
 \end{verbatim}
 }
 
-
 %------------------------------------------------------------------------------
-\subsection{Extended Functions (experimental)}
+\subsection{Extended functions}
 %------------------------------------------------------------------------------
 It is possible to use special functions on terms with variables that
-will automatically converted to a system of inequalities. The
+will automatically be converted into a system of inequalities. The
 arguments of these functions have to be linear terms consisting of
-bounded integer or binary variables. 
-
-The following functions are defined:
-
-\medskip
-\begin{tabular}{llp{7cm}}
-%\hline
-\code{vabs(t)}&Absolute value&$|t|$\\
-%\hline
-\end{tabular}
-
-\begin{center}
-\fbox{\parbox{0.85\textwidth}{Be aware that using this construct will lead to
-the generation of several additional constraints and variables.}}
-\end{center}
+bounded integer or binary variables. At the moment only the function
+\code{vabs(t)} that computes the absolute value of the term \code{t}
+is implemented, but functions like the minimum or the maximum of two
+terms, or the sign of a term can be implemented in a similar manner.
+Again, using this construct will lead to
+the generation of several additional constraints and variables.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-var x[i] integer >= -5 <= 5;
-
-subto c1: vabs(x[1]) >= 5;
-subto c2: vabs(sum <i> in I : x[i]) <= 15;
-subto c2: vif vabs(x[1] + x[2]) > 2 then x[3] == 7 end;
+var x[I] integer >= -5 <= 5;
+subto c1: vabs(sum <i> in I : x[i]) <= 15;
+subto c2: vif vabs(x[1] + x[2]) > 2 then x[3] == 2 end;
 \end{verbatim}
 }
 
 %------------------------------------------------------------------------------
-\subsection{The \code{do print} and \code{do check} commands}
+\subsection{The \emph{do print} and \emph{do check} commands}
 %------------------------------------------------------------------------------
 The \code{do} command is special.
 It has two possible incarnations:
-
 \code{print} and \code{check}. \code{print} will print to the 
 standard output stream
 whatever numerical, string, Boolean or set expression, or tuple
 follows it. This can be used for example to check if a set has the
 expected members, or if some computation has the anticipated result.
-
 \code{check} always precedes a Boolean expression. If this
-expression does not evaluated to \emph{true}, the program is aborted
+expression does not evaluate to \emph{true}, the program is aborted
 with an appropriate error message. This can be used to assert that
 specific conditions are met.
-
 It is possible to use a \code{forall} clause before a \code{print}
-oder \code{check} statement.
+or \code{check} statement.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
 set I := { 1..10 };
-
 do print I;
 do forall <i> in I with i > 5 do print sqrt(i);
-
 do forall <p> in P do check sum <p,i> in PI : 1 >= 1;
 \end{verbatim}
 }
 
-\clearpage
-\section{Examples}
-In this section we will show examples how to translate a problem
-into \zimpl format.
+\section{Modeling examples}
+In this section we show some examples of well-known problems
+translated into \zimpl format.
 
-\subsection{Diet problem}
+\subsection{The diet problem}
 This is the first example in 
-\cite[Chapter 1, page 3]{Chvatal1983}.
-It is a classic so-called \emph{diet}-problem, see for example
-\cite{Danzig1990} about the practicle implications.
+\citet[Chapter 1, page 3]{Chvatal1983}.
+It is a classic so-called \emph{diet} problem, see for example
+\cite{Dantzig1990} about its implications in practice.
 
 Given a set of foods $F$ and a set of nutrients $N$, we have a table
 $\pi_{fn}$ of the amount of nutrient $n$ in food $f$. Now $\Pi_n$
-defines how much intake of each nutriment is needed. And $\Delta_f$
-describes the maximum number of servings of each food. 
+defines how much intake of each nutrient is needed. $\Delta_f$
+denotes for each food the maximum number of servings acceptable. 
+Given prices $c_f$ for each food, we have to find a selection of foods
+that obeys the restrictions and has minimal cost. An integer
+variable $x_f$ is introduced for each $f\in F$ indicating the number of servings of
+food $f$. Integer variables are used, because only complete servings can be
+obtained, \ie half an egg is not an option.
+The problem may be stated as:
+\begin{align}
+\min&\sum_{f\in F}c_{f} x_{f}&&\mbox{subject to}\nonumber\\
+\sum_{f\in F} \pi_{fn} x_{f}&\ge\Pi_n&&\fa n\in N\nonumber\\
+0\leq x_{f}&\leq\Delta_f&&\fa f\in F\nonumber\\
+x_{f}&\in\NNZ&&\fa f\in F\label{eqn:integrality}
+\end{align}
 
-Now given prices $c_f$ for each food, we have to find a selection of foods
-that obeys the restrictions and has minimal cost. 
-\begin{eqnarray}
-\min_{f\in F, n\in N} c_{fn} x_{fn}&&\mbox{subject to}\\
-\sum_{f\in F} \pi_f x_{fn} &\ge&\Pi_n\quad\forall n\in N\\
-0\leq x_{fn}&\leq&\Delta_f\quad\forall f\in F, n\in N\\
-x_{fn}&\in&\N\label{eqn:integrality}
-\end{eqnarray}
+\noindent This translates into \zimpl as follows:
 
-As (\ref{eqn:integrality}) implies, only complete servings can be
-obtained. Half an egg is not an option.
-Now translating this to \zimpl looks as follows:
-{\small
-\begin{verbatim}
-set Food := {"Oatmeal","Chicken","Eggs","Milk","Pie","Pork"};
-set Nutrients := { "Energy", "Protein", "Calcium" };
+\medskip
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=tb]{}
+set Food      := { "Oatmeal", "Chicken", "Eggs",
+                   "Milk",    "Pie",     "Pork" };
+set Nutrients := { "Energy",  "Protein", "Calcium" };
 set Attr      := Nutrients + { "Servings", "Price" };
 
 param needed[Nutrients] := 
-  <"Energy"> 2000, <"Protein"> 55, <"Calcium"> 800;
+   <"Energy"> 2000, <"Protein"> 55, <"Calcium"> 800;
 
 param data[Food * Attr] := 
           |"Servings","Energy","Protein","Calcium","Price"|
@@ -903,112 +956,186 @@ param data[Food * Attr] :=
 |"Pie"    |        2 ,    420 ,       4 ,      22 ,    20 |
 |"Pork"   |        2 ,    260 ,      14 ,      80 ,    19 |;
 #                       (kcal)       (g)      (mg) (cents)       
+
 var x[<f> in Food] integer >= 0 <= data[f, "Servings"];
 
 minimize cost: sum <f> in Food : data[f, "Price"] * x[f];
 
-subto need :
-  forall <n> in Nutrients do
-    sum <f> in Food : data[f, n] * x[f] >= needed[n];
-\end{verbatim}
-}
-\clearpage
-\subsection{TSP}
+subto need: forall <n> in Nutrients do
+   sum <f> in Food : data[f, n] * x[f] >= needed[n];
+\end{lstlisting}
+
+\medskip
+\noindent The cheapest meal satisfying all requirements costs 97 cents and
+consists of four servings of oatmeal, five servings of milk and two
+servings of pie.
+
+%x$Oatmeal                     4.000000
+%x$Milk                        5.000000
+%x$Pie                         2.000000
+
+\subsection{The traveling salesman problem}
 In this example we show how to generate an exponential 
-description of the \emph{Traveling Salesmen Problem} 
+description of the \emph{symmetric traveling salesman problem} (\tsp)
 as given for example in 
-\cite[Section 58.5]{Schrijver2003}.
+\citet[Section 58.5]{Schrijver2003}.
+
+Let $G=(V,E)$ be a complete graph, with $V$ being the set of cities
+and $E$ being the set of links between the cities. Introducing binary
+variables $x_{ij}$ for each $(i,j)\in E$ indicating if edge $(i,j)$ is
+part of the tour, the \tsp can be written as:
+\begin{align}
+\min &\sum_{(i,j)\in E}d_{ij} x_{ij}&&\text{subject to}\nonumber\\
+\sum_{(i,j)\in\delta_v} x_{ij}&=2&&\fa v\in V\nonumber\\
+\sum_{(i,j)\in E(U)} x_{ij}&\leq |U|-1&&\fa U\subseteq V, \emptyset\neq
+U\neq V\label{tsp:subtour}\\
+x_{ij}&\in\{0,1\}&&\fa (i,j)\in E\nonumber
+\end{align}
+%
 The data is read in from a file that gives the number of the city and the
-x and y coordinate. Distances between cities are geometric.
-A suitable data file would look like this:
-{\small
+x and y coordinates. Distances between cities are assumed Euclidean. For example:
+{\footnotesize
+\setlength\columnseprule{0.4pt}
+\begin{multicols}{2}
 \begin{verbatim}
-#City        x y 
-"Sylt"       1 1
-"Flensburg"  3 1
-"Neumünster" 2 2
-"Husum"      1 3
-"Schleswig"  3 3
-"Ausacker"   2 4
+# City       X    Y
+Berlin     5251 1340
+Frankfurt  5011  864 
+Leipzig    5133 1237 
+Heidelberg 4941  867 
+Karlsruhe  4901  840 
+Hamburg    5356  998 
+Bayreuth   4993 1159 
+Trier      4974  668 
+Hannover   5237  972
+Stuttgart  4874  909 
+Passau     4856 1344 
+Augsburg   4833 1089 
+Koblenz    5033  759 
+Dortmund   5148  741 
+Bochum     5145  728 
+Duisburg   5142  679 
+Wuppertal  5124  715 
+Essen      5145  701 
+Jena       5093 1158 
 \end{verbatim}
+\end{multicols}
 }
-The formulation in \zimpl follows below. Please note that \code{P[]}
-holds all subsets of the cities. So don't try to solve a 52
-city TSP this way. It won't work.
-{\small
-\begin{verbatim}
-set V   := { read "tsp.dat" as "<1s>" comment "#" };
-set E   := { <i,j> in V * V with i < j };
-set P[] := powerset(V);
-set K   := indexset(P);
 
-param px[V] := read "tsp.dat" as "<1s> 2n" comment "#";
-param py[V] := read "tsp.dat" as "<1s> 3n" comment "#";
+% {\small
+% \begin{verbatim}
+% #City        x y 
+% "Sylt"       1 1
+% "Flensburg"  3 1
+% "Neumünster" 2 2
+% "Husum"      1 3
+% "Schleswig"  3 3
+% "Ausacker"   2 4
+% \end{verbatim}
+% }
 
+\noindent The formulation in \zimpl follows below. Please note that \code{P[]}
+holds all subsets of the cities. As a result 
+19 cities is about as far as one can get with this approach. 
+Information on how to solve much larger instances can be found on the 
+\textsc{concorde} website\footnote{http://www.tsp.gatech.edu}.
+
+\medskip
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=tb]{}
+set V             := { read "tsp.dat" as "<1s>" comment "#" };
+set E             := { <i,j> in V * V with i < j };
+set P[]           := powerset(V);
+set K             := indexset(P);
+param px[V]       := read "tsp.dat" as "<1s> 2n" comment "#";
+param py[V]       := read "tsp.dat" as "<1s> 3n" comment "#";
 defnumb dist(a,b) := sqrt((px[a]-px[b])^2 + (py[a]-py[b])^2);
 
 var x[E] binary;
 
 minimize cost: sum <i,j> in E : dist(i,j) * x[i, j];
 
-subto two_connected:
-   forall <v> in V do
-      (sum <v,j> in E : x[v,j]) 
-    + (sum <i,v> in E : x[i,v]) == 2;
+subto two_connected: forall <v> in V do
+   (sum <v,j> in E : x[v,j]) + (sum <i,v> in E : x[i,v]) == 2;
 
-subto no_subtour:
+subto no_subtour: 
    forall <k> in K with 
       card(P[k]) > 2 and card(P[k]) < card(V) - 2 do
       sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] 
       <= card(P[k]) - 1;
-\end{verbatim}
-}
-\clearpage
-\subsection{Capacitated Facility Location Problem}
-Here we have a formulation for the \emph{Capacitated Facility
-Location} Problem. Of course this is also kind of a \emph{bin packing} problem
-with packing costs and variable sized bins, or a \emph{cutting stock} problem
+\end{lstlisting}
+
+\medskip
+\noindent The resulting \LP has 171 variables, 239,925 constraints, and
+22,387,149 non-zero entries in the constraint matrix, giving an \mps-file
+size of 936\,\textsc{mb}. \cplex solves this to optimality
+without branching in less than a minute.\footnote{Only 40
+simplex iterations are needed to reach the optimal solution.}
+
+An optimal tour for the data above is 
+Berlin, Hamburg, Hannover, Dortmund, Bo\-chum, Wuppertal, Essen,
+Duisburg, Trier, Koblenz, Frankfurt, Heidelberg, Karlsruhe, Stuttgart,
+Augsburg, Passau, Bayreuth, Jena, Leipzig, Berlin.
+
+
+\subsection{The capacitated facility location problem}
+Here we give a formulation of the \emph{capacitated facility
+location} problem. It may also be considered as a kind of \emph{bin packing} problem
+with packing costs and variable sized bins, or as a \emph{cutting stock} problem
 with cutting costs.
 
-Given a set of possible plants $P$ to built, and a set of stores $S$
+Given a set of possible plants $P$ to build, and a set of stores $S$
 with a certain demand $\delta_s$ that has to be satisfied, we have
 to decide which plant should serve which store.
 We have costs $c_p$ for building plant $p$ and $c_{ps}$
 for transporting the goods from plant $p$ to store $s$.
 Each plant has only a limited capacity $\kappa_p$.
-And we insist that each store is served by exactly one plant.
+We insist that each store is served by exactly one plant.
 Of course we are looking for the cheapest solution:
-
-\begin{eqnarray}
-\min_{p\in P, s\in S} c_p + c_{ps}&&\mbox{subject to}\\ 
-\sum_{p\in P} x_{ps}& =& 1\quad\forall s\in S\label{eqn:assign}\\
-x_{ps}&\leq&z_{s}\quad\forall s\in S, p\in P\label{eqn:open}\\
-\sum_{s\in S} \delta_s x_{ps}&\leq&\kappa_p\quad\forall p\in P\label{eqn:capacity}\\
-x_{ps},z_p&\in&\BB
-\end{eqnarray}
-
-We have binary variables $z_p$, which are set to one, iff plant $p$ is
-to be build. And we have binary variables $x_{ps}$, 
-which are set to one iff plant $p$ serves shop $s$. 
-Equation (\ref{eqn:assign}) demands that each store is assigned to
-exactly one plant. Equation (\ref{eqn:open}) makes sure that a plant
-that serves a shop is built. And Equation (\ref{eqn:capacity})
-restricts the shops that are served by a plant to the plants capacity.
-Putting this into \zimpl yields:
-{\small
-\begin{verbatim}
+%
+\begin{align}
+\min\sum_{p\in P}c_p z_p& 
+   +\!\!\!\sum_{p\in P, s\in S}\!\!\!c_{ps} z_{ps}&&\mbox{subject to}\nonumber\\ 
+\sum_{p\in P} x_{ps}& = 1&&\fa s\in S\label{eqn:assign}\\
+x_{ps}&\leq z_{p}&&\fa s\in S, p\in P\label{eqn:open}\\
+\sum_{s\in S} \delta_s x_{ps}&\leq\kappa_p&&\fa p\in P\label{eqn:capacity}\\
+x_{ps},z_p&\in\BB&&\fa p\in P, s\in S\nonumber
+\end{align}
+%
+We use binary variables $z_p$, which are set to one, if and only if plant $p$ is
+to be built. Additionally we have binary variables $x_{ps}$, 
+which are set to one if and only if plant $p$ serves shop $s$. 
+Equation~\eqref{eqn:assign} demands that each store is assigned to
+exactly one plant. Inequality~\eqref{eqn:open} makes sure that a plant
+that serves a shop is built. Inequality~\eqref{eqn:capacity}
+assures that the shops are served by a plant which does not exceed its
+capacity. Putting this into \zimpl yields the program shown on the
+next page.
+The optimal solution for the instance described by the program is to build plants \code{A} and
+\code{C}. Stores 2, 3, and 4 are served by plant \code{A} and the others by
+plant \code{C}. The total cost is 1457.
+\clearpage
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=b]{}
 set PLANTS := { "A", "B", "C", "D" };
 set STORES := { 1 .. 9 };
 set PS     := PLANTS * STORES;
 
 # How much does it cost to build a plant and what capacity 
 # will it then have?
-param building[PLANTS]:= <"A">500,<"B">600,<"C">700,<"D">800;
-param capacity[PLANTS]:= <"A"> 40,<"B"> 55,<"C"> 73,<"D"> 90;
+param building[PLANTS]:= <"A"> 500, <"B"> 600, <"C"> 700, <"D"> 800;
+param capacity[PLANTS]:= <"A">  40, <"B">  55, <"C">  73, <"D">  90;
 
-# Here is the demand of each store
-param demand  [STORES]:= <1> 10,<2> 14,<3> 17,<4> 8,<5> 9,
-                         <6> 12,<7> 11,<8> 15,<9> 16;
+# The demand of each store
+param demand  [STORES]:= <1> 10, <2> 14,
+                         <3> 17, <4>  8,
+                         <5>  9, <6> 12,
+                         <7> 11, <8> 15,
+                         <9> 16;
 
 # Transportation cost from each plant to each store
 param transport[PS] := 
@@ -1018,8 +1145,8 @@ param transport[PS] :=
   |"C"| 17, 34, 65, 25,  7, 67, 45, 13, 54 |
   |"D"| 60,  8, 79, 24, 28, 19, 62, 18, 45 |;
 
-var x[PS]     binary;  # Is plant p suppling store s ?
-var z[PLANTS] binary;  # Is plant p build ?
+var x[PS]     binary;  # Is plant p supplying store s ?
+var z[PLANTS] binary;  # Is plant p built ?
 
 # We want it cheap
 minimize cost: sum <p> in PLANTS : building[p] * z[p]
@@ -1027,85 +1154,282 @@ minimize cost: sum <p> in PLANTS : building[p] * z[p]
 
 # Each store is supplied by exactly one plant
 subto assign: 
-  forall <s> in STORES : sum <p> in PLANTS : x[p,s] == 1;
+  forall <s> in STORES do 
+     sum <p> in PLANTS : x[p,s] == 1;
    
-# To be able to supply a store, a plant must be build
-subto build: forall <p,s> in PS : x[p,s] <= z[p];
+# To be able to supply a store, a plant must be built
+subto build: 
+   forall <p,s> in PS do 
+      x[p,s] <= z[p];
 
 # The plant must be able to meet the demands from all stores
-# that are connected to it
-subto limit: forall <p> in PLANTS :
-   sum <s> in S : demand[s] * x[p,s] <= capacity[p];
-\end{verbatim}
-}
-
-The optimal solution in this case is to build plants \code{A} and
-\code{C}. Stores 2, 3, and 4 are served by plant \code{A}, the rest by
-plant \code{C}. Total cost would be 1457.
-
+# that are assigned to it
+subto limit: 
+   forall <p> in PLANTS do
+      sum <s> in S : demand[s] * x[p,s] <= capacity[p];
+\end{lstlisting}
 \clearpage
-\subsection{$n$-Queens Problem}
-\label{ssec:example:n-queens-problem}
-We now show two formulations of the $n$-Queens problems using 
-extended constraints and functions. 
 
+\subsection{The $n$-queens problem}
+\label{ssec:example:n-queens-problem}
+The problem is to place $n$ queens on a $n\times n$ chessboard so that no
+two queens are on the same row, column or diagonal.
+The $n$-queens problem is a classic combinatorial search problem
+often used to test the performance of algorithms that solve satisfiability
+problems. Note though, that there are algorithms available which need
+linear time in practise, like, for example, those of \cite{SosicGu1991}.
+We will show four different models for the problem and compare
+their performance. 
+
+\subsubsection{The integer model}
 The first formulation uses 
 one general integer variable for each row of the board.
-Each variable can take the value of a column. So we have $n$ variables 
+Each variable can assume the value of a column, \ie we have $n$ variables 
 with bounds $1\ldots n$. Next we use the 
 \code{vabs} extended function to model an \emph{all different}
 constraint on the variables (see constraint c1). 
 This makes sure that no queen is located
 on the same column than any other queen.
 The second constraint (c2) is used to block all the diagonals of a
-queen. This is done by demanding that the absolute row and the column 
-distance of each pair of queens is different. We model $a\neq b$ by
-$\mbox{abs}(a-b)\geq 1$.
+queen by demanding that the absolute value of the row
+distance and the column distance of each pair of queens are
+different. We model $a\neq b$ by $\mbox{abs}(a-b)\geq 1$.
 
 Note that this formulation only works if a queen can be placed in each
-row,\ie the board size has to be at least $4\times4$.
+row, \ie if the size of the board is at least $4\times4$.
 
-{\small
-\begin{verbatim}
+\medskip
+%\noindent\textsf{Integer formulation}
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=tb]{}
 param queens := 8;
 
-set I := { 1 .. queens };
-set P := { <i,j> in I * I with i < j };
+set C := { 1 .. queens };
+set P := { <i,j> in C * C with i < j };
  
-var x[I] integer >= 1 <= queens;
+var x[C] integer >= 1 <= queens;
 
 subto c1: forall <i,j> in P do vabs(x[i] - x[j]) >= 1;
 subto c2: forall <i,j> in P do 
-   vabs(vabs(x[i] - x[j]) - abs(i - j)) >= 1;
-\end{verbatim}
+             vabs(vabs(x[i] - x[j]) - abs(i - j)) >= 1;
+\end{lstlisting}
+
+\medskip
+\noindent The following table shows the performance of the model. Since the
+problem is modeled as a
+pure satisfiability problem, the solution time depends only on how
+long it takes to find a feasible solution.\footnote{Which is, in fact,
+rather random.} 
+The columns titled \emph{Vars}, \emph{Cons}, and \emph{NZ} denote the
+number of variables, constraints and non-zero entries in the
+constraint matrix of the generated integer program. 
+\emph{Nodes} lists the number of branch-and-bound nodes evaluated by
+the solver, and \emph{time} gives the solution time in \cpu seconds. 
+\begin{center}
+{\sffamily\small
+\begin{tabular}{crrrrrr}
+\toprule
+Queens & Vars & Cons &   NZ      & Nodes & Time [s]\\
+\midrule
+   8    &   344 &   392 &    951 &   1,324   & $<$1\\
+  12    &   804 &   924 &  2,243 & 122,394   &  120\\
+  16    & 1,456 & 1,680 &  4,079 & $>$1 mill.& $>$1,700\\
+\bottomrule
+\end{tabular}
 }
+\end{center}
+As we can see, between 12 and 16 queens is the maximum instance size
+we can expect to solve with this model. Neither changing the \cplex parameters
+to aggressive cut generation nor setting emphasis on integer
+feasibility improves the performance significantly.
 
-Here we do the same with one binary variable for each field of the
-board. The variable is one iff a queen is on this field.
-We compute in advance which other fields are blocked if a queen is
-placed on a particular field. Then we use the extended \code{vif}
-constraint to set the variables of the blocked fields to zero if a
-queens is placed. %We maximize the number of queens allowed.
+\subsubsection{The binary models}
+Another approach to model the problem is to have 
+one binary variable for each square of the
+board. The variable is one if and only if a queen is on this square
+and we maximize the number of queens on the board.
 
-{\small
-\begin{verbatim}
+For each square we compute in advance which other squares are blocked if a queen is
+placed on this particular square. Then the extended \code{vif}
+constraint is used to set the variables of the blocked squares to zero if a
+queen is placed. 
+
+\medskip
+%\noindent\textsf{Binary formulation A}
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1,escapechar=@}
+\begin{lstlisting}[frame=tb]{}
 param columns := 8;
 
-set I   := { 1 .. columns };
-set IxI := I * I;
+set C   := { 1 .. columns };
+set CxC := C * C;
 
-set TABU[<i,j> in IxI] := { <m,n> in IxI with 
-   (m != i or n != j) and 
-   (m == i or n == j or abs(m - i) == abs(n - j)) };
+set TABU[<i,j> in CxC] := { <m,n> in CxC with (m != i or n != j)
+   and (m == i or n == j or abs(m - i) == abs(n - j)) };
 
-var x[IxI] binary;
+var x[CxC] binary;
 
-maximize queens: sum <i,j> in IxI : x[i,j];
+maximize queens: sum <i,j> in CxC : x[i,j];
 
-subto c1: forall <i,j> in IxI do
-   vif x[i,j] == 1 then 
-      sum <m,n> in TABU[i,j] : x[m,n] <= 0 end;
-\end{verbatim}
+subto c1: forall <i,j> in CxC do vif x[i,j] == 1 then @\label{queens-vif}@
+              sum <m,n> in TABU[i,j] : x[m,n] <= 0 end;
+\end{lstlisting}
+
+\medskip
+\noindent Using extended formulations can make the models more comprehensible.
+For example, replacing constraint c1 in line \ref{queens-vif} with
+an equivalent one that does not use \code{vif} as shown below,
+leads to a formulation that is much harder to understand.
+
+\medskip
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[firstlabel=13]{}
+subto c2: forall <i,j> in CxC do
+             card(TABU[i,j]) * x[i,j] 
+           + sum <m,n> in TABU[i,j] : x[m,n] <= card(TABU[i,j]);
+\end{lstlisting}
+
+\medskip 
+\noindent After the application of the \cplex presolve procedure both
+formulations result in identical integer programs. The performance of
+the model is shown in the following table. \emph{S} indicates the
+\cplex settings used: Either \emph{(D)efault},
+\emph{(C)uts}\footnote{Cuts: \code{mip cuts all 2} and \code{mip strategy probing 3}.}, or
+\emph{(F)easibility}\footnote{Feasibility: \code{mip cuts all -1} and \code{mip emph 1}}.
+\emph{Root Node} indicates 
+the objective function value of the \lp relaxation of the root node.
+\begin{center}
+{\sffamily\small
+\begin{tabular}{ccrrrrrrr}
+\toprule
+Queens & S & Vars & Cons &   NZ   & Root Node & Nodes & Time [s]\\
+\midrule
+   8   & D &   384 &   448 &   2,352 & 13.4301 &     241 & $<$1\\
+       & C &       &       &         &  8.0000 &       0 & $<$1\\
+  12   & D &   864 & 1,008 &   7,208 & 23.4463 &  20,911 & 4\\
+       & C &       &       &         & 12.0000 &       0 & $<$1\\
+  16   & D & 1,536 & 1,792 &  16,224 & 35.1807 & 281,030 & 1,662\\
+       & C &       &       &         & 16.0000 &      54 & 8\\
+  24   & C & 3,456 & 4,032 &  51,856 & 24.0000 &      38 & 42\\
+  32   & C & 6,144 & 7,168 & 119,488 & 56.4756 & $>$5,500& $>$2,000\\
+\bottomrule
+\end{tabular}
 }
+\end{center}
+This approach solves instances with more than 24 queens. 
+The use of aggressive cut generation improves the upper
+bound on the objective function significantly, though 
+it can be observed that for values of
+$n$ larger than 24 \cplex is not able to deduce the trivial upper
+bound of $n$.\footnote{For the 32 queens instance the optimal solution is found
+after 800 nodes, but the upper bound is still 56.1678.}
+If we use the following formulation instead of constraint c2, this changes:
 
+\medskip
+%\noindent\textsf{Binary formulation B}
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[firstlabel=13]{}
+subto c3: forall <i,j> in CxC do
+             forall <m,n> in TABU[i,j] do x[i,j] + x[m,n] <= 1;
+\end{lstlisting}
+
+\medskip
+\noindent As shown in the table below, the optimal upper bound on the objective
+function is always found in the root node. This leads to a similar
+situation as in the integer formulation, \ie the solution time depends
+mainly on the time it needs to find the optimal solution. While
+reducing the number of branch-and-bound nodes evaluated, 
+aggressive cut generation increases the total solution time.
+
+With this approach instances up to 96 queens can be solved. 
+At this point the integer program gets too large to be generated. 
+Even though the \cplex presolve routine is able to aggregate the
+constraints  again, \zimpl needs too much memory to generate the \ip.
+The column labeled \emph{Pres. NZ} lists the number of non-zero entries
+after the presolve procedure.
+
+\begin{center}
+{\sffamily\small
+\begin{tabular}{ccrrrrrrrr}
+\toprule
+       &   &      &      &        & Pres. & Root &       & Time    \\
+Queens & S & Vars & Cons &   NZ   &  NZ   & Node & Nodes & [s]\\
+\midrule
+%   8   & D &    64 &     1,456 &     2,912 &    528 &  8.0 &       0 & $<$1\\
+  16   & D &   256 &    12,640 &    25,280 &  1,594 & 16.0 &       0 & $<$1\\
+  32   & D & 1,024 &   105,152 &   210,304 &  6,060 & 32.0 &      58 & 5  \\
+  64   & D & 4,096 &   857,472 & 1,714,944 & 23,970 & 64.0 &     110 & 60\\
+  64   & C &       &           &           &        & 64.0 &      30 & 89\\
+  96   & D & 9,216 & 2,912,320 & 5,824,640 & 53,829 & 96.0 &      70 & 193\\
+  96   & C &       &           &           &        & 96.0 &      30 & 410\\
+  96   & F &       &           &           &        & 96.0 &      69 & 66\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+\clearpage
+Finally, we will try the following set packing formulation:
+
+\medskip
+%\noindent\textsf{Set packing formulation}
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+\begin{lstlisting}[frame=tb,firstlabel=13]{}
+subto row: forall <i> in C do
+   sum <i,j> in CxC : x[i,j] <= 1;
+
+subto col: forall <j> in C do
+   sum <i,j> in CxC : x[i,j] <= 1;
+
+subto diag_row_do: forall <i> in C do
+   sum <m,n> in CxC with m - i == n - 1: x[m,n] <= 1;
+      
+subto diag_row_up: forall <i> in C do
+   sum <m,n> in CxC with m - i == 1 - n: x[m,n] <= 1;
+      
+subto diag_col_do: forall <j> in C do
+   sum <m,n> in CxC with m - 1 == n - j: x[m,n] <= 1;
+
+subto diag_col_up: forall <j> in C do
+   sum <m,n> in CxC with card(C) - m == n - j: x[m,n] <= 1;
+\end{lstlisting}
+
+\medskip
+\noindent Here again, the upper bound on the objective function is always
+optimal. The size of the generated \ip is even smaller than that of
+the former model after presolve. The results for different instances
+size are shown in the following table:
+\begin{center}
+{\sffamily\small
+\begin{tabular}{ccrrrrrrr}
+\toprule
+Queens & S & Vars & Cons    &   NZ      & Root Node & Nodes & Time [s]\\
+\midrule
+%   8   & D &     64 &      48 &       272 &   8.0 &     0 & $<$1\\
+%  16   & D &    256 &      96 &      1056 &  16.0 &     8 & $<$1\\
+%  32   & D &  1,024 &     192 &      4160 &  32.0 &     0 & $<$1\\
+  64   & D &  4,096 &     384 &    16,512 &  64.0 &     0 & $<$1\\
+  96   & D &  9,216 &     576 &    37,056 &  96.0 &  1680 & 331\\
+  96   & C &        &         &           &  96.0 &  1200 & 338\\
+  96   & F &        &         &           &  96.0 &   121 &  15\\
+ 128   & D & 16,384 &     768 &    65,792 & 128.0 & $>$7000 &$>$3600 &\\
+ 128   & F &        &         &           & 128.0 &   309 &  90\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+In case of the 128 queens instance with default settings, a solution with 127 queens is found
+after 90 branch-and-bound nodes, but \cplex was not able to find the
+optimal solution within an hour. From the performance of the Feasible
+setting it can be presumed that generating cuts is not beneficial for
+this model.
 

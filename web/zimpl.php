@@ -1,42 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.27 2004/05/09 09:12:07 bzfkocht Exp $ -->
-<?php
-#
-#	Author: Philip Gatt
-#	Email: pxg@hotmail.com
-#	Date: 6-22-99
-#	Location: Orlando, Florida
-#
-#	This file is free to use, modify, distribute, delete, distort, 
-#       or whatever else you desire.
-#	I only ask that I receive credit and that you send me an email 
-#       letting me know you are using my script (so I know I helped somebody).
-#
-#	modified by Thorsten Koch (koch@zib.de) 11Mar2001
-#
-$counter = "counter/counter.dat";  # the data storage file
-
-if (file_exists($counter)) {
-	$fp = fopen($counter, 'r');
-	$buffer = fread($fp, filesize($counter));
-	fclose($fp);
-	$visitorCount = intval($buffer);
-}
-else
-{
-	$visitorCount = 0;
-}
-$fp = fopen($counter, 'w');
-fwrite($fp, ++$visitorCount);
-fclose($fp);
-?>
+<!-- $Id: zimpl.php,v 1.28 2005/02/09 08:56:13 bzfkocht Exp $ -->
 <html lang="en">
 <head>
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2004/05/09 09:12:07 $">
+<meta name="date" content="$Date: 2005/02/09 08:56:13 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -75,18 +45,17 @@ is available. Zimpl has even been successfully compiled for Windows using
 </p>
 <p>
 <hr noshade>
-<h3>What's new in 2.02</h3>
+<h3>What's new in 2.03</h3>
 <ul>
-<li>Much faster set implementation
-<li>Zimpl can write .mst files
-<li>Bug fixes and enhancements.
+<li>Bug fixes
+<li>Improved documentation
 </ul>
 <h3>Download</h3>
 <p>
-The latest Version is 2.02. 
+The latest Version is 2.03. 
 <a href="download">Download</a>
 complete
-<a href="download/zimpl-2.02.tgz">source code</a>
+<a href="download/zimpl-2.03.tgz">source code</a>
 and 
 <a href="download/zimpl.pdf">documentation</a>.
 <br>
@@ -101,7 +70,7 @@ Precompiled
 If you find one (shouldn't be to difficult), it would be nice if you 
 send a description 
 or even better a working fix with a runnable example .zpl file to 
-<a href="mailto:koch@zib.de">me.</a>
+koch<img src="images/klammeraffe.gif" align="bottom" border="0" alt="Klammeraffe">zib.de.
 </p>
 <hr noshade>
 <h3>Solver</h3>
@@ -119,10 +88,6 @@ NEOS Optimization Software</a>.
 <h3>Links</h3>
 <h4>Zimpl related:</h4>
 <dl>
-<!--
-<dt><a href="http://www.iot.ntnu.no/~mkaut/files/zimpl_info.htm">
-    Precompiled Zimpl for Windoze</a></dt>
--->
 <dt><a href="http://www.math.tu-berlin.de/Vorlesungen/WS02/LinOpt/">
     TU-Berlin, Lecture on Linear Optimization</a></dt>
 <dt><a href="http://www.mathematik.tu-darmstadt.de/ags/ag7/Lehrveranstaltungen/WS2002_de.html">
@@ -178,7 +143,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2004/05/09 09:12:07 $ by
+Last Update $Date: 2005/02/09 08:56:13 $ by
 <a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch,
 <a href="/impressum.en.html">Imprint</a>

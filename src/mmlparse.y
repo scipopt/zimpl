@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.64 2004/05/03 11:35:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.65 2005/02/09 08:56:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -26,7 +26,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*lint -e428 -e574 -e525 -e527 -e661 -e662 -e676 */
-/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e764 */
+/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 */
+/*lint -e818 -e830 */
+/*lint -esym(530,yylen) */
+/*lint -esym(563,yyerrorlab) */   
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
 /*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
@@ -68,7 +71,7 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token DEFNUMB DEFSTRG DEFSET PRINT CHECK
 %token BINARY INTEGER REAL
-%token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
+%token ASGN DO WITH IN TO UNTIL BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR XOR NOT
@@ -692,9 +695,15 @@ sexpr
       }
    | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(1)); }
    | '{' cexpr TO cexpr BY cexpr '}' {
-         $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
+         $$ = code_new_inst(i_set_range2, 3, $2, $4, $6);
       }
    | '{' cexpr TO cexpr '}' {
+         $$ = code_new_inst(i_set_range2, 3, $2, $4, code_new_numb(numb_new_integer(1)));
+      }
+   | '{' cexpr UNTIL cexpr BY cexpr '}' {
+         $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
+      }
+   | '{' cexpr UNTIL cexpr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, code_new_numb(numb_new_integer(1)));
       }
    | sexpr UNION sexpr  { $$ = code_new_inst(i_set_union, 2, $1, $3); }

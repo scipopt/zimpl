@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.8 2005/01/26 09:13:04 bzfkocht Exp $
+# $Id: set.zpl,v 1.9 2005/02/09 08:56:12 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -51,7 +51,8 @@ set U := proj(T, <3,1>);
 set V := { <a,2> in A*B with a == "a" or a == "b" };
 set W[<i> in B] := { <c> in C with c <= i };
 set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
-set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 to -10 by -2 } + { 7 .. 1 } ;
+set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
+set Y2:= { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
 set Z := C * (A * B);
  
 var a[A];
@@ -73,6 +74,7 @@ var u[U];
 var v[V];
 var xabcdefghijklmno[X];
 var y[Y];
+var y2[Y2];
 var z[Z];
 
 subto a1: sum <i> in A : a[i] >= 0;
@@ -100,6 +102,7 @@ subto w1: forall <i> in B do
    sum <w> in W[i]: n[w] >= 0; 
 subto x1: sum <i> in X : xabcdefghijklmno[i] >= 0;
 subto y1: sum <i> in Y : y[i] >= 0;
+subto y2: sum <i> in Y2 : y2[i] >= 2;
 subto z1: sum <i> in {1..card(E)} do e[ord(E,i,1),ord(E,i,2)] >= 5;
 subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
 

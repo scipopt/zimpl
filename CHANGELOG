@@ -1,3 +1,9 @@
+ - There is now a difference between 
+   "to" and "..". "to" tries to do exactly
+   what is requested possibly resulting in
+   an empty set. ".." does as before its best
+   to produce a range
+
  - Fixed Bug in print command appearing in 
    connection with default clause
 

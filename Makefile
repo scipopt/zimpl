@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.23 2005/01/26 09:13:03 bzfkocht Exp $
+# $Id: Makefile,v 1.24 2005/02/09 08:56:12 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -36,7 +36,7 @@ ARCH            :=      $(shell uname -m | \
 			-e s/Power\ Macintosh/ppc/ \
 			-e s/00........../pwr4/)
 OSTYPE          :=      $(shell uname -s | \
-                        tr A-Z a-z | \
+                        tr '[:upper:]' '[:lower:]' | \
                         sed \
 			-e s/cygwin.*/cygwin/ \
                         -e s/irix../irix/ )

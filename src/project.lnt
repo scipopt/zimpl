@@ -2,7 +2,8 @@
 +fsc // strings are const
 -ffc // Function takes Custody flag -> off
 -A(C90)
--I/usr/local/lib/flexelint/posix
+-I/opt/flexelint/posix
+-I/usr/include
 +libh(lint.h)
 -function(exit,_assert)
 -function(exit,__assert)
