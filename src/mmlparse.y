@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.52 2003/09/26 15:32:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.53 2003/09/27 11:57:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -75,7 +75,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW
-%token CARD ABS SGN FLOOR CEIL LOG LN EXP RANDOM
+%token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
@@ -249,33 +249,12 @@ decl_par
                   code_new_inst(i_tuple_empty, 0),
                   $4)), code_new_inst(i_nop, 0));
       }
-   | DECLPAR NAME '[' idxset ']' ASGN matrix_head matrix_body ';' {
-         $$ = code_new_inst(i_newsym_para1, 4,
-            code_new_name($2),
-            $4,
-            code_new_inst(i_list_matrix, 2, $7, $8),
-            code_new_inst(i_nop, 0)); /* no default */
-      }
    ;
 
 par_default
    : /* empty */   { $$ = code_new_inst(i_nop, 0); }
    | DEFAULT expr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
    ;
-
-matrix_head
-   : WITH expr_list WITH { $$ = $2; }
-   ;
-
-matrix_body
-   : matrix_head expr_list {
-         $$ = code_new_inst(i_matrix_list_new, 2, $1, $2);
-      }
-   | matrix_body matrix_head expr_list  {
-         $$ = code_new_inst(i_matrix_list_add, 3, $1, $2, $3);
-      }
-   ;
-
 
 /* ----------------------------------------------------------------------------
  * --- Var Declaration
@@ -354,16 +333,31 @@ startval
  * ----------------------------------------------------------------------------
  */
 expr_entry_list
-   : expr_entry            { $$ = code_new_inst(i_entry_list_new, 1, $1); }
+   : expr_entry              { $$ = code_new_inst(i_entry_list_new, 1, $1); }
    | expr_entry_list ',' expr_entry  {
          $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
       }
-   | read                  { $$ = code_new_inst(i_read, 1, $1); } 
+   | read                    { $$ = code_new_inst(i_read, 1, $1); }
+   | matrix_head matrix_body { $$ = code_new_inst(i_list_matrix, 2, $1, $2); }
    ;
 
 expr_entry
    : tuple expr            { $$ = code_new_inst(i_entry, 2, $1, $2); }
    ;
+
+matrix_head
+   : WITH expr_list WITH { $$ = $2; }
+   ;
+
+matrix_body
+   : matrix_head expr_list WITH {
+         $$ = code_new_inst(i_matrix_list_new, 2, $1, $2);
+      }
+   | matrix_body matrix_head expr_list WITH {
+         $$ = code_new_inst(i_matrix_list_add, 3, $1, $2, $3);
+      }
+   ;
+
 
 /* ----------------------------------------------------------------------------
  * --- Objective Declaration
@@ -670,6 +664,7 @@ expr
    | LOG '(' expr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }
    | LN '(' expr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
    | EXP '(' expr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
+   | SQRT '(' expr ')'     { $$ = code_new_inst(i_expr_sqrt, 1, $3); }
 
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }

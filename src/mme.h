@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.48 2003/09/26 15:32:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.49 2003/09/27 11:57:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -189,6 +189,14 @@ extern void         numb_sgn(Numb* numb);
 extern void         numb_ceil(Numb* numb);
 /*lint -sem(        numb_floor, 1p == 1) */
 extern void         numb_floor(Numb* numb);
+/*lint -sem(        numb_new_log, 1p == 1, @p == 1 || @p == 0) */
+extern Numb*        numb_new_log(const Numb* numb);
+/*lint -sem(        numb_new_sqrt, 1p == 1, @p == 1 || @p == 0) */
+extern Numb*        numb_new_sqrt(const Numb* numb);
+/*lint -sem(        numb_new_exp, 1p == 1, @p == 1) */
+extern Numb*        numb_new_exp(const Numb* numb);
+/*lint -sem(        numb_new_ln, 1p == 1, @p == 1 || @p == 0) */
+extern Numb*        numb_new_ln(const Numb* numb);
 /*lint -sem(        numb_todbl, 1p == 1) */
 extern double       numb_todbl(const Numb* numb);
 /*lint -sem(        numb_print, 1p == 1 && 2p == 1) */

@@ -1,3 +1,12 @@
+ - Function sqrt() implemented.
+
+ - Functions log(), ln(), exp() reactivated.
+
+ - Some error cases of parameter input
+   were not handled correctly.
+
+ - Table input for parameter implemented.
+
  - if for contstraints and summands implemented.
 
  - if for set expressions implemented.

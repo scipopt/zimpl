@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.9 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.10 2003/09/27 11:57:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -29,7 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
+#include <math.h>
+#include <errno.h>
 #include <gmp.h>
 
 /* #define TRACE 1 */
@@ -490,6 +491,74 @@ void numb_floor(Numb* numb)
    mpz_fdiv_q(q, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
    mpq_set_z(numb->value.numb, q);
    mpz_clear(q);
+}
+
+Numb* numb_new_log(const Numb* numb)
+{
+   char   temp[32];
+   double d;
+   
+   assert(numb_is_valid(numb));
+
+   d = log10(mpq_get_d(numb->value.numb));
+
+   if (errno != 0)
+   {
+      perror("*** Error 700: log()");
+      return NULL;
+   }
+   sprintf(temp, "%.16e", d);
+
+   return numb_new_ascii(temp);
+}
+
+Numb* numb_new_sqrt(const Numb* numb)
+{
+   char   temp[32];
+   double d;
+   
+   assert(numb_is_valid(numb));
+
+   d = sqrt(mpq_get_d(numb->value.numb));
+
+   if (errno != 0)
+   {
+      perror("*** Error 701: sqrt()");
+      return NULL;
+   }
+   sprintf(temp, "%.16e", d);
+
+   return numb_new_ascii(temp);
+}
+
+Numb* numb_new_exp(const Numb* numb)
+{
+   char temp[32];
+   
+   assert(numb_is_valid(numb));
+
+   sprintf(temp, "%.16e", exp(mpq_get_d(numb->value.numb)));
+
+   return numb_new_ascii(temp);
+}
+
+Numb* numb_new_ln(const Numb* numb)
+{
+   char   temp[32];
+   double d;
+   
+   assert(numb_is_valid(numb));
+
+   d = log(mpq_get_d(numb->value.numb));
+
+   if (errno != 0)
+   {
+      perror("*** Error 702: ln()");
+      return NULL;
+   }
+   sprintf(temp, "%.16e", d);
+
+   return numb_new_ascii(temp);
 }
 
 double numb_todbl(const Numb* numb)

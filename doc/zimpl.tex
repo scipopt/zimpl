@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.22 2003/09/25 19:35:30 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.23 2003/09/27 11:57:01 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.22 2003/09/25 19:35:30 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.23 2003/09/27 11:57:01 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -321,10 +321,6 @@ any of the following operators and functions:
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
-%\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
-%\code{ln(a)}                     &natural logarithm         & $\ln a$\\
-%\code{exp(a)}                    &exponential function      & $e^a$\\
-%\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
 \code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
 \code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
@@ -337,6 +333,19 @@ any of the following operators and functions:
 %With $\min$ and $\max$ it is possible to find the minimum/maximum
 %member of an one dimensional set of numeric values.
 %\code{card} gives the cardinality of a set.
+
+The following functions are only computed with normal double precision
+floating point arithmetic. So be careful:
+
+\medskip
+\begin{tabular}{lll}
+\code{sqrt(a)}                   &square root               & $\sqrt a$\\
+\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
+\code{ln(a)}                     &natural logarithm         & $\ln a$\\
+\code{exp(a)}                    &exponential function      & $e^a$\\
+%\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
+\end{tabular}
+
 
 \subsubsection{String expressions}
 A string is delimited by double quotation marks \code{"},
@@ -526,6 +535,37 @@ param x[<i> in I with i mod 2 == 0] := 3 * i;
 In the example, no value is given for index $<$787,12.6,"oh"$>$ of
 parameter \code{w}, that is assignments need not to be complete. This
 is correct as long as it is never referenced.
+
+\subsubsection{Parameter tables}
+It is possible to initialise multi-dimensional indexed parameters from
+tables. This is especially usefull for two-dimensional parameters.
+The data is put in a table structure with \code{$|$} signs on each
+margin. Then a head line with column indices has to be added, and one index
+for each row of the table is needed. The row index can also be
+multi-dimensional. The complete index for the entry is build by
+appending the colum index to the row index.
+The value entries are separated by commas. Any valid expression is
+allowed here.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set I := { 1 .. 10 };
+set J := { "a", "b", "c", "x", "y", "z" };
+
+param h[I*J] :=   | "a", "c", "x", "z"   |
+                |1|  12,  17, 99,     23 |
+                |3|   4,   3,-17, 66*5.5 |
+                |5| 2/3, -.4,  3, abs(-4)|
+                |9|   1,   2,  0,      3 | default -99;
+
+param g[I*I*I] :=     | 1, 2, 3 |
+                  |1,1| 0, 1, 0 |
+                  |1,2| 1, 1, 1 |
+                  |1,3| 0, 0, 1 | 
+                  |2,1| 1, 0, 1 |;
+\end{verbatim}
+}
 
 \subsection{Variables}
 Like parameters, variables can be indexed. 
@@ -822,7 +862,9 @@ can produce:
    possible]\ \\
    You tried to build the maximum of some strings.
 \item[118 Comparison of different types]\ \\
-   You tried to compare apples with oranges, i.e, numbers with strings.
+   You tried to compare apples with oranges, i.e, numbers with
+   strings. Note that the use of an undefined parmeter could also
+   lead to this message.
 \item[119 Union of incompatible sets]\ \\
    To unite two sets, both must have the same dimension tuples,\ie
    the tuples must have the same number of components.
@@ -872,7 +914,7 @@ can produce:
   As the message said, probable the template of a read statement looks
   like \code{"$<$1n$>$"} instead of \code{"$<$1n$>$ 2n"}.
 \item[133 Unknown local symbol \code{xxx}]\ \\
-  A local symbol was used, that is not defined anywhere in scope.
+  A (local) symbol was used, that is not defined anywhere in scope.
 \item[134 Illegal element \code{xxx} for symbol]\ \\
   The index tuple given in the initialisation is not member of the
   index set of the parameter.
@@ -1017,6 +1059,27 @@ can produce:
   for call of define \code{zzz}]\ \\
   A define was called with the a different number of arguments than in
   its definition.
+\item[172 Wrong number of entries (\code{xxx}) in table line, 
+  expected \code{yyy} entries]\ \\
+  Each line of a parameter initialisation table must have
+  exactly the same number of entries as the index (first) line of
+  the table.
+\item[173 Illegal type in element \code{xxx} for symbol]\ \\
+  A parameter can be only have one type of values. Either numbers or
+  strings. In the initialisation both types were present.
+%
+% numbgmp.c
+%
+\item[700 log(): \code{OS specific domain or range error message}]\ \\
+Function \code{log} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+\item[701 sqrt(): \code{OS specific domain error message}]\ \\
+Function \code{sqrt} was called with a negative argument.
+\item[702 ln(): \code{OS specific domain or range error message}]\ \\
+Function \code{ln} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+%\item[]\ \\
+%\item[]\ \\
 %\item[]\ \\
 %\item[]\ \\
 %\item[]\ \\

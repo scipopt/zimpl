@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.62 2003/09/26 15:32:48 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.63 2003/09/27 11:57:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -451,50 +451,60 @@ CodeNode* i_expr_ceil(CodeNode* self)
 
 CodeNode* i_expr_log(CodeNode* self)
 {
-   double exponent;
+   Numb* numb;
    
    Trace("i_expr_log");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   exponent = code_eval_child_numb(self, 0);
+   numb = numb_new_log(code_eval_child_numb(self, 0));
    
-   if (EQ(exponent, 0.0))
+   if (numb == NULL)
    {
-      fprintf(stderr, "*** Error: log of zero\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }      
-   code_value_numb(self, log10(exponent));
-#endif
+   code_value_numb(self, numb);
    
    return self;
 }
 
 CodeNode* i_expr_ln(CodeNode* self)
 {
-   double exponent;
+   Numb* numb;
    
    Trace("i_expr_ln");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   exponent = code_eval_child_numb(self, 0);
+   numb = numb_new_ln(code_eval_child_numb(self, 0));
    
-   if (EQ(exponent, 0.0))
+   if (numb == NULL)
    {
-      fprintf(stderr, "*** Error: ln of zero\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }      
-   code_value_numb(self, log(exponent));
-#endif
+   code_value_numb(self, numb);
+   
+   return self;
+}
+
+CodeNode* i_expr_sqrt(CodeNode* self)
+{
+   Numb* numb;
+   
+   Trace("i_expr_sqrt");
+
+   assert(code_is_valid(self));
+
+   numb = numb_new_sqrt(code_eval_child_numb(self, 0));
+   
+   if (numb == NULL)
+   {
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }      
+   code_value_numb(self, numb);
    
    return self;
 }
@@ -505,11 +515,7 @@ CodeNode* i_expr_exp(CodeNode* self)
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self, exp(code_eval_child_numb(self, 0)));
-#endif
+   code_value_numb(self, numb_new_exp(code_eval_child_numb(self, 0)));
    
    return self;
 }
@@ -569,6 +575,9 @@ CodeNode* i_expr_card(CodeNode* self)
 
 CodeNode* i_expr_rand(CodeNode* self)
 {
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    double mini;
    double maxi;
    double val;
@@ -577,9 +586,6 @@ CodeNode* i_expr_rand(CodeNode* self)
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
    mini = code_eval_child_numb(self, 0);
    maxi = code_eval_child_numb(self, 1);
 
@@ -841,8 +847,6 @@ CodeNode* i_bool_false(CodeNode* self)
 
 CodeNode* i_bool_not(CodeNode* self)
 {
-   Bool val;
-   
    Trace("i_bool_not");
 
    assert(code_is_valid(self));
@@ -909,6 +913,11 @@ CodeNode* i_bool_eq(CodeNode* self)
    case CODE_STRG :
       result = strcmp(code_get_strg(op1), code_get_strg(op2)) == 0;
       break;
+   case CODE_NAME :
+      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+         code_get_name(op1));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
    default :
       abort();
    }
@@ -1647,6 +1656,107 @@ CodeNode* i_newsym_set2(CodeNode* self)
    return self;
 }
 
+/* initialisation per list
+ */
+CodeNode* i_newsym_para1(CodeNode* self)
+{
+   const char*   name;
+   Set*          iset;
+   const IdxSet* idxset;
+   Symbol*       sym;
+   const List*   list;
+   ListElem*     lelem;
+   const Entry*  entry;
+   const Tuple*  tuple;
+   CodeNode*     child3;
+   const Entry*  deflt;
+   int           count;
+   int           i;
+   
+   Trace("i_newsym_para1");
+
+   assert(code_is_valid(self));
+
+   name   = code_eval_child_name(self, 0);
+   idxset = code_eval_child_idxset(self, 1);
+   iset   = set_from_idxset(idxset);
+   list   = code_eval_child_list(self, 2);
+   child3 = code_eval_child(self, 3);
+
+   if (code_get_type(child3) == CODE_VOID)
+      deflt = ENTRY_NULL;
+   else
+      deflt = code_get_entry(code_eval(child3));
+         
+   if (!list_is_entrylist(list))
+   {
+      /* This errors occurs, if the parameter is mssing in the template
+       * for a "read" statement.
+       */
+      assert(list_is_tuplelist(list));
+      
+      fprintf(stderr, "*** Error 132: Values in parameter list missing,\n");
+      fprintf(stderr, "               probably wrong read template\n");      
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   
+   /* First element will determine the type (see SYM_ERR below)
+    */
+   count = list_get_elems(list);
+
+   /* I found no way to make the following error happen.
+    * You will get either an error 157 or an parse error.
+    * In case there is a way a parse error with
+    * message "Symbol xxx not initialised" will result.
+    * In this case the code below should be reactivated.
+    */
+   assert(count > 0);
+#if 0
+   /* So if there is no first element, we are in trouble.
+    */
+   if (count == 0)
+   {
+      fprintf(stderr, "*** Error xxx: Empty initialisation for parameter \"%s\
+n",
+         name);
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+#endif
+   sym   = symbol_new(name, SYM_ERR, iset, count, deflt);
+   lelem = NULL;
+   
+   for(i = 0; i < count; i++)
+   {
+      entry  = list_get_entry(list, &lelem);
+      tuple  = entry_get_tuple(entry);
+      
+      if (!set_lookup(iset, tuple))
+      {
+         fprintf(stderr, "*** Error 134: Illegal element ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " for symbol\n");
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+      if (i > 0 && symbol_get_type(sym) != entry_get_type(entry))
+      {
+         fprintf(stderr, "*** Error 173: Illegal type in element ");
+         entry_print(stderr, entry);
+         fprintf(stderr, " for symbol\n");
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+      symbol_add_entry(sym, entry_copy(entry));
+   }
+   code_value_void(self);
+
+   set_free(iset);
+
+   return self;
+}
+
 /* initialisation per element
  */
 CodeNode* i_newsym_para2(CodeNode* self)
@@ -1661,7 +1771,8 @@ CodeNode* i_newsym_para2(CodeNode* self)
    CodeNode*     child;
    const Tuple*  tuple;
    const Tuple*  pattern;
-   int           idx = 0;
+   int           idx   = 0;
+   int           count = 0;
    
    Trace("i_newsym_para2");
 
@@ -1712,9 +1823,19 @@ CodeNode* i_newsym_para2(CodeNode* self)
       default :
          abort();
       }
+      if (count > 0 && symbol_get_type(sym) != entry_get_type(entry))
+      {
+         fprintf(stderr, "*** Error 173: Illegal type in element ");
+         entry_print(stderr, entry);
+         fprintf(stderr, " for symbol\n");
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
       symbol_add_entry(sym, entry);
       
       local_drop_frame();
+
+      count++;
    }
    code_value_void(self);
 
@@ -2491,19 +2612,116 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
 
 CodeNode* i_list_matrix(CodeNode* self)
 {
-   List* head;
-   List* lines;
-   List* list;
+   const List* head_list;
+   const List* body_list;
+   const List* idx_list;
+   const List* val_list;
+   List*       list = NULL;
+   ListElem*   le_head;
+   ListElem*   le_body;
+   ListElem*   le_val;
+   ListElem*   le_idx;
+   int         head_count;
+   int         body_count;
+   int         idx_count;
+   Tuple*      tuple;
+   const Elem* elem;
+   Entry*      entry;
+   Bool        first = TRUE;
+   int         i;
+   int         j;
+   int         k;
    
-   Trace("i_matrix_list_new");
+   Trace("i_list_matrix");
 
    assert(code_is_valid(self));
 
-   head  = code_eval_child_list(self, 0);
-   lines = code_eval_child_list(self, 1);
+   head_list  = code_eval_child_list(self, 0);
+   body_list  = code_eval_child_list(self, 1);
+   head_count = list_get_elems(head_list);
+   body_count = list_get_elems(body_list);
+   
+   assert(head_count > 0);
+   assert(body_count > 0);
+   assert(body_count % 2 == 0); /* has to be even */
 
-   /* make new list, make new tuple, etc
-    */
+   le_body = NULL;
+   
+   for(i = 0; i < body_count; i += 2)
+   {
+      idx_list  = list_get_list(body_list, &le_body);
+      val_list  = list_get_list(body_list, &le_body);
+      idx_count = list_get_elems(idx_list);
+
+      /* Number of values in a lines has to be equal the
+       * number of elements in the head list
+       */
+      if (list_get_elems(val_list) != head_count)
+      {
+         fprintf(stderr, "*** Error 172: Wrong number of entries (%d) in table line,\n",
+            list_get_elems(val_list));
+         fprintf(stderr, "               expected %d entries\n", head_count);
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+
+      le_head = NULL;
+      le_val  = NULL;
+
+      /* For each element in the head list we end up with
+       * one element in the result list
+       */
+      for(j = 0; j < head_count; j++)
+      {
+         /* Construct tuple. If idx_count is not constant, we will later
+          * get an error when the list is applied to the parameter
+          */
+         tuple = tuple_new(idx_count + 1);
+
+         le_idx = NULL;
+         for(k = 0; k < idx_count; k++)
+            tuple_set_elem(tuple, k, elem_copy(list_get_elem(idx_list, &le_idx)));
+
+         tuple_set_elem(tuple, k, elem_copy(list_get_elem(head_list, &le_head)));
+      
+         elem = list_get_elem(val_list, &le_val);
+
+         switch(elem_get_type(elem))
+         {
+         case ELEM_NUMB :
+            entry = entry_new_numb(tuple, elem_get_numb(elem));
+            break;
+         case ELEM_STRG :
+            entry = entry_new_strg(tuple, elem_get_strg(elem));
+            break;
+         case ELEM_NAME :
+            fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+               elem_get_name(elem));
+            code_errmsg(self);
+            exit(EXIT_FAILURE);
+         default :
+            abort();
+         }
+         if (!first)
+         {
+            assert(list != NULL);
+            
+            list_add_entry(list, entry);
+         }
+         else
+         {
+            assert(list == NULL);
+            
+            list  = list_new_entry(entry);
+            first = FALSE;
+         }
+         entry_free(entry);
+         tuple_free(tuple);
+      }
+   }
+   assert(!first);
+   assert(list != NULL);
+   
    code_value_list(self, list);
 
    return self;

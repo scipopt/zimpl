@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.dbg,v 1.4 2003/08/27 20:23:58 bzfkocht Exp $
-CPPFLAGS	+=	-DFREEMEM 
+#--- $Id: make.linux.x86.gnu.dbg,v 1.5 2003/09/27 11:57:02 bzfkocht Exp $
+CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES 
 CFLAGS		=	-O -g $(GCCWARN)
-LDFLAGS		=	-lgmp -lz -static
+LDFLAGS		=	-lgmp -lz -lm -static

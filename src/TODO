@@ -1,3 +1,13 @@
+function log etc wider in expr.zpl aufnehmen.
+
+makefiles aendern -lm -D__NO_BUI,,.
+
+test vergleich verbessern fuer 700er und 800er fehler.
+
+
+Docu hinweis, parameter sind eine liste, 
+:= matrix, read, wert ist erlaubt.
+
 warning wenn ein feld in 1n nicht isdigit +/- ist.
 
 trace wenn fehler in function?
@@ -18,7 +28,7 @@ Warning 165 kommt nur wenn die Mengen die gleiche cardinalität haben.
 
 check, that   -2^4 + 3! * 2 - 3 has the right value.
 
-check füer read/include siehe example
+check fuer read/include siehe example
 
 MPS testen auch ranges.
 
@@ -87,11 +97,6 @@ Mindestens in Elem und Numb machen die SID wenig sinn,
 weil sie nie zurueckgesetzt werden.
 
 Einleseroutinen für indizerte Sets
-Einleseroutinen für Matrizen:
-    <1> <2> <3>
-<5>  2   3   4
-<6>  3   4   5
-=> <5,1> 2, <5,2> 3 ...
 
 tru64/opt INFINITY warnung
 hp complett

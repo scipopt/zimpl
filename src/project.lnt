@@ -1,4 +1,4 @@
--passes(2)
+-passes(3)
 +fsc // strings are const
 -ffc // Function takes Custody flag -> off
 -A(C90)
