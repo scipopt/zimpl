@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.28 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.29 2003/02/05 07:37:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -127,9 +127,18 @@ stmt
 decl_set
    : DECLSET NAME ASGN idxset ';' {
          $$ = code_new_inst(i_newsym_set1, 3,
-            code_new_name($2),                                /* Name */
-            code_new_inst(i_set_empty, 1, code_new_size(0)),  /* index set */
-            $4);                                              /* initial */
+            code_new_name($2),                                       /* Name */
+            code_new_inst(i_idxset_new, 3,                      /* index set */
+               code_new_inst(i_tuple_empty, 0),
+               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_bool_true, 0)),
+            $4);                                                  /* initial */
+      }
+   | DECLSET NAME '[' idxset ']' ASGN idxset ';' {
+         $$ = code_new_inst(i_newsym_set1, 3,
+            code_new_name($2),                                       /* Name */
+            $4,                                                 /* index set */
+            $7);                                                   /* idxset */
       }
    | DECLSET NAME '[' idxset ']' ASGN set_entry_list ';' {
          $$ = code_new_inst(i_newsym_set2, 3,

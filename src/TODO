@@ -1,3 +1,8 @@
+Bug in par initialisierung.
+es wird diret das set von idxset genommen. Dann geht aber 
+<1,i> in B schief. set_from_idxset verwenden.
+
+
 Sollte man auf 0 fixierte Variablen entfernen ?
 ------------------------
 idxset und sexpr vereinheitlichen, eigendlich ist ein

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.30 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.31 2003/02/05 07:37:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1135,6 +1135,7 @@ CodeNode* i_tuple_empty(CodeNode* self)
  * Symbol Funktionen
  * ----------------------------------------------------------------------------
  */
+#if 0
 CodeNode* i_newsym_set1(CodeNode* self)
 {
    const char*   name    = code_eval_child_name(self, 0);
@@ -1190,7 +1191,84 @@ CodeNode* i_newsym_set1(CodeNode* self)
 
    return self;
 }
+#else /* new */
+static Set* set_from_idxset(const IdxSet* idxset)
+{
+   const Tuple*  pattern;
+   const Tuple*  tuple;
+   Set*          newset;
+   int           idx;
+   const Set*    set;
+   CodeNode*     lexpr;
 
+   assert(idxset != NULL);
+   
+   set     = idxset_get_set(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   pattern = idxset_get_tuple(idxset);
+   newset  = set_new(tuple_get_dim(pattern));
+   idx     = 0;
+      
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+         set_add_member(newset, tuple, SET_ADD_END, SET_CHECK_WARN);
+
+      local_drop_frame();
+   }
+   return newset;
+}
+
+
+CodeNode* i_newsym_set1(CodeNode* self)
+{
+   const char*   name;
+   const IdxSet* idxset;
+   Set*          iset;
+   Symbol*       sym;
+
+   const Tuple*  pattern;
+   const Tuple*  tuple;
+   Set*          newset;
+   Entry*        entry;
+   int           idx;
+   
+   Trace("i_newsym_set1");
+
+   name    = code_eval_child_name(self, 0);
+   idxset  = code_eval_child_idxset(self, 1);
+   iset    = set_from_idxset(idxset);
+   sym     = symbol_new(name, SYM_SET, iset);
+
+   assert(code_is_valid(self));
+
+   pattern = idxset_get_tuple(idxset);
+   idx     = 0;
+      
+   while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      newset  = set_from_idxset(code_eval_child_idxset(self, 2)); 
+      entry   = entry_new_set(tuple, newset);
+
+      symbol_add_entry(sym, entry);
+
+      set_free(newset);
+      entry_free(entry);
+
+      local_drop_frame();
+   }
+   set_free(iset);
+
+   code_value_void(self);
+
+   return self;
+}
+
+#endif
 static Set* iset_from_list(const CodeNode* self, const List* list)
 {
    const Entry* entry;
