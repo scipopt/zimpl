@@ -35,7 +35,12 @@ If your configuration is not in the list or does not work,
 you have to change the Makefile. Go to make/local
 an add a file make.<hostname_of_your_computer>
 There you can set the usual suspects like CC, CFLAGS, LDFLAG,
-and so on. Have a look at Makefile and make/make.* to
+and so on. Example:
+
+CPPFLAGS        +=      -I/tmp/gmp/include
+LDFLAGS         +=      -L/tmp/gmp/lib
+
+Have a look at Makefile and make/make.* to
 get an idea. 
 
 CHECKING

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.17 2003/09/17 10:18:02 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.18 2003/09/17 11:42:17 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/09/17 10:18:02 $">
+<meta name="date" content="$Date: 2003/09/17 11:42:17 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -63,7 +63,7 @@ by a LP or MIP solver.
 Zimpl is a command line 
 program written in plain C and released under GNU GPL. 
 It has been tested to compile under
-Linux/Intel, Solaris and Tru64. 
+Linux/Intel, Solaris, Tru64 and AIX. 
 Probably it will compile and run wherever a decent OS and C compiler
 is available. Zimpl has been successfully compiled under Windows using 
 <a href="http://www.cygwin.com">Cygwin</a>.
@@ -111,12 +111,16 @@ NEOS Optimization Software</a>.
 <h3>Links</h3>
 <h4>Zimpl related:</h4>
 <dl>
+<!--
 <dt><a href="http://www.iot.ntnu.no/~mkaut/files/zimpl_info.htm">
     Precompiled Zimpl for Windoze</a></dt>
+-->
 <dt><a href="http://www.math.tu-berlin.de/Vorlesungen/WS02/LinOpt/">
     TU-Berlin, Lecture on Linear Optimization</a></dt>
 <dt><a href="http://www.mathematik.tu-darmstadt.de/ags/ag7/Lehrveranstaltungen/WS2002_de.html">
     TU-Darmstadt, Lecture on Discrete Optimization</a></dt>
+<dt><a href="http://www.math.uni-augsburg.de/~schmidtb/bschmidt/OptiI03/zimpl.html">
+    University Augsburg, Lecture on Optimization</a><dt>
 </dl>
 <h4>The commercial ones:</h4>
 <p>
@@ -167,7 +171,7 @@ border="0" width="88" height="36" align="bottom"></a>
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
 <a href="http://www.zib.de/impressum.en.html">Imprint</a>
-Last Update $Date: 2003/09/17 10:18:02 $ by
+Last Update $Date: 2003/09/17 11:42:17 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch
 </font>

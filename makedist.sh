@@ -1,4 +1,4 @@
-tar -cvzf zimpl-2.00.tgz \
+tar -cvzhf zimpl-2.00.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
@@ -7,6 +7,7 @@ tar -cvzf zimpl-2.00.tgz \
 --exclude="*TODO" \
 --exclude="lint.out" \
 --exclude=".\#*" \
+--exclude="zimpl/make/local/*" \
 zimpl/LICENSE zimpl/README zimpl/COPYING zimpl/CHANGELOG \
 zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf zimpl/check
 

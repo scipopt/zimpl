@@ -1,3 +1,12 @@
+spricht irgendwas dagenen auch
+
+if lexpr then sexpr else sexpr end
+if lexpr then constraint else constraint end
+usw. zu implementieren?
+
+e800 verschiedenen bison versionen
+mmlscan.l kein mshell ?
+
 was passiert bei <i,i> in { <1,1>, <1,2>, <2,1>, <2,2> } = |2|{<1,1>,<1,2>,<2,1>,<2,2>} genau ?
 
 warum gibt set A:= {1,"hallo", 2, "a"}; keine fehler ? soll das so? 
