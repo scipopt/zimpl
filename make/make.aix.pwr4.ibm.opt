@@ -1,6 +1,7 @@
-#--- $Id: make.aix.pwr4.ibm.opt,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+#--- $Id: make.aix.pwr4.ibm.opt,v 1.2 2003/03/24 08:44:52 bzfkocht Exp $
 CC		=	xlc
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
-CFLAGS		=	-O3 -q64 -qmaxmem=-1 \
-			-qarch=auto -qtune=auto -qcache=auto
+CFLAGS		=	-O3 -q32 -qmaxmem=-1 \
+			-qarch=auto -qtune=auto -qcache=auto \
+			-qsuppress=1506-732
 

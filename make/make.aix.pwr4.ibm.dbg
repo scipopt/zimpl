@@ -1,6 +1,7 @@
-#--- $Id: make.aix.pwr4.ibm.dbg,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+#--- $Id: make.aix.pwr4.ibm.dbg,v 1.2 2003/03/24 08:44:52 bzfkocht Exp $
 CC		=	xlc
 CPPFLAGS	+=	-DFREEMEM
-CFLAGS		=	-g -q64 -bnoquiet
-# -qheapdebug -qflttrap -qcheck=all -qinfo=all -qwarn64 -extchk
+CFLAGS		=	-g -q32 -bnoquiet -qsuppress=1506-732 \
+			-qflttrap -qcheck=all 
+#-qwarn64 
 
