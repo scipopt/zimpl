@@ -4,6 +4,8 @@ $(OBJDIR)/code.o: src/code.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h 
  src/code.h src/inst.h
 $(OBJDIR)/conname.o: src/conname.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h src/xlpglue.h
+$(OBJDIR)/define.o: src/define.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
 $(OBJDIR)/elem.o: src/elem.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
 $(OBJDIR)/entry.o: src/entry.c src/bool.h src/mshell.h src/ratlptypes.h \
@@ -20,8 +22,8 @@ $(OBJDIR)/local.o: src/local.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
 $(OBJDIR)/mmlparse.o: src/mmlparse.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h src/code.h src/inst.h
-$(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/ratlptypes.h src/mme.h \
- src/mmlparse.h
+$(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/mmlparse.h
 $(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h \
  src/gmpmisc.h src/ratlptypes.h src/mme.h
 $(OBJDIR)/prog.o: src/prog.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
@@ -43,8 +45,8 @@ $(OBJDIR)/tuple.o: src/tuple.c src/bool.h src/mshell.h src/ratlptypes.h \
  src/mme.h
 $(OBJDIR)/zimpl.o: src/zimpl.c src/lint.h src/bool.h src/mshell.h \
  src/ratlptypes.h src/mme.h src/xlpglue.h src/gmpmisc.h
-$(OBJDIR)/ratlpstore.o: src/ratlpstore.c src/lint.h src/bool.h src/gmpmisc.h \
- src/ratlp.h src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/ratlpstore.o: src/ratlpstore.c src/lint.h src/bool.h src/mshell.h \
+ src/gmpmisc.h src/ratlp.h src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/ratlpfwrite.o: src/ratlpfwrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
  src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/ratmpswrite.o: src/ratmpswrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
@@ -61,3 +63,5 @@ $(OBJDIR)/ratpresolve.o: src/ratpresolve.c src/lint.h src/bool.h src/gmpmisc.h \
  src/ratlp.h src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/rathumwrite.o: src/rathumwrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
  src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/code.h src/inst.h src/xlpglue.h

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.3 2003/10/10 08:32:47 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.4 2003/10/10 08:37:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -53,7 +53,8 @@ static Entry* create_new_var_entry(
    char*  vname;
    Tuple* tuple;
    Entry* entry;
-
+   Var*   var;
+   
    vname = malloc(strlen(basename) + strlen(extension) + strlen(SYMBOL_NAME_INTERNAL) + 1);
    sprintf(vname, "%s%s%s", SYMBOL_NAME_INTERNAL, basename, extension);
    var   = xlp_addvar(vname, var_class, lower, upper, numb_zero(), numb_zero());
@@ -144,50 +145,13 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
       bound_free(upper);
       upper = bound_new(BOUND_VALUE, numb_zero());
    }
-   /* Create x^+
+   /* Create x^+, x^-, b^+, b^-, Result
     */
-   sprintf(temp, "%s%s_xp", SYMBOL_NAME_INTERNAL, cname);
-   var   = xlp_addvar(temp, VAR_INT, bound_zero, upper, numb_zero(), numb_zero());
-   tuple = tuple_new(1);
-   tuple_set_elem(tuple, 0, elem_new_strg(str_new(temp + strlen(SYMBOL_NAME_INTERNAL))));
-   entry_xplus = entry_new_var(tuple, var);
-   tuple_free(tuple);
-   
-   /* Create x^-
-    */
-   sprintf(temp, "%s%s_xm", SYMBOL_NAME_INTERNAL, cname);
-   var   = xlp_addvar(temp, VAR_INT, bound_zero, lower, numb_zero(), numb_zero());
-   tuple = tuple_new(1);
-   tuple_set_elem(tuple, 0, elem_new_strg(str_new(temp + strlen(SYMBOL_NAME_INTERNAL))));
-   entry_xminus = entry_new_var(tuple, var);
-   tuple_free(tuple);
-
-   /* Create b^+
-    */
-   sprintf(temp, "%s%s_bp", SYMBOL_NAME_INTERNAL, cname);
-   var   = xlp_addvar(temp, VAR_BIN, bound_zero, bound_one, numb_zero(), numb_zero());
-   tuple = tuple_new(1);
-   tuple_set_elem(tuple, 0, elem_new_strg(str_new(temp + strlen(SYMBOL_NAME_INTERNAL))));
-   entry_bplus = entry_new_var(tuple, var);
-   tuple_free(tuple);
-   
-   /* Create b^-
-    */
-   sprintf(temp, "%s%s_bm", SYMBOL_NAME_INTERNAL, cname);
-   var   = xlp_addvar(temp, VAR_BIN, bound_zero, bound_one, numb_zero(), numb_zero());
-   tuple = tuple_new(1);
-   tuple_set_elem(tuple, 0, elem_new_strg(str_new(temp + strlen(SYMBOL_NAME_INTERNAL))));
-   entry_bminus = entry_new_var(tuple, var);
-   tuple_free(tuple);
-
-   /* Create result
-    */
-   sprintf(temp, "%s%s_re", SYMBOL_NAME_INTERNAL, cname);
-   var   = xlp_addvar(temp, VAR_BIN, bound_zero, bound_one, numb_zero(), numb_zero());
-   tuple = tuple_new(1);
-   tuple_set_elem(tuple, 0, elem_new_strg(str_new(temp + strlen(SYMBOL_NAME_INTERNAL))));
-   entry_result = entry_new_var(tuple, var);
-   tuple_free(tuple);
+   entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
+   entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
+   entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
+   entry_bminus = create_new_var_entry(cname, "_bm", VAR_BIN, bound_zero, bound_one);
+   entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
 
    /* add term = x^+ + x^-
     */
