@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.15 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.16 2004/05/15 15:18:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -356,8 +356,6 @@ void list_print(FILE* fp, const List* list)
 {
    ListElem* le;
    
-   fprintf(fp, "List Type: %d Elems: %d\n", list->type, list->elems);
-
    for(le = list->anchor.next; le != &list->anchor; le = le->next)
    {
       switch(list->type)

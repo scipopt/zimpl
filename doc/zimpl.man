@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.1
 .\"
-.TH ZIMPL 1 "12 Nov 2003" Linux "User Manuals"
+.TH ZIMPL 1 "15 May 2004" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -9,7 +9,7 @@ zimpl \- Zuse Institute Mathematical Programming Language
 .I name=value
 .B ] [ -f ] [ -F
 .I filter
-.B ] [ -h ] [ -n
+.B ] [ -h ] [ -m ] [ -n
 .I cm|cn|cf
 .B ] [ -o
 .I outfile
@@ -73,6 +73,8 @@ string is replaced by the output filename. For example:
 output files.
 .IP -h
 Show program help.
+.IP -m
+Write a CPLEX .mst Mip STart file.
 .IP "-n cm|cn|cf"
 Select the format for the generation of constraint
 names. Can be either 
