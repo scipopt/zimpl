@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.55 2004/04/12 07:04:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.56 2004/04/12 19:17:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -40,7 +40,7 @@ enum element_type
    ELEM_ERR = 0, ELEM_FREE, ELEM_NUMB, ELEM_STRG, ELEM_NAME
 };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
-enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_VAR, HASH_CON };
+enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX };
 enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_SET };
 
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
@@ -261,6 +261,8 @@ extern List*        list_new_list(const List* list);
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
 extern Bool         list_is_valid(const List* list);
+/*lint -sem(        list_is_elemlist, 1p == 1) */
+extern Bool         list_is_elemlist(const List* list);
 /*lint -sem(        list_is_entrylist, 1p == 1) */
 extern Bool         list_is_entrylist(const List* list);
 /*lint -sem(        list_is_tuplelist, 1p == 1) */
@@ -300,6 +302,8 @@ extern Bool         hash_is_valid(const Hash* hash);
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */
 extern void         hash_add_entry(Hash* hash, const Entry* entry);
+/*lint -sem(        hash_add_elem_idx, 1p == 1 && 2p == 1 && 3n >= 0) */
+extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx);
 
 #if 0 /* ??? kann weg? */
 /*lint -sem(        hash_add_con, 1p == 1 && 2p == 1) */
@@ -314,6 +318,8 @@ extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
+/*lint -sem(        hash_lookup_elem_idx, 1p == 1 && 2p == 1) */
+extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
 
 #if 0 /* ??? kann weg? */
 /*lint -sem(        hash_lookup_con, nulterm(2), 1p == 1 && 2p)) */
@@ -732,11 +738,17 @@ extern int          yylen(void);
 #define SID_set(p, id)  (p->sid = id)
 #define SID_del(p)      (p->sid = 0xffffffff)
 #define SID_ok(p, id)   (p->sid == id)
+#define SID_set2(p, id) (p.sid = id)
+#define SID_del2(p)     (p.sid = 0xffffffff)
+#define SID_ok2(p, id)  (p.sid == id)
 #else /* NDEBUG */
 #define SID              /* */
 #define SID_set(p, sid)  /* */
 #define SID_del(p)       /* */
 #define SID_ok(p, id)    TRUE
+#define SID_set2(p, sid) /* */
+#define SID_del2(p)      /* */
+#define SID_ok2(p, id)   TRUE
 #endif /* NDEBUG */
 
 #define DISPERSE(x) (1664525U * (x) + 1013904223U);

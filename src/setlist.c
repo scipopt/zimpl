@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.1 2004/04/12 07:04:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -39,42 +39,207 @@
 #define SET_LIST_SID          0x5345544c
 #define SET_LIST_ITER_SID     0x53454c49
 
-struct set_list
-{
-   SetHead head;   /** head.dim == 1 */
-   Elem* const *  member; /** head.members gives the number */
-   Hash*   hash;
-   SID
-};
-
-struct set_list_iter
-{
-   int first;
-   int last;
-   int now;
-   SID
-};
+#define HASH_THRESHOLD        12
 
 /* ------------------------------------------------------------------------- 
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_list_is_valid(const SetList* sl)
+static Bool set_list_is_valid(const Set* set)
 {
-   return sl != NULL
-      && SID_ok(sl, SET_LIST_SID)
-      && sl->head.refc > 0
-      && sl->head.dim == 1;
+   return set != NULL
+      && SID_ok2(set->list, SET_LIST_SID)
+      && set->head.refc    >  0
+      && set->head.dim     == 1
+      && set->head.members >= 0
+      && set->list.size    >= set->head.members
+      && set->list.member  != NULL;
 }
 
-static Bool set_list_iter_is_valid(const SetListIter* sli)
+static Bool set_list_iter_is_valid(const SetIter*iter)
 {
-   return sli != NULL
-      && SID_ok(sli, SET_LIST_ITER_SID)
-      && sli->first >= 0
-      && sli->last  >= 0
-      && sli->now   >= 0
-      && sli->now   >= sli->first;
+   return iter != NULL
+      && SID_ok2(iter->list, SET_LIST_ITER_SID)
+      && iter->list.first >= 0
+      && iter->list.last  >= 0
+      && iter->list.now   >= 0
+      && iter->list.now   >= iter->list.first;
+}
+
+/* ------------------------------------------------------------------------- 
+ * --- internal                 
+ * -------------------------------------------------------------------------
+ */
+/* Return index number of element. -1 if not present
+ */
+static int lookup_elem_idx(const Set* set, const Elem* elem)
+{
+   int i;
+   
+   assert(set_list_is_valid(set));
+   assert(elem_is_valid(elem));
+
+   if (set->list.hash != NULL)
+      return hash_lookup_elem_idx(set->list.hash, elem);
+
+   for(i = 0; i < set->list.head.members; i++)
+      if (!elem_cmp(elem, set->list.member[i]))
+         return i;
+
+   return -1;
+}
+
+/* ------------------------------------------------------------------------- 
+ * --- new                 
+ * -------------------------------------------------------------------------
+ */
+Set* set_list_new(int size, int flags)
+{
+   Set* set;
+
+   assert(size > 0);
+   
+   set = calloc(1, sizeof(set->list));
+
+   assert(set != NULL);
+
+   set->head.refc    = 1;
+   set->head.dim     = 1;
+   set->head.members = 0;
+   set->head.type    = SET_LIST;
+   set->list.size    = size;
+   set->list.member  = calloc((size_t)size, sizeof(*set->list.member));
+
+   assert(set->list.member != NULL);
+
+   if ((flags & SET_NO_HASH) == 0 && size > HASH_THRESHOLD)
+      set->list.hash = hash_new(HASH_ELEM_IDX, size);
+
+   SID_set2(set->list, SET_LIST_SID);
+
+   assert(set_list_is_valid(set));
+   
+   return set;
+}
+
+int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
+{
+   int idx = -1;
+   
+   assert(set_list_is_valid(set));
+   assert(elem_is_valid(elem));
+   
+   if (check != SET_CHECK_NONE && (idx = lookup_elem_idx(set, elem)) >= 0)
+   {
+      if (check != SET_CHECK_QUIET)
+      {
+         assert(check == SET_CHECK_WARN);
+
+         fprintf(stderr, "--- Warning 164: Duplicate element ");
+         elem_print(stderr, elem);
+         fprintf(stderr, " for set rejected\n");
+      }
+   }
+   else
+   {
+      idx = set->head.members;
+
+      set->list.member[idx] = elem_copy(elem); 
+
+      if (set->list.hash != NULL)
+         hash_add_elem_idx(set->list.hash, elem, idx);
+      
+      set->head.members++;
+
+      assert(set->head.members <= set->list.size);
+   }
+   assert(idx >= 0);
+   
+   return idx;
+}
+
+Set* set_list_new_from_elems(const List* list)
+{
+   ListElem*   le = NULL;
+   Set*         set;
+   int         n;
+
+   assert(list_is_valid(list));
+
+   n   = list_get_elems(list);
+   set = set_list_new(n, SET_DEFAULT);
+
+   while(n-- > 0)
+      (void)set_list_add_elem(set, list_get_elem(list, &le), SET_CHECK_WARN);
+
+   assert(set_list_is_valid(set));
+
+   return set;
+}
+
+Set* set_list_new_from_tuples(const List* list)
+{
+   ListElem*    le = NULL;
+   const Tuple* tuple;
+   Set*         set;
+   int          n;
+
+   assert(list_is_valid(list));
+
+   n   = list_get_elems(list);
+   set = set_list_new(n, SET_DEFAULT);
+
+   while(n-- > 0)
+   {
+      tuple = list_get_tuple(list, &le);
+
+      assert(tuple_get_dim(tuple) == 1);
+      
+      (void)set_list_add_elem(set, tuple_get_elem(tuple, 0), SET_CHECK_WARN);
+   }
+   assert(set_list_is_valid(set));
+
+   return set;
+}
+
+/* ------------------------------------------------------------------------- 
+ * --- copy
+ * -------------------------------------------------------------------------
+ */
+static Set* set_list_copy(const Set* source)
+{
+   Set* set = (Set*)source;
+   
+   set->head.refc++;
+
+   return set;
+}
+
+/* ------------------------------------------------------------------------- 
+ * --- free                 
+ * -------------------------------------------------------------------------
+ */
+static void set_list_free(Set* set)
+{
+   int i;
+   
+   assert(set_list_is_valid(set));
+
+   set->head.refc--;
+
+   if (set->head.refc == 0)
+   {
+      SID_del2(set->list);
+
+      for(i = 0; i < set->head.members; i++)
+         elem_free(set->list.member[i]);
+
+      if (set->list.hash != NULL)
+         hash_free(set->list.hash);
+      
+      free(set->list.member);
+      free(set);
+   }
 }
 
 /* ------------------------------------------------------------------------- 
@@ -83,26 +248,14 @@ static Bool set_list_iter_is_valid(const SetListIter* sli)
  */
 /* Return index number of element. -1 if not present
  */
-static int set_list_lookup(const Set set, const Tuple* tuple, int offset)
+static int set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
-   const Elem* elem;
-   int         i;
-   
-   assert(set_list_is_valid(set.list));
+   assert(set_list_is_valid(set));
    assert(tuple_is_valid(tuple));
    assert(offset               >= 0);
    assert(tuple_get_dim(tuple) <  offset);
    
-   elem = tuple_get_elem(tuple, offset);
-
-   if (set.list->hash != NULL)
-      return hash_lookup_elem_idx(set.list->hash, elem);
-
-   for(i = 0; i < set.list->head.members; i++)
-      if (!elem_cmp(elem, set.list->member[i]))
-         return i;
-
-   return -1;
+   return lookup_elem_idx(set, tuple_get_elem(tuple, offset));
 }
 
 /* ------------------------------------------------------------------------- 
@@ -111,49 +264,49 @@ static int set_list_lookup(const Set set, const Tuple* tuple, int offset)
  */
 /* Initialise Iterator. Write into iter
  */
-static void iter_init(
-   SetIter*     iter,
-   const Set    set,
+static SetIter* iter_init(
+   const Set*   set,
    const Tuple* pattern,
    int          offset)
 {
-   const Elem*    elem;
-   int            i;
+   const Elem*  elem;
+   SetIter*     iter;
+   int          i;
 
-   assert(set_list_is_valid(set.list));
+   assert(set_list_is_valid(set));
    assert(tuple_is_valid(pattern));
-   assert(iter       != NULL);
-   assert(iter->list == NULL);
-   assert(offset     >= 0);
-   assert(offset     <  tuple_get_dim(pattern));
+   assert(offset        >= 0);
+   assert(offset        <  tuple_get_dim(pattern));
 
-   elem       = tuple_get_elem(pattern, offset);
-   iter->list = calloc(1, sizeof(*iter->list));
-
-   assert(iter->list != NULL);
+   elem = tuple_get_elem(pattern, offset);
+   iter = calloc(1, sizeof(iter->list));
+   
+   assert(iter != NULL);
    
    if (elem_get_type(elem) == ELEM_NAME)
    {
-      iter->list->first = 0;
-      iter->list->last  = set.head->members - 1;
+      iter->list.first = 0;
+      iter->list.last  = set->head.members - 1;
    }
    else
    {
-      for(i = 0; i < set.head->members; i++)
-         if (!elem_cmp(elem, set.list->member[i]))
+      for(i = 0; i < set->head.members; i++)
+         if (!elem_cmp(elem, set->list.member[i]))
             break;
 
-      iter->list->first = i;
-      iter->list->last  = i;
+      iter->list.first = i;
+      iter->list.last  = i;
 
-      if (iter->list->last >= set.head->members)
-         iter->list->last = set.head->members - 1;
+      if (iter->list.last >= set->head.members)
+         iter->list.last = set->head.members - 1;
    }
-   iter->list->now = iter->list->first;
+   iter->list.now = iter->list.first;
 
-   SID_set(iter->list, SET_LIST_ITER_SID);
+   SID_set2(iter->list, SET_LIST_ITER_SID);
 
-   assert(set_list_iter_is_valid(iter->list));
+   assert(set_list_iter_is_valid(iter));
+
+   return iter;
 }
 
 /* ------------------------------------------------------------------------- 
@@ -163,20 +316,20 @@ static void iter_init(
 /* FALSE means, there is no further element
  */
 static Bool iter_next(
-   SetIter    iter,
-   const Set  set,
+   SetIter*   iter,
+   const Set* set,
    Tuple*     tuple,
    int        offset)
 {
-   assert(set_list_iter_is_valid(iter.list));
-   assert(set_list_is_valid(set.list));
+   assert(set_list_iter_is_valid(iter));
+   assert(set_list_is_valid(set));
    
-   if (iter.list->now > iter.list->last)
+   if (iter->list.now > iter->list.last)
       return FALSE;
 
-   tuple_set_elem(tuple, offset, elem_copy(set.list->member[iter.list->now]));
+   tuple_set_elem(tuple, offset, elem_copy(set->list.member[iter->list.now]));
    
-   iter.list->now++;
+   iter->list.now++;
 
    return TRUE;
 }
@@ -185,145 +338,51 @@ static Bool iter_next(
  * --- iter_exit
  * -------------------------------------------------------------------------
  */
-static void iter_exit(SetIter iter)
+static void iter_exit(SetIter* iter)
 {
-   assert(set_list_iter_is_valid(iter.list));
+   assert(set_list_iter_is_valid(iter));
    
-   free(iter.list);
+   free(iter);
 }
 
 /* ------------------------------------------------------------------------- 
  * --- iter_reset
  * -------------------------------------------------------------------------
  */
-static void iter_reset(SetIter iter)
+static void iter_reset(SetIter* iter)
 {
-   assert(set_list_iter_is_valid(iter.list));
+   assert(set_list_iter_is_valid(iter));
    
-   iter.list->now = iter.list->first;
+   iter->list.now = iter->list.first;
 }
 
 /* ------------------------------------------------------------------------- 
- * --- set_free                 
+ * --- vtab_init
  * -------------------------------------------------------------------------
  */
-static void set_list_free(Set set)
-{
-   assert(set_list_is_valid(set.list));
-
-   set.head->refc--;
-
-   if (set.head->refc == 0)
-   {
-      free(set.list->member);
-      free(set.list);
-   }
-}
-
-
-#if 0
-/* ------------------------------------------------------------------------- 
- * --- set_new                 
- * -------------------------------------------------------------------------
- */
-static Set* set_new(SetType type, int dim, int members)
-{
-   Set* set;
-
-   set = calloc(1, sizeof(set));
-
-   assert(set != NULL);
-
-   set->refc    = 1;
-   set->dim     = dim;
-   set->members = members;
-   set->type    = type;
-
-   return set;
-}
-
-Set* set_new_hash_from_elem_list(const List* list)
-{
-   Set* set_hash;
-   Set* set_list;
-   ListElem*   le    = NULL;
-   int  n;
-
-   n = list_get_elems(list);
-   
-   set_list                     = set_new(SUBSET_LIST, 1, 0);
-   set_list->subset.list.size   = n;
-   set_list->subset.list.extend = SET_EXTEND_SIZE;
-   set_list->subset.list.member = calloc(n, sizeof(*set_list->subset.list.member));
-   
-   set_hash                     = set_new(SUBSET_HASH, 1, 0);
-   set_hash->subset.hash.set    = set_list;
-   set_hash->subset.hash.hash   = hash_new(n);
-
-   for(i = 0; i < n; i++)
-   {
-      elem  = list_get_elem(list, &le);
-      tuple = tuple_new(1);
-
-      tuple_set_elem(tuple, 0, elem_copy(elem));
-
-      if (check != SET_CHECK_NONE && set_lookup(set_hash, tuple))
-      {
-         if (check != SET_CHECK_QUIET)
-         {
-            assert(check == SET_CHECK_WARN);
-
-            fprintf(stderr, "--- Warning 164: Duplicate element ");
-            tuple_print(stderr, tuple);
-            fprintf(stderr, " for set rejected\n");
-         }
-         tuple_free(tuple);
-      }
-      else
-      {
-         assert(!set_lookup(set_hash, tuple));
-      
-         idx = set_list->members;
-
-         set_list->subset.list.member[idx] = tuple;
-
-         hash_add_tuple(set_hash->subset.hash.hash, tuple, idx);
-      
-         set_list->members++;
-         set_hash->members++;
-      }
-   }
-   return set_hash;
-}
-
-Set* set_new_hash_from_tuple_list() 
-{
-   /* - fuer jede dimension eine hash.list.set erzeugen
-    * - binaeren baum von cross_erzeugen, oder ueberlegen
-    *   ob cross auf mehr als zwei erweitert wird.
-    * - hash.oberster_cross.set erzeugen und alle elemente
-    *   einhashen.
-    */
-}
-#endif
-
 void setlist_init(SetVTab* vtab)
 {
-   vtab[SET_LIST].set_free   = set_list_free;
-   vtab[SET_LIST].set_lookup = set_list_lookup;
-   vtab[SET_LIST].iter_init  = iter_init;
-   vtab[SET_LIST].iter_next  = iter_next;
-   vtab[SET_LIST].iter_exit  = iter_exit;
-   vtab[SET_LIST].iter_reset = iter_reset;
+   vtab[SET_LIST].set_copy       = set_list_copy;
+   vtab[SET_LIST].set_free       = set_list_free;
+   vtab[SET_LIST].set_is_valid   = set_list_is_valid;
+   vtab[SET_LIST].set_lookup_idx = set_list_lookup_idx;
+   vtab[SET_LIST].iter_init      = iter_init;
+   vtab[SET_LIST].iter_next      = iter_next;
+   vtab[SET_LIST].iter_exit      = iter_exit;
+   vtab[SET_LIST].iter_reset     = iter_reset;
 }
 
-const Elem* set_list_get_elem(SetList* sl, int idx)
+/* ------------------------------------------------------------------------- 
+ * --- extras
+ * -------------------------------------------------------------------------
+ */
+const Elem* set_list_get_elem(const Set* set, int idx)
 {
-   assert(set_list_is_valid(sl));
+   assert(set_list_is_valid(set));
    assert(idx >= 0);
-   assert(idx <  sl->head.members);
+   assert(idx <  set->head.members);
 
-   return sl->member[idx];
+   return set->list.member[idx];
 }
 
 

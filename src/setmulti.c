@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.1 2004/04/12 07:04:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.2 2004/04/12 19:17:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -56,6 +56,11 @@ struct set_multi_iter
    int* subset;
    SID
 };
+
+/* This is a bloody hack. But there seems to be no easy way to give
+ * additional information to the compare routine needed for qsort().
+ */
+static subset_cmp_dim = 0;
 
 /* ------------------------------------------------------------------------- 
  * --- valid                 
@@ -312,6 +317,8 @@ static void set_multi_free(Set set)
 
    if (set.head->refc == 0)
    {
+      SID_del(set.prod);
+
       for(i = 0; i < set.head->dim; i++)
          vtab[SET_LIST].set_free(set.multi->set[i]);
 
@@ -325,7 +332,102 @@ static void set_multi_free(Set set)
  * --- set_new                 
  * -------------------------------------------------------------------------
  */
+static int subset_cmp(const void* a, const void* b)
+{
+   const int* aa = (const int*)a;
+   const int* bb = (const int*)b;
 
+   int i;
+   int d;
+
+   for(i = 0; i < subset_cmp_dim; i++)
+   {
+      d = aa[i] - bb[i];
+
+      if (d != 0)
+         return d;
+   }
+   return 0;
+}
+
+Set set_multi_new_from_tuples(const List* list)
+{
+   const Elem*  elem;
+   const Tuple* tuple;
+   ListElem*    le = NULL;
+   Set          set;
+   int          n;
+   int          i;
+   int          k;
+   
+   assert(list_is_valid(list));
+
+   n         = list_get_elems(list);
+   tuple     = list_get_tuple(list, &le);
+   tuple_dim = tuple_get_dim(tuple);
+
+   assert(tuple_dim > 1);
+
+   set.multi = calloc(1, sizeof(*set.multi));
+
+   assert(set.multi != NULL);
+
+   set.head->refc    = 1;
+   set.head->dim     = tuple_dim;
+   set.head->members = 0;
+   set.head->type    = SET_MULTI;
+   set.multi->set    = calloc((size_t)tuple_dim, sizeof(*set.multi->set));
+   set.multi->subset = calloc((size_t)(n * tuple_dim), sizeof(*set.multi->subset));
+
+   assert(set.multi->set    != NULL);
+   assert(set.multi->subset != NULL);
+
+   for(k = 0; k < tuple_dim; k++)
+      set.multi->set[i] = set_list_new(n, SET_DEFAULTS);
+   
+   le  = NULL;
+
+   for(i = 0; i < n; i++)
+   {
+      tuple = list_get_tuple(list, &le);
+
+      for(k = 0; k < tuple_dim; k++)
+      {
+         set.multi->subset[i * tuple_dim + k] =
+            set_list_add_elem(set.multi->set[i], tuple_get_elem(tuple, k), SET_CHECK_QUIET);
+         set.head->members++;
+      }
+   }
+   /* Sort entries
+    */
+   /* Bloody hack!
+    */
+   subset_cmp_dim = tuple_dim;
+   
+   qsort(set.multi->subset, set.head->members,
+      tuple_dim * sizeof(*set.multi->subset), subset_cmp);
+   
+   /* Remove doubles
+    */
+   i = 1;
+   
+   while(i < set.head->members)
+   {
+      if (subset_cmp(
+         &set.multi->subset[i       * tuple_dim],
+         &set.multi->subset[(i - 1) * tuple_dim]) == 0)
+      {
+         for(k = i * tuple_dim; k < (set.head->members - 1) * tuple_dim; k++)
+            set.multi->subset[k] = set.multi->subset[k + tuple_dim];
+
+         fprintf(stderr, "Doublicate found!!\n");
+         set.head->members--;
+      }
+      else
+         i++;
+   }
+   return set;
+}
 
 
 void setmulti_init(SetVTab* vtab)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.13 2003/09/26 15:32:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.14 2004/04/12 19:17:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -198,6 +198,13 @@ Bool list_is_valid(const List* list)
    return ((list != NULL) && SID_ok(list, LIST_SID) && (list->refc > 0));
 }
 
+Bool list_is_elemlist(const List* list)
+{
+   assert(list_is_valid(list));
+
+   return list->type == LIST_ELEM;
+}
+   
 Bool list_is_entrylist(const List* list)
 {
    assert(list_is_valid(list));
