@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.11 2002/08/23 11:31:22 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.12 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -60,20 +60,30 @@ void lpf_write(
    
    for(var = lp->var_root, cnt = 0; var != NULL; var = var->next)
    {
-      if ((var->size > 0) && (fabs(var->cost) > EPS_ZERO))
-      {
-         lps_makename(tmp, MPS_NAME_LEN + 1, var->name, var->number);
+      /* If cost is zero, do not include in objective function
+       */
+      if (fabs(var->cost) < EPS_ZERO)
+         continue;
 
-         if (EQ(var->cost, 1.0))
-            fprintf(fp, " + %s", tmp);
-         else if (EQ(var->cost, -1.0))
-            fprintf(fp, " - %s", tmp);
-         else
-            fprintf(fp, " %+.15g %s", var->cost, tmp);
+      /* If the variable is free and when minimizing the lower or
+       * when maximizing the upper bound is zero,
+       * it can be discarded.
+       */
+      if ((var->size == 0) && (fabs((lp->direct == LP_MIN) ?
+         var->lower : var->upper) < EPS_ZERO))
+         continue;
+      
+      lps_makename(tmp, MPS_NAME_LEN + 1, var->name, var->number);
 
-         if (++cnt % 6 == 0)
-            fprintf(fp, "\n ");
-      }
+      if (EQ(var->cost, 1.0))
+         fprintf(fp, " + %s", tmp);
+      else if (EQ(var->cost, -1.0))
+         fprintf(fp, " - %s", tmp);
+      else
+         fprintf(fp, " %+.15g %s", var->cost, tmp);
+      
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n ");
    }
    /* ---------------------------------------------------------------------- */
 

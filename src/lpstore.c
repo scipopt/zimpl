@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.9 2002/08/18 14:58:01 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.10 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -808,6 +808,12 @@ void lps_transtable(FILE* fp)
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
+      if (var->size == 0)
+      {
+         if ((fabs(var->cost) < EPS_ZERO) || (fabs((lp->direct == LP_MIN) ?
+            var->lower : var->upper) < EPS_ZERO))
+            continue;
+      }
       lps_makename(temp, MPS_NAME_LEN + 1, var->name, var->number);
 
       fprintf(fp, "zimpl\tv %7d\t%-*s\t\"%s\"\n",
@@ -815,10 +821,13 @@ void lps_transtable(FILE* fp)
    }
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      lps_makename(temp, MPS_NAME_LEN + 1, con->name, con->number);
+      if ((con->size > 0) || (fabs(con->rhs) > EPS_ZERO))
+      {
+         lps_makename(temp, MPS_NAME_LEN + 1, con->name, con->number);
 
-      fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\t%.16e\n",
-         con->number, MPS_NAME_LEN, temp, con->name, con->scale);
+         fprintf(fp, "zimpl\tc %7d\t%-*s\t\"%s\"\t%.16e\n",
+            con->number, MPS_NAME_LEN, temp, con->name, con->scale);
+      }
    }
 }
 

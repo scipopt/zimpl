@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.6 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: local.c,v 1.7 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -33,6 +33,8 @@
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"
+
+#define LOCAL_STR_SIZE 100
 
 struct local
 {
@@ -140,3 +142,55 @@ void local_print_all(FILE* fp)
       fprintf(fp, "\n");
    }
 }
+
+char* local_tostrall()
+{
+   const Local* local;
+   int          size = LOCAL_STR_SIZE;
+   int          len  = 1; /* fuer die '\0' */
+   char*        str  = malloc(size);
+   char*        selem;
+   int          selemlen;
+   Bool         after_elem = FALSE;
+
+   assert(str != NULL);
+
+   str[0] = '\0';
+
+   for(local = anchor.next; local != NULL; local = local->next)
+   {
+      /* Frame ?
+       */
+      if (local->element == NULL)
+      {
+         selem      = strdup("|");
+         selemlen   = 1;
+         after_elem = FALSE;
+      }
+      else
+      {
+         selem    = elem_tostr(local->element);
+         selemlen = strlen(selem) + (after_elem ? 1 : 0);
+      }
+      if (len + selemlen >= size)
+      {
+         size += selemlen + LOCAL_STR_SIZE;
+         str   = realloc(str, size);
+
+         assert(str != NULL);
+      }
+      assert(len + selemlen < size);
+
+      strcat(str, after_elem ? "@" : "");
+      strcat(str, selem);
+
+      free(selem);
+      
+      len += selemlen;
+      
+      after_elem = (local->element != NULL);
+   }
+   return str;
+}
+
+

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: conname.c,v 1.4 2002/08/18 14:58:01 bzfkocht Exp $"
+#ident "@(#) $Id: conname.c,v 1.5 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -34,47 +34,96 @@
 #include "mshell.h"
 #include "mme.h"
 
-static const char* cpfix = NULL;
-static char*       cname = NULL;
-static int         count = 0;
+static char*        cpfix  = NULL;
+static int          count  = 1;
+static char*        cname  = NULL;
+static unsigned int clen   = 0;
+static ConNameForm  cform  = CON_FORM_NAME;
+
+void conname_format(ConNameForm format)
+{
+   cform = format;
+}
 
 void conname_free()
 {
-   if (cname != NULL)
-      free(cname);
+   assert(cname != NULL);
+   assert(cpfix != NULL);
 
+   free(cname);
+   free(cpfix);
+   
    cname = NULL;
-   count = 0;
+   clen  = 0;
 }
 
-/* return False if already a constraint with the prefix exists.
+/* return False if we are in mode CON_FORM_NAME and
+ * already a constraint with the prefix exists. Otherwise this
+ * is unimportant, because all constraints will get a unique
+ * number anyway.
  */
 Bool conname_set(const char* prefix)
 {
    assert(prefix != NULL);
+   assert(cname  == NULL);
 
-   cpfix = prefix;
+   cpfix = strdup(prefix);
+   clen  = strlen(cpfix) + 16;
+   cname = malloc(clen);
 
-   if (cname != NULL)
-      free(cname);
-
-   cname = malloc(strlen(cpfix) + 16);
-   count = 1;
-   
    assert(cname != NULL);
 
-   sprintf(cname, "%s_%d", cpfix, count);
+   if (cform != CON_FORM_NAME)
+      return TRUE;
 
-   return NULL == lps_getcon(cname);
+   assert(cform == CON_FORM_NAME);
+   
+   count = 1;
+   
+   strcpy(cname, cpfix);
+   strcat(cname, "_1");
+
+   return (NULL == lps_getcon(cname));
 }
 
 const char* conname_get()
 {
+   char*        localstr;
+   unsigned int newlen;
+   
    assert(cpfix != NULL);
    assert(cname != NULL);
 
-   sprintf(cname, "%s_%d", cpfix, count);
+   switch(cform)
+   {
+   case CON_FORM_MAKE :
+      sprintf(cname, "c%d", count);
+      break;
+   case CON_FORM_NAME :
+      sprintf(cname, "%s_%d", cpfix, count);
+      break;
+   case CON_FORM_FULL :
+      localstr = local_tostrall();
+      newlen   = strlen(localstr) + strlen(cpfix) + 16;
 
+      if (newlen > clen)
+      {
+         clen  = newlen;
+         cname = realloc(cname, clen);
+
+         assert(cname != NULL);
+      }
+      sprintf(cname, "%s_%d%s%s",
+         cpfix,
+         count,
+         strlen(localstr) > 0 ? "|" : "",
+         localstr);
+
+      free(localstr);
+      break;
+   }
+   assert(strlen(cname) < clen);
+   
    count++;
 
    return cname;

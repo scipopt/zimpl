@@ -1,3 +1,19 @@
+ - Only variables that are written to the LP are written to the 
+   ".tbl" file. 
+
+ - Fixed a bug that would discard free variables with non zero costs.
+
+ - Changed the output of the ".tbl" file. Now also the long constraint
+   names are enclosed in doublequotes. 
+
+ - New options -n cm|cn|cf that control how the constraints in the
+   LPF/MPS file are named. "cm" will number them 1..n with a "c"
+   in front. "cn" will use the name supplied in the subto statement
+   and number them 1..n within the statement. "cf" will use the
+   name of the subto, then a 1..n number like in "cm" and then append
+   all the local variables from the forall statements.
+   (It is open if the "f" in "cf" stands for "full" or for "fuegenschuh".)
+
  - Grammar changed again, to allow x/3 as shorthand for x * 1/3
 
  - Changed grammar again, to get rid of conflicts.

@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.12 2002/08/18 12:26:34 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.13 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -65,6 +65,7 @@ static const char* banner =
 "  -r          write branching order file.\n" \
 "  -h          show this help.\n" \
 "  -v          enable verbose output.\n" \
+"  -n cm|cn|cf name column make/name/full\n" \
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
 "  -o outfile  select name for the output file. Default is the name of\n" \
 "              the input file without extension.\n" \
@@ -110,23 +111,23 @@ static char* extend_basename(const char* filename, const char* extension)
 int main(int argc, char* const* argv)
 {
    const char* usage =
-      "usage: %s [-h][-v][-r][-t lp|mps][-o outfile] filename\n";
+      "usage: %s [-h][-v][-r][-n cs|cn|cf][-t lp|mps][-o outfile] filename\n";
    
-   Prog*  prog;
-   char*  outfile  = NULL;
-   char*  tblfile  = NULL;
-   char*  ordfile  = NULL;
-   char*  basefile = NULL;
-   LpForm format   = LP_FORM_LPF;
-   FILE*  fp;
-   Bool   write_order = FALSE;
-   int    c;
-   int    i;
+   Prog*       prog;
+   char*       outfile  = NULL;
+   char*       tblfile  = NULL;
+   char*       ordfile  = NULL;
+   char*       basefile = NULL;
+   LpForm      format   = LP_FORM_LPF;
+   FILE*       fp;
+   Bool        write_order = FALSE;
+   int         c;
+   int         i;
    
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfho:rt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfhn:o:rt:v")) != -1)
    {
       switch(c)
       {
@@ -141,6 +142,28 @@ int main(int argc, char* const* argv)
          exit(0);
       case 'f' :
          yy_flex_debug = 1;
+         break;
+      case 'n' :
+         if (*optarg != 'c')
+         {
+            fprintf(stderr, usage, argv[0]);
+            exit(0);
+         }
+         switch(optarg[1])
+         {
+         case 'm' :
+            conname_format(CON_FORM_MAKE);
+            break;
+         case 'n' :
+            conname_format(CON_FORM_NAME);
+            break;
+         case 'f' :
+            conname_format(CON_FORM_FULL);
+            break;
+         default :
+            fprintf(stderr, usage, argv[0]);
+            exit(0);
+         }
          break;
       case 'o' :
          basefile = strdup(optarg);
@@ -176,7 +199,7 @@ int main(int argc, char* const* argv)
    
    str_init();
    elem_init();
-   
+      
    prog = prog_new();
 
    for(i = optind; i < argc; i++)

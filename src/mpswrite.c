@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mpswrite.c,v 1.3 2002/07/03 13:02:04 bzfkocht Exp $"
+#ident "@(#) $Id: mpswrite.c,v 1.4 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -78,12 +78,23 @@ static void write_vars(
       if (var->type != vartype)
          continue;
 
+      /* Only variables with a cost not equal zero, need to be included
+       * in the objective function
+       */
       if (fabs(var->cost) > EPS_ZERO)
       {
-         lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
+         /* If the variable not free or when minimizing the lower or
+          * when maximizing the upper bound is not zero,
+          * we have to include it.
+          */
+         if ((var->size != 0) || (fabs((lp->direct == LP_MIN) ?
+            var->lower : var->upper) > EPS_ZERO))
+         {
+            lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
-         write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV",
-            (lp->direct == LP_MIN) ? var->cost : -var->cost);
+            write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV",
+               (lp->direct == LP_MIN) ? var->cost : -var->cost);
+         }
       }
       for(nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.20 2002/09/15 08:53:20 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.21 2002/10/13 16:05:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -38,7 +38,7 @@ enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
 enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
 enum con_type        { CON_ERR = 0, CON_EQ, CON_LE, CON_GE };
 enum var_type        { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
-
+enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
@@ -92,6 +92,7 @@ typedef enum lp_form             LpForm;
 typedef enum con_type            ConType;
 typedef enum var_type            VarType;
 
+typedef enum con_name_format     ConNameForm;
 typedef enum statement_type      StmtType;
 typedef struct statement         Stmt;
 typedef struct program           Prog;
@@ -375,6 +376,8 @@ extern const Elem*  local_lookup(const char* name);
 extern void         local_install_tuple(const Tuple* patt, const Tuple* vals);
 /*lint -sem(        local_print_all, 1p == 1) */
 extern void         local_print_all(FILE* fp);
+/*lint -sem(        local_tostrall, @p && nulterm(@)) */
+extern char*        local_tostrall(void);
 
 /* term.c
  */
@@ -447,6 +450,7 @@ extern RPar*       rpar_copy(const RPar* rpar);
 
 /* conname.c
  */
+extern void        conname_format(ConNameForm format);
 extern void        conname_free(void);
 /*lint -sem(       conname_set, 1p && nulterm(1)) */
 extern Bool        conname_set(const char* prefix);
