@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.16 2003/10/29 16:57:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.17 2004/05/01 09:44:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -373,34 +373,51 @@ Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
 
 void numb_mod(Numb* numb_a, const Numb* numb_b)
 {
+   mpz_t a;
+   mpz_t b;
    mpz_t r;
 
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
 
-   mpq_div(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
-
+   mpz_init(a);
+   mpz_init(b);
    mpz_init(r);
-   mpz_tdiv_r(r, mpq_numref(numb_a->value.numb), mpq_denref(numb_a->value.numb));
+
+   mpz_mul(a, mpq_numref(numb_a->value.numb), mpq_denref(numb_b->value.numb));
+   mpz_mul(b, mpq_numref(numb_b->value.numb), mpq_denref(numb_a->value.numb));
+   mpz_mod(r, a, b);
    mpq_set_z(numb_a->value.numb, r);
+
    mpz_clear(r);
+   mpz_clear(b);
+   mpz_clear(a);
 }
 
 Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
 {
    Numb* numb = numb_new();
-   mpz_t        r;
+   mpz_t a;
+   mpz_t b;
+   mpz_t r;
+   
 
    assert(numb != NULL);
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
 
-   mpq_div(numb->value.numb, numb_a->value.numb, numb_b->value.numb);
-
+   mpz_init(a);
+   mpz_init(b);
    mpz_init(r);
-   mpz_tdiv_r(r, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+
+   mpz_mul(a, mpq_numref(numb_a->value.numb), mpq_denref(numb_b->value.numb));
+   mpz_mul(b, mpq_numref(numb_b->value.numb), mpq_denref(numb_a->value.numb));
+   mpz_mod(r, a, b);
    mpq_set_z(numb->value.numb, r);
+
    mpz_clear(r);
+   mpz_clear(b);
+   mpz_clear(a);
 
    return numb;
 }

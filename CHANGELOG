@@ -1,3 +1,10 @@
+ - Improved detection of incorrect initialization
+   of sets and params.
+
+ - Bug in mod function fixed. Before mod
+   gave the wrong result, if the two numbers
+   had factors in common.
+
  - New -m switch that will write a CPLEX MST
    file with MIP starting values.
 

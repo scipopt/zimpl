@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.76 2004/04/23 07:39:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.77 2004/05/01 09:44:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1302,11 +1302,37 @@ CodeNode* i_bool_exists(CodeNode* self)
  */
 CodeNode* i_set_new_tuple(CodeNode* self)
 {
+   const List*  list;
+   const Tuple* tuple;
+   ListElem*    le    = NULL;
+   int          dim;
+   
    Trace("i_set_new_tuple");
    
    assert(code_is_valid(self));
 
-   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0), SET_CHECK_WARN));
+   list  = code_eval_child_list(self, 0);
+   tuple = list_get_tuple(list, &le);
+
+   assert(tuple != NULL);
+
+   dim   = tuple_get_dim(tuple);
+      
+   while(NULL != (tuple = list_get_tuple(list, &le)))
+   {
+      if (tuple_get_dim(tuple) != dim)
+      {
+         le = NULL;
+         fprintf(stderr, "*** Error xxx: Different dimension tuples in set initialisation\n");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " vs. ");
+         tuple_print(stderr, list_get_tuple(list, &le));
+         fprintf(stderr, "\n");
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
+   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
    return self;
 }
@@ -1801,7 +1827,18 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
-      
+#if 1 // ???????
+      if (set_get_dim(iset) != tuple_get_dim(tuple))
+      {
+         fprintf(stderr, "*** Warning xxx: Tuple ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " has wrong dimension %d, expected %d -- ignored\n",
+            tuple_get_dim(tuple),
+            set_get_dim(iset));
+         code_errmsg(self);
+         continue;
+      }
+#endif
       if (set_lookup(iset, tuple))
          symbol_add_entry(sym, entry_copy(entry));
       else
@@ -1894,6 +1931,16 @@ n",
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
 
+      if (set_get_dim(iset) != tuple_get_dim(tuple))
+      {
+         fprintf(stderr, "*** Warning xxx: Indexing tuple of entry ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " has wrong dimension %d, expected %d -- ignored\n",
+            tuple_get_dim(tuple),
+            set_get_dim(iset));
+         code_errmsg(self);
+         continue;
+      }
       if (!set_lookup(iset, tuple))
       {
          fprintf(stderr, "*** Error 134: Illegal element ");
