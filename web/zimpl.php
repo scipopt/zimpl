@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.20 2003/10/30 13:09:44 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.21 2003/10/31 08:34:54 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/10/30 13:09:44 $">
+<meta name="date" content="$Date: 2003/10/31 08:34:54 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -180,7 +180,7 @@ border="0" width="88" height="36" align="bottom"></a>
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
 <a href="http://www.zib.de/impressum.en.html">Imprint</a>
-Last Update $Date: 2003/10/30 13:09:44 $ by
+Last Update $Date: 2003/10/31 08:34:54 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch
 </font>
@@ -189,7 +189,7 @@ Last Update $Date: 2003/10/30 13:09:44 $ by
 </html>
 <?php
 define("_BBC_PAGE_NAME", "Zimpl");
-define("_BBCLONE_DIR", "../test/bbclone/");
+define("_BBCLONE_DIR", "../bbclone/");
 define("COUNTER", _BBCLONE_DIR."mark_page.php");
 if (is_readable(COUNTER)) include_once(COUNTER);
 ?>
