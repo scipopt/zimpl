@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.10 2002/07/28 07:03:33 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.11 2002/07/29 07:48:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -189,6 +189,9 @@ int main(int argc, char* const* argv)
 
    prog_execute(prog);
 
+   if (verbose)
+      printf("Generating output\n");
+   
    //mem_display(stderr);
    
    lps_scale();
@@ -250,7 +253,7 @@ int main(int argc, char* const* argv)
       free(basefile);
    
    mem_display(stderr);
-#endif /* __INSURE__ || !NDEBUG */
+#endif /* __INSURE__ || !NDEBUG || FREEMEM */
    return 0;
 }
 

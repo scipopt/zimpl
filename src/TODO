@@ -1,3 +1,7 @@
+lint:  type(1) bei allen semantics in inst.h
+       nulterm() bei allen wo es so ist.
+
+
 Initialisierung von set's
 
 1. ASGN idxset statt sexpr 

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.17 2002/07/28 07:03:31 bzfkocht Exp $
+# $Id: Makefile,v 1.18 2002/07/29 07:48:35 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -32,11 +32,11 @@ CC		=	gcc
 YACC		=	bison
 LEX		=	flex
 CPPFLAGS	=	-I./ 
-OPTI_FLAGS      =       -O3 #-fomit-frame-pointer 
+OPTI_FLAGS      =       -O3 -fomit-frame-pointer -mcpu=pentiumpro
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline
-DEBU_FLAGS      =       -g -DNDEBUG -DFREEMEM #-DTRACE #-pg #-pg -a -DNO_MSHELL
+DEBU_FLAGS      =       -g -DNDEBUG -DNO_MSHELL #-DFREEMEM #-DTRACE #-pg -a 
 LDFLAGS		=	-lm 
 DFLAGS		=	-MM 
 YFLAGS		=	-d -t #-v  
@@ -48,9 +48,10 @@ LINT		=	flexelint
 #------------------------------------------------------------------------------
 #
 CFLAGS	=	$(OPTI_FLAGS) $(DEBU_FLAGS) $(PROG_FLAGS) $(WARN_FLAGS) 
-OBJECT  =       code.o elem.o entry.o hash.o idxset.o inst.o iread.o list.o \
-		load.o local.o lpstore.o lpfwrite.o mmlparse.o mmlscan.o \
-		mpswrite.o ordwrite.o prog.o rbt.o rdefpar.o set.o source.o \
+OBJECT  =       code.o conname.o elem.o entry.o hash.o idxset.o inst.o \
+		iread.o list.o load.o local.o lpstore.o lpfwrite.o \
+		mmlparse.o mmlscan.o mpswrite.o ordwrite.o \
+		prog.o rbt.o rdefpar.o set.o source.o \
 		stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
 		mshell.o
 

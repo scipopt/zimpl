@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.15 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.16 2002/07/29 07:48:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -134,7 +134,7 @@ extern const Entry* list_get_entry(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
 
-/* hash
+/* hash.c
  */
 /*lint -sem(        hash_new, @p == 1) */
 extern Hash*        hash_new(HashType type);
@@ -430,6 +430,15 @@ extern void        rpar_free(RPar* rpar);
 extern Bool        rpar_is_valid(const RPar* rpar);
 /*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
 extern RPar*       rpar_copy(const RPar* rpar);
+
+/* conname.c
+ */
+extern void        conname_free(void);
+/*lint -sem(       conname_set, nulterm(1), 1p) */
+extern void        conname_set(const char* prefix);
+/*lint -sem(       conname_set, nulterm(@) && @p) */
+extern const char* conname_get(void);
+
 
 /* lpstore.c
  */

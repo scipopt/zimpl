@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.15 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.16 2002/07/29 07:48:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -81,6 +81,7 @@ extern void yyerror(const char* s);
 %token <bits> SEPARATE
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
+%type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset product factor term entry entry_list
 %type <code> var_type con_type lower upper priority startval condition
@@ -230,6 +231,21 @@ decl_obj
  * ----------------------------------------------------------------------------
  */
 decl_sub
+   : DECLSUB NAME DO constraint ';' {
+        $$ = code_new_inst(i_subto, 2, code_new_name($2), $4);
+     }
+   ;
+
+constraint
+   : term con_type expr con_attr_list {
+        $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
+     }   
+   | FORALL idxset DO constraint {
+        $$ = code_new_inst(i_forall, 2, $2, $4);
+     }
+   ;
+/*
+
    : DECLSUB NAME DO term con_type expr con_attr_list ';' {
          $$ = code_new_inst(i_once, 5, code_new_name($2),
             $4, $5, $6, code_new_bits($7));
@@ -239,6 +255,7 @@ decl_sub
             $5, $7, $8, $9, code_new_bits($10)); 
       }
    ;
+*/
 
 con_attr_list
    : /* empty */                { $$ = 0; }

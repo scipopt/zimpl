@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.18 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.19 2002/07/29 07:48:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -48,6 +48,87 @@ CodeNode* i_nop(CodeNode* self)
 
    return self;
 }
+
+CodeNode* i_subto(CodeNode* self)
+{
+   const char* name;
+   
+   Trace("i_subto");
+   
+   assert(code_is_valid(self));
+
+   name = code_eval_child_name(self, 0);
+
+   conname_set(name);
+   
+   (void)code_eval_child(self, 1); /* constraint */
+
+   conname_free();
+   
+   code_value_void(self);
+
+   return self;
+}
+
+CodeNode* i_constraint(CodeNode* self)
+{
+   const Term*  term;
+   ConType      type;
+   double       rhs;
+   Con*         con;
+   unsigned int flags;
+   
+   Trace("i_constraint");
+   
+   assert(code_is_valid(self));
+
+   term  = code_eval_child_term(self, 0);
+   type  = code_eval_child_contype(self, 1);
+   rhs   = code_eval_child_numb(self, 2);
+   flags = code_eval_child_bits(self, 3);
+   
+   con   = lps_addcon(conname_get(), type, rhs, flags);
+
+   term_to_nzo(term, con);
+   
+   code_value_void(self);
+
+   return self;
+}
+
+CodeNode* i_forall(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   const Tuple*  tuple;
+   CodeNode*     lexpr;
+   int           idx   = 0;
+   
+   Trace("i_forall");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);  
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+         (void)code_eval_child(self, 1); /* constraint */
+
+      local_drop_frame();
+   }
+   code_value_void(self);
+
+   return self;
+}
+
+#if 0
 
 CodeNode* i_once(CodeNode* self)
 {
@@ -129,6 +210,7 @@ CodeNode* i_forall(CodeNode* self)
 
    return self;
 }
+#endif
 
 /* ----------------------------------------------------------------------------
  * Arithmetische Funktionen
