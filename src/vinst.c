@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.1 2003/10/08 08:03:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.2 2003/10/09 08:20:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -271,14 +271,103 @@ CodeNode* i_vbool_eq(CodeNode* self)
 {
    return handle_vbool_eq_ne(self, TRUE);
 }
+
+static void generate_conditional_constraint(
+   const CodeNode* self,
+   const Term*     vif_term,
+   const Term*     lhs_term,
+   ConType         con_type,
+   const Numb*     rhs,
+   unsigned int    flags,
+   Bool            then_case)
+{
+   Bound*       bound;
+   Numb*        big_m;
+   Term*        big_term;
+   Con*         con;
+   const Numb*  bound_val;
+   const Numb*  new_rhs;
    
-static void handle_vif_true(
+   assert(con_type == CON_RHS || con_type == CON_LHS);
+
+   bound = con_type == CON_RHS ? term_get_upper_bound(lhs_term) : term_get_lower_bound(lhs_term);
+   
+   if (bound_get_type(bound) != BOUND_VALUE)
+   {
+      fprintf(stderr, "*** Error ???: Conditional only possible on bounded constraints\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   bound_val = bound_get_value(bound);
+   big_term  = term_copy(vif_term);
+   big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
+   new_rhs   = then_case ? bound_val : rhs;
+      
+   term_mul_coeff(big_term, big_m);
+   term_append_term(big_term, lhs_term);
+
+   con = xlp_addcon(conname_get(), con_type, new_rhs, new_rhs, flags);
+   
+   term_to_nzo(big_term, con);
+      
+   bound_free(bound);
+   numb_free(big_m);
+   term_free(big_term);
+}
+
+static void handle_vif_then_else(
    const CodeNode* self,
    const Term*     vif_term,
    const Term*     lhs_term,
    ConType         con_type,
    const Term*     rhs_term,
-   unsigned int    flags)
+   unsigned int    flags,
+   Bool            then_case)
+{
+   Term*        term;
+   Numb*        rhs;
+   
+   Trace("handle_vif_then_else");
+   
+   rhs   = numb_new_sub(term_get_constant(rhs_term), term_get_constant(lhs_term));
+   term  = term_sub_term(lhs_term, rhs_term);
+   term_add_constant(term, rhs);
+
+   /* Check if trival infeasible
+    */
+   if (term_get_elements(term) == 0)
+   {
+      fprintf(stderr, "*** Error ???: Empty LHS, not allowed\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+
+   assert(con_type == CON_RHS || con_type == CON_LHS || con_type == CON_EQUAL);
+   
+   /* <=, ==
+    */
+   if (con_type == CON_RHS || con_type == CON_EQUAL)
+      generate_conditional_constraint(self, vif_term, term, CON_RHS, rhs, flags, then_case);
+
+   /* >=, ==
+    */
+   if (con_type == CON_LHS || con_type == CON_EQUAL)
+      generate_conditional_constraint(self, vif_term, term, CON_LHS, rhs, flags, then_case);
+
+   numb_free(rhs);
+   term_free(term);
+}
+
+
+#if 0
+static void handle_vif_then_else(
+   const CodeNode* self,
+   const Term*     vif_term,
+   const Term*     lhs_term,
+   ConType         con_type,
+   const Term*     rhs_term,
+   unsigned int    flags,
+   Bool            then_case)
 {
    Term*        term;
    Term*        big_term;
@@ -289,8 +378,9 @@ static void handle_vif_true(
    Numb*        big_m;
    const Numb*  upper_val;
    const Numb*  lower_val;
+   const Numb*  new_rhs;
    
-   Trace("i_vif_true");
+   Trace("handle_vif_then_else");
    
    rhs   = numb_new_sub(term_get_constant(rhs_term), term_get_constant(lhs_term));
    term  = term_sub_term(lhs_term, rhs_term);
@@ -311,7 +401,7 @@ static void handle_vif_true(
     */
    if (con_type == CON_RHS || con_type == CON_EQUAL)
    {
-      upper = term_get_upper_bound(lhs_term);
+      upper = term_get_upper_bound(term);
 
       if (bound_get_type(upper) != BOUND_VALUE)
       {
@@ -320,13 +410,14 @@ static void handle_vif_true(
          exit(EXIT_FAILURE);
       }
       upper_val = bound_get_value(upper);
-      big_m     = numb_new_sub(upper_val, rhs);
       big_term  = term_copy(vif_term);
-
+      big_m     = then_case ? numb_new_sub(upper_val, rhs) : numb_new_sub(rhs, upper_val);
+      new_rhs   = then_case ? upper_val : rhs;
+      
       term_mul_coeff(big_term, big_m);
       term_append_term(big_term, term);
 
-      con = xlp_addcon(conname_get(), CON_RHS, upper_val, upper_val, flags);
+      con = xlp_addcon(conname_get(), CON_RHS, new_rhs, new_rhs, flags);
    
       term_to_nzo(big_term, con);
       
@@ -338,7 +429,7 @@ static void handle_vif_true(
     */
    if (con_type == CON_LHS || con_type == CON_EQUAL)
    {
-      lower = term_get_lower_bound(lhs_term);
+      lower = term_get_lower_bound(term);
 
       if (bound_get_type(lower) != BOUND_VALUE)
       {
@@ -347,13 +438,14 @@ static void handle_vif_true(
          exit(EXIT_FAILURE);
       }
       lower_val = bound_get_value(lower);
-      big_m     = numb_new_sub(lower_val, rhs);
       big_term  = term_copy(vif_term);
-
+      big_m     = then_case ? numb_new_sub(lower_val, rhs) : numb_new_sub(rhs, lower_val);
+      new_rhs   = then_case ? lower_val : rhs;
+         
       term_mul_coeff(big_term, big_m);
       term_append_term(big_term, term);
 
-      con = xlp_addcon(conname_get(), CON_LHS, lower_val, lower_val, flags);
+      con = xlp_addcon(conname_get(), CON_LHS, new_rhs, new_rhs, flags);
    
       term_to_nzo(big_term, con);
 
@@ -364,17 +456,7 @@ static void handle_vif_true(
    numb_free(rhs);
    term_free(term);
 }
-
-/*ARGSUSED*/
-static void handle_vif_false(
-   const CodeNode* self,
-   const Term*     vif_term,
-   const Term*     lhs_term,
-   ConType         con_type,
-   const Term*     rhs_term,
-   unsigned int    flags)
-{
-}
+#endif
 
 
 CodeNode* i_vif_else(CodeNode* self)
@@ -394,13 +476,13 @@ CodeNode* i_vif_else(CodeNode* self)
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
 
-   handle_vif_true(self, vif_term, lhs_term, con_type, rhs_term, flags);
+   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
    
    lhs_term   = code_eval_child_term(self, 4);
    con_type   = code_eval_child_contype(self, 5);
    rhs_term   = code_eval_child_term(self, 6);
 
-   handle_vif_false(self, vif_term, lhs_term, con_type, rhs_term, flags);
+   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, FALSE);
 
    code_value_void(self);
 
@@ -424,7 +506,7 @@ CodeNode* i_vif(CodeNode* self)
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
 
-   handle_vif_true(self, vif_term, lhs_term, con_type, rhs_term, flags);
+   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
    
    code_value_void(self);
 
