@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.7 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: list.c,v 1.8 2002/02/24 11:05:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -178,6 +178,20 @@ void list_free(List* list)
 Bool list_is_valid(const List* list)
 {
    return ((list != NULL) && SID_ok(list, LIST_SID) && (list->refc > 0));
+}
+
+Bool list_is_entrylist(const List* list)
+{
+   assert(list_is_valid(list));
+
+   return list->type == LIST_ENTRY;
+}
+   
+Bool list_is_tuplelist(const List* list)
+{
+   assert(list_is_valid(list));
+
+   return list->type == LIST_TUPLE;
 }
 
 List* list_copy(List* list)

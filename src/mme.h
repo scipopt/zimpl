@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.9 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: mme.h,v 1.10 2002/02/24 11:05:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -108,6 +108,10 @@ extern List*        list_new_entry(Entry* entry);
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
 extern Bool         list_is_valid(const List* list);
+/*lint -sem(        list_is_entrylist, 1p == 1) */
+extern Bool         list_is_entrylist(const List* list);
+/*lint -sem(        list_is_tuplelist, 1p == 1) */
+extern Bool         list_is_tuplelist(const List* list);
 /*lint -sem(        list_copy, 1p == 1, @P == 1) */
 extern List*        list_copy(List* list);
 /*lint -sem(        list_add_elem, 1p == 1 && 2p == 1) */

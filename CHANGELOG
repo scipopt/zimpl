@@ -1,3 +1,6 @@
+ - Wrong template in read now gives an error message instead of
+   an segment violation.
+
 1.01 30.Oct 2001 Bug fix release
 
  - Added several missing const's to the code.

@@ -1,3 +1,7 @@
+Demangle script. das die .lp + .tbl für menschen lesbar macht.
+
+link auf der website auf soplex und test ob das geht.
+
 Flag für make_tmpname in lpfwrite das angibt ob der Name gemangelt oder
 korrekt als x["hallo",5] ausgegeben werden soll.
 

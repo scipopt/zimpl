@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.9 2001/10/30 14:23:16 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.10 2002/02/24 11:05:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -908,6 +908,19 @@ void i_newsym_para(CodeNode* self)
    set  = Code_eval_child_set(self, 1);
    list = Code_eval_child_list(self, 2);
 
+   if (!list_is_entrylist(list))
+   {
+      /* This errors occurs, if the parameter is mssing in the template
+       * for a "read" statement.
+       */
+      assert(list_is_tuplelist(list));
+      
+      fprintf(stderr, "*** Error: Values in parameter list missing,\n");
+      fprintf(stderr, "           probably wrong read template\n");      
+      code_errmsg(self);
+      abort();
+   }
+   
    /* First element will determine the type
     */
    sym  = symbol_new(name, SYM_ERR, set);
