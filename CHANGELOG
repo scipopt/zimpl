@@ -1,3 +1,10 @@
+ - Changes param initialsation. STRG values are allowed
+   within indexed intialiszations. 
+
+ - Changed IF command. It can now handle (in principle) all
+   types as return values, but only NUMB, STRG, NAME are 
+   allowed by the parser.
+
  - Change the implementation of SUM command. Major speedup.
 
  - Implemented random(min, max) generates a random number

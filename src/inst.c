@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.33 2003/02/17 16:13:47 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.34 2003/02/19 15:55:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -401,9 +401,9 @@ CodeNode* i_expr_if(CodeNode* self)
    assert(code_is_valid(self));
 
    if (code_eval_child_bool(self, 0))
-      code_value_numb(self, code_eval_child_numb(self, 1));
+      code_copy_value(self, code_eval_child(self, 1));
    else
-      code_value_numb(self, code_eval_child_numb(self, 2));
+      code_copy_value(self, code_eval_child(self, 2));
 
    return self;
 }
@@ -1477,6 +1477,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
    Entry*        entry;
    const Entry*  deflt;
    CodeNode*     child3;
+   CodeNode*     child;
    const Tuple*  tuple;
    const Tuple*  pattern;
    int           idx = 0;
@@ -1506,8 +1507,21 @@ CodeNode* i_newsym_para2(CodeNode* self)
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
    {
       local_install_tuple(pattern, tuple);
-      
-      entry = entry_new_numb(tuple, code_eval_child_numb(self, 2));
+
+      child = code_eval_child(self, 2);
+
+      if (code_get_type(child) == CODE_NUMB)
+         entry = entry_new_numb(tuple, code_get_numb(child));
+      else if (code_get_type(child) == CODE_STRG)
+         entry = entry_new_strg(tuple, code_get_strg(child));
+      else
+      {
+         fprintf(stderr, "*** Error: Type mismatch, need %d or %d, got %d\n",
+            CODE_NUMB, CODE_STRG, code_get_type(child));
+         code_errmsg(self);
+         abort();
+      }
+      /*entry = entry_new_numb(tuple, code_eval_child_numb(self, 2));*/
       
       symbol_add_entry(sym, entry);
       
@@ -1868,9 +1882,7 @@ CodeNode* i_term_sum(CodeNode* self)
    const Tuple*  tuple;
    CodeNode*     lexpr;
    int           idx = 0;
-   Term*         term_a;
-   Term*         term_b;
-   Term*         term_r = NULL;
+   Term*         term_r;
 
    Trace("i_term_sum");
    
@@ -1887,18 +1899,8 @@ CodeNode* i_term_sum(CodeNode* self)
       local_install_tuple(pattern, tuple);
 
       if (code_get_bool(code_eval(lexpr)))
-      {
-#if 0
-         term_b = term_copy(code_eval_child_term(self, 1));      
-         term_a = term_add_term(term_r, term_b);
-
-         term_free(term_r);
-         term_free(term_b);
-         term_r = term_a;
-#else
          term_append_term(term_r, code_eval_child_term(self, 1));
-#endif
-      }
+
       local_drop_frame();
    }
    code_value_term(self, term_r);

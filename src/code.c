@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.16 2003/02/11 12:19:21 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.17 2003/02/19 15:55:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -679,6 +679,71 @@ void code_value_void(CodeNode* node)
    code_free_value(node);
 
    node->type = CODE_VOID;
+}
+
+void code_copy_value(CodeNode* dst, const CodeNode* src)
+{
+   assert(code_is_valid(dst));
+   assert(code_is_valid(src));
+   
+   code_free_value(dst);
+
+   switch(src->type)
+   {
+   case CODE_NUMB :
+      dst->value.numb = src->value.numb;
+      break;
+   case CODE_STRG :
+      dst->value.strg = src->value.strg;
+      break;
+   case CODE_NAME :
+      dst->value.name = src->value.name;
+      break;
+   case CODE_TUPLE:
+      dst->value.tuple = tuple_copy(src->value.tuple);
+      break;
+   case CODE_SET :
+      dst->value.set = set_copy(src->value.set);
+      break;
+   case CODE_IDXSET :
+      dst->value.idxset = idxset_copy(src->value.idxset);
+      break;
+   case CODE_ENTRY :
+      dst->value.entry = entry_copy(src->value.entry);
+      break;
+   case CODE_TERM :
+      dst->value.term = term_copy(src->value.term);
+      break;
+   case CODE_BOOL :
+      dst->value.bool = src->value.bool;
+      break;
+   case CODE_SIZE :
+      dst->value.size = src->value.size;
+      break;
+   case CODE_LIST :
+      dst->value.list = list_copy(src->value.list);
+      break;
+   case CODE_VARTYPE :
+      dst->value.vartype = src->value.vartype;
+      break;
+   case CODE_CONTYPE :
+      dst->value.contype = src->value.contype;
+      break;
+   case CODE_RDEF :
+      dst->value.rdef = rdef_copy(src->value.rdef);
+      break;
+   case CODE_RPAR :
+      dst->value.rpar = rpar_copy(src->value.rpar);
+      break;
+   case CODE_BITS :
+      dst->value.bits = src->value.bits;
+      break;
+   case CODE_VOID :
+      break;
+   default :
+      abort();
+   }
+   dst->type = src->type;
 }
 
 /* ----------------------------------------------------------------------------

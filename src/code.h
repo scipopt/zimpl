@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.h,v 1.9 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "@(#) $Id: code.h,v 1.10 2003/02/19 15:55:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -138,6 +138,8 @@ extern void         code_value_rpar(CodeNode* node, const RPar* rpar);
 extern void         code_value_bits(CodeNode* node, unsigned int bits);
 /*lint -sem(        code_value_void, 1p == 1) */
 extern void         code_value_void(CodeNode* node);
+/*lint -sem(        code_copy_value, 1p == 1 && 2p == 1) */
+extern void         code_copy_value(CodeNode* dst, const CodeNode* src);
 
 /*lint -sem(        code_eval_child, 1p == 1 && 2n >= 0, @p == 1p) */
 extern CodeNode*    code_eval_child(const CodeNode* node, int no);
