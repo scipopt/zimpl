@@ -1,3 +1,5 @@
+ - new -m switch to write unmangled lp file.
+
 1.05 23.Mar 2003 Release
 
  - make check now works.

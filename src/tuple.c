@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.10 2003/05/04 07:22:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -228,7 +228,7 @@ unsigned int tuple_hash(const Tuple* tuple)
 char* tuple_tostr(const Tuple* tuple)
 {
    unsigned int   size = TUPLE_STR_SIZE;
-   unsigned int   len  = 1; /* fuer die '\0' */
+   unsigned int   len  = 2; /* fuer die '\0', ggf. fuer das [ */
    char*          str  = malloc(size);
    char*          selem;
    unsigned int   selemlen;
@@ -237,12 +237,12 @@ char* tuple_tostr(const Tuple* tuple)
    assert(tuple_is_valid(tuple));
    assert(str != NULL);
 
-   str[0] = '\0';
+   strcpy(str, mangling ? "" : "[");
    
    for(i = 0; i < tuple->dim; i++)
    {
       selem    = elem_tostr(tuple->element[i]);
-      selemlen = strlen(selem) + ((i > 0) ? 1 : 0);
+      selemlen = strlen(selem) + 1;
 
       if (len + selemlen >= size)
       {
@@ -253,9 +253,16 @@ char* tuple_tostr(const Tuple* tuple)
       }
       assert(len + selemlen < size);
 
-      strcat(str, i > 0 ? "@" : "");
-      strcat(str, selem);
-
+      if (mangling)
+      {
+         strcat(str, i > 0 ? "@" : "");
+         strcat(str, selem);
+      }
+      else
+      {
+         strcat(str, selem);
+         strcat(str, i < tuple->dim - 1 ? "," : "]");
+      }
       free(selem);
       
       len += selemlen;

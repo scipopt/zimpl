@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.24 2003/03/23 12:12:16 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.25 2003/05/04 07:22:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -45,8 +45,9 @@
 extern int yydebug;
 extern int yy_flex_debug;
 
-Bool verbose  = FALSE;
-Bool zpldebug = FALSE;
+Bool verbose   = FALSE;
+Bool zpldebug  = FALSE;
+Bool mangling  = TRUE;
 
 static const char* banner = 
 "****************************************************\n" \
@@ -67,6 +68,7 @@ static const char* banner =
 "  -h          show this help.\n" \
 "  -v          enable verbose output.\n" \
 "  -n cm|cn|cf name column make/name/full\n" \
+"  -m          do not mangle variable names\n" \
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
 "  -o outfile  select name for the output file. Default is the name of\n" \
 "              the input file without extension.\n" \
@@ -148,7 +150,7 @@ int main(int argc, char* const* argv)
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfhn:o:p:rt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfhmn:o:p:rt:v")) != -1)
    {
       switch(c)
       {
@@ -163,6 +165,11 @@ int main(int argc, char* const* argv)
          exit(0);
       case 'f' :
          yy_flex_debug = 1;
+         break;
+      case 'm' :
+         fprintf(stderr,
+            "*WARNING* the generated LP/MPS files will be invalid\n");
+         mangling = FALSE;
          break;
       case 'n' :
          if (*optarg != 'c')

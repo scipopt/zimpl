@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.28 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.29 2003/05/04 07:22:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -104,6 +104,7 @@ typedef CodeNode*              (*Inst)(CodeNode* self);
 
 extern Bool         verbose;
 extern Bool         zpldebug;
+extern Bool         mangling;
 
 extern void         str_init(void);
 extern void         str_exit(void);
