@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.11 2003/10/03 09:02:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.12 2003/10/03 12:47:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -502,7 +502,7 @@ Numb* numb_new_log(const Numb* numb)
 
    d = log10(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || d == -HUGE_VAL || !finite(d))
+   if (errno != 0 || isnan(d) || isinf(d))
    {
       perror("*** Error 700: log()");
       return NULL;
@@ -521,7 +521,7 @@ Numb* numb_new_sqrt(const Numb* numb)
 
    d = sqrt(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || d == -HUGE_VAL || !finite(d))
+   if (errno != 0 || isnan(d) || isinf(d))
    {
       perror("*** Error 701: sqrt()");
       return NULL;
@@ -551,7 +551,7 @@ Numb* numb_new_ln(const Numb* numb)
 
    d = log(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || d == -HUGE_VAL || !finite(d))
+   if (errno != 0 || isnan(d) || isinf(d))
    {
       perror("*** Error 702: ln()");
       return NULL;
@@ -652,6 +652,37 @@ int numb_toint(const Numb* numb)
    assert(numb_is_int(numb));
    
    return mpz_get_si(mpq_numref(numb->value.numb)); 
+}
+
+Bool numb_is_number(const char *s)
+{
+   /* 5 !*/
+   if (isdigit(*s))
+      return TRUE;
+
+   /* maybe -5 or .6 or -.7 ? */
+   if (*s != '+' && *s != '-' && *s != '.')
+      return FALSE;
+
+   if (*s == '\0')
+      return FALSE;
+
+   s++;
+
+   /* -5 or .6 ! */
+   if (isdigit(*s))
+      return TRUE;
+
+   /* maybe -.7 ? */
+   if (*s != '.')
+      return FALSE;
+   
+   if (*s == '\0')
+      return FALSE;
+
+   s++;
+   
+   return isdigit(*s);
 }
 
 

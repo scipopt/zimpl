@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.14 2003/10/03 09:02:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.15 2003/10/03 12:47:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -309,37 +309,6 @@ static int split_fields(char* s, char* field[])
    return fields;
 }
 
-static Bool is_valid_number(const char *s)
-{
-   /* 5 !*/
-   if (isdigit(*s))
-      return TRUE;
-
-   /* maybe -5 or .6 or -.7 ? */
-   if (*s != '+' && *s != '-' && *s != '.')
-      return FALSE;
-
-   if (*s == '\0')
-      return FALSE;
-
-   s++;
-
-   /* -5 or .6 ! */
-   if (isdigit(*s))
-      return TRUE;
-
-   /* maybe -.7 ? */
-   if (*s != '.')
-      return FALSE;
-   
-   if (*s == '\0')
-      return FALSE;
-
-   s++;
-   
-   return isdigit(*s);
-}
-
 CodeNode* i_read(CodeNode* self)
 {
    gzFile      fp;
@@ -470,7 +439,7 @@ CodeNode* i_read(CodeNode* self)
 
             if (param_type[i] == 'n')
             {
-               if (!is_valid_number(t))
+               if (!numb_is_number(t))
                {
                   fprintf(stderr, "*** Error 174: Numeric field %d", i + 1);
                   fprintf(stderr, " read as \"%s\". This is not a number.\n", t);

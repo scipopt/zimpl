@@ -1,3 +1,7 @@
+ - It is now possible to define non indexed parameters
+   on the command line. -Dpeng=12 is equivalent to
+   param peng := 12; in the Zimpl file.
+
  - <,<=,>=,> for strings implemented.
 
  - Function sqrt() implemented.

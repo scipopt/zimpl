@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.53 2003/09/27 11:57:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.54 2003/10/03 12:47:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -245,9 +245,8 @@ decl_par
                code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             code_new_inst(i_entry_list_new, 1,
-               code_new_inst(i_entry, 2,
-                  code_new_inst(i_tuple_empty, 0),
-                  $4)), code_new_inst(i_nop, 0));
+               code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
+            code_new_inst(i_nop, 0));
       }
    ;
 

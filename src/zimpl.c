@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.44 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.45 2003/10/03 12:47:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -62,7 +62,7 @@ static const char* banner =
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n";
 
-static const char* options = "bfF:hn:o:prt:v:";
+static const char* options = "bD:fF:hn:o:prt:v:";
 static const char* usage =
 "usage: %s [-bfhpr][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
 
@@ -145,6 +145,76 @@ static void check_write_ok(FILE* fp, const char* filename)
    }
 }
 
+static Bool is_valid_identifier(const char* s)
+{
+   assert(s != NULL);
+
+   /* Identifiers start with a  character
+    */
+   if (!isalpha(*s))
+      return FALSE;
+
+   /* Then character or digits can follow.
+    */
+   while(isalnum(*++s))
+      ;
+
+   return *s == '\0';
+}
+
+static void add_parameter(const char* def)
+{
+   const char* warning =
+      "--- Warning 175: Illegal syntax for command line define \"%s\" -- ignored\n";
+   Set*    set;
+   Symbol* sym;
+   Numb*   numb;
+   Tuple*  tuple;
+   Entry*  entry;
+   char*   name;
+   char*   value;
+
+   assert(def != NULL);
+   
+   name  = strdup(def);
+   value = strchr(name, '=');
+   
+   if (value == NULL)
+   {
+      fprintf(stderr, warning, def);
+      free(name);
+      return;
+   }
+   *value = '\0';
+   value++;
+
+   if (strlen(name) == 0 || strlen(value) == 0 || !is_valid_identifier(name))
+   {
+      fprintf(stderr, warning, def);
+      free(name);
+      return;
+   }
+   set   = set_new(0, 1);
+   set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
+
+   sym   = symbol_new(str_new(name), SYM_ERR, set, 1, ENTRY_NULL);
+   tuple = tuple_new(0);   
+
+   if (!numb_is_number(value))
+      entry = entry_new_strg(tuple, str_new(value));
+   else
+   {
+      numb  = numb_new_ascii(value);
+      entry = entry_new_numb(tuple, numb);
+      numb_free(numb);
+   }
+   symbol_add_entry(sym, entry);
+   
+   tuple_free(tuple);
+   set_free(set); 
+   free(name); 
+}
+
 int main(int argc, char* const* argv)
 {
    Prog*       prog;
@@ -173,6 +243,8 @@ int main(int argc, char* const* argv)
       {
       case 'b' :
          yydebug = 1;
+         break;
+      case 'D' :
          break;
       case 'h' :
          printf(usage, argv[0]);
@@ -287,7 +359,22 @@ int main(int argc, char* const* argv)
    str_init();
    numb_init();
    elem_init();
-      
+
+   /* Do it again Sam, to get the defines from the command line
+    */
+   optind = 0;
+   while((c = getopt(argc, argv, options)) != -1)
+   {
+      switch(c)
+      {
+      case 'D' :
+         add_parameter(optarg);
+         break;
+      default :
+         break;
+      }
+   }
+
    prog = prog_new();
 
    for(i = optind; i < argc; i++)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.5 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.6 2003/10/03 12:47:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -36,6 +36,12 @@
  */
 /*lint -sem(strdup, 1p && nulterm(1), @P == malloc(1P) && nulterm(@p)) */ 
 extern char* strdup(const char* s);
+
+/* It is not clear if isinf() and isnan() are already POSIX
+ * or only in the next Draft.
+ */
+extern int isinf(double);
+extern int isnan(double);
 
 /*lint -esym(757, optarg, optind, opterr, optopt) */
 /*lint -sem(getopt, 1n > 0 && 2p && 3p) */

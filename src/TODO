@@ -1,3 +1,6 @@
+doc -D
+test warnings -D
+
 test vergleich verbessern fuer 700er und 800er fehler.
 
 trace wenn fehler in function?
@@ -34,8 +37,6 @@ if (....) constraint else constraint endif
 und/oder
 if (....) term else term endif 
 einbauen
-
-parameter mit -s auf der Kommandozeile setzen können.
 
 unterstuetzung von semi-continous variablen in cplex
 
