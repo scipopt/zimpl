@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.8 2003/10/23 09:22:55 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.9 2003/10/27 08:43:53 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -1345,7 +1345,10 @@ can produce:
    There are non integer variables in the argument to a \code{vabs} function.
    Due to numerical reasons continuous variables are not allowed as
    arguments to \code{vabs}. 
-%
+\item[184 vabs term not bounded]\ \\
+   The term inside a \code{vabs} has at least one unbounded variable.
+\item[185 Term in Boolean constraint not bounded]\ \\
+   The term inside a \code{vif} has at least one unbounded variable.
 % numbgmp.c
 %
 \item[700 log(): \code{OS specific domain or range error message}]\ \\

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.58 2003/10/12 10:36:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.59 2003/10/27 08:43:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -52,6 +52,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
+%expect 1
 
 %union
 {
@@ -74,7 +75,7 @@ extern void yyerror(const char* s);
 %token SUM MIN MAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
-%token MOD DIV POW
+%token MOD DIV POW FAC
 %token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
@@ -91,15 +92,15 @@ extern void yyerror(const char* s);
 %type <code> def_numb def_strg def_set
 %type <code> exec_do command
 %type <code> constraint vbool
-%type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
-%type <code> idxset subterm summand factor vexpr term name_list
-%type <code> expr_entry expr_entry_list set_entry set_entry_list par_default
+%type <code> cexpr cexpr_list cfactor cproduct
+%type <code> symidx tuple tuple_list sexpr lexpr read read_par
+%type <code> idxset vproduct vfactor vexpr name_list
+%type <code> cexpr_entry cexpr_entry_list set_entry set_entry_list par_default
 %type <code> var_type con_type lower upper priority startval condition
 %type <code> matrix_body matrix_head
 %type <bits> con_attr con_attr_list
 
 %right ASGN
-%left  TERMOP
 %left  ','
 %right '('
 %left  ')'
@@ -115,8 +116,6 @@ extern void yyerror(const char* s);
 %left  '+' '-' 
 %left  SUM MIN MAX
 %left  '*' '/' MOD DIV
-%left  ABS SGN CARD FLOOR CEIL PROJ LOG LN EXP
-%left  UNARY
 %left  POW
 %left  FAC
 %%
@@ -174,7 +173,7 @@ set_entry_list
    | set_entry_list ',' set_entry  {
          $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
       }
-   | SUBSETS '(' sexpr ',' expr ')' {
+   | SUBSETS '(' sexpr ',' cexpr ')' {
          $$ = code_new_inst(i_entry_list_subsets, 2, $3, $5);
       }
    | POWERSET '(' sexpr ')' {
@@ -192,7 +191,7 @@ set_entry
  * ----------------------------------------------------------------------------
  */
 def_numb
-   : DEFNUMB DEFNAME '(' name_list ')' ASGN expr ';' {
+   : DEFNUMB DEFNAME '(' name_list ')' ASGN cexpr ';' {
          $$ = code_new_inst(i_newdef, 3,
             code_new_define($2),
             code_new_inst(i_tuple_new, 1, $4),
@@ -201,7 +200,7 @@ def_numb
    ;
 
 def_strg
-   : DEFSTRG DEFNAME '(' name_list ')' ASGN expr ';' {
+   : DEFSTRG DEFNAME '(' name_list ')' ASGN cexpr ';' {
          $$ = code_new_inst(i_newdef, 3,
             code_new_define($2),
             code_new_inst(i_tuple_new, 1, $4),
@@ -232,13 +231,13 @@ name_list
  * ----------------------------------------------------------------------------
  */
 decl_par
-   : DECLPAR NAME '[' idxset ']' ASGN expr_entry_list par_default ';' {
+   : DECLPAR NAME '[' idxset ']' ASGN cexpr_entry_list par_default ';' {
          $$ = code_new_inst(i_newsym_para1, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME '[' idxset ']' ASGN expr par_default ';' {
+   | DECLPAR NAME '[' idxset ']' ASGN cexpr par_default ';' {
          $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME ASGN expr ';' {
+   | DECLPAR NAME ASGN cexpr ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
@@ -253,7 +252,7 @@ decl_par
 
 par_default
    : /* empty */   { $$ = code_new_inst(i_nop, 0); }
-   | DEFAULT expr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
+   | DEFAULT cexpr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -301,59 +300,59 @@ var_type
    : /* empty */      { $$ = code_new_varclass(VAR_CON); }
    | REAL             { $$ = code_new_varclass(VAR_CON); }
    | INTEGER          { $$ = code_new_varclass(VAR_INT); }
-/*   | BINARY           { $$ = code_new_varclass(VAR_BIN); }*/
+/* | BINARY  not needed due to different syntax because no bounds are allowed. */
    ;
 
 lower
    : /* empty */      {
          $$ = code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0)));
       }
-   | CMP_GE expr      { $$ = code_new_inst(i_bound_new, 1, $2); }
+   | CMP_GE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_GE '-' INFTY { $$ = code_new_bound(BOUND_MINUS_INFTY); }
    ;
 
 upper
    : /* empty */      { $$ = code_new_bound(BOUND_INFTY); }
-   | CMP_LE expr      { $$ = code_new_inst(i_bound_new, 1, $2); }
+   | CMP_LE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_LE INFTY     { $$ = code_new_bound(BOUND_INFTY); }
    ;
 
 priority
    : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
-   | PRIORITY expr    { $$ = $2; }
+   | PRIORITY cexpr    { $$ = $2; }
    ;
 
 startval
    : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
-   | STARTVAL expr    { $$ = $2; }
+   | STARTVAL cexpr    { $$ = $2; }
    ;
 
 /* ----------------------------------------------------------------------------
  * --- DATA 
  * ----------------------------------------------------------------------------
  */
-expr_entry_list
-   : expr_entry              { $$ = code_new_inst(i_entry_list_new, 1, $1); }
-   | expr_entry_list ',' expr_entry  {
+cexpr_entry_list
+   : cexpr_entry              { $$ = code_new_inst(i_entry_list_new, 1, $1); }
+   | cexpr_entry_list ',' cexpr_entry  {
          $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
       }
    | read                    { $$ = code_new_inst(i_read, 1, $1); }
    | matrix_head matrix_body { $$ = code_new_inst(i_list_matrix, 2, $1, $2); }
    ;
 
-expr_entry
-   : tuple expr            { $$ = code_new_inst(i_entry, 2, $1, $2); }
+cexpr_entry
+   : tuple cexpr            { $$ = code_new_inst(i_entry, 2, $1, $2); }
    ;
 
 matrix_head
-   : WITH expr_list WITH { $$ = $2; }
+   : WITH cexpr_list WITH { $$ = $2; }
    ;
 
 matrix_body
-   : matrix_head expr_list WITH {
+   : matrix_head cexpr_list WITH {
          $$ = code_new_inst(i_matrix_list_new, 2, $1, $2);
       }
-   | matrix_body matrix_head expr_list WITH {
+   | matrix_body matrix_head cexpr_list WITH {
          $$ = code_new_inst(i_matrix_list_add, 3, $1, $2, $3);
       }
    ;
@@ -365,10 +364,10 @@ matrix_body
  */
 
 decl_obj
-   : DECLMIN NAME DO term ';' {
+   : DECLMIN NAME DO vexpr ';' {
          $$ = code_new_inst(i_object_min, 2, code_new_name($2), $4);
       }
-   | DECLMAX NAME DO term ';' {
+   | DECLMAX NAME DO vexpr ';' {
          $$ = code_new_inst(i_object_max, 2, code_new_name($2), $4);
       }
    ;
@@ -384,20 +383,43 @@ decl_sub
    ;
 
 constraint
-   : term con_type term con_attr_list {
+   : vexpr con_type vexpr con_attr_list {
         $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
      }
-   | expr con_type term con_attr_list {
+   | vexpr con_type cexpr con_attr_list {
+        $$ = code_new_inst(i_constraint, 4, $1, $2,
+           code_new_inst(i_term_expr, 1, $3),
+           code_new_bits($4));
+     }
+   | cexpr con_type vexpr con_attr_list {
         $$ = code_new_inst(i_constraint, 4,
            code_new_inst(i_term_expr, 1, $1),
            $2, $3, code_new_bits($4));
      }
-   | expr con_type term CMP_LE expr con_attr_list {
+   | cexpr con_type cexpr con_attr_list { 
+        $$ = code_new_inst(i_constraint, 4,
+           code_new_inst(i_term_expr, 1, $1),
+           $2,
+           code_new_inst(i_term_expr, 1, $3),
+           code_new_bits($4));
+     }
+   | cexpr con_type vexpr CMP_LE cexpr con_attr_list {
         $$ = code_new_inst(i_rangeconst, 6, $1, $3, $5, $2,
            code_new_contype(CON_RHS), code_new_bits($6)); 
      }
-   | expr con_type term CMP_GE expr con_attr_list {
+   | cexpr con_type cexpr CMP_LE cexpr con_attr_list {
+        $$ = code_new_inst(i_rangeconst, 6, $1,
+           code_new_inst(i_term_expr, 1, $3), $5, $2,
+           code_new_contype(CON_RHS), code_new_bits($6)); 
+     }
+   | cexpr con_type vexpr CMP_GE cexpr con_attr_list {
         $$ = code_new_inst(i_rangeconst, 6, $5, $3, $1, $2,
+           code_new_contype(CON_LHS), code_new_bits($6)); 
+     }
+   | cexpr con_type cexpr CMP_GE cexpr con_attr_list {
+        $$ = code_new_inst(i_rangeconst, 6, $5,
+           code_new_inst(i_term_expr, 1, $3),
+           $1, $2,
            code_new_contype(CON_LHS), code_new_bits($6)); 
      }
    | FORALL idxset DO constraint {
@@ -406,33 +428,164 @@ constraint
    | IF lexpr THEN constraint ELSE constraint END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }
-   | VIF vbool THEN term con_type term ELSE term con_type term END {
+   | VIF vbool THEN vexpr con_type vexpr ELSE vexpr con_type vexpr END {
          $$ = code_new_inst(i_vif_else, 7, $2, $4, $5, $6, $8, $9, $10);
       }
-   | VIF vbool THEN expr con_type term ELSE term con_type term END { $$ = $2; }
-   | VIF vbool THEN term con_type term ELSE expr con_type term END { $$ = $2; }
-   | VIF vbool THEN expr con_type term ELSE expr con_type term END { $$ = $2; }
-   | VIF vbool THEN term con_type term END {
+   | VIF vbool THEN cexpr con_type vexpr ELSE vexpr con_type vexpr END {
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5, $6, $8, $9, $10);
+      }
+   | VIF vbool THEN vexpr con_type cexpr ELSE vexpr con_type vexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5,
+            code_new_inst(i_term_expr, 1, $6),
+            $8, $9, $10);
+      }
+   | VIF vbool THEN vexpr con_type vexpr ELSE cexpr con_type vexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5, $6,
+            code_new_inst(i_term_expr, 1, $8),
+            $9, $10);
+      }
+   | VIF vbool THEN vexpr con_type vexpr ELSE vexpr con_type cexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5, $6, $8, $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN cexpr con_type cexpr ELSE vexpr con_type vexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5,
+            code_new_inst(i_term_expr, 1, $6),
+            $8, $9, $10);
+      }
+   | VIF vbool THEN cexpr con_type vexpr ELSE cexpr con_type vexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5, $6,
+            code_new_inst(i_term_expr, 1, $8),
+            $9, $10);
+      }
+   | VIF vbool THEN cexpr con_type vexpr ELSE vexpr con_type cexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5, $6, $8, $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN vexpr con_type cexpr ELSE cexpr con_type vexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5,
+            code_new_inst(i_term_expr, 1, $6),
+            code_new_inst(i_term_expr, 1, $8),
+            $9, $10);
+      }
+   | VIF vbool THEN vexpr con_type cexpr ELSE vexpr con_type cexpr END { 
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5,
+            code_new_inst(i_term_expr, 1, $6),
+            $8, $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN vexpr con_type vexpr ELSE cexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5, $6,
+            code_new_inst(i_term_expr, 1, $8), $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN cexpr con_type cexpr ELSE cexpr con_type vexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5,
+            code_new_inst(i_term_expr, 1, $6),
+            code_new_inst(i_term_expr, 1, $8),
+            $9, $10);
+      }
+   | VIF vbool THEN cexpr con_type cexpr ELSE vexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5,
+            code_new_inst(i_term_expr, 1, $6),
+            $8, $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN cexpr con_type vexpr ELSE cexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5, $6,
+            code_new_inst(i_term_expr, 1, $8),
+            $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN vexpr con_type cexpr ELSE cexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5,
+            code_new_inst(i_term_expr, 1, $6),
+            code_new_inst(i_term_expr, 1, $8),
+            $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+   | VIF vbool THEN cexpr con_type cexpr ELSE cexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif_else, 7, $2,
+            code_new_inst(i_term_expr, 1, $4),
+            $5,
+            code_new_inst(i_term_expr, 1, $6),
+            code_new_inst(i_term_expr, 1, $8),
+            $9,
+            code_new_inst(i_term_expr, 1, $10));
+      }
+
+   | VIF vbool THEN vexpr con_type vexpr END {
          $$ = code_new_inst(i_vif, 4, $2, $4, $5, $6);
       }
-   | VIF vbool THEN expr con_type term END {
+   | VIF vbool THEN cexpr con_type vexpr END {
          $$ = code_new_inst(i_vif, 4, $2, code_new_inst(i_term_expr, 1, $4), $5, $6);
+      }
+   | VIF vbool THEN vexpr con_type cexpr END {
+         $$ = code_new_inst(i_vif, 4, $2, $4, $5, code_new_inst(i_term_expr, 1, $6));
+      }
+   | VIF vbool THEN cexpr con_type cexpr END { /* ??? This is an error */
+         $$ = code_new_inst(i_vif, 4, $2,
+            code_new_inst(i_term_expr, 1, $4), $5, code_new_inst(i_term_expr, 1, $6));
       }
    ;
 
 vbool
-   : term CMP_NE term { $$ = code_new_inst(i_vbool_ne, 2, $1, $3); }
-   | expr CMP_NE term { $$ = code_new_inst(i_vbool_ne, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, $1, $3); }
-   | expr CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_LE term { $$ = code_new_inst(i_vbool_le, 2, $1, $3); }
-   | expr CMP_LE term { $$ = code_new_inst(i_vbool_le, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_GE term { $$ = code_new_inst(i_vbool_ge, 2, $1, $3); }
-   | expr CMP_GE term { $$ = code_new_inst(i_vbool_ge, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_LT term { $$ = code_new_inst(i_vbool_lt, 2, $1, $3); }
-   | expr CMP_LT term { $$ = code_new_inst(i_vbool_lt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, $1, $3); }
-   | expr CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   : vexpr CMP_NE vexpr { $$ = code_new_inst(i_vbool_ne, 2, $1, $3); }
+   | cexpr CMP_NE vexpr {
+         $$ = code_new_inst(i_vbool_ne, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_NE cexpr {
+         $$ = code_new_inst(i_vbool_ne, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | vexpr CMP_EQ vexpr { $$ = code_new_inst(i_vbool_eq, 2, $1, $3); }
+   | cexpr CMP_EQ vexpr {
+         $$ = code_new_inst(i_vbool_eq, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_EQ cexpr {
+         $$ = code_new_inst(i_vbool_eq, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | vexpr CMP_LE vexpr { $$ = code_new_inst(i_vbool_le, 2, $1, $3); }
+   | cexpr CMP_LE vexpr {
+         $$ = code_new_inst(i_vbool_le, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_LE cexpr {
+         $$ = code_new_inst(i_vbool_le, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | vexpr CMP_GE vexpr { $$ = code_new_inst(i_vbool_ge, 2, $1, $3); }
+   | cexpr CMP_GE vexpr {
+         $$ = code_new_inst(i_vbool_ge, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_GE cexpr {
+         $$ = code_new_inst(i_vbool_ge, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | vexpr CMP_LT vexpr { $$ = code_new_inst(i_vbool_lt, 2, $1, $3); }
+   | cexpr CMP_LT vexpr {
+         $$ = code_new_inst(i_vbool_lt, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_LT cexpr {
+         $$ = code_new_inst(i_vbool_lt, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | vexpr CMP_GT vexpr { $$ = code_new_inst(i_vbool_gt, 2, $1, $3); }
+   | cexpr CMP_GT vexpr {
+         $$ = code_new_inst(i_vbool_gt, 2, code_new_inst(i_term_expr, 1, $1), $3);
+      }
+   | vexpr CMP_GT cexpr {
+         $$ = code_new_inst(i_vbool_gt, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
    | vbool AND vbool  { $$ = code_new_inst(i_vbool_and, 2, $1, $3); }
    | vbool OR  vbool  { $$ = code_new_inst(i_vbool_or,  2, $1, $3); }
    | vbool XOR vbool  { $$ = code_new_inst(i_vbool_xor, 2, $1, $3); }
@@ -456,68 +609,49 @@ con_type
    | CMP_EQ  { $$ = code_new_contype(CON_EQUAL); }
    ;
 
-term
-   : term '+' subterm       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
-   | term '-' subterm       { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
-   | subterm                { $$ = $1; }
-   ;
-
-subterm
-   : summand                { $$ = $1; }
-   | expr %prec TERMOP      { $$ = code_new_inst(i_term_expr, 1, $1); }
-   | expr '+' summand       { $$ = code_new_inst(i_term_const, 2, $3, $1); }
-   | expr '-' summand       {
+vexpr
+   : vproduct { $$ = $1; }
+   | vexpr '+' vproduct { $$ = code_new_inst(i_term_add, 2, $1, $3); }
+   | vexpr '-' vproduct { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
+   | vexpr '+' cproduct %prec SUM { $$ = code_new_inst(i_term_const, 2, $1, $3); } 
+   | vexpr '-' cproduct %prec SUM {
+         $$ = code_new_inst(i_term_sub, 2, $1, code_new_inst(i_term_expr, 1, $3));
+      }
+   | cexpr '+' vproduct { $$ = code_new_inst(i_term_const, 2, $3, $1); } 
+   | cexpr '-' vproduct {
          $$ = code_new_inst(i_term_sub, 2,
             code_new_inst(i_term_expr, 1, $1),
             $3);
       }
    ;
 
-summand
-   : factor                { $$ = $1; }
-   | factor '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
-   | factor '/' expr       {
+vproduct
+   : vfactor                 { $$ = $1; }
+   | vproduct '*' cfactor    { $$ = code_new_inst(i_term_coeff, 2, $1, $3); /*???*/ }
+   | vproduct '/' cfactor    {
          $$ = code_new_inst(i_term_coeff, 2, $1,
             code_new_inst(i_expr_div, 2, code_new_numb(numb_new_integer(1)), $3));
       }
-   | SUM idxset DO summand %prec SUM {
-         $$ = code_new_inst(i_term_sum, 2, $2, $4);
-      }
-   | expr '*' SUM idxset DO summand %prec SUM {
-         $$ = code_new_inst(i_term_coeff, 2, 
-            code_new_inst(i_term_sum, 2, $4, $6),
-            $1);
-      }
-   | IF lexpr THEN summand ELSE summand END {
-         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
-      }
+   | cproduct '*' vfactor    { $$ = code_new_inst(i_term_coeff, 2, $3, $1); }
    ;
 
-factor
-   : vexpr                  { $$ = $1; }
-   | expr '*' vexpr         { $$ = code_new_inst(i_term_coeff, 2, $3, $1); }
-   | '(' term ')'           { $$ = $2; }   
-   | '+' '(' term ')' %prec UNARY { $$ = $3; }           
-   | '-' '(' term ')' %prec UNARY {
-         $$ = code_new_inst(i_term_coeff, 2, $3, code_new_numb(numb_new_integer(-1)));
-      }
-   | expr '*' '(' term ')'  { $$ = code_new_inst(i_term_coeff, 2, $4, $1); }
-   ;
-
-vexpr
+vfactor
    : VARSYM symidx          {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       } 
-   | '+' VARSYM symidx %prec UNARY  {
-         $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3);
+   | '+' vfactor              { $$ = $2; }
+   | '-' vfactor              { 
+         $$ = code_new_inst(i_term_coeff, 2, $2, code_new_numb(numb_new_integer(-1)));
       } 
-   | '-' VARSYM symidx %prec UNARY  { 
-         $$ = code_new_inst(i_term_coeff, 2,
-            code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3),
-            code_new_numb(numb_new_integer(-1)));
-      } 
-   | VABS '(' term ')' { $$ = code_new_inst(i_vabs, 1, $3); }
+   | VABS '(' vexpr ')' { $$ = code_new_inst(i_vabs, 1, $3); }
+   | SUM idxset DO vproduct %prec '+' {
+         $$ = code_new_inst(i_term_sum, 2, $2, $4);
+      }
 
+   | IF lexpr THEN vexpr ELSE vexpr END {
+         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+      }
+   | '(' vexpr ')'      { $$ = $2; }
 ;   
 
 /* ----------------------------------------------------------------------------
@@ -529,7 +663,7 @@ exec_do
    ;
 
 command
-   : PRINT expr     { $$ = code_new_inst(i_print, 1, $2); }
+   : PRINT cexpr     { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT tuple    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT sexpr    { $$ = code_new_inst(i_print, 1, $2); }
    | CHECK lexpr    { $$ = code_new_inst(i_check, 1, $2); }
@@ -561,16 +695,16 @@ sexpr
    : SETSYM symidx  {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
-   | SETDEF '(' expr_list ')' {
+   | SETDEF '(' cexpr_list ')' {
          $$ = code_new_inst(i_define_deref, 2,
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
    | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
-   | '{' expr TO expr BY expr '}' {
+   | '{' cexpr TO cexpr BY cexpr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
       }
-   | '{' expr TO expr '}' {
+   | '{' cexpr TO cexpr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, code_new_numb(numb_new_integer(1)));
       }
    | sexpr UNION sexpr  { $$ = code_new_inst(i_set_union, 2, $1, $3); }
@@ -589,7 +723,7 @@ sexpr
    | sexpr INTER   sexpr  { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
    | '(' sexpr ')'      { $$ = $2; }
    | '{' tuple_list '}' { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
-   | '{' expr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
+   | '{' cexpr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
    | '{' idxset '}'     { $$ = code_new_inst(i_set_idxset, 1, $2); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
@@ -603,14 +737,14 @@ sexpr
    ;
 
  read
-    : READ expr AS expr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
+    : READ cexpr AS cexpr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
     | read read_par     { $$ = code_new_inst(i_read_param, 2, $1, $2); }
     ;
 
  read_par
-    : SKIP expr    { $$ = code_new_inst(i_read_skip, 1, $2); }
-    | USE expr     { $$ = code_new_inst(i_read_use, 1, $2); }
-    | COMMENT expr { $$ = code_new_inst(i_read_comment, 1, $2); }
+    : SKIP cexpr    { $$ = code_new_inst(i_read_skip, 1, $2); }
+    | USE cexpr     { $$ = code_new_inst(i_read_use, 1, $2); }
+    | COMMENT cexpr { $$ = code_new_inst(i_read_comment, 1, $2); }
     ;
 
  tuple_list
@@ -624,12 +758,12 @@ sexpr
     ;
 
  lexpr
-    : expr CMP_EQ expr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
-    | expr CMP_NE expr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
-    | expr CMP_GT expr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
-    | expr CMP_GE expr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
-    | expr CMP_LT expr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
-    | expr CMP_LE expr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
+    : cexpr CMP_EQ cexpr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
+    | cexpr CMP_NE cexpr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
+    | cexpr CMP_GT cexpr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
+    | cexpr CMP_GE cexpr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
+    | cexpr CMP_LT cexpr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
+    | cexpr CMP_LE cexpr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
     | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
     | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
     | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
@@ -647,28 +781,42 @@ sexpr
  
 tuple
    : EMPTY_TUPLE             { $$ = code_new_inst(i_tuple_empty, 0); }
-   | CMP_LT expr_list CMP_GT { $$ = code_new_inst(i_tuple_new, 1, $2);  }
+   | CMP_LT cexpr_list CMP_GT { $$ = code_new_inst(i_tuple_new, 1, $2);  }
    ;
 
 symidx
    : /* empty */  {
          $$ = code_new_inst(i_tuple_empty, 0);
       }
-   | '[' expr_list ']' {
+   | '[' cexpr_list ']' {
          $$ = code_new_inst(i_tuple_new, 1, $2);
       }
    ;
 
-expr_list
-   : expr {
+cexpr_list
+   : cexpr {
          $$ = code_new_inst(i_elem_list_new, 1, $1);
       }
-   | expr_list ',' expr {
+   | cexpr_list ',' cexpr {
          $$ = code_new_inst(i_elem_list_add, 2, $1, $3);
       }
    ;
 
-expr
+cexpr
+   : cproduct              { $$ = $1; }
+   | cexpr '+' cproduct    { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
+   | cexpr '-' cproduct    { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }
+
+cproduct
+   : cfactor               { $$ = $1; }
+   | cproduct '*' cfactor  { $$ = code_new_inst(i_expr_mul, 2, $1, $3); }
+   | cproduct '/' cfactor  { $$ = code_new_inst(i_expr_div, 2, $1, $3); }
+   | cproduct MOD cfactor  { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
+   | cproduct DIV cfactor  { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
+   | cproduct POW cfactor  { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
+   ;
+
+cfactor
    : NUMB       { $$ = code_new_numb($1); }
    | STRG       { $$ = code_new_strg($1);  }
    | NAME       {
@@ -680,60 +828,53 @@ expr
    | STRGSYM symidx { 
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
-   | NUMBDEF '(' expr_list ')' {
+   | NUMBDEF '(' cexpr_list ')' {
          $$ = code_new_inst(i_define_deref, 2,
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
-   | STRGDEF '(' expr_list ')' {
+   | STRGDEF '(' cexpr_list ')' {
          $$ = code_new_inst(i_define_deref, 2,
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
-   | expr '+' expr         { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
-   | expr '-' expr         { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }
-   | expr '*' expr         { $$ = code_new_inst(i_expr_mul, 2, $1, $3); }
-   | expr '/' expr         { $$ = code_new_inst(i_expr_div, 2, $1, $3); }
-   | expr MOD expr         { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
-   | expr DIV expr         { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
-   | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
-   | expr FAC              { $$ = code_new_inst(i_expr_fac, 1, $1); }
-   | CARD '(' sexpr ')'    { $$ = code_new_inst(i_expr_card, 1, $3); }
-   | ABS '(' expr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
-   | SGN '(' expr ')'      { $$ = code_new_inst(i_expr_sgn, 1, $3); }
-   | FLOOR '(' expr ')'    { $$ = code_new_inst(i_expr_floor, 1, $3); }
-   | CEIL '(' expr ')'     { $$ = code_new_inst(i_expr_ceil, 1, $3); }
-   | LOG '(' expr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }
-   | LN '(' expr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
-   | EXP '(' expr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
-   | SQRT '(' expr ')'     { $$ = code_new_inst(i_expr_sqrt, 1, $3); }
+   | cfactor FAC            { $$ = code_new_inst(i_expr_fac, 1, $1); } 
+   | CARD '(' sexpr ')'     { $$ = code_new_inst(i_expr_card, 1, $3); }
+   | ABS '(' cexpr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
+   | SGN '(' cexpr ')'      { $$ = code_new_inst(i_expr_sgn, 1, $3); }
+   | FLOOR '(' cexpr ')'    { $$ = code_new_inst(i_expr_floor, 1, $3); }
+   | CEIL '(' cexpr ')'     { $$ = code_new_inst(i_expr_ceil, 1, $3); }
+   | LOG '(' cexpr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }
+   | LN '(' cexpr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
+   | EXP '(' cexpr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
+   | SQRT '(' cexpr ')'     { $$ = code_new_inst(i_expr_sqrt, 1, $3); }
 
-   | '+' expr %prec UNARY  { $$ = $2; }
-   | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
-   | '(' expr ')'          { $$ = $2; }
-   | RANDOM '(' expr ',' expr ')' {
+   | '+' cfactor   { $$ = $2; }
+   | '-' cfactor   { $$ = code_new_inst(i_expr_neg, 1, $2); }
+   | '(' cexpr ')'          { $$ = $2; }
+   | RANDOM '(' cexpr ',' cexpr ')' {
          $$ = code_new_inst(i_expr_rand, 2, $3, $5);
       }
-   | IF lexpr THEN expr ELSE expr END {
+   | IF lexpr THEN cexpr ELSE cexpr END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }
-   | MIN idxset DO expr %prec MIN {
+   | MIN idxset DO cproduct %prec '+' {
          $$ = code_new_inst(i_expr_min, 2, $2, $4);
       }
-   | MAX idxset DO expr %prec MAX {
+   | MAX idxset DO cproduct %prec '+' {
          $$ = code_new_inst(i_expr_max, 2, $2, $4);
       }
-
-   | SUM idxset DO expr %prec SUM {
+   | SUM idxset DO cproduct %prec '+' {
          $$ = code_new_inst(i_expr_sum, 2, $2, $4);
       }
-   | MIN '(' expr_list ')' {
+   | MIN '(' cexpr_list ')' {
          $$ = code_new_inst(i_expr_min2, 1, $3);
       }
-   | MAX '(' expr_list ')' {
+   | MAX '(' cexpr_list ')' {
          $$ = code_new_inst(i_expr_max2, 1, $3);
       }
    ;
+
 
 
 

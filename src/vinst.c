@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.10 2003/10/25 09:39:04 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.11 2003/10/27 08:43:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -270,7 +270,14 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    bound_one  = bound_new(BOUND_VALUE, numb_one());
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
-
+   
+   if (bound_get_type(lower) != BOUND_VALUE || bound_get_type(upper) != BOUND_VALUE)
+   {
+      fprintf(stderr, "*** Error 185: Term in Boolean constraint not bounded\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   
    /* Check if trival infeasible
     */
    if (term_get_elements(term) == 0)
@@ -938,7 +945,7 @@ CodeNode* i_vabs(CodeNode* self)
    Entry*       entry_bplus;
    Entry*       entry_result;
    Numb*        numb;
-   
+      
    Trace("i_vabs");
    
    assert(code_is_valid(self));
@@ -967,7 +974,19 @@ CodeNode* i_vabs(CodeNode* self)
    bound_one  = bound_new(BOUND_VALUE, numb_one());
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
-   
+
+   printf("[%s] ", cname);
+   numb_print(stdout, rhs);
+   term_print(stdout, term, TERM_PRINT_SYMBOL);
+   printf("---\n");
+
+
+   if (bound_get_type(lower) != BOUND_VALUE || bound_get_type(upper) != BOUND_VALUE)
+   {
+      fprintf(stderr, "*** Error 184: vabs term not bounded\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
    term_sub_constant(term, rhs);
 
    if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
@@ -1006,6 +1025,7 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_xminus, numb_one());
    create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
 
+   
    /* bplus * upper >= xplus */
    term = term_new(2);
    if (!numb_equal(bound_get_value(upper), numb_zero()))
