@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.5 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.6 2003/08/19 07:54:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -194,7 +194,7 @@ static void hash_add_var(LpsHash* hash, Var* var)
    assert(hash_lookup_var(hash, var->name) == var);
 }
 
-static void hash_del_var(LpsHash* hash, Var* var)
+static void hash_del_var(LpsHash* hash, const Var* var)
 {
    LpsHElem*    he;
    LpsHElem*    next;
@@ -243,7 +243,7 @@ static void hash_add_con(LpsHash* hash, Con* con)
    assert(hash_lookup_con(hash, con->name) == con);
 }
 
-static void hash_del_con(LpsHash* hash, Con* con)
+static void hash_del_con(LpsHash* hash, const Con* con)
 {
    LpsHElem*    he;
    LpsHElem*    next;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.1 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.2 2003/08/19 07:54:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -239,17 +239,212 @@ static PSResult simple_rows(
    return PRESOLVE_OKAY;
 }
 
+static PSResult handle_col_singleton(
+   Lps* lp,
+   Var* var,
+   int  verbose_level,
+   int* rem_cols,
+   int* rem_nzos)
+{
+   Nzo*  nzo;
+   Con*  con;
+   int   cmpres;
+   mpq_t maxobj;
+   
+   assert(lp            != NULL);
+   assert(var           != NULL);
+   assert(verbose_level >= 0);
+   assert(rem_cols      != NULL);
+   assert(rem_nzos      != NULL);
+   
+   nzo = var->first;
+   con = nzo->con;
+         
+   assert(!mpq_equal(nzo->value, const_zero));
+
+   mpq_init(maxobj);
+   mpq_set(maxobj, var->cost);
+         
+   if (lp->direct == LP_MIN)
+      mpq_neg(maxobj, maxobj);
+
+   /* Value is positive
+    */
+   if (mpq_cmp(nzo->value, const_zero) > 0.0)
+   {
+      /* max -3 x
+       * s.t. 5 x (<= 8)
+       * l <= x
+       *
+       * and we have NO lhs, (rhs does not matter)
+       */
+      if (!HAS_LHS(con))
+      {
+         cmpres = mpq_cmp(maxobj, const_zero);
+
+         /* The objective is either zero or negative
+          */
+         if (cmpres <= 0)
+         {
+            /* If we have no lower bound
+             */
+            if (!HAS_LOWER(var))
+            {
+               /* ... but a negative objective, so we get unbounded
+                */
+               if (cmpres < 0)
+               {
+                  printf("Unbounded var %s\n", var->name);
+                  return PRESOLVE_UNBOUNDED;
+               }
+               /* With a zero objective and no bounds, there is not
+                * much we can do.
+                */
+            }
+            else
+            {
+               /* now we know we want to go to the lower bound.
+                */
+               lps_setupper(var, var->lower);
+               
+               remove_fixed_var(lp, var, verbose_level);
+               
+               (*rem_cols)++;
+               (*rem_nzos)++;
+
+               return PRESOLVE_OKAY;
+            }
+         }
+      }
+      /* max  3 x
+       * s.t. 5 x (>= 8)
+       * x <= u
+       *
+       * and we have NO rhs, (lhs does not matter)
+       */
+      if (!HAS_RHS(con))
+      {
+         cmpres = mpq_cmp(maxobj, const_zero);
+
+         /* The objective is either zero or positive
+          */
+         if (cmpres >= 0)
+         {
+            /* If we have no upper bound
+             */
+            if (!HAS_UPPER(var))
+            {
+               /* ... but a positive objective, so we get unbounded
+                */
+               if (cmpres > 0)
+               {
+                  printf("Unbounded var %s\n", var->name);
+                  return PRESOLVE_UNBOUNDED;
+               }
+               /* With a zero objective and no bounds, there is not
+                * much we can do.
+                */
+            }
+            else
+            {
+               /* now we know we want to go to the upper bound.
+                */
+               lps_setlower(var, var->upper);
+
+               remove_fixed_var(lp, var, verbose_level);
+
+               (*rem_cols)++;
+               (*rem_nzos)++;
+
+               return PRESOLVE_OKAY;
+            }
+         }
+      }
+   }
+   else
+   {
+      /* Value is negative
+       */
+      assert(mpq_cmp(nzo->value, const_zero) < 0.0);
+
+      /* max  -3 x
+       * s.t. -5 x (>= 8)
+       * l <= x
+       */
+      if (!HAS_RHS(con))
+      {
+         cmpres = mpq_cmp(maxobj, const_zero);
+
+         if (cmpres <= 0)
+         {
+            if (!HAS_LOWER(var))
+            {
+               if (cmpres < 0)
+               {
+                  printf("Unbounded var %s\n", var->name);
+                  return PRESOLVE_UNBOUNDED;
+               }
+            }
+            else
+            {
+               lps_setupper(var, var->lower);
+
+               remove_fixed_var(lp, var, verbose_level);
+               
+               (*rem_cols)++;
+               (*rem_nzos)++;               
+
+               return PRESOLVE_OKAY;
+            }
+         }
+      }
+      /* max  3 x
+       * s.t. -5 x (<= 8)
+       * x <= u
+       */
+      if (!HAS_LHS(con))
+      {
+         cmpres = mpq_cmp(maxobj, const_zero);
+
+         if (cmpres >= 0)
+         {
+            if (!HAS_UPPER(var))
+            {
+               if (cmpres > 0)
+               {
+                  printf("Unbounded var %s\n", var->name);
+                  return PRESOLVE_UNBOUNDED;
+               }
+            }
+            else
+            {
+               lps_setlower(var, var->upper);
+
+               remove_fixed_var(lp, var, verbose_level);
+
+               (*rem_cols)++;
+               (*rem_nzos)++;
+
+               return PRESOLVE_OKAY;
+            }
+         }
+      }
+   }
+   mpq_clear(maxobj);
+   
+   return PRESOLVE_OKAY;
+}
+
 static PSResult simple_cols(
    Lps*  lp,
    Bool* again,
    int   verbose_level)
 {
-   mpq_t maxobj;
-   int   rem_cols = 0;
-   int   rem_nzos = 0;
-   Nzo*  nzo;
-   Con*  con;
-   Var*  var;
+   PSResult res;
+   mpq_t    maxobj;
+   int      rem_cols = 0;
+   int      rem_nzos = 0;
+   Var*     var;
 
    mpq_init(maxobj);
    
@@ -336,103 +531,15 @@ static PSResult simple_cols(
 
          continue;
       }
-      // ??? a lot of this is also done in redundantRows.
-
+      /* Column singleton
+       */
       if (var->size == 1)
       {
-         nzo = var->first;
-         con = nzo->con;
-         
-         assert(!mpq_equal(nzo->value, const_zero));
+         res = handle_col_singleton(lp, var, verbose_level, &rem_cols, &rem_nzos);
 
-         if (mpq_cmp(nzo->value, const_zero) > 0.0)
-         {
-            mpq_set(maxobj, var->cost);
-         
-            if (lp->direct == LP_MIN)
-               mpq_neg(maxobj, maxobj);
-            
-            // max -3 x
-            // s.t. 5 x <= 8
-            // l <= x
-            if (!HAS_LHS(con) && HAS_RHS(con) && mpq_cmp(maxobj, const_zero) <= 0 && HAS_LOWER(var))
-            {
-               lps_setupper(var, var->lower);
-
-               remove_fixed_var(lp, var, verbose_level);
-               
-               rem_cols++;
-               rem_nzos++;
-               continue;
-            }
-            // max  3 x
-            // s.t. 5 x >= 8
-            // x <= u
-            if (HAS_LHS(con) && !HAS_RHS(con) && mpq_cmp(maxobj, const_zero) >= 0 && HAS_UPPER(var))
-            {
-               lps_setlower(var, var->upper);
-
-               remove_fixed_var(lp, var, verbose_level);
-
-               rem_cols++;
-               rem_nzos++;
-               continue;
-            }
-         }
+         if (res != PRESOLVE_OKAY)
+            return res;
       }
-#if 0 // a lot of this is allready done in redundantRows.
-
-      // Column singleton without objective
-      else if (col.size() == 1 && isZero(lp.maxObj(i), epsilonSimplifier()))
-      {
-         Real x = col.value(0);
-         int  j = col.index(0);
-         
-         Real           up;
-         Real           lo;
-
-
-         if (GT(x, 0.0, epsilonSimplifier()))
-         {
-            if (lp.lower(i) > -infinity)
-               // TODO here should be checked if rhs < infinity
-               up = lp.rhs(j) - lp.lower(i) * x;
-            else
-               up = infinity;
-            
-            if (lp.upper(i) < infinity)
-               lo = lp.lhs(j) - lp.upper(i) * x;
-            else
-               lo = -infinity;
-         }
-         else if (LT(x, 0.0, epsilonSimplifier()))
-         {
-            if (lp.lower(i) > -infinity)
-               lo = lp.lhs(j) - lp.lower(i) * x;
-            else
-               lo = -infinity;
-            
-            if (lp.upper(i) < infinity)
-               up = lp.rhs(j) - lp.upper(i) * x;
-            else
-               up = infinity;
-         }
-         else
-         {
-            up = lp.rhs(j);
-            lo = lp.lhs(j);
-         }
-         
-         if (isZero(lo, epsilonSimplifier()))
-            lo = 0.0;
-         if (isZero(up, epsilonSimplifier()))
-            up = 0.0;
-         
-         lp.changeRange(j, lo, up);
-         rem[i] = -1;
-         num++;
-      }
-#endif // 0
    }
    assert(rem_cols != 0 || rem_nzos == 0);
 
@@ -456,9 +563,10 @@ PSResult lps_presolve(Lps* lp, int verbose_level)
 {
    PSResult ret = PRESOLVE_OKAY;
    Bool     again;
+   /*
    Bool     rcagain;
    Bool     rragain;
-   
+   */
    do
    {
       again = FALSE;
