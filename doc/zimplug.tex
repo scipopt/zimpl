@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.5 2003/10/15 16:31:49 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.6 2003/10/16 07:42:58 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -199,7 +199,9 @@ comment and is ignored.
 If a line starts with the word \code{include} followed by a filename in double
 quotation marks, this file is read instead of this line.
 
+%-----------------------------------------------------------------------------------------
 \subsection{Expressions}
+%-----------------------------------------------------------------------------------------
 \zimpl works on the lowest level with two types of data: Strings and
 numbers. 
 
@@ -272,7 +274,9 @@ strings the
 relational operators $<$, $<=$, $==$, $!=$, $>=$, and $>$ are
 defined.
 Combinations of boolean expressions with \code{and},
-or \code{or}, and negation with \code{not} are possible.
+\code{or}, and 
+\code{xor}\footnote{$a\wedge\bar{b}\vee \bar{a}\wedge b$} 
+and negation with \code{not} are possible.
 The expression \emph{tuple} \code{in} \emph{set-expression} can be used to test set
 membership of a tuple. 
 
@@ -413,7 +417,9 @@ set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 \end{verbatim}
 }
 
+%-----------------------------------------------------------------------------------------
 \subsection{Parameters}
+%-----------------------------------------------------------------------------------------
 Parameters can be declared with or without an indexing
 set. Without indexing the parameter is just one value, which is either
 a number or a string. For indexed parameters there is one
@@ -478,7 +484,9 @@ param k[I*I] :=  |  7,  8,  9 |
 \end{verbatim}
 }
 
+%-----------------------------------------------------------------------------------------
 \subsection{Variables}
+%-----------------------------------------------------------------------------------------
 Like parameters, variables can be indexed. 
 A variable has to be one out of three possible types: 
 Continuous (called {\em real}), binary or integer. The default is real. 
@@ -518,7 +526,9 @@ minimize cost: 12 * x1 -4.4 * x2
 \end{verbatim}
 }
 
+%-----------------------------------------------------------------------------------------
 \subsection{Constraints}
+%-----------------------------------------------------------------------------------------
 The general format for a constraint is 
 \code{subto name: term sense term}.
 Name can be any name starting with a letter. The term is defined
@@ -541,7 +551,9 @@ subto c40: x[1] == a[1] +
 \end{verbatim}
 }
 
+%-----------------------------------------------------------------------------------------
 \subsection{Details on \code{sum} and \code{forall}}
+%-----------------------------------------------------------------------------------------
 The general forms are
 
 \qquad\code{forall} \emph{index} \code{do} \emph{term}
@@ -574,7 +586,9 @@ forall <i,j> in X cross { 1 to 5 } without { <2,3> }
 Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
 instruction. So they are fixed for all invocations of \code{sum}.
 
+%-----------------------------------------------------------------------------------------
 \subsection{Details on \code{if} in constraints}
+%-----------------------------------------------------------------------------------------
 It is possible to put two variants of a constraint into an
 \code{if}-statement. The same is true for \emph{terms}.
 It is also possible to have a \code{forall} statement inside
@@ -591,7 +605,9 @@ subto c2: sum <i> in I :
 \end{verbatim}
 }
 
+%-----------------------------------------------------------------------------------------
 \subsection{Initialising sets and parameters from a file}
+%-----------------------------------------------------------------------------------------
 It is possible to load the values for a set or a parameter from a
 file. The syntax is
 
@@ -690,9 +706,9 @@ param winniepoh[X] :=
 \end{verbatim}
 }  
 
-
+%-----------------------------------------------------------------------------------------
 \subsection{Function Definitions}
-
+%-----------------------------------------------------------------------------------------
 It is possible to define function within \zimpl. The value a
 function returns has to be either a number, a string or a set.
 The arguments to a function can only be numbers or strings, but within
@@ -712,6 +728,79 @@ expression or set expression.
 defnumb dist(a,b)  := a*a + b*b;
 defstrg huehott(a) := if a < 0 then "hue" else "hott" end;
 defset  bigger(i)  := { <j> in K with j > i };
+\end{verbatim}
+}
+
+%-----------------------------------------------------------------------------------------
+\subsection{Extended Constraints (experimental)}
+%-----------------------------------------------------------------------------------------
+\zimpl has the possibility to generate systems of constraints that
+mimic conditional constraints. The general syntax is as  follows, note
+that the \code{else} part is optional:
+
+\smallskip
+\centerline{
+\code{vif} \emph{boolean-constraint} \code{then} \emph{constraint} 
+[ \code{else} \emph{constraint} ] \code{end}}
+
+\smallskip
+where \emph{boolean-constraint} consists of linear expression involving
+variables. Als these variables have to be bounded integer or binary
+variables. It is not possible to use any continuous variables or integer
+variables with infinite bounds in a boolean-constraint.
+All comparison operators ($<$, $\le$, $=$, $!\!\!\!=$, $\ge$, $>$) are
+allowed. Also combination of serveral terms with \code{and},
+\code{or}, and \code{xor} and negation with \code{not} is possible.
+The conditional constraints (those which follow after \code{then} or
+\code{else} may include bounded continous variables. 
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{Be aware that using this construct will lead to
+the generation of several additional constraints and variables.}}
+\end{center}
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+var x[i] integer >= 0 <= 20;
+
+subto c1: vif 3 * x[1] + x[2] != 7 
+   then sum <i> in I : y[i] <= 17
+   else sum <k> in K : z[k] >= 5 end;
+
+subto c2: vif x[1] == 1 and x[2] > 5 then x[3] == 7 end;
+
+subto c3: forall <i> in I : vif x[i] >= 2 then x[i + 1] <= 4 end;
+\end{verbatim}
+}
+
+%-----------------------------------------------------------------------------------------
+\subsection{Extended Functions (experimental)}
+%-----------------------------------------------------------------------------------------
+It is possible to use special functions on terms with variables that
+will automatically converted to a system of inequalities. The
+arguments of these functions have to be linear terms consisting out of
+bounded integer or binary variables. 
+
+The following functions are defined:
+
+\medskip
+\begin{tabular}{llp{7cm}}
+%\hline
+\code{vabs(t)}&Absolute value&$|t|$\\
+%\hline
+\end{tabular}
+
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{Be aware that using this construct will lead to
+the generation of several additional constraints and variables.}}
+\end{center}
+
+{\small 
+\begin{verbatim}
+var x[i] integer >= -5 <= 5;
+
+subto c1: vabs(x[1]) >= 5;
+subto c2: vabs(sum <i> in I : x[i]) <= 15;
+subto c2: vif vabs(x[1] + x[2]) > 2 then x[3] == 7 end;
 \end{verbatim}
 }
 

@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.26 2003/10/02 08:20:12 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.27 2003/10/16 07:42:58 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimpl.tex                                                     *
@@ -29,9 +29,9 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.26 2003/10/02 08:20:12 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.27 2003/10/16 07:42:58 bzfkocht Exp $
 %
-\parindent0ex
+%\parindent0ex
 \setcounter{tocdepth}{2}
 \setcounter{secnumdepth}{2}
 \renewcommand{\labelitemi}{$\blacktriangleright$}
@@ -97,10 +97,11 @@ Most of the things in \zimpl (and a lot more) can be found in
 the wonderful book about the modelling language \ampl 
 from Robert Fourer, David N. Gay and Brian W. Kernighan
 \cite{FourierGrayKernighan2003}.
-Indeed if not the guys at \ilog had needed more than three months just
-to tell me the price of \ampl for \cplex, I would probably use
-\ampl today.
-On the other hand, having the source code of a program has its advantages. The
+%Indeed if not the guys at \ilog had needed more than three months just
+%to tell me the price of \ampl for \cplex, I would probably use
+%\ampl today.
+%On the other hand, 
+But having the source code of a program has its advantages. The
 possibility to run it regardless of architecture and operating system, the
 ability to modify it to suite the needs, and not having to hassle with license
 managers may make a much less powerful program the better choice.
@@ -129,6 +130,7 @@ to put them back in the main distribution.
 \include{zimplug}
 %--------------------------------------------------------------------------------------
 \nocite{*}
+\small
 \bibliographystyle{alpha}
 \bibliography{zimpl}
 

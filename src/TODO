@@ -17,7 +17,7 @@ nichts erzeugt, sondern die angegebene variable benutzt.
 
 checken was passiert wenn man if bin_var == 1 then schreibt.
 
-xor testen, docu
+xor testen
 
 überprüfen ob type() in der semantic von inst.h richtig ist
 

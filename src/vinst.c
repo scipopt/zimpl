@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.6 2003/10/15 16:31:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.7 2003/10/16 07:42:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -109,6 +109,44 @@ static Entry* create_new_var_entry(
    return entry;
 }
 
+static VBFixed check_how_fixed(
+   VBCmpOp     cmp_op,
+   const Numb* rhs)
+{
+   VBFixed result = VBOOL_FALSE;
+   
+   switch(cmp_op)
+   {
+   case VBOOL_EQ :
+      if (numb_equal(rhs, numb_zero()))
+         result = VBOOL_TRUE;
+      break;
+   case VBOOL_NE :
+      if (!numb_equal(rhs, numb_zero()))
+         result = VBOOL_TRUE;
+      break;
+   case VBOOL_LE :
+      if (numb_cmp(numb_zero(), rhs) <= 0)
+         result = VBOOL_TRUE;
+      break;
+   case VBOOL_GE :
+      if (numb_cmp(numb_zero(), rhs) >= 0)
+         result = VBOOL_TRUE;
+      break;
+   case VBOOL_LT :
+      if (numb_cmp(numb_zero(), rhs) < 0)
+         result = VBOOL_TRUE;
+      break;
+   case VBOOL_GT :
+      if (numb_cmp(numb_zero(), rhs) > 0)
+         result = VBOOL_TRUE;
+      break;
+   default :
+      abort();
+   }
+   return result;
+}
+
 static VBFixed check_if_fixed(
    VBCmpOp     cmp_op,
    const Numb* lower,
@@ -202,7 +240,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    Entry*       entry_bminus;
    Entry*       entry_result;
    Numb*        numb;
-   VBFixed      fixed;
+   VBFixed      fixed = VBOOL_OPEN;
    
    Trace("handle_vbool_cmp");
    
@@ -215,16 +253,6 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    rhs        = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
    term       = term_sub_term(term_lhs, term_rhs);
 
-   /* Check if trival infeasible
-    */
-   if (term_get_elements(term) == 0)
-   {
-      fprintf(stderr, "--- Warning 176: Empty LHS, in boolean constraint\n");
-      code_errmsg(code_get_child(self, 0));
-
-      /* Jetzt muss noch true/false festgestellt werden
-       */
-   }
    if (!term_is_all_integer(term))
    {
       fprintf(stderr, "*** Error 177: Boolean constraint not all integer\n");
@@ -243,8 +271,21 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
 
-   fixed = check_if_fixed(cmp_op, bound_get_value(lower), bound_get_value(upper));
+   /* Check if trival infeasible
+    */
+   if (term_get_elements(term) == 0)
+   {
+      fprintf(stderr, "--- Warning 176: Empty LHS, in boolean constraint\n");
+      code_errmsg(code_get_child(self, 0));
 
+      fixed = check_how_fixed(cmp_op, rhs);
+
+      assert(fixed != VBOOL_OPEN);
+   }
+   else
+   {
+      fixed = check_if_fixed(cmp_op, bound_get_value(lower), bound_get_value(upper));
+   }
    if (fixed != VBOOL_OPEN)
    {
       if (fixed == VBOOL_TRUE)
@@ -739,7 +780,9 @@ static void generate_conditional_constraint(
    
    assert(con_type == CON_RHS || con_type == CON_LHS);
 
-   bound = (con_type == CON_RHS) ? term_get_upper_bound(lhs_term) : term_get_lower_bound(lhs_term);
+   bound = (con_type == CON_RHS)
+      ? term_get_upper_bound(lhs_term)
+      : term_get_lower_bound(lhs_term);
    
    if (bound_get_type(bound) != BOUND_VALUE)
    {
