@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.4 2003/10/04 16:22:07 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.5 2003/10/15 16:31:49 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -41,7 +41,7 @@ for humans.
    ENDATA
 \end{verbatim}
 }
-Another possibility is the \lpf format \cite{ILOG2002}, which is more
+Another possibility is the \lpf format \cite{CPlex80}, which is more
 readable\footnote{
 The \lpf format has also some idiosyncratic restrictions. For example
 variables should not be named \code{e12} or the like. And it is not
@@ -1028,21 +1028,21 @@ can produce:
   The attempt was made to declare an indexed parameter with the
   empty set as index set. Most likely the index set has a \code{with}
   clause which has rejected all elements.
-\item[136 Lower bound for var \code{xxx} set to infinity -- ignored]\ \\
+\item[136 Lower bound for var \code{xxx} set to infinity -- ignored] (warning)\ \\
   In the zimpl code something like \code{$\ge$ infinity} must have
   been appeared. This makes no sense and is therefore ignored.
-\item[137 Upper bound for var \code{xxx} set to -infinity -- ignored]\ \\
+\item[137 Upper bound for var \code{xxx} set to -infinity -- ignored] (warning)\ \\
   In the zimpl code something like \code{$\le$ -infinity} must have 
   been appeared. This makes no sense and is therefore ignored.
-\item[138 Priority/Startval for continous var \code{xxx} ignored]\ \\
+\item[138 Priority/Startval for continous var \code{xxx} ignored] (warning)\ \\
   There has been set a priority or a starting value for a continous 
   (\code{real}) variable. This is not possible and therefore ignored.
 \item[139 Lower bound for integral var \code{xxx} truncated to
-  \code{yyy}]\ \\
+  \code{yyy}] (warning)\ \\
   An integral variable can only have an integral bound. So the given
   non integral bound was ajusted.
 \item[140 Upper bound for integral var \code{xxx} truncated to
-  \code{yyy}]\ \\
+  \code{yyy}] (warning)\ \\
   An integral variable can only have an integral bound. So the given
   non integral bound was ajusted.
 \item[141 Infeasible due to conflicting bounds for var \code{xxx}]\ \\
@@ -1103,7 +1103,7 @@ can produce:
 % elem.c
 % 
 \item[160 Comparison of elements with different types \code{xxx} /
-  \code{yyy}]\ \\
+  \code{yyy}] (warning)\ \\
   Two elements from different tuples were compared and found to be 
   of different types. Probably you have a index expression with a 
   constant element, that does not match the elements of the set.
@@ -1114,7 +1114,7 @@ can produce:
 \item[161 Line \code{xxx}: Unterminated string]\ \\
   This line has an odd number of \code{"} characters. 
   A String was started, but not ended.
-\item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored]\ \\
+\item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored] (warning)\ \\
   Something was found after the last semicolon in the file.
 \item[163 Line \code{xxx}: Syntax Error]\ \\
   A new statement was not started with one of the keywords:
@@ -1123,21 +1123,22 @@ can produce:
 %
 % set.c
 %
-\item[164 Dublicate element \code{xxx} for set rejected]\ \\
+\item[164 Dublicate element \code{xxx} for set rejected] (warning)\ \\
    An element was added to a set that was already in it.
-\item[165 Comparison of differen dimension sets]\ \\
+\item[165 Comparison of differen dimension sets] (warning)\ \\
    Two sets were compared, but have different dimension tuples.
    (This means they never had a chance other then beeing empty sets to
    be equal.)
 %
 % symbol.c
 %
-\item[166 Dublicate element \code{xxx} for symbol \code{yyy} rejected]\ \\
+\item[166 Dublicate element \code{xxx} for symbol \code{yyy} rejected]
+   (warning)\ \\
   An element that was already there was added to a symbol.
 %
 % tuple.c
 %
-\item[167 Comparison of different dimension tuples]\ \\
+\item[167 Comparison of different dimension tuples] (warning)\ \\
   Two tuples with different dimensions were compared.
   Probably you have a index expression which does not match the  
   dimension of the tuples in the set.
@@ -1183,11 +1184,35 @@ can produce:
 % zimpl.c
 %
 \item[175] Illegal syntax for command line define \code{"xxx"} --
-  ignored]\ \\
+  ignored] (warning)\ \\
   A parameter definition using the command line \code{-D} flag, must
   have the form \code{name=value}. The \code{name} must be a legal
   identifier, \ie it has to start with a letter and may consist only out
   of letters and numbers including the underscore. 
+%
+% vinst.c
+%
+\item[176 Empty LHS, in boolean constraint] (warning)\ \\
+   The left hand side, \ie the term with the variables, is empty. 
+\item[177 Boolean constraint not all integer]\ \\
+   No continous (real) variables are allowed in a boolean constraint.
+\item[178 Conditional always true or false due to bounds] (warning)\ \\
+   All or part of a boolean constraint are always either true or
+   false, due to the bounds of variables.
+\item[179 Conditional only possible on bounded constraints]\ \\
+   A boolean constraint has at least one variable without finite bounds.
+\item[180 Conditional constraint always true due to bounds] (warning)\ \\
+   The result part of a conditional constraint is always true anyway. 
+   This due to the bounds of the variables involved.
+\item[181 Empty LHS, not allowed in conditional constraint]\ \\
+   The result part of a conditional constraint may not be empty.
+\item[182 Empty LHS, in variable vabs]\ \\
+   There are no variables in the argument to a \code{vabs} function.
+   Either everything is zero, or just use \code{abs}.
+\item[183 vabs term not all integer]\ \\
+   There are non integer variables in the argument to a \code{vabs} function.
+   Due to numerical reasons continuos variables are not allowed as
+   arguments to \code{vabs}. 
 %
 % numbgmp.c
 %
@@ -1204,6 +1229,8 @@ the argument was too small to be represented as a \code{double}.
 %\item[]\ \\
 %\item[]\ \\
 %\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
 % mmlscan.l
 \item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
   Parsing error. What was found was not what was expected.
@@ -1215,4 +1242,5 @@ the argument was too small to be represented as a \code{double}.
 % inst.c
 %
 \item[900 Check failed!]\ \\
+  A \code{check} instruction did not evaluate to true. 
 \end{description}

@@ -1,3 +1,5 @@
+Improve position of error messages by giving the right child.
+
 set.c testen ob bestimmte tuple automatisch in reihenfolge 
 erzeugt werden. Wenn ja, markieren, damit binsearch eingesetzt 
 werden kann. (z.B. range oder subset)

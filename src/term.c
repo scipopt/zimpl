@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.21 2003/10/13 16:11:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.22 2003/10/15 16:31:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -374,8 +374,6 @@ Bound* term_get_lower_bound(const Term* term)
          ? xlp_getlower(entry_get_var(term->elem[i].entry))
          : xlp_getupper(entry_get_var(term->elem[i].entry));
       
-      bound = xlp_getlower(entry_get_var(term->elem[i].entry));
-
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
 
@@ -386,6 +384,8 @@ Bound* term_get_lower_bound(const Term* term)
       bound_free(bound);
       numb_free(value);
    }
+   numb_add(lower, term->constant);
+
    bound = bound_new(BOUND_VALUE, lower);
 
  finish:
@@ -424,6 +424,8 @@ Bound* term_get_upper_bound(const Term* term)
       bound_free(bound);
       numb_free(value);
    }
+   numb_add(upper, term->constant);
+   
    bound = bound_new(BOUND_VALUE, upper);
 
  finish:
@@ -470,10 +472,10 @@ void term_print(FILE* fp, const Term* term, int flag)
 
       tuple = entry_get_tuple(term->elem[i].entry);
       
-      /* fprintf(fp, "%s", symbol_get_name(term->elem[i].symbol));
-       */
       if (flag & TERM_PRINT_SYMBOL)
          tuple_print(fp, tuple);
+
+      numb_free(coeff);
    }
    if (!numb_equal(term->constant, numb_zero()))
    {
@@ -484,6 +486,7 @@ void term_print(FILE* fp, const Term* term, int flag)
    }
 }
 #endif /* !NDEBUG */
+
 
 
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.5 2003/10/12 10:36:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.6 2003/10/15 16:31:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -40,8 +40,10 @@
 #include "xlpglue.h"
 
 enum vbool_cmp_operator { VBOOL_LT, VBOOL_LE, VBOOL_EQ, VBOOL_NE, VBOOL_GE, VBOOL_GT };
+enum vbool_fixed_result { VBOOL_TRUE, VBOOL_FALSE, VBOOL_OPEN };
 
 typedef enum vbool_cmp_operator VBCmpOp;
+typedef enum vbool_fixed_result VBFixed;
 
 static int internal_vars = 0;
 static int internal_cons = 0;
@@ -107,6 +109,80 @@ static Entry* create_new_var_entry(
    return entry;
 }
 
+static VBFixed check_if_fixed(
+   VBCmpOp     cmp_op,
+   const Numb* lower,
+   const Numb* upper)
+{
+   VBFixed result = VBOOL_OPEN;
+
+   /* lower <= upper
+    */
+   assert(numb_cmp(lower, upper) <= 0);
+
+   switch(cmp_op)
+   {
+   case VBOOL_EQ :
+      if (  (numb_cmp(lower, numb_zero()) > 0)
+         || (numb_cmp(upper, numb_zero()) < 0))
+         result = VBOOL_FALSE;
+      else
+      {
+         if (numb_equal(lower, upper))
+         {
+            assert(numb_equal(lower, numb_zero()));
+            assert(numb_equal(upper, numb_zero()));
+
+            result = VBOOL_TRUE;
+         }
+      }
+      break;
+   case VBOOL_NE :
+      if (  (numb_cmp(lower, numb_zero()) > 0)
+         || (numb_cmp(upper, numb_zero()) < 0))
+         result = VBOOL_TRUE;
+      else
+      {
+         if (numb_equal(lower, upper))
+         {
+            assert(numb_equal(lower, numb_zero()));
+            assert(numb_equal(upper, numb_zero()));
+            
+            result = VBOOL_FALSE;
+         }
+      }
+      break;
+   case VBOOL_LE :
+      if (numb_cmp(upper, numb_zero()) <= 0)
+         result = VBOOL_TRUE;
+      else if (numb_cmp(lower, numb_zero()) > 0)
+         result = VBOOL_FALSE;
+      break;
+   case VBOOL_GE :
+      if (numb_cmp(lower, numb_zero()) >= 0)
+         result = VBOOL_TRUE;
+      else if (numb_cmp(upper, numb_zero()) < 0)
+         result = VBOOL_FALSE;
+      break;
+   case VBOOL_LT :
+      if (numb_cmp(upper, numb_zero()) < 0)
+         result = VBOOL_TRUE;
+      else if (numb_cmp(lower, numb_zero()) >= 0)
+         result = VBOOL_FALSE;
+      break;
+   case VBOOL_GT :
+      if (numb_cmp(lower, numb_zero()) > 0)
+         result = VBOOL_TRUE;
+      else if (numb_cmp(upper, numb_zero()) <= 0)
+         result = VBOOL_FALSE;
+      break;
+   default :
+      abort();
+   }
+   return result;
+}
+
+
 static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
 {
    Symbol*      sym;
@@ -126,6 +202,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    Entry*       entry_bminus;
    Entry*       entry_result;
    Numb*        numb;
+   VBFixed      fixed;
    
    Trace("handle_vbool_cmp");
    
@@ -138,185 +215,211 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    rhs        = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
    term       = term_sub_term(term_lhs, term_rhs);
 
-   term_add_constant(term, rhs);
-
    /* Check if trival infeasible
     */
    if (term_get_elements(term) == 0)
    {
-      fprintf(stderr, "*** Error ???: Empty LHS, in boolean constraint\n");
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
+      fprintf(stderr, "--- Warning 176: Empty LHS, in boolean constraint\n");
+      code_errmsg(code_get_child(self, 0));
+
+      /* Jetzt muss noch true/false festgestellt werden
+       */
    }
    if (!term_is_all_integer(term))
    {
-      fprintf(stderr, "*** Error ???: Boolean constraint not all integer\n");
-      code_errmsg(self);
+      fprintf(stderr, "*** Error 177: Boolean constraint not all integer\n");
+      code_errmsg(code_get_child(self, 0));
       exit(EXIT_FAILURE);
    }
+   /* Symbol for internal entries
+    */
+   sym        = symbol_lookup(SYMBOL_NAME_INTERNAL);
+
+   assert(sym != NULL);
+
    cname      = conname_get();
    bound_zero = bound_new(BOUND_VALUE, numb_zero());
    bound_one  = bound_new(BOUND_VALUE, numb_one());
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
 
-   if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
+   fixed = check_if_fixed(cmp_op, bound_get_value(lower), bound_get_value(upper));
+
+   if (fixed != VBOOL_OPEN)
    {
-      numb = numb_copy(bound_get_value(lower));
-      numb_abs(numb);
-      bound_free(lower);
-      lower = bound_new(BOUND_VALUE, numb);
-      numb_free(numb);
+      if (fixed == VBOOL_TRUE)
+         entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_one, bound_one);
+      else
+      {
+         assert(fixed == VBOOL_FALSE);
+
+         entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_zero);
+      }
+      if (verbose == VERB_NORMAL)
+      {
+         fprintf(stderr, "--- Warning 178: Conditional always true or false due to bounds\n");
+         code_errmsg(code_get_child(self, 0)); /* pos of warning message */
+      }  
+      term_free(term);
    }
    else
    {
-      bound_free(lower);
-      lower = bound_new(BOUND_VALUE, numb_zero());
-   }
+      /* Remove constant from term
+       */
+      term_add_constant(term, rhs);
+
+      if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
+      {
+         numb = numb_copy(bound_get_value(lower));
+         numb_abs(numb);
+         bound_free(lower);
+         lower = bound_new(BOUND_VALUE, numb);
+         numb_free(numb);
+      }
+      else
+      {
+         bound_free(lower);
+         lower = bound_new(BOUND_VALUE, numb_zero());
+      }
    
-   if (numb_cmp(bound_get_value(upper), numb_zero()) < 0)
-   {
-      bound_free(upper);
-      upper = bound_new(BOUND_VALUE, numb_zero());
-   }
-   /* Create x^+, x^-, b^+, b^-, Result
-    */
-   entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
-   entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
-   entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
-   entry_bminus = create_new_var_entry(cname, "_bm", VAR_BIN, bound_zero, bound_one);
-   entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+      if (numb_cmp(bound_get_value(upper), numb_zero()) < 0)
+      {
+         bound_free(upper);
+         upper = bound_new(BOUND_VALUE, numb_zero());
+      }
+      /* Create x^+, x^-, b^+, b^-, Result
+       */
+      entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
+      entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
+      entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
+      entry_bminus = create_new_var_entry(cname, "_bm", VAR_BIN, bound_zero, bound_one);
+      entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
 
-   /* add term = x^+ + x^-
-    */
-   term_add_elem(term, entry_xplus, numb_minusone());
-   term_add_elem(term, entry_xminus, numb_one());
+      /* add term = x^+ + x^-
+       */
+      term_add_elem(term, entry_xplus, numb_minusone());
+      term_add_elem(term, entry_xminus, numb_one());
 
-   create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
+      create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
    
-   /* bplus <= xplus */
-   term = term_new(2);
-   term_add_elem(term, entry_bplus, numb_one());
-   term_add_elem(term, entry_xplus, numb_minusone());
-   create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
+      /* bplus <= xplus */
+      term = term_new(2);
+      term_add_elem(term, entry_bplus, numb_one());
+      term_add_elem(term, entry_xplus, numb_minusone());
+      create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
 
-   /* bminus <= xminus */
-   term = term_new(2);
-   term_add_elem(term, entry_bminus, numb_one());
-   term_add_elem(term, entry_xminus, numb_minusone());
-   create_new_constraint(cname, "_c", term, CON_RHS, numb_zero(), flags);
-
-   /* bplus * upper >= xplus */
-   term = term_new(2);
-   if (!numb_equal(bound_get_value(upper), numb_zero()))
-      term_add_elem(term, entry_bplus, bound_get_value(upper));
-   term_add_elem(term, entry_xplus, numb_minusone());
-   create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
-
-   /* bminus * lower >= xminus */
-   term = term_new(2);
-   if (!numb_equal(bound_get_value(lower), numb_zero()))
-      term_add_elem(term, entry_bminus, bound_get_value(lower));
-   term_add_elem(term, entry_xminus, numb_minusone());
-   create_new_constraint(cname, "_e", term, CON_LHS, numb_zero(), flags);
-
-   switch(cmp_op)
-   {
-   case VBOOL_EQ :
-      /* 1 - result = bplus + bminus =>  result + bplus + bminus = 1 */
-      term = term_new(3);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bplus,  numb_one());
+      /* bminus <= xminus */
+      term = term_new(2);
       term_add_elem(term, entry_bminus, numb_one());
-      create_new_constraint(cname, "_f", term, CON_EQUAL, numb_one(), flags);
-      break;
-   case VBOOL_NE :
-      /* result = bplus + bminus  =>  result - bplus - bminus = 0*/
-      term = term_new(3);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bplus,  numb_minusone());
-      term_add_elem(term, entry_bminus, numb_minusone());
-      create_new_constraint(cname, "_f", term, CON_EQUAL, numb_zero(), flags);
-      break;
-   case VBOOL_LE :
-      /* bplus + bminus <= 1,
-       * result = 1 - bplus => result + bplus = 1
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_bplus,  numb_one());
-      term_add_elem(term, entry_bminus, numb_one());
-      create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+      term_add_elem(term, entry_xminus, numb_minusone());
+      create_new_constraint(cname, "_c", term, CON_RHS, numb_zero(), flags);
 
+      /* bplus * upper >= xplus */
       term = term_new(2);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bplus,  numb_one());
-      create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
-      break;
-   case VBOOL_GE :
-      /* bplus + bminus <= 1,
-       * result = 1 - bminus => result + bminus = 1
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_bplus,  numb_one());
-      term_add_elem(term, entry_bminus, numb_one());
-      create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+      if (!numb_equal(bound_get_value(upper), numb_zero()))
+         term_add_elem(term, entry_bplus, bound_get_value(upper));
+      term_add_elem(term, entry_xplus, numb_minusone());
+      create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
 
+      /* bminus * lower >= xminus */
       term = term_new(2);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bminus,  numb_one());
-      create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
-      break;
-   case VBOOL_LT :
-      /* bplus + bminus <= 1,
-       * result = bminus => result - bminus = 0
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_bplus,  numb_one());
-      term_add_elem(term, entry_bminus, numb_one());
-      create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+      if (!numb_equal(bound_get_value(lower), numb_zero()))
+         term_add_elem(term, entry_bminus, bound_get_value(lower));
+      term_add_elem(term, entry_xminus, numb_minusone());
+      create_new_constraint(cname, "_e", term, CON_LHS, numb_zero(), flags);
 
-      /* This is somewhat superflous
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bminus,  numb_minusone());
-      create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
-      break;
-   case VBOOL_GT :
-      /* bplus + bminus <= 1,
-       * result = bplus => result - bplus = 0
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_bplus,  numb_one());
-      term_add_elem(term, entry_bminus, numb_one());
-      create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+      switch(cmp_op)
+      {
+      case VBOOL_EQ :
+         /* 1 - result = bplus + bminus =>  result + bplus + bminus = 1 */
+         term = term_new(3);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_bminus, numb_one());
+         create_new_constraint(cname, "_f", term, CON_EQUAL, numb_one(), flags);
+         break;
+      case VBOOL_NE :
+         /* result = bplus + bminus  =>  result - bplus - bminus = 0*/
+         term = term_new(3);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bplus,  numb_minusone());
+         term_add_elem(term, entry_bminus, numb_minusone());
+         create_new_constraint(cname, "_f", term, CON_EQUAL, numb_zero(), flags);
+         break;
+      case VBOOL_LE :
+         /* bplus + bminus <= 1,
+          * result = 1 - bplus => result + bplus = 1
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_bminus, numb_one());
+         create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
 
-      /* This is somewhat superflous
-       */
-      term = term_new(2);
-      term_add_elem(term, entry_result, numb_one());
-      term_add_elem(term, entry_bplus,  numb_minusone());
-      create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
-      break;
-   default :
-      abort();
+         term = term_new(2);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one());
+         create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
+         break;
+      case VBOOL_GE :
+         /* bplus + bminus <= 1,
+          * result = 1 - bminus => result + bminus = 1
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_bminus, numb_one());
+         create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+
+         term = term_new(2);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bminus,  numb_one());
+         create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
+         break;
+      case VBOOL_LT :
+         /* bplus + bminus <= 1,
+          * result = bminus => result - bminus = 0
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_bminus, numb_one());
+         create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+
+         /* This is somewhat superflous
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bminus,  numb_minusone());
+         create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
+         break;
+      case VBOOL_GT :
+         /* bplus + bminus <= 1,
+          * result = bplus => result - bplus = 0
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_bminus, numb_one());
+         create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
+
+         /* This is somewhat superflous
+          */
+         term = term_new(2);
+         term_add_elem(term, entry_result, numb_one());
+         term_add_elem(term, entry_bplus,  numb_minusone());
+         create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
+         break;
+      default :
+         abort();
+      }
+      symbol_add_entry(sym, entry_xplus);
+      symbol_add_entry(sym, entry_xminus);
+      symbol_add_entry(sym, entry_bplus);
+      symbol_add_entry(sym, entry_bminus);
    }
    //------------------------------------------------------
    term = term_new(1);
    term_add_elem(term, entry_result, numb_one());
 
    code_value_term(self, term);
-
-   /* Symbol for internal entries
-    */
-   sym  = symbol_lookup(SYMBOL_NAME_INTERNAL);
-
-   assert(sym != NULL);
    
-   symbol_add_entry(sym, entry_xplus);
-   symbol_add_entry(sym, entry_xminus);
-   symbol_add_entry(sym, entry_bplus);
-   symbol_add_entry(sym, entry_bminus);
    symbol_add_entry(sym, entry_result);
    
    bound_free(bound_one);
@@ -636,29 +739,43 @@ static void generate_conditional_constraint(
    
    assert(con_type == CON_RHS || con_type == CON_LHS);
 
-   bound = con_type == CON_RHS ? term_get_upper_bound(lhs_term) : term_get_lower_bound(lhs_term);
+   bound = (con_type == CON_RHS) ? term_get_upper_bound(lhs_term) : term_get_lower_bound(lhs_term);
    
    if (bound_get_type(bound) != BOUND_VALUE)
    {
-      fprintf(stderr, "*** Error ???: Conditional only possible on bounded constraints\n");
+      fprintf(stderr, "*** Error 179: Conditional only possible on bounded constraints\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
    bound_val = bound_get_value(bound);
-   big_term  = term_copy(vif_term);
-   big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
-   new_rhs   = then_case ? bound_val : rhs;
-      
-   term_mul_coeff(big_term, big_m);
-   term_append_term(big_term, lhs_term);
 
-   con = xlp_addcon(conname_get(), con_type, new_rhs, new_rhs, flags);
-   
-   term_to_nzo(big_term, con);
+   if (  (con_type == CON_RHS && numb_cmp(bound_val, rhs) <= 0)
+      || (con_type == CON_LHS && numb_cmp(bound_val, rhs) >= 0))
+   {
+      if (verbose == VERB_NORMAL)
+      {
+         fprintf(stderr, "--- Warning 180: Conditional constraint always true due to bounds\n");
+         code_errmsg(self);
+      }  
+   }
+   else
+   {
+      big_term  = term_copy(vif_term);
+      big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
+      new_rhs   = then_case ? bound_val : rhs;
       
+      term_mul_coeff(big_term, big_m);
+
+      term_append_term(big_term, lhs_term);
+
+      con = xlp_addcon(conname_get(), con_type, new_rhs, new_rhs, flags);
+   
+      term_to_nzo(big_term, con);
+
+      numb_free(big_m);
+      term_free(big_term);
+   }
    bound_free(bound);
-   numb_free(big_m);
-   term_free(big_term);
 }
 
 static void handle_vif_then_else(
@@ -683,11 +800,10 @@ static void handle_vif_then_else(
     */
    if (term_get_elements(term) == 0)
    {
-      fprintf(stderr, "*** Error ???: Empty LHS, not allowed\n");
+      fprintf(stderr, "*** Error 181: Empty LHS, not allowed in conditional constraint\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
-
    assert(con_type == CON_RHS || con_type == CON_LHS || con_type == CON_EQUAL);
    
    /* <=, ==
@@ -721,13 +837,15 @@ CodeNode* i_vif_else(CodeNode* self)
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
 
-   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
+   handle_vif_then_else(code_get_child(self, 1), /* pos for error messages */
+      vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
    
    lhs_term   = code_eval_child_term(self, 4);
    con_type   = code_eval_child_contype(self, 5);
    rhs_term   = code_eval_child_term(self, 6);
 
-   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, FALSE);
+   handle_vif_then_else(code_get_child(self, 4), /* pos for error messages */
+      vif_term, lhs_term, con_type, rhs_term, flags, FALSE);
 
    code_value_void(self);
 
@@ -751,7 +869,8 @@ CodeNode* i_vif(CodeNode* self)
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
 
-   handle_vif_then_else(self, vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
+   handle_vif_then_else(code_get_child(self, 1), /* pos for error messages */
+      vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
    
    code_value_void(self);
 
@@ -787,19 +906,17 @@ CodeNode* i_vabs(CodeNode* self)
    rhs      = term_get_constant(term_abs);
    term     = term_copy(term_abs);
 
-   term_sub_constant(term, rhs);
-
    /* Check if trival infeasible
     */
    if (term_get_elements(term) == 0)
    {
-      fprintf(stderr, "*** Error ???: Empty LHS, in boolean constraint\n");
+      fprintf(stderr, "*** Error 182: Empty LHS, in variable vabs\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
    if (!term_is_all_integer(term))
    {
-      fprintf(stderr, "*** Error ???: vabs term not all integer\n");
+      fprintf(stderr, "*** Error 183: vabs term not all integer\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
@@ -809,6 +926,8 @@ CodeNode* i_vabs(CodeNode* self)
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
    
+   term_sub_constant(term, rhs);
+
    if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
    {
       numb = numb_copy(bound_get_value(lower));
