@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.50 2003/08/21 08:12:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.51 2003/08/22 15:01:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -362,12 +362,6 @@ CodeNode* i_expr_pow(CodeNode* self)
    }
    ex = numb_toint(expo);
 
-   if (ex < 0)
-   {
-      fprintf(stderr, "*** Error: negative exponent\n");
-      code_errmsg(self);
-      abort();
-   }
    code_value_numb(self,
       numb_new_pow(code_eval_child_numb(self, 0), ex));
 

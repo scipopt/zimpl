@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.10 2003/08/21 10:59:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.11 2003/08/22 15:01:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1582,9 +1582,9 @@ void lps_scale(const Lps* lp)
    for(con = lp->con_root; con != NULL; con = con->next)
    {
       if ((con->flags & LP_FLAG_CON_SCALE) > 0)
-      {         
-         /* should be abs and I don't know if it is right maximum = con->rhs; */
-      
+      {
+         mpq_set_ui(maximum, 0, 1);  /* = 0 */
+
          for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
          {
             mpq_abs(v, nzo->value);
@@ -1594,8 +1594,12 @@ void lps_scale(const Lps* lp)
          }
          mpq_inv(con->scale, maximum); /* scale = 1 / maximum */
 
-         mpq_mul(con->rhs, con->rhs, con->scale);
+         if (HAS_RHS(con))
+            mpq_mul(con->rhs, con->rhs, con->scale);
 
+         if (HAS_LHS(con))
+            mpq_mul(con->lhs, con->lhs, con->scale);
+            
          for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
             mpq_mul(nzo->value, nzo->value, con->scale);
       }

@@ -1,3 +1,10 @@
+Bug mit datei ohne ; keine Ausgabe.
+Falscher Dateityp sollte früher erkannt werden.
+
+parameter mit -s auf der Kommandozeile setzen können.
+
+check mit fixierten variablen.
+
 check separate, scale flag
 
 checks auf für MPS

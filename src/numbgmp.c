@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.6 2003/08/07 08:56:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.7 2003/08/22 15:01:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -396,16 +396,24 @@ Numb* numb_new_pow(const Numb* base, int expo)
 {
    Numb* numb = numb_new();
    int   i;
+   Bool  is_negative = FALSE;
    
    assert(numb != NULL);
    assert(numb_is_valid(base));
-   assert(expo >= 0);
 
+   if (expo < 0)
+   {
+      is_negative = TRUE;
+      expo        = -expo;
+   }
    mpq_set_si(numb->value.numb, 1, 1);  /* set to 1 */
 
    for(i = 1; i <= expo; i++)
       mpq_mul(numb->value.numb, numb->value.numb, base->value.numb);
 
+   if (is_negative)
+      mpq_inv(numb->value.numb, numb->value.numb);
+   
    return numb;
 }
 
