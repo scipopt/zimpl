@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.4 2002/02/24 11:05:29 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.5 2002/07/05 12:47:47 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -19,9 +19,9 @@
 \usepackage{fancyhdr}
 \usepackage{xspace}
 \usepackage{url}
-\usepackage{zibtitlepage}
+%\usepackage{zibtitlepage}
 \usepackage[notoday,nofancy]{rcsinfo}
-\rcsInfo $Id: zimpl.tex,v 1.4 2002/02/24 11:05:29 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.5 2002/07/05 12:47:47 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -48,21 +48,21 @@
 \pagestyle{fancy}
 %
 \begin{document}
-\ZTPAuthor{Thorsten Koch}
-\ZTPTitle{\zimpl User Guide}
+%\ZTPAuthor{Thorsten Koch}
+%\ZTPTitle{\zimpl User Guide}
 %\ZTPInfo{Best preprint of the year 2000}
-\ZTPNumber{01-20}
-\ZTPMonth{August}
-\ZTPPreprint
-\ZTPYear{2001}
-\zibtitlepage
+%\ZTPNumber{01-20}
+%\ZTPMonth{August}
+%\ZTPPreprint
+%\ZTPYear{2001}
+%\zibtitlepage
 
 \title{
 %\vspace*{-3cm}\epsfig{file=ziblogo2.eps,width=3cm}\\[\bigskipamount]
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small 11. March 2001}
+\date{\small 5. July 2002}
 \maketitle
 \vfill
 \begin{abstract}
@@ -253,12 +253,14 @@ usual one. If in doubt use parenthesis to be save.
 
 \subsubsection{Numeric expressions}
 The following functions are currently implemented: 
-$^\wedge$,\code{+,-,*,/,mod,div}. $\wedge$ stands for \emph{to the
+$^\wedge$,\code{+,-,*,/,mod,div,abs,floor,ceil}. 
+$\wedge$ stands for \emph{to the
 power of}. \code{mod} is the modulo function and
 \code{div} gives the integer part of a division. \code{**} can be used
 as synonym for $^\wedge$.
 With $\min$ and $\max$ it is possible to find the minimum/maximum
-member of an one dimension set of numeric values.
+member of an one dimensional set of numeric values.
+\code{card} gives the cardinality of a set.
 
 The following is also a numeric expression:
 

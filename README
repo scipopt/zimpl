@@ -5,12 +5,6 @@ problem into a linear or (mixed-)integer mathematical program
 expressed in .lp or .mps file format which can be read by a LP or MIP
 solver.
 
-WARNING
--------
-This code is not very well tested and could be regarded as in beta test. 
-Even as the version number says 1.0.
-Think of it like a Micro$oft version 1.0 not a Linux one. 
-
 INSTALLATION
 ------------
 GNU Make is needed to use the makefiles. 

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.15 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.16 2002/07/05 12:47:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -222,6 +222,24 @@ void i_expr_abs(CodeNode* self)
    assert(code_is_valid(self));
 
    code_value_numb(self, fabs(Code_eval_child_numb(self, 0)));
+}
+
+void i_expr_floor(CodeNode* self)
+{
+   Trace("i_floor");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self, floor(Code_eval_child_numb(self, 0)));
+}
+
+void i_expr_ceil(CodeNode* self)
+{
+   Trace("i_ceil");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self, ceil(Code_eval_child_numb(self, 0)));
 }
 
 void i_expr_card(CodeNode* self)

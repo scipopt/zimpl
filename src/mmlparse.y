@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.13 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.14 2002/07/05 12:47:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -68,7 +68,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT
 %token MOD DIV POW
-%token CARD ABS
+%token CARD ABS FLOOR CEIL
 %token READ AS SKIP USE COMMENT
 %token <name> NUMBSYM
 %token <name> STRGSYM
@@ -102,7 +102,7 @@ extern void yyerror(const char* s);
 %left  '*' '/' MOD DIV
 %left  UNARY
 %left  POW
-%left  ABS CARD
+%left  ABS CARD FLOOR CEIL
 %%
 stmt
    : decl_set   { code_set_root($1); }
@@ -419,6 +419,8 @@ expr
    | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
    | CARD sexpr            { $$ = code_new_inst(i_expr_card, 1, $2); }
    | ABS expr              { $$ = code_new_inst(i_expr_abs, 1, $2); }
+   | FLOOR expr            { $$ = code_new_inst(i_expr_floor, 1, $2); }
+   | CEIL expr             { $$ = code_new_inst(i_expr_ceil, 1, $2); }
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }

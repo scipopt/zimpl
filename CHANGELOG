@@ -1,3 +1,8 @@
+1.02 05.Jul 2002 Release
+
+ - new functions FLOOR(expr) and CEIL(expr) which find the
+   next integer down and up.
+
  - Bug fixed in MPS output that lets zimpl write BOUND lines
    for variables that are not used.
 
