@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.1 2003/10/01 08:51:12 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.2 2003/10/02 08:20:12 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -18,7 +18,7 @@ $$
 \end{array}
 $$
 The usual format to store the description of such a problem is \mps
-invented by \ibm \cite{IBM97} long ago. 
+invented by \ibm \cite{IBM1997} long ago. 
 Nearly all available \lp and \mip solvers can read this format.
 While \mps is a nice format to punch into a punch card and at least a
 reasonable format to read for a computer it is quite unreadable
@@ -41,7 +41,7 @@ for humans.
    ENDATA
 \end{verbatim}
 }
-Another possibility is the \lpf format \cite{ILO02}, which is more
+Another possibility is the \lpf format \cite{ILOG2002}, which is more
 readable\footnote{
 The \lpf format has also some idiosyncratic restrictions. For example
 variables should not be named \code{e12} or the like. And it is not
@@ -697,23 +697,40 @@ defset  bigger(i)  := { <j> in K with j > i };
 
 \newpage
 \section{Examples}
+In this section we will show examples how to translate a problem
+into \zimpl format.
+
 \subsection{Diet problem}
+This is the first example in 
+\cite[Chapter 1, page 3]{Chvatal1983}.
+It is a classic so-called \emph{diet}-problem.
+Given a set of foods $F$ and a set of nutrients $N$, we have a table
+$\pi_{fn}$ of the amount of nutrient $n$ in food $f$. Now $\Pi_n$
+defines how much intake of each nutriement is needed. And $\Delta_f$
+describes the maximum number of servings of each food. 
+
+Now given prices $c_f$ for each food, we to find a selection of foods
+that obeys the restrictions and has minimal cost. 
+\begin{eqnarray}
+\min_{f\in F, n\in N} c_{fn} x_{fn}&&\mbox{subject to}\\
+\sum_{f\in F} \pi_f x_{fn} &\ge&\Pi_n\quad\forall n\in N\\
+0\leq x_{fn}&\leq&\Delta_f\quad\forall f\in F, n\in N\\
+x_{fn}&\in&\N\label{eqn:integrality}
+\end{eqnarray}
+
+As (\ref{eqn:integrality}) implies, only complete servings can be
+optained. Half an egg is not an option.
+Now translating this to \zimpl looks as follows:
 {\small
 \begin{verbatim}
-#
-# From V. Chvatal: Linear Programming
-# Chapter 1, Page 3ff.
-#
-# A diet problem
-#
 set Food := {"Oatmeal","Chicken","Eggs","Milk","Pie","Pork"};
-set Attr := {"Servings","Energy","Protein","Calcium","Price"};
+set Nutrients := { "Energy", "Protein", "Calcium" };
+set Attr      := Nutrients + { "Servings", "Price" };
 
-param min_energy  := 2000; # kcal
-param min_protein := 55;   # g
-param min_calcium := 800;  # mg
+param needed[Nutrients] := 
+  <"Energy"> 2000, <"Protein"> 55, <"Calcium"> 800;
 
-param nutrition[Food * Attr] := 
+param data[Food * Attr] := 
           |"Servings","Energy","Protein","Calcium","Price"|
 |"Oatmeal"|        4 ,    110 ,       4 ,       2 ,     3 |
 |"Chicken"|        3 ,    205 ,      32 ,      12 ,    24 |
@@ -722,26 +739,40 @@ param nutrition[Food * Attr] :=
 |"Pie"    |        2 ,    420 ,       4 ,      22 ,    20 |
 |"Pork"   |        2 ,    260 ,      14 ,      80 ,    19 |;
 #                       (kcal)       (g)      (mg) (cents)       
+var x[<f> in Food] integer >= 0 <= data[f, "Servings"];
 
-var x[<f> in Food] integer >= 0 <= nutrition[f, "Servings"];
+minimize cost: sum <f> in Food : data[f, "Price"] * x[f];
 
-minimize cost: sum <f> in Food : nutrition[f, "Price"]*x[f];
-
-subto energy : 
-  sum <f> in Food: nutrition[f,"Energy" ]*x[f] >= min_energy;
-subto protein: 
-  sum <f> in Food: nutrition[f,"Protein"]*x[f] >= min_protein;
-subto calcium: 
-  sum <f> in Food: nutrition[f,"Calcium"]*x[f] >= min_calcium;
+subto need :
+  forall <n> in Nutrients do
+    sum <f> in Food : data[f, n] * x[f] >= needed[n];
 \end{verbatim}
 }
 \newpage
 \subsection{TSP}
+In this example we show how to genrate an exponential 
+description of the \emph{Traveling Salesmen Problem} 
+as given for example in 
+\cite[Section 58.5]{Schrijver2003}.
+The data is read in from a file giving the number of the city and the
+x and y coordinate. Distances between cities are geometric.
+A suitable data file would look like this:
 {\small
 \begin{verbatim}
-#
-# Generic formulation of the Travelling Salesmen Problem
-#
+# x y Data for TSP 
+1 1 1
+2 3 1
+3 2 2
+4 1 3
+5 3 3
+6 2 4
+\end{verbatim}
+}
+And the formulation in \zimpl follows. Please note that \code{P[]}
+holds all subsets of the cities. So don't try to solve a 52
+city TSP this way. It won't work.
+{\small
+\begin{verbatim}
 set V   := { read "tsp.dat" as "<1n>" comment "#" };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
@@ -768,31 +799,38 @@ subto no_subtour:
       <= card(P[k]) - 1;
 \end{verbatim}
 }
-\subsubsection{Data for TSP}
-{\small
-\begin{verbatim}
-# Data for TSP 
-# x y
-1 1 1
-2 3 1
-3 2 2
-4 1 3
-5 3 3
-6 2 4
-\end{verbatim}
-}
 \newpage
 \subsection{Capacitated Facility Location Problem}
-Generic formulation for the Capacitated Facility Location Problem
-Of course this is also kind of a bin packing problem with packing costs
-and variable sized bins, or a cutting stock problem with cutting costs.
+Here we have a formulation for the \emph{Capacitated Facility
+Location} Problem. Of course this is also kind of a \emph{bin packing} problem
+with packing costs and variable sized bins, or a \emph{cutting stock} problem
+with cutting costs.
+
+Given a set of possible plants $P$ to build, and a set of stores $S$
+with a certain demand $\delta_s$ that has to be satisfied, we have
+to decide which plant should serve which store.
+We have costs $c_p$ for building plant $p$ and $c_{ps}$
+for transporting the goods from plant $p$ to store $s$.
+Each plant has only a limited capacity $\kappa_p$.
+And we insist that each store is served by exactly one plant.
+Of course we are looking for the cheapest solution:
 
 \begin{eqnarray}
-\sum_{p\in P} x_{ps}& =& 1\quad\forall s\in S\\
-x_{ps}&\leq&z_{s}\quad\forall s\in S, p\in P\\
-\sum_{s\in S} \delta_s x_{ps}&\leq&\kappa_p\quad\forall p\in P
+\min_{p\in P, s\in S} c_p + c_{ps}&&\mbox{subject to}\\ 
+\sum_{p\in P} x_{ps}& =& 1\quad\forall s\in S\label{eqn:assign}\\
+x_{ps}&\leq&z_{s}\quad\forall s\in S, p\in P\label{eqn:open}\\
+\sum_{s\in S} \delta_s x_{ps}&\leq&\kappa_p\quad\forall p\in P\label{eqn:capacity}\\
+x_{ps},z_p&\in&\BB
 \end{eqnarray}
 
+We have binary variables $z_p$, which are set to one, iff plant $p$ is
+to be build. And we have binary variables $x_ps$, 
+which are one iff plant $p$ serves shop $s$. 
+Equation(\ref{eqn:assign}) demands that each store is assigned to
+exactly one plant. Equation (\ref{eqn:open}) makes sure that a plant
+that serves a shop is build. And Equaltion (\ref{eqn:capacity})
+restricts the shops that are served by a plant to the plants capacity.
+Putting it into \zimpl yields:
 {\small
 \begin{verbatim}
 set PLANTS := { "A", "B", "C", "D" };
