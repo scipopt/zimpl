@@ -1,3 +1,17 @@
+lint ausgabe untersuchen
+testcases ref ausgaben
+documentieren
+zugriff auf set elemente nach ordnungsnummer, so das
+for <i> in { 1 .. card(A) } do
+   A[ord(i)] 
+geht.
+Besser ORD(set, index, member) z.B, ord(A,2,3)
+bei A:=<1,2,"a">,<2,3,"b">,<3,4,"c"> gibt "b"
+
+
+"read from file found no data" in warning bei sets umwandeln.
+
+
 Schnelleren hash-code von numb über nenner/zaehler
 außerdem ggf im Tuple cachen.
 
@@ -108,13 +122,6 @@ check mit fixierten variablen.
 check separate flag
 
 check: Tests für preprocessing
-
-zugriff auf set elemente nach ordnungsnummer, so das
-for <i> in { 1 .. card(A) } do
-   A[ord(i)] 
-geht.
-Besser ORD(set, index, member) z.B, ord(A,2,3)
-bei A:=<1,2,"a">,<2,3,"b">,<3,4,"c"> gibt "b"
 
 
 

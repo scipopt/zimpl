@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.7 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.8 2004/04/23 07:39:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -212,8 +212,6 @@ extern SetVTab* set_vtab_global;
 extern int          set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
 /*lint -sem(        set_get_tuple_intern, 1p == 1 && 2n >= 0 && 3p == 1 && 4n >= 0) */
 extern void         set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset);
-/*lint -sem(        set_get_tuple, 1p == 1 && 2n >= 0) */
-extern Tuple*       set_get_tuple(const Set* set, int idx);
 /*lint -sem(        set_iter_init_intern, 1p == 1 && 3n >= 0, @p == 1) */
 extern SetIter*     set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
 /*lint -sem(        set_iter_next_intern, 1p == 1 && 2p == 1 && 3p == 1 && 4n >= 0) */

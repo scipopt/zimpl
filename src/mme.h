@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.60 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.61 2004/04/23 07:39:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -404,6 +404,8 @@ extern void         set_iter_exit(SetIter* iter, const Set* set);
 extern int          set_get_dim(const Set* set);
 /*lint -sem(        set_get_members, 1p == 1, @n >= 0) */
 extern int          set_get_members(const Set* set);
+/*lint -sem(        set_get_tuple, 1p == 1 && 2n >= 0) */
+extern Tuple*       set_get_tuple(const Set* set, int idx);
 /*lint -sem(        set_print, 1p == 1 && 2p == 1) */
 extern void         set_print(FILE* fp, const Set* set);
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.75 2004/04/19 11:44:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.76 2004/04/23 07:39:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -851,6 +851,76 @@ CodeNode* i_expr_max2(CodeNode* self)
       }
    }
    code_value_numb(self, max);
+
+   return self;
+}
+
+CodeNode* i_expr_ord(CodeNode* self)
+{
+   const Set*  set;
+   const Elem* elem;
+   const Numb* tuple_no;
+   const Numb* compo_no;
+   Tuple*      tuple;
+   int         tno;
+   int         cno;
+   
+   Trace("i_expr_ord");
+
+   assert(code_is_valid(self));
+
+   set      = code_eval_child_set(self, 0);
+   tuple_no = code_eval_child_numb(self, 1);
+   compo_no = code_eval_child_numb(self, 2);
+
+   if (!numb_is_int(tuple_no))
+   {
+      fprintf(stderr, "*** Error 189: Tuple number ");
+      numb_print(stderr, tuple_no);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if (!numb_is_int(compo_no))
+   {
+      fprintf(stderr, "*** Error 190: Component number ");
+      numb_print(stderr, compo_no);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   tno = numb_toint(tuple_no);
+   cno = numb_toint(compo_no);
+
+   if (tno < 1 || tno > set_get_members(set))
+   {
+      fprintf(stderr, "*** Error 191: Tuple number %d", tno);
+      fprintf(stderr, " is not a valid value between 1..%d\n", set_get_members(set));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if (cno < 1 || cno > set_get_dim(set))
+   {
+      fprintf(stderr, "*** Error 192: Component number %d", cno);
+      fprintf(stderr, " is not a valid value between 1..%d\n", set_get_dim(set));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   tuple = set_get_tuple(set, tno - 1);
+   elem  = tuple_get_elem(tuple, cno - 1);
+   
+   switch(elem_get_type(elem))
+   {
+   case ELEM_NUMB :
+      code_value_numb(self, numb_copy(elem_get_numb(elem)));
+      break;
+   case ELEM_STRG :
+      code_value_strg(self, elem_get_strg(elem));
+      break;
+   default :
+      abort();
+   }
+   tuple_free(tuple);
 
    return self;
 }
