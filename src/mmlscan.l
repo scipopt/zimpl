@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.33 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.34 2003/09/25 19:35:31 bzfkocht Exp $"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -32,8 +32,7 @@
 #include <string.h>
 
 #include "bool.h"
-/* Leads to problems with stdlib.h - reason? */
-/* #include "mshell.h" */
+#include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
 #include "mmlparse.h"
@@ -47,7 +46,8 @@ YY_DECL;
 static int        yycolumn  = 0;
 static int        yydecl    = 0;
 
-/*lint -e506 -e525 -e528 -e527 -e551 -e553 -e613 -e633 */
+/*lint -e429 */
+/*lint -e506 -e525 -e528 -e527 -e537 -e551 -e553 -e613 -e633 */
 /*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
 /*lint -e825 */
 /*lint -esym(613,b,buf) -esym(563,find_rule) */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.4 2003/08/22 08:21:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.5 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -34,7 +34,7 @@
 
 /* Unfortunately strdup() is not a POSIX function.
  */
-/*lint -sem(strdup, nulterm(1), malloc(1p), 1p, @p > 0) */ 
+/*lint -sem(strdup, 1p && nulterm(1), @P == malloc(1P) && nulterm(@p)) */ 
 extern char* strdup(const char* s);
 
 /*lint -esym(757, optarg, optind, opterr, optopt) */
@@ -65,7 +65,11 @@ extern int    gzread(gzFile file, void* buf, unsigned len);
 extern int    gzwrite(gzFile file, const void* buf, unsigned len);
 /*lint -sem(  gzputs, 1p == 1 && 2p && nulterm(2)) */
 extern int    gzputs(gzFile file, const char *s);
-/*lint -sem(  gzgets, 1p == 1 && 2p && 3n > 0, r_null) */
+/*lintx -sem(  gzgets, 1p == 1 && 2p > 0 && 2P <= 3n && 3n > 0, @P == 2P || @P == 0) */
+/*lint -function(fgets(1), gzgets(2))) */
+/*lint -function(fgets(2), gzgets(3))) */
+/*lint -function(fgets(3), gzgets(1))) */
+/*lint -function(fgets(r), gzgets(r))) */
 extern char*  gzgets(gzFile file, char *buf, int len);
 /*lint -sem(  gzclose, 1p == 1) */
 extern int    gzclose(gzFile file);

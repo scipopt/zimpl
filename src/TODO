@@ -1,8 +1,11 @@
+warning wenn ein feld in 1n nicht isdigit +/- ist.
 
-spricht irgendwas dagenen auch
+trace wenn fehler in function?
 
-if lexpr then constraint else constraint end
-usw. zu implementieren?
+cplex stream version? 
+enter prob
+zimpl -F cplex | awk 
+getrennte -F's fuer .lp und .tbl ?
 
 e800 verschiedenen bison versionen
 mmlscan.l kein mshell ?

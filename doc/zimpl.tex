@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.21 2003/09/19 08:30:15 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.22 2003/09/25 19:35:30 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.21 2003/09/19 08:30:15 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.22 2003/09/25 19:35:30 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -74,7 +74,7 @@ pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimizati
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small for Version 2.00\\17. September 2003}
+\date{\small for Version 2.01\\19. September 2003}
 \maketitle
 \vfill
 \begin{abstract}
@@ -622,6 +622,23 @@ forall <i,j> in X cross { 1 to 5 } without { <2,3> }
 
 Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
 instruction. So they are fixed for all invocations of \code{sum}.
+
+\subsection{Details on \code{if} in constraints}
+It is possible to put two variants of a constraint into an
+\code{if}-statement. The same is true for \emph{terms}.
+It is also possible to have a \code{forall} statement inside
+an \code{if}.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+subto c1: forall <i> in I do
+  if (i mod 2 == 0) then  3 * x[i] >= 4
+                    else -2 * y[i] <= 3 end;
+subto c2: sum <i> in I :
+     if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
+\end{verbatim}
+}
 
 \subsection{Initialising sets and parameters from a file}
 It is possible to load the values for a set or a parameter from a

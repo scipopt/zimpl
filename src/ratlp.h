@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.8 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.9 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -40,23 +40,23 @@
 
 /* lpstore.c
  */
-/*lint -sem(        lps_alloc, 1p && nulterm(1), @p == 1) */
+/*lint -sem(        lps_alloc, nulterm(1), 1p, @p == 1) */
 extern Lps*         lps_alloc(const char* name);
-/*lint -sem(        lps_free, 1p) */
+/*lint -sem(        lps_free, custodial(1), 1p) */
 extern void         lps_free(Lps* lp);
 /*lint -sem(        lps_number, 1p == 1) */
 extern void         lps_number(const Lps* lp);
-/*lint -sem(        lps_getvar, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_getvar, nulterm(2), 1p && 2p) */
 extern Var*         lps_getvar(const Lps* lp, const char* name);
-/*lint -sem(        lps_getcon, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_getcon, nulterm(2), 1p && 2p) */
 extern Con*         lps_getcon(const Lps* lp, const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
-/*lint -sem(        lps_addvar, 1p == 1 && 2p && nulterm(2), @p == 1) */
+/*lint -sem(        lps_addvar, nulterm(2), 1p == 1 && 2p, @p == 1) */
 extern Var*         lps_addvar(Lps* lp, const char* name); 
 /*lint -sem(        lps_delvar, 1p == 1 && 2p == 1) */
 extern void         lps_delvar(Lps* lp, Var* var);
-/*lint -sem(        lps_addcon, 1p == 1 && 2p && nulterm(2), @p == 1) */
+/*lint -sem(        lps_addcon, nulterm(2), 1p == 1 && 2p, @p == 1) */
 extern Con*         lps_addcon(Lps* lp, const char* name);
 /*lint -sem(        lps_delcon, 1p == 1 && 2p == 1) */
 extern void         lps_delcon(Lps* lp, Con* con);
@@ -72,15 +72,15 @@ extern void         lps_setval(Nzo* nzo, const mpq_t value);
 extern void         lps_getval(const Nzo* nzo, mpq_t value);
 /*lint -sem(        lps_stat, 1p == 1) */
 extern void         lps_setdir(Lps* lp, LpDirect direct);
-/*lint -sem(        lps_setprobname, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_setprobname, nulterm(2), 1p && 2p) */
 extern void         lps_setprobname(Lps* lp, const char* name);
-/*lint -sem(        lps_setobjname, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_setobjname, nulterm(2), 1p && 2p) */
 extern void         lps_setobjname(Lps* lp, const char* name);
-/*lint -sem(        lps_setrhsname, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_setrhsname, nulterm(2), 1p && 2p) */
 extern void         lps_setrhsname(Lps* lp, const char* name);
-/*lint -sem(        lps_setbndname, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_setbndname, nulterm(2), 1p && 2p) */
 extern void         lps_setbndname(Lps* lp, const char* name);
-/*lint -sem(        lps_setrngname, 1p && 2p && nulterm(2)) */
+/*lint -sem(        lps_setrngname, nulterm(2), 1p && 2p) */
 extern void         lps_setrngname(Lps* lp, const char* name);
 /*lint -sem(        lps_getcost, 1p == 1) */
 extern void         lps_getcost(const Var* var, mpq_t cost);
@@ -130,9 +130,9 @@ extern void         lps_setpriority(Var* var, int priority);
 extern void         lps_setvalue(Var* var, const mpq_t value);
 /*lint -sem(        lps_setstartval, 1p == 1) */
 extern void         lps_setstartval(Var* var, const mpq_t startval);
-/*lint -sem(        lps_write, 1p == 1 && 2p == 1 && nulterm(4)) */
+/*lint -sem(        lps_write, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
-/*lint -sem(        lps_transtable, 1p == 1 && 2p == 1 && 4p && nulterm(4)) */
+/*lint -sem(        lps_transtable, nulterm(4), 1p == 1 && 2p == 1 && 4p) */
 extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern void         lps_scale(const Lps* lp);
@@ -140,27 +140,27 @@ extern void         lps_scale(const Lps* lp);
 
 /* ratmpsread.c
  */
-/*lint -sem(        lps_readmps, 1p && nulterm(1) */
+/*lint -sem(        lps_readmps, nulterm(1), 1p) */
 extern Lps*         lps_readmps(const char* filename);
 
 /* ratlpfwrite.c
  */
-/*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
+/*lint -sem(        lpf_write, nulterm(3), 1p == 1 && 2p == 1) */
 extern void         lpf_write(const Lps* lp, FILE* fp, const char* text);
 
 /* ratmpswrite.c
  */
-/*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
+/*lint -sem(        lpf_write, nulterm(3), 1p == 1 && 2p == 1) */
 extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
 
 /* rathumwrite.c
  */
-/*lint -sem(        hum_write, 1p == 1 && 2p == 1 && nulterm(3)) */
+/*lint -sem(        hum_write, nulterm(3), 1p == 1 && 2p == 1) */
 extern void         hum_write(const Lps* lp, FILE* fp, const char* text);
 
 /* ratordwrite.c
  */
-/*lint -sem(        lps_ordwrite, 1p == 1 && 2p == 1 && nulterm(4)) */
+/*lint -sem(        lps_ordwrite, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 
 /* ratpresolve.c

@@ -1,4 +1,7 @@
 -passes(2)
++fsc // strings are const
+-ffc // Function takes Custody flag -> off
+-A(C90)
 -I/usr/local/lib/flexelint/posix
 +libh(lint.h)
 -function(exit,_assert)
@@ -12,7 +15,7 @@
 //
 -e749 // local enumeration constant not referenced
 -e758 // Operator followed by operator is confusing
--e766
+-e766 // Include of header file not used
 -e788 // enum constant not used within defaulted switch
 -e801 // Use of goto is deprecated
 -e834 // Operator followed by operator is confusing.  Use parentheses
@@ -37,7 +40,7 @@
 //-esym(123,malloc,calloc,realloc,free)
 -strong(AzJzX,ElemType,Elem,Tuple,Set,VarType,Var,Entry,SymbolType,Symbol)
 -strong(AzJzX,IdxSet,Term,IneqType,Ineq,Local,ListElem,List,HashType,Hash)
--strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode,RDef,RPar)
+-strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode,RDef,RPar,Bound)
 -strong(AcJX,Inst)
 -strong(AJXbl,Bool)
 -e793 //  ANSI limit of 1024 'macros in module' exceeded

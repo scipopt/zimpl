@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.5 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.6 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -119,7 +119,7 @@ struct lpstorage
 
 /* Internal functions
  */
-/*lint -sem(        lpf_write, 1p && 2n > 0 && 3p && nulterm(3) && 4n >= 0) */
+/*lint -sem(        lpf_write, nulterm(3), 1p && 2n > 0 && 3p && 4n >= 0) */
 void                lps_makename(char* target, int size, const char* name, int no);
 
 #endif /* _RATLPSTORE_H_ */

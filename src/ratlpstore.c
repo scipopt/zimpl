@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.16 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.17 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -34,6 +34,7 @@
 
 #include "lint.h"
 #include "bool.h"
+#include "mshell.h"
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.12 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.13 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -250,6 +250,7 @@ static int parse_template(
    return params;
 }
 
+/*lint -sem(split_fields, nulterm(1), 1p && 2p, @n >= 0) */
 static int split_fields(char* s, char* field[])
 {
    char* t = s;
@@ -284,6 +285,7 @@ static int split_fields(char* s, char* field[])
       }
       if (new_field)
       {
+         /*lint --e{661}  Possible access of out-of-bounds pointer */
          u = s;
          field[fields] = t;
          fields++;
@@ -301,7 +303,7 @@ static int split_fields(char* s, char* field[])
          if (*s == '\0')
             break;
 
-         t  = s;
+         t = s;
       }
    }
    return fields;

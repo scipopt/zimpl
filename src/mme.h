@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.46 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.47 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -133,12 +133,12 @@ extern void         numb_init(void);
 extern void         numb_exit(void);
 /*lint -sem(        numb_new, @p == 1) */
 extern Numb*        numb_new(void);
-/*lint -sem(        numb_new_ascii, 1p && nulterm(1), @p == 1) */
+/*lint -sem(        numb_new_ascii, nulterm(1), 1p, @p == 1) */
 extern Numb*        numb_new_ascii(const char* val);
 /*lint -sem(        numb_new_integer, @p == 1) */
 extern Numb*        numb_new_integer(int val);
 
-/*lint -sem(        numb_free, 1p == 1) */
+/*lint -sem(        numb_free, custodial(1), 1p == 1) */
 extern void         numb_free(Numb* numb);
 /*lint -sem(        numb_is_valid, 1p == 1) */
 extern Bool         numb_is_valid(const Numb* numb);
@@ -216,7 +216,7 @@ extern void         numb_get_mpq(const Numb* numb, mpq_t value);
  */
 /*lint -sem(        bound_new, @p == 1) */
 extern Bound*       bound_new(BoundType type, const Numb* value);
-/*lint -sem(        bound_free, 1p == 1) */
+/*lint -sem(        bound_free, custodial(1), 1p == 1) */
 extern void         bound_free(Bound* bound);
 /*lint -sem(        bound_is_valid, 1p == 1) */
 extern Bool         bound_is_valid(const Bound* bound);
@@ -236,7 +236,7 @@ extern List*        list_new_elem(const Elem* elem);
 extern List*        list_new_tuple(const Tuple* tuple);
 /*lint -sem(        list_new_entry, 1p == 1, @p == 1) */
 extern List*        list_new_entry(const Entry* entry);
-/*lint -sem(        list_free, 1p == 1) */
+/*lint -sem(        list_free, custodial(1), 1p == 1) */
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
 extern Bool         list_is_valid(const List* list);
@@ -291,9 +291,9 @@ extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 
 #if 0 /* ??? kann weg? */
-/*lint -sem(        hash_lookup_con, 1p == 1 && 2p && nulterm(2)) */
+/*lint -sem(        hash_lookup_con, nulterm(2), 1p == 1 && 2p)) */
 extern const Con*   hash_lookup_con(const Hash* hash, const char* name);
-/*lint -sem(        hash_lookup_var, 1p == 1 && 2p && nulterm(2)) */
+/*lint -sem(        hash_lookup_var, nulterm(2), 1p == 1 && 2p)) */
 extern const Var*   hash_lookup_var(const Hash* hash, const char* name);
 #endif
 
@@ -305,11 +305,11 @@ extern void         elem_init(void);
 extern void         elem_exit(void);
 /*lint -sem(        elem_new_numb, @p == 1) */
 extern Elem*        elem_new_numb(const Numb* n);
-/*lint -sem(        elem_new_strg, 1p && nulterm(1), @p == 1) */
+/*lint -sem(        elem_new_strg, nulterm(1), 1p, @p == 1) */
 extern Elem*        elem_new_strg(const char* s);
-/*lint -sem(        elem_new_name, 1p && nulterm(1), @p == 1) */
+/*lint -sem(        elem_new_name, nulterm(1), 1p, @p == 1) */
 extern Elem*        elem_new_name(const char* s);
-/*lint -sem(        elem_free, 1p == 1) */
+/*lint -sem(        elem_free, custodial(1), 1p == 1) */
 extern void         elem_free(Elem* elem);
 /*lint -sem(        elem_is_valid, 1p == 1) */
 extern Bool         elem_is_valid(const Elem* elem);
@@ -338,7 +338,7 @@ extern char*        elem_tostr(const Elem* elem);
 
 /*lint -sem(        tuple_new, 1n >= 0, @p == 1) */
 extern Tuple*       tuple_new(int dim);
-/*lint -sem(        tuple_free, 1p == 1) */
+/*lint -sem(        tuple_free, custodial(1), 1p == 1) */
 extern void         tuple_free(Tuple* tuple);
 /*lint -sem(        tuple_is_valid, 1p == 1) */
 extern Bool         tuple_is_valid(const Tuple* tuple);
@@ -346,9 +346,9 @@ extern Bool         tuple_is_valid(const Tuple* tuple);
 extern Tuple*       tuple_copy(const Tuple* tuple);
 /*lint -sem(        tuple_cmp, 1p == 1 && 2p == 1) */
 extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
-/*lint -sem(        tuple_get_dim, 1p == 1, @n >= 0) */
+/*lint -sem(        tuple_get_dim, 1p == 1, @n > 0) */
 extern int          tuple_get_dim(const Tuple* tuple);
-/*lint -sem(        tuple_set_elem, 1p == 1 && 2n >= 0 && 3p == 1) */
+/*lint -sem(        tuple_set_elem, custodial(3), 1p == 1 && 2n >= 0 && 3p == 1) */
 extern void         tuple_set_elem(Tuple* tuple, int idx, Elem* elem);
 /*lint -sem(        tuple_get_elem, 1p == 1 && 2n >= 0, @p == 1) */
 extern const Elem*  tuple_get_elem(const Tuple* tuple, int idx);
@@ -365,13 +365,13 @@ extern char*        tuple_tostr(const Tuple* tuple);
  */
 /*lint -sem(        set_new, 1n >= 0 && 2n >= 0, @p == 1) */
 extern Set*         set_new(int dim, int estimated_size);
-/*lint -sem(        set_free, 1p == 1) */
+/*lint -sem(        set_free, custodial(1), 1p == 1) */
 extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */
 extern Bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
 extern Set*         set_copy(const Set* set);
-/*lint -sem(        set_add_member, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        set_add_member, custodial(2), 1p == 1 && 2p == 1, @p == 1) */
 extern void         set_add_member(Set* set, Tuple* tuple,
    SetAddType where, SetCheckType check);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
@@ -415,13 +415,13 @@ extern List*        set_subsets_list(
 
 /*lint -sem(        entry_new_numb, 1p == 1, @p == 1) */
 extern Entry*       entry_new_numb(const Tuple* tuple, const Numb* numb);
-/*lint -sem(        entry_new_strg, 1p == 1 && 2p && nulterm(2), @p == 1) */
+/*lint -sem(        entry_new_strg, nulterm(2), 1p == 1 && 2p, @p == 1) */
 extern Entry*       entry_new_strg(const Tuple* tuple, const char* strg);
 /*lint -sem(        entry_new_set, 1p == 1 && 2p == 1, @p == 1) */
 extern Entry*       entry_new_set(const Tuple* tuple, const Set* set);
 /*lint -sem(        entry_new_var, 1p == 1 && 2p == 1, @p == 1) */
 extern Entry*       entry_new_var(const Tuple* tuple, Var* var);
-/*lint -sem(        entry_free, 1p == 1) */
+/*lint -sem(        entry_free, custodial(1), 1p == 1) */
 extern void         entry_free(Entry* entry);
 /*lint -sem(        entry_is_valid, 1p == 1) */
 extern Bool         entry_is_valid(const Entry* entry);
@@ -446,19 +446,19 @@ extern void         entry_print(FILE* fp, const Entry* entry);
 
 /* symbol.c
  */
-/*lint -sem(        symbol_new, 1p && nulterm(1) && 3p == 1 && 4n >= 0, @p == 1) */
+/*lint -sem(        symbol_new, nulterm(1), 1p && 3p == 1 && 4n >= 0, @p == 1) */
 extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
 extern void         symbol_exit(void);
 /*lint -sem(        symbol_is_valid, 1p == 1) */
 extern Bool         symbol_is_valid(const Symbol* symbol);
-/*lint -sem(        symbol_lookup, 1p && nulterm(1), r_null) */
+/*lint -sem(        symbol_lookup, nulterm(1), 1p, r_null) */
 extern Symbol*      symbol_lookup(const char* name);
 /*lint -sem(        symbol_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
-/*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
+/*lint -sem(        symbol_add_entry, custodial(2), 1p == 1 && 2p == 1) */
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
 extern int          symbol_get_dim(const Symbol* sym);
@@ -483,16 +483,16 @@ extern void         symbol_print_all(FILE* fp);
 
 /* define.c
  */
-/*lint -sem(        define_new, 1p && nulterm(1), @p == 1) */
+/*lint -sem(        define_new, nulterm(1), 1p, @p == 1) */
 extern Define*      define_new(const char* name, DefineType type);
-/*lint -sem(        define_set_param, 1p == 1 && 2p == 1) */
+/*lint -sem(        define_set_param, custodial(2), 1p == 1 && 2p == 1) */
 extern void         define_set_param(Define* def, Tuple* param);
 /*lint -sem(        define_set_code, 1p == 1 && 2p == 1) */
 extern void         define_set_code(Define* def, CodeNode* code);
 extern void         define_exit(void);
 /*lint -sem(        define_is_valid, 1p == 1) */
 extern Bool         define_is_valid(const Define* def);
-/*lint -sem(        define_lookup, 1p && nulterm(1), r_null) */
+/*lint -sem(        define_lookup, nulterm(1), 1p, r_null) */
 extern Define*      define_lookup(const char* name);
 /*lint -sem(        define_get_name, 1p == 1, @p && nulterm(@)) */
 extern const char*  define_get_name(const Define* def);
@@ -508,7 +508,7 @@ extern CodeNode*    define_get_code(const Define* def);
 /*lint -sem(        idxset_new, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
 extern IdxSet*      idxset_new(
    const Tuple* tuple, const Set* set, CodeNode* lexpr);
-/*lint -sem(        idxset_free, 1p == 1) */
+/*lint -sem(        idxset_free, custodial(1), 1p == 1) */
 extern void         idxset_free(IdxSet* idxset);
 /*lint -sem(        idxset_is_valid, 1p == 1) */
 extern Bool         idxset_is_valid(const IdxSet* idxset);
@@ -526,7 +526,7 @@ extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 /* local.c
  */
 extern void         local_drop_frame(void);
-/*lint -sem(        local_lookup, 1p && nulterm(1), r_null) */
+/*lint -sem(        local_lookup, nulterm(1), 1p, r_null) */
 extern const Elem*  local_lookup(const char* name);
 /*lint -sem(        local_install_tuple, 1p == 1 && 2p == 1) */
 extern void         local_install_tuple(const Tuple* patt, const Tuple* vals);
@@ -543,7 +543,7 @@ extern char*        local_tostrall(void);
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1) */
 extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff);
-/*lint -sem(        term_free, 1p == 1) */
+/*lint -sem(        term_free, custodial(1), 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
 extern Bool         term_is_valid(const Term* term);
@@ -576,9 +576,9 @@ extern int          term_get_elements(const Term* term);
 
 /* rdefpar.c
  */
-/*lint -sem(       rdef_new, 1p && nulterm(1) && 2p && nulterm(2), @p == 1) */
+/*lint -sem(       rdef_new, nulterm(1), nulterm(2), 1p && 2p, @p == 1) */
 extern RDef*       rdef_new(const char* filename, const char* template);
-/*lint -sem(       rdef_free, 1p == 1) */
+/*lint -sem(       rdef_free, custodial(1), 1p == 1) */
 extern void        rdef_free(RDef* rdef);
 /*lint -sem(       rdef_is_valid, 1p == 1) */
 extern Bool        rdef_is_valid(const RDef* rdef);
@@ -603,7 +603,7 @@ extern RPar*       rpar_new_skip(int skip);
 extern RPar*       rpar_new_use(int use);
 /*lint -sem(       rpar_new_comment, 1p && nulterm(1), @p == 1) */
 extern RPar*       rpar_new_comment(const char* comment);
-/*lint -sem(       rpar_free, 1p == 1) */
+/*lint -sem(       rpar_free, custodial(1), 1p == 1) */
 extern void        rpar_free(RPar* rpar);
 /*lint -sem(       rpar_is_valid, 1p == 1) */
 extern Bool        rpar_is_valid(const RPar* rpar);
@@ -614,100 +614,18 @@ extern RPar*       rpar_copy(const RPar* rpar);
  */
 extern void        conname_format(ConNameForm format);
 extern void        conname_free(void);
-/*lint -sem(       conname_set, 1p && nulterm(1)) */
+/*lint -sem(       conname_set, nulterm(1), 1p) */
 extern Bool        conname_set(const char* prefix);
 /*lint -sem(       conname_set, @p && nulterm(@)) */
 extern const char* conname_get(void);
 
-#if 0 /* ??? kann weg */
-/* lpstore.c
- */
-#define LP_FLAG_CON_SCALE    1
-#define LP_FLAG_CON_SEPAR    2
-
-/*lint -sem(        lps_alloc, 1p && nulterm(1)) */
-extern void         lps_alloc(const char* name);
-extern void         lps_free(void);
-extern void         lps_number(void);
-/*lint -sem(        lps_getvar, 1p && nulterm(1)) */
-extern const Var*   lps_getvar(const char* name);
-/*lint -sem(        lps_getcon, 1p && nulterm(1)) */
-extern const Con*   lps_getcon(const char* name);
-/*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1) */
-extern Nzo*         lps_getnzo(const Con* con, const Var* var);
-/*lint -sem(        lps_addvar, 1p && nulterm(1), @p == 1) */
-extern Var*         lps_addvar(const char* name, VarType type,
-   double lower, double upper, int priority, double startval); 
-/*lint -sem(        lps_addcon, 1p && nulterm(1), @p == 1) */
-extern Con*         lps_addcon(
-   const char* name, ConType sense, double rhs, unsigned int flags);
-/*lint -sem(        lps_addnzo, 1p == 1 && 2p == 1) */
-extern void         lps_addnzo(Con* con, Var* var, double value);
-/*lint -sem(        lps_delnzo, 1p == 1) */
-extern void         lps_delnzo(Nzo* nzo);
-extern void         lps_stat(void);
-/*lint -sem(        lps_setval, 1p == 1) */
-extern void         lps_setval(Nzo* nzo, double value);
-/*lint -sem(        lps_getval, 1p == 1) */
-extern double       lps_getval(const Nzo* nzo);
-/*lint -sem(        lps_hash, 1p && nulterm(1)) */
-extern unsigned int lps_hash(const char* name);
-/*lint -sem(        lps_varname, 1p == 1, @p && nulterm(@)) */
-extern const char*  lps_varname(const Var* var);
-/*lint -sem(        lps_conname, 1p == 1, @p && nulterm(@)) */
-extern const char*  lps_conname(const Con* con);
-extern void         lps_setdir(LpDirect direct);
-/*lint -sem(        lps_objname, 1p && nulterm(1)) */
-extern void         lps_objname(const char* name);
-/*lint -sem(        lps_getcost, 1p == 1) */
-extern double       lps_getcost(const Var* var);
-/*lint -sem(        lps_setcost, 1p == 1) */
-extern void         lps_setcost(Var* var, double cost);
-/*lint -sem(        lps_setlower, 1p == 1) */
-extern void         lps_setlower(Var* var, double lower);
-/*lint -sem(        lps_setupper, 1p == 1) */
-extern void         lps_setupper(Var* var, double upper);
-/*lint -sem(        lps_setsense, 1p == 1) */
-extern void         lps_setsense(Con* con, ConType sense);
-/*lint -sem(        lps_setrhs, 1p == 1) */
-extern void         lps_setrhs(Con* con, double rhs);
-/*lint -sem(        lps_getsense, 1p == 1) */
-extern int          lps_getsense(const Con* con);
-/*lint -sem(        lps_write, 1p == 1) */
-extern void         lps_write(FILE* fp, LpForm form);
-/*lint -sem(        lps_makename, 1p && 3p && nulterm(3)) */
-extern void         lps_makename(
-   char* target, int size, const char* name, int no);
-/*lint -sem(        lps_transtable, 1p == 1) */
-extern void         lps_transtable(FILE* fp);
-/*lint -sem(        lps_orderfile, 1p == 1) */
-extern void         lps_orderfile(FILE* fp);
-extern void         lps_scale(void);
-
-/* lpfwrite.c
- */
-/*lint -sem(        lpf_write, 1p == 1 && 2p == 1) */
-extern void         lpf_write(const Lps* lp, FILE* fp);
-
-/* mpswrite.c
- */
-/*lint -sem(        mps_write, 1p == 1 && 2p == 1) */
-extern void         mps_write(const Lps* lp, FILE* fp);
-
-/* ordwrite.c
- */
-/*lint -sem(        ord_write, 1p == 1 && 2p == 1) */
-extern void         ord_write(const Lps* lp, FILE* fp);
-#endif
-
-
 /* stmt.c
  */
-/*lint -sem(        stmt_new, 2p && nulterm(2) && 3n >= 0 && 4p && nulterm(4)
-                    && 5p && nulterm(5), @p == 1) */
+/*lint -sem(        stmt_new, nulterm(2), nulterm(4), nulterm(5),
+                    2p && 3n >= 0 && 4p && 5p, @p == 1) */
 extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
    const char* name, const char* text);
-/*lint -sem(        stmt_free, 1p == 1) */
+/*lint -sem(        stmt_free, custodial(1), 1p == 1) */
 extern void         stmt_free(Stmt* stmt);
 /*lint -sem(        stmt_is_valid, 1p == 1) */
 extern Bool         stmt_is_valid(const Stmt* stmt);
@@ -730,13 +648,13 @@ extern void         stmt_print(FILE* fp, const Stmt* stmt);
  */
 /*lint -sem(        prog_new, 1p) */
 extern Prog*        prog_new(void);
-/*lint -sem(        prog_free, 1p == 1) */
+/*lint -sem(        prog_free, custodial(1), 1p == 1) */
 extern void         prog_free(Prog* prog);
 /*lint -sem(        prog_is_valid, 1p == 1) */
 extern Bool         prog_is_valid(const Prog* prog);
 /*lint -sem(        prog_is_empty, 1p == 1) */
 extern Bool         prog_is_empty(const Prog* prog);
-/*lint -sem(        prog_add_stmt, 1p == 1 && 2p == 1) */
+/*lint -sem(        prog_add_stmt, custodial(2), 1p == 1 && 2p == 1) */
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 /*lint -sem(        prog_print, 1p == 1 && 2p == 1) */
 extern void         prog_print(FILE* fp, const Prog* prog);
@@ -745,12 +663,12 @@ extern void         prog_execute(const Prog* prog);
 
 /* load.c
  */
-/*lint -sem(        prog_load, 1p == 1 && 2p && nulterm(2)) */
+/*lint -sem(        prog_load, nulterm(2), 1p == 1 && 2p) */
 extern void         prog_load(Prog* prog, const char* filename);
 
 /* source.c
  */
-/*lint -sem(        shwo_source, 1p == 1 && 2p && nulterm(2)) */
+/*lint -sem(        shwo_source, nulterm(2), 1p == 1 && 2p) */
 extern void         show_source(FILE* fp, const char* text, int column);
 
 /* mmlparse.y

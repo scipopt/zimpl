@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.50 2003/09/19 08:30:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.51 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -387,6 +387,9 @@ constraint
    | FORALL idxset DO constraint {
         $$ = code_new_inst(i_forall, 2, $2, $4);
      }
+   | IF lexpr THEN constraint ELSE constraint END {
+         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+      }
    ;
 
 con_attr_list
@@ -436,6 +439,9 @@ summand
          $$ = code_new_inst(i_term_coeff, 2, 
             code_new_inst(i_term_sum, 2, $4, $6),
             $1);
+      }
+   | IF lexpr THEN summand ELSE summand END {
+         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }
    ;
 
@@ -537,7 +543,7 @@ sexpr
    | IF lexpr THEN sexpr ELSE sexpr END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }
-    ;
+   ;
 
  read
     : READ expr AS expr { $$ = code_new_inst(i_read_new, 2, $2, $4); }

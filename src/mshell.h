@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.h,v 1.5 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.h,v 1.6 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.h                                                      */
@@ -28,10 +28,15 @@
 #ifndef _MSHELL_H_
 #define _MSHELL_H_  
 
+/*lint -sem(  mem_malloc, nulterm(2), 1n > 0 && 2p, @P == malloc(1n)) */
 extern void*  mem_malloc(size_t, const char*, const int);
+/*lint -sem(  mem_calloc, nulterm(3), 1n > 0 && 2n > 0 && 3p, @P == malloc(1n * 2n)) */
 extern void*  mem_calloc(size_t, size_t, const char*, const int);
+/*lint -sem(  mem_realloc, custodial(1), nulterm(3), 1p > 0 && 2n > 0 && 3p, @P == malloc(2n)) */
 extern void*  mem_realloc(void*, size_t, const char*, const int);
+/*lint -sem(  mem_strdup, nulterm(1), nulterm(2), 1p > 0 && 2p > 0, @P == malloc(1P) && nulterm(@p)) */
 extern char*  mem_strdup(const char*, const char*, const int);
+/*lint -sem(  mem_free, custodial(1), nulterm(2), 1p > 0 && 2p) */
 extern void   mem_free(void*, const char*, const int);
 
 #ifndef _MSHELL_C_ 

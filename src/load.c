@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.19 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.20 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -193,6 +193,7 @@ static void add_stmt(
    
  syntax_error:
    
+   /*lint -esym(429,copy) Custodial pointer 'copy' has not been freed or returned */
    fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
    exit(EXIT_FAILURE);
 }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.8 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.9 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -451,6 +451,7 @@ void numb_sgn(Numb* numb)
 {
    assert(numb_is_valid(numb));
 
+   /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
    switch(mpq_sgn(numb->value.numb))
    {
    case -1 :

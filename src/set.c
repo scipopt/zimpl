@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.21 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.22 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -518,6 +518,7 @@ Bool set_is_equal(const Set* set_a, const Set* set_b)
  * k elements in subset
  * i index for counter
  */
+/*lint -sem(counter_inc, 1p == 3n && 2n > 0 && 3n > 0 && 4n >= 0, @n > 0) */
 static int counter_inc(int* counter, int n, int k, int i)
 {
    int ret = 0;

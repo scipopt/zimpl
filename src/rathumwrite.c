@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.1 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.2 2003/09/25 19:35:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -151,6 +151,7 @@ static void write_row(
       {
          fputc(' ', fp);
          
+         /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
          if (mpq_sgn(nzo->value) > 0)
             fprintf(fp, "+");
          
@@ -199,6 +200,7 @@ void hum_write(
       {
          fputc(' ', fp);
          
+         /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
          if (mpq_sgn(var->cost) > 0)
             fprintf(fp, "+");
          
