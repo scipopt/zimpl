@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.6 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -34,34 +34,37 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define TERM_SID  0x5465726d
+#define TERM_EXTEND_SIZE 8
+#define TERM_SID         0x5465726d
 
 typedef struct term_element TermElem;
 
 struct term_element
 {
-   const Symbol* symbol;
-   Entry*        entry;
-   double        coeff;
-   TermElem*     next;
+   const Entry* entry;
+   double       coeff;
 };
 
 struct term
 {
    SID
    double    constant;
-   TermElem  first;
-   TermElem* last;
+   int       size;
+   int       used;
+   TermElem* elem;
 };
 
-Term* term_new(void)
+Term* term_new(int size)
 {
    Term* term = calloc(1, sizeof(*term));
 
    assert(term != NULL);
-
+   assert(size >  0);
+   
    term->constant = 0.0;
-   term->last     = &term->first;
+   term->size     = size;
+   term->used     = 0;
+   term->elem     = calloc(term->size, sizeof(*term->elem));
    
    SID_set(term, TERM_SID);
    assert(term_is_valid(term));
@@ -69,128 +72,93 @@ Term* term_new(void)
    return term;
 }
 
-void term_add_elem(Term* term, const Symbol* sym, Entry* entry, double coeff)
+void term_add_elem(Term* term, const Entry* entry, double coeff)
 {
-   TermElem* te = calloc(1, sizeof(*te));
-
    assert(term_is_valid(term));
-   assert(symbol_is_valid(sym));
    assert(entry_is_valid(entry));
    assert(NE(coeff, 0.0));
-   assert(te  != NULL);
-
-   te->symbol       = sym;
-   te->entry        = entry_copy(entry);
-   te->coeff        = coeff;
-   te->next         = NULL;
-   term->last->next = te;
-   term->last       = te;
-}
-
-static void term_free_elem(Term* term)
-{
-   TermElem* p;
-   TermElem* q;
+   assert(term->used <= term->size);
    
-   assert(term_is_valid(term));
-
-   for(p = term->first.next; p != NULL; p = q)
+   if (term->used == term->size)
    {
-      q = p->next;
-      entry_free(p->entry);
-      free(p);
+      /* Die Routine ist ok, aber dieser Fall sollte nie eintreten.
+       */
+      abort();
+      
+      term->size   += TERM_EXTEND_SIZE;
+      term->elem    = realloc(
+         term->elem, (size_t)term->size * sizeof(*term->elem));
+
+      assert(term->elem != NULL);
    }
-   term->last       = &term->first;
-   term->first.next = NULL;
+   assert(term->used < term->size);
+
+   term->elem[term->used].entry = entry;
+   term->elem[term->used].coeff = coeff;
+   term->used++;
 }
 
 void term_free(Term* term)
 {
    assert(term_is_valid(term));
 
-   term_free_elem(term);
    SID_del(term);
+
+   free(term->elem);
    free(term);
 }
 
+#ifndef NDEBUG
 Bool term_is_valid(const Term* term)
 {
-   return ((term != NULL) && SID_ok(term, TERM_SID));
+   return ((term != NULL)
+      && SID_ok(term, TERM_SID)
+      && (term->used <= term->size));
 }
+#endif /* !NDEBUG */
 
-Term* term_copy(Term* term)
+Term* term_copy(const Term* term)
 {
-   Term*     tnew = term_new();
-   TermElem* te;
+   Term* tnew = term_new(term->size);
    
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
-   
-   for(te = term->first.next; te != NULL; te = te->next)
-      term_add_elem(tnew, te->symbol, te->entry, te->coeff);
 
+   memcpy(tnew->elem, term->elem, (size_t)term->used * sizeof(*term->elem));
+
+   tnew->used     = term->used;
    tnew->constant = term->constant;
    
    return tnew;
 }
 
-void term_print(FILE* fp, const Term* term, int flag)
-{
-   Tuple*    tuple;
-   TermElem* te;
-   double    coeff;
-   
-   assert(term_is_valid(term));
-
-   for(te = term->first.next; te != NULL; te = te->next)
-   {
-      assert(NE(te->coeff, 0.0));
-
-      coeff = fabs(te->coeff);
-      
-      fprintf(fp, " %s ", GE(te->coeff, 0.0) ? "+" : "-");
-      
-      if (NE(coeff, 1.0))
-         fprintf(fp, "%.16g ", coeff);
-
-      tuple = entry_get_tuple(te->entry);
-      
-      fprintf(fp, "%s", symbol_get_name(te->symbol));
-
-      if (flag & TERM_PRINT_SYMBOL)
-         tuple_print(fp, tuple);
-
-      if (flag & TERM_PRINT_INDEX)
-         fprintf(fp, "_%d", entry_get_index(te->entry));      
-
-      tuple_free(tuple);
-   }
-   if (NE(term->constant, 0.0))
-   {
-      if (GE(term->constant, 0.0))
-         fprintf(fp, " + %.16g ", term->constant);
-      else
-         fprintf(fp, " - %.16g ", -term->constant);
-   }
-}
-
 Term* term_add_term(Term* term_a, Term* term_b)
 {
-   Term*     term;
-   TermElem* te;
+   Term* term;
    
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term           = term_new();
+   term           = term_new(term_a->size + term_b->size);
+   term->used     = term_a->used + term_b->used;
    term->constant = term_a->constant + term_b->constant;
 
-   for(te = term_a->first.next; te != NULL; te = te->next)
-      term_add_elem(term, te->symbol, te->entry, te->coeff);
+   assert(term->size >= term->used);
 
-   for(te = term_b->first.next; te != NULL; te = te->next)
-      term_add_elem(term, te->symbol, te->entry, te->coeff);
-   
+   memcpy(&term->elem[0], term_a->elem,
+      (size_t)term_a->used * sizeof(*term->elem));
+
+   memcpy(&term->elem[term_a->used], term_b->elem,
+      (size_t)term_b->used * sizeof(*term->elem));
+
+
+#if 0
+   for(i = 0; i < term_a->used; i++)
+      term_add_elem(term, term_a->elem[i].entry, term_a->elem[i].coeff);
+
+   for(i = 0; i < term_b->used; i++)
+      term_add_elem(term, term_b->elem[i].entry, term_b->elem[i].coeff);
+#endif
    assert(term_is_valid(term));
 
    return term;
@@ -205,18 +173,18 @@ void term_add_constant(Term* term, double value)
 
 void term_mul_coeff(Term* term, double value)
 {
-   TermElem* te;
+   int i;
 
    assert(term_is_valid(term));
 
    term->constant *= value;
 
    if (EQ(value, 0.0))
-      term_free_elem(term);
+      term->used = 0;
    else
    {
-      for(te = term->first.next; te != NULL; te = te->next)
-         te->coeff *= value;
+      for(i = 0; i < term->used; i++)
+         term->elem[i].coeff *= value;
    }
 }
 
@@ -234,8 +202,79 @@ void term_negate(Term* term)
    term_mul_coeff(term, -1.0);
 }
 
+void term_to_nzo(const Term* term, Con* con)
+{
+   int i;
+   
+   assert(con != NULL);
+   assert(term_is_valid(term));
+   assert(EQ(term->constant, 0.0));
 
+   for(i = 0; i < term->used; i++)
+   {
+      assert(NE(term->elem[i].coeff, 0.0));
 
+      lps_addnzo(con, entry_get_var(term->elem[i].entry), term->elem[i].coeff);
+   }
+}
+
+void term_to_objective(const Term* term)
+{
+   int i;
+   
+   assert(term_is_valid(term));
+   assert(EQ(term->constant, 0.0));
+
+   for(i = 0; i < term->used; i++)
+   {
+      assert(NE(term->elem[i].coeff, 0.0));
+
+      lps_setcost(entry_get_var(term->elem[i].entry), term->elem[i].coeff);
+   }
+}
+
+#ifndef NDEBUG
+void term_print(FILE* fp, const Term* term, int flag)
+{
+   Tuple* tuple;
+   int    i;
+   double coeff;
+   
+   assert(term_is_valid(term));
+
+   for(i = 0; i < term->used; i++)
+   {
+      assert(NE(term->elem[i].coeff, 0.0));
+
+      coeff = fabs(term->elem[i].coeff);
+      
+      fprintf(fp, " %s ", GE(term->elem[i].coeff, 0.0) ? "+" : "-");
+      
+      if (NE(coeff, 1.0))
+         fprintf(fp, "%.16g ", coeff);
+
+      tuple = entry_get_tuple(term->elem[i].entry);
+      
+      /* fprintf(fp, "%s", symbol_get_name(term->elem[i].symbol));
+       */
+
+      if (flag & TERM_PRINT_SYMBOL)
+         tuple_print(fp, tuple);
+
+      if (flag & TERM_PRINT_INDEX)
+         fprintf(fp, "_%d", entry_get_index(term->elem[i].entry));      
+
+      tuple_free(tuple);
+   }
+   if (NE(term->constant, 0.0))
+   {
+      if (GE(term->constant, 0.0))
+         fprintf(fp, " + %.16g ", term->constant);
+      else
+         fprintf(fp, " - %.16g ", -term->constant);
+   }
+}
+#endif /* !NDEBUG */
 
 
 

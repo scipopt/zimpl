@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.7 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: symbol.c,v 1.8 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -145,7 +145,7 @@ Bool symbol_has_entry(const Symbol* sym, Tuple* tuple)
    return hash_has_entry(sym->hash, tuple);
 }
 
-Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple)
+const Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -298,100 +298,4 @@ void symbol_print_all(FILE* fp)
       symbol_print(fp, sym);
 }
 
-void symbol_print_bounds(FILE* fp)
-{
-   Symbol* sym;
-   Var*    var;
-   int     i;
-   Bool    flag;
-   Bool    first;
-   
-   assert(fp != NULL);
-   
-   fprintf(fp, "Bounds\n");
-   
-   for(sym = anchor.next; sym != NULL; sym = sym->next)
-   {
-      if (sym->type != SYM_VAR)
-         continue;
-      
-      for(i = 0; i < sym->used; i++)
-      {
-         var = entry_get_var(sym->entry[i]);
-         
-         fprintf(fp, " %.16g <= ", var_get_lower(var));
-         fprintf(fp, "%s", sym->name);
-         fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
-         fprintf(fp, " <= %.16g\n", var_get_upper(var));
-         
-         var_free(var);
-      }
-   }
-   first = TRUE;
-   
-   for(sym = anchor.next; sym != NULL; sym = sym->next)
-   {
-      if (sym->type != SYM_VAR)
-         continue;
-
-      flag = FALSE;
-      
-      for(i = 0; i < sym->used; i++)
-      {
-         var = entry_get_var(sym->entry[i]);
-
-         if (var_get_type(var) == VAR_INT)
-         {
-            if (first)
-            {
-               fprintf(fp, "Integer\n");
-               first = FALSE;
-            }
-            fprintf(fp, " %s", sym->name);
-            fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
-
-            flag = TRUE;
-
-            if (i % 8 == 7)
-               fputc('\n', fp);
-         }
-         var_free(var);
-      }
-      if (flag)
-         fputc('\n', fp);
-   }
-   first = TRUE;
-   
-   for(sym = anchor.next; sym != NULL; sym = sym->next)
-   {
-      if (sym->type != SYM_VAR)
-         continue;
-
-      flag = FALSE;
-      
-      for(i = 0; i < sym->used; i++)
-      {
-         var = entry_get_var(sym->entry[i]);
-
-         if (var_get_type(var) == VAR_BIN)
-         {
-            if (first)
-            {
-               fprintf(fp, "Binary\n");
-               first = FALSE;
-            }
-            fprintf(fp, " %s", sym->name);
-            fprintf(fp, "_%d", entry_get_index(sym->entry[i]));      
-
-            flag = TRUE;
-            
-            if (i % 8 == 7)
-               fputc('\n', fp);
-         }
-         var_free(var);
-      }
-      if (flag)
-         fputc('\n', fp);
-   }
-}
 

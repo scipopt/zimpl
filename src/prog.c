@@ -1,4 +1,4 @@
-#ident "@(#) $Id: prog.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: prog.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -40,21 +40,18 @@
 struct program
 {
    SID
-   const char* filename;
    int         size;
    int         used;
    int         extend;
    Stmt**      stmt;
 };
 
-Prog* prog_new(const char* filename)
+Prog* prog_new()
 {
    Prog* prog = calloc(1, sizeof(*prog));
 
-   assert(filename != NULL);
-   assert(prog     != NULL);
+   assert(prog != NULL);
 
-   prog->filename = strdup(filename);
    prog->size     = PROG_EXTEND_SIZE;
    prog->used     = 0;
    prog->extend   = PROG_EXTEND_SIZE;
@@ -71,7 +68,6 @@ void prog_free(Prog* prog)
    int i;
    
    assert(prog_is_valid(prog));
-   assert(prog->filename != NULL);
    assert(prog->stmt     != NULL);
    
    SID_del(prog);
@@ -80,7 +76,6 @@ void prog_free(Prog* prog)
       stmt_free(prog->stmt[i]);
 
    free(prog->stmt);
-   free((void*)prog->filename);
    free(prog);
 }
 
@@ -111,21 +106,12 @@ void prog_add_stmt(Prog* prog, Stmt* stmt)
    prog->used++;   
 }
 
-const char* prog_get_filename(const Prog* prog)
-{
-   assert(prog_is_valid(prog));
-   assert(prog->filename != NULL);
-
-   return prog->filename;
-}
-
 void prog_print(FILE* fp, const Prog* prog)
 {
    int i;
 
    assert(prog_is_valid(prog));
    
-   fprintf(fp, "Programm  : %s\n", prog->filename);
    fprintf(fp, "Statements: %d\n", prog->used);
 
    for(i = 0; i < prog->used; i++)
@@ -138,15 +124,10 @@ void prog_execute(const Prog* prog)
 
    assert(prog_is_valid(prog));
 
-   printf("\\Problem name: %s\n", prog->filename);
-   
    for(i = 0; i < prog->used; i++)
    {
       stmt_parse(prog->stmt[i]);
       stmt_execute(prog->stmt[i]);
    }
-   symbol_print_bounds(stdout);
-   
-   printf("End\n");
 }
 

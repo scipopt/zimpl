@@ -1,4 +1,4 @@
-#ident "@(#) $Id: local.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: local.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -101,8 +101,8 @@ void local_install_tuple(const Tuple* pattern, const Tuple* values)
    const char* name;
    int         i;
    
-   assert(pattern != NULL);
-   assert(values  != NULL);
+   assert(tuple_is_valid(pattern));
+   assert(tuple_is_valid(values));
    
    assert(tuple_get_dim(pattern) == tuple_get_dim(values));
 

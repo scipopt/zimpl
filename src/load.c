@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -81,16 +81,48 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
    return *buf;
 }
 
-static void add_stmt(Prog* prog, int lineno, const char* text)
+static const char* make_pathname(
+   char*       target,
+   const char* pathname,
+   const char* filename)
+{
+   char* s;
+
+   assert(target   != NULL);
+   assert(pathname != NULL);
+   assert(filename != NULL);
+
+   /* Absolute Name ? */
+   if (*filename == '/')
+      strcpy(target, filename);
+   else
+   {
+      strcpy(target, pathname);
+   
+      if (NULL == (s = strrchr(target, '/')))
+         strcpy(target, filename);
+      else
+         strcpy(s + 1, filename);
+   }
+   return target;
+}
+
+static void add_stmt(
+   Prog*       prog,
+   const char* filename,
+   const int   lineno,
+   const char* text)
 {
    const char* separ = " :;";
+
    StmtType type;
    char*    copy;
    char*    s;
    char*    name;
-   
-   assert(prog != NULL);
-   assert(text != NULL);
+
+   assert(prog     != NULL);
+   assert(filename != NULL);
+   assert(text     != NULL);
 
    if (strlen(text) < 4)
       goto syntax_error;
@@ -122,31 +154,37 @@ static void add_stmt(Prog* prog, int lineno, const char* text)
    if (NULL == (name = strtok(NULL, separ)))
       goto syntax_error;
 
-   prog_add_stmt(prog, stmt_new(type, lineno, name, text));
-   
+   prog_add_stmt(prog, stmt_new(type, filename, lineno, name, text));
+
    return;
    
  syntax_error:
    
    fprintf(stderr, "*** Line %d: Syntax Error\n", lineno);
-   exit(1);
+   abort();
 }
 
-void prog_load(Prog* prog)
+void prog_load(Prog* prog, const char* filename)
 {
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);
    FILE* fp;
    char* s;
-   int   lineno = 1;
+   int   lineno  = 1;
+   char  newname [1024];
+   char* temp;
    
-   assert(prog != NULL);
-   assert(buf  != NULL);
+   assert(prog     != NULL);
+   assert(filename != NULL);
+   assert(buf      != NULL);
 
-   if ((fp = fopen(prog_get_filename(prog), "r")) == NULL)
+   if (verbose)
+      printf("Reading %s\n", filename);
+   
+   if ((fp = fopen(filename, "r")) == NULL)
    {
-      perror(prog_get_filename(prog));
-      exit(1);
+      perror(filename);
+      abort();
    }
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
@@ -157,8 +195,16 @@ void prog_load(Prog* prog)
       if (*s == '\0')
          continue;
 
-      add_stmt(prog, lineno, s);
-   }   
+      if (1 == sscanf(s, "include \"%1023[^\"]\"", newname))
+      {
+         temp = alloca(strlen(filename) + strlen(newname) + 1);
+         prog_load(prog, make_pathname(temp, filename, newname));
+      }
+      else
+      { 
+         add_stmt(prog, filename, lineno, s);
+      }
+   }
    fclose(fp);
    free(buf);
 }

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.6 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -50,20 +50,23 @@ void i_nop(CodeNode* self)
 void i_once(CodeNode* self)
 {
    const char* name;
-   Ineq*       ineq;
+   Term*       term;
+   ConType     type;
+   double      rhs;
+   Con*        con;
 
    Trace("i_once");
    
    assert(code_is_valid(self));
 
    name = Code_eval_child_name(self, 0);
-   ineq = Code_eval_child_ineq(self, 1);
-
-   printf("%s: ", name);
-   ineq_print(stdout, ineq);
-   printf("\n");
-
-   ineq_free(ineq);
+   term = Code_eval_child_term(self, 1);
+   type = Code_eval_child_contype(self, 2);
+   rhs  = Code_eval_child_numb(self, 3);
+   con  = lps_addcon(name, type, rhs);
+   
+   term_to_nzo(term, con);
+   term_free(term);   
    
    code_value_void(self);
 }
@@ -71,8 +74,12 @@ void i_once(CodeNode* self)
 void i_forall(CodeNode* self)
 {
    const char* name;
+   char*       conname;
+   Con*        con;
    IdxSet*     idxset;
-   Ineq*       ineq;
+   Term*       term;
+   ConType     type;
+   double      rhs;
    Set*        set;
    Tuple*      pattern;
    Tuple*      tuple;
@@ -86,8 +93,9 @@ void i_forall(CodeNode* self)
 
    name    = Code_eval_child_name(self, 0);
    idxset  = Code_eval_child_idxset(self, 1);
-   set     = idxset_get_set(idxset, 0);
-   pattern = idxset_get_tuple(idxset, 0);
+   type    = Code_eval_child_contype(self, 3);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
@@ -96,13 +104,18 @@ void i_forall(CodeNode* self)
 
       if (code_get_bool(code_eval(lexpr)))
       {
-         ineq = Code_eval_child_ineq(self, 2);
-      
-         printf("%s_%d: ", name, ++count);
-         ineq_print(stdout, ineq);
-         printf("\n");
+         conname = malloc(strlen(name) + 13);
+         assert(conname != NULL);
+         sprintf(conname, "%s_%d", name, ++count);
          
-         ineq_free(ineq);
+         term = Code_eval_child_term(self, 2);
+         rhs  = Code_eval_child_numb(self, 4);         
+         con  = lps_addcon(conname, type, rhs);
+   
+         term_to_nzo(term, con);
+
+         term_free(term);   
+         free(conname);
       }
       local_drop_frame();
 
@@ -159,6 +172,26 @@ void i_expr_div(CodeNode* self)
       Code_eval_child_numb(self, 0) / Code_eval_child_numb(self, 1));
 }
 
+void i_expr_mod(CodeNode* self)
+{
+   Trace("i_mod");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self,
+      fmod(Code_eval_child_numb(self, 0), Code_eval_child_numb(self, 1)));
+}
+
+void i_expr_intdiv(CodeNode* self)
+{
+   Trace("i_intdiv");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self,
+      floor(Code_eval_child_numb(self, 0) / Code_eval_child_numb(self, 1)));
+}
+
 void i_expr_neg(CodeNode* self)
 {
    Trace("i_neg");
@@ -167,6 +200,19 @@ void i_expr_neg(CodeNode* self)
 
    code_value_numb(self, -Code_eval_child_numb(self, 0));
 }
+
+void i_expr_if(CodeNode* self)
+{
+   Trace("i_if");
+
+   assert(code_is_valid(self));
+
+   if (Code_eval_child_bool(self, 0))
+      code_value_numb(self, Code_eval_child_numb(self, 1));
+   else
+      code_value_numb(self, Code_eval_child_numb(self, 2));
+}
+
 /* ----------------------------------------------------------------------------
  * Logische Funktionen
  * ----------------------------------------------------------------------------
@@ -237,10 +283,9 @@ void i_bool_eq(CodeNode* self)
 
    if (tp1 != tp2)
    {
-      fprintf(stderr,
-         "*** Line %d Col %d: Comparison of different types\n",
-         code_get_lineno(self), code_get_column(self));      
-      exit(1);
+      fprintf(stderr, "*** Error: Comparison of different types\n");
+      code_errmsg(self);
+      abort();
    }
    assert(tp1 == tp2);
 
@@ -384,11 +429,95 @@ void i_set_union(CodeNode* self)
 
    if (set_get_dim(set_a) != set_get_dim(set_b))
    {
-      fprintf(stderr, "*** Line %d Col %d: Union of incompatible sets\n",
-         code_get_lineno(self), code_get_column(self));      
-      exit(1);
+      fprintf(stderr, "*** Error: Union of incompatible sets\n");
+      code_errmsg(self);
+      abort();
    }
    set_r = set_union(set_a, set_b);
+   
+   code_value_set(self, set_r);
+
+   set_free(set_a);
+   set_free(set_b);
+   set_free(set_r);
+}
+
+void i_set_minus(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+   Set* set_r;
+   
+   Trace("i_set_minus");
+
+   assert(code_is_valid(self));
+
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+
+   if (set_get_dim(set_a) != set_get_dim(set_b))
+   {
+      fprintf(stderr, "*** Error: Minus of incompatible sets\n");
+      code_errmsg(self);
+      abort();
+   }
+   set_r = set_minus(set_a, set_b);
+   
+   code_value_set(self, set_r);
+
+   set_free(set_a);
+   set_free(set_b);
+   set_free(set_r);
+}
+
+void i_set_inter(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+   Set* set_r;
+   
+   Trace("i_set_inter");
+
+   assert(code_is_valid(self));
+
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+
+   if (set_get_dim(set_a) != set_get_dim(set_b))
+   {
+      fprintf(stderr, "*** Error: Intersection of incompatible sets\n");
+      code_errmsg(self);
+      abort();
+   }
+   set_r = set_inter(set_a, set_b);
+   
+   code_value_set(self, set_r);
+
+   set_free(set_a);
+   set_free(set_b);
+   set_free(set_r);
+}
+
+void i_set_sdiff(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+   Set* set_r;
+   
+   Trace("i_set_sdiff");
+
+   assert(code_is_valid(self));
+
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+
+   if (set_get_dim(set_a) != set_get_dim(set_b))
+   {
+      fprintf(stderr, "*** Error: Symetric Difference of incompatible sets\n");
+      code_errmsg(self);
+      abort();
+   }
+   set_r = set_sdiff(set_a, set_b);
    
    code_value_set(self, set_r);
 
@@ -416,6 +545,27 @@ void i_set_cross(CodeNode* self)
    set_free(set_a);
    set_free(set_b);
    set_free(set_r);
+}
+
+void i_set_range(CodeNode* self)
+{
+   Set*   set;
+   double from;
+   double upto;
+   double step;
+   
+   Trace("i_set_range");
+
+   assert(code_is_valid(self));
+
+   from = Code_eval_child_numb(self, 0);
+   upto = Code_eval_child_numb(self, 1);
+   step = Code_eval_child_numb(self, 2);
+   set  = set_range(from, upto, step);
+
+   code_value_set(self, set);
+
+   set_free(set);
 }
 
 /* ----------------------------------------------------------------------------
@@ -514,11 +664,11 @@ void i_newsym_numb(CodeNode* self)
          symbol_add_entry(sym, entry);
       else
       {
-         fprintf(stderr, "*** Line %d Col %d: Illegal element ",
-            code_get_lineno(self), code_get_column(self));
+         fprintf(stderr, "*** Error: Illegal element ");
          tuple_print(stderr, tuple);
          fprintf(stderr, " for symbol\n");
-         exit(1);
+         code_errmsg(self);
+         abort();
       }
       tuple_free(tuple);
       entry_free(entry);
@@ -531,41 +681,75 @@ void i_newsym_numb(CodeNode* self)
 
 void i_newsym_var(CodeNode* self)
 {
-   const char*  name;
-   Set*         set;
-   Symbol*      sym;
-   Tuple*       tuple;
-   VarType      vartype;
-   Var*         var;
-   Entry*       entry;
-   int          idx = 0;
-   double       lower;
-   double       upper;
+   const char* name;
+   IdxSet*     idxset;
+   Set*        set;
+   Symbol*     sym;
+   Tuple*      tuple;
+   Tuple*      pattern;
+   VarType     vartype;
+   Var*        var;
+   Entry*      entry;
+   int         idx = 0;
+   double      lower;
+   double      upper;
+   char*       tuplestr;
+   char*       varname;
    
    Trace("i_newsym_var");
 
    assert(code_is_valid(self));
 
    name    = Code_eval_child_name(self, 0);
-   set     = Code_eval_child_set(self, 1);
+   idxset  = Code_eval_child_idxset(self, 1);
    vartype = Code_eval_child_vartype(self, 2);
-   lower   = Code_eval_child_numb(self, 3);
-   upper   = Code_eval_child_numb(self, 4);   
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
    sym     = symbol_new(name, SYM_VAR, set);
 
-   while((tuple = set_match_next(set, NULL, &idx)) != NULL)
+   if ((!code_get_bool(code_eval(idxset_get_lexpr(idxset)))))
    {
-      var   = var_new(vartype, lower, upper);
+      fprintf(stderr, "*** Error: WITH not allowed here\n");
+      code_errmsg(self);
+      abort();
+   }
+
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+      
+      lower = Code_eval_child_numb(self, 3);
+      upper = Code_eval_child_numb(self, 4);
+
+      /* Hier geben wir der Variable einen eindeutigen Namen
+       */
+      tuplestr = tuple_tostr(tuple);
+      varname  = malloc(strlen(name) + strlen(tuplestr) + 2);
+
+      assert(varname != NULL);
+      
+      sprintf(varname, "%s_%s", name, tuplestr);
+
+      /* Und nun legen wir sie an.
+       */
+      var = lps_addvar(varname, vartype, lower, upper);
+
       entry = entry_new_var(tuple, var);
 
       symbol_add_entry(sym, entry);
 
+      free(varname);
+      free(tuplestr);
+      
+      local_drop_frame();
+
       entry_free(entry);
-      var_free(var);
       tuple_free(tuple);
    }
    set_free(set);
-   
+   tuple_free(pattern);
+   idxset_free(idxset);
+
    code_value_void(self);
 }
 
@@ -573,7 +757,7 @@ void i_symbol_deref(CodeNode* self)
 {
    const char* name;
    Tuple*      tuple;
-   Entry*      entry;
+   const Entry* entry;
    Symbol*     sym;
    Set*        set;   
    Term*       term;
@@ -588,18 +772,18 @@ void i_symbol_deref(CodeNode* self)
 
    if (sym == NULL)
    {
-      fprintf(stderr, "*** Line %d Col %d: Unknown symbol \"%s\"\n",
-         code_get_lineno(self), code_get_column(self), name);      
-      exit(1);
+      fprintf(stderr, "*** Error: Unknown symbol \"%s\"\n", name);
+      code_errmsg(self);
+      abort();
    }
 
    if (!symbol_has_entry(sym, tuple))
    {
-      fprintf(stderr, "*** Line %d Col %d: Unknown index ",
-         code_get_lineno(self), code_get_column(self));
+      fprintf(stderr, "*** Error: Unknown index ");
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol \"%s\"\n", name);
-      exit(1);
+      code_errmsg(self);
+      abort();
    }
    entry = symbol_lookup_entry(sym, tuple);
 
@@ -619,15 +803,15 @@ void i_symbol_deref(CodeNode* self)
       set_free(set);
       break;
    case SYM_VAR :
-      term = term_new();
-      term_add_elem(term, sym, entry, 1.0);
+      term = term_new(1);
+      term_add_elem(term, entry, 1.0);
       code_value_term(self, term);
       term_free(term);
       break;
    default :
       abort();
    }
-   entry_free(entry);
+   /* entry_free(entry); */
 }
 
 /* ----------------------------------------------------------------------------
@@ -638,21 +822,40 @@ void i_idxset_new(CodeNode* self)
 {
    IdxSet*   idxset;
    Tuple*    tuple;
+   Tuple*    t0;
    Set*      set;
-   
+   char      name[13]; /* "@-2000000000" */
+   int       dim;
+   int       i;
+         
    Trace("i_idxset_new");
    
    assert(code_is_valid(self));
 
+   t0     = tuple_new(0);
    tuple  = Code_eval_child_tuple(self, 0);
    set    = Code_eval_child_set(self, 1);
-   idxset = idxset_new();
 
-   idxset_add_set(idxset, tuple, set);
-   idxset_set_lexpr(idxset, code_get_child(self, 2));
+   /* Wenn kein Index tuple angegeben wurde, konstruieren wir eins.
+    */
+   if (!tuple_cmp(tuple, t0))
+   {
+      tuple_free(tuple);
+
+      dim   = set_get_dim(set);
+      tuple = tuple_new(dim);
+      
+      for(i = 0; i < dim; i++)
+      {
+         sprintf(name, "@%d", i + 1); 
+         tuple_set_elem(tuple, i, elem_new_name(str_new(name)));
+      }
+   }
+   idxset = idxset_new(tuple, set, code_get_child(self, 2));
 
    code_value_idxset(self, idxset);
 
+   tuple_free(t0);
    tuple_free(tuple);
    set_free(set);
    idxset_free(idxset);
@@ -778,10 +981,10 @@ void i_term_sum(CodeNode* self)
    assert(code_is_valid(self));
 
    idxset  = Code_eval_child_idxset(self, 0);
-   set     = idxset_get_set(idxset, 0);
-   pattern = idxset_get_tuple(idxset, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
-   term_a  = term_new();
+   term_a  = term_new(1);
 
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
    {
@@ -804,42 +1007,15 @@ void i_term_sum(CodeNode* self)
 
    if (term_r == NULL)
    {
-      fprintf(stderr, "*** Line %d Col %d: Empty term generated\n",
-         code_get_lineno(self), code_get_column(self));      
-      exit(1);
+      fprintf(stderr, "*** Error: Empty term generated\n");
+      code_errmsg(self);
+      abort();
    }
    code_value_term(self, term_r);
 
    set_free(set);   
    term_free(term_r);
    idxset_free(idxset);
-}
-
-/* ----------------------------------------------------------------------------
- * Inequality Funktionen
- * ----------------------------------------------------------------------------
- */
-void i_ineq_new(CodeNode* self)
-{
-   Term*    term;
-   Ineq*    ineq;
-   IneqType type;
-   double   rhs;
-   
-   Trace("i_ineq_new");
-   
-   assert(code_is_valid(self));
-
-   term = Code_eval_child_term(self, 0);
-   type = Code_eval_child_ineqtype(self, 1);
-   rhs  = Code_eval_child_numb(self, 2);
-   rhs -= term_get_constant(term);
-   ineq = ineq_new(type, term, rhs);
-
-   code_value_ineq(self, ineq);
-
-   ineq_free(ineq);
-   term_free(term);
 }
 
 /* ----------------------------------------------------------------------------
@@ -1025,11 +1201,10 @@ static void objective(CodeNode* self, Bool minimize)
 
    name = Code_eval_child_name(self, 0);
    term = Code_eval_child_term(self, 1);
-   
-   printf("%s\n", minimize ? "Minimize" : "Maximize");
-   printf("%s: ", name);
-   term_print(stdout, term, TERM_PRINT_INDEX);
-   printf("\nSubject To\n");
+
+   lps_objname(name);
+   lps_setdir(minimize ? LP_MIN : LP_MAX);
+   term_to_objective(term);
 
    term_free(term);
    

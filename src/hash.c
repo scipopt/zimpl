@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.5 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: hash.c,v 1.6 2001/03/09 16:12:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -44,7 +44,7 @@ struct hash_element
    union
    {
       const Tuple* tuple;
-      Entry*       entry;
+      const Entry* entry;
    } value;
    HElem* next;
 };
@@ -128,7 +128,7 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
    hash->elems++;
 }
 
-void hash_add_entry(Hash* hash, Entry* entry)
+void hash_add_entry(Hash* hash, const Entry* entry)
 {
    HElem*       he = calloc(1, sizeof(*he));
    Tuple*       tuple;
@@ -149,7 +149,7 @@ void hash_add_entry(Hash* hash, Entry* entry)
    tuple_free(tuple);
 }
 
-Bool hash_has_tuple(Hash* hash, const Tuple* tuple)
+Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
@@ -164,7 +164,7 @@ Bool hash_has_tuple(Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-Bool hash_has_entry(Hash* hash, Tuple* tuple)
+Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
@@ -179,11 +179,10 @@ Bool hash_has_entry(Hash* hash, Tuple* tuple)
    return he != NULL;
 }
 
-Entry* hash_lookup_entry(Hash* hash, Tuple* tuple)
+const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he    = NULL;
-   Entry*       entry = NULL;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -194,11 +193,9 @@ Entry* hash_lookup_entry(Hash* hash, Tuple* tuple)
 
    assert(he != NULL);
 
-   entry = entry_copy(he->value.entry);
+   assert(entry_is_valid(he->value.entry));
 
-   assert(entry_is_valid(entry));
-
-   return entry;
+   return he->value.entry;
 }
 
 static void hash_statist(FILE* fp, const Hash* hash)
@@ -236,7 +233,7 @@ static void hash_statist(FILE* fp, const Hash* hash)
    assert(sum == hash->elems);
 
    fprintf(fp,
-      "HashStat: size=%d sum=%d min=%d max=%d avg=%.1f zero=%d filled=%d\n",
+      "HashStat: size=%u sum=%d min=%d max=%d avg=%.1f zero=%d filled=%d\n",
       hash->size, sum, min, max,
       (double)sum / (double)filled,
       zeros, filled);

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.6 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.7 2001/03/09 16:12:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -49,15 +49,13 @@ union code_value
    Tuple*      tuple;
    Set*        set;
    Term*       term;
-   Ineq*       ineq;
    Entry*      entry;
-   Symbol*     symbol;
    IdxSet*     idxset;
    Bool        bool;
    int         size;
    List*       list;
    VarType     vartype;
-   IneqType    ineqtype;
+   ConType     contype;
 };
 
 #define MAX_CHILDS 6
@@ -65,12 +63,12 @@ union code_value
 struct code_node
 {
    SID
-   CodeType  type;
-   Inst      eval;
-   CodeValue value;
-   CodeNode* child[MAX_CHILDS];
-   int       lineno;
-   int       column;
+   CodeType    type;
+   Inst        eval;
+   CodeValue   value;
+   CodeNode*   child[MAX_CHILDS];
+   const Stmt* stmt;
+   int         column;
 };
 
 static CodeNode* root;
@@ -89,7 +87,7 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    /* Das sollte eigendlich ein parameter sein, aber wozu bei jedem
     * code_new diese Funktionen mit uebergeben.
     */
-   node->lineno = scan_get_lineno();
+   node->stmt   = scan_get_stmt();
    node->column = scan_get_column();
    
    SID_set(node, CODE_SID);
@@ -117,7 +115,7 @@ CodeNode* code_new_numb(double numb)
    node->type       = CODE_NUMB;
    node->eval       = i_nop;
    node->value.numb = numb;
-   node->lineno     = scan_get_lineno();
+   node->stmt       = scan_get_stmt();
    node->column     = scan_get_column();
 
    SID_set(node, CODE_SID);
@@ -136,7 +134,7 @@ CodeNode* code_new_strg(const char* strg)
    node->type       = CODE_STRG;
    node->eval       = i_nop;
    node->value.strg = strg;
-   node->lineno     = scan_get_lineno();
+   node->stmt       = scan_get_stmt();
    node->column     = scan_get_column();
 
    SID_set(node, CODE_SID);
@@ -155,7 +153,7 @@ CodeNode* code_new_name(const char* name)
    node->type       = CODE_NAME;
    node->eval       = i_nop;
    node->value.name = name;
-   node->lineno     = scan_get_lineno();
+   node->stmt       = scan_get_stmt();
    node->column     = scan_get_column();
 
    SID_set(node, CODE_SID);
@@ -174,7 +172,7 @@ CodeNode* code_new_size(int size)
    node->type       = CODE_SIZE;
    node->eval       = i_nop;
    node->value.size = size;
-   node->lineno     = scan_get_lineno();
+   node->stmt       = scan_get_stmt();
    node->column     = scan_get_column();
 
    SID_set(node, CODE_SID);
@@ -192,7 +190,7 @@ CodeNode* code_new_vartype(VarType vartype)
    node->type          = CODE_VARTYPE;
    node->eval          = i_nop;
    node->value.vartype = vartype;
-   node->lineno        = scan_get_lineno();
+   node->stmt          = scan_get_stmt();
    node->column        = scan_get_column();
 
    SID_set(node, CODE_SID);
@@ -201,17 +199,17 @@ CodeNode* code_new_vartype(VarType vartype)
    return node;
 }
 
-CodeNode* code_new_ineqtype(IneqType ineqtype)
+CodeNode* code_new_contype(ConType contype)
 {
    CodeNode* node = calloc(1, sizeof(*node));
 
    assert(node != NULL);
 
-   node->type           = CODE_INEQTYPE;
-   node->eval           = i_nop;
-   node->value.ineqtype = ineqtype;
-   node->lineno         = scan_get_lineno();
-   node->column         = scan_get_column();
+   node->type          = CODE_CONTYPE;
+   node->eval          = i_nop;
+   node->value.contype = contype;
+   node->stmt          = scan_get_stmt();
+   node->column        = scan_get_column();
 
    SID_set(node, CODE_SID);
    assert(code_is_valid(node));
@@ -244,13 +242,8 @@ static void code_free_value(CodeNode* node)
    case CODE_TERM :
       term_free(node->value.term);
       break;
-   case CODE_INEQ :
-      ineq_free(node->value.ineq);
-      break;
    case CODE_ENTRY :
       entry_free(node->value.entry);
-      break;
-   case CODE_SYMBOL :
       break;
    case CODE_IDXSET :
       idxset_free(node->value.idxset);
@@ -262,7 +255,7 @@ static void code_free_value(CodeNode* node)
       list_free(node->value.list);
       break;
    case CODE_VARTYPE :
-   case CODE_INEQTYPE :
+   case CODE_CONTYPE :
       break;
    default :
       abort();
@@ -330,15 +323,21 @@ static CodeNode* code_check_type(CodeNode* node, CodeType expected)
 
    if (node->type != expected)
    {
-      fprintf(stderr, 
-         "*** Line %d Col %d: Type error, expected %d got %d\n",
-         node->lineno, node->column,
-         expected,
-         node->type);
-
-      exit(1);
+      fprintf(stderr, "*** Error: Type error, expected %d got %d\n",
+         expected, node->type);
+      code_errmsg(node);
+      abort();
    }
    return node;
+}
+
+void code_errmsg(const CodeNode* node)
+{
+   fprintf(stderr, "*** File: %s Line %d\n",
+      stmt_get_filename(node->stmt),
+      stmt_get_lineno(node->stmt));
+
+   show_source(stderr, stmt_get_text(node->stmt), node->column);
 }
 
 /* ----------------------------------------------------------------------------
@@ -353,20 +352,6 @@ CodeNode* code_get_child(CodeNode* node, int no)
    assert(node->child[no] != NULL);
    
    return node->child[no];
-}
-
-int code_get_lineno(const CodeNode* node)
-{
-   assert(code_is_valid(node));
-   
-   return node->lineno;
-}
-
-int code_get_column(const CodeNode* node)
-{
-   assert(code_is_valid(node));
-   
-   return node->column;
 }
 
 double code_get_numb(CodeNode* node)
@@ -409,11 +394,6 @@ Term* code_get_term(CodeNode* node)
    return term_copy(code_check_type(node, CODE_TERM)->value.term);
 }
 
-Ineq* code_get_ineq(CodeNode* node)
-{
-   return ineq_copy(code_check_type(node, CODE_INEQ)->value.ineq);
-}
-
 int code_get_size(CodeNode* node)
 {
    return code_check_type(node, CODE_SIZE)->value.size;
@@ -434,9 +414,9 @@ VarType code_get_vartype(CodeNode* node)
    return code_check_type(node, CODE_VARTYPE)->value.vartype;
 }
 
-IneqType code_get_ineqtype(CodeNode* node)
+ConType code_get_contype(CodeNode* node)
 {
-   return code_check_type(node, CODE_INEQTYPE)->value.ineqtype;
+   return code_check_type(node, CODE_CONTYPE)->value.contype;
 }
 
 /* ----------------------------------------------------------------------------
@@ -530,17 +510,6 @@ void code_value_term(CodeNode* node, Term* term)
    node->value.term = term_copy(term);
 }
 
-void code_value_ineq(CodeNode* node, Ineq* ineq)
-{
-   assert(code_is_valid(node));
-   assert(ineq_is_valid(ineq));
-
-   code_free_value(node);
-
-   node->type       = CODE_INEQ;
-   node->value.ineq = ineq_copy(ineq);
-}
-
 void code_value_bool(CodeNode* node, Bool bool)
 {
    assert(code_is_valid(node));
@@ -582,14 +551,14 @@ void code_value_vartype(CodeNode* node, VarType vartype)
    node->value.vartype = vartype;
 }
 
-void code_value_ineqtype(CodeNode* node, IneqType ineqtype)
+void code_value_contype(CodeNode* node, ConType contype)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
 
-   node->type           = CODE_INEQTYPE;
-   node->value.ineqtype = ineqtype;
+   node->type          = CODE_CONTYPE;
+   node->value.contype = contype;
 }
 
 void code_value_void(CodeNode* node)

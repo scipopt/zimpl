@@ -21,3 +21,7 @@
 -strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode)
 -strong(AcJX,Inst)
 -strong(AJXbl,Bool)
+/* lpstore.c */
+-esym(429,n)
+/* rbt.c */
+-esym(429,nodes,t)

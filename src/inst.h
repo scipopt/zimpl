@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.1 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: inst.h,v 1.2 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -7,6 +7,23 @@
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 #ifndef _INST_H_
 #define _INST_H_
@@ -51,24 +68,22 @@ extern void i_entry_list_new(CodeNode* self);
 extern void i_expr_add(CodeNode* self);
 /*lint -sem(i_expr_div, 1p == 1) */
 extern void i_expr_div(CodeNode* self);
+/*lint -sem(i_expr_if, 1p == 1) */
+extern void i_expr_if(CodeNode* self);
+/*lint -sem(i_expr_intdiv, 1p == 1) */
+extern void i_expr_intdiv(CodeNode* self);
 /*lint -sem(i_expr_mul, 1p == 1) */
 extern void i_expr_mul(CodeNode* self);
+/*lint -sem(i_expr_mod, 1p == 1) */
+extern void i_expr_mod(CodeNode* self);
 /*lint -sem(i_expr_neg, 1p == 1) */
 extern void i_expr_neg(CodeNode* self);
 /*lint -sem(i_expr_sub, 1p == 1) */
 extern void i_expr_sub(CodeNode* self);
 /*lint -sem(i_forall, 1p == 1) */
 extern void i_forall(CodeNode* self);
-/*lint -sem(i_ineq_new, 1p == 1) */
-extern void i_ineq_new(CodeNode* self);
 /*lint -sem(i_idxset_new, 1p == 1) */
 extern void i_idxset_new(CodeNode* self);
-/*lint -sem(i_idxset_add, 1p == 1) */
-extern void i_idxset_add(CodeNode* self);
-/*lint -sem(i_idxset_set, 1p == 1) */
-extern void i_idxset_set(CodeNode* self);
-/*lint -sem(i_idxset_lexpr, 1p == 1) */
-extern void i_idxset_lexpr(CodeNode* self);
 /*lint -sem(i_local_deref, 1p == 1) */
 extern void i_local_deref(CodeNode* self);
 /*lint -sem(i_newsym_numb, 1p == 1) */
@@ -87,10 +102,18 @@ extern void i_object_min(CodeNode* self);
 extern void i_once(CodeNode* self);
 /*lint -sem(i_set_cross, 1p == 1) */
 extern void i_set_cross(CodeNode* self);
+/*lint -sem(i_set_inter, 1p == 1) */
+extern void i_set_inter(CodeNode* self);
 /*lint -sem(i_set_new, 1p == 1) */
 extern void i_set_new(CodeNode* self);
+/*lint -sem(i_set_minus, 1p == 1) */
+extern void i_set_minus(CodeNode* self);
 /*lint -sem(i_set_empty, 1p == 1) */
 extern void i_set_empty(CodeNode* self);
+/*lint -sem(i_set_range, 1p == 1) */
+extern void i_set_range(CodeNode* self);
+/*lint -sem(i_set_sdiff, 1p == 1) */
+extern void i_set_sdiff(CodeNode* self);
 /*lint -sem(i_set_union, 1p == 1) */
 extern void i_set_union(CodeNode* self);
 /*lint -sem(i_symbol_deref, 1p == 1) */

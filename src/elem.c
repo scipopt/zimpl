@@ -1,4 +1,4 @@
-#ident "@(#) $Id: elem.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: elem.c,v 1.5 2001/03/09 16:12:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -93,12 +93,12 @@ static Elem* new_elem(void)
    return &store_anchor->begin[store_anchor->used++];
 }
 
-void elem_init(void)
+void elem_init()
 {
    extend_storage();
 }
 
-void elem_exit(void)
+void elem_exit()
 {
    ElemStore* store;
    ElemStore* next;
@@ -259,8 +259,7 @@ void elem_print(FILE* fp, const Elem* elem)
       fprintf(fp, "%s", elem->value.name);
       break;
    default :
-      fprintf(fp, "Elem-ERR");
-      break;
+      abort();
    }
 }
 
@@ -294,4 +293,33 @@ unsigned int elem_hash(const Elem* elem)
       abort();
    }
    return hcode;
+}
+
+char* elem_tostr(const Elem* elem)
+{
+   char* str;
+   
+   assert(elem_is_valid(elem));
+
+   switch(elem->type)
+   {
+   case ELEM_NUMB :
+      str = malloc(32);
+      
+      assert(str != NULL);
+      
+      sprintf(str, "%.16g", elem->value.numb);
+      break;
+   case ELEM_STRG :
+      str = strdup(elem->value.strg);
+      break;
+   case ELEM_NAME :
+      str = strdup(elem->value.name);
+      break;
+   default :
+      abort();
+   }
+   assert(str != NULL);
+
+   return str;
 }

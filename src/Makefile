@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.7 2001/01/30 19:19:04 thor Exp $
+# $Id: Makefile,v 1.8 2001/03/09 16:12:35 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   Type....: Makefile                                                      *
@@ -28,18 +28,18 @@
 
 .PHONY:		clean lint
 
-NAME		=	mme
-CC		=	gcc 
+NAME		=	zimple
+CC		=	cc 
 YACC		=	bison
 LEX		=	flex
 CPPFLAGS	=	-I./ 
-OPTI_FLAGS      =       -O
+OPTI_FLAGS      =       -O -mcpu=pentiumpro 
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline
-DEBU_FLAGS      =       -g #-DNDEBUG #-pg -DNO_MSHELL #  
-LDFLAGS		=	-lm
-DFLAGS		=	-MM
+DEBU_FLAGS      =       -g -DNO_MSHELL -DNDEBUG #-pg
+LDFLAGS		=	-lm 
+DFLAGS		=	-MM #-M -xM1
 YFLAGS		=	-v -d -t
 LFLAGS		=	-d
 LINT		=	lintgcc
@@ -49,9 +49,10 @@ LINT		=	lintgcc
 #------------------------------------------------------------------------------
 #
 CFLAGS	=	$(OPTI_FLAGS) $(DEBU_FLAGS) $(PROG_FLAGS) $(WARN_FLAGS) 
-OBJECT  =       code2.o elem.o entry.o hash.o idxset.o ineq.o inst.o list.o \
-		load.o local.o mme.o mmlparse.o mmlscan.o prog.o set.o \
-		stmt.o strstore.o symbol.o term.o tuple.o var.o \
+OBJECT  =       code.o elem.o entry.o hash.o idxset.o inst.o list.o \
+		load.o local.o lpstore.o lpfwrite.o mmlparse.o mmlscan.o \
+		mpswrite.o prog.o rbt.o set.o source.o stmt.o strstore.o \
+		symbol.o term.o tuple.o zimple.o \
 		mshell.o
 
 $(NAME):	$(OBJECT)

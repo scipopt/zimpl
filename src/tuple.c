@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.3 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: tuple.c,v 1.4 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -34,7 +34,8 @@
 #include "mshell.h"
 #include "mme.h"
 
-#define TUPLE_SID  0x5475706c
+#define TUPLE_SID      0x5475706c
+#define TUPLE_STR_SIZE 100
 
 struct tuple
 {
@@ -116,9 +117,13 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
    
    if (tuple_a->dim != tuple_b->dim)
    {
-      fprintf(stderr, "Warning: Comparison of different dimension tuples\n");
+      /* Keine Warnung wenn wir mit dem 0-Tuple vergleichen.
+       */
+      if ((tuple_a->dim != 0) && (tuple_b->dim != 0))
+         fprintf(stderr,
+            "Warning: Comparison of different dimension tuples\n");
 
-      return FALSE;
+      return TRUE;
    }
    assert(tuple_a->dim == tuple_b->dim);
    
@@ -208,4 +213,41 @@ unsigned int tuple_hash(const Tuple* tuple)
    return hcode;
 }
 
+char* tuple_tostr(const Tuple* tuple)
+{
+   int   size = TUPLE_STR_SIZE;
+   int   len  = 1; /* fuer die '\0' */
+   char* str  = malloc(size);
+   char* selem;
+   int   selemlen;
+   int   i;
+   
+   assert(tuple_is_valid(tuple));
+   assert(str != NULL);
+
+   str[0] = '\0';
+   
+   for(i = 0; i < tuple->dim; i++)
+   {
+      selem    = elem_tostr(tuple->element[i]);
+      selemlen = strlen(selem) + ((i > 0) ? 1 : 0);
+
+      if (len + selemlen >= size)
+      {
+         size += selemlen + TUPLE_STR_SIZE;
+         str   = realloc(str, size);
+
+         assert(str != NULL);
+      }
+      assert(len + selemlen < size);
+
+      strcat(str, i > 0 ? "@" : "");
+      strcat(str, selem);
+
+      free(selem);
+      
+      len += selemlen;
+   }
+   return str;
+}
 

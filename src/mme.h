@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.6 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: mme.h,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -24,41 +24,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-typedef int                      Bool;
-typedef enum element_type        ElemType;
-typedef struct element           Elem;
-typedef struct tuple             Tuple;
-typedef struct set               Set;
-typedef enum variable_type       VarType;
-typedef struct variable          Var;
-typedef struct entry             Entry;
-typedef enum symbol_type         SymbolType;
-typedef struct symbol            Symbol;
-typedef struct index_set         IdxSet;
-typedef struct term              Term;
-typedef enum inequality_type     IneqType; 
-typedef struct inequality        Ineq;
-typedef struct local             Local;
-typedef struct list_element      ListElem;
-typedef struct list              List;
-typedef enum hash_type           HashType;
-typedef struct hash              Hash;
-
-typedef enum statement_type  StmtType;
-typedef struct statement     Stmt;
-typedef struct program       Prog;
-
-typedef enum code_type       CodeType;
-typedef struct code_node     CodeNode;
-
-typedef void               (*Inst)(CodeNode* self);
+#ifndef _MME_H_
+#define _MME_H_
 
 enum element_type    { ELEM_ERR = 0, ELEM_NUMB, ELEM_STRG, ELEM_NAME };
-enum variable_type   { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
-enum inequality_type { INEQ_ERR = 0, INEQ_EQ, INEQ_LE, INEQ_GE };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY };
+enum lp_direct       { LP_MIN = 0, LP_MAX };
+enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
+enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
+enum con_type        { CON_ERR = 0, CON_EQ, CON_LE, CON_GE };
+enum var_type        { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
 
 enum statement_type
 {
@@ -66,7 +42,49 @@ enum statement_type
    STMT_CONS, STMT_DATA
 };
 
-extern Bool          verbose;
+enum code_type
+{
+   CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
+   CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
+   CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE
+};
+
+typedef enum element_type        ElemType;
+typedef struct element           Elem;
+typedef struct tuple             Tuple;
+typedef struct set               Set;
+typedef struct entry             Entry;
+typedef enum symbol_type         SymbolType;
+typedef struct symbol            Symbol;
+typedef struct index_set         IdxSet;
+typedef struct term              Term;
+typedef struct local             Local;
+typedef struct list_element      ListElem;
+typedef struct list              List;
+typedef enum hash_type           HashType;
+typedef struct hash              Hash;
+
+typedef struct nonzero           Nzo;
+typedef struct variable          Var;
+typedef struct constraint        Con;
+typedef struct lpstorage         Lps;
+typedef enum lp_direct           LpDirect;
+typedef enum lp_type             LpType;
+typedef enum lp_form             LpForm;
+typedef enum con_type            ConType;
+typedef enum var_type            VarType;
+
+typedef enum statement_type      StmtType;
+typedef struct statement         Stmt;
+typedef struct program           Prog;
+
+typedef enum code_type           CodeType;
+typedef struct code_node         CodeNode;
+
+typedef void                   (*Inst)(CodeNode* self);
+
+extern Bool         verbose;
+extern Bool         zpldebug;
 
 extern void         str_init(void);
 extern void         str_exit(void);
@@ -117,13 +135,13 @@ extern Bool         hash_is_valid(const Hash* hash);
 /*lint -sem(        hash_add_tuple, 1p == 1 && 2p == 1) */
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */
-extern void         hash_add_entry(Hash* hash, Entry* entry);
+extern void         hash_add_entry(Hash* hash, const Entry* entry);
 /*lint -sem(        hash_has_tuple, 1p == 1 && 2p == 1) */
-extern Bool         hash_has_tuple(Hash* hash, const Tuple* tuple);
+extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
-extern Bool         hash_has_entry(Hash* hash, Tuple* tuple);
+extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
-extern Entry*       hash_lookup_entry(Hash* hash, Tuple* tuple);
+extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 
 /* element.c
  */
@@ -153,6 +171,8 @@ extern const char*  elem_get_name(const Elem* elem);
 extern void         elem_print(FILE* fp, const Elem* elem);
 /*lint -sem(        elem_hash, 1p == 1) */
 extern unsigned int elem_hash(const Elem* elem);
+/*lint -sem(        elem_tostr, 1p == 1, @p > 0) */
+extern char*        elem_tostr(const Elem* elem);
 
 /* tuple.c
  */
@@ -180,6 +200,8 @@ extern Tuple*       tuple_combine(const Tuple* ta, const Tuple* tb);
 extern void         tuple_print(FILE* fp, const Tuple* tuple);
 /*lint -sem(        tuple_hash, 1p == 1) */
 extern unsigned int tuple_hash(const Tuple* tuple);
+/*lint -sem(        tuple_tostr, 1p == 1, @p > 0) */
+extern char*        tuple_tostr(const Tuple* tuple);
 
 /* set.c
  */
@@ -210,25 +232,12 @@ extern Set*         set_range(double start, double end, double step);
 extern Set*         set_cross(const Set* seta, const Set* setb);
 /*lint -sem(        set_union, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_union(const Set* seta, const Set* setb);
-
-/* var.c
- */
-/*lint -sem(        var_new, @p == 1) */
-extern Var*         var_new(VarType type, double lower, double upper);
-/*lint -sem(        var_free, 1p == 1) */
-extern void         var_free(Var* var);
-/*lint -sem(        var_is_valid, 1p == 1) */
-extern Bool         var_is_valid(const Var* var);
-/*lint -sem(        var_copy, 1p == 1, @p == 1) */
-extern Var*         var_copy(Var* var);
-/*lint -sem(        var_get_type, 1p == 1) */
-extern VarType      var_get_type(const Var* var);
-/*lint -sem(        var_get_lower, 1p == 1) */
-extern double       var_get_lower(const Var* var);
-/*lint -sem(        var_get_upper, 1p == 1) */
-extern double       var_get_upper(const Var* var);
-/*lint -sem(        var_print, 1p == 1 && 2p == 1) */
-extern void         var_print(FILE* fp, const Var* var);
+/*lint -sem(        set_inter, 1p == 1 && 2p == 1, @p == 1) */
+extern Set*         set_inter(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_minus, 1p == 1 && 2p == 1, @p == 1) */
+extern Set*         set_minus(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_sdiff, 1p == 1 && 2p == 1, @p == 1) */
+extern Set*         set_sdiff(const Set* set_a, const Set* set_b);
 
 /* entry.c
  */
@@ -257,15 +266,15 @@ extern SymbolType   entry_get_type(const Entry* entry);
 /*lint -sem(        entry_get_tuple, 1p == 1, @p == 1) */
 extern Tuple*       entry_get_tuple(const Entry* entry);
 /*lint -sem(        entry_get_index, 1p == 1, @n >= 0) */
-extern int          entry_get_index(Entry* entry);
+extern int          entry_get_index(const Entry* entry);
 /*lint -sem(        entry_get_numb, 1p == 1) */
 extern double       entry_get_numb(const Entry* entry);
 /*lint -sem(        entry_get_strg, 1p == 1, @p == 1) */
 extern const char*  entry_get_strg(const Entry* entry);
 /*lint -sem(        entry_get_set, 1p == 1, @p == 1) */
-extern Set*         entry_get_set(Entry* entry);
+extern Set*         entry_get_set(const Entry* entry);
 /*lint -sem(        entry_get_var, 1p == 1, @p == 1) */
-extern Var*         entry_get_var(Entry* entry);
+extern Var*         entry_get_var(const Entry* entry);
 /*lint -sem(        entry_print, 1p == 1 && 2p == 1) */
 extern void         entry_print(FILE* fp, const Entry* entry);
 /*lint -sem(        entry_hash, 1p == 1) */
@@ -283,7 +292,7 @@ extern Symbol*      symbol_lookup(const char* name);
 /*lint -sem(        symbol_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         symbol_has_entry(const Symbol* sym, Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
-extern Entry*       symbol_lookup_entry(const Symbol* sym, Tuple* tuple);
+extern const Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple);
 /*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
@@ -311,28 +320,20 @@ extern void         symbol_print_bounds(FILE* fp);
 
 /* idxset.c
  */
-/*lint -sem(        idxset_new, @p == 1) */
-extern IdxSet*      idxset_new(void);
+/*lint -sem(        idxset_new, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
+extern IdxSet*      idxset_new(Tuple* tuple, Set* set, CodeNode* lexpr);
 /*lint -sem(        idxset_free, 1p == 1) */
 extern void         idxset_free(IdxSet* idxset);
-/*lint -sem(        idxset_add_set, 1p == 1 && 2p == 1 && 3p == 1) */
-extern void         idxset_add_set(IdxSet* idxset, Tuple* tuple, Set* set);
 /*lint -sem(        idxset_is_valid, 1p == 1) */
 extern Bool         idxset_is_valid(const IdxSet* idxset);
 /*lint -sem(        idxset_copy, 1p == 1, @p == 1) */
 extern IdxSet*      idxset_copy(const IdxSet* source);
-/*lint -sem(        idxset_set_lexpr, 1p == 1 && 2p == 1) */
-extern void         idxset_set_lexpr(IdxSet* idxset, CodeNode* addr);
 /*lint -sem(        idxset_get_lexpr, 1p == 1, @p == 1) */
 extern CodeNode*    idxset_get_lexpr(const IdxSet* idxset);
-/*lint -sem(        idxset_get_sets, 1p == 1, @n >= 0) */
-extern int          idxset_get_sets(const IdxSet* idxset);
-/*lint -sem(        idxset_get_dim, 1p == 1, @n >= 0) */
-extern int          idxset_get_dim(const IdxSet* idxset);
-/*lint -sem(        idxset_get_tuple, 1p == 1 && 2n >= 0, @p == 1) */
-extern Tuple*       idxset_get_tuple(const IdxSet* idxset, int set_nr);
-/*lint -sem(        idxset_get_set, 1p == 1 && 2n >= 0, @p == 1) */
-extern Set*         idxset_get_set(const IdxSet* idxset, int set_nr);
+/*lint -sem(        idxset_get_tuple, 1p == 1, @p == 1) */
+extern Tuple*       idxset_get_tuple(const IdxSet* idxset);
+/*lint -sem(        idxset_get_set, 1p == 1, @p == 1) */
+extern Set*         idxset_get_set(const IdxSet* idxset);
 /*lint -sem(        idxset_print, 1p == 1 && 2p == 1) */
 extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 
@@ -351,17 +352,16 @@ extern void         local_print_all(FILE* fp);
 #define TERM_PRINT_SYMBOL  1
 #define TERM_PRINT_INDEX   2
 
-/*lint -sem(        term_new, @p == 1) */
-extern Term*        term_new(void);
-/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
-extern void         term_add_elem(
-   Term* term, const Symbol* sym, Entry* entry, double coeff);
+/*lint -sem(        term_new, 1n > 0, @p == 1) */
+extern Term*        term_new(int size);
+/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1) */
+extern void         term_add_elem(Term* term, const Entry* entry, double coeff);
 /*lint -sem(        term_free, 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
 extern Bool         term_is_valid(const Term* term);
 /*lint -sem(        term_copy, 1p == 1, @p == 1) */
-extern Term*        term_copy(Term* term);
+extern Term*        term_copy(const Term* term);
 /*lint -sem(        term_print, 1p == 1 && 2p == 1 && 3n >= 1) */
 extern void         term_print(FILE* fp, const Term* term, int flag);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
@@ -374,31 +374,61 @@ extern void         term_mul_coeff(Term* term, double value);
 extern double       term_get_constant(Term* term);
 /*lint -sem(        term_negate, 1p == 1) */
 extern void         term_negate(Term* term);
+/*lint -sem(        term_to_objective, 1p == 1) */
+extern void         term_to_objective(const Term* term);
+/*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
+extern void         term_to_nzo(const Term* term, Con* con);
 
-/* ineq.c
+/* lpstore.c
  */
-/*lint -sem(        ineq_new, 2p == 1, @p == 1) */
-extern Ineq*        ineq_new(IneqType type, Term* term, double rhs);
-/*lint -sem(        ineq_free, 1p == 1) */
-extern void         ineq_free(Ineq* ineq);
-/*lint -sem(        ineq_is_valid, 1p == 1) */
-extern Bool         ineq_is_valid(const Ineq* ineq);
-/*lint -sem(        ineq_copy, 1p == 1, @p == 1) */
-extern Ineq*        ineq_copy(Ineq* ineq);
-/*lint -sem(        ineq_print, 1p == 1 && 2p == 1) */
-extern void         ineq_print(FILE* fp, const Ineq* ineq);
+extern void         lps_alloc(const char* name);
+extern void         lps_free(void);
+extern void         lps_number(void);
+extern Var*         lps_getvar(const char* name);
+extern Con*         lps_getcon(const char* name);
+extern Nzo*         lps_getnzo(Con* con, Var* var);
+extern Var*         lps_addvar(const char* name, VarType type,
+                       double lower, double upper); 
+extern Con*         lps_addcon(const char* name, ConType sense, double rhs);
+extern void         lps_addnzo(Con* con, Var* var, double value);
+extern void         lps_stat(void);
+extern void         lps_solve(void);
+extern void         lps_setdir(LpDirect direct);
+extern void         lps_objname(const char* name);
+extern void         lps_setcost(Var* var, double cost);
+extern void         lps_setlower(Var* var, double lower);
+extern void         lps_setupper(Var* var, double upper);
+extern void         lps_setsense(Con* con, ConType sense);
+extern void         lps_setrhs(Con* con, double rhs);
+extern int          lps_getsense(const Con* con);
+extern void         lps_write(FILE* fp, LpForm form);
+extern void         lps_transtable(FILE* fp);
+
+/* lpfwrite.c
+ */
+extern void         lpf_write(const Lps* lp, FILE* fp);
+
+/* mpswrite.c
+ */
+extern void         mps_write(const Lps* lp, FILE* fp);
 
 /* stmt.c
  */
-/*lint -sem(        stmt_new, 2n >= 0 && 3p && 4p == 1, @p == 1) */
-extern Stmt*        stmt_new(StmtType type, int lineno, const char* name,
-   const char* text);
+/*lint -sem(        stmt_new, 2p && 3n >= 0 && 4p && 5p == 1, @p == 1) */
+extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
+   const char* name, const char* text);
 /*lint -sem(        stmt_free, 1p == 1) */
 extern void         stmt_free(Stmt* stmt);
 /*lint -sem(        stmt_is_valid, 1p == 1) */
 extern Bool         stmt_is_valid(const Stmt* stmt);
 /*lint -sem(        stmt_get_name, 1p == 1, @p) */
 extern const char*  stmt_get_name(const Stmt* stmt);
+/*lint -sem(        stmt_get_filename, 1p == 1, @p) */
+extern const char*  stmt_get_filename(const Stmt* stmt);
+/*lint -sem(        stmt_get_lineno, 1p == 1, @n > 0) */
+extern int          stmt_get_lineno(const Stmt* stmt);
+/*lint -sem(        stmt_get_filename, 1p == 1, @p) */
+extern const char*  stmt_get_text(const Stmt* stmt);
 /*lint -sem(        stmt_parse, 1p == 1) */
 extern void         stmt_parse(Stmt* stmt);
 /*lint -sem(        stmt_execute, 1p == 1) */
@@ -408,16 +438,14 @@ extern void         stmt_print(FILE* fp, const Stmt* stmt);
 
 /* prog.c
  */
-/*lint -sem(        prog_new, 1p, @p == 1) */
-extern Prog*        prog_new(const char* filename);
+/*lint -sem(        prog_new, 1p) */
+extern Prog*        prog_new(void);
 /*lint -sem(        prog_free, 1p == 1) */
 extern void         prog_free(Prog* prog);
 /*lint -sem(        prog_is_valid, 1p == 1) */
 extern Bool         prog_is_valid(const Prog* prog);
 /*lint -sem(        prog_add_stmt, 1p == 1 && 2p == 1) */
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
-/*lint -sem(        prog_get_filename, 1p == 1, @p) */
-extern const char*  prog_get_filename(const Prog* prog);
 /*lint -sem(        prog_print, 1p == 1 && 2p == 1) */
 extern void         prog_print(FILE* fp, const Prog* prog);
 /*lint -sem(        prog_execute, 1p == 1) */
@@ -425,8 +453,12 @@ extern void         prog_execute(const Prog* prog);
 
 /* load.c
  */
-/*lint -sem(        prog_load, 1p == 1) */
-extern void         prog_load(Prog* prog);
+/*lint -sem(        prog_load, 1p == 1 && 2p) */
+extern void         prog_load(Prog* prog, const char* filename);
+
+/* source.c
+ */
+extern void         show_source(FILE* fp, const char* text, int column);
 
 /* mmlparse.y
  */
@@ -434,9 +466,9 @@ extern int          yyparse(void);
 
 /* mmlscan.l
  */
-/*lint -sem(        parse_string, 1p && 2n >= 0) */
-extern void         parse_string(const char* s, int lineno);
-extern int          scan_get_lineno(void);
+/*lint -sem(        parse_stmt, 1p) */
+extern void         parse_stmt(const Stmt* stmt);
+extern const Stmt*  scan_get_stmt(void);
 extern int          scan_get_column(void);
 extern int          yylen(void);
 
@@ -452,11 +484,6 @@ extern int          yylen(void);
 #define SID_ok(p, id)    TRUE
 #endif /* NDEBUG */
 
-#ifndef NDEBUG
-#define Trace(fname) if (verbose) fprintf(stderr, "Trace: %s\n", fname);
-#else
-#define Trace(fname) /* */
-#endif
-
 #define DISPERSE(x) (1664525U * (x) + 1013904223U);
 
+#endif /* _MME_H_ */

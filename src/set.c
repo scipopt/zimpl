@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: set.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -181,16 +181,16 @@ Tuple* set_match_next(const Set* set, const Tuple* pattern, int* idx)
    Tuple* tuple;
    
    assert(set_is_valid(set));
+   assert(tuple_is_valid(pattern));
    assert(*idx    >= 0);
 
-   if (pattern != NULL)
-      while((*idx < set->used) && tuple_cmp(pattern, set->member[*idx]))
-         (*idx)++;
+   while((*idx < set->used) && tuple_cmp(pattern, set->member[*idx]))
+      (*idx)++;
 
    if (*idx >= set->used)
       return NULL;
 
-   assert((pattern == NULL) || !tuple_cmp(pattern, set->member[*idx]));
+   assert(!tuple_cmp(pattern, set->member[*idx]));
 
    tuple = set->member[*idx];
    
@@ -306,3 +306,77 @@ Set* set_union(const Set* set_a, const Set* set_b)
 
    return set;
 }
+
+/* In A and in B */
+Set* set_inter(const Set* set_a, const Set* set_b)
+{
+   Set* set;
+   int  i;
+   
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+   assert(set_a->dim == set_b->dim);
+   
+   set = set_new(set_a->dim);
+
+   assert(set != NULL);
+   
+   for(i = 0; i < set_a->used; i++)
+      if (set_lookup(set_b, set_a->member[i]))
+         set_add_member(set, set_a->member[i], SET_ADD_END);         
+
+   assert(set_is_valid(set));
+
+   return set;
+}
+
+/* In A but not in B */
+Set* set_minus(const Set* set_a, const Set* set_b)
+{
+   Set* set;
+   int  i;
+   
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+   assert(set_a->dim == set_b->dim);
+   
+   set = set_new(set_a->dim);
+
+   assert(set != NULL);
+   
+   for(i = 0; i < set_a->used; i++)
+      if (!set_lookup(set_b, set_a->member[i]))
+         set_add_member(set, set_a->member[i], SET_ADD_END);         
+
+   assert(set_is_valid(set));
+
+   return set;
+}
+
+/* In A and not in B or in B and not in A  (Symetric difference) */
+Set* set_sdiff(const Set* set_a, const Set* set_b)
+{
+   Set* set;
+   int  i;
+   
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+   assert(set_a->dim == set_b->dim);
+   
+   set = set_new(set_a->dim);
+
+   assert(set != NULL);
+   
+   for(i = 0; i < set_a->used; i++)
+      if (!set_lookup(set_b, set_a->member[i]))
+         set_add_member(set, set_a->member[i], SET_ADD_END);         
+
+   for(i = 0; i < set_b->used; i++)
+      if (!set_lookup(set_a, set_b->member[i]))
+         set_add_member(set, set_b->member[i], SET_ADD_END);         
+
+   assert(set_is_valid(set));
+
+   return set;
+}
+

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: list.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -36,13 +36,13 @@
 
 #define LIST_SID  0x4c697374
 
-typedef enum list_type      ListType;
-typedef union list_data     ListData; 
-
 enum list_type
 {
    LIST_ERR = 0, LIST_ELEM, LIST_TUPLE, LIST_ENTRY, LIST_IDXELEM
 };
+
+typedef enum list_type      ListType;
+typedef union list_data     ListData; 
 
 union list_data
 {

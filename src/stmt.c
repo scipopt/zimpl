@@ -1,4 +1,4 @@
-#ident "@(#) $Id: stmt.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: stmt.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -42,26 +42,34 @@ struct statement
 {
    SID
    StmtType    type;
+   const char* filename;
    int         lineno;
    const char* name;
    const char* text;
    CodeNode*   node;
 };
 
-Stmt* stmt_new(StmtType type, int lineno, const char* name, const char* text)
+Stmt* stmt_new(
+   StmtType    type,
+   const char* filename,
+   int         lineno,
+   const char* name,
+   const char* text)
 {
    Stmt* stmt = calloc(1, sizeof(*stmt));;
 
-   assert(name  != NULL);
-   assert(text  != NULL);
-   assert(stmt  != NULL);
-   assert(lineno > 0);
+   assert(filename != NULL);
+   assert(name     != NULL);
+   assert(text     != NULL);
+   assert(stmt     != NULL);
+   assert(lineno   > 0);
    
-   stmt->type   = type;
-   stmt->lineno = lineno;
-   stmt->name   = strdup(name);
-   stmt->text   = strdup(text);
-   stmt->node   = NULL;
+   stmt->type     = type;
+   stmt->filename = strdup(filename);
+   stmt->lineno   = lineno;
+   stmt->name     = strdup(name);
+   stmt->text     = strdup(text);
+   stmt->node     = NULL;
    
    SID_set(stmt, STMT_SID);
    assert(stmt_is_valid(stmt));
@@ -72,14 +80,13 @@ Stmt* stmt_new(StmtType type, int lineno, const char* name, const char* text)
 void stmt_free(Stmt* stmt)
 {
    assert(stmt_is_valid(stmt));
-   assert(stmt->name != NULL);
-   assert(stmt->text != NULL);
 
    SID_del(stmt);
    
    if (stmt->node != NULL)
       code_free(stmt->node);
-   
+
+   free((void*)stmt->filename);
    free((void*)stmt->name);
    free((void*)stmt->text);
    free(stmt);
@@ -87,7 +94,12 @@ void stmt_free(Stmt* stmt)
 
 Bool stmt_is_valid(const Stmt* stmt)
 {
-   return ((stmt != NULL) && SID_ok(stmt, STMT_SID));
+   return ((stmt != NULL)
+      && SID_ok(stmt, STMT_SID)
+      && (stmt->filename != NULL)
+      && (stmt->lineno   >  0)
+      && (stmt->name     != NULL)
+      && (stmt->text     != NULL));
 }
 
 const char* stmt_get_name(const Stmt* stmt)
@@ -97,16 +109,36 @@ const char* stmt_get_name(const Stmt* stmt)
    return stmt->name;
 }
 
+const char* stmt_get_filename(const Stmt* stmt)
+{
+   assert(stmt_is_valid(stmt));
+
+   return stmt->filename;
+}
+
+int stmt_get_lineno(const Stmt* stmt)
+{
+   assert(stmt_is_valid(stmt));
+
+   return stmt->lineno;
+}
+
+const char* stmt_get_text(const Stmt* stmt)
+{
+   assert(stmt_is_valid(stmt));
+
+   return stmt->text;
+}
+
 void stmt_parse(Stmt* stmt)
 {
    assert(stmt_is_valid(stmt));
 
+   
    if (verbose)
-   {
-      fprintf(stderr, "Parsing: ");
-      stmt_print(stderr, stmt);
-   }
-   parse_string(stmt->text, stmt->lineno);
+      printf("Parsing %s %d\n", stmt->filename, stmt->lineno);
+
+   parse_stmt(stmt);
 
    stmt->node = code_get_root();
 }
@@ -116,14 +148,12 @@ void stmt_execute(const Stmt* stmt)
    assert(stmt_is_valid(stmt));
 
    if (verbose)
-   {
-      fprintf(stderr, "Executing: ");
-      stmt_print(stderr, stmt);
-   }
+      printf("Executing %s %d\n", stmt->filename, stmt->lineno);
+
    if (code_get_type(code_eval(stmt->node)) != CODE_VOID)
    {
       fprintf(stderr, "*** Error: Execute must return void element\n");
-      exit(1);
+      abort();
    }
 }
 
@@ -141,7 +171,8 @@ void stmt_print(FILE* fp, const Stmt* stmt)
    assert((unsigned int)stmt->type
       < (sizeof(type_name) / sizeof(type_name[0]))); /*lint !e650 */
 
-   fprintf(fp, "%04d %-7s %-10.10s [%s]\n",
+   fprintf(fp, "%s %04d %-7s %-10.10s [%s]\n",
+      stmt->filename,
       stmt->lineno,
       type_name[(int)stmt->type],
       stmt->name,

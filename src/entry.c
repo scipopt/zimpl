@@ -1,4 +1,4 @@
-#ident "@(#) $Id: entry.c,v 1.5 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: entry.c,v 1.6 2001/03/09 16:12:35 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -127,7 +127,7 @@ Entry* entry_new_var(Tuple* tuple, Var* var)
    entry->index     = -1;
    entry->tuple     = tuple_copy(tuple);
    entry->type      = SYM_VAR;
-   entry->value.var = var_copy(var);
+   entry->value.var = var;
 
    SID_set(entry, ENTRY_SID);
    assert(entry_is_valid(entry));
@@ -154,7 +154,6 @@ void entry_free(Entry* entry)
          set_free(entry->value.set);
          break;
       case SYM_VAR :
-         var_free(entry->value.var);
          break;
       default :
          abort();
@@ -210,7 +209,7 @@ Tuple* entry_get_tuple(const Entry* entry)
    return tuple_copy(entry->tuple);
 }
 
-int entry_get_index(Entry* entry)
+int entry_get_index(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    
@@ -233,7 +232,7 @@ const char* entry_get_strg(const Entry* entry)
    return entry->value.strg;
 }
 
-Set* entry_get_set(Entry* entry)
+Set* entry_get_set(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_SET);
@@ -241,12 +240,12 @@ Set* entry_get_set(Entry* entry)
    return set_copy(entry->value.set);
 }
 
-Var* entry_get_var(Entry* entry)
+Var* entry_get_var(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_VAR);
    
-   return var_copy(entry->value.var);
+   return entry->value.var;
 }
 
 void entry_print(FILE* fp, const Entry* entry)
@@ -268,7 +267,8 @@ void entry_print(FILE* fp, const Entry* entry)
       set_print(fp, entry->value.set);
       break;
    case SYM_VAR :
-      var_print(fp, entry->value.var);
+      /* ??? */
+      /* var_print(fp, entry->value.var); */
       break;
    default :
       fprintf(fp, "Entry-ERR");

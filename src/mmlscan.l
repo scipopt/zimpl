@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.4 2001/01/30 19:14:10 thor Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -41,12 +41,12 @@ extern void yyerror(const char* s);
 
 YY_DECL;
 
+static int yycolumn = 0;
+
 /*lint -e506 -e525 -e528 -e527 -e551 -e553 -e633 */
 /*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
 /*lint -esym(613,b,buf) -esym(563,find_rule) */
 /*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
-
-static int yycolumn = 0;
 %}
 %option noyylineno
 %option never-interactive
@@ -81,6 +81,19 @@ static int yycolumn = 0;
 "<>"                      { yycolumn += yyleng; return EMPTY_TUPLE; }
 "sum"                     { yycolumn += yyleng; return SUM; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
+"if"                      { yycolumn += yyleng; return IF; }
+"then"                    { yycolumn += yyleng; return THEN; }
+"else"                    { yycolumn += yyleng; return ELSE; }
+"end"                     { yycolumn += yyleng; return END; }
+"to"|".."                 { yycolumn += yyleng; return TO; }
+"by"                      { yycolumn += yyleng; return BY; }
+"union"                   { yycolumn += yyleng; return UNION; }
+"inter"                   { yycolumn += yyleng; return INTER; }
+"symdiff"                 { yycolumn += yyleng; return SYMDIFF; }
+"cross"                   { yycolumn += yyleng; return CROSS; }
+"without"|"\\"            { yycolumn += yyleng; return WITHOUT; }
+"mod"|"modulo"            { yycolumn += yyleng; return MOD; }
+"div"                     { yycolumn += yyleng; return DIV; }
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       sscanf(yytext, "%lf", &lval->numb);
@@ -138,17 +151,19 @@ static int yycolumn = 0;
 <<EOF>>                   { yycolumn += yyleng; return EOF; }
 
 %%
-static int yylineno = -1;
+static const Stmt* yystmt = NULL;
 
 void yyerror(const char* s)
 {
-   fprintf(stderr, "*** Line %d col %d: %s\n", yylineno, yycolumn, s);
-   exit(-1);
+   fprintf(stderr, "*** File %s Line %d : %s\n", 
+      stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);
+   show_source(stderr, stmt_get_text(yystmt), yycolumn);
+   abort();
 }
 
-int scan_get_lineno(void)
+const Stmt* scan_get_stmt(void)
 {
-   return yylineno;
+   return yystmt;
 }
 
 int scan_get_column(void)
@@ -156,15 +171,15 @@ int scan_get_column(void)
    return yycolumn;
 }
 
-void parse_string(const char* s, int lineno)
+void parse_stmt(const Stmt* stmt)
 {
    YY_BUFFER_STATE state;
 
    yy_delete_buffer(YY_CURRENT_BUFFER);
 
-   yylineno = lineno;
+   yystmt   = stmt;
    yycolumn = 0;
-   state    = yy_scan_string(s);
+   state    = yy_scan_string(stmt_get_text(stmt));
 
    if (yyparse() != 0)
    {
