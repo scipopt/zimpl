@@ -1,0 +1,4 @@
+*** Error 122: Symetric Difference of incompatible sets
+*** File: e122.zpl Line 2
+*** set A:={1..5} symdiff {1..2}*{3..4};
+***                                    ^^^

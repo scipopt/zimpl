@@ -1,0 +1,4 @@
+*** Error 153: Invalid field number [3647]
+*** File: e153.zpl Line 2
+*** set A := { read "dummy.dat" as "<3647n>" };
+***                                          ^^^

@@ -1,0 +1,4 @@
+*** Error 120: Minus of incompatible sets
+*** File: e120.zpl Line 2
+*** set A:={1..5}-{1..2}*{3..4};
+***                            ^^^

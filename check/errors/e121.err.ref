@@ -1,0 +1,4 @@
+*** Error 121: Intersection of incompatible sets
+*** File: e121.zpl Line 2
+*** set A:={1..5} inter {1..2}*{3..4};
+***                                  ^^^

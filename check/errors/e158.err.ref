@@ -1,0 +1,4 @@
+*** Error 158: Read from file found no data
+*** File: e158.zpl Line 2
+*** set A:={read "e158.dat" as "<1n>" comment "#"};
+***                                              ^^^
