@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.49 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.50 2003/09/19 08:30:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -191,19 +191,28 @@ set_entry
  */
 def_numb
    : DEFNUMB DEFNAME '(' name_list ')' ASGN expr ';' {
-         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+         $$ = code_new_inst(i_newdef, 3,
+            code_new_define($2),
+            code_new_inst(i_tuple_new, 1, $4),
+            $7);
       }
    ;
 
 def_strg
    : DEFSTRG DEFNAME '(' name_list ')' ASGN expr ';' {
-         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+         $$ = code_new_inst(i_newdef, 3,
+            code_new_define($2),
+            code_new_inst(i_tuple_new, 1, $4),
+            $7);
       }
    ;
 
 def_set
    : DEFSET DEFNAME '(' name_list ')' ASGN sexpr ';' {
-         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+         $$ = code_new_inst(i_newdef, 3,
+            code_new_define($2),
+            code_new_inst(i_tuple_new, 1, $4),
+            $7);
       }
    ;
 
@@ -490,7 +499,9 @@ sexpr
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
    | SETDEF '(' expr_list ')' {
-         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
+         $$ = code_new_inst(i_define_deref, 2,
+            code_new_define($1),
+            code_new_inst(i_tuple_new, 1, $3));
       }
    | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
    | '{' expr TO expr BY expr '}' {
@@ -520,9 +531,12 @@ sexpr
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
        }
-    | INDEXSET '(' SETSYM ')' {
+   | INDEXSET '(' SETSYM ')' {
           $$ = code_new_inst(i_set_indexset, 1, code_new_symbol($3));
        }
+   | IF lexpr THEN sexpr ELSE sexpr END {
+         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+      }
     ;
 
  read
@@ -603,10 +617,14 @@ expr
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
    | NUMBDEF '(' expr_list ')' {
-         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
+         $$ = code_new_inst(i_define_deref, 2,
+            code_new_define($1),
+            code_new_inst(i_tuple_new, 1, $3));
       }
    | STRGDEF '(' expr_list ')' {
-         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
+         $$ = code_new_inst(i_define_deref, 2,
+            code_new_define($1),
+            code_new_inst(i_tuple_new, 1, $3));
       }
    | expr '+' expr         { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
    | expr '-' expr         { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }

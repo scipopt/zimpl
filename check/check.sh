@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id: check.sh,v 1.7 2003/09/19 08:30:14 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -8,7 +9,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -27,7 +28,7 @@
 # $1 = Binary
 PASS=0
 COUNT=0
-for i in expr param set subto var bool
+for i in expr param set subto var bool define
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl

@@ -1,15 +1,6 @@
-defset bigger(i) := { <j> in K with j > i };
-
-subto c3: sum <i> in bigger(i) : y[i] >= 0;
-gibt eine execption!
-zimpl.linux.x86.gnu.dbg: src/local.c:125: local_install_tuple: Assertion `elem_get_type(elem) != ELEM_NAME' failed.
-
-defnumb/strg/set im Handbuch fehlt noch.
-
 
 spricht irgendwas dagenen auch
 
-if lexpr then sexpr else sexpr end
 if lexpr then constraint else constraint end
 usw. zu implementieren?
 
@@ -33,19 +24,8 @@ Funktion statistik Anzahl vars/Cons/Boxed/Fixed/NZOs etc,
 
 Funktion timing.
 
-define fun(name_list) := expr | term? | constraint?
-              ^
-              | Kein Problem, weil keine lokalen Variablen definiert sind.
-
-Neuer Symboltyp SYM_FUN
-return is klar aus dem was hinter ist.
-Aufruf: fun(expr_list)
-local_setup_match_name_list(name_list, expr_list)
-eval.
-u.u. müßte expr_list keine sein, sonder irgendwas, das sich als local auflösen läßt.
-Fehlerausgabe Trace?
-Recursion geht einfach so.
-
+defterm?
+defcons?
 
 Test mit 1 Mill var einbauen oder Sascha fragen
 ewtl :    x1 + x2, x2 + x3, ... x98 + x99, x99 = 5 => preprocessing

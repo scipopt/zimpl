@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.60 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.61 2003/09/19 08:30:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -2033,25 +2033,15 @@ CodeNode* i_symbol_deref(CodeNode* self)
 
 CodeNode* i_newdef(CodeNode* self)
 {
-   Define*       def;
-   const List*   list;
-   ListElem*     lelem;
-   int           count;
-   Tuple*        tuple;
-   int           i;
+   Define* def;
    
-   Trace("i_newdef_expr");
+   Trace("i_newdef");
 
-   def     = code_eval_child_define(self, 0);
-   list    = code_eval_child_list(self, 1);
-   count   = list_get_elems(list);
-   tuple   = tuple_new(count);
-   lelem   = NULL;
+   assert(code_is_valid(self));
+
+   def = code_eval_child_define(self, 0);
    
-   for(i = 0; i < count; i++)
-      tuple_set_elem(tuple, i, elem_copy(list_get_elem(list, &lelem)));
-   
-   define_set_param(def, tuple);
+   define_set_param(def, tuple_copy(code_eval_child_tuple(self, 1)));
    define_set_code(def, code_get_child(self, 2));
    
    code_value_void(self);
@@ -2062,11 +2052,9 @@ CodeNode* i_newdef(CodeNode* self)
 CodeNode* i_define_deref(CodeNode* self)
 {
    const Define* def;
-   const List*   list;
-   ListElem*     lelem;
-   Tuple*        tuple;
+   const Tuple*  tuple;
    const Tuple*  param;
-   int           count;
+   ElemType      elem_type;
    int           i;
    
    Trace("i_define_deref");
@@ -2074,13 +2062,24 @@ CodeNode* i_define_deref(CodeNode* self)
    assert(code_is_valid(self));
 
    def   = code_eval_child_define(self, 0);
-   list  = code_eval_child_list(self, 1);   
-   count = list_get_elems(list);
-   tuple = tuple_new(count);
-   lelem = NULL;
+   tuple = code_eval_child_tuple(self, 1);   
 
-   for(i = 0; i < count; i++)
-      tuple_set_elem(tuple, i, elem_copy(list_get_elem(list, &lelem)));
+   for(i = 0; i < tuple_get_dim(tuple); i++)
+   {
+      elem_type = elem_get_type(tuple_get_elem(tuple, i));
+      
+      if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
+      {
+         assert(elem_type == ELEM_NAME);
+         
+         fprintf(stderr, "*** Error 170: Use of unintialised local variable \"%s\"\n",
+            elem_get_name(tuple_get_elem(tuple, i)));
+         fprintf(stderr, "               in call of define \"%s\".\n",
+            define_get_name(def));
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
    
    /* wurde schon in mmlscan ueberprueft
     */
@@ -2090,7 +2089,7 @@ CodeNode* i_define_deref(CodeNode* self)
    
    if (tuple_get_dim(tuple) != tuple_get_dim(param))
    {
-      fprintf(stderr, "*** Error 170: Wrong number of arguments (%d instead of %d)\n",
+      fprintf(stderr, "*** Error 171: Wrong number of arguments (%d instead of %d)\n",
          tuple_get_dim(tuple),
          tuple_get_dim(param));
       fprintf(stderr, "               for call of define \"%s\".\n",
@@ -2104,10 +2103,9 @@ CodeNode* i_define_deref(CodeNode* self)
 
    local_drop_frame();
 
-   tuple_free(tuple);
-   
    return self;
 }
+
 
 /* ----------------------------------------------------------------------------
  * Index Set Funktionen

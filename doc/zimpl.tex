@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.20 2003/09/17 10:18:01 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.21 2003/09/19 08:30:15 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.20 2003/09/17 10:18:01 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.21 2003/09/19 08:30:15 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -275,13 +275,14 @@ the objective function will be inverted.}
 % -----------------------------------------------------------------------------
 \section{Format}
 
-Each \zpl-file consists of five types of statements: 
+Each \zpl-file consists of six types of statements: 
 \begin{itemize}
 \item Sets
 \item Parameters
 \item Variables
 \item Objective
 \item Constraints
+\item Function definitions
 \end{itemize}
 
 Each statement ends with a semicolon \code{;}. 
@@ -420,8 +421,15 @@ operators are defined:
    The new set will consist of $n$-tuples, with\\
    &$t=(e_1,\ldots,e_n)$&
    the $i$-th component beeing the $e_i$-th component of $A$.\\
+\code{if a then}\\
+\code{\ b else c}        &conditional               &\\
 %\hline
 \end{tabular}
+
+\medskip
+An example for the use of the \code{if} \emph{boolean-expression} \code{then}
+\emph{set expression} \code{else} \emph{set expression} \code{end} can
+be found below with the examples for indexed sets.
 
 \paragraph{Examples}
 {\small 
@@ -486,6 +494,7 @@ set B[<i> in I] := { 3 * i };
 set P[]         := powerset(N);
 set J           := indexset(P);
 set S[]         := subset(I, 2);
+set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 \end{verbatim}
 }
 
@@ -701,6 +710,31 @@ haha.txt:
    4:5:de:con3    ->   <"de",4,5> "con1"
 \end{verbatim}
 }  
+
+\subsection{Function Definitions}
+
+It is possible to define function within \zimpl. The value a
+function returns has to be either a number, a string or a set.
+The arguments to a function can only be numbers or strings, but within
+the function definition it is possible to access all otherwise
+declared sets, parameters and variables.
+
+Depending on the return value, the definition of a function has to start with 
+\code{defnumb}, \code{defstrg} or \code{defset}. Then follows the name
+of the function and a list of argument names enclosed in parenthesis.
+
+After this comes an assignment operator (\code{:=}) and a valid
+expression or set expression.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+defnumb dist(a,b)  := a*a + b*b;
+defstrg huehott(a) := if a < 0 then "hue" else "hott" end;
+defset  bigger(i)  := { <j> in K with j > i };
+\end{verbatim}
+}
+
 \newpage
 
 \section{Error messages}
@@ -955,8 +989,17 @@ can produce:
 \item[169 Execute must return void element]\ \\
   This should not happen. If you encounter
   this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
-%\item[]\ \\
-%\item[]\ \\
+%
+% inst.c
+%
+\item[170 Use of unintialised local variable \code{xxx} in call of
+  define \code{yyy}]\ \\
+  A define was called and one of the arguments was a ``name'' 
+  (of a variable) for which no value was defined.
+\item[171 Wrong number of arguments (\code{xxx} instead of \code{yyy})
+  for call of define \code{zzz}]\ \\
+  A define was called with the a different number of arguments than in
+  its definition.
 %\item[]\ \\
 %\item[]\ \\
 %\item[]\ \\
