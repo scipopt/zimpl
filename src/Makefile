@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.29 2003/02/11 07:46:30 bzfkocht Exp $
+# $Id: Makefile,v 1.30 2003/02/11 12:19:21 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -32,7 +32,7 @@ CC		=	gcc
 YACC		=	bison
 LEX		=	flex
 CPPFLAGS	=	-I./ 
-OPTI_FLAGS      =       -O3 -march=pentium4 # -fomit-frame-pointer 
+OPTI_FLAGS      =       -march=pentiumpro -O3 
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline

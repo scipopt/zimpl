@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.15 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.16 2003/02/11 12:19:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -92,6 +92,7 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    assert(inst != INST_NULL);
    assert(node != NULL);
 
+   node->type   = CODE_ERR; /* call to eval() will set this */
    node->eval   = inst;
    /* Das sollte eigendlich ein parameter sein, aber wozu bei jedem
     * code_new diese Funktionen mit uebergeben.

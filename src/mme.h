@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.23 2003/02/04 06:58:11 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.24 2003/02/11 12:19:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -318,7 +318,7 @@ extern void         entry_print(FILE* fp, const Entry* entry);
  */
 /*lint -sem(        symbol_new, 1p && nulterm(1) && 3p == 1, @p == 1) */
 extern Symbol*      symbol_new(
-   const char* name, SymbolType type, const Set* set);
+   const char* name, SymbolType type, const Set* set, const Entry* deflt);
 extern void         symbol_exit(void);
 /*lint -sem(        symbol_is_valid, 1p == 1) */
 extern Bool         symbol_is_valid(const Symbol* symbol);

@@ -1,3 +1,12 @@
+
+ - It is now possible to have a default value for a parameter.
+   param p[A] := <1> 1, <2> 2 default 99
+   will declare all p[i] with i in A and not 1 or 2 to return 99.
+
+ - Corrected a type, that resulted in .orf files instead of .ord
+
+ - sym_lookup is now resolved in the scanner (speedup).
+
  - Added new flag -p "filter" which pipes the output 
    through the filter, enabling for example compression.
    (Daniels idea)

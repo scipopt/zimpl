@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.13 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.14 2003/02/11 12:19:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -50,17 +50,22 @@ struct symbol
    Set*         set;
    Hash*        hash;
    Entry**      entry;
+   Entry*       deflt;
    Symbol*      next;
 };
 
 static int    symbols = 0;
 #ifndef NDEBUG
-static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
+static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL, NULL };
 #else
-static Symbol anchor  = { "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL };
+static Symbol anchor  = {    "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL, NULL };
 #endif
 
-Symbol* symbol_new(const char* name, SymbolType type, const Set* set)
+Symbol* symbol_new(
+   const char*  name,
+   SymbolType   type,
+   const Set*   set,
+   const Entry* deflt)
 {
    Symbol* sym;
 
@@ -72,16 +77,17 @@ Symbol* symbol_new(const char* name, SymbolType type, const Set* set)
 
    assert(sym != NULL);
    
-   sym->name   = name;
-   sym->type   = type;
-   sym->size   = 1;
-   sym->used   = 0;
-   sym->extend = SYMBOL_EXTEND_SIZE;
-   sym->set    = set_copy(set);
-   sym->hash   = hash_new(HASH_ENTRY);
-   sym->entry  = calloc(1, sizeof(*sym->entry));
-   sym->next   = anchor.next;
-   anchor.next = sym;
+   sym->name    = name;
+   sym->type    = type;
+   sym->size    = 1;
+   sym->used    = 0;
+   sym->extend  = SYMBOL_EXTEND_SIZE;
+   sym->set     = set_copy(set);
+   sym->hash    = hash_new(HASH_ENTRY);
+   sym->entry   = calloc(1, sizeof(*sym->entry));
+   sym->deflt   = (deflt != ENTRY_NULL) ? entry_copy(deflt) : ENTRY_NULL;
+   sym->next    = anchor.next;
+   anchor.next  = sym;
    symbols++;
 
    assert(sym->entry != NULL);
@@ -112,6 +118,10 @@ void symbol_exit(void)
       free(p->entry);
       set_free(p->set);
       hash_free(p->hash);
+
+      if (p->deflt != NULL)
+         entry_free(p->deflt);
+
       free(p);
    }
    anchor.next = NULL;
@@ -141,17 +151,27 @@ Bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
 
-   return hash_has_entry(sym->hash, tuple);
+   return hash_has_entry(sym->hash, tuple)
+      || (sym->deflt != NULL && set_lookup(sym->set, tuple));
 }
 
 /* Liefert NULL wenn nicht gefunden.
+ * Falls ein default zurueckgegeben wird, stimmt "tuple" nicht mit
+ * entry->tuple ueberein.
  */
 const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
 {
+   const Entry* entry;
+   
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
 
-   return hash_lookup_entry(sym->hash, tuple);
+   entry = hash_lookup_entry(sym->hash, tuple);
+
+   if (NULL == entry && sym->deflt != NULL && set_lookup(sym->set, tuple))
+      entry = sym->deflt;
+
+   return entry;
 }
 
 /* Entry wird gefressen.
@@ -178,11 +198,13 @@ void symbol_add_entry(Symbol* sym, const Entry* entry)
 
    tuple = entry_get_tuple(entry);
 
+   assert(set_lookup(sym->set, tuple));
+
    if (hash_has_entry(sym->hash, tuple))
    {
       fprintf(stderr, "*** Warning: Dublicate element ");
       tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol rejected\n");
+      fprintf(stderr, " for symbol %s rejected\n", sym->name);
    }
    else
    {

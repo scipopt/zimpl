@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.31 2003/02/05 07:37:45 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.32 2003/02/11 12:19:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -45,6 +45,9 @@ CodeNode* i_nop(CodeNode* self)
    Trace("i_nop");
 
    assert(code_is_valid(self));
+
+   if (code_get_type(self) == CODE_ERR)
+      code_value_void(self);
 
    return self;
 }
@@ -1240,7 +1243,7 @@ CodeNode* i_newsym_set1(CodeNode* self)
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    iset    = set_from_idxset(idxset);
-   sym     = symbol_new(name, SYM_SET, iset);
+   sym     = symbol_new(name, SYM_SET, iset, NULL);
 
    assert(code_is_valid(self));
 
@@ -1337,14 +1340,14 @@ CodeNode* i_newsym_set2(CodeNode* self)
    /* Empty set ?
     */
    if (set_get_dim(iset) > 0)
-      sym  = symbol_new(name, SYM_SET, iset);
+      sym  = symbol_new(name, SYM_SET, iset, NULL);
    else
    {
       Set* set;
       
       /*set  = set_range(0.0, (double)list_get_elems(list) - 1.0, 1.0);*/
       set  = iset_from_list(code_get_child(self, 2), list);
-      sym  = symbol_new(name, SYM_SET, set);
+      sym  = symbol_new(name, SYM_SET, set, NULL);
       iset = symbol_get_iset(sym);
       set_free(set);
    }
@@ -1384,6 +1387,8 @@ CodeNode* i_newsym_para1(CodeNode* self)
    ListElem*     lelem;
    const Entry*  entry;
    const Tuple*  tuple;
+   CodeNode*     child3;
+   const Entry*  deflt;
    int           count;
    int           i;
    
@@ -1395,7 +1400,10 @@ CodeNode* i_newsym_para1(CodeNode* self)
    idxset = code_eval_child_idxset(self, 1);
    set    = idxset_get_set(idxset);
    list   = code_eval_child_list(self, 2);
-
+   child3 = code_eval_child(self, 3);
+   deflt  = (code_get_type(child3) == CODE_VOID)
+          ? ENTRY_NULL : code_get_entry(code_eval(child3));
+         
    if (!list_is_entrylist(list))
    {
       /* This errors occurs, if the parameter is mssing in the template
@@ -1411,7 +1419,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
    
    /* First element will determine the type
     */
-   sym  = symbol_new(name, SYM_ERR, set);
+   sym  = symbol_new(name, SYM_ERR, set, deflt);
    
    lelem = NULL;
    count = list_get_elems(list);
@@ -1446,6 +1454,8 @@ CodeNode* i_newsym_para2(CodeNode* self)
    const IdxSet* idxset;
    Symbol*       sym;
    Entry*        entry;
+   const Entry*  deflt;
+   CodeNode*     child3;
    const Tuple*  tuple;
    const Tuple*  pattern;
    int           idx = 0;
@@ -1457,7 +1467,10 @@ CodeNode* i_newsym_para2(CodeNode* self)
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    set     = idxset_get_set(idxset);
-   sym     = symbol_new(name, SYM_NUMB, set);
+   child3  = code_eval_child(self, 3);
+   deflt   = (code_get_type(child3) == CODE_VOID)
+           ? ENTRY_NULL : code_get_entry(code_eval(child3));
+   sym     = symbol_new(name, SYM_NUMB, set, deflt);
    pattern = idxset_get_tuple(idxset);
 
    /* Why did I this for the variables ??? Is it neccessary ?
@@ -1515,7 +1528,7 @@ CodeNode* i_newsym_var(CodeNode* self)
    vartype = code_eval_child_vartype(self, 2);
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
-   sym     = symbol_new(name, SYM_VAR, set);
+   sym     = symbol_new(name, SYM_VAR, set, NULL);
 
    if ((!code_get_bool(code_eval(idxset_get_lexpr(idxset)))))
    {

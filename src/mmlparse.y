@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.29 2003/02/05 07:37:45 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.30 2003/02/11 12:19:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -63,7 +63,7 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB PRINT
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
-%token PRIORITY STARTVAL
+%token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR NOT
 %token SUM MIN MAX
@@ -85,7 +85,7 @@ extern void yyerror(const char* s);
 %type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset subterm summand factor vexpr term
-%type <code> expr_entry expr_entry_list set_entry set_entry_list
+%type <code> expr_entry expr_entry_list set_entry set_entry_list par_default
 %type <code> var_type con_type lower upper priority startval condition
 %type <bits> con_attr con_attr_list
 
@@ -180,14 +180,14 @@ set_entry
  * ----------------------------------------------------------------------------
  */
 decl_par
-   : DECLPAR NAME '[' idxset ']' ASGN expr_entry_list ';' {
-         $$ = code_new_inst(i_newsym_para1, 3, code_new_name($2), $4, $7);
+   : DECLPAR NAME '[' idxset ']' ASGN expr_entry_list par_default ';' {
+         $$ = code_new_inst(i_newsym_para1, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME '[' idxset ']' ASGN expr ';' {
-         $$ = code_new_inst(i_newsym_para2, 3, code_new_name($2), $4, $7);
+   | DECLPAR NAME '[' idxset ']' ASGN expr par_default ';' {
+         $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME ASGN expr ';' {
-         $$ = code_new_inst(i_newsym_para1, 3,
+   | DECLPAR NAME ASGN expr par_default ';' {
+         $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
                code_new_inst(i_tuple_empty, 0),
@@ -196,8 +196,13 @@ decl_par
             code_new_inst(i_entry_list_new, 1,
                code_new_inst(i_entry, 2,
                   code_new_inst(i_tuple_empty, 0),
-                  $4)));
+                  $4)), $5);
       }
+   ;
+
+par_default
+   : /* empty */   { $$ = code_new_inst(i_nop, 0); }
+   | DEFAULT expr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
    ;
 
 /* ----------------------------------------------------------------------------

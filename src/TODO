@@ -23,10 +23,6 @@ Was im prinzip ein bedingtes ODER ist.
 
 lint: check bei passes(2+)
 
-Initialisierung von set's
-
-1. Indizierung der sets erlauben.
-
 Warnung bei set operationen auf sets mit inkompatiblen tupeln
 z.B. { 1, 2, 3 } \ { "3" }
 
@@ -70,6 +66,8 @@ Warning wenn locale Variable eine globale uerbschreibt.
 sparse symbols. Dazu brauchen wir das urspüngliche indexset.
 Dann können wir für alle derefs mit einem index für den kein Wert
 vorliegt, der aber zulässig wäre, den default zurück liefern.
+
+
 
 
 
