@@ -1,10 +1,7 @@
 check separate, scale flag
 
-Warum sind subto names in gleichem namensraum wie variablen?
-
 checks auf für MPS
 
-check: Tests für ranges
 check: Tests für preprocessing
 
 ranges: MPS write fehlt noch
@@ -91,8 +88,6 @@ Was im prinzip ein bedingtes ODER ist.
 
 ------------------------------------------
 
-lint: check bei passes(2+)
-
 Warnung bei set operationen auf sets mit inkompatiblen tupeln
 z.B. { 1, 2, 3 } \ { "3" }
 
@@ -115,8 +110,6 @@ min <a,b> in X : expr
 max =====================> Dokumentation
 
 include gucken auch innerhalt eines ; ausdrucks.
-
-ewtl bei lp_format etwas längere Dateinamen
 
 
 shortcummings and Tips&Trick Abschnitt
