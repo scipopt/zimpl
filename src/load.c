@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.22 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.23 2005/03/25 10:03:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -82,6 +82,9 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
          c = ' ';
          (*lineno)++;
       }
+      if (iscntrl(c))
+         c = ' ';
+      
       /* Skip leading white space
        */
       if (cnt == 0 && isspace(c))
@@ -146,6 +149,8 @@ static void add_stmt(
    assert(filename != NULL);
    assert(text     != NULL);
 
+   fprintf(stderr, "%d@%s@\n", lineno, text);
+   
    if (!strncmp(text, "set ", 4))
       type = STMT_SET;
    else if (!strncmp(text, "param ", 6))
@@ -219,6 +224,8 @@ void prog_load(Prog* prog, const char* filename)
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
+      fprintf(stderr, "@%s@\n", s);
+
       assert(!isspace(*s));
 
       /* This could happen if we have a ;; somewhere.
