@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.22 2005/01/24 20:49:12 bzfkocht Exp $
+# $Id: Makefile,v 1.23 2005/01/26 09:13:03 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -40,7 +40,7 @@ OSTYPE          :=      $(shell uname -s | \
                         sed \
 			-e s/cygwin.*/cygwin/ \
                         -e s/irix../irix/ )
-HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
+HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
 VERSION		=	2.03a
 OPT		=	opt

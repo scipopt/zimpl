@@ -1,3 +1,11 @@
+Test fuer spezielle fehlersituationen.
+z,B. param x[E] : = ...
+     do print x;
+gibt eine obscure Fehlermedung.
+Diser Fall sollte ewtl. behandelt werden.
+Auf jedenfall getestest werden.
+
+
 Bei -v0 alle warnings aus.
 
 min2/max2 warnung wenn empty list

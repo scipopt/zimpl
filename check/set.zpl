@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.7 2004/05/03 11:35:14 bzfkocht Exp $
+# $Id: set.zpl,v 1.8 2005/01/26 09:13:04 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -52,7 +52,8 @@ set V := { <a,2> in A*B with a == "a" or a == "b" };
 set W[<i> in B] := { <c> in C with c <= i };
 set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
 set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 to -10 by -2 } + { 7 .. 1 } ;
-
+set Z := C * (A * B);
+ 
 var a[A];
 var b[B];
 var c[C];
@@ -72,6 +73,7 @@ var u[U];
 var v[V];
 var xabcdefghijklmno[X];
 var y[Y];
+var z[Z];
 
 subto a1: sum <i> in A : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= 0;
@@ -99,6 +101,7 @@ subto w1: forall <i> in B do
 subto x1: sum <i> in X : xabcdefghijklmno[i] >= 0;
 subto y1: sum <i> in Y : y[i] >= 0;
 subto z1: sum <i> in {1..card(E)} do e[ord(E,i,1),ord(E,i,2)] >= 5;
+subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
 
 
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.7 2004/05/03 11:35:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.8 2005/01/26 09:13:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -369,6 +369,8 @@ static void set_prod_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
+
+   iter->prod.first = TRUE;
    
    set_iter_reset_intern(iter->prod.iter_a, set->prod.set_a);
    set_iter_reset_intern(iter->prod.iter_b, set->prod.set_b);

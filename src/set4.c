@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.8 2004/05/11 19:16:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.9 2005/01/26 09:13:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -132,6 +132,9 @@ inline int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 
 Bool set_lookup(const Set* set, const Tuple* tuple)
 {
+   if (set->head.dim != tuple_get_dim(tuple))
+      return FALSE;
+   
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
 

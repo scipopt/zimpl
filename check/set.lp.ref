@@ -137,6 +137,10 @@ Subject to
   + e#4$c + e#4$b + e#4$a + e#3$c + e#3$b + e#3$a
   + e#2$c + e#2$b + e#2$a + e#1$c + e#1$b + e#1$a
   >= 5
+ z2_1:
+  + z#4$c#3 + z#4$c#2 + z#4$c#1 + z#3$c#3 + z#3$c#2 + z#3$c#1
+  + z#2$c#3 + z#2$c#2 + z#2$c#1 + z#1$c#3 + z#1$c#2 + z#1$c#1
+  <= 8
 Bounds
  0 <= a$a <= +Inf
  0 <= a$b <= +Inf
@@ -238,4 +242,16 @@ Bounds
  0 <= y#3 <= +Inf
  0 <= y#2 <= +Inf
  0 <= y#1 <= +Inf
+ 0 <= z#1$c#1 <= +Inf
+ 0 <= z#1$c#2 <= +Inf
+ 0 <= z#1$c#3 <= +Inf
+ 0 <= z#2$c#1 <= +Inf
+ 0 <= z#2$c#2 <= +Inf
+ 0 <= z#2$c#3 <= +Inf
+ 0 <= z#3$c#1 <= +Inf
+ 0 <= z#3$c#2 <= +Inf
+ 0 <= z#3$c#3 <= +Inf
+ 0 <= z#4$c#1 <= +Inf
+ 0 <= z#4$c#2 <= +Inf
+ 0 <= z#4$c#3 <= +Inf
 End

@@ -1,4 +1,11 @@
+ - Fixed Bug in print command appearing in 
+   connection with default clause
+
+ - Fixed Bug in handling of set products
+
  - Decreased memory consumption of hash tables
+
+ - Slightly faster string hashing 
 
  - Improved error handling for wrong components in
    sets.
