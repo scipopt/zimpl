@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.23 2002/10/20 09:17:39 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.24 2002/10/29 10:42:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -105,9 +105,10 @@ extern void yyerror(const char* s);
 %left  '+' '-' 
 %left  SUM MIN MAX
 %left  '*' '/' MOD DIV
+%left  ABS CARD FLOOR CEIL PROJ LOG LN EXP
 %left  UNARY
 %left  POW
-%left  ABS CARD FLOOR CEIL PROJ
+%left  FAC
 %%
 stmt
    : decl_set   { code_set_root($1); }
@@ -466,10 +467,14 @@ expr
    | expr MOD expr         { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
    | expr DIV expr         { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
    | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
+   | expr FAC              { $$ = code_new_inst(i_expr_fac, 1, $1); }
    | CARD sexpr            { $$ = code_new_inst(i_expr_card, 1, $2); }
    | ABS expr              { $$ = code_new_inst(i_expr_abs, 1, $2); }
    | FLOOR expr            { $$ = code_new_inst(i_expr_floor, 1, $2); }
    | CEIL expr             { $$ = code_new_inst(i_expr_ceil, 1, $2); }
+   | LOG expr              { $$ = code_new_inst(i_expr_log, 1, $2); }
+   | LN expr               { $$ = code_new_inst(i_expr_ln, 1, $2); }
+   | EXP expr              { $$ = code_new_inst(i_expr_exp, 1, $2); }
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }

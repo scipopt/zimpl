@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.1 2001/05/06 11:43:21 thor Exp $
+# $Id: Makefile,v 1.2 2002/10/29 10:42:47 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -27,10 +27,13 @@
 
 .PHONY:		clean all
 
-all:		zimpl.ps
+all:		zimpl.pdf
 
 zimpl.ps:	zimpl.dvi
 		dvips -o $@ zimpl.dvi
+
+zimpl.pdf:	zimpl.ps
+		ps2pdf13 zimpl.ps
 
 zimpl.dvi:	zimpl.tex zimpl.bib ziblogo2.eps
 		latex zimpl

@@ -1,7 +1,10 @@
+ - added "!" factorial fucntion.
+
+ - log, ln, exp where missing in the parser and the documentation.
+
 1.04 20.Oct 2002 Release
 
- - Big bug fixed in storage of variable and constraint names.
-   It is unclear to be why it has worked before at all.
+ - Bug fixed in storage of variable and constraint names.
 
  - Grammar fixed, since trailing '*' expr of vexpr where not parsed.
 

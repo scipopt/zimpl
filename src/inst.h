@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.13 2002/08/22 07:20:01 bzfkocht Exp $"
+#ident "@(#) $Id: inst.h,v 1.14 2002/10/29 10:42:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -90,6 +90,8 @@ extern CodeNode* i_expr_ceil(CodeNode* self);
 extern CodeNode* i_expr_div(CodeNode* self);
 /*lint -sem(     i_expr_exp, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_exp(CodeNode* self);
+/*lint -sem(     i_expr_fac, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_fac(CodeNode* self);
 /*lint -sem(     i_expr_floor, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_floor(CodeNode* self);
 /*lint -sem(     i_expr_if, 1p == 1, type(1), @p == 1p) */

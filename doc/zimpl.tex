@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.7 2002/10/20 09:17:38 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.8 2002/10/29 10:42:47 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -21,7 +21,15 @@
 \usepackage{url}
 %\usepackage{zibtitlepage}
 \usepackage[notoday,nofancy]{rcsinfo}
-\rcsInfo $Id: zimpl.tex,v 1.7 2002/10/20 09:17:38 bzfkocht Exp $
+\usepackage[dvips,%
+bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
+\hypersetup{%
+pdftitle={ZIMPL User Guide},
+pdfsubject={Zuse Institute Mathematical Programming Language},
+pdfauthor={Thorsten Koch},
+pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
+}
+\rcsInfo $Id: zimpl.tex,v 1.8 2002/10/29 10:42:47 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -261,7 +269,9 @@ usual one. If in doubt use parenthesis to be save.
 \subsubsection{Numeric expressions}
 The following functions are currently implemented: 
 $^\wedge$, \code{+}, \code{-}, \code{*}, \code{/}, \code{mod},
-\code{div}, \code{abs}, \code{floor}, \code{ceil}. 
+\code{div}, \code{abs}, \code{floor}, \code{ceil}, 
+\code{log} (logarithm with base 10),
+\code{ln} (logarithm with base $e$), \code{exp} ($e^x$), \code{$!$}. 
 $^\wedge$ stands for \emph{to the
 power of}. \code{mod} is the modulo function and
 \code{div} gives the integer part of a division. \code{**} can be used
@@ -576,10 +586,10 @@ can produce:
 
 \section{Remarks}
 \zimpl is licensed under the GNU general public licence version 2.
-For more information on free software see \url{www.gnu.org}.
+For more information on free software see \url{http://www.gnu.org}.
 The latest version of \zimpl can be found at
-\url{www.zib.de/koch/zimpl}.
-If you find any bugs you can email me at \url{koch@zib.de}. Please
+\url{http://www.zib.de/koch/zimpl}.
+If you find any bugs you can email me at \url{mailto:koch@zib.de}. Please
 include an example that shows the problem.
 If somebody extends \zimpl, I am interested in getting patches
 to put them back in the main distribution.
