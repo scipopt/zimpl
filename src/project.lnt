@@ -18,10 +18,13 @@
 //-esym(123,malloc,calloc,realloc,free)
 -strong(AzJzX,ElemType,Elem,Tuple,Set,VarType,Var,Entry,SymbolType,Symbol)
 -strong(AzJzX,IdxSet,Term,IneqType,Ineq,Local,ListElem,List,HashType,Hash)
--strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode)
+-strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode,RDef,RPar)
 -strong(AcJX,Inst)
 -strong(AJXbl,Bool)
+-e793 //  ANSI limit of 1024 'macros in module' exceeded
 /* lpstore.c */
 -esym(429,n)
 /* rbt.c */
 -esym(429,nodes,t)
+/* iread.c */
+-esym(771,field) // Symbol 'field' (line 227) conceivably not initialized

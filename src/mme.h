@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.8 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -46,7 +46,8 @@ enum code_type
 {
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
    CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
-   CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE
+   CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE,
+   CODE_RDEF, CODE_RPAR
 };
 
 typedef enum element_type        ElemType;
@@ -63,6 +64,8 @@ typedef struct list_element      ListElem;
 typedef struct list              List;
 typedef enum hash_type           HashType;
 typedef struct hash              Hash;
+typedef struct read_param        RPar;
+typedef struct read_definition   RDef;
 
 typedef struct nonzero           Nzo;
 typedef struct variable          Var;
@@ -238,6 +241,12 @@ extern Set*         set_inter(const Set* set_a, const Set* set_b);
 extern Set*         set_minus(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_sdiff, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_sdiff(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_is_subseteq, 1p == 1 && 2p == 1) */
+extern Bool         set_is_subseteq(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_is_subset, 1p == 1 && 2p == 1) */
+extern Bool         set_is_subset(const Set* set_a, const Set* set_b);
+/*lint -sem(        set_is_equal, 1p == 1 && 2p == 1) */
+extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
 
 /* entry.c
  */
@@ -379,37 +388,105 @@ extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
 extern void         term_to_nzo(const Term* term, Con* con);
 
+/* rdefpar.c
+ */
+/*lint -sem(       rdef_new, 1p && 2p, @p == 1) */
+extern RDef*       rdef_new(const char* filename, const char* template);
+/*lint -sem(       rdef_free, 1p == 1) */
+extern void        rdef_free(RDef* rdef);
+/*lint -sem(       rdef_is_valid, 1p == 1) */
+extern Bool        rdef_is_valid(const RDef* rdef);
+/*lint -sem(       rdef_copy, 1p == 1, @p == 1) */
+extern RDef*       rdef_copy(RDef* rdef);
+/*lint -sem(       rdef_set_param, 1p == 1 && 2p == 1) */
+extern void        rdef_set_param(RDef* rdef, RPar* rpar);
+/*lint -sem(       rdef_get_filename, 1p == 1, @p) */
+extern const char* rdef_get_filename(const RDef* rdef);
+/*lint -sem(       rdef_get_template, 1p == 1, @p) */
+extern const char* rdef_get_template(const RDef* rdef);
+/*lint -sem(       rdef_get_fieldsep, 1p == 1, @p) */
+extern const char* rdef_get_fieldsep(const RDef* rdef);
+/*lint -sem(       rdef_get_comment, 1p == 1, @p) */
+extern const char* rdef_get_comment(const RDef* rdef);
+/*lint -sem(       rdef_get_use, 1p == 1) */
+extern int         rdef_get_use(const RDef* rdef);
+/*lint -sem(       rdef_get_skip, 1p == 1) */
+extern int         rdef_get_skip(const RDef* rdef);
+
+/*lint -sem(       rpar_new_skip, @p == 1) */
+extern RPar*       rpar_new_skip(int skip);
+/*lint -sem(       rpar_new_use, @p == 1) */
+extern RPar*       rpar_new_use(int use);
+/*lint -sem(       rpar_new_fieldsep, 1p, @p == 1) */
+extern RPar*       rpar_new_fieldsep(const char* fieldsep);
+/*lint -sem(       rpar_new_comment, 1p, @p == 1) */
+extern RPar*       rpar_new_comment(const char* fieldsep);
+/*lint -sem(       rpar_free, 1p == 1) */
+extern void        rpar_free(RPar* rpar);
+/*lint -sem(       rpar_is_valid, 1p == 1) */
+extern Bool        rpar_is_valid(const RPar* rpar);
+/*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
+extern RPar*       rpar_copy(RPar* rpar);
+
 /* lpstore.c
  */
+/*lint -sem(        lps_alloc, 1p) */
 extern void         lps_alloc(const char* name);
 extern void         lps_free(void);
 extern void         lps_number(void);
+/*lint -sem(        lps_getvar, 1p) */
 extern Var*         lps_getvar(const char* name);
+/*lint -sem(        lps_getcon, 1p) */
 extern Con*         lps_getcon(const char* name);
+/*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1) */
 extern Nzo*         lps_getnzo(Con* con, Var* var);
+/*lint -sem(        lps_addvar, 1p, @p == 1) */
 extern Var*         lps_addvar(const char* name, VarType type,
                        double lower, double upper); 
+/*lint -sem(        lps_addcon, 1p, @p == 1) */
 extern Con*         lps_addcon(const char* name, ConType sense, double rhs);
+/*lint -sem(        lps_addnzo, 1p == 1 && 2p == 1) */
 extern void         lps_addnzo(Con* con, Var* var, double value);
+/*lint -sem(        lps_delnzo, 1p == 1) */
+extern void         lps_delnzo(Nzo* nzo);
 extern void         lps_stat(void);
-extern void         lps_solve(void);
+/*lint -sem(        lps_setval, 1p == 1) */
+extern void         lps_setval(Nzo* nzo, double value);
+/*lint -sem(        lps_getval, 1p == 1) */
+extern double       lps_getval(const Nzo* nzo);
 extern void         lps_setdir(LpDirect direct);
+/*lint -sem(        lps_objname, 1p) */
 extern void         lps_objname(const char* name);
+/*lint -sem(        lps_getcost, 1p == 1) */
+extern double       lps_getcost(Var* var);
+/*lint -sem(        lps_setcost, 1p == 1) */
 extern void         lps_setcost(Var* var, double cost);
+/*lint -sem(        lps_setlower, 1p == 1) */
 extern void         lps_setlower(Var* var, double lower);
+/*lint -sem(        lps_setupper, 1p == 1) */
 extern void         lps_setupper(Var* var, double upper);
+/*lint -sem(        lps_setsense, 1p == 1) */
 extern void         lps_setsense(Con* con, ConType sense);
+/*lint -sem(        lps_setrhs, 1p == 1) */
 extern void         lps_setrhs(Con* con, double rhs);
+/*lint -sem(        lps_getsense, 1p == 1) */
 extern int          lps_getsense(const Con* con);
+/*lint -sem(        lps_write, 1p == 1) */
 extern void         lps_write(FILE* fp, LpForm form);
+/*lint -sem(        lps_makename, 1p && 3p) */
+extern void         lps_makename(
+   char* target, int size, const char* name, int no);
+/*lint -sem(        lps_transtable, 1p == 1) */
 extern void         lps_transtable(FILE* fp);
 
 /* lpfwrite.c
  */
+/*lint -sem(        lpf_write, 1p == 1 && 2p == 1) */
 extern void         lpf_write(const Lps* lp, FILE* fp);
 
 /* mpswrite.c
  */
+/*lint -sem(        mps_write, 1p == 1 && 2p == 1) */
 extern void         mps_write(const Lps* lp, FILE* fp);
 
 /* stmt.c

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: term.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -204,7 +204,10 @@ void term_negate(Term* term)
 
 void term_to_nzo(const Term* term, Con* con)
 {
-   int i;
+   Var*   var;
+   Nzo*   nzo;
+   double value;
+   int    i;
    
    assert(con != NULL);
    assert(term_is_valid(term));
@@ -214,13 +217,27 @@ void term_to_nzo(const Term* term, Con* con)
    {
       assert(NE(term->elem[i].coeff, 0.0));
 
-      lps_addnzo(con, entry_get_var(term->elem[i].entry), term->elem[i].coeff);
+      var = entry_get_var(term->elem[i].entry);
+      nzo = lps_getnzo(con, var);
+
+      if (nzo == NULL)
+         lps_addnzo(con, var, term->elem[i].coeff);
+      else
+      {
+         value = lps_getval(nzo) + term->elem[i].coeff;
+
+         if (EQ(value, 0.0))
+            lps_delnzo(nzo);
+         else
+            lps_setval(nzo, value);
+      }
    }
 }
 
 void term_to_objective(const Term* term)
 {
-   int i;
+   Var* var;
+   int  i;
    
    assert(term_is_valid(term));
    assert(EQ(term->constant, 0.0));
@@ -229,7 +246,9 @@ void term_to_objective(const Term* term)
    {
       assert(NE(term->elem[i].coeff, 0.0));
 
-      lps_setcost(entry_get_var(term->elem[i].entry), term->elem[i].coeff);
+      var = entry_get_var(term->elem[i].entry);
+      
+      lps_setcost(var, lps_getcost(var) + term->elem[i].coeff);
    }
 }
 

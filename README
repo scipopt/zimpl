@@ -1,1 +1,81 @@
-ZIMPLE
+INTRODUCTION
+------------
+ZIMPL is a little language to translate the mathematical model of a
+problem into a linear or (mixed-)integer mathematical program
+expressed in .lp or .mps file format which can be read by a LP or MIP
+solver.
+
+WARNING
+-------
+This code is not very well tested and could be regarded as in beta test. 
+Even as the version number says 1.0.
+Think of it like a Micro$oft version 1.0 not a Linux one. 
+
+INSTALLATION
+------------
+GNU Make is needed to use the makefiles. 
+If gcc is installed just say "make". 
+This will build the program src/zimpl and doc/zimpl.ps
+the documentation.
+
+SPECIAL MASCHINE DEPENDEND INSTRUCTIONS 
+---------------------------------------
+Compaq C Compiler on Tru64
+in src/Makefile, change
+CC    = cc
+CFLAGS= -O3 -fast
+DFLAGS= -M
+
+Compaq C Compiler on Linux/Alpha
+same as above, but CC=ccc.
+
+Sun with Sun Workshop Compiler
+in src/Makefile, change
+CC    = cc
+CFLAGS= -fast -xO3
+DFLAGS= -xM1
+
+ALL GNULESS
+-----------
+if you don't have gcc and gmake etc. You can try the following.
+Go to src and say "cc -O *.c -o zimpl".  
+
+LICENSE
+-------
+ZIMPL is under the GNU Public License Version 2. 
+See the file LICENSE for details.
+
+LATEST VERSION
+--------------
+Can be found at http://www.zib.de/koch/zimpl
+
+BUGS
+----
+String valued parameters don't work.
+
+Probably several more. If you find one, send a description 
+with runnable example .zpl file to koch@zib.de
+(Better even, send a working fix ;-)
+
+REMARK
+------
+If anything is changed in the code I would recommend recompiling without
+NDEBUG defined. This will slow down the code considerably but
+will do a lot of consistency checking.
+In the source code are a lot of comments starting with
+/*lint ... and also a target in the Makefile.
+These are for flexelint (see http://www.gimpel.com) a very good version of
+lint. If you are interested in my settings used for this project,
+send me an email.
+
+COMPLAINS
+---------
+>/dev/null
+
+Have fun!
+
+
+
+
+
+

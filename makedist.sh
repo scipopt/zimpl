@@ -1,0 +1,1 @@
+tar -cvzf zimpl_beta5.tgz --exclude="*CVS*" --exclude="*cvs*" --exclude="*~" --exclude="*.o" --exclude="*.d "--exclude="*TODO" zimpl/LICENSE zimpl/README zimpl/Makefile zimpl/src zimpl/doc zimpl/data  

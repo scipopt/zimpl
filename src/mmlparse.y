@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.6 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -59,13 +59,14 @@ extern void yyerror(const char* s);
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
-%token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE
+%token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
 %token AND OR NOT
-%token SUM
+%token SUM MIN MAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT
-%token MOD DIV
+%token MOD DIV POW
+%token READ AS SKIP USE FS COMMENT
 %token <name> NUMBSYM
 %token <name> STRGSYM
 %token <name> VARSYM
@@ -75,23 +76,26 @@ extern void yyerror(const char* s);
 %token <numb> NUMB
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
-%type <code> expr expr_list symidx tuple tuple_list sexpr lexpr
+%type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset product factor term entry entry_list
-%type <code> var_type con_type lower upper condition;
+%type <code> var_type con_type lower upper condition
 
 %right ASGN
 %left  ','
 %left  OR
+%left  EXISTS
 %left  AND
 %left  CMP_EQ CMP_NE CMP_LE CMP_LT CMP_GE CMP_GT
+%left  IN
 %left  NOT
 %left  UNION WITHOUT SYMDIFF
 %left  INTER
 %left  CROSS
 %left  '+' '-' 
-%left  SUM
+%left  SUM MIN MAX
 %left  '*' '/' MOD DIV
 %left  UNARY
+%left  POW
 %%
 stmt
    : decl_set   { code_set_root($1); }
@@ -177,10 +181,11 @@ upper
 entry_list
    : entry                 { $$ = code_new_inst(i_entry_list_new, 1, $1); }
    | entry_list ',' entry  { $$ = code_new_inst(i_entry_list_add, 2, $1, $3); }
+   | read                  { $$ = code_new_inst(i_read, 1, $1); } 
    ;
 
 entry
-   : tuple ',' expr       { $$ = code_new_inst(i_entry, 2, $1, $3); }
+   : tuple expr            { $$ = code_new_inst(i_entry, 2, $1, $2); }
    ;
 
 /* ----------------------------------------------------------------------------
@@ -218,12 +223,15 @@ con_type
 
 term
    : term '+' product       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
-   | term '-' product       { $$ = code_new_inst(i_term_sub, 2, $1, $3);}
+   | term '-' product       { $$ = code_new_inst(i_term_sub, 2, $1, $3); }
+   | term '*' expr          { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
    | product                { $$ = $1; }
    ;
 
 product
-   : SUM idxset DO factor   { $$ = code_new_inst(i_term_sum, 2, $2, $4); }
+   : SUM idxset DO factor %prec SUM {
+         $$ = code_new_inst(i_term_sum, 2, $2, $4);
+      }
    | factor                 { $$ = $1; }
    ;
 
@@ -278,9 +286,22 @@ sexpr
       }
    | sexpr INTER   sexpr  { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
    | '(' sexpr ')'      { $$ = $2; }
-   | '{' tuple_list '}' { $$ = code_new_inst(i_set_new, 1, $2); }
+   | '{' tuple_list '}' { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
+   | '{' expr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
    ;
 
+read
+   : READ expr AS expr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
+   | read read_par     { $$ = code_new_inst(i_read_param, 2, $1, $2); }
+   ;
+
+read_par
+   : SKIP expr    { $$ = code_new_inst(i_read_skip, 1, $2); }
+   | USE expr     { $$ = code_new_inst(i_read_use, 1, $2); }
+   | FS expr      { $$ = code_new_inst(i_read_fieldsep, 1, $2); }
+   | COMMENT expr { $$ = code_new_inst(i_read_comment, 1, $2); }
+   ;
+ 
 tuple_list
    : tuple {
          $$ = code_new_inst(i_tuple_list_new, 1, $1);
@@ -288,19 +309,28 @@ tuple_list
    | tuple_list ',' tuple  {
          $$ = code_new_inst(i_tuple_list_add, 2, $1, $3);
       }
+   | read { $$ = code_new_inst(i_read, 1, $1); }
    ;
 
 lexpr
-   : expr CMP_EQ expr { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
-   | expr CMP_NE expr { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
-   | expr CMP_GT expr { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
-   | expr CMP_GE expr { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
-   | expr CMP_LT expr { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
-   | expr CMP_LE expr { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
-   | lexpr AND lexpr  { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
-   | lexpr OR lexpr   { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
-   | NOT lexpr        { $$ = code_new_inst(i_bool_not, 2, $2); }
-   | '(' lexpr ')'    { $$ = $2; }
+   : expr CMP_EQ expr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
+   | expr CMP_NE expr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
+   | expr CMP_GT expr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
+   | expr CMP_GE expr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
+   | expr CMP_LT expr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
+   | expr CMP_LE expr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
+   | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
+   | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
+   | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
+   | sexpr CMP_GE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $3, $1); }
+   | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
+   | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
+   | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
+   | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
+   | NOT lexpr          { $$ = code_new_inst(i_bool_not, 2, $2); }
+   | '(' lexpr ')'      { $$ = $2; }
+   | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
+/*   | EXISTS idxset %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $2); }*/
    ;
  
 tuple
@@ -344,11 +374,18 @@ expr
    | expr '/' expr         { $$ = code_new_inst(i_expr_div, 2, $1, $3); }
    | expr MOD expr         { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
    | expr DIV expr         { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
+   | expr POW expr         { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
    | '+' expr %prec UNARY  { $$ = $2; }
    | '-' expr %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' expr ')'          { $$ = $2; }
    | IF lexpr THEN expr ELSE expr END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+      }
+   | MIN idxset DO expr %prec MIN {
+         $$ = code_new_inst(i_expr_min, 2, $2, $4);
+      }
+   | MAX idxset DO expr %prec MAX {
+         $$ = code_new_inst(i_expr_max, 2, $2, $4);
       }
    ;
 

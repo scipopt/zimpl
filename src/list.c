@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: list.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -89,7 +89,7 @@ static List* list_new(ListType type, ListData* data)
    
    assert(list != NULL);
    assert(data != NULL);
-
+   
    list->refc        = 1;
    list->elems       = 0;
    list->type        = type;

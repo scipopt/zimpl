@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.6 2001/05/06 11:43:21 thor Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -56,6 +56,7 @@ static int yycolumn = 0;
 %option nounput
 %pointer
 %%
+"**"|"^"                  { yycolumn += yyleng; return POW; }
 ":="                      { yycolumn += yyleng; return ASGN; }
 "=="                      { yycolumn += yyleng; return CMP_EQ; }
 "<="                      { yycolumn += yyleng; return CMP_LE; }
@@ -64,8 +65,8 @@ static int yycolumn = 0;
 ">"                       { yycolumn += yyleng; return CMP_GT; }
 "!="                      { yycolumn += yyleng; return CMP_NE; }
 "not"                     { yycolumn += yyleng; return NOT; }
-"and"                     { yycolumn += yyleng; return OR; }
-"or"                      { yycolumn += yyleng; return AND; }
+"and"                     { yycolumn += yyleng; return AND; }
+"or"                      { yycolumn += yyleng; return OR; }
 "set"                     { yycolumn += yyleng; return DECLSET; }
 "param"                   { yycolumn += yyleng; return DECLPAR; }
 "var"                     { yycolumn += yyleng; return DECLVAR; }
@@ -81,6 +82,7 @@ static int yycolumn = 0;
 "<>"                      { yycolumn += yyleng; return EMPTY_TUPLE; }
 "sum"                     { yycolumn += yyleng; return SUM; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
+"exists"                  { yycolumn += yyleng; return EXISTS; }
 "if"                      { yycolumn += yyleng; return IF; }
 "then"                    { yycolumn += yyleng; return THEN; }
 "else"                    { yycolumn += yyleng; return ELSE; }
@@ -94,6 +96,14 @@ static int yycolumn = 0;
 "without"|"\\"            { yycolumn += yyleng; return WITHOUT; }
 "mod"|"modulo"            { yycolumn += yyleng; return MOD; }
 "div"                     { yycolumn += yyleng; return DIV; }
+"min"                     { yycolumn += yyleng; return MIN; }
+"max"                     { yycolumn += yyleng; return MAX; }
+"read"                    { yycolumn += yyleng; return READ; }
+"as"                      { yycolumn += yyleng; return AS; }
+"skip"                    { yycolumn += yyleng; return SKIP; }
+"use"                     { yycolumn += yyleng; return USE; }
+"fs"                      { yycolumn += yyleng; return FS; }
+"comment"                 { yycolumn += yyleng; return COMMENT; }
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       sscanf(yytext, "%lf", &lval->numb);

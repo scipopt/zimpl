@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.7 2001/03/09 16:12:35 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -56,6 +56,8 @@ union code_value
    List*       list;
    VarType     vartype;
    ConType     contype;
+   RDef*       rdef;
+   RPar*       rpar;
 };
 
 #define MAX_CHILDS 6
@@ -257,6 +259,12 @@ static void code_free_value(CodeNode* node)
    case CODE_VARTYPE :
    case CODE_CONTYPE :
       break;
+   case CODE_RDEF :
+      rdef_free(node->value.rdef);
+      break;
+   case CODE_RPAR :
+      rpar_free(node->value.rpar);
+      break;
    default :
       abort();
    }
@@ -419,6 +427,16 @@ ConType code_get_contype(CodeNode* node)
    return code_check_type(node, CODE_CONTYPE)->value.contype;
 }
 
+RDef* code_get_rdef(CodeNode* node)
+{
+   return rdef_copy(code_check_type(node, CODE_RDEF)->value.rdef);
+}
+
+RPar* code_get_rpar(CodeNode* node)
+{
+   return rpar_copy(code_check_type(node, CODE_RPAR)->value.rpar);
+}
+
 /* ----------------------------------------------------------------------------
  * Value Funktionen
  * ----------------------------------------------------------------------------
@@ -559,6 +577,28 @@ void code_value_contype(CodeNode* node, ConType contype)
 
    node->type          = CODE_CONTYPE;
    node->value.contype = contype;
+}
+
+void code_value_rdef(CodeNode* node, RDef* rdef)
+{
+   assert(code_is_valid(node));
+   assert(rdef_is_valid(rdef));
+
+   code_free_value(node);
+
+   node->type       = CODE_RDEF;
+   node->value.rdef = rdef_copy(rdef);
+}
+
+void code_value_rpar(CodeNode* node, RPar* rpar)
+{
+   assert(code_is_valid(node));
+   assert(rpar_is_valid(rpar));
+
+   code_free_value(node);
+
+   node->type       = CODE_RPAR;
+   node->value.rpar = rpar_copy(rpar);
 }
 
 void code_value_void(CodeNode* node)

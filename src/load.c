@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: load.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -40,8 +40,9 @@
 
 static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
 {
-   int cnt = 0;
-   int c;
+   Bool in_string = FALSE;
+   int  cnt = 0;
+   int  c;
 
    for(;;)
    {
@@ -65,7 +66,10 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
          (*lineno)++;
       }
 
-      if (c == '#')
+      if (c == '"')
+         in_string = !in_string;
+      
+      if (!in_string && (c == '#'))
       {
          do { c = fgetc(fp); } while((c != EOF) && (c != '\n'));
          (*lineno)++;
@@ -73,7 +77,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
       }
       (*buf)[cnt++] = (char)c;
 
-      if (c == ';')
+      if (!in_string && (c == ';'))
          break;      
    }
    (*buf)[cnt] = '\0';

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.1 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.2 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <ctype.h>
 #include "mshell.h"
 #include "portab.h"
 #include "rbt.h"
@@ -423,8 +424,8 @@ Var* lps_addvar(
    v->size      = 0;
    v->type      = type;
    v->cost      = 0.0;
-   v->lower     = lower;
-   v->upper     = upper;
+   v->lower     = (type == VAR_BIN) ? 0.0 : lower;
+   v->upper     = (type == VAR_BIN) ? 1.0 : upper;
    v->first     = NULL;
    v->prev      = NULL;   
    v->next      = lp->var_root;
@@ -546,6 +547,57 @@ void lps_addnzo(
    assert(lps_valid());
 }
 
+void lps_delnzo(
+   Nzo* nzo)
+{
+   assert(lps_valid());
+   assert(nzo != NULL);
+
+   /* Aus der Spalte nahmen
+    */
+   if (nzo == nzo->var->first)
+      nzo->var->first = nzo->var_next;
+   
+   if (nzo->var_prev != NULL)
+      nzo->var_prev->var_next = nzo->var_next;
+   if (nzo->var_next != NULL)
+      nzo->var_next->var_prev = nzo->var_prev;
+   nzo->var->size--;
+   
+   /* Aus der Zeile nahmen
+    */
+   if (nzo == nzo->con->first)
+      nzo->con->first = nzo->con_next;
+   
+   if (nzo->con_prev != NULL)
+      nzo->con_prev->con_next = nzo->con_next;
+   if (nzo->con_next != NULL)
+      nzo->con_next->con_prev = nzo->con_prev;
+   nzo->con->size--;
+
+   /* Aus dem LP nehmen
+    */
+   nzo->var_next = lp->next;
+   lp->next      = nzo;
+   lp->nonzeros--;
+   
+   assert(lps_valid());
+}
+
+void lps_setval(Nzo* nzo, double value)
+{
+   assert(nzo != NULL);
+
+   nzo->value = value;   
+}
+
+double lps_getval(const Nzo* nzo)
+{
+   assert(nzo != NULL);
+
+   return nzo->value;
+}
+
 void lps_setdir(
    LpDirect direct)
 {
@@ -564,6 +616,14 @@ void lps_objname(
       free(lp->objname);
    
    lp->objname = strdup(name);
+}
+
+double lps_getcost(
+   Var* var)
+{
+   assert(var != NULL);
+
+   return var->cost;
 }
 
 void lps_setcost(
@@ -657,31 +717,67 @@ void lps_write(FILE* fp, LpForm format)
    }
 }
 
+void lps_makename(
+   char*       target,
+   int         size,
+   const char* name,
+   int         no)
+{
+   char temp[13];
+   int  len;
+   int  i;
+   
+   assert(target != NULL);
+   assert(size   >= 3);
+   assert(name   != NULL);
+   assert(no     >= 0);
+   
+   if (strlen(name) < (size_t)size)
+      strcpy(target, name);
+   else
+   {
+      sprintf(temp, "%d", no);
+
+      /* -2 : fuer '#' und '\0'
+       */
+      len = size - (int)strlen(temp) - 2;
+
+      assert(len >= 0);
+   
+      for(i = 0; i < len; i++)      
+         target[i] = isalnum(name[i]) ? name[i] : '_';
+
+      target[i++] = '#';
+
+      strcpy(&target[i], temp);
+   
+      assert(strlen(target) == (size_t)size - 1);
+   }
+}
+
 void lps_transtable(FILE* fp)
 {
    Var* var;
    Con* con;
+   char tmp[MPS_NAME_LEN + 1];
 
    assert(lps_valid());
 
    lps_number();
    
    for(var = lp->var_root; var != NULL; var = var->next)
-      fprintf(fp, "zimple\tv%d\t%s\n", var->number, var->name);
+   {
+      lps_makename(tmp, MPS_NAME_LEN + 1, var->name, var->number);
 
+      fprintf(fp, "zimpl\tv %7d\t%-*s\t%s\n",
+         var->number, MPS_NAME_LEN, tmp, var->name);
+   }
    for(con = lp->con_root; con != NULL; con = con->next)
-      fprintf(fp, "zimple\tc%d\t%s\n", con->number, con->name);
+   {
+      lps_makename(tmp, MPS_NAME_LEN + 1, con->name, con->number);
+
+      fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\n",
+         con->number, MPS_NAME_LEN, tmp, con->name);
+   }
 }
 
-void lps_solve()
-{
-   assert(lps_valid());
-
-   lps_stat();
-
-#ifdef WITH_CPLEX
-   solve_cplex(lp);
-#else
-   printf("No solver implemented\n");
-#endif
-}

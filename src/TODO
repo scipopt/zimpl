@@ -1,0 +1,39 @@
+
+----------------------------
+Potenzmengen und mengen element kann dann auch eine menge sein,
+so das man sagen kann:
+
+forall w in pot(V) with s in W do
+
+--------------------------------------------------------
+Attribut generate_covers oder ander ungleichungen für ein subto
+Attribut branch / dontbranch / branchweight für variablen
+Sogar branch bereiche füer integer variablen denkbar oder
+alternative unlgeichnungen zum branchen
+
+---------------------------------------------------
+exists <a,b,c> in X : b == 4 and c == 3  shift/reduce beseitigen count?
+
+Teilmengen zuweisung in sexpr
+
+min <a,b> in X : expr 
+max =====================> Dokumentation
+
+include gucken auch innerhalt eines ; ausdrucks.
+
+ewtl bei lp_format etwas längere Dateinamen
+
+default für parameter
+
+forall verschachteln
+sum verschachtlung überprüfung
+
+shortcummings and Tips&Trick Abschnitt
+
+check statement mit forall als reductionsoperator expr* -> bool
+
+Im LP reihenfolge der sets beibehalten
+
+bessere fehlermeldungen
+
+Warning wenn locale Variable eine globale uerbschreibt.

@@ -1,0 +1,593 @@
+% $Id: vortrag.tex,v 1.1 2001/05/06 11:43:21 thor Exp $
+%
+\documentclass{slides}
+\usepackage{times}
+%\usepackage[light]{draftcopy}
+%\usepackage{a4}
+\usepackage{german}
+\usepackage[latin1]{inputenc}
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{xspace}
+\usepackage{verbatim}
+\usepackage{url}
+%\usepackage[notoday,nofancy]{rcsinfo}
+%\rcsInfo $Id: vortrag.tex,v 1.1 2001/05/06 11:43:21 thor Exp $
+%\parindent0ex
+%\headheight15pt
+%\selectlanguage{german}
+
+\newcommand{\ZIB}{\textsc{Zib}\xspace}
+\newcommand{\CPlex}{\textsc{CPlex}\xspace}
+\newcommand{\Zimpl}{\textsc{Zimpl}\xspace}
+
+\renewcommand{\footrulewidth}{\headrulewidth}
+\rhead{\includegraphics[scale=.4,bb=200 110 230 190]{ziblogo2.eps}}
+%\epsfig{file=ziblogo2.eps,width=2cm}}
+\lfoot{\tiny Mathematical Modeling Languages}
+\cfoot{}
+\pagestyle{fancy}
+\headheight60pt
+\headsep10pt
+\begin{document}
+\begin{slide}
+\lhead{Mathematical Modeling Languages}
+\thispagestyle{fancy}
+
+What is a MPL?
+
+\small
+Mathematical or algebraic modeling languages allow to formulate a
+linear or nonlinear programming problem in 
+a way near the original mathematical formulation and 
+automatically generate data for a corresponding solver.
+
+\normalsize Uses for MPL's
+
+\small
+\begin{itemize}
+\item Teaching modeling
+\item Rapid prototyping
+\item Projects with industry
+\end{itemize}
+
+\normalsize Some links
+
+\small
+NEOS Guide\\
+\footnotesize
+\url{http://www-fp.mcs.anl.gov/otc/Guide/}\\
+\url{SoftwareGuide/Categories/optsysmodlang.html}
+
+\small
+Arnold Neumaier\\
+\footnotesize
+\url{http://solon.cma.univie.ac.at/~neum/glopt.html}
+
+\small
+Decision Tree for Optimization Software\\
+\footnotesize
+\url{http://plato.la.asu.edu/topics/tools.html}
+
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{Some MPL's}
+\thispagestyle{fancy}
+
+\vfill
+\tiny
+
+\begin{tabular}{llll}
+%------------------------------------------------------------------------------
+Name&Author&Models\\
+\hline\\
+%------------------------------------------------------------------------------
+AIMMS&
+Johannes J. Bisschop&
+LP, MIP, NLP, NWP\\
+&Roobert Entriken\\
+&Paragon Decision\\
+&Technology\\
+\\\hline\\
+%------------------------------------------------------------------------------
+AMPL&
+Robert Fourer&
+LP, MIP, QP, NLP, NWP\\
+&David M. Gay\\
+&Brian W. Kernighan\\
+&AT\&T Bell Laboratories\\
+\\\hline\\
+%------------------------------------------------------------------------------
+GAMS&
+Anthony Brooke&
+LP, MIP, QP, NLP, NWP\\
+&David Kendrick\\
+&Alexander Meeraus\\
+&Ramesh Raman\\
+&GAMS Development\\
+&Corporation\\
+\\\hline\\
+%------------------------------------------------------------------------------
+LINGO&
+LINDO Systems&
+LP, MIP, QP, NLP\\
+\\\hline\\
+%------------------------------------------------------------------------------
+MINOPT&
+C. A. Schweiger&
+LP, MIP, NLP, MINLP\\
+&C. A. Floudas\\
+&Princeton University\\
+\\\hline\\
+%------------------------------------------------------------------------------
+OPL&
+Pascal van Hentenryck&
+LP, MIP, NLP\\
+&Irvin Lustig\\
+&Larent Michael\\
+&Jean-Fran\c{c}is Puget\\
+&ILOG\\
+\\\hline\\
+%------------------------------------------------------------------------------
+XPRESS-MP&
+Dash Associates&
+LP, MIP, NLP\\
+
+\end{tabular}
+\end{slide}
+
+\begin{slide}
+\lhead{AMPL Model}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+set P;                # Products
+set R;                # Raw materials
+
+param T > 0;          # number of production periods
+param M > 0;          # Maximum production per period
+param a{R,P} >= 0;    # units of raw material i to 
+                      # manufacture 1 unit of product j
+param b{R} >= 0;      # maximum initial stock 
+param c{P,1..T};      # estimated profit per unit 
+param d{R};           # storage cost per period per unit 
+param f{R};           # estimated remaining value per 
+                      # unit after last period
+var x{P,1..T} >= 0;   # units of product manufactured 
+var s{R,1..T+1} >= 0; # stock of raw material 
+
+maximize profit:
+    sum {t in 1..T} (sum {j in P} c[j,t]*x[j,t] 
+                 - sum {i in R} d[i]*s[i,t])
+  + sum {i in R} f[i] * s[i,T+1];
+
+subject to 
+
+   prd {t in 1..T}: sum {j in P} x[j,t] <= M;
+ 
+   stock1 {i in R}: s[i,1] <= b[i];
+
+   stock {i in R, t in 1..T}: 
+      s[i,t+1] = s[i,t] - sum {j in P} a[i,j] * x[j,t];
+\end{verbatim}
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{AMPL Data}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+
+data;
+
+set P := lite bud mich ;
+set R := malt hops ;
+
+param T 3 ;
+param M 40 ;
+param a [malt,lite] 5 [malt,bud] 3 [malt,mich] 1
+        [hops,lite] 1 [hops,bud] 2 [hops,mich] 3 ;
+param b [malt] 400 [hops] 275 ;
+param c [lite,1] 25 [lite,2] 20 [lite,3] 10
+        [bud,1] 50 [bud,2] 50 [bud,3] 50
+        [mich,1] 75 [mich,2] 80 [mich,3] 100 ;
+param d [malt] 0.5 [hops] 2.0 ;
+param f [malt] 15 [hops] 25 ;
+\end{verbatim}
+\vfill
+\end{slide}
+
+
+\begin{slide}
+\lhead{GAMS}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+SETS
+     I   canning plants / SEATTLE, SAN-DIEGO /
+     J   markets        / NEW-YORK, CHICAGO, TOPEKA / ;
+PARAMETERS
+     A(I)  capacity of plant i in cases
+       /    SEATTLE     350
+            SAN-DIEGO   600  /
+     B(J)  demand at market j in cases
+       /    NEW-YORK    325
+            CHICAGO     300
+            TOPEKA      275  / ;
+TABLE D(I,J)  distance in thousands of miles
+                  NEW-YORK       CHICAGO      TOPEKA
+    SEATTLE          2.5           1.7          1.8
+    SAN-DIEGO        2.5           1.8          1.4  ;
+SCALAR F  freight in USD per case per 1000 miles  /90/ ;
+PARAMETER C(I,J) cost in 1000s of USD per case;
+          C(I,J) = F * D(I,J) / 1000 ;
+VARIABLES
+     X(I,J)  shipment quantities in cases
+     Z       total transportation costs in 1000s of USD;
+POSITIVE VARIABLE X ;
+EQUATIONS
+     COST        define objective function
+     SUPPLY(I)   observe supply limit at plant i
+     DEMAND(J)   satisfy demand at market j ;
+COST ..        Z  =E=  SUM((I,J), C(I,J)*X(I,J)) ;
+SUPPLY(I) ..   SUM(J, X(I,J))  =L=  A(I) ;
+DEMAND(J) ..   SUM(I, X(I,J))  =G=  B(J) ;
+MODEL TRANSPORT /ALL/ ;
+SOLVE TRANSPORT USING LP MINIMIZING Z ;
+\end{verbatim}
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{MINOPT}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+DECLARATION {{
+INDEX {i,j,k,p};
+SET I = |1,2|;
+SET J = |1,2|;
+SET K = |1,2|;
+
+PARAM c(I,J,K,P) = {10,15,20,10,5,5,30,10,25,20,15,20};
+PARAM s(I,P) = {100,200,150,120};
+PARAM f(J) = {2000,2500};
+PARAM v(J) = {50,70};
+
+XVAR {x(I,J,K,P)};
+YVAR {y(J,K),z(J)};
+BINARY {y(J,K),z(J)};
+POSITIVE {x(I,J,K,P)};
+UBDS x(I,J,K,P)=<i E I|<j E J|<k E K|<p E P| 300>>>>;
+YSTP {1,0,0,1,1,1};
+}}
+MODEL {{
+  MIN: <<i E I| <<j E J| <<k E K| 
+          <<p E P| c(i,j,k,p)*x(i,j,k,p) >> >> >> >>
+       + <<j E J| f(j)*z(j) >>
+       + <<j E J| v(j) * <<i E I| <<k E K| 
+            <<p E P| x(i,j,k,p) >> >> >>^2.5>>;
+  lsum1(i E I, p E P): 
+     <<j E J| <<k E K| x(i,j,k,p) >> >> =l= s(i,p);
+  lsum2(j E J, k E K, p E P): 
+     <<i E I| x(i,j,k,p) >> =E= d(k,p)*y(j,k);
+  lsum3(j E J): <<k E K| 
+     <<p E P| d(k,p)*y(j,k) >> >> =l= vu(j)*z(j);
+  lsum4(j E J):  <<k E K| 
+     <<p E P| d(k,p)*y(j,k) >> >> =g= vl(j)*z(j);
+  lsum5(k E K): <<j E J| y(j,k)>> =e= 1;
+}}
+\end{verbatim}
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{OPL 1/2}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+// The network configuration
+enum Sites ...;
+enum Articles ...;
+
+struct link {
+    Sites    org;
+    Sites    dst;
+};
+
+{link} Links = ...;
+
+float+ cost[Links] = ...;
+float+ siteCapacity[Sites] = ...;
+float+ demand[Sites,Articles] = ...;
+float+ linkCapacity[Links] = ...;
+float+ onHand[Sites,Articles] = ...;
+
+int minmax = 1;
+
+var float+ totalCost;
+var float+ siteExtra[Sites];
+var float+ linkExtra[Links];
+var float+ flow[Links,Articles];
+
+minimize
+   totalCost * minmax
+
+\end{verbatim}
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{OPL 2/2}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+   
+subject to {
+   forall(l in Links)
+      sum(a in Articles) 
+         flow[l,a] <= linkCapacity[l] + linkExtra[l];
+
+   forall(s in Sites)
+      sum(a in Articles)   
+         (sum(l in Links : s = l.dst) flow[l,a] -
+             sum(l in Links : s = l.org) flow[l,a] +
+             onHand[s,a] -
+             demand[s,a] ) <= 
+      siteCapacity[s] + siteExtra[s];
+
+   totalCost = sum(l in Links & a in Articles) 
+      cost[l] * flow[l,a];
+
+   forall(s in Sites & a in Articles)
+      demand[s,a] - onHand[s,a] <=   
+         sum(l in Links : s = l.dst) flow[l,a] -
+         sum(l in Links : s = l.org) flow[l,a];           
+};
+
+display linkExtra;
+display siteExtra;
+display flow;
+
+\end{verbatim}
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{Why \Zimpl}
+\thispagestyle{fancy}
+\normalsize
+Why build yet another MPL?
+
+\small
+While there are over a dozend MPL's, all seem to be
+commercial. None of them is AFAIK available with source code.
+
+The are several possible reasons for this:
+
+\begin{itemize}
+\item MPL's are not a research topic\\
+      (It's pretty clear what they possibly can do and what not)
+\item There main purpose is to make modeling easier\\
+      (Which increases the demand for model solving tools)
+\item A lot MPL's started as research and went commercial\\
+      (The same situation as with LP-Solvers)
+\item They don't help if one is looking at a single model 
+      that is at the edge of solvability\\
+      (A common case in research)
+\item By now all major suppliers of optimization software have a MPL
+      bundled with there products\\
+      (And let you download free \emph{student} versions)
+\end{itemize}
+Nonetheless having a platform independent 
+non commercial open source MPL would have some advantages other than
+the possibility to teach modeling with more than 300 variables.
+
+\vfill
+\end{slide}
+
+\begin{slide}
+\lhead{Model example}
+\thispagestyle{fancy}
+A model consists of 
+%\begin{center}
+\begin{tabular}{l}
+\bf Sets\\
+\bf Parameters\\
+\bf Variables\\
+\bf Objective\\
+\bf Constraints\\
+\end{tabular}
+
+\vfill
+\footnotesize
+\begin{tabular}{lll}
+$B$ & set of BSC's\\
+$M$ & set of MSC's\\
+$R$ & set of resources\\
+$S$ & set of building stages\\
+$A$ & $\subseteq B\cup M$ set of links between BSC's and MSC's\\\\
+$c_a$ & $a\in A$ cost for connecting a BSC to a MSC\\
+$f_s$ & $s\in S$ cost for building stage $s$\\
+$d_{br}$ & $b\in B, r\in R$ demand of BSC $b$ for resource $r$\\
+$k_{rs}$ & $r\in R, s\in S$ capacity of resource $r$ in stage $s$\\\\
+$x_a$ & $\in\{0,1\}, a\in A$ 1 if link $a$ is used, 0 otherwise\\
+$z_{ms}$ & $\in\{0,1\}, m\in M, s\in S$ 1 if MSC $m$ is in stage $s$\\
+\end{tabular}
+$$
+\renewcommand{\arraystretch}{1.5}
+\begin{array}{rlll}
+\min&\displaystyle\sum_{bm\in A} c_{bm} x_{bm} + 
+\sum_{m\in M}\sum_{s\in S} f_s z_{ms}\\
+\mbox{s.t.}&\displaystyle\sum_{bm\in A} x_{bm}&=1&\displaystyle\forall b\in B\\
+&\displaystyle\sum_{s\in S} z_{ms}&=1&\displaystyle\forall m\in M\\
+&\displaystyle\sum_{bm\in A} d_{br} x_{bm} - \sum_{s\in S} k_{rs} z_{ms}
+&\leq 0&\displaystyle\forall m\in M, r\in R
+\end{array}
+$$
+\end{slide}
+
+\begin{slide}
+\lhead{\Zimpl example 1/2}
+\thispagestyle{fancy}
+{\tiny
+\begin{verbatim}
+set M := { "Altenburg", "Augsburg", "Berlin", ...
+set B := { "Bischofsheim", "Bockenem", "Bonn", ...
+set R := { "Lines", "Users" }; 
+set S := { 0 to 6 };
+
+set A := { 
+   <"Berlin","Altenburg">, 
+   <"Berlin","Braunschweig">,   
+   <"Berlin","Chemnitz">, ...
+
+param anbind_kosten[A] := 
+   <"Aachen","Gieﬂen"> 479740, 
+   <"Aachen","Hagen">  365308,
+   <"Aachen","Kˆln">   275908, ...
+
+param bedarf[B * R] :=
+ <"Bautzen", "Lines">      2, 
+ <"Berlin",  "Lines">   1090, 
+ <"Bautzen", "Users">    986,
+ <"Berlin",  "Users"> 431252, ...
+
+param kapazitaet[R * S] := 
+ <"Lines", 0>     0, <"Users", 0>      0,
+ <"Lines", 1> 18750, <"Users", 1> 200000,
+ <"Lines", 2> 18750, <"Users", 2> 400000,
+ <"Lines", 3> 37500, <"Users", 3> 600000,
+ <"Lines", 4> 37500, <"Users", 4> 8000000,	
+ <"Lines", 5> 75000, <"Users", 5> 1000000,	
+ <"Lines", 6> 75000, <"Users", 6> 1200000;
+
+param ausbau_kosten[S] := 
+ <0>       0,  <1>  810000,  <2> 1782000,
+ <3> 1924000,  <4> 2264000,  <5> 2614000,
+ <6> 3002000;
+\end{verbatim}
+}
+\vfill
+\end{slide}
+%------------------------------------------------------------------------------
+\begin{slide}
+\lhead{\Zimpl example 2/2}
+\thispagestyle{fancy}
+{\tiny
+\begin{verbatim}
+var x[A    ] binary;
+var z[M * S] binary;
+
+minimize kosten: 
+   sum <b,m> in A     : anbind_kosten[b,m] * x[b,m] 
++  sum <m,s> in M * S : ausbau_kosten[s] * z[m,s];
+  
+# Jede BSC muﬂ an genau eine MSC angebunden werden.
+#
+subto c1: forall <b> in B do 
+   sum <b,m> in A : x[b,m] == 1;
+
+# Jede MSC muﬂ eine Konfiguration haben
+#
+subto c2: forall <m> in M do 
+   sum <s> in S : z[m,s] == 1;
+
+# Die Kapazit‰t der gew‰hlten Konfiguration 
+# muﬂ ausreichen.
+#
+subto c3: forall <m,r> in M * R do 
+   sum <b,m> in A : bedarf[b,r] * x[b,m] 
+ - sum <s> in S : kapazitaet[r,s] * z[m,s] <= 0;
+
+\end{verbatim}
+}
+\vfill
+\end{slide}
+
+
+\begin{slide}
+\lhead{Examples}
+\thispagestyle{fancy}
+\tiny
+\begin{verbatim}
+set A := { 1, 2, 3 };
+set B := { "hi", "ha", "ho" };
+set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
+set D := A cross B;
+set E := { 6 to 9 } union A without { <2>, <3> }; 
+\end{verbatim}
+
+\begin{verbatim}
+param q := 5;
+param u[A] := <1> 17, <2> 29, <3> 12;
+param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
+\end{verbatim}
+
+\begin{verbatim}
+var x1;
+var x2 binary;
+var y[A] real >= 2 <= 18;
+var z[<a,b,c> in C] integer 
+    >= a * 10 
+    <= if b <= 3 then p[b] else 10 end; 
+\end{verbatim}
+
+\begin{verbatim}
+minimize cost: 12 * x1 -4.4 * x2 
+   + sum <a> in A : u[a] * y[a]
+   + sum <a,b,c> in C with a in E and b > 3 : 
+        -a/2 * z[a,b,c];
+\end{verbatim}
+
+\begin{verbatim}
+subto time : 3 * x1 + 4 * x2 <= 7;
+subto space: sum <a> in A : 2 * u[a] * y[a] >= 50;
+subto weird: forall <a> in A : 
+   sum <a,b,c> in C : z[a,b,c] == 55;
+\end{verbatim}
+\end{slide}
+
+\begin{slide}
+\lhead{\Zimpl}
+\thispagestyle{fancy}
+
+\normalsize What type of models can \Zimpl generate?
+
+\small
+LP, MIP
+
+\normalsize Which solvers are supported?
+
+\small
+Since \Zimpl generates MPS or LPF files, it can be used with
+nearly all available solvers. Integration within SIP is planned.
+
+\normalsize How does it work?
+
+\small
+\Zimpl consist of two parts. The parser and the engine. The parser is
+responsible for understanding the input and building an instruction
+tree. The engine then traverses the tree and executes the instructions.
+
+\normalsize Further directions
+
+\small
+\begin{itemize}
+\item More possibilities for specifying data
+\item Improved and extended syntax 
+\item Hints to the solver
+\item Commands to generate special inequalities 
+\end{itemize}
+
+\end{slide}
+
+
+\end{document}
+

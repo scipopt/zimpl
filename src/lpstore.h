@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.1 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.2 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -83,5 +83,7 @@ struct lpstorage
    RBT*     var_tree;
    RBT*     con_tree;
 }; 
+
+#define MPS_NAME_LEN 8
 
 #endif /* _LPSTORE_H_ */

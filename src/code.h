@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.h,v 1.2 2001/03/09 16:12:35 bzfkocht Exp $"
+#ident "@(#) $Id: code.h,v 1.3 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -43,6 +43,8 @@
 #define Code_eval_child_list(n, i)     code_get_list(Code_eval_child(n, i))
 #define Code_eval_child_vartype(n, i)  code_get_vartype(Code_eval_child(n, i))
 #define Code_eval_child_contype(n, i)  code_get_contype(Code_eval_child(n, i))
+#define Code_eval_child_rdef(n, i)     code_get_rdef(Code_eval_child(n, i))
+#define Code_eval_child_rpar(n, i)     code_get_rpar(Code_eval_child(n, i))
 
 /*lint -sem(        code_new_inst, 1p == 1 && 2n >= 0, @p == 1) */
 extern CodeNode*    code_new_inst(Inst inst, int childs, ...);
@@ -102,6 +104,10 @@ extern List*        code_get_list(CodeNode* node);
 extern VarType      code_get_vartype(CodeNode* node);
 /*lint -sem(        code_get_contype, 1p == 1) */
 extern ConType      code_get_contype(CodeNode* node);
+/*lint -sem(        code_get_rdef, 1p == 1, @p == 1) */
+extern RDef*        code_get_rdef(CodeNode* node);
+/*lint -sem(        code_get_rpar, 1p == 1, @p == 1) */
+extern RPar*        code_get_rpar(CodeNode* node);
 /*lint -sem(        code_value_numb, 1p == 1) */
 extern void         code_value_numb(CodeNode* node, double numb);
 /*lint -sem(        code_value_strg, 1p == 1 && 2p) */
@@ -128,6 +134,10 @@ extern void         code_value_list(CodeNode* node, List* list);
 extern void         code_value_vartype(CodeNode* node, VarType vartype);
 /*lint -sem(        code_value_contype, 1p == 1) */
 extern void         code_value_contype(CodeNode* node, ConType contype);
+/*lint -sem(        code_value_rdef, 1p == 1 && 2p == 1) */
+extern void         code_value_rdef(CodeNode* node, RDef* rdef);
+/*lint -sem(        code_value_rpar, 1p == 1 && 2p == 1) */
+extern void         code_value_rpar(CodeNode* node, RPar* rpar);
 /*lint -sem(        code_value_void, 1p == 1) */
 extern void         code_value_void(CodeNode* node);
 

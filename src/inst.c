@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.7 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -192,6 +192,16 @@ void i_expr_intdiv(CodeNode* self)
       floor(Code_eval_child_numb(self, 0) / Code_eval_child_numb(self, 1)));
 }
 
+void i_expr_pow(CodeNode* self)
+{
+   Trace("i_pow");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self,
+      pow(Code_eval_child_numb(self, 0), Code_eval_child_numb(self, 1)));
+}
+
 void i_expr_neg(CodeNode* self)
 {
    Trace("i_neg");
@@ -211,6 +221,92 @@ void i_expr_if(CodeNode* self)
       code_value_numb(self, Code_eval_child_numb(self, 1));
    else
       code_value_numb(self, Code_eval_child_numb(self, 2));
+}
+
+void i_expr_min(CodeNode* self)
+{
+   IdxSet*   idxset;
+   Set*      set;
+   Tuple*    pattern;
+   Tuple*    tuple;
+   CodeNode* lexpr;
+   int       idx = 0;
+   double    value;
+   double    min = DBL_MAX;
+
+   Trace("i_expr_min");
+   
+   assert(code_is_valid(self));
+
+   idxset  = Code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         value = Code_eval_child_numb(self, 1);      
+
+         if (value < min)
+            min = value;
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   tuple_free(pattern);
+
+   code_value_numb(self, min);
+
+   set_free(set);   
+   idxset_free(idxset);
+}
+
+void i_expr_max(CodeNode* self)
+{
+   IdxSet*   idxset;
+   Set*      set;
+   Tuple*    pattern;
+   Tuple*    tuple;
+   CodeNode* lexpr;
+   int       idx = 0;
+   double    value;
+   double    max = -DBL_MAX;
+
+   Trace("i_expr_max");
+   
+   assert(code_is_valid(self));
+
+   idxset  = Code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         value = Code_eval_child_numb(self, 1);      
+
+         if (value > max)
+            max = value;
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   tuple_free(pattern);
+
+   code_value_numb(self, max);
+
+   set_free(set);   
+   idxset_free(idxset);
 }
 
 /* ----------------------------------------------------------------------------
@@ -354,11 +450,138 @@ void i_bool_lt(CodeNode* self)
       LT(Code_eval_child_numb(self, 0), Code_eval_child_numb(self, 1)));
 }
 
+void i_bool_seq(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+      
+   Trace("i_bool_seq");
+
+   assert(code_is_valid(self));
+
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+   
+   code_value_bool(self, set_is_equal(set_a, set_b));
+
+   set_free(set_a);
+   set_free(set_b);
+}
+
+void i_bool_sneq(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+
+   Trace("i_bool_sneq");
+
+   assert(code_is_valid(self));
+
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+   
+   code_value_bool(self, !set_is_equal(set_a, set_b));
+
+   set_free(set_a);
+   set_free(set_b);
+}
+
+void i_bool_subs(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+
+   Trace("i_bool_subs");
+
+   assert(code_is_valid(self));
+   
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+
+   code_value_bool(self, set_is_subset(set_a, set_b));
+
+   set_free(set_a);
+   set_free(set_b);
+}
+
+void i_bool_sseq(CodeNode* self)
+{
+   Set* set_a;
+   Set* set_b;
+
+   Trace("i_bool_sseq");
+
+   assert(code_is_valid(self));
+   
+   set_a = Code_eval_child_set(self, 0);
+   set_b = Code_eval_child_set(self, 1);
+
+   code_value_bool(self, set_is_subseteq(set_a, set_b));
+
+   set_free(set_a);
+   set_free(set_b);
+}
+
+void i_bool_is_elem(CodeNode* self)
+{
+   Tuple* tuple;
+   Set*   set;
+   
+   Trace("i_bool_is_elem");
+
+   assert(code_is_valid(self));
+
+   tuple = Code_eval_child_tuple(self, 0);
+   set   = Code_eval_child_set(self, 1);
+
+   code_value_bool(self, set_lookup(set, tuple));
+
+   tuple_free(tuple);
+   set_free(set);
+}
+
+void i_bool_exists(CodeNode* self)
+{
+   IdxSet*   idxset;
+   Set*      set;
+   Tuple*    pattern;
+   Tuple*    tuple;
+   CodeNode* lexpr;
+   int       idx   = 0;
+   Bool      exists = FALSE;
+
+   Trace("i_bool_exists");
+   
+   assert(code_is_valid(self));
+
+   idxset  = Code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+
+   while(!exists && (tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      exists = code_get_bool(code_eval(lexpr));
+
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   tuple_free(pattern);
+
+   code_value_bool(self, exists);
+
+   set_free(set);   
+   idxset_free(idxset);
+}
+
 /* ----------------------------------------------------------------------------
  * Set Funktionen
  * ----------------------------------------------------------------------------
  */
-void i_set_new(CodeNode* self)
+void i_set_new_tuple(CodeNode* self)
 {
    List*     list  = Code_eval_child_list(self, 0);
    ListElem* le    = NULL;
@@ -368,7 +591,7 @@ void i_set_new(CodeNode* self)
    int       n     = list_get_elems(list);
    int       i;
    
-   Trace("i_set_new");
+   Trace("i_set_new_tuple");
 
    assert(code_is_valid(self));
 
@@ -382,6 +605,40 @@ void i_set_new(CodeNode* self)
    {
       tuple = list_get_tuple(list, &le);
       set_add_member(set, tuple, SET_ADD_END);
+      tuple_free(tuple);
+   }
+   code_value_set(self, set);
+
+   set_free(set);
+   list_free(list);
+}
+
+void i_set_new_elem(CodeNode* self)
+{
+   List*     list  = Code_eval_child_list(self, 0);
+   ListElem* le    = NULL;
+   Set*      set   = set_new(1);
+   int       n     = list_get_elems(list);
+   Tuple*    tuple;
+   const Elem* elem;
+   int       i;
+   
+   Trace("i_set_new_elem");
+
+   assert(code_is_valid(self));
+
+   /* Und jetzt noch mal alle.
+    */
+   le  = NULL;
+
+   for(i = 0; i < n; i++)
+   {
+      elem  = list_get_elem(list, &le);
+      tuple = tuple_new(1);
+
+      tuple_set_elem(tuple, 0, elem);      
+      set_add_member(set, tuple, SET_ADD_END);
+
       tuple_free(tuple);
    }
    code_value_set(self, set);
@@ -961,9 +1218,6 @@ void i_term_sub(CodeNode* self)
    term_free(term_r);
 }
 
-/* Eventuell kann man unter einsatz der i_term Funktion
- * diese Funktion wesendlich vereinfachen.
- */
 void i_term_sum(CodeNode* self)
 {
    IdxSet*   idxset;
@@ -1006,11 +1260,8 @@ void i_term_sum(CodeNode* self)
    tuple_free(pattern);
 
    if (term_r == NULL)
-   {
-      fprintf(stderr, "*** Error: Empty term generated\n");
-      code_errmsg(self);
-      abort();
-   }
+      term_r = term_new(1);
+   
    code_value_term(self, term_r);
 
    set_free(set);   

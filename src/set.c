@@ -1,4 +1,4 @@
-#ident "@(#) $Id: set.c,v 1.5 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: set.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -57,7 +57,7 @@ Set* set_new(int dim)
 
    assert(dim >= 0);
    
-   set = calloc(1, sizeof(Set));
+   set = calloc(1, sizeof(*set));
 
    assert(set != NULL);
 
@@ -380,3 +380,49 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    return set;
 }
 
+/* Is A subset (or equal) of B */
+Bool set_is_subseteq(const Set* set_a, const Set* set_b)
+{
+   int  i;
+   
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+
+   if (set_a->dim != set_b->dim)
+   {
+      fprintf(stderr, "*** Warning: Comparison of differen dimension sets.\n");
+      return FALSE;
+   }
+   if (set_a->used > set_b->used)
+      return FALSE;
+   
+   for(i = 0; i < set_a->used; i++)
+      if (!set_lookup(set_b, set_a->member[i]))
+         return FALSE;
+   
+   return TRUE;
+}
+
+/* A is real subset of B */
+Bool set_is_subset(const Set* set_a, const Set* set_b)
+{
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+
+   if (set_a->used >= set_b->used)
+      return FALSE;
+
+   return set_is_subseteq(set_a, set_b);
+}
+
+/* A has the same elements as B */
+Bool set_is_equal(const Set* set_a, const Set* set_b)
+{
+   assert(set_is_valid(set_a));
+   assert(set_is_valid(set_b));
+
+   if (set_a->used != set_b->used)
+      return FALSE;
+
+   return set_is_subseteq(set_a, set_b);
+}

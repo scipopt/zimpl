@@ -1,9 +1,16 @@
-% $Id: zimpl.tex,v 1.1 2001/03/09 16:14:36 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.2 2001/05/06 11:43:21 thor Exp $
+%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+%*                                                                           */
+%*   File....: zimpl.tex                                                     */
+%*   Name....: Zuse Institute Mathematical Programming Language              */
+%*   Author..: Thorsten Koch                                                 */
+%*   Copyright (C) 2001 by Author, All rights reserved                       */
+%*                                                                           */
+%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %
 \documentclass[12pt]{article}
 \usepackage{times}
 \usepackage{a4}
-%\usepackage{german}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -13,12 +20,12 @@
 \usepackage{xspace}
 \usepackage{url}
 \usepackage[notoday,nofancy]{rcsinfo}
-\rcsInfo $Id: zimpl.tex,v 1.1 2001/03/09 16:14:36 bzfkocht Exp $
-
+\rcsInfo $Id: zimpl.tex,v 1.2 2001/05/06 11:43:21 thor Exp $
+%
 \parindent0ex
 \setcounter{tocdepth}{1}
 \setcounter{secnumdepth}{1}
-\newcommand{\zimple}{{\sc Zimple}\xspace}
+\newcommand{\zimpl}{{\sc Zimpl}\xspace}
 \newcommand{\lp}{{\sc lp}\xspace}
 \newcommand{\mip}{{\sc mip}\xspace}
 \newcommand{\mps}{{\tt mps}\xspace}
@@ -33,24 +40,24 @@
 \newcommand{\Z}{\ensuremath{\mathbb{Z}}}
 \headheight5mm
 \renewcommand{\footrulewidth}{\headrulewidth}
-\lhead{\zimple}
+\lhead{\zimpl}
 \chead{}
 \rhead{}
 \cfoot{\thepage}
 \pagestyle{fancy}
-
+%
 \begin{document}
 \title{
 \vspace*{-3cm}\epsfig{file=ziblogo2.eps,width=3cm}\\[\bigskipamount]
-\LARGE\zimple\\
+\LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-%\date{\small 07. March 2001}
+\date{\small 11. March 2001}
 \maketitle
 \begin{abstract}
-\zimple is a little language to translate a mathematical model of a 
+\zimpl is a little language to translate the mathematical model of a 
 problem into a linear or (mixed-)integer mathematical program
-expressed in \lpf or \mps file format which then can be solved
+expressed in \lpf or \mps file format which can be read
 by a \lp or \mip solver.
 \end{abstract}
 %\tableofcontents
@@ -62,18 +69,18 @@ by a \lp or \mip solver.
 {\em May the source be with you, Luke!}
 \end{flushright}
 \section{Introduction}
-Most of the things in \zimple (and a lot more) can be found in 
+Most of the things in \zimpl (and a lot more) can be found in 
 the wonderful book about the modelling language \ampl 
 from Robert Fourer, David N. Gay and Brian W. Kernighan
 \cite{FGK93}.
 Indeed if not the guys at \ilog had needed more than three months just
-to tell me the price of \ampl for \cplex I would probably today using
-\ampl.
-But then, having the source code of a program is another thing. The
+to tell me the price of \ampl for \cplex I would probably use
+\ampl today.
+On the other hand, having the source code of a program is another thing. The
 possibility to run it regardless of architecture and operating system, the
 ability to modify it to suite the needs and not having to hassle with license
 managers may make a much less powerful program the better choice.
-And so \zimple came into being.
+And so \zimpl came into being.
 
 \medskip
 A linear program (\lp) might look like this:
@@ -107,8 +114,8 @@ for humans.
    ENDATA
 \end{verbatim}
 }
-Another possibility is the \lpf format \cite{ILO00}, which is quite
-human readable but is only supported by a few solvers. 
+Another possibility is the \lpf format \cite{ILO00}, which is more
+readable but is only supported by a few solvers. 
 {
 \small
 \begin{verbatim}
@@ -121,10 +128,10 @@ human readable but is only supported by a few solvers.
 }
 But since each coefficient of the matrix $A$ must be stated
 explicitly it is also not a desirable choice to develop a mathematical
-model in.
+model.
 
 \medskip
-Now, with \zimple it is possible to write this:
+Now, with \zimpl it is possible to write this:
 {\small
 \begin{verbatim}
    var x;
@@ -144,12 +151,12 @@ $$
 &x_i\ge 0\\
 \end{array}
 $$
-And this is how to tell it \zimple
+And this is how to tell it \zimpl
 {
 \small
 \begin{verbatim}
 set I      := { 1 to 3 };
-param c[I] := <1>, 2, <2>, 3, <3>, 1.5;
+param c[I] := <1> 2, <2> 3, <3> 1.5;
 var   x[I] >= 0;
 minimize value: sum <i> in I : c[i] * x[i];
 subto     cons: sum <i> in I : x[i] <= 6;
@@ -161,15 +168,15 @@ subto     cons: sum <i> in I : x[i] <= 6;
 % -----------------------------------------------------------------------------
 \section{Invocation}
 
-To run \zimple on a model given in the file \code{ex1.zpl} type
+To run \zimpl on the model given in the file \code{ex1.zpl} type the command
 \begin{verbatim}
-   zimple ex1.zpl
+   zimpl ex1.zpl
 \end{verbatim}
 
-The general case is \code{zimple} \code{[options]} $<$\code{input-files}$>$.
+The general case is \code{zimpl} \code{[options]} $<$\code{input-files}$>$.
 It is possible to give more than one input file. They are read one
 after the other and then executed as if they were all in one big file.
-The result of running \zimple will be either an error message or two files.
+The result of running \zimpl will be either an error message or two files.
 
 The two files are the problem generated from the model in either 
 \lpf or \mps format with extension \code{.lp} or \code{.mps} and a file
@@ -180,7 +187,7 @@ can only handle names up to eight characters long. And in \lp format
 the length of the names is also restricted to 16 characters.
 
 \medskip
-The following options are recognised (only the first two are normally
+The following options are possible (only the first two are normally
 of interest):
 
 \medskip
@@ -192,7 +199,7 @@ which is default or \code{mps}.\\
 & Defaults to the first input file striped of the extension.\\
 %\hline
 -b&Enables bison debugging output.\\
--d&Enables zimple debugging output.\\
+-d&Enables zimpl debugging output.\\
 -f&Enables flex debugging output.\\
 -h&Prints a usage message.\\
 -v&Enables verbose mode.\\
@@ -200,12 +207,12 @@ which is default or \code{mps}.\\
 \end{tabular}
 
 \medskip
-A typical invocation would for example be:
+A typical invocation is for example:
 \begin{verbatim}
-   zimple -o hardone -t mps data.zpl model.zpl
+   zimpl -o hardone -t mps data.zpl model.zpl
 \end{verbatim}
-This would read the files \code{data.zpl} and \code{mode.zpl} and
-produce \code{hardone.mps} and \code{hardone.tbl}.
+This reads the files \code{data.zpl} and \code{model.zpl} and
+produces \code{hardone.mps} and \code{hardone.tbl}.
 
 % -----------------------------------------------------------------------------
 % --- Format
@@ -217,39 +224,51 @@ variables, an objective and constraints.
 Each statement ends with a semicolon (\code{;}). 
 Everything from a number-sign (\code{\#}) to 
 the end of the line is treated as a
-comment and ignored.
+comment and is ignored.
 
 If a line starts with the word \code{include} followed by a filename in double
 quotation marks, this file is read instead of this line.
 
-\zimple works on the lowest level with two types of data: Strings and
+\medskip
+\zimpl works on the lowest level with two types of data: Strings and
 numbers. A string is delimited by double quotation marks (\code{"}).
 A number can be given as 2, -6.5 or 5.234e-12. 
 Wherever a number or string is required, it is also possible to give a
 parameter of the right value type. Also numeric expressions are
 allowed instead of just a number. 
+The precedence of numeric, boolean and set operators should be the
+usual one. If in doubt use parenthesis to be save.
 
-\subsubsection{Numeric functions}
+\subsubsection{Numeric expressions}
 The following functions are currently implemented: 
-\code{+,-,*,/,mod,div}. \code{mod} is the modulo function and
-\code{div} gives the integer part of a division.
+$^\wedge$,\code{+,-,*,/,mod,div}. $\wedge$ stands for \emph{to the
+power of}. \code{mod} is the modulo function and
+\code{div} gives the integer part of a division. \code{**} can be used
+as synonym for $^\wedge$.
+With $\min$ and $\max$ it is possible to find the minimum/maximum
+member of an one dimension set of numeric values.
 
-\medskip
 The following is also a numeric expression:
 
 \code{if} \emph{boolean-expression} \code{then}
 \emph{numeric-expression} \code{else} \emph{numeric-expression} \code{end}.
 
-\subsubsection{Boolean functions}
+\subsubsection{Boolean expressions}
 For numbers $<,<=,==,!=,>=,>$ are defined. For strings only $==$ and
-$!=$ are available. Combinations of boolean-expressions with \code{and},
+$!=$ are available. The expression \emph{tuple} \code{in}
+\emph{set-expression} can be used to test set
+membership of a tuple. Combinations of boolean-expressions with \code{and},
 \code{or} and negation with \code{not} are possible.
 
 \subsection{Sets}
-Here we declare sets. The members of a set are tuples with the same
-number of elements in each tuple. 
-The elements are either numbers or strings. The type of the n-th
-element of each tuple must be the same.
+The elements of a set are tuples. Each tuple of a set has the same
+number of components. 
+The components are either numbers or strings. The type of the n-th
+component of each tuple must be the same. A tuple starts and ends with
+$<$ and $>$, resp. The components are separated by commas.
+If tuples are one-dimensional, it is possible 
+to omit the braces in a list of elements, but then 
+they must be omitted from all tuples of the set.
 
 \subsubsection{Set functions}
 \begin{tabular}{lll}
@@ -276,8 +295,8 @@ and .. instead of \code{to}.
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-set A := { <1>, <2>, <3> };
-set B := { <"hi">, <"ha">, <"ho"> };
+set A := { 1, 2, 3 };
+set B := { "hi", "ha", "ho" };
 set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 set D := A cross B;
 set E := { 6 to 9 } union A without { <2>, <3> }; 
@@ -286,12 +305,15 @@ set E := { 6 to 9 } union A without { <2>, <3> };
 
 \subsection{Parameters}
 Parameters can be declared with or without an indexing
-set. Without indexing the parameter is just one value, otherwise there is one
-value for each member of the set. The value of a parameter is either a
-number or a string. There are not much uses for string valued
+set. Without indexing the parameter is just one value, which is either
+a number or a string. For indexed parameters there is one
+value for each member of the set. There are not much uses for string valued
 parameters, so normally they are all numbers. 
 
-After the assignment comes a list of pairs. The first element of each
+Parameters are declared in the following way: 
+The keyword \code{param} is followed by the name of the parameter
+optionally followed by the indexing set. 
+Then after the assignment sign comes a list of pairs. The first element of each
 pair is a tuple from the index set, the second element is the value of
 the parameter for this index.
 
@@ -299,24 +321,25 @@ the parameter for this index.
 {\small 
 \begin{verbatim}
 param q := 5;
-param u[A] := <1>, 17, <2>, 29, <3>, 12;
-param w[C] := <1,2,"x">, 1/2, <6,5,"y">, 2/3;
+param u[A] := <1> 17, <2> 29, <3> 12;
+param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
 \end{verbatim}
 }
 
 \medskip
-In this case, no value is given for index $<$787,12.6,"oh"$>$ of parameter
-\code{w}. This is correct as long as it is never referenced.
+In the example, no value is given for index $<$787,12.6,"oh"$>$ of
+parameter \code{w}, that is assignments need not to be complete. This
+is correct as long as it is never referenced.
 
 \subsection{Variables}
 Like parameters, variables can be indexed. 
 A variable has to be one out of three possible types: 
 Continuous (called {\em real}), binary or integer. The default is real. 
-For variables lower and upper bounds can be given. These default to
+Variables may have lower and upper bounds. Defaults are
 zero as lower and infinity as upper bound. Binary variables are
 always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
-depending on the index for the variable.
+depending on the index for the variable (see last declaration in the example).
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
@@ -330,28 +353,28 @@ var z[<a,b,c> in C] integer
 }
 
 \subsection{Objective}
-Exactly one objective statement must be in a model. The objective
+There must be exactly one objective statement in a model. The objective
 can be either \code{minimize} or \code{maximize}. Following the
 keyword is a name, a colon (\code{:}) and then a term consisting 
-out of variables.
+of variables.
 
-\subsubsection{Examples}
+\subsubsection{Example}
 {\small 
 \begin{verbatim}
 minimize cost: 12 * x1 -4.4 * x2 
    + sum <a> in A : u[a] * y[a]
-   + sum <a,b,c> in C with a != 2 and b > 3 : -a/2 * z[a,b,c];
+   + sum <a,b,c> in C with a in E and b > 3 : -a/2 * z[a,b,c];
 \end{verbatim}
 }
 
 \subsection{Constraints}
 The general format for a constraint is 
 \code{subto name: term sense rhs}.
-Name can be any name starting with a letter. The term is constructed
-similar as in the objective out of variables. Sense is one of
+Name can be any name starting with a letter. The term is defined
+as in the objective. Sense is one of
 \code{<=}, \code{>=} and \code{==}. The rhs is any numeric expression.
 Many constraints can be generated with one statement by the use of the
-\code{forall} instruction. 
+\code{forall} instruction, see below.
 
 \subsubsection{Examples}
 {\small 
@@ -365,16 +388,21 @@ subto weird: forall <a> in A :
 
 \subsection{Details on \code{sum} and \code{forall}}
 The general forms are
-\code{forall} \emph{index} \code{do} \emph{term} and \code{sum}
-\emph{index} \code{do} \emph{term}. It should be
-noted, that a \code{sum}-expression is a \emph{term} itself, so it is
-possible to nest or concatenate them.
+
+\qquad\code{forall} \emph{index} \code{do} \emph{term}
+and 
+\code{sum} \emph{index} \code{do} \emph{term}.
+ 
+%It should be noted, that a \code{sum}-expression is a \emph{term}
+%itself, so it is possible to nest or concatenate them.
 The general form of \emph{index} is 
-\emph{tuple} \code{in} \emph{set} \code{with} \emph{boolean-expression}.
+
+\qquad\emph{tuple} \code{in} \emph{set} \code{with} \emph{boolean-expression}.
+
 It is allowed to write a colon (\code{:}) instead of \code{do} and a
 vertical bar (\code{|}) instead of \code{with}.
-The number of elements in the \emph{tuple} and in the elements of the
-\emph{set} must match. The \code{with} part of an \emph{index} is
+The number of components in the \emph{tuple} and in the components of the
+mebers of the \emph{set} must match. The \code{with} part of an \emph{index} is
 optional. The \emph{set} can be any expression giving a set.
 
 \subsubsection{Examples}
@@ -387,11 +415,86 @@ forall <i,j> in X cross { 1 to 5 } without { <2,3> }
 \end{verbatim}
 }
 
-In this case \emph{i} and \emph{j} are set by the \code{forall}
+Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
 instruction. So they are fixed for all invocations of \code{sum}.
 
+\subsection{Initialising sets and parameters from a file}
+It is possible to load the values for a set or a parameter from a
+file. The syntax is
+
+\smallskip
+\code{read} \emph{filename} \code{as} \emph{template} 
+[\code{skip} \emph{n}] [\code{use} \emph{n}] 
+[\code{fs} \emph{s}] [\code{comment} \emph{s}]
+
+\smallskip
+\emph{filename} is the name of the file to read.
+
+\emph{template} is a string with a template for the tuples to
+generate. Each input line from the file is split in fields. The
+default is to start a new field after occurence of spaces or
+semi-colons. For each component of the tuple the number of the field
+to use for the value is given, followed by either a \code{n} if the
+field should be interpreted as a number or \code{s} for a string. 
+Have a look at the example, it is quite obvious how it works.
+After the template some optional modifiers can be given. The order
+does not matter. 
+
+\code{skip} \emph{n} instructs to skip the first
+\emph{n} lines of the file. 
+
+\code{use} \emph{n} limits the number of
+lines to use to \emph{n}. 
+
+\code{fs} \emph{s} sets the fieldseperators
+to \emph{s}. The fields will be split by any character present in
+\emph{s}. 
+
+\code{comment} \emph{s} sets a list of characters that start
+comments in the file. Each line is ended when any of the comment
+characters is found.
+
+When a file is read, empty lines are skiped and not counted for the
+\code{use} clause. They are counted for the \code{skip} clause.
+ 
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set P := { read "nodes.txt" as <1s> };
+
+nodes.txt:
+   Hamburg   ->   <"Hamburg">
+   München   ->   <"München">
+   Berlin    ->   <"Berlin">
+
+set Q := { read "blabla.txt" as "<1s,5n,2n>" skip 1 use 2 };
+
+blabla.txt:
+   Name;Nr;X;Y;No     ->   skip   
+   Hamburg;12;x;y;7   ->   <"Hamburg",7,12>
+   Bremen;4;x;y;5     ->   <"Bremen,5,4>
+   Berlin;2;x;y;8     ->   skip
+   
+param cost[P] := read "cost.txt" as "<1s> 4n" comment "#";
+
+cost.txt:
+   # Name Price   ->   skip
+   Hamburg 1000   ->   <"Hamburg"> 1000
+   München 1200   ->   <"München"> 1200
+   Berlin  1400   ->   <"Berlin">  1400
+
+param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s" fs ":";
+
+haha.txt:
+   1:2:ab:con1    ->   <"ab",1,2> "con1"
+   2:3:bc:con2    ->   <"bc",2,3> "con1"
+   4:5:de:con3    ->   <"de",4,5> "con1"
+\end{verbatim}
+}  
+\newpage
+
 \section{Error messages}
-Here are some of the incomprehensible error messages that \zimple
+Here are some of the incomprehensible error messages \zimpl
 can produce:
 
 \begin{description}
@@ -399,19 +502,15 @@ can produce:
  It is not possible to compare a number with a string.
 \item[xxx of incompatible sets]\ \\
  The members of the two sets involved in operation \emph{xxx} have not
- the same number of elements.
+ the same number of components.
 \item[Illegal element xxx for symbol]\ \\
- In the initialisation of a parameter, tuple \emph{xxx} is not member
+ In the initialisation of a parameter, tuple \emph{xxx} is not a member
  in the index set.
 \item[WITH not allowed here]\ \\
  When initialising the bounds of variables by index, 
- a \code{with} clause to exclude some of the Elements is not allowed.
-\item[Empty term generated]\ \\
- In a \code{sum} function evolved to nothing. This is not allowed.
- If anybody wants to have empty sums, drop me an email and I will
- have a look if it makes any sense.
+ the \code{with} clause to exclude some of the elements is not allowed.
 \item[Comparison of different dimension tuples]\ \\
- Two tuples were compared which have a different number of elements.
+ Two tuples were compared which have a different number of components.
  This is never a good idea, since such tuples are always different.
 \item[Comparison of elements with different types]\ \\
  Two tuples were compared which have a different type for the 
@@ -424,17 +523,19 @@ can produce:
 \end{description}
 
 \section{Remarks}
-\zimple is licensed under the GNU general public licence version 2.
+\zimpl is licensed under the GNU general public licence version 2.
 For more information on free software see \url{www.gnu.org}.
-The latest version of \zimple can be found at
-\url{www.zib.de/koch/zimple}.
-If you find any bugs you can email me at \url{koch@zib.de}.
-If somebody extends \zimple, I would be interested in getting patches
+The latest version of \zimpl can be found at
+\url{www.zib.de/koch/zimpl}.
+If you find any bugs you can email me at \url{koch@zib.de}. Please
+include an example that shows the problem.
+If somebody extends \zimpl, I am interested in getting patches
 to put them back in the main distribution.
- 
-%\nocite{*}
+
+\newpage 
+\nocite{*}
 \bibliographystyle{alpha}
-\bibliography{zimple}
+\bibliography{zimpl}
 
 {\vfill\tiny\hfill\fbox{\rcsInfoRevision}}
 \end{document}

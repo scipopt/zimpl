@@ -1,7 +1,7 @@
-#ident "$Id: zimpl.c,v 1.4 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.5 2001/05/06 11:43:21 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: zimple.c                                                      */
+/*   File....: zimpl.c                                                       */
 /*   Name....: Zuse Institute Mathematical Programming Language              */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
@@ -52,13 +52,13 @@ static const char* banner =
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
-"*     ZIMPLE comes with ABSOLUTELY NO WARRANTY     *\n" \
+"*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n" \
 "\n" \
-"usage: zimple [-bdfhv][-t lp|mps][-o outfile] files\n" \
+"usage: zimpl [-bdfhv][-t lp|mps][-o outfile] files\n" \
 "\n" \
 "  -b          enable bison debugging output.\n" \
-"  -d          enable zimple debugging output.\n" \
+"  -d          enable zimpl debugging output.\n" \
 "  -f          enable flex debugging output.\n" \
 "  -h          this help.\n" \
 "  -v          enable verbose output.\n" \
@@ -200,7 +200,7 @@ int main(int argc, char** argv)
    lps_transtable(fp_tbl);
 
    fclose(fp_tbl);
-   
+
    if (zpldebug) 
       symbol_print_all(stderr);
 
