@@ -1,0 +1,4 @@
+#--- $Id: make.lachs,v 1.1 2003/09/29 15:54:22 bzfkocht Exp $
+CPPFLAGS        +=      -I/home/bzfkocht/gmp/include 
+LDFLAGS         =      -noshared -L/home/bzfkocht/gmp/lib -lgmp -lz -lm
+

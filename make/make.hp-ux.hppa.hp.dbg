@@ -1,0 +1,5 @@
+#--- $Id: make.hp-ux.hppa.hp.dbg,v 1.1 2003/09/29 15:54:22 bzfkocht Exp $
+CC		=	cc
+CPPFLAGS	+=	-DFREEMEM -Dinline="" 
+CFLAGS		=	-z -g +DD64 +W21,486,474 
+LDFLAGS		=	-noshared -lgmp -lz -lm 
