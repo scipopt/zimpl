@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.2 2001/01/28 19:16:14 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -59,23 +59,18 @@ void term_add_elem(Term* term, const Symbol* sym, Entry* entry, double coeff)
    assert(term_is_valid(term));
    assert(symbol_is_valid(sym));
    assert(entry_is_valid(entry));
+   assert(NE(coeff, 0.0));
    assert(te  != NULL);
 
-   /* ??? Bin mir nicht sicher ob das die richtige stelle fuer diese
-    * optimierung ist.
-    */
-   if (NE(coeff, 0.0))
-   {
-      te->symbol       = sym;
-      te->entry        = entry_copy(entry);
-      te->coeff        = coeff;
-      te->next         = NULL;
-      term->last->next = te;
-      term->last       = te;
-   }
+   te->symbol       = sym;
+   te->entry        = entry_copy(entry);
+   te->coeff        = coeff;
+   te->next         = NULL;
+   term->last->next = te;
+   term->last       = te;
 }
 
-void term_free(Term* term)
+static void term_free_elem(Term* term)
 {
    TermElem* p;
    TermElem* q;
@@ -88,6 +83,15 @@ void term_free(Term* term)
       entry_free(p->entry);
       free(p);
    }
+   term->last       = &term->first;
+   term->first.next = NULL;
+}
+
+void term_free(Term* term)
+{
+   assert(term_is_valid(term));
+
+   term_free_elem(term);
    SID_del(term);
    free(term);
 }
@@ -117,6 +121,7 @@ void term_print(FILE* fp, const Term* term, int flag)
 {
    Tuple*    tuple;
    TermElem* te;
+   double    coeff;
    
    assert(term_is_valid(term));
 
@@ -124,10 +129,12 @@ void term_print(FILE* fp, const Term* term, int flag)
    {
       assert(NE(te->coeff, 0.0));
 
-      if (GE(te->coeff, 0.0))
-         fprintf(fp, " + %g ", te->coeff);
-      else
-         fprintf(fp, " - %g ", -te->coeff);
+      coeff = fabs(te->coeff);
+      
+      fprintf(fp, " %s ", GE(te->coeff, 0.0) ? "+" : "-");
+      
+      if (NE(coeff, 1.0))
+         fprintf(fp, "%g ", coeff);
 
       tuple = entry_get_tuple(te->entry);
       
@@ -187,8 +194,13 @@ void term_mul_coeff(Term* term, double value)
 
    term->constant *= value;
 
-   for(te = term->first.next; te != NULL; te = te->next)
-      te->coeff *= value; 
+   if (EQ(value, 0.0))
+      term_free_elem(term);
+   else
+   {
+      for(te = term->first.next; te != NULL; te = te->next)
+         te->coeff *= value;
+   }
 }
 
 double term_get_constant(Term* term)

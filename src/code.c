@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -486,7 +486,8 @@ void code_value_numb(CodeNode* node, double numb)
 void code_value_strg(CodeNode* node, const char* strg)
 {
    assert(code_is_valid(node));
-
+   assert(strg != NULL);
+   
    code_free_value(node);
 
    node->type       = CODE_STRG;
@@ -496,7 +497,8 @@ void code_value_strg(CodeNode* node, const char* strg)
 void code_value_name(CodeNode* node, const char* name)
 {
    assert(code_is_valid(node));
-
+   assert(name != NULL);
+   
    code_free_value(node);
 
    node->type       = CODE_NAME;
@@ -506,6 +508,7 @@ void code_value_name(CodeNode* node, const char* name)
 void code_value_tuple(CodeNode* node, Tuple* tuple)
 {
    assert(code_is_valid(node));
+   assert(tuple_is_valid(tuple));
 
    code_free_value(node);
 
@@ -516,6 +519,7 @@ void code_value_tuple(CodeNode* node, Tuple* tuple)
 void code_value_set(CodeNode* node, Set* set)
 {
    assert(code_is_valid(node));
+   assert(set_is_valid(set));
 
    code_free_value(node);
 
@@ -526,6 +530,7 @@ void code_value_set(CodeNode* node, Set* set)
 void code_value_idxset(CodeNode* node, IdxSet* idxset)
 {
    assert(code_is_valid(node));
+   assert(idxset_is_valid(idxset));
 
    code_free_value(node);
 
@@ -536,6 +541,7 @@ void code_value_idxset(CodeNode* node, IdxSet* idxset)
 void code_value_entry(CodeNode* node, Entry* entry)
 {
    assert(code_is_valid(node));
+   assert(entry_is_valid(entry));
 
    code_free_value(node);
 
@@ -546,6 +552,7 @@ void code_value_entry(CodeNode* node, Entry* entry)
 void code_value_term(CodeNode* node, Term* term)
 {
    assert(code_is_valid(node));
+   assert(term_is_valid(term));
 
    code_free_value(node);
 
@@ -556,6 +563,7 @@ void code_value_term(CodeNode* node, Term* term)
 void code_value_ineq(CodeNode* node, Ineq* ineq)
 {
    assert(code_is_valid(node));
+   assert(ineq_is_valid(ineq));
 
    code_free_value(node);
 
@@ -586,6 +594,7 @@ void code_value_size(CodeNode* node, int size)
 void code_value_list(CodeNode* node, List* list)
 {
    assert(code_is_valid(node));
+   assert(list_is_valid(list));
 
    code_free_value(node);
 

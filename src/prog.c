@@ -1,4 +1,4 @@
-#ident "@(#) $Id: prog.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: prog.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -17,10 +17,12 @@
 #include "mshell.h"
 #include "mme.h"
 
+#define PROG_SID         0x50726f67
 #define PROG_EXTEND_SIZE 100
 
 struct program
 {
+   SID
    const char* filename;
    int         size;
    int         used;
@@ -41,8 +43,9 @@ Prog* prog_new(const char* filename)
    prog->extend   = PROG_EXTEND_SIZE;
    prog->stmt     = calloc(prog->size, sizeof(*prog->stmt));
 
-   assert(prog->stmt != NULL);
-   
+   SID_set(prog, PROG_SID);
+   assert(prog_is_valid(prog));
+
    return prog;
 }
 
@@ -50,10 +53,12 @@ void prog_free(Prog* prog)
 {
    int i;
    
-   assert(prog           != NULL);
+   assert(prog_is_valid(prog));
    assert(prog->filename != NULL);
    assert(prog->stmt     != NULL);
    
+   SID_del(prog);
+
    for(i = 0; i < prog->used; i++)
       stmt_free(prog->stmt[i]);
 
@@ -62,10 +67,15 @@ void prog_free(Prog* prog)
    free(prog);
 }
 
+int prog_is_valid(const Prog* prog)
+{
+   return ((prog != NULL) && SID_ok(prog, PROG_SID));
+}
+
 void prog_add_stmt(Prog* prog, Stmt* stmt)
 {
-   assert(prog != NULL);
-   assert(stmt != NULL);
+   assert(prog_is_valid(prog));
+   assert(stmt_is_valid(stmt));
 
    assert(prog->used <= prog->size);
    
@@ -86,7 +96,7 @@ void prog_add_stmt(Prog* prog, Stmt* stmt)
 
 const char* prog_get_filename(const Prog* prog)
 {
-   assert(prog           != NULL);
+   assert(prog_is_valid(prog));
    assert(prog->filename != NULL);
 
    return prog->filename;
@@ -96,7 +106,7 @@ void prog_print(FILE* fp, const Prog* prog)
 {
    int i;
 
-   assert(prog != NULL);
+   assert(prog_is_valid(prog));
    
    fprintf(fp, "Programm  : %s\n", prog->filename);
    fprintf(fp, "Statements: %d\n", prog->used);
@@ -109,6 +119,8 @@ int prog_execute(const Prog* prog)
 {
    int i;
 
+   assert(prog_is_valid(prog));
+
    printf("\\Problem name: %s\n", prog->filename);
    
    for(i = 0; i < prog->used; i++)
@@ -119,6 +131,8 @@ int prog_execute(const Prog* prog)
       if (stmt_execute(prog->stmt[i]))
          break;
    }
+   symbol_print_bounds(stdout);
+   
    printf("End\n");
    
    return (i == prog->used) ? SUCCESS : FAILURE;

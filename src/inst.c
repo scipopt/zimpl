@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.3 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -76,8 +76,7 @@ void i_forall(CodeNode* self)
 
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
    {
-      if (pattern != NULL)
-         local_install_tuple(pattern, tuple);
+      local_install_tuple(pattern, tuple);
 
       ineq = code_get_ineq(code_get_child(self, 2));
 
@@ -85,8 +84,7 @@ void i_forall(CodeNode* self)
       ineq_print(stdout, ineq);
       printf("\n");
 
-      if (pattern != NULL)
-         local_drop_frame();
+      local_drop_frame();
 
       ineq_free(ineq);
       tuple_free(tuple);
@@ -502,9 +500,8 @@ void i_symbol_deref(CodeNode* self)
          name, code_get_lineno(self), code_get_column(self));      
       assert(0);
    }
-   entry = symbol_lookup_entry(sym, tuple);
 
-   if (entry == NULL)
+   if (!symbol_has_entry(sym, tuple))
    {
       fprintf(stderr, "Error: Unknown index ");
       tuple_print(stderr, tuple);
@@ -512,6 +509,8 @@ void i_symbol_deref(CodeNode* self)
          name, code_get_lineno(self), code_get_column(self));
       assert(0);
    }
+   entry = symbol_lookup_entry(sym, tuple);
+
    tuple_free(tuple);
 
    switch(symbol_get_type(sym))
@@ -537,63 +536,6 @@ void i_symbol_deref(CodeNode* self)
       assert(0);
    }
    entry_free(entry);
-#if 0
-   const char* name;
-   Tuple*      tuple;
-   Symbol*     sym;
-   Set*        set;   
-   int         idx;
-   Term*       term;
-   
-   Trace("i_symbol_deref");
-   
-   assert(code_is_valid(self));
-
-   name  = code_get_name(code_get_child(self, 0));
-   tuple = code_get_tuple(code_get_child(self, 1));   
-   sym   = symbol_lookup(name);
-
-   if (sym == NULL)
-   {
-      fprintf(stderr, "Error: unknown symbol \"%s\", lineno=%d, column=%d\n",
-         name, code_get_lineno(self), code_get_column(self));      
-      assert(0);
-   }
-   idx = symbol_lookup_tuple(sym, tuple);
-
-   if (idx < 0)
-   {
-      fprintf(stderr, "Error: Unknown index ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol \"%s\" at lineno=%d, column=%d\n",
-         name, code_get_lineno(self), code_get_column(self));
-      assert(0);
-   }
-   tuple_free(tuple);
-
-   switch(symbol_get_type(sym))
-   {
-   case SYM_NUMB :
-      code_value_numb(self, symbol_get_numb(sym, idx));
-      break;
-   case SYM_STRG :
-      code_value_strg(self, symbol_get_strg(sym, idx));
-      break;
-   case SYM_SET :
-      set = symbol_get_set(sym, idx);
-      code_value_set(self, set);
-      set_free(set);
-      break;
-   case SYM_VAR :
-      term = term_new();
-      term_add_elem(term, sym, idx, 1.0);
-      code_value_term(self, term);
-      term_free(term);
-      break;
-   default :
-      assert(0);
-   }
-#endif
 }
 
 /* ----------------------------------------------------------------------------
@@ -612,7 +554,7 @@ void i_idxset_new(CodeNode* self)
    assert(code_is_valid(self));
 
    child  = code_get_child(self, 0);
-   tuple  = (child == NULL) ? TUPLE_NULL : code_get_tuple(child);
+   tuple  = code_get_tuple(child);
    set    = code_get_set(code_get_child(self, 1));
    idxset = idxset_new();
 
@@ -620,9 +562,7 @@ void i_idxset_new(CodeNode* self)
 
    code_value_idxset(self, idxset);
 
-   if (tuple != NULL)
-      tuple_free(tuple);
-   
+   tuple_free(tuple);
    set_free(set);
    idxset_free(idxset);
 }
@@ -802,12 +742,6 @@ void i_ineq_new(CodeNode* self)
    type = code_get_ineqtype(code_get_child(self, 1));
    rhs  = code_get_numb(code_get_child(self, 2));
    rhs -= term_get_constant(term);
-   
-   if (term == NULL)
-   {
-      fprintf(stderr, "Error: Empty term\n");
-      assert(0);
-   }
    ineq = ineq_new(type, term, rhs);
 
    code_value_ineq(self, ineq);

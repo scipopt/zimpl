@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.2 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -53,12 +53,13 @@ extern void yyerror(const char* s);
 
 %type <code> stmt decl_set decl_par decl_var decl_min decl_sub
 %type <code> expr expr_list symidx tuple tuple_list sexpr 
-%type <code> idxset term ineq entry entry_list
+%type <code> idxset product factor term ineq entry entry_list
 %type <code> var_type ineq_type lower upper;
 
 %right ASGN
 %left  ','
-%left  '+' '-' SUM
+%left  '+' '-' 
+%left  SUM
 %left  '*' '/'
 %left  UNARY
 %%
@@ -165,9 +166,18 @@ ineq_type
    | CMP_EQ  { $$ = code_new_ineqtype(INEQ_EQ); }
    ;
 
-/*  expr                   { $$ = code_new_inst(i_term_const, 1, $1); } */
-
 term
+   : term '+' product       { $$ = code_new_inst(i_term_add, 2, $1, $3); }
+   | term '-' product       { $$ = code_new_inst(i_term_sub, 2, $1, $3);}
+   | product                { $$ = $1; }
+   ;
+
+product
+   : SUM idxset DO factor   { $$ = code_new_inst(i_term_sum, 2, $2, $4); }
+   | factor                 { $$ = $1; }
+   ;
+
+factor
    : VARSYM symidx          {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
       } 
@@ -175,10 +185,7 @@ term
          $$ = code_new_inst(i_term_coeff, 2,
             code_new_inst(i_symbol_deref, 2, code_new_name($3), $4), $1);
       }
-   | term '+' term          { $$ = code_new_inst(i_term_add, 2, $1, $3); }
-   | term '-' term          { $$ = code_new_inst(i_term_sub, 2, $1, $3);}
    | '(' term ')'           { $$ = $2; }
-   | SUM idxset DO term     { $$ = code_new_inst(i_term_sum, 2, $2, $4); }
    ;
 
 idxset
@@ -248,5 +255,4 @@ expr
    | '+' expr %prec UNARY  { $$ = $2; }
    | '(' expr ')'          { $$ = $2; }
    ;
-
 

@@ -8,8 +8,9 @@
 -esym(773,BEGIN)
 -esym(760,FLEX_DEBUG)
 -esym(123,malloc,calloc,realloc,free)
--e730
+//-e730
 -strong(AzJzX,ElemType,Elem,Tuple,Set,VarType,Var,Entry,SymbolType,Symbol)
 -strong(AzJzX,IdxSet,Term,IneqType,Ineq,Local,ListElem,List,HashType,Hash)
 -strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode)
 -strong(AcJX,Inst)
+-strong(AcbJX,Bool)

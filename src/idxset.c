@@ -1,4 +1,4 @@
-#ident "@(#) $Id: idxset.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: idxset.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -83,7 +83,7 @@ void idxset_add_set(IdxSet* idxset, Tuple* tuple, Set* set)
    int     dim;
    
    assert(idxset_is_valid(idxset));
-   assert((tuple == NULL) || tuple_is_valid(tuple));
+   assert(tuple_is_valid(tuple));
    assert(set_is_valid(set));
    
    assert(iselem != NULL);

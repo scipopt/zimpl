@@ -1,4 +1,4 @@
-#ident "@(#) $Id: stmt.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: stmt.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -17,8 +17,11 @@
 #include "mshell.h"
 #include "mme.h"
 
+#define STMT_SID 0x53746d74
+
 struct statement
 {
+   SID
    StmtType    type;
    int         lineno;
    const char* name;
@@ -41,15 +44,20 @@ Stmt* stmt_new(StmtType type, int lineno, const char* name, const char* text)
    stmt->text   = strdup(text);
    stmt->node   = NULL;
    
+   SID_set(stmt, STMT_SID);
+   assert(stmt_is_valid(stmt));
+
    return stmt;
 }
 
 void stmt_free(Stmt* stmt)
 {
-   assert(stmt != NULL);
+   assert(stmt_is_valid(stmt));
    assert(stmt->name != NULL);
    assert(stmt->text != NULL);
 
+   SID_del(stmt);
+   
    if (stmt->node != NULL)
       code_free(stmt->node);
    
@@ -58,16 +66,21 @@ void stmt_free(Stmt* stmt)
    free(stmt);
 }
 
+int stmt_is_valid(const Stmt* stmt)
+{
+   return ((stmt != NULL) && SID_ok(stmt, STMT_SID));
+}
+
 const char* stmt_get_name(const Stmt* stmt)
 {
-   assert(stmt != NULL);
+   assert(stmt_is_valid(stmt));
 
    return stmt->name;
 }
 
 int stmt_parse(Stmt* stmt)
 {
-   assert(stmt != NULL);
+   assert(stmt_is_valid(stmt));
 
    if (verbose)
    {
@@ -83,7 +96,7 @@ int stmt_parse(Stmt* stmt)
 
 int stmt_execute(const Stmt* stmt)
 {
-   assert(stmt != NULL);
+   assert(stmt_is_valid(stmt));
 
    if (verbose)
    {
@@ -101,7 +114,7 @@ void stmt_print(FILE* fp, const Stmt* stmt)
    {
       "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Data"
    };
-   assert(stmt != NULL);
+   assert(stmt_is_valid(stmt));
    assert(((int)stmt->type) < (sizeof(type_name) / sizeof(type_name[0])));
 
    fprintf(fp, "%04d %-7s %-10.10s [%s]\n",

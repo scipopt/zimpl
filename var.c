@@ -1,4 +1,4 @@
-#ident "@(#) $Id: var.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: var.c,v 1.2 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: var.c                                                         */
@@ -72,6 +72,27 @@ Var* var_copy(Var* var)
    return var;
 }
 
+VarType var_get_type(const Var* var)
+{
+   assert(var_is_valid(var));
+
+   return var->type;
+}
+
+double var_get_lower(const Var* var)
+{
+   assert(var_is_valid(var));
+
+   return var->lower;
+}
+
+double var_get_upper(const Var* var)
+{
+   assert(var_is_valid(var));
+
+   return var->upper;
+}
+
 void var_print(FILE* fp, const Var* var)
 {
    const char* text;
@@ -95,5 +116,4 @@ void var_print(FILE* fp, const Var* var)
    }
    fprintf(fp, "%s [%g..%g]", text, var->lower, var->upper);
 }
-
 

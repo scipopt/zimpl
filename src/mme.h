@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.2 2001/01/28 19:16:13 thor Exp $"
+#ident "@(#) $Id: mme.h,v 1.3 2001/01/29 13:45:37 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -48,7 +48,7 @@
  *
  * denkbar
  */
-
+typedef int                      Bool;
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
@@ -97,6 +97,8 @@ enum code_type
 
 extern int          verbose;
 
+/*lint -sem(str_new,  1p, @p == 1p) */
+/*lint -sem(str_hash, 1p)           */
 extern void         str_init(void);
 extern void         str_exit(void);
 extern const char*  str_new(const char* s);
@@ -104,6 +106,21 @@ extern unsigned int str_hash(const char* s);
 
 /* list.c
  */
+/*lint -sem(list_new_elem,  1p == 1,            @p == 1) */
+/*lint -sem(list_new_tuple, 1p == 1,            @p == 1) */
+/*lint -sem(list_new_entry, 1p == 1,            @p == 1) */
+/*lint -sem(list_free,      1p == 1)                     */
+/*lint -sem(list_is_valid,  1p == 1)                     */
+/*lint -sem(list_copy,      1p == 1,            @P == 1) */
+/*lint -sem(list_add_elem,  1p == 1 && 2p == 1)          */
+/*lint -sem(list_add_tuple, 1p == 1 && 2p == 1)          */
+/*lint -sem(list_add_entry, 1p == 1 && 2p == 1)          */
+/*lint -sem(list_get_elems, 1p == 1,            @n >= 0) */
+/*lint -sem(list_get_elem,  1p == 1,            @p == 1) */
+/*lint -sem(list_get_tuple, 1p == 1,            @p == 1) */
+/*lint -sem(list_get_entry, 1p == 1,            @p == 1) */
+/*lint -sem(list_print,     1p == 1 && 2p == 1)          */
+
 extern List*        list_new_elem(const Elem* elem);
 extern List*        list_new_tuple(Tuple* tuple);
 extern List*        list_new_entry(Entry* entry);
@@ -121,6 +138,15 @@ extern void         list_print(FILE* fp, const List* list);
 
 /* hash
  */
+/*lint -sem(hash_new,                              @p == 1) */
+/*lint -sem(hash_free,         1p == 1)                     */
+/*lint -sem(hash_is_valid,     1p == 1)                     */
+/*lint -sem(hash_add_tuple,    1p == 1 && 2p == 1)          */
+/*lint -sem(hash_add_entry,    1p == 1 && 2p == 1)          */
+/*lint -sem(hash_has_tuple,    1p == 1 && 2p == 1)          */
+/*lint -sem(hash_has_entry,    1p == 1 && 2p == 1)          */
+/*lint -sem(hash_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
+
 extern Hash*        hash_new(HashType type);
 extern void         hash_free(Hash* hash);
 extern int          hash_is_valid(const Hash* hash);
@@ -133,6 +159,18 @@ extern Entry*       hash_lookup_entry(Hash* hash, Tuple* tuple);
 /* element.c
  */
 #define ELEM_NULL  ((Elem*)0)
+
+/*lint -sem(elem_new_numb,                     @p == 1) */
+/*lint -sem(elem_new_strg, 1p,                 @p == 1) */
+/*lint -sem(elem_new_name, 1p,                 @p == 1) */
+/*lint -sem(elem_is_valid, 1p == 1)                     */
+/*lint -sem(elem_cmp,      1p == 1 && 2p == 1)          */
+/*lint -sem(elem_get_type, 1p == 1)                     */
+/*lint -sem(elem_get_numb, 1p == 1)                     */
+/*lint -sem(elem_get_strg, 1p == 1,            @p)      */
+/*lint -sem(elem_get_name, 1p == 1,            @p)      */
+/*lint -sem(elem_print,    1p == 1 && 2p == 1)          */
+/*lint -sem(elem_hash,     1p == 1)                     */
 
 extern void         elem_init(void);
 extern void         elem_exit(void);
@@ -152,6 +190,18 @@ extern unsigned int elem_hash(const Elem* elem);
  */
 #define TUPLE_NULL ((Tuple*)0)
 
+/*lint -sem(tuple_new,      1n >= 0,                       @p == 1) */
+/*lint -sem(tuple_free,     1p == 1)                                */
+/*lint -sem(tuple_is_valid, 1p == 1)                                */
+/*lint -sem(tuple_copy,     1p == 1,                       @p == 1) */
+/*lint -sem(tuple_cmp,      1p == 1 && 2p == 1)                     */
+/*lint -sem(tuple_get_dim,  1p == 1,                       @n >= 0) */
+/*lint -sem(tuple_set_elem, 1p == 1 && 2n >= 0 && 3p == 1)          */
+/*lint -sem(tuple_get_elem, 1p == 1 && 2n >= 0,            @p == 1) */
+/*lint -sem(tuple_combine,  1p == 1 && 2p == 1,            @p == 1) */
+/*lint -sem(tuple_print,    1p == 1 && 2p == 1)                     */
+/*lint -sem(tuple_hash,     1p == 1)                                */
+
 extern Tuple*       tuple_new(int dim);
 extern void         tuple_free(Tuple* tuple);
 extern int          tuple_is_valid(const Tuple* tuple);
@@ -169,6 +219,19 @@ extern unsigned int tuple_hash(const Tuple* tuple);
 #define SET_ADD_BEGIN  0
 #define SET_ADD_END    1
 
+/*lint -sem(set_new,        1n >= 0, @p == 1)                       */
+/*lint -sem(set_free,       1p == 1)                                */
+/*lint -sem(set_is_valid,   1p == 1)                                */
+/*lint -sem(set_copy,       1p == 1,                       @p == 1) */
+/*lint -sem(set_add_member, 1p == 1 && 2p == 1 && 3n >= 0, @p == 1) */
+/*lint -sem(set_lookup,     1p == 1 && 2p == 1)                     */
+/*lint -sem(set_match,      1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
+/*lint -sem(set_get_dim,    1p == 1,                       @n >= 0) */
+/*lint -sem(set_print,      1p == 1 && 2p == 1)                     */
+/*lint -sem(set_range,      @p == 1)                                */
+/*lint -sem(set_cross,      1p == 1 && 2p == 1, @p == 1)            */
+/*lint -sem(set_union,      1p == 1 && 2p == 1, @p == 1)            */
+
 extern Set*         set_new(int dim);
 extern void         set_free(Set* set);
 extern int          set_is_valid(const Set* set);
@@ -184,15 +247,46 @@ extern Set*         set_union(const Set* seta, const Set* setb);
 
 /* var.c
  */
+/*lint -sem(var_new,                @p == 1)   */
+/*lint -sem(var_free,      1p == 1)            */
+/*lint -sem(var_is_valid,  1p == 1)            */
+/*lint -sem(var_copy,      1p == 1, @p == 1)   */
+/*lint -sem(var_get_type,  1p == 1)            */
+/*lint -sem(var_get_lower, 1p == 1)            */
+/*lint -sem(var_get_upper, 1p == 1)            */
+/*lint -sem(var_print,     1p == 1 && 2p == 1) */
+
 extern Var*         var_new(VarType type, double lower, double upper);
 extern void         var_free(Var* var);
 extern int          var_is_valid(const Var* var);
 extern Var*         var_copy(Var* var);
+extern VarType      var_get_type(const Var* var);
+extern double       var_get_lower(const Var* var);
+extern double       var_get_upper(const Var* var);
 extern void         var_print(FILE* fp, const Var* var);
 
 /* entry.c
  */
 #define ENTRY_NULL ((Entry*)0)
+
+/*lint -sem(entry_new_numb,  1p == 1,            @p == 1) */
+/*lint -sem(entry_new_strg,  1p == 1 && 2p,      @p == 1) */
+/*lint -sem(entry_new_set,   1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(entry_new_var,   1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(entry_free,      1p == 1)                     */
+/*lint -sem(entry_is_valid,  1p == 1)                     */
+/*lint -sem(entry_copy,      1p == 1,            @p == 1) */
+/*lint -sem(entry_cmp,       1p == 1 && 2p == 1)          */
+/*lint -sem(entry_set_index, 1p == 1 && 2n >= 0)          */
+/*lint -sem(entry_get_type,  1p == 1,            @n >= 0) */
+/*lint -sem(entry_get_tuple, 1p == 1,            @p == 1) */
+/*lint -sem(entry_get_index, 1p == 1,            @n >= 0) */
+/*lint -sem(entry_get_numb,  1p == 1)                     */
+/*lint -sem(entry_get_strg,  1p == 1,            @p == 1) */
+/*lint -sem(entry_get_set,   1p == 1,            @p == 1) */
+/*lint -sem(entry_get_var,   1p == 1,            @p == 1) */
+/*lint -sem(entry_print,     1p == 1 && 2p == 1)          */
+/*lint -sem(entry_hash,      1p == 1)                     */
 
 extern Entry*       entry_new_numb(Tuple* tuple, double numb);
 extern Entry*       entry_new_strg(Tuple* tuple, const char* strg);
@@ -215,10 +309,29 @@ extern unsigned int entry_hash(const Entry* entry);
 
 /* symbol.c
  */
+/*lint -sem(symbol_new,          1p == 1 && 3p == 1, @p == 1) */
+/*lint -sem(symbol_is_valid,     1p == 1)                     */
+/*lint -sem(symbol_lookup,       1p == 1,            r_null)  */
+/*lint -sem(symbol_has_entry,    1p == 1 && 2p == 1)          */
+/*lint -sem(symbol_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(symbol_add_entry,    1p == 1 && 2p == 1)          */
+/*lint -sem(symbol_get_dim,      1p == 1,            @n >= 0) */
+/*lint -sem(symbol_get_iset,     1p == 1,            @p == 1) */
+/*lint -sem(symbol_get_name,     1p == 1,            @p)      */
+/*lint -sem(symbol_get_type,     1p == 1)                     */
+/*lint -sem(symbol_get_numb,     1p == 1)                     */
+/*lint -sem(symbol_get_strg,     1p == 1,            @p)      */
+/*lint -sem(symbol_get_set,      1p == 1,            @p == 1) */
+/*lint -sem(symbol_get_var,      1p == 1,            @p == 1) */
+/*lint -sem(symbol_print,        1p == 1 && 2p == 1)          */
+/*lint -sem(symbol_print_all,    1p == 1)                     */
+/*lint -sem(symbol_print_bounds, 1p == 1)                     */
+
 extern Symbol*      symbol_new(const char* name, SymbolType type, Set* set);
 extern void         symbol_exit(void);
 extern int          symbol_is_valid(const Symbol* symbol);
 extern Symbol*      symbol_lookup(const char* name);
+extern int          symbol_has_entry(const Symbol* sym, Tuple* tuple);
 extern Entry*       symbol_lookup_entry(const Symbol* sym, Tuple* tuple);
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 extern int          symbol_get_dim(const Symbol* sym);
@@ -231,6 +344,22 @@ extern Set*         symbol_get_set(Symbol* sym, int idx);
 extern Var*         symbol_get_var(Symbol* sym, int idx);
 extern void         symbol_print(FILE* fp, const Symbol* sym);
 extern void         symbol_print_all(FILE* fp);
+extern void         symbol_print_bounds(FILE* fp);
+
+/* idxset.c
+ */
+/*lint -sem(idxset_new,       @p == 1)                                */
+/*lint -sem(idxset_free,      1p == 1)                                */
+/*lint -sem(idxset_add_set,   1p == 1 && 2p == 1 && 3p == 1)          */
+/*lint -sem(idxset_is_valid,  1p == 1)                                */
+/*lint -sem(idxset_copy,      1p == 1,                       @p == 1) */
+/*lint -sem(idxset_set_lexpr, 1p == 1 && 2p == 1)                     */
+/*lint -sem(idxset_get_lexpr, 1p == 1,                       @p == 1) */
+/*lint -sem(idxset_get_sets,  1p == 1,                       @n >= 0) */
+/*lint -sem(idxset_get_dim,   1p == 1,                       @n >= 0) */
+/*lint -sem(idxset_get_tuple, 1p == 1 && 2n >= 0,            @p == 1) */
+/*lint -sem(idxset_get_set,   1p == 1 && 2n >= 0,            @p == 1) */
+/*lint -sem(idxset_print,     1p == 1 && 2p == 1)                     */
 
 extern IdxSet*      idxset_new(void);
 extern void         idxset_free(IdxSet* idxset);
@@ -247,6 +376,10 @@ extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 
 /* local.c
  */
+/*lint -sem(local_lookup,        1p == 1,            r_null) */
+/*lint -sem(local_install_tuple, 1p == 1 && 2p == 1)         */
+/*lint -sem(local_print_all,     1p == 1)                    */
+
 extern void         local_drop_frame(void);
 extern const Elem*  local_lookup(const char* name);
 extern void         local_install_tuple(const Tuple* patt, const Tuple* vals);
@@ -257,6 +390,18 @@ extern void         local_print_all(FILE* fp);
 #define TERM_PRINT_SYMBOL  1
 #define TERM_PRINT_INDEX   2
 
+/*lint -sem(term_new,                                         @p == 1) */
+/*lint -sem(term_add_elem,     1p == 1 && 2p == 1 && 3p == 1)          */
+/*lint -sem(term_free,         1p == 1)                                */
+/*lint -sem(term_is_valid,     1p == 1)                                */
+/*lint -sem(term_copy,         1p == 1,                       @p == 1) */
+/*lint -sem(term_print,        1p == 1 && 2p == 1 && 3n >= 1)          */
+/*lint -sem(term_add_term,     1p == 1 && 2p == 1,            @p == 1) */
+/*lint -sem(term_add_constant, 1p == 1)                                */
+/*lint -sem(term_mul_coeff,    1p == 1)                                */
+/*lint -sem(term_get_constant, 1p == 1)                                */
+/*lint -sem(term_negate,       1p == 1)                                */
+
 extern Term*        term_new(void);
 extern void         term_add_elem(
    Term* term, const Symbol* sym, Entry* entry, double coeff);
@@ -264,7 +409,7 @@ extern void         term_free(Term* term);
 extern int          term_is_valid(const Term* term);
 extern Term*        term_copy(Term* term);
 extern void         term_print(FILE* fp, const Term* term, int flag);
-extern Term*        term_add_term(Term* target, Term* victim);
+extern Term*        term_add_term(Term* term_a, Term* term_b);
 extern void         term_add_constant(Term* term, double value);
 extern void         term_mul_coeff(Term* term, double value);
 extern double       term_get_constant(Term* term);
@@ -272,6 +417,12 @@ extern void         term_negate(Term* term);
 
 /* ineq.c
  */
+/*lint -sem(ineq_new,      2p == 1,            @p == 1) */
+/*lint -sem(ineq_free,     1p == 1)                     */
+/*lint -sem(ineq_is_valid, 1p == 1)                     */
+/*lint -sem(ineq_copy,     1p == 1,            @p == 1) */
+/*lint -sem(ineq_print,    1p == 1 && 2p == 1)          */
+
 extern Ineq*        ineq_new(IneqType type, Term* term, double rhs);
 extern void         ineq_free(Ineq* ineq);
 extern int          ineq_is_valid(const Ineq* ineq);
@@ -280,9 +431,18 @@ extern void         ineq_print(FILE* fp, const Ineq* ineq);
 
 /* stmt.c
  */
+/*lint -sem(stmt_new,      2n >= 0 && 3p && 4p == 1, @p == 1) */
+/*lint -sem(stmt_free,     1p == 1)                           */
+/*lint -sem(stmt_is_valid, 1p == 1)                           */
+/*lint -sem(stmt_get_name, 1p == 1,                  @p)      */
+/*lint -sem(stmt_parse,    1p == 1)                           */
+/*lint -sem(stmt_execute,  1p == 1)                           */
+/*lint -sem(stmt_print,    1p == 1 && 2p == 1)                */
+
 extern Stmt*        stmt_new(StmtType type, int lineno, const char* name,
    const char* text);
 extern void         stmt_free(Stmt* stmt);
+extern int          stmt_is_valid(const Stmt* stmt);
 extern const char*  stmt_get_name(const Stmt* stmt);
 extern int          stmt_parse(Stmt* stmt);
 extern int          stmt_execute(const Stmt* stmt);
@@ -290,8 +450,17 @@ extern void         stmt_print(FILE* fp, const Stmt* stmt);
 
 /* prog.c
  */
+/*lint -sem(prog_new,          1p,                 @p == 1) */
+/*lint -sem(prog_free,         1p == 1)                     */
+/*lint -sem(prog_is_valid,     1p == 1)                     */
+/*lint -sem(prog_add_stmt,     1p == 1 && 2p == 1)          */
+/*lint -sem(prog_get_filename, 1p == 1,            @p)      */
+/*lint -sem(prog_print,        1p == 1 && 2p == 1)          */
+/*lint -sem(prog_execute,      1p == 1)                     */
+
 extern Prog*        prog_new(const char* filename);
 extern void         prog_free(Prog* prog);
+extern int          prog_is_valid(const Prog* prog);
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 extern const char*  prog_get_filename(const Prog* prog);
 extern void         prog_print(FILE* fp, const Prog* prog);
@@ -299,10 +468,60 @@ extern int          prog_execute(const Prog* prog);
 
 /* load.c
  */
+/*lint -sem(prog_load, 1p == 1) */
+
 extern int          prog_load(Prog* prog);
 
 /* code2.c
  */
+/*lint -sem(code_new_inst,       1p == 1,                       @p == 1) */
+/*lint -sem(code_new_numb,       1p == 1,                       @p == 1) */
+/*lint -sem(code_new_strg,       1p,                            @p == 1) */
+/*lint -sem(code_new_name,       1p,                            @p == 1) */
+/*lint -sem(code_new_size,                                      @p == 1) */
+/*lint -sem(code_new_vartype,                                   @p == 1) */
+/*lint -sem(code_new_ineqtype,                                  @p == 1) */
+/*lint -sem(code_free,           1p == 1)                                */
+/*lint -sem(code_is_valid,       1p == 1)                                */
+/*lint -sem(code_set_child,      1p == 1 && 2n >= 0 && 3p == 1)          */
+/*lint -sem(code_get_type,       1p == 1)                                */
+/*lint -sem(code_set_root,       1p == 1)                                */
+/*lint -sem(code_get_root,                                      @p == 1) */
+/*lint -sem(code_eval,           1p == 1)                                */
+/*lint -sem(code_execute,        1p == 1)                                */
+/*lint -sem(code_get_child,      1p == 1 && 2n >= 0,            @p == 1) */
+/*lint -sem(code_get_lineno,     1p == 1)                                */
+/*lint -sem(code_get_column,     1p == 1)                                */
+/*lint -sem(code_get_numb,       1p == 1)                                */
+/*lint -sem(code_get_strg,       1p == 1,                       @p)      */
+/*lint -sem(code_get_name,       1p == 1,                       @p)      */
+/*lint -sem(code_get_tuple,      1p == 1,                       @p == 1) */
+/*lint -sem(code_get_set,        1p == 1,                       @p == 1) */
+/*lint -sem(code_get_idxset,     1p == 1,                       @p == 1) */
+/*lint -sem(code_get_entry,      1p == 1,                       @p == 1) */
+/*lint -sem(code_get_term,       1p == 1,                       @p == 1) */
+/*lint -sem(code_get_ineq,       1p == 1,                       @p == 1) */
+/*lint -sem(code_get_size,       1p == 1)                                */
+/*lint -sem(code_get_bool,       1p == 1)                                */
+/*lint -sem(code_get_list,       1p == 1,                       @p == 1) */
+/*lint -sem(code_get_vartype,    1p == 1)                                */
+/*lint -sem(code_get_ineqtype,   1p == 1)                                */
+/*lint -sem(code_value_numb,     1p == 1)                                */
+/*lint -sem(code_value_strg,     1p == 1 && 2p)                          */
+/*lint -sem(code_value_name,     1p == 1 && 2p)                          */
+/*lint -sem(code_value_tuple,    1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_set,      1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_idxset,   1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_entry,    1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_term,     1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_ineq,     1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_bool,     1p == 1)                                */
+/*lint -sem(code_value_size,     1p == 1)                                */
+/*lint -sem(code_value_list,     1p == 1 && 2p == 1)                     */
+/*lint -sem(code_value_vartype,  1p == 1)                                */
+/*lint -sem(code_value_ineqtype, 1p == 1)                                */
+/*lint -sem(code_value_void,     1p == 1)                                */
+
 extern CodeNode*    code_new_inst(Inst inst, int childs, ...);
 extern CodeNode*    code_new_numb(double numb);
 extern CodeNode*    code_new_strg(const char* strg);
@@ -353,6 +572,52 @@ extern void         code_value_void(CodeNode* node);
 
 /* inst.c
  */
+/*lint -sem(i_and,            1p == 1) */
+/*lint -sem(i_expr_add,       1p == 1) */
+/*lint -sem(i_data_par,       1p == 1) */
+/*lint -sem(i_expr_div,       1p == 1) */
+/*lint -sem(i_elem_list_add,  1p == 1) */
+/*lint -sem(i_elem_list_new,  1p == 1) */
+/*lint -sem(i_entry,          1p == 1) */
+/*lint -sem(i_entry_list_add, 1p == 1) */
+/*lint -sem(i_entry_list_new, 1p == 1) */
+/*lint -sem(i_eq,             1p == 1) */
+/*lint -sem(i_false,          1p == 1) */
+/*lint -sem(i_forall,         1p == 1) */
+/*lint -sem(i_ineq_new,       1p == 1) */
+/*lint -sem(i_idxset_new,     1p == 1) */
+/*lint -sem(i_idxset_add,     1p == 1) */
+/*lint -sem(i_idxset_set,     1p == 1) */
+/*lint -sem(i_idxset_lexpr,   1p == 1) */
+/*lint -sem(i_local_deref,    1p == 1) */
+/*lint -sem(i_expr_mul,       1p == 1) */
+/*lint -sem(i_newsym_numb,    1p == 1) */
+/*lint -sem(i_newsym_set,     1p == 1) */
+/*lint -sem(i_newsym_var,     1p == 1) */
+/*lint -sem(i_nop,            1p == 1) */
+/*lint -sem(i_not,            1p == 1) */
+/*lint -sem(i_numb_size,      1p == 1) */
+/*lint -sem(i_object_min,     1p == 1) */
+/*lint -sem(i_once,           1p == 1) */
+/*lint -sem(i_or,             1p == 1) */
+/*lint -sem(i_set_cross,      1p == 1) */
+/*lint -sem(i_set_new,        1p == 1) */
+/*lint -sem(i_set_dim,        1p == 1) */
+/*lint -sem(i_set_empty,      1p == 1) */
+/*lint -sem(i_set_union,      1p == 1) */
+/*lint -sem(i_expr_sub,       1p == 1) */
+/*lint -sem(i_symbol_deref,   1p == 1) */
+/*lint -sem(i_term_coeff,     1p == 1) */
+/*lint -sem(i_term_const,     1p == 1) */
+/*lint -sem(i_term_add,       1p == 1) */
+/*lint -sem(i_term_sub,       1p == 1) */
+/*lint -sem(i_term_sum,       1p == 1) */
+/*lint -sem(i_true,           1p == 1) */
+/*lint -sem(i_tuple_new,      1p == 1) */
+/*lint -sem(i_tuple_empty,    1p == 1) */
+/*lint -sem(i_tuple_list_add, 1p == 1) */
+/*lint -sem(i_tuple_list_new, 1p == 1) */
+
 extern void i_and(CodeNode* self);
 extern void i_expr_add(CodeNode* self);
 extern void i_data_par(CodeNode* self);
@@ -399,20 +664,14 @@ extern void i_tuple_empty(CodeNode* self);
 extern void i_tuple_list_add(CodeNode* self);
 extern void i_tuple_list_new(CodeNode* self);
 
-#if 0
-extern void i_idxset_dim(CodeNode* self);
-extern void i_init_set(CodeNode* self);
-extern void i_range(CodeNode* self);
-extern void i_set_dim(CodeNode* self);
-
-#endif
-
 /* mmlparse.y
  */
 extern int yyparse(void);
 
 /* mmlscan.l
  */
+/*lint -sem(parse_string, 1p && 2n >= 0) */
+
 extern int yylen(void);
 extern int parse_string(const char* s, int lineno);
 extern int scan_get_lineno(void);
