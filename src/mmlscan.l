@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.36 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.37 2003/10/08 08:03:05 bzfkocht Exp $"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -94,6 +94,7 @@ static int        yydecl    = 0;
 "sum"                     { yycolumn += yyleng; return SUM; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
 "exists"                  { yycolumn += yyleng; return EXISTS; }
+"vif"                     { yycolumn += yyleng; return VIF; }
 "if"                      { yycolumn += yyleng; return IF; }
 "then"                    { yycolumn += yyleng; return THEN; }
 "else"                    { yycolumn += yyleng; return ELSE; }

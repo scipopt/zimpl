@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.55 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.56 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -78,6 +78,7 @@ extern void yyerror(const char* s);
 %token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
+%token VIF VBOOL VAND VOR VNOT
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
 %token <def> NUMBDEF STRGDEF SETDEF DEFNAME
 %token <name> NAME
@@ -89,7 +90,7 @@ extern void yyerror(const char* s);
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> def_numb def_strg def_set
 %type <code> exec_do command
-%type <code> constraint
+%type <code> constraint vbool
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset subterm summand factor vexpr term name_list
 %type <code> expr_entry expr_entry_list set_entry set_entry_list par_default
@@ -405,6 +406,32 @@ constraint
    | IF lexpr THEN constraint ELSE constraint END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
       }
+   | VIF vbool THEN term con_type term ELSE term con_type term END {
+         $$ = code_new_inst(i_vif_else, 7, $2, $4, $5, $6, $8, $9, $10);
+      }
+   | VIF vbool THEN expr con_type term ELSE term con_type term END { $$ = $2; }
+   | VIF vbool THEN term con_type term ELSE expr con_type term END { $$ = $2; }
+   | VIF vbool THEN expr con_type term ELSE expr con_type term END { $$ = $2; }
+   | VIF vbool THEN term con_type term END {
+         $$ = code_new_inst(i_vif, 4, $2, $4, $5, $6);
+      }
+   | VIF vbool THEN expr con_type term END {
+         $$ = code_new_inst(i_vif, 4, $2, code_new_inst(i_term_expr, 1, $4), $5, $6);
+      }
+   ;
+
+vbool
+   : term CMP_NE term { $$ = code_new_inst(i_vbool_ne, 2, $1, $3); }
+   | expr CMP_NE term { $$ = code_new_inst(i_vbool_ne, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   | term CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, $1, $3); }
+   | expr CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   | term CMP_LE term { $$ = $1; }
+   | expr CMP_LE term { $$ = $1; }
+   | term CMP_GE term { $$ = $1; }
+   | expr CMP_GE term { $$ = $1; }
+   | vbool AND vbool  { $$ = $1; }
+   | vbool OR  vbool  { $$ = $1; }
+   | NOT vbool        { $$ = $2; }
    ;
 
 con_attr_list

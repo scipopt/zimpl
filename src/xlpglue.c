@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.14 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.15 2003/10/08 08:03:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -195,6 +195,57 @@ Var* xlp_addvar(
    return var;
 }
 
+VarClass xlp_getclass(const Var* var)
+{
+   assert(var != NULL);
+
+   return lps_getclass(var);
+}
+
+Bound* xlp_getlower(const Var* var)
+{
+   Bound* bound;
+   Numb*  numb;
+   mpq_t  lower;
+   
+   assert(var != NULL);
+
+   if (!lps_haslower(var))
+      bound = bound_new(BOUND_MINUS_INFTY, numb_zero());
+   else
+   {
+      mpq_init(lower);
+      lps_getlower(var, lower);
+      numb  = numb_new_mpq(lower);
+      bound = bound_new(BOUND_VALUE, numb);
+      numb_free(numb);
+      mpq_clear(lower);
+   }
+   return bound;
+}
+     
+Bound* xlp_getupper(const Var* var)
+{
+   Bound* bound;
+   Numb*  numb;
+   mpq_t  upper;
+   
+   assert(var != NULL);
+
+   if (!lps_hasupper(var))
+      bound = bound_new(BOUND_INFTY, numb_zero());
+   else
+   {
+      mpq_init(upper);
+      lps_getupper(var, upper);
+      numb  = numb_new_mpq(upper);
+      bound = bound_new(BOUND_VALUE, numb);
+      numb_free(numb);
+      mpq_clear(upper);
+   }
+   return bound;
+}
+     
 void xlp_objname(const char* name)
 {
    assert(name != NULL);

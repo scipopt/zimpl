@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.5 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.6 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -457,7 +457,7 @@ static PSResult simple_cols(
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->type == VAR_FIXED || var->size == 0)
+      if (var->type == VAR_FIXED && var->size == 0)
          continue;
       
       /* Empty column ?

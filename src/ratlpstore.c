@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.17 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.18 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1180,6 +1180,14 @@ void lps_getcost(
    mpq_set(cost, var->cost);
 }
 
+Bool lps_haslower(const Var* var)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   return HAS_LOWER(var);
+}
+
 void lps_setcost(
    Var*        var,
    const mpq_t cost)
@@ -1188,6 +1196,14 @@ void lps_setcost(
    assert(var->sid == VAR_SID);
 
    mpq_set(var->cost, cost);
+}
+
+void lps_getlower(const Var* var, mpq_t lower)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   mpq_set(lower, var->lower);
 }
 
 void lps_setlower(
@@ -1213,6 +1229,22 @@ void lps_setlower(
 
       var->type = mpq_equal(var->lower, var->upper) ? VAR_FIXED : VAR_BOXED;
    }
+}
+
+Bool lps_hasupper(const Var* var)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   return HAS_UPPER(var);
+}
+
+void lps_getupper(const Var* var, mpq_t upper)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   mpq_set(upper, var->upper);
 }
 
 void lps_setupper(
@@ -1314,7 +1346,7 @@ VarType lps_vartype(const Var* var)
    return var->type;
 }
 
-VarClass lps_class(const Var *var)
+VarClass lps_getclass(const Var *var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.46 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.47 2003/10/08 08:03:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -219,6 +219,7 @@ static void add_parameter(const char* def)
 int main(int argc, char* const* argv)
 {
    Prog*       prog;
+   Set*        set;
    const char* extension;
    char*       filter   = strdup("%s");
    char*       outfile  = NULL;
@@ -361,6 +362,12 @@ int main(int argc, char* const* argv)
    numb_init();
    elem_init();
 
+   /* Make symbol to hold entries of internal variables
+    */
+   set = set_new(0, 0);
+   (void)symbol_new("@@", SYM_VAR, set, 100, NULL);
+   set_free(set);
+   
    /* Do it again Sam, to get the defines from the command line
     */
    optind = 0;

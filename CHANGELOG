@@ -1,3 +1,8 @@
+ - Fixed bug in presolve that resulted in fixed
+   variables not removed.
+
+ - Missing linefeed in hum format fixed.
+
  - Implemented "check" statement.
 
  - Implemented the "do" statement. This changes the

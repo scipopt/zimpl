@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.20 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.21 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -55,11 +55,7 @@ struct symbol
    Symbol*      next;
 };
 
-#ifndef NDEBUG
-static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL, NULL };
-#else
-static Symbol anchor  = {    "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL, NULL };
-#endif
+static Symbol* anchor = NULL;
 
 Symbol* symbol_new(
    const char*  name,
@@ -88,8 +84,8 @@ Symbol* symbol_new(
    sym->hash    = hash_new(HASH_ENTRY, estimated_size);
    sym->entry   = calloc(1, sizeof(*sym->entry));
    sym->deflt   = (deflt != ENTRY_NULL) ? entry_copy(deflt) : ENTRY_NULL;
-   sym->next    = anchor.next;
-   anchor.next  = sym;
+   sym->next    = anchor;
+   anchor       = sym;
 
    assert(sym->entry != NULL);
 
@@ -105,7 +101,7 @@ void symbol_exit(void)
    Symbol* p;
    int     i;
    
-   for(p = anchor.next; p != NULL; p = q)
+   for(p = anchor; p != NULL; p = q)
    {
       assert(symbol_is_valid(p));
 
@@ -125,7 +121,7 @@ void symbol_exit(void)
 
       free(p);
    }
-   anchor.next = NULL;
+   anchor = NULL;
 }
 
 Bool symbol_is_valid(const Symbol* symbol)
@@ -139,7 +135,7 @@ Symbol* symbol_lookup(const char* name)
 
    assert(name != NULL);
 
-   for(sym = anchor.next; sym != NULL; sym = sym->next)
+   for(sym = anchor; sym != NULL; sym = sym->next)
       if (!strcmp(sym->name, name))
          break;
 
@@ -174,7 +170,9 @@ const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
    return entry;
 }
 
-/* Entry wird gefressen.
+/* Entry is eaten.
+ * No check is done if entry->tuple is a member of sym->set !
+ * This has to be done before.
  */
 void symbol_add_entry(Symbol* sym, Entry* entry)
 {
@@ -198,7 +196,9 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
 
    tuple = entry_get_tuple(entry);
 
-   assert(set_lookup(sym->set, tuple));
+   /* There is no index set for the internal symbol.
+    */
+   assert(!strcmp(sym->name, SYMBOL_NAME_INTERNAL) || set_lookup(sym->set, tuple));
 
    if (hash_has_entry(sym->hash, tuple))
    {
@@ -319,7 +319,7 @@ void symbol_print_all(FILE* fp)
    
    assert(fp != NULL);
 
-   for(sym = anchor.next; sym != NULL; sym = sym->next)
+   for(sym = anchor; sym != NULL; sym = sym->next)
       symbol_print(fp, sym);
 }
 

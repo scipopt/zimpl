@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.19 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.20 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -352,6 +352,83 @@ int term_get_elements(const Term* term)
    assert(term_is_valid(term));
 
    return term->used;
+}
+
+Bound* term_get_lower_bound(const Term* term)
+{
+   Bound*      bound;
+   Numb*       lower;
+   Numb*       value;
+   int         i;
+   
+   lower = numb_new_integer(0);
+      
+   for(i = 0; i < term->used; i++)
+   {
+      bound = xlp_getlower(entry_get_var(term->elem[i].entry));
+
+      if (bound_get_type(bound) != BOUND_VALUE)
+         goto finish;
+
+      value = numb_new_mul(bound_get_value(bound), term->elem[i].coeff);
+
+      numb_add(lower, value);
+      
+      bound_free(bound);
+      numb_free(value);
+   }
+   bound = bound_new(BOUND_VALUE, lower);
+
+ finish:
+   numb_free(lower);
+
+   return bound;
+}
+
+Bound* term_get_upper_bound(const Term* term)
+{
+   Bound*      bound;
+   Numb*       upper;
+   Numb*       value;
+   int         i;
+   
+   upper = numb_new_integer(0);
+      
+   for(i = 0; i < term->used; i++)
+   {
+      bound = xlp_getupper(entry_get_var(term->elem[i].entry));
+
+      if (bound_get_type(bound) != BOUND_VALUE)
+         goto finish;
+
+      value = numb_new_mul(bound_get_value(bound), term->elem[i].coeff);
+
+      numb_add(upper, value);
+      
+      bound_free(bound);
+      numb_free(value);
+   }
+   bound = bound_new(BOUND_VALUE, upper);
+
+ finish:
+   numb_free(upper);
+
+   return bound;
+}
+
+Bool term_is_all_integer(const Term* term)
+{
+   VarClass vc;
+   int      i;
+   
+   for(i = 0; i < term->used; i++)
+   {
+      vc = xlp_getclass(entry_get_var(term->elem[i].entry));
+
+      if (vc != VAR_BIN && vc != VAR_INT)
+         return FALSE;
+   }
+   return TRUE;
 }
 
 #ifndef NDEBUG

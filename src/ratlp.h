@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.9 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.10 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -86,12 +86,20 @@ extern void         lps_setrngname(Lps* lp, const char* name);
 extern void         lps_getcost(const Var* var, mpq_t cost);
 /*lint -sem(        lps_setcost, 1p == 1) */
 extern void         lps_setcost(Var* var, const mpq_t cost);
+/*lint -sem(        lps_haslower, 1p == 1) */
+extern Bool         lps_haslower(const Var* var);
+/*lint -sem(        lps_getlower, 1p == 1) */
+extern void         lps_getlower(const Var* var, mpq_t lower);
 /*lint -sem(        lps_setlower, 1p == 1) */
 extern void         lps_setlower(Var* var, const mpq_t lower);
+/*lint -sem(        lps_hasupper, 1p == 1) */
+extern Bool         lps_hasupper(const Var* var);
+/*lint -sem(        lps_getupper, 1p == 1) */
+extern void         lps_getupper(const Var* var, mpq_t upper);
 /*lint -sem(        lps_setupper, 1p == 1) */
 extern void         lps_setupper(Var* var, const mpq_t upper);
-/*lint -sem(        lps_class, 1p == 1) */
-extern VarClass     lps_class(const Var* var);
+/*lint -sem(        lps_getclass, 1p == 1) */
+extern VarClass     lps_getclass(const Var* var);
 /*lint -sem(        lps_setclass, 1p == 1) */
 extern void         lps_setclass(Var* var, VarClass class);
 /*lint -sem(        lps_setlhs, 1p == 1) */

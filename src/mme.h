@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.51 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.52 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -219,8 +219,11 @@ extern int          numb_toint(const Numb* numb);
 extern Bool         numb_is_number(const char *s);
 
 #ifdef __GMP_H__
+/*lint -sem(        numb_new_mpq, @p == 1) */
+extern Numb*        numb_new_mpq(const mpq_t val);
+/*lint -sem(        numb_new_mpq, 1p == 1) */
 extern void         numb_get_mpq(const Numb* numb, mpq_t value);
-#endif
+#endif /* __GMP_H__ */
 
 /* bound.c
  */
@@ -464,6 +467,8 @@ extern void         entry_print(FILE* fp, const Entry* entry);
 
 /* symbol.c
  */
+#define SYMBOL_NAME_INTERNAL  "@@"
+
 /*lint -sem(        symbol_new, nulterm(1), 1p && 3p == 1 && 4n >= 0, @p == 1) */
 extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
@@ -591,6 +596,12 @@ extern void         term_to_objective(const Term* term);
 extern void         term_to_nzo(const Term* term, Con* con);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
+/*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */
+extern Bound*       term_get_lower_bound(const Term* term);
+/*lint -sem(        term_get_upper_bound, 1p == 1, @p == 1) */
+extern Bound*       term_get_upper_bound(const Term* term);
+/*lint -sem(        term_is_all_integer, 1p == 1) */
+extern Bool         term_is_all_integer(const Term* term);
 
 /* rdefpar.c
  */

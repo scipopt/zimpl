@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.10 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.11 2003/10/08 08:03:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -58,6 +58,12 @@ extern Con*     xlp_addcon(const char* name, ConType type,
 /*lint -sem(    xlp_addvar, nulterm(1), 1p && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
+/*lint -sem(    xlp_getclass, 1p == 1) */
+extern VarClass xlp_getclass(const Var* var);
+/*lint -sem(    xlp_getlower, 1p == 1, @p == 1) */
+extern Bound*   xlp_getlower(const Var* var);
+/*lint -sem(    xlp_getupper, 1p == 1, @p == 1) */
+extern Bound*   xlp_getupper(const Var* var);
 /*lint -sem(    xlp_objname, nulterm(1), 1p) */
 extern void     xlp_objname(const char* name);
 extern void     xlp_setdir(Bool minimize);

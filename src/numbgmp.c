@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.13 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.14 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -179,6 +179,17 @@ Numb* numb_new_integer(int val)
    assert(numb != NULL);
 
    mpq_set_si(numb->value.numb, val, 1); 
+   
+   return numb;
+}
+
+Numb* numb_new_mpq(const mpq_t val)
+{
+   Numb* numb = numb_new();
+   
+   assert(numb != NULL);
+
+   mpq_set(numb->value.numb, val); 
    
    return numb;
 }

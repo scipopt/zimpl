@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.2 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.3 2003/10/08 08:03:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -245,7 +245,6 @@ void hum_write(
          write_name(fp, var->name);
          fprintf(fp, " = ");
          mpq_out_str(fp, 10, var->lower);
-         fprintf(fp, "\n");
       }
       else
       {
@@ -269,8 +268,9 @@ void hum_write(
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
             mpq_out_str(fp, 10, var->upper);
          else
-            fprintf(fp, "+Inf\n");
+            fprintf(fp, "+Inf");
       }
+      fprintf(fp, "\n");
    }
 
    /* ---------------------------------------------------------------------- */
