@@ -1,6 +1,6 @@
-#--- $Id: make.sunos.sparc.sun.dbg,v 1.5 2003/09/17 11:33:05 bzfkocht Exp $
+#--- $Id: make.sunos.sparc.sun.dbg,v 1.6 2003/09/28 11:08:56 bzfkocht Exp $
 CC		=	cc
 CPPFLAGS	+=	-DFREEMEM -Dinline=""
 CFLAGS		=	-g -xcheck=stkovf
-LDFLAGS		=	-Bstatic -lgmp -lz
+LDFLAGS		=	-Bstatic -lgmp -lz -lm
 

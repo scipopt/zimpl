@@ -1,6 +1,6 @@
-# $Id: make.linux.x86.intel.opt-p4,v 1.4 2003/09/17 10:18:01 bzfkocht Exp $
+# $Id: make.linux.x86.intel.opt-p4,v 1.5 2003/09/28 11:08:56 bzfkocht Exp $
 CC              =       icc
 CPPFLAGS        +=      -DNDEBUG -DNO_MSHELL
 CFLAGS          =       -O3 -tpp7 -xW -ipo -Xc -w1 \
 			-par_report0 -vec_report0 -wd1173
-LDFLAGS         =       -lgmp -lz -static
+LDFLAGS         =       -lgmp -lz -lm -static

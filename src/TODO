@@ -1,9 +1,6 @@
 function log etc wider in expr.zpl aufnehmen.
 
-makefiles aendern -lm -D__NO_BUI,,.
-
 test vergleich verbessern fuer 700er und 800er fehler.
-
 
 Docu hinweis, parameter sind eine liste, 
 := matrix, read, wert ist erlaubt.

@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.opt,v 1.4 2003/08/27 20:23:58 bzfkocht Exp $
-CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL 
+#--- $Id: make.linux.x86.gnu.opt,v 1.5 2003/09/28 11:08:56 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
 CFLAGS		=	-O6 -march=pentiumpro -g
-LDFLAGS		=	-lgmp -lz -static
+LDFLAGS		=	-lgmp -lz -lm -static

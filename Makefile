@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.12 2003/09/18 11:55:49 bzfkocht Exp $
+# $Id: Makefile,v 1.13 2003/09/28 11:08:56 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -59,7 +59,7 @@ LIBDIR		=	lib
 
 CPPFLAGS	=	-I$(SRCDIR) 
 CFLAGS		=	-O
-LDFLAGS		=	-lgmp -lz 
+LDFLAGS		=	-lgmp -lz -lm
 YFLAGS		=	-d -t -v  
 LFLAGS		=	-d
 DFLAGS		=	-MM
