@@ -1,3 +1,9 @@
+ - New function exists() that looks if a set has 
+   at least one member, e.g.
+   exists( <i> in I with i > 5 )
+   should be equivatent to
+   card( { <i> in I with i > 5 }) > 0
+
  - Better diagnosis if a variable/parameter/set name
    is used a second time.
 

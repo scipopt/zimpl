@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.3 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.4 2003/08/21 10:59:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -47,7 +47,7 @@ void lps_orderfile(
    FILE*      fp)
 {
    const Var*  var;
-   char  vtmp  [13];
+   char  vtmp  [MPS_NAME_LEN + 1];
    
    assert(lp != NULL);
    assert(fp != NULL);
@@ -62,6 +62,9 @@ void lps_orderfile(
 
       if (var->size == 0)
           continue;
+
+      if (var->type == VAR_FIXED)
+         continue;
       
       lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 

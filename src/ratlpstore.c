@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.9 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.10 2003/08/21 10:59:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1487,7 +1487,6 @@ void lps_write(
 
 /* size has to be big enough to store a '#', a '\0'
  * and the var or row number.
- * ??? would be better to store the row number as base 26
  */
 void lps_makename(
    char*       target,
@@ -1495,14 +1494,15 @@ void lps_makename(
    const char* name,
    int         no)
 {
-   char* temp;
+   char  temp[16];
    int   len;
    int   i;
 
    assert(target != NULL);
-   assert(size   >  0);
+   assert(size   >= 9);         /* so we have at lest '#' + 7 + '\0' */
    assert(name   != NULL);
    assert(no     >= 0);
+   assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
    
    if (strlen(name) < (size_t)size)
       strcpy(target, name);
@@ -1510,19 +1510,14 @@ void lps_makename(
    {
       /* The 16 is to make sure the %x later has enough room
        */
-      temp = malloc((size_t)size + 16);
-
-      assert(temp != NULL);
-      
       sprintf(temp, "%x", no);
 
       /* -2 : fuer '#' und '\0'
        */
       len = size - (int)strlen(temp) - 2;
 
-      /* ??? Dasmacht keinen sinn zusammen mit der +16 oben. */
       assert(len >= 0);
-   
+     
       for(i = 0; i < len; i++)      
          target[i] = isalnum(name[i]) ? name[i] : '_';
 
@@ -1531,8 +1526,6 @@ void lps_makename(
       strcpy(&target[i], temp);
    
       assert(strlen(target) == (size_t)size - 1);
-
-      free(temp);
    }
 }
 

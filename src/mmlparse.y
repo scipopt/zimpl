@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.41 2003/08/21 08:12:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.42 2003/08/21 10:59:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -478,52 +478,52 @@ sexpr
    | '{' idxset '}'     { $$ = code_new_inst(i_set_idxset, 1, $2); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
-      }
-   | INDEXSET '(' SETSYM ')' {
-         $$ = code_new_inst(i_set_indexset, 1, code_new_symbol($3));
-      }
-   ;
+       }
+    | INDEXSET '(' SETSYM ')' {
+          $$ = code_new_inst(i_set_indexset, 1, code_new_symbol($3));
+       }
+    ;
 
-read
-   : READ expr AS expr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
-   | read read_par     { $$ = code_new_inst(i_read_param, 2, $1, $2); }
-   ;
+ read
+    : READ expr AS expr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
+    | read read_par     { $$ = code_new_inst(i_read_param, 2, $1, $2); }
+    ;
 
-read_par
-   : SKIP expr    { $$ = code_new_inst(i_read_skip, 1, $2); }
-   | USE expr     { $$ = code_new_inst(i_read_use, 1, $2); }
-   | COMMENT expr { $$ = code_new_inst(i_read_comment, 1, $2); }
-   ;
- 
-tuple_list
-   : tuple {
-         $$ = code_new_inst(i_tuple_list_new, 1, $1);
-      }
-   | tuple_list ',' tuple  {
-         $$ = code_new_inst(i_tuple_list_add, 2, $1, $3);
-      }
-   | read { $$ = code_new_inst(i_read, 1, $1); }
-   ;
+ read_par
+    : SKIP expr    { $$ = code_new_inst(i_read_skip, 1, $2); }
+    | USE expr     { $$ = code_new_inst(i_read_use, 1, $2); }
+    | COMMENT expr { $$ = code_new_inst(i_read_comment, 1, $2); }
+    ;
 
-lexpr
-   : expr CMP_EQ expr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
-   | expr CMP_NE expr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
-   | expr CMP_GT expr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
-   | expr CMP_GE expr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
-   | expr CMP_LT expr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
-   | expr CMP_LE expr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
-   | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
-   | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
-   | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
-   | sexpr CMP_GE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $3, $1); }
-   | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
-   | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
-   | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
-   | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
-   | NOT lexpr          { $$ = code_new_inst(i_bool_not, 2, $2); }
-   | '(' lexpr ')'      { $$ = $2; }
-   | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
-/*   | EXISTS idxset %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $2); }*/
+ tuple_list
+    : tuple {
+          $$ = code_new_inst(i_tuple_list_new, 1, $1);
+       }
+    | tuple_list ',' tuple  {
+          $$ = code_new_inst(i_tuple_list_add, 2, $1, $3);
+       }
+    | read { $$ = code_new_inst(i_read, 1, $1); }
+    ;
+
+ lexpr
+    : expr CMP_EQ expr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
+    | expr CMP_NE expr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
+    | expr CMP_GT expr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
+    | expr CMP_GE expr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
+    | expr CMP_LT expr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
+    | expr CMP_LE expr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
+    | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
+    | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
+    | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
+    | sexpr CMP_GE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $3, $1); }
+    | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
+    | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
+    | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
+    | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
+    | NOT lexpr          { $$ = code_new_inst(i_bool_not, 2, $2); }
+    | '(' lexpr ')'      { $$ = $2; }
+    | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
+    | EXISTS '(' idxset ')' %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $3); } 
    ;
  
 tuple

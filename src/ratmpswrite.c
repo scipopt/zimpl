@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.4 2003/08/20 11:34:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.5 2003/08/21 10:59:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -69,8 +69,8 @@ static void write_vars(
 {
    const Var*  var;
    const Nzo*  nzo;
-   char  vtmp  [13];
-   char  ctmp  [13];
+   char  vtmp  [MPS_NAME_LEN + 1];
+   char  ctmp  [MPS_NAME_LEN + 1];
    mpq_t temp;
    
    assert(lp != NULL);
@@ -123,8 +123,8 @@ void mps_write(
 {
    const Var*  var;
    const Con*  con;
-   char  vtmp  [13];
-   char  ctmp  [13];
+   char  vtmp  [MPS_NAME_LEN + 1];
+   char  ctmp  [MPS_NAME_LEN + 1];
    int   indicator;
    
    assert(lp != NULL);
