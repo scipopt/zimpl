@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.12 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.13 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define HASH_SID      0x48617368
@@ -44,8 +45,8 @@ struct hash_element
    {
       const Tuple* tuple;
       const Entry* entry;
-      const Con*   con;
-      const Var*   var;
+      //      const Con*   con;
+      //      const Var*   var;
    } value;
    HElem* next;
 };
@@ -170,7 +171,7 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    hash->bucket[hcode] = he;
    hash->elems++;
 }
-
+#if 0
 void hash_add_con(Hash* hash, const Con* con)
 {
    HElem*       he = calloc(1, sizeof(*he));
@@ -204,6 +205,7 @@ void hash_add_var(Hash* hash, const Var* var)
    hash->bucket[hcode] = he;
    hash->elems++;
 }
+#endif
 
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
@@ -259,6 +261,7 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
    return he->value.entry;
 }
 
+#if 0
 /* Liefert NULL wenn nicht gefunden.
  */
 const Con* hash_lookup_con(const Hash* hash, const char* name)
@@ -304,6 +307,8 @@ const Var* hash_lookup_var(const Hash* hash, const char* name)
 
    return he->value.var;
 }
+#endif
+
 
 static void hash_statist(FILE* fp, const Hash* hash)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: strstore.c,v 1.5 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore.c,v 1.6 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore.c                                                    */
@@ -31,8 +31,9 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 typedef struct string Str;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: idxset.c,v 1.7 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: idxset.c,v 1.8 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define IDXSET_SID  0x49647853

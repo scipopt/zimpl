@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.13 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.14 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define TEST_DUBLICATE   0
@@ -244,19 +245,22 @@ void set_print(FILE* fp, const Set* set)
    fprintf(fp, "}");
 }
 
-Set* set_range(double start, double end, double step)
+Set* set_range(int start, int end, int step)
 {
    Set*      set;
    Tuple*    tuple;
-   double    x;
+   Numb*     numb;
+   int       x;
    
-   set = set_new(1, (int)(fabs(end - start) / fabs(step)) + 1);
+   set = set_new(1, (abs(end - start) / step) + 1);
 
-   for(x = start; LE(x, end); x += step)
+   for(x = start; x <= end; x += step)
    {
       tuple = tuple_new(1);
-      tuple_set_elem(tuple, 0, elem_new_numb(x));
+      numb  = numb_new_integer(x);
+      tuple_set_elem(tuple, 0, elem_new_numb(numb));
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
+      numb_free(numb);
       tuple_free(tuple);
    }
    assert(set_is_valid(set));
@@ -517,7 +521,7 @@ List* set_subsets_list(
    const Set* set,
    int        subset_size,
    List*      list,
-   double*    idx)
+   int*       idx)
 {
    int*   counter;
    int    i;
@@ -525,7 +529,8 @@ List* set_subsets_list(
    Elem*  elem;
    Tuple* tuple;
    Entry* entry;
-
+   Numb*  numb;
+   
    assert(set_is_valid(set));
    assert(subset_size <= set->used);
    assert(idx         != NULL);
@@ -545,8 +550,9 @@ List* set_subsets_list(
          set_add_member(subset, set->member[counter[i]],
             SET_ADD_END, SET_CHECK_NONE);
 
-      elem  = elem_new_numb(*idx);
-      *idx += 1.0;
+      numb  = numb_new_integer(*idx);
+      elem  = elem_new_numb(numb);
+      *idx += 1;
       tuple = tuple_new(1);
       tuple_set_elem(tuple, 0, elem);
       entry = entry_new_set(tuple, subset);
@@ -556,6 +562,7 @@ List* set_subsets_list(
       else
          list_add_entry(list, entry);
 
+      numb_free(numb);
       entry_free(entry);
       tuple_free(tuple);
       elem_free(elem);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.13 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.14 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -30,9 +30,11 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
+#include "xlpglue.h"
 
 #define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d
@@ -42,13 +44,13 @@ typedef struct term_element TermElem;
 struct term_element
 {
    const Entry* entry;
-   double       coeff;
+   Numb*        coeff;
 };
 
 struct term
 {
    SID
-   double    constant;
+   Numb*     constant;
    int       size;
    int       used;
    TermElem* elem;
@@ -61,7 +63,7 @@ Term* term_new(int size)
    assert(term != NULL);
    assert(size >  0);
    
-   term->constant = 0.0;
+   term->constant = numb_new_integer(0);
    term->size     = size;
    term->used     = 0;
    term->elem     = calloc(term->size, sizeof(*term->elem));
@@ -72,11 +74,11 @@ Term* term_new(int size)
    return term;
 }
 
-void term_add_elem(Term* term, const Entry* entry, double coeff)
+void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
 {
    assert(term_is_valid(term));
    assert(entry_is_valid(entry));
-   assert(NE(coeff, 0.0));
+   assert(!numb_equal(coeff, numb_zero()));
    assert(term->used <= term->size);
    
    if (term->used == term->size)
@@ -90,16 +92,23 @@ void term_add_elem(Term* term, const Entry* entry, double coeff)
    assert(term->used < term->size);
 
    term->elem[term->used].entry = entry;
-   term->elem[term->used].coeff = coeff;
+   term->elem[term->used].coeff = numb_copy(coeff);
    term->used++;
 }
 
 void term_free(Term* term)
 {
+   int i;
+   
    assert(term_is_valid(term));
 
    SID_del(term);
 
+   for(i = 0; i < term->used; i++)
+      numb_free(term->elem[i].coeff);
+
+   numb_free(term->constant);
+   
    free(term->elem);
    free(term);
 }
@@ -107,21 +116,23 @@ void term_free(Term* term)
 #ifndef NDEBUG
 Bool term_is_valid(const Term* term)
 {
-   return ((term != NULL)
-      && SID_ok(term, TERM_SID)
-      && (term->used <= term->size));
+   return term != NULL && SID_ok(term, TERM_SID) && (term->used <= term->size);
 }
 #endif /* !NDEBUG */
 
 Term* term_copy(const Term* term)
 {
-   Term* tnew = term_new(term->size);
+   Term* tnew = term_new(term->used + TERM_EXTEND_SIZE);
+   int   i;
    
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
 
-   memcpy(tnew->elem, term->elem, (size_t)term->used * sizeof(*term->elem));
-
+   for(i = 0; i < term->used; i++)
+   {
+      tnew->elem[i].entry = term->elem[i].entry;
+      tnew->elem[i].coeff = numb_copy(term->elem[i].coeff);
+   }
    tnew->used     = term->used;
    tnew->constant = term->constant;
    
@@ -135,7 +146,7 @@ void term_append_term(Term* term_a, const Term* term_b)
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term_a->constant += term_b->constant;
+   numb_add(term_a->constant, term_b->constant);
 
    for(i = 0; i < term_b->used; i++)
       term_add_elem(term_a, term_b->elem[i].entry, term_b->elem[i].coeff);
@@ -146,22 +157,29 @@ void term_append_term(Term* term_a, const Term* term_b)
 Term* term_add_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
+   int   i;
    
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term           = term_new(term_a->size + term_b->size);
+   term           = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
    term->used     = term_a->used + term_b->used;
-   term->constant = term_a->constant + term_b->constant;
+
+   numb_set(term->constant, term_a->constant);
+   numb_add(term->constant, term_b->constant);
 
    assert(term->size >= term->used);
 
-   memcpy(&term->elem[0], term_a->elem,
-      (size_t)term_a->used * sizeof(*term->elem));
-
-   memcpy(&term->elem[term_a->used], term_b->elem,
-      (size_t)term_b->used * sizeof(*term->elem));
-
+   for(i = 0; i < term_a->used; i++)
+   {
+      term->elem[i].entry = term_a->elem[i].entry;
+      term->elem[i].coeff = numb_copy(term_a->elem[i].coeff);
+   }
+   for(i = 0; i < term_b->used; i++)
+   {
+      term->elem[i + term_a->used].entry = term_b->elem[i].entry;
+      term->elem[i + term_a->used].coeff = numb_copy(term_b->elem[i].coeff);
+   }
    assert(term_is_valid(term));
 
    return term;
@@ -175,47 +193,63 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term           = term_new(term_a->size + term_b->size);
-   term->constant = term_a->constant - term_b->constant;
+   term           = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
+   term->used     = term_a->used + term_b->used;
+
+   numb_set(term->constant, term_a->constant);
+   numb_sub(term->constant, term_b->constant);
 
    assert(term->size >= term->used);
 
    for(i = 0; i < term_a->used; i++)
-      term_add_elem(term, term_a->elem[i].entry, term_a->elem[i].coeff);
-
+   {
+      term->elem[i].entry = term_a->elem[i].entry;
+      term->elem[i].coeff = numb_copy(term_a->elem[i].coeff);
+   }
    for(i = 0; i < term_b->used; i++)
-      term_add_elem(term, term_b->elem[i].entry, -term_b->elem[i].coeff);
-
+   {
+      term->elem[i + term_a->used].entry = term_b->elem[i].entry;
+      term->elem[i + term_a->used].coeff = numb_copy(term_b->elem[i].coeff);
+      numb_neg(term->elem[i + term_a->used].coeff);
+   }
    assert(term_is_valid(term));
 
    return term;
 }
 
-void term_add_constant(Term* term, double value)
+void term_add_constant(Term* term, const Numb* value)
 {
    assert(term_is_valid(term));
 
-   term->constant += value;
+   numb_add(term->constant, value);
 }
 
-void term_mul_coeff(Term* term, double value)
+void term_mul_coeff(Term* term, const Numb* value)
 {
    int i;
 
    assert(term_is_valid(term));
 
-   term->constant *= value;
+   numb_mul(term->constant, value);
 
-   if (EQ(value, 0.0))
+   if (numb_equal(value, numb_zero()))
+   {
+      for(i = 0; i < term->used; i++)
+         numb_free(term->elem[i].coeff);
+      
       term->used = 0;
+      
+#warning "Nicht klar ob das gesetzt werden muss, aber term_negate ist sonst falsch"
+      numb_set(term->constant, numb_zero());
+   }
    else
    {
       for(i = 0; i < term->used; i++)
-         term->elem[i].coeff *= value;
+         numb_mul(term->elem[i].coeff, value);
    }
 }
 
-double term_get_constant(const Term* term)
+const Numb* term_get_constant(const Term* term)
 {
    assert(term_is_valid(term));
    
@@ -226,38 +260,27 @@ void term_negate(Term* term)
 {
    assert(term_is_valid(term));
 
-   term_mul_coeff(term, -1.0);
+   term_mul_coeff(term, numb_minusone());
 }
+
+/* HIER GEHTS WEITER */
 
 void term_to_nzo(const Term* term, Con* con)
 {
    Var*   var;
-   Nzo*   nzo;
-   double value;
    int    i;
    
    assert(con != NULL);
    assert(term_is_valid(term));
-   assert(EQ(term->constant, 0.0));
+   assert(numb_equal(term->constant, numb_zero()));
 
    for(i = 0; i < term->used; i++)
    {
-      assert(NE(term->elem[i].coeff, 0.0));
+      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
 
       var = entry_get_var(term->elem[i].entry);
-      nzo = lps_getnzo(con, var);
 
-      if (nzo == NULL)
-         lps_addnzo(con, var, term->elem[i].coeff);
-      else
-      {
-         value = lps_getval(nzo) + term->elem[i].coeff;
-
-         if (EQ(value, 0.0))
-            lps_delnzo(nzo);
-         else
-            lps_setval(nzo, value);
-      }
+      xlp_addtonzo(var, con, term->elem[i].coeff);
    }
 }
 
@@ -267,15 +290,15 @@ void term_to_objective(const Term* term)
    int  i;
    
    assert(term_is_valid(term));
-   assert(EQ(term->constant, 0.0));
+   assert(numb_equal(term->constant, numb_zero()));
 
    for(i = 0; i < term->used; i++)
    {
-      assert(NE(term->elem[i].coeff, 0.0));
+      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
 
       var = entry_get_var(term->elem[i].entry);
       
-      lps_setcost(var, lps_getcost(var) + term->elem[i].coeff);
+      xlp_addtocost(var, term->elem[i].coeff);
    }
 }
 
@@ -284,20 +307,21 @@ void term_print(FILE* fp, const Term* term, int flag)
 {
    const Tuple* tuple;
    int          i;
-   double       coeff;
+   Numb*        coeff;
    
    assert(term_is_valid(term));
 
    for(i = 0; i < term->used; i++)
    {
-      assert(NE(term->elem[i].coeff, 0.0));
+      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
 
-      coeff = fabs(term->elem[i].coeff);
+      coeff = numb_copy(term->elem[i].coeff);
+      numb_abs(coeff);
       
-      fprintf(fp, " %s ", GE(term->elem[i].coeff, 0.0) ? "+" : "-");
+      fprintf(fp, " %s ", (numb_cmp(term->elem[i].coeff, numb_zero()) >= 0) ? "+" : "-");
       
-      if (NE(coeff, 1.0))
-         fprintf(fp, "%.16g ", coeff);
+      if (!numb_equal(coeff, numb_one()))
+         fprintf(fp, "%.16g ", numb_todbl(coeff));
 
       tuple = entry_get_tuple(term->elem[i].entry);
       
@@ -306,12 +330,12 @@ void term_print(FILE* fp, const Term* term, int flag)
       if (flag & TERM_PRINT_SYMBOL)
          tuple_print(fp, tuple);
    }
-   if (NE(term->constant, 0.0))
+   if (!numb_equal(term->constant, numb_zero()))
    {
-      if (GE(term->constant, 0.0))
-         fprintf(fp, " + %.16g ", term->constant);
+      if (numb_cmp(term->constant, numb_zero()) >= 0)
+         fprintf(fp, " + %.16g ", numb_todbl(term->constant));
       else
-         fprintf(fp, " - %.16g ", -term->constant);
+         fprintf(fp, " - %.16g ", -numb_todbl(term->constant));
    }
 }
 #endif /* !NDEBUG */

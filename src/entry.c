@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.8 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.9 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define ENTRY_SID  0x456e7472
@@ -40,7 +41,7 @@ typedef union entry_value EntryValue;
 
 union entry_value
 {
-   double      numb;
+   Numb*       numb;
    const char* strg;
    Set*        set;
    Var*        var;
@@ -55,7 +56,7 @@ struct entry
    EntryValue value;
 };
 
-Entry* entry_new_numb(const Tuple* tuple, double numb)
+Entry* entry_new_numb(const Tuple* tuple, const Numb* numb)
 {
    Entry* entry = calloc(1, sizeof(*entry));
 
@@ -65,7 +66,7 @@ Entry* entry_new_numb(const Tuple* tuple, double numb)
    entry->refc       = 1;
    entry->tuple      = tuple_copy(tuple);
    entry->type       = SYM_NUMB;
-   entry->value.numb = numb;
+   entry->value.numb = numb_copy(numb);
 
    SID_set(entry, ENTRY_SID);
    assert(entry_is_valid(entry));
@@ -198,7 +199,7 @@ const Tuple* entry_get_tuple(const Entry* entry)
    return entry->tuple;
 }
 
-double entry_get_numb(const Entry* entry)
+const Numb* entry_get_numb(const Entry* entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_NUMB);
@@ -240,7 +241,7 @@ void entry_print(FILE* fp, const Entry* entry)
    switch(entry->type)
    {
    case SYM_NUMB :
-      fprintf(fp, "%.16g", entry->value.numb);
+      fprintf(fp, "%.16g", numb_todbl(entry->value.numb));
       break;
    case SYM_STRG :
       fprintf(fp, "\"%s\"", entry->value.strg);

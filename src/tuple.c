@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.10 2003/05/04 07:22:35 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.11 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define TUPLE_SID      0x5475706c

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.6 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.7 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -32,8 +32,9 @@
 #include <ctype.h>
 
 #include "lint.h"
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 #include "code.h"
 #include "inst.h"
@@ -398,10 +399,16 @@ CodeNode* i_read(CodeNode* self)
                abort();
             }
             t    = field[param_field[i]];
-            elem = (param_type[i] == 'n')
-               ? elem_new_numb(atof(t))
-               : elem_new_strg(str_new(t));
-            
+            if (param_type[i] == 'n')
+            {
+               Numb* n = numb_new_ascii(t);
+               elem = elem_new_numb(n);
+               numb_free(n);
+            }
+            else
+            {
+               elem = elem_new_strg(str_new(t));
+            }
             tuple_set_elem(tuple, i, elem);
 
             elem_free(elem);
@@ -425,9 +432,16 @@ CodeNode* i_read(CodeNode* self)
                abort();
             }
             t     = field[param_field[i]];
-            entry = (param_type[i] == 'n')
-               ? entry_new_numb(tuple, atof(t))
-               : entry_new_strg(tuple, str_new(t));
+            if (param_type[i] == 'n')
+            {
+               Numb* n = numb_new_ascii(t);
+               entry = entry_new_numb(tuple, n);
+               numb_free(n);
+            }
+            else
+            {
+               entry = entry_new_strg(tuple, str_new(t));
+            }
             
             if (list == NULL)
                list = list_new_entry(entry);

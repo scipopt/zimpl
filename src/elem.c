@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.10 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -31,8 +31,9 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define STORE_SIZE  100
@@ -43,7 +44,7 @@ typedef struct element_storage ElemStore;
 
 union element_value
 {
-   double      numb;
+   Numb*       numb;
    const char* strg;
    const char* name;
    Elem*       next;
@@ -134,14 +135,14 @@ void elem_exit()
    }
 }
 
-Elem* elem_new_numb(double numb)
+Elem* elem_new_numb(const Numb* numb)
 {
    Elem* elem = new_elem();
    
    assert(elem != NULL);
 
    elem->type       = ELEM_NUMB;
-   elem->value.numb = numb;
+   elem->value.numb = numb_copy(numb);
    
    return elem;
 }
@@ -183,7 +184,7 @@ void elem_free(Elem* elem)
 
 Bool elem_is_valid(const Elem* elem)
 {
-   return ((elem != NULL) && SID_ok(elem, ELEM_SID));
+   return elem != NULL && SID_ok(elem, ELEM_SID);
 }
 
 Elem* elem_copy(const Elem* source)
@@ -235,7 +236,7 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
 
    assert(elem_a->type == ELEM_NUMB);
 
-   return NE(elem_a->value.numb, elem_b->value.numb);
+   return !numb_equal(elem_a->value.numb, elem_b->value.numb);
 }
 
 ElemType elem_get_type(const Elem* elem)
@@ -245,7 +246,7 @@ ElemType elem_get_type(const Elem* elem)
    return elem->type;
 }
 
-double elem_get_numb(const Elem* elem)
+const Numb* elem_get_numb(const Elem* elem)
 {
    assert(elem_is_valid(elem));
    assert(elem->type == ELEM_NUMB);
@@ -278,7 +279,7 @@ void elem_print(FILE* fp, const Elem* elem)
    switch(elem->type)
    {
    case ELEM_NUMB :
-      fprintf(fp, "%.16g", elem->value.numb);
+      fprintf(fp, "%.16g", numb_todbl(elem->value.numb));
       break;
    case ELEM_STRG :
       fprintf(fp, "\"%s\"", elem->value.strg);
@@ -294,23 +295,12 @@ void elem_print(FILE* fp, const Elem* elem)
 
 unsigned int elem_hash(const Elem* elem)
 {
-   union
-   {
-      struct
-      {
-         unsigned int a;
-         unsigned int b;
-      } i;
-      double d;
-   } d2i;
-   
    unsigned int hcode;
    
    switch(elem->type)
    {
    case ELEM_NUMB :
-      d2i.d = elem->value.numb;
-      hcode = d2i.i.a ^ d2i.i.b;
+      hcode = numb_hash(elem->value.numb);
       break;
    case ELEM_STRG :
       hcode = str_hash(elem->value.strg);
@@ -338,7 +328,7 @@ char* elem_tostr(const Elem* elem)
       
       assert(str != NULL);
       
-      sprintf(str, "%.16g", elem->value.numb);
+      sprintf(str, "%.16g", numb_todbl(elem->value.numb));
       break;
    case ELEM_STRG :
       str = strdup(elem->value.strg);

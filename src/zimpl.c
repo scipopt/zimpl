@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.26 2003/05/20 12:40:22 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.27 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -35,9 +35,11 @@
 #include <errno.h>
 
 #include "lint.h"
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
+#include "xlpglue.h"
 
 #define FORM_LP  0
 #define FORM_MPS 1
@@ -141,7 +143,7 @@ int main(int argc, char* const* argv)
    char*       ordfile  = NULL;
    char*       basefile = NULL;
    char*       cmdpipe  = NULL;
-   LpForm      format   = LP_FORM_LPF;
+   LpFormat    format   = LP_FORM_LPF;
    FILE*       fp;
    Bool        write_order = FALSE;
    int         c;
@@ -236,6 +238,7 @@ int main(int argc, char* const* argv)
    assert(cmdpipe != NULL);
    
    str_init();
+   numb_init();
    elem_init();
       
    prog = prog_new();
@@ -246,11 +249,11 @@ int main(int argc, char* const* argv)
    if (zpldebug)
       prog_print(stderr, prog);
    
-   lps_alloc(argv[optind]);
+   xlp_alloc(argv[optind]);
 
    prog_execute(prog);
 
-   lps_scale();
+   xlp_scale();
    
    /* Write Output
     */
@@ -265,7 +268,7 @@ int main(int argc, char* const* argv)
       perror(" ");
       abort();
    }
-   lps_write(fp, format);
+   xlp_write(fp, format);
 
    check_write_ok(fp, outfile);
    
@@ -284,7 +287,7 @@ int main(int argc, char* const* argv)
       perror(" ");
       abort();
    }
-   lps_transtable(fp);
+   xlp_transtable(fp);
 
    check_write_ok(fp, tblfile);
 
@@ -305,7 +308,7 @@ int main(int argc, char* const* argv)
          perror(" ");
          abort();
       }
-      lps_orderfile(fp);
+      xlp_orderfile(fp);
 
       check_write_ok(fp, ordfile);
       
@@ -321,9 +324,10 @@ int main(int argc, char* const* argv)
     */
    prog_free(prog);
 
-   lps_free();
+   xlp_free();
    symbol_exit();
    elem_exit();
+   numb_exit();
    str_exit();
    free(ordfile);
    free(outfile);

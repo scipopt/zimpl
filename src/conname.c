@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: conname.c,v 1.6 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: conname.c,v 1.7 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -30,8 +30,11 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
+#include "mme.h"
+#include "xlpglue.h"
 #include "mme.h"
 
 static char*        cpfix  = NULL;
@@ -83,7 +86,7 @@ Bool conname_set(const char* prefix)
    strcpy(cname, cpfix);
    strcat(cname, "_1");
 
-   return (NULL == lps_getcon(cname));
+   return xlp_conname_exists(cname);
 }
 
 const char* conname_get()

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.18 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.19 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -31,8 +31,9 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 #include "code.h"
 #include "inst.h"
@@ -41,7 +42,7 @@ typedef union code_value CodeValue;
 
 union code_value
 {
-   double       numb;
+   Numb*        numb;
    const char*  strg;
    const char*  name;
    Tuple*       tuple;
@@ -52,7 +53,7 @@ union code_value
    Bool         bool;
    int          size;
    List*        list;
-   VarType      vartype;
+   VarClass     varclass;
    ConType      contype;
    RDef*        rdef;
    RPar*        rpar;
@@ -118,7 +119,9 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    return node;
 }
 
-CodeNode* code_new_numb(double numb)
+/* We eat the numb, i.e. we will free it!
+ */
+CodeNode* code_new_numb(Numb* numb)
 {
    CodeNode* node = calloc(1, sizeof(*node));
 
@@ -126,7 +129,7 @@ CodeNode* code_new_numb(double numb)
 
    node->type       = CODE_NUMB;
    node->eval       = i_nop;
-   node->value.numb = numb;
+   node->value.numb = numb; 
    node->stmt       = scan_get_stmt();
    node->column     = scan_get_column();
 
@@ -193,17 +196,17 @@ CodeNode* code_new_size(int size)
    return node;
 }
 
-CodeNode* code_new_vartype(VarType vartype)
+CodeNode* code_new_varclass(VarClass varclass)
 {
    CodeNode* node = calloc(1, sizeof(*node));
 
    assert(node != NULL);
 
-   node->type          = CODE_VARTYPE;
-   node->eval          = i_nop;
-   node->value.vartype = vartype;
-   node->stmt          = scan_get_stmt();
-   node->column        = scan_get_column();
+   node->type           = CODE_VARCLASS;
+   node->eval           = i_nop;
+   node->value.varclass = varclass;
+   node->stmt           = scan_get_stmt();
+   node->column         = scan_get_column();
 
    SID_set(node, CODE_SID);
    assert(code_is_valid(node));
@@ -278,6 +281,8 @@ static inline void code_free_value(const CodeNode* node)
        */
       break;
    case CODE_NUMB :
+      numb_free(node->value.numb);
+      break;
    case CODE_STRG :
    case CODE_NAME :
       break;
@@ -302,7 +307,7 @@ static inline void code_free_value(const CodeNode* node)
    case CODE_LIST :
       list_free(node->value.list);
       break;
-   case CODE_VARTYPE :
+   case CODE_VARCLASS :
    case CODE_CONTYPE :
       break;
    case CODE_RDEF :
@@ -413,7 +418,7 @@ inline CodeNode* code_get_child(const CodeNode* node, int no)
    return node->child[no];
 }
 
-inline double code_get_numb(CodeNode* node)
+inline const Numb* code_get_numb(CodeNode* node)
 {
    return code_check_type(node, CODE_NUMB)->value.numb;
 }
@@ -468,9 +473,9 @@ inline const List* code_get_list(CodeNode* node)
    return code_check_type(node, CODE_LIST)->value.list;
 }
 
-inline VarType code_get_vartype(CodeNode* node)
+inline VarClass code_get_varclass(CodeNode* node)
 {
-   return code_check_type(node, CODE_VARTYPE)->value.vartype;
+   return code_check_type(node, CODE_VARCLASS)->value.varclass;
 }
 
 inline ConType code_get_contype(CodeNode* node)
@@ -502,14 +507,14 @@ inline Symbol* code_get_symbol(CodeNode* node)
  * Value Funktionen
  * ----------------------------------------------------------------------------
  */
-void code_value_numb(CodeNode* node, double numb)
+void code_value_numb(CodeNode* node, const Numb* numb)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
    
    node->type       = CODE_NUMB;
-   node->value.numb = numb;
+   node->value.numb = numb_copy(numb);
 }
 
 void code_value_strg(CodeNode* node, const char* strg)
@@ -620,14 +625,14 @@ void code_value_list(CodeNode* node, const List* list)
    node->value.list = list_copy(list);
 }
 
-void code_value_vartype(CodeNode* node, VarType vartype)
+void code_value_varclass(CodeNode* node, VarClass varclass)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
 
-   node->type          = CODE_VARTYPE;
-   node->value.vartype = vartype;
+   node->type           = CODE_VARCLASS;
+   node->value.varclass = varclass;
 }
 
 void code_value_contype(CodeNode* node, ConType contype)
@@ -691,7 +696,7 @@ void code_copy_value(CodeNode* dst, const CodeNode* src)
    switch(src->type)
    {
    case CODE_NUMB :
-      dst->value.numb = src->value.numb;
+      dst->value.numb = numb_copy(src->value.numb);
       break;
    case CODE_STRG :
       dst->value.strg = src->value.strg;
@@ -723,8 +728,8 @@ void code_copy_value(CodeNode* dst, const CodeNode* src)
    case CODE_LIST :
       dst->value.list = list_copy(src->value.list);
       break;
-   case CODE_VARTYPE :
-      dst->value.vartype = src->value.vartype;
+   case CODE_VARCLASS :
+      dst->value.varclass = src->value.varclass;
       break;
    case CODE_CONTYPE :
       dst->value.contype = src->value.contype;
@@ -755,7 +760,7 @@ CodeNode* code_eval_child(const CodeNode* node, int no)
    return code_eval(code_get_child(node, no));
 }
 
-double code_eval_child_numb(const CodeNode* node, int no)
+const Numb* code_eval_child_numb(const CodeNode* node, int no)
 {
    return code_get_numb(code_eval(code_get_child(node, no)));
 }
@@ -810,9 +815,9 @@ const List* code_eval_child_list(const CodeNode* node, int no)
    return code_get_list(code_eval(code_get_child(node, no)));
 }
 
-VarType code_eval_child_vartype(const CodeNode* node, int no)
+VarClass code_eval_child_varclass(const CodeNode* node, int no)
 {
-   return code_get_vartype(code_eval(code_get_child(node, no)));
+   return code_get_varclass(code_eval(code_get_child(node, no)));
 }
 
 ConType code_eval_child_contype(const CodeNode* node, int no)

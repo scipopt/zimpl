@@ -1,14 +1,14 @@
-#pragma ident "@(#) $Id: source.c,v 1.3 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.h,v 1.1 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: source.c                                                      */
-/*   Name....: Source Code Printing Function                                 */
+/*   File....: gmpmisc.c                                                     */
+/*   Name....: miscellenious rational arithmetic functions                   */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,55 +24,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _GMPMISC_H_
+#define _GMPMISC_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#ifndef __GMP_H__
+#error "Need to include gmp.h before gmpmisc.h"
+#endif
+#ifndef _BOOL_H_
+#error "Need to include bool.h before gmpmisc.h"
+#endif
 
-#include "bool.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "mme.h"
+extern mpq_t const_zero;
+extern mpq_t const_one;
+extern mpq_t const_minus_one;
 
-void show_source(FILE* fp, const char* text, int column)
-{
-   int len;
-   int beg;
-   int end;
-      
-   assert(fp     != NULL);
-   assert(text   != NULL);
-   assert(column >= 0);
+/*lint -sem(gmp_str2mpq, 1p && 2p && nulterm(2)) */
+extern void gmp_str2mpq(mpq_t value, const char* num);
+/*lint -sem(gmp_print, 1p == 1 && 2p ) */
+extern void gmp_print_mpq(FILE* fp, const mpq_t qval);
+extern void gmp_init(Bool verb);
+extern void gmp_exit(void);
 
-   if (column > 0)
-      column--;
-   
-   len = strlen(text);
-   beg = column - 30;
-   end = column + 30;
-
-   if (beg < 0)
-   {
-      end -= beg;
-      beg = 0;
-   }
-   if (end > len)
-   {
-      beg -= end - len;
-      end  = len;      
-   }
-   if (beg < 0)
-      beg = 0;
-
-   assert(beg >= 0);
-   assert(end <= len);
-   assert(beg <= end);
-
-   fprintf(fp, "*** %-*s\n", end - beg, &text[beg]);
-   fprintf(fp, "*** %*s^^^\n", column - beg, ""); 
-}
-
-
-
-
+#endif /* _GMPMISC_H */

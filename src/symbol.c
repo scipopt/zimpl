@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.16 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.17 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -30,8 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 
 #define TEST_DUBLICATE   0
@@ -253,7 +254,7 @@ SymbolType symbol_get_type(const Symbol* sym)
    return sym->type;
 }
 
-double symbol_get_numb(const Symbol* sym, int idx)
+const Numb* symbol_get_numb(const Symbol* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);

@@ -1,14 +1,14 @@
-#pragma ident "@(#) $Id: lpstore.h,v 1.9 2003/03/18 11:47:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: lpstore.h                                                     */
-/*   Name....: Store Linear Programm                                         */
+/*   File....: ratlpstore.h                                                  */
+/*   Name....: Rational Number Store Linear Programm                         */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,10 +25,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _LPSTORE_H_
-#define _LPSTORE_H_
+#ifndef _RATLPSTORE_H_
+#define _RATLPSTORE_H_
+
+#ifndef __GMP_H__
+#error "Need to include gmp.h before gmpmisc.h"
+#endif
+#ifndef _BOOL_H_
+#error "Need to include bool.h before gmpmisc.h"
+#endif
 
 typedef struct storage Sto;
+
+typedef struct hash Hash;
 
 struct nonzero
 {
@@ -38,7 +47,7 @@ struct nonzero
    Nzo*   var_next;
    Nzo*   con_prev;
    Nzo*   con_next;
-   double value;
+   mpq_t  value;
 };
 
 struct variable
@@ -46,13 +55,15 @@ struct variable
    unsigned int sid;
    char*        name;
    int          number;
-   int          size;
+   VarClass     class;
    VarType      type;
-   double       cost;
-   double       lower;
-   double       upper;
+   VarState     state;
+   int          size;
+   mpq_t        cost;
+   mpq_t        lower;
+   mpq_t        upper;
+   mpq_t        value;
    int          priority;
-   double       startval;
    Var*         prev;
    Var*         next;   
    Nzo*         first;
@@ -65,11 +76,13 @@ struct constraint
    unsigned int sid;
    char*        name;
    int          number;
-   ConType      type;
    unsigned int flags;
+   ConType      type;
+   ConState     state;
    int          size;
-   double       rhs;
-   double       scale;
+   mpq_t        lhs;
+   mpq_t        rhs;
+   mpq_t        scale;
    Con*         prev;
    Con*         next;
    Nzo*         first;
@@ -80,9 +93,13 @@ struct constraint
 struct lpstorage
 {
    char*    name;
+   LpType   type;   /* ??? Wird noch nicht automatisch gesetzt */
    LpDirect direct;
-   LpType   type;
+   char*    probname;
    char*    objname;
+   char*    rhsname;
+   char*    bndname;
+   char*    rngname;
    int      vars;
    int      cons;
    int      nonzeros;
@@ -92,8 +109,17 @@ struct lpstorage
    Nzo*     next;
    Hash*    var_hash;
    Hash*    con_hash;
+   Var*     var_last;
+   Con*     con_last;
 }; 
 
-#define MPS_NAME_LEN  8
+/* Internal functions
+ */
+/*lint -sem(        lpf_write, 1p && 2n > 0 && 3p && nulterm(3) && 4n >= 0) */
+void                lps_makename(char* target, int size, const char* name, int no);
 
-#endif /* _LPSTORE_H_ */
+#endif /* _RATLPSTORE_H_ */
+
+
+
+

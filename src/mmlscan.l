@@ -24,15 +24,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.22 2003/05/04 07:27:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.23 2003/07/12 15:24:02 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
 
-#include "portab.h"
+#include "bool.h"
 /* Leads to problems with stdlib.h - reason? */
 /* #include "mshell.h" */
+#include "ratlptypes.h"
 #include "mme.h"
 #include "mmlparse.h"
 
@@ -128,14 +129,14 @@ static int yycolumn = 0;
 
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
-/*      lval->numb = numb_new_ascii(yytext);*/
-      sscanf(yytext, "%lf", &lval->numb);
+      lval->numb = numb_new_ascii(yytext);
+/*      sscanf(yytext, "%lf", &lval->numb);*/
       return NUMB; 
    }
 "."[0-9]+([eEdD][-+]-?[0-9]+)?  { 
       yycolumn += yyleng; 
-/*      lval->numb = numb_new_ascii(yytext);*/
-      sscanf(yytext, "%lf", &lval->numb);
+      lval->numb = numb_new_ascii(yytext);
+/*      sscanf(yytext, "%lf", &lval->numb);*/
       return NUMB; 
    }
 

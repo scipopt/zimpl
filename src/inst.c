@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.37 2003/05/26 08:30:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.38 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -30,11 +30,13 @@
 #include <string.h>
 #include <assert.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 #include "code.h"
 #include "inst.h"
+#include "xlpglue.h"
 
 /* ----------------------------------------------------------------------------
  * Kontrollfluss Funktionen
@@ -84,7 +86,7 @@ CodeNode* i_constraint(CodeNode* self)
    const Term*  term_rhs;
    ConType      type;
    Con*         con;
-   double       rhs;
+   Numb*        rhs;
    unsigned int flags;
    
    Trace("i_constraint");
@@ -96,15 +98,16 @@ CodeNode* i_constraint(CodeNode* self)
    term_rhs   = code_eval_child_term(self, 2);
    flags      = code_eval_child_bits(self, 3);
 
-   rhs        = term_get_constant(term_rhs) - term_get_constant(term_lhs);
+   rhs        = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
    term       = term_sub_term(term_lhs, term_rhs);
-   con        = lps_addcon(conname_get(), type, rhs, flags);
+   con        = xlp_addcon(conname_get(), type, rhs, flags);
 
    term_add_constant(term, rhs);
    term_to_nzo(term, con);
    
    code_value_void(self);
 
+   numb_free(rhs);
    term_free(term);
    
    return self;
@@ -148,43 +151,59 @@ CodeNode* i_forall(CodeNode* self)
  */
 CodeNode* i_expr_add(CodeNode* self)
 {
+   Numb* numb;
+   
    Trace("i_add");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self,
-      code_eval_child_numb(self, 0) + code_eval_child_numb(self, 1));
+   numb = numb_new_add(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1));
 
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+   
    return self;
 }
 
 CodeNode* i_expr_sub(CodeNode* self)
 {
+   Numb* numb;
+
    Trace("i_sub");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self,
-      code_eval_child_numb(self, 0) - code_eval_child_numb(self, 1));
+   numb = numb_new_sub(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1));
 
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+   
    return self;
 }
 
 CodeNode* i_expr_mul(CodeNode* self)
 {
+   Numb* numb;
+
    Trace("i_mul");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self, 
-      code_eval_child_numb(self, 0) * code_eval_child_numb(self, 1));
+   numb = numb_new_mul(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1));
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
 
    return self;
 }
 
 CodeNode* i_expr_div(CodeNode* self)
 {
-   double divisor;
+   Numb*       numb;
+   const Numb* divisor;
    
    Trace("i_div");
 
@@ -192,14 +211,17 @@ CodeNode* i_expr_div(CodeNode* self)
 
    divisor = code_eval_child_numb(self, 1);
 
-   if (EQ(divisor, 0.0))
+   if (numb_equal(divisor, numb_zero()))
    {
       fprintf(stderr, "*** Error: Division by zero\n");
       code_errmsg(self);
       abort();
    }      
-   code_value_numb(self,
-      code_eval_child_numb(self, 0) / divisor);
+   numb = numb_new_div(code_eval_child_numb(self, 0), divisor);
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
 
    return self;
 }
@@ -210,9 +232,13 @@ CodeNode* i_expr_mod(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self,
       fmod(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
-
+#endif
+   
    return self;
 }
 
@@ -222,9 +248,13 @@ CodeNode* i_expr_intdiv(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self,
       floor(code_eval_child_numb(self, 0) / code_eval_child_numb(self, 1)));
-
+#endif
+   
    return self;
 }
 
@@ -234,30 +264,48 @@ CodeNode* i_expr_pow(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self,
       pow(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
-
+#endif
+   
    return self;
 }
 
 CodeNode* i_expr_neg(CodeNode* self)
 {
+   Numb* numb;
+   
    Trace("i_neg");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self, -code_eval_child_numb(self, 0));
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_neg(numb);
+   
+   code_value_numb(self, numb);
 
+   numb_free(numb);
+   
    return self;
 }
 
 CodeNode* i_expr_abs(CodeNode* self)
 {
+   Numb* numb;
+   
    Trace("i_abs");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self, fabs(code_eval_child_numb(self, 0)));
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_abs(numb);
+   
+   code_value_numb(self, numb);
+
+   numb_free(numb);
 
    return self;
 }
@@ -268,8 +316,12 @@ CodeNode* i_expr_floor(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self, floor(code_eval_child_numb(self, 0)));
-
+#endif
+   
    return self;
 }
 
@@ -279,8 +331,12 @@ CodeNode* i_expr_ceil(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self, ceil(code_eval_child_numb(self, 0)));
-
+#endif
+   
    return self;
 }
 
@@ -292,6 +348,9 @@ CodeNode* i_expr_log(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    exponent = code_eval_child_numb(self, 0);
    
    if (EQ(exponent, 0.0))
@@ -301,7 +360,8 @@ CodeNode* i_expr_log(CodeNode* self)
       abort();
    }      
    code_value_numb(self, log10(exponent));
-
+#endif
+   
    return self;
 }
 
@@ -313,6 +373,9 @@ CodeNode* i_expr_ln(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    exponent = code_eval_child_numb(self, 0);
    
    if (EQ(exponent, 0.0))
@@ -322,7 +385,8 @@ CodeNode* i_expr_ln(CodeNode* self)
       abort();
    }      
    code_value_numb(self, log(exponent));
-
+#endif
+   
    return self;
 }
 
@@ -332,8 +396,12 @@ CodeNode* i_expr_exp(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    code_value_numb(self, exp(code_eval_child_numb(self, 0)));
-
+#endif
+   
    return self;
 }
 
@@ -347,28 +415,38 @@ CodeNode* i_expr_fac(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
+   /* do this in numb.c
+    */
    x = code_eval_child_numb(self, 0);
 
    for(z = 2.0; z <= x; z += 1.0)
       y *= z;
 
    code_value_numb(self, y);
-
+#endif
+   
    return self;
 }
 
 CodeNode* i_expr_card(CodeNode* self)
 {
    const Set* set;
+   Numb*      numb;
    
    Trace("i_abs");
 
    assert(code_is_valid(self));
 
-   set = code_eval_child_set(self, 0);
-   
-   code_value_numb(self, (double)set_get_used(set));
+   set  = code_eval_child_set(self, 0);
+   numb = numb_new_integer(set_get_used(set));
 
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+   
    return self;
 }
 
@@ -382,6 +460,9 @@ CodeNode* i_expr_rand(CodeNode* self)
 
    assert(code_is_valid(self));
 
+#if 1
+   fprintf(stderr, "Not yet implemented\n");
+#else
    mini = code_eval_child_numb(self, 0);
    maxi = code_eval_child_numb(self, 1);
 
@@ -389,7 +470,8 @@ CodeNode* i_expr_rand(CodeNode* self)
    val = val * (maxi - mini) + mini;
 
    code_value_numb(self, val);
-
+#endif
+   
    return self;
 }
 
@@ -414,10 +496,11 @@ CodeNode* i_expr_min(CodeNode* self)
    const Tuple*  pattern;
    const Tuple*  tuple;
    CodeNode*     lexpr;
-   int           idx = 0;
-   double        value;
-   double        min = DBL_MAX;
-
+   int           idx   = 0;
+   const Numb*   value;
+   Numb*         min   = numb_new();
+   Bool          first = TRUE;
+   
    Trace("i_expr_min");
    
    assert(code_is_valid(self));
@@ -435,13 +518,18 @@ CodeNode* i_expr_min(CodeNode* self)
       {
          value = code_eval_child_numb(self, 1);      
 
-         if (value < min)
-            min = value;
+         if (first || numb_cmp(value, min) < 0)
+         {
+            numb_set(min, value);
+            first = FALSE;
+         }
       }
       local_drop_frame();
    }
    code_value_numb(self, min);
 
+   numb_free(min);
+   
    return self;
 }
 
@@ -452,9 +540,10 @@ CodeNode* i_expr_max(CodeNode* self)
    const Tuple*  pattern;
    const Tuple*  tuple;
    CodeNode*     lexpr;
-   int           idx = 0;
-   double        value;
-   double        max = -DBL_MAX;
+   int           idx   = 0;
+   const Numb*   value;
+   Numb*         max   = numb_new();
+   Bool          first = TRUE;
 
    Trace("i_expr_max");
    
@@ -473,13 +562,18 @@ CodeNode* i_expr_max(CodeNode* self)
       {
          value = code_eval_child_numb(self, 1);      
 
-         if (value > max)
-            max = value;
+         if (first || numb_cmp(value, max) > 0)
+         {
+            numb_set(max, value);
+            first = FALSE;
+         }
       }
       local_drop_frame();
    }
    code_value_numb(self, max);
 
+   numb_free(max);
+   
    return self;
 }
 
@@ -491,7 +585,7 @@ CodeNode* i_expr_sum(CodeNode* self)
    const Tuple*  tuple;
    CodeNode*     lexpr;
    int           idx = 0;
-   double        sum = 0;
+   Numb*         sum = numb_new();
 
    Trace("i_expr_sum");
    
@@ -507,12 +601,14 @@ CodeNode* i_expr_sum(CodeNode* self)
       local_install_tuple(pattern, tuple);
 
       if (code_get_bool(code_eval(lexpr)))
-         sum += code_eval_child_numb(self, 1);      
+         numb_add(sum, code_eval_child_numb(self, 1));      
 
       local_drop_frame();
    }
    code_value_numb(self, sum);
 
+   numb_free(sum);
+   
    return self;
 }
 
@@ -605,7 +701,7 @@ CodeNode* i_bool_eq(CodeNode* self)
    switch(tp1)
    {
    case CODE_NUMB :
-      result = EQ(code_get_numb(op1), code_get_numb(op2));
+      result = numb_equal(code_get_numb(op1), code_get_numb(op2));
       break;
    case CODE_STRG :
       result = strcmp(code_get_strg(op1), code_get_strg(op2)) == 0;
@@ -636,7 +732,7 @@ CodeNode* i_bool_ge(CodeNode* self)
    assert(code_is_valid(self));
    
    code_value_bool(self, 
-      GE(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
+      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) >= 0);
 
    return self;
 }
@@ -648,7 +744,7 @@ CodeNode* i_bool_gt(CodeNode* self)
    assert(code_is_valid(self));
    
    code_value_bool(self, 
-      GT(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
+      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) > 0);
 
    return self;
 }
@@ -660,7 +756,7 @@ CodeNode* i_bool_le(CodeNode* self)
    assert(code_is_valid(self));
    
    code_value_bool(self, 
-      LE(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
+      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) <= 0);
 
    return self;
 }
@@ -672,7 +768,7 @@ CodeNode* i_bool_lt(CodeNode* self)
    assert(code_is_valid(self));
    
    code_value_bool(self, 
-      LT(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
+      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) < 0);
 
    return self;
 }
@@ -1025,17 +1121,19 @@ CodeNode* i_set_cross(CodeNode* self)
 CodeNode* i_set_range(CodeNode* self)
 {
    Set*   set;
-   double from;
-   double upto;
-   double step;
+   int    from;
+   int    upto;
+   int    step;
    
    Trace("i_set_range");
 
    assert(code_is_valid(self));
 
-   from = code_eval_child_numb(self, 0);
-   upto = code_eval_child_numb(self, 1);
-   step = code_eval_child_numb(self, 2);
+   /* ??? TODO This is shitty
+    */
+   from = (int)numb_todbl(code_eval_child_numb(self, 0));
+   upto = (int)numb_todbl(code_eval_child_numb(self, 1));
+   step = (int)numb_todbl(code_eval_child_numb(self, 2));
    set  = set_range(from, upto, step);
 
    code_value_set(self, set);
@@ -1486,15 +1584,15 @@ CodeNode* i_newsym_var(CodeNode* self)
    Symbol*       sym;
    const Tuple*  tuple;
    const Tuple*  pattern;
-   VarType       vartype;
-   VarType       usevartype;
+   VarClass      varclass;
+   VarClass      usevarclass;
    Var*          var;
    Entry*        entry;
    int           idx = 0;
-   double        lower;
-   double        upper;
-   double        priority;
-   double        startval;
+   const Numb*   lower;
+   const Numb*   upper;
+   const Numb*   priority;
+   const Numb*   startval;
    char*         tuplestr;
    char*         varname;
    
@@ -1502,53 +1600,58 @@ CodeNode* i_newsym_var(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   name    = code_eval_child_name(self, 0);
-   idxset  = code_eval_child_idxset(self, 1);
-   vartype = code_eval_child_vartype(self, 2);
-   iset    = set_from_idxset(idxset);
-   pattern = idxset_get_tuple(idxset);
-   sym     = symbol_new(name, SYM_VAR, iset, set_get_used(iset), NULL);
+   name     = code_eval_child_name(self, 0);
+   idxset   = code_eval_child_idxset(self, 1);
+   varclass = code_eval_child_varclass(self, 2);
+   iset     = set_from_idxset(idxset);
+   pattern  = idxset_get_tuple(idxset);
+   sym      = symbol_new(name, SYM_VAR, iset, set_get_used(iset), NULL);
 
    while((tuple = set_match_next(iset, pattern, &idx)) != NULL)
    {
       local_install_tuple(pattern, tuple);
       
-      lower      = code_eval_child_numb(self, 3);
-      upper      = code_eval_child_numb(self, 4);
-      priority   = code_eval_child_numb(self, 5);
-      startval   = code_eval_child_numb(self, 6);
-      usevartype = vartype;
+      lower       = code_eval_child_numb(self, 3);
+      upper       = code_eval_child_numb(self, 4);
+      priority    = code_eval_child_numb(self, 5);
+      startval    = code_eval_child_numb(self, 6);
+      usevarclass = varclass;
       
-      if ((vartype == VAR_BIN) && NE(lower, 0.0) && NE(upper, 1.0))
+      if ((varclass == VAR_BIN)
+         && !numb_equal(lower, numb_zero()) && !numb_equal(upper, numb_one()))
          fprintf(stderr,
             "*** Warning: Bounds for binary variable %s ignored\n",
             name);
 
-      if ((vartype == VAR_CON)
+#if 0 /* ??? */
+      if ((varclass == VAR_CON)
          && (NE(priority, 0.0) || LT(startval, INFINITY)))
          fprintf(stderr,
             "*** Warning: Priority/Startval for continous var %s ignored\n",
             name);
-
+#endif
+#if 0 /* ??? TODO */
+      
       /* Integral bounds for integral variables ?
        */
-      if ((vartype != VAR_CON) && NE(ceil(lower), lower))
+      if ((varclass != VAR_CON) && NE(ceil(lower), lower))
       {
          lower = ceil(lower);
          fprintf(stderr,
             "*** Warning: Lower bound for integral var %s truncated to %g\n",
             name, lower);
       }
-      if ((vartype != VAR_CON) && NE(floor(upper), upper))
+      if ((varclass != VAR_CON) && NE(floor(upper), upper))
       {
          upper = floor(upper);
          fprintf(stderr,
             "*** Warning: Upper bound for integral var %s truncated to %g\n",
             name, upper);
       }
-
-      if ((vartype == VAR_INT) && EQ(lower, 0.0) && EQ(upper, 1.0))
-         usevartype = VAR_BIN;
+#endif
+      if ((varclass == VAR_INT)
+         && numb_equal(lower, numb_zero()) && numb_equal(upper, numb_zero()))
+         usevarclass = VAR_BIN;
 
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
@@ -1561,8 +1664,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = lps_addvar(varname, usevartype, lower, upper,
-         (int)priority, startval);
+      var = xlp_addvar(varname, usevarclass, lower, upper, priority, startval);
 
       entry = entry_new_var(tuple, var);
 
@@ -1626,7 +1728,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       break;
    case SYM_VAR :
       term = term_new(1);
-      term_add_elem(term, entry, 1.0);
+      term_add_elem(term, entry, numb_one());
       code_value_term(self, term);
       term_free(term);
       break;
@@ -1730,8 +1832,8 @@ CodeNode* i_local_deref(CodeNode* self)
  */
 CodeNode* i_term_coeff(CodeNode* self)
 {
-   Term*  term;
-   double coeff;
+   Term*       term;
+   const Numb* coeff;
    
    Trace("i_term_coeff");
    
@@ -1751,8 +1853,8 @@ CodeNode* i_term_coeff(CodeNode* self)
 
 CodeNode* i_term_const(CodeNode* self)
 {
-   Term*  term;
-   double numb;
+   Term*       term;
+   const Numb* numb;
    
    Trace("i_term_const");
    
@@ -1851,8 +1953,8 @@ CodeNode* i_term_sum(CodeNode* self)
 
 CodeNode* i_term_expr(CodeNode* self)
 {
-   Term*  term;
-   double numb;
+   Term*       term;
+   const Numb* numb;
    
    Trace("i_term_expr");
    
@@ -2063,7 +2165,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    const Set* set;
    int        subset_size;
    List*      list;
-   double     idx  = 0.0;
+   int        idx  = 0;
    int        used;
    
    Trace("i_entry_list_subsets");
@@ -2104,7 +2206,7 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
 {
    const Set* set;
    List*      list = NULL;
-   double     idx  = 0.0;
+   int        idx  = 0;
    int        i;
    int        used;
 
@@ -2145,8 +2247,8 @@ static void objective(CodeNode* self, Bool minimize)
    name = code_eval_child_name(self, 0);
    term = code_eval_child_term(self, 1);
 
-   lps_objname(name);
-   lps_setdir(minimize ? LP_MIN : LP_MAX);
+   xlp_objname(name);
+   xlp_setdir(minimize);
    term_to_objective(term);
 
    code_value_void(self);
@@ -2189,7 +2291,7 @@ CodeNode* i_print(CodeNode* self)
    switch(code_get_type(child))
    {
    case CODE_NUMB :
-      printf("%.16g", code_get_numb(child));
+      printf("%.16g", numb_todbl(code_get_numb(child)));
       break;
    case CODE_STRG :
       printf("\"%s\"", code_get_strg(child));

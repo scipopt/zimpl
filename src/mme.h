@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.29 2003/05/04 07:22:35 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.30 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -27,30 +27,31 @@
 #ifndef _MME_H_
 #define _MME_H_
 
+#ifndef _BOOL_H_
+#error "Need to include bool.h before mme.h"
+#endif
+
+#ifndef _RATLPTYPES_H_
+#error "Need to include ratlptypes.h before code.h"
+#endif
+
 enum element_type
 {
    ELEM_ERR = 0, ELEM_FREE, ELEM_NUMB, ELEM_STRG, ELEM_NAME
 };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_VAR, HASH_CON };
-enum lp_direct       { LP_MIN = 0, LP_MAX };
-enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
-enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
-enum con_type        { CON_ERR = 0, CON_EQ, CON_LE, CON_GE };
-enum var_type        { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
+//enum lp_direct       { LP_MIN = 0, LP_MAX };
+//enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
+//enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
+//enum con_type        { CON_ERR = 0, CON_EQ, CON_LE, CON_GE };
+//enum var_type        { VAR_ERR = 0, VAR_CON, VAR_INT, VAR_BIN };
+
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
    STMT_CONS, STMT_PRINT
-};
-
-enum code_type
-{
-   CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
-   CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
-   CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE,
-   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM
 };
 
 enum set_check_type
@@ -63,6 +64,23 @@ enum set_add_type
    SET_ADD_BEGIN, SET_ADD_END
 };
 
+/* the following is not in code.h because code.h needs mme.h anyway,
+ * but we also need these declaratons.
+ */
+enum code_type
+{
+   CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
+   CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
+   CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARCLASS, CODE_CONTYPE,
+   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM
+};
+
+typedef enum code_type           CodeType;
+typedef struct code_node         CodeNode;
+
+typedef CodeNode*              (*Inst)(CodeNode* self);
+
+typedef struct number            Numb;
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
@@ -82,6 +100,7 @@ typedef struct hash              Hash;
 typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
 
+#if 0 /* ??? kann weg */
 typedef struct nonzero           Nzo;
 typedef struct variable          Var;
 typedef struct constraint        Con;
@@ -91,27 +110,107 @@ typedef enum lp_type             LpType;
 typedef enum lp_form             LpForm;
 typedef enum con_type            ConType;
 typedef enum var_type            VarType;
+#endif
 
 typedef enum con_name_format     ConNameForm;
 typedef enum statement_type      StmtType;
 typedef struct statement         Stmt;
 typedef struct program           Prog;
 
-typedef enum code_type           CodeType;
-typedef struct code_node         CodeNode;
-
-typedef CodeNode*              (*Inst)(CodeNode* self);
-
 extern Bool         verbose;
 extern Bool         zpldebug;
 extern Bool         mangling;
 
+/* strstore.c
+ */
 extern void         str_init(void);
 extern void         str_exit(void);
-/*lint -sem(        str_new, 1p, @p == 1p) */
+/*lint -sem(        str_new, 1p && nulterm(1), @p == 1p && nulterm(@)) */
 extern const char*  str_new(const char* s);
 /*lint -sem(        str_hash, 1p)           */
 extern unsigned int str_hash(const char* s);
+
+/* numbdbl.c
+ */
+extern void         numb_init(void);
+extern void         numb_exit(void);
+/*lint -sem(        numb_new, @p == 1) */
+extern Numb*        numb_new(void);
+/*lint -sem(        numb_new_ascii, 1p && nulterm(1), @p == 1) */
+extern Numb*        numb_new_ascii(const char* val);
+/*lint -sem(        numb_new_integer, @p == 1) */
+extern Numb*        numb_new_integer(int val);
+
+#if 0
+/*lint -sem(        numb_new_posinfty, @p == 1) */
+extern Numb*        numb_new_posinfty(void);
+/*lint -sem(        numb_new_neginfty, @p == 1) */
+extern Numb*        numb_new_neginfty(void);
+#endif
+
+/*lint -sem(        numb_free, 1p == 1) */
+extern void         numb_free(Numb* numb);
+/*lint -sem(        numb_is_valid, 1p == 1) */
+extern Bool         numb_is_valid(const Numb* numb);
+
+#if 0
+/*lint -sem(        numb_is_posinfty, 1p == 1) */
+extern Bool         numb_is_posinfty(const Numb* numb);
+/*lint -sem(        numb_is_neginfty, 1p == 1) */
+extern Bool         numb_is_neginfty(const Numb* numb);
+/*lint -sem(        numb_is_number, 1p == 1) */
+extern Bool         numb_is_number(const Numb* numb);
+#endif
+
+/*lint -sem(        numb_copy, 1p == 1, @p == 1) */
+extern Numb*        numb_copy(const Numb* source);
+/*lint -sem(        numb_equal, 1p == 1 && 2p == 1) */
+extern Bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_cmp,p, 1p == 1 && 2p == 1) */
+extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_todbl, 1p == 1) */
+extern double       numb_todbl(const Numb* numb);
+/*lint -sem(        numb_set, 1p == 1 && 2p == 1) */
+extern void         numb_set(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_add, 1p == 1 && 2p == 1) */
+extern void         numb_add(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_add, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_add(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_sub, 1p == 1 && 2p == 1) */
+extern void         numb_sub(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_sub, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_sub(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_mul, 1p == 1 && 2p == 1) */
+extern void         numb_mul(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_mul, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_mul(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_div, 1p == 1 && 2p == 1) */
+extern void         numb_div(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_div, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_neg, 1p == 1) */
+extern void         numb_neg(Numb* numb);
+/*lint -sem(        numb_abs, 1p == 1) */
+extern void         numb_abs(Numb* numb);
+/*lint -sem(        numb_todbl, 1p == 1) */
+extern double       numb_todbl(const Numb* numb);
+
+/*lint -sem(        numb_print, 1p == 1 && 2p == 1) */
+extern void         numb_print(FILE* fp, const Numb* numb);
+/*lint -sem(        numb_hash, 1p == 1) */
+extern unsigned int numb_hash(const Numb* numb);
+/*lint -sem(        numb_tostr, 1p == 1, @p && nulterm(@)) */
+extern char*        numb_tostr(const Numb* numb);
+/*lint -sem(        numb_zero, @p == 1) */
+extern const Numb*  numb_zero(void);
+/*lint -sem(        numb_one, @p == 1) */
+extern const Numb*  numb_one(void);
+/*lint -sem(        numb_minusone, @p == 1) */
+extern const Numb*  numb_minusone(void);
+
+#ifdef __GMP_H__
+extern void         numb_get_mpq(const Numb* numb, mpq_t value);
+#endif
 
 /* list.c
  */
@@ -160,20 +259,27 @@ extern Bool         hash_is_valid(const Hash* hash);
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */
 extern void         hash_add_entry(Hash* hash, const Entry* entry);
+
+#if 0 /* ??? kann weg? */
 /*lint -sem(        hash_add_con, 1p == 1 && 2p == 1) */
 extern void         hash_add_con(Hash* hash, const Con* con);
 /*lint -sem(        hash_add_var, 1p == 1 && 2p == 1) */
 extern void         hash_add_var(Hash* hash, const Var* var);
+#endif
+
 /*lint -sem(        hash_has_tuple, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
+
+#if 0 /* ??? kann weg? */
 /*lint -sem(        hash_lookup_con, 1p == 1 && 2p && nulterm(2)) */
 extern const Con*   hash_lookup_con(const Hash* hash, const char* name);
 /*lint -sem(        hash_lookup_var, 1p == 1 && 2p && nulterm(2)) */
 extern const Var*   hash_lookup_var(const Hash* hash, const char* name);
+#endif
 
 /* element.c
  */
@@ -182,7 +288,7 @@ extern const Var*   hash_lookup_var(const Hash* hash, const char* name);
 extern void         elem_init(void);
 extern void         elem_exit(void);
 /*lint -sem(        elem_new_numb, @p == 1) */
-extern Elem*        elem_new_numb(double n);
+extern Elem*        elem_new_numb(const Numb* n);
 /*lint -sem(        elem_new_strg, 1p && nulterm(1), @p == 1) */
 extern Elem*        elem_new_strg(const char* s);
 /*lint -sem(        elem_new_name, 1p && nulterm(1), @p == 1) */
@@ -198,7 +304,7 @@ extern Bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
 /*lint -sem(        elem_get_type, 1p == 1) */
 extern ElemType     elem_get_type(const Elem* elem);
 /*lint -sem(        elem_get_numb, 1p == 1) */
-extern double       elem_get_numb(const Elem* elem);
+extern const Numb*  elem_get_numb(const Elem* elem);
 /*lint -sem(        elem_get_strg, 1p == 1, @p && nulterm(@)) */
 extern const char*  elem_get_strg(const Elem* elem);
 /*lint -sem(        elem_get_name, 1p == 1, @p && nulterm(@)) */
@@ -264,7 +370,7 @@ extern int          set_get_used(const Set* set);
 /*lint -sem(        set_print, 1p == 1 && 2p == 1) */
 extern void         set_print(FILE* fp, const Set* set);
 /*lint -sem(        set_range, @p == 1) */
-extern Set*         set_range(double start, double end, double step);
+extern Set*         set_range(int start, int end, int step);
 /*lint -sem(        set_cross, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_cross(const Set* seta, const Set* setb);
 /*lint -sem(        set_union, 1p == 1 && 2p == 1, @p == 1) */
@@ -285,7 +391,7 @@ extern Bool         set_is_subset(const Set* set_a, const Set* set_b);
 extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_subset_list, 1p == 1 && 2n > 0 && 4p == 1, @p == 1) */
 extern List*        set_subsets_list(
-   const Set* set, int subset_size, List* list, double* idx);
+   const Set* set, int subset_size, List* list, int* idx);
 
 
 /* entry.c
@@ -293,7 +399,7 @@ extern List*        set_subsets_list(
 #define ENTRY_NULL ((Entry*)0)
 
 /*lint -sem(        entry_new_numb, 1p == 1, @p == 1) */
-extern Entry*       entry_new_numb(const Tuple* tuple, double numb);
+extern Entry*       entry_new_numb(const Tuple* tuple, const Numb* numb);
 /*lint -sem(        entry_new_strg, 1p == 1 && 2p && nulterm(2), @p == 1) */
 extern Entry*       entry_new_strg(const Tuple* tuple, const char* strg);
 /*lint -sem(        entry_new_set, 1p == 1 && 2p == 1, @p == 1) */
@@ -313,7 +419,7 @@ extern SymbolType   entry_get_type(const Entry* entry);
 /*lint -sem(        entry_get_tuple, 1p == 1, @p == 1) */
 extern const Tuple* entry_get_tuple(const Entry* entry);
 /*lint -sem(        entry_get_numb, 1p == 1) */
-extern double       entry_get_numb(const Entry* entry);
+extern const Numb*  entry_get_numb(const Entry* entry);
 /*lint -sem(        entry_get_strg, 1p == 1, @p && nulterm(@)) */
 extern const char*  entry_get_strg(const Entry* entry);
 /*lint -sem(        entry_get_set, 1p == 1, @p == 1) */
@@ -348,7 +454,7 @@ extern const char*  symbol_get_name(const Symbol* sym);
 /*lint -sem(        symbol_get_type, 1p == 1) */
 extern SymbolType   symbol_get_type(const Symbol* sym);
 /*lint -sem(        symbol_get_numb, 1p == 1) */
-extern double       symbol_get_numb(const Symbol* sym, int idx);
+extern const Numb*  symbol_get_numb(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_strg, 1p == 1, @p && nulterm(@)) */
 extern const char*  symbol_get_strg(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_set, 1p == 1, @p == 1) */
@@ -399,7 +505,7 @@ extern char*        local_tostrall(void);
 /*lint -sem(        term_new, 1n > 0, @p == 1) */
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1) */
-extern void         term_add_elem(Term* term, const Entry* entry, double coeff);
+extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff);
 /*lint -sem(        term_free, 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
@@ -414,12 +520,12 @@ extern void         term_append_term(Term* term_a, const Term* term_b);
 extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
-/*lint -sem(        term_add_constant, 1p == 1) */
-extern void         term_add_constant(Term* term, double value);
-/*lint -sem(        term_mul_coeff, 1p == 1) */
-extern void         term_mul_coeff(Term* term, double value);
+/*lint -sem(        term_add_constant, 1p == 1 && 2p == 1) */
+extern void         term_add_constant(Term* term, const Numb* value);
+/*lint -sem(        term_mul_coeff, 1p == 1 && 2p == 1) */
+extern void         term_mul_coeff(Term* term, const Numb* value);
 /*lint -sem(        term_get_constant, 1p == 1) */
-extern double       term_get_constant(const Term* term);
+extern const Numb*  term_get_constant(const Term* term);
 /*lint -sem(        term_negate, 1p == 1) */
 extern void         term_negate(Term* term);
 /*lint -sem(        term_to_objective, 1p == 1) */
@@ -472,7 +578,7 @@ extern Bool        conname_set(const char* prefix);
 /*lint -sem(       conname_set, @p && nulterm(@)) */
 extern const char* conname_get(void);
 
-
+#if 0 /* ??? kann weg */
 /* lpstore.c
  */
 #define LP_FLAG_CON_SCALE    1
@@ -551,6 +657,8 @@ extern void         mps_write(const Lps* lp, FILE* fp);
  */
 /*lint -sem(        ord_write, 1p == 1 && 2p == 1) */
 extern void         ord_write(const Lps* lp, FILE* fp);
+#endif
+
 
 /* stmt.c
  */
@@ -614,6 +722,9 @@ extern const Stmt*  scan_get_stmt(void);
 extern int          scan_get_column(void);
 extern int          yylen(void);
 
+#define Min(a, b)    (((a) <= (b)) ? (a) : (b)) 
+
+
 #ifndef NDEBUG
 #define SID unsigned int sid;
 #define SID_set(p, id)  (p->sid = id)
@@ -627,5 +738,11 @@ extern int          yylen(void);
 #endif /* NDEBUG */
 
 #define DISPERSE(x) (1664525U * (x) + 1013904223U);
+
+#ifdef TRACE
+#define Trace(fname) fprintf(stderr, "Trace: %s\n", fname);
+#else
+#define Trace(fname) /* */
+#endif /* TRACE */
 
 #endif /* _MME_H_ */

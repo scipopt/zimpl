@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.34 2003/05/04 07:27:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.35 2003/07/12 15:24:01 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -37,8 +37,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "portab.h"
+#include "bool.h"
 #include "mshell.h"
+#include "ratlptypes.h"
 #include "mme.h"
 #include "code.h"
 #include "inst.h"
@@ -53,8 +54,8 @@ extern void yyerror(const char* s);
 %union
 {
    unsigned int bits;
-   /*  Numb*        numb;*/
-   double       numb;
+   Numb*        numb;
+   /*   double       numb;*/
    const char*  strg;
    const char*  name;
    Symbol*      sym;
@@ -227,31 +228,31 @@ decl_var
    ;
 
 var_type
-   : /* empty */      { $$ = code_new_vartype(VAR_CON); }
-   | REAL             { $$ = code_new_vartype(VAR_CON); }
-   | INTEGER          { $$ = code_new_vartype(VAR_INT); }
-   | BINARY           { $$ = code_new_vartype(VAR_BIN); }
+   : /* empty */      { $$ = code_new_varclass(VAR_CON); }
+   | REAL             { $$ = code_new_varclass(VAR_CON); }
+   | INTEGER          { $$ = code_new_varclass(VAR_INT); }
+   | BINARY           { $$ = code_new_varclass(VAR_BIN); }
    ;
 
 lower
-   : /* empty */      { $$ = code_new_numb(0.0); }
+   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
    | CMP_GE expr      { $$ = $2; }
-   | CMP_GE '-' INFTY { $$ = code_new_numb(-INFINITY); }
+   | CMP_GE '-' INFTY { $$ = code_new_numb(numb_new_integer(-100000000)); }
    ;
 
 upper
-   : /* empty */      { $$ = code_new_numb(INFINITY); }
+   : /* empty */      { $$ = code_new_numb(numb_new_integer(10000000)); }
    | CMP_LE expr      { $$ = $2; }
-   | CMP_LE INFTY     { $$ = code_new_numb(INFINITY); }
+   | CMP_LE INFTY     { $$ = code_new_numb(numb_new_integer(10000000)); }
    ;
 
 priority
-   : /* empty */      { $$ = code_new_numb(0.0); }
+   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
    | PRIORITY expr    { $$ = $2; }
    ;
 
 startval
-   : /* empty */      { $$ = code_new_numb(INFINITY); }
+   : /* empty */      { $$ = code_new_numb(numb_new_integer(10000000)); }
    | STARTVAL expr    { $$ = $2; }
    ;
 
@@ -330,9 +331,9 @@ con_attr
    ;
 
 con_type
-   : CMP_LE  { $$ = code_new_contype(CON_LE); }
-   | CMP_GE  { $$ = code_new_contype(CON_GE); }
-   | CMP_EQ  { $$ = code_new_contype(CON_EQ); }
+   : CMP_LE  { $$ = code_new_contype(CON_RHS); }
+   | CMP_GE  { $$ = code_new_contype(CON_LHS); }
+   | CMP_EQ  { $$ = code_new_contype(CON_EQUAL); }
    ;
 
 term
@@ -353,11 +354,11 @@ subterm
    ;
 
 summand
-   : factor                 { $$ = $1; }
+   : factor                { $$ = $1; }
    | factor '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
    | factor '/' expr       {
          $$ = code_new_inst(i_term_coeff, 2, $1,
-            code_new_inst(i_expr_div, 2, code_new_numb(1.0), $3));
+            code_new_inst(i_expr_div, 2, code_new_numb(numb_new_integer(1)), $3));
       }
    | SUM idxset DO summand %prec SUM {
          $$ = code_new_inst(i_term_sum, 2, $2, $4);
@@ -375,7 +376,7 @@ factor
    | '(' term ')'           { $$ = $2; }   
    | '+' '(' term ')' %prec UNARY { $$ = $3; }           
    | '-' '(' term ')' %prec UNARY {
-         $$ = code_new_inst(i_term_coeff, 2, $3, code_new_numb(-1.0));
+         $$ = code_new_inst(i_term_coeff, 2, $3, code_new_numb(numb_new_integer(-1)));
       }
    | expr '*' '(' term ')'  { $$ = code_new_inst(i_term_coeff, 2, $4, $1); }
    ;
@@ -390,7 +391,7 @@ vexpr
    | '-' VARSYM symidx %prec UNARY  { 
          $$ = code_new_inst(i_term_coeff, 2,
             code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3),
-            code_new_numb(-1.0));
+            code_new_numb(numb_new_integer(-1)));
       } 
    ;   
 
@@ -434,7 +435,7 @@ sexpr
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
       }
    | '{' expr TO expr '}' {
-         $$ = code_new_inst(i_set_range, 3, $2, $4, code_new_numb(1.0));
+         $$ = code_new_inst(i_set_range, 3, $2, $4, code_new_numb(numb_new_integer(1)));
       }
    | sexpr UNION sexpr  { $$ = code_new_inst(i_set_union, 2, $1, $3); }
    | sexpr '+' sexpr %prec UNION {

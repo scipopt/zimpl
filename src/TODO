@@ -1,3 +1,15 @@
+INFINITY in mmlparser kommt noch nicht durch.
+
+
+
+
+
+
+
+
+
+
+
 Mindestens in Elem und Numb machen die SID wenig sinn,
 weil sie nie zurueckgesetzt werden.
 
