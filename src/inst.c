@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.10 2002/02/24 11:05:29 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.11 2002/05/11 07:44:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -304,6 +304,44 @@ void i_expr_max(CodeNode* self)
    tuple_free(pattern);
 
    code_value_numb(self, max);
+
+   set_free(set);   
+   idxset_free(idxset);
+}
+
+void i_expr_sum(CodeNode* self)
+{
+   IdxSet*   idxset;
+   Set*      set;
+   Tuple*    pattern;
+   Tuple*    tuple;
+   CodeNode* lexpr;
+   int       idx = 0;
+   double    sum = 0;
+
+   Trace("i_expr_sum");
+   
+   assert(code_is_valid(self));
+
+   idxset  = Code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+
+   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+         sum += Code_eval_child_numb(self, 1);      
+
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   tuple_free(pattern);
+
+   code_value_numb(self, sum);
 
    set_free(set);   
    idxset_free(idxset);

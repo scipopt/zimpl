@@ -1,3 +1,5 @@
+ - "sum" is now also valid for expressions without variables.
+
  - Fixed error in LPF Writing Routine, that would write "Inf"
    instead of "+Inf".
 

@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.7 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.8 2002/05/11 07:44:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -393,6 +393,9 @@ expr
       }
    | MAX idxset DO expr %prec MAX {
          $$ = code_new_inst(i_expr_max, 2, $2, $4);
+      }
+   | SUM idxset DO expr %prec SUM {
+         $$ = code_new_inst(i_expr_sum, 2, $2, $4);
       }
    ;
 
