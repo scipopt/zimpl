@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.13 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.14 2003/10/03 09:02:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -309,6 +309,37 @@ static int split_fields(char* s, char* field[])
    return fields;
 }
 
+static Bool is_valid_number(const char *s)
+{
+   /* 5 !*/
+   if (isdigit(*s))
+      return TRUE;
+
+   /* maybe -5 or .6 or -.7 ? */
+   if (*s != '+' && *s != '-' && *s != '.')
+      return FALSE;
+
+   if (*s == '\0')
+      return FALSE;
+
+   s++;
+
+   /* -5 or .6 ! */
+   if (isdigit(*s))
+      return TRUE;
+
+   /* maybe -.7 ? */
+   if (*s != '.')
+      return FALSE;
+   
+   if (*s == '\0')
+      return FALSE;
+
+   s++;
+   
+   return isdigit(*s);
+}
+
 CodeNode* i_read(CodeNode* self)
 {
    gzFile      fp;
@@ -326,6 +357,7 @@ CodeNode* i_read(CodeNode* self)
    Elem*       elem;
    Tuple*      tuple;
    Entry*      entry;
+   Numb*       numb;
    char*       filename;
    char*       comment;
    int         skip;
@@ -434,12 +466,22 @@ CodeNode* i_read(CodeNode* self)
                code_errmsg(self);
                exit(EXIT_FAILURE);
             }
-            t    = field[param_field[i]];
+            t = field[param_field[i]];
+
             if (param_type[i] == 'n')
             {
-               Numb* n = numb_new_ascii(t);
-               elem = elem_new_numb(n);
-               numb_free(n);
+               if (!is_valid_number(t))
+               {
+                  fprintf(stderr, "*** Error 174: Numeric field %d", i + 1);
+                  fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
+                  fprintf(stderr, "***            File: %s line %d\n",
+                     rdef_get_filename(rdef), line);
+                  code_errmsg(self);
+                  exit(EXIT_FAILURE);
+               }
+               numb = numb_new_ascii(t);
+               elem = elem_new_numb(numb);
+               numb_free(numb);
             }
             else
             {

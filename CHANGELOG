@@ -1,3 +1,5 @@
+ - <,<=,>=,> for strings implemented.
+
  - Function sqrt() implemented.
 
  - Functions log(), ln(), exp() reactivated.

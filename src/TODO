@@ -1,13 +1,4 @@
-Docu lösungen für beispiele.
-
-function log etc wider in expr.zpl aufnehmen.
-
 test vergleich verbessern fuer 700er und 800er fehler.
-
-Docu hinweis, parameter sind eine liste, 
-:= matrix, read, wert ist erlaubt.
-
-warning wenn ein feld in 1n nicht isdigit +/- ist.
 
 trace wenn fehler in function?
 
@@ -15,9 +6,6 @@ cplex stream version?
 enter prob
 zimpl -F cplex | awk 
 getrennte -F's fuer .lp und .tbl ?
-
-e800 verschiedenen bison versionen
-mmlscan.l kein mshell ?
 
 was passiert bei <i,i> in { <1,1>, <1,2>, <2,1>, <2,2> } = |2|{<1,1>,<1,2>,<2,1>,<2,2>} genau ?
 

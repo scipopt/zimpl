@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.63 2003/09/27 11:57:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.64 2003/10/03 09:02:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -939,24 +939,92 @@ CodeNode* i_bool_ne(CodeNode* self)
 
 CodeNode* i_bool_ge(CodeNode* self)
 {
+   CodeNode* op1;
+   CodeNode* op2;
+   CodeType  tp1;
+   CodeType  tp2;
+   Bool      result;
+   
    Trace("i_bool_ge");
 
    assert(code_is_valid(self));
-   
-   code_value_bool(self, 
-      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) >= 0);
+
+   op1 = code_eval_child(self, 0);
+   op2 = code_eval_child(self, 1);
+   tp1 = code_get_type(op1);
+   tp2 = code_get_type(op2);
+
+   if (tp1 != tp2)
+   {
+      fprintf(stderr, "*** Error 118: Comparison of different types\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   assert(tp1 == tp2);
+
+   switch(tp1)
+   {
+   case CODE_NUMB :
+      result = numb_cmp(code_get_numb(op1), code_get_numb(op2)) >= 0;
+      break;
+   case CODE_STRG :
+      result = strcmp(code_get_strg(op1), code_get_strg(op2)) >= 0;
+      break;
+   case CODE_NAME :
+      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+         code_get_name(op1));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   default :
+      abort();
+   }
+   code_value_bool(self, result);
 
    return self;
 }
 
 CodeNode* i_bool_gt(CodeNode* self)
 {
+   CodeNode* op1;
+   CodeNode* op2;
+   CodeType  tp1;
+   CodeType  tp2;
+   Bool      result;
+   
    Trace("i_bool_gt");
 
    assert(code_is_valid(self));
-   
-   code_value_bool(self, 
-      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) > 0);
+
+   op1 = code_eval_child(self, 0);
+   op2 = code_eval_child(self, 1);
+   tp1 = code_get_type(op1);
+   tp2 = code_get_type(op2);
+
+   if (tp1 != tp2)
+   {
+      fprintf(stderr, "*** Error 118: Comparison of different types\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   assert(tp1 == tp2);
+
+   switch(tp1)
+   {
+   case CODE_NUMB :
+      result = numb_cmp(code_get_numb(op1), code_get_numb(op2)) > 0;
+      break;
+   case CODE_STRG :
+      result = strcmp(code_get_strg(op1), code_get_strg(op2)) > 0;
+      break;
+   case CODE_NAME :
+      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+         code_get_name(op1));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   default :
+      abort();
+   }
+   code_value_bool(self, result);
 
    return self;
 }
@@ -967,8 +1035,7 @@ CodeNode* i_bool_le(CodeNode* self)
 
    assert(code_is_valid(self));
    
-   code_value_bool(self, 
-      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) <= 0);
+   code_value_bool(self, !code_get_bool(i_bool_gt(self)));
 
    return self;
 }
@@ -979,8 +1046,7 @@ CodeNode* i_bool_lt(CodeNode* self)
 
    assert(code_is_valid(self));
    
-   code_value_bool(self, 
-      numb_cmp(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)) < 0);
+   code_value_bool(self, !code_get_bool(i_bool_ge(self)));
 
    return self;
 }

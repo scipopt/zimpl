@@ -1,4 +1,4 @@
-# $Id: tsp.zpl,v 1.2 2003/10/01 08:51:12 bzfkocht Exp $
+# $Id: tsp.zpl,v 1.3 2003/10/03 09:02:27 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: tsp.zpl                                                       *
@@ -27,13 +27,13 @@
 #
 # Generic formulation of the Travelling Salesmen Problem
 #
-set V   := { read "tsp.dat" as "<1n>" comment "#" };
+set V   := { read "tsp.dat" as "<1s>" comment "#" };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
 set K   := indexset(P);
 
-param px[V] := read "tsp.dat" as "<1n> 2n" comment "#";
-param py[V] := read "tsp.dat" as "<1n> 3n" comment "#";
+param px[V] := read "tsp.dat" as "<1s> 2n" comment "#";
+param py[V] := read "tsp.dat" as "<1s> 3n" comment "#";
 
 defnumb dist(a,b) := sqrt((px[a] - px[b])^2 + (py[a] - py[b])^2);
 

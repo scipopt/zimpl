@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.7 2003/09/19 08:30:14 bzfkocht Exp $
+# $Id: check.sh,v 1.8 2003/10/03 09:02:26 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -50,7 +50,7 @@ done
 #
 cd errors
 #
-for i in *.zpl
+for i in e[1-6]*.zpl
 do
    COUNT=`expr $COUNT + 1` 
    NAME=`basename $i .zpl`
@@ -63,6 +63,25 @@ do
    esac
    rm $NAME.err
 done 2>/dev/null
+#
+# Error 700 to 900 can vary
+#
+for i in e[789]*.zpl
+do
+#   COUNT=`expr $COUNT + 1` 
+   NAME=`basename $i .zpl`
+   # DIFFOPT=`awk -f ../exdiffopt.awk $NAME.err.ref`
+   ../$1 -v0 $i 2>$NAME.err
+   diff $NAME.err $NAME.err.ref >/dev/null
+   case $? in
+    0) echo Test $i "(err)" OK;; #PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(err)" FAIL "(ignored)";;
+    *) echo Test $i "(err)" ERROR ;;
+   esac
+   rm $NAME.err
+done 2>/dev/null
+
+
 if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
 else echo FAILURE! Only $PASS of $COUNT tests passed; 
 fi

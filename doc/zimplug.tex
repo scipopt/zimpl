@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.2 2003/10/02 08:20:12 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.3 2003/10/03 09:02:27 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -264,12 +264,12 @@ At this time no further functions or operators
 for strings are implemented.
 
 \subsubsection{Boolean expressions}
-These evaluate either to \emph{true} or \emph{false}. For numbers the
+These evaluate either to \emph{true} or \emph{false}. For numbers and
+strings the
 relational operators $<$, $<=$, $==$, $!=$, $>=$, and $>$ are
-defined. For strings only $==$ and $!=$ are available. 
+defined.
 Combinations of boolean expressions with \code{and},
 or \code{or}, and negation with \code{not} are possible.
-
 The expression \emph{tuple} \code{in} \emph{set-expression} can be used to test set
 membership of a tuple. 
 
@@ -448,7 +448,8 @@ for each row of the table is needed. The row index can also be
 multi-dimensional. The complete index for the entry is build by
 appending the colum index to the row index.
 The value entries are separated by commas. Any valid expression is
-allowed here.
+allowed here. As can be seen in the third example below, it is
+possible to add a list of entries after the table.
 
 \subsubsection{Examples}
 {\small 
@@ -467,6 +468,10 @@ param g[I*I*I] :=     | 1, 2, 3 |
                   |1,2| 1, 1, 1 |
                   |1,3| 0, 0, 1 | 
                   |2,1| 1, 0, 1 |;
+
+param k[I*I] :=  |  7,  8,  9 |
+               |4| 89, 67, 55 |
+               |5| 12, 13, 14 |, <1,2> 17, <3,4> 99;
 \end{verbatim}
 }
 
@@ -639,7 +644,7 @@ When a file is read, empty lines are skiped and not counted for the
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-set P := { read "nodes.txt" as <1s> };
+set P := { read "nodes.txt" as "<1s>" };
 
 nodes.txt:
    Hamburg   ->   <"Hamburg">
@@ -670,6 +675,18 @@ haha.txt:
    4:5:de:con3    ->   <"de",4,5> "con1"
 \end{verbatim}
 }  
+
+As with table format input, it is possible to add a list of tuples or
+parameter entries after a read statement.
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set A := { read "test.txt" as "<2n>", <5>, <6> }; 
+param winniepoh[X] := 
+   read "values.txt" as "<1n,2n> 3n", <1,2> 17, <3,4> 29;
+\end{verbatim}
+}  
+
 
 \subsection{Function Definitions}
 
@@ -759,27 +776,27 @@ x and y coordinate. Distances between cities are geometric.
 A suitable data file would look like this:
 {\small
 \begin{verbatim}
-# x y Data for TSP 
-1 1 1
-2 3 1
-3 2 2
-4 1 3
-5 3 3
-6 2 4
+#Ort         x y 
+"Sylt"       1 1
+"Flensburg"  3 1
+"Neumünster" 2 2
+"Husum"      1 3
+"Schleswig"  3 3
+"Ausacker"   2 4
 \end{verbatim}
 }
-And the formulation in \zimpl follows. Please note that \code{P[]}
+The formulation in \zimpl follows below. Please note that \code{P[]}
 holds all subsets of the cities. So don't try to solve a 52
 city TSP this way. It won't work.
 {\small
 \begin{verbatim}
-set V   := { read "tsp.dat" as "<1n>" comment "#" };
+set V   := { read "tsp.dat" as "<1s>" comment "#" };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
 set K   := indexset(P);
 
-param px[V] := read "tsp.dat" as "<1n> 2n" comment "#";
-param py[V] := read "tsp.dat" as "<1n> 3n" comment "#";
+param px[V] := read "tsp.dat" as "<1s> 2n" comment "#";
+param py[V] := read "tsp.dat" as "<1s> 3n" comment "#";
 
 defnumb dist(a,b) := sqrt((px[a]-px[b])^2 + (py[a]-py[b])^2);
 
@@ -824,21 +841,21 @@ x_{ps},z_p&\in&\BB
 \end{eqnarray}
 
 We have binary variables $z_p$, which are set to one, iff plant $p$ is
-to be build. And we have binary variables $x_ps$, 
+to be build. And we have binary variables $x_{ps}$, 
 which are one iff plant $p$ serves shop $s$. 
-Equation(\ref{eqn:assign}) demands that each store is assigned to
+Equation (\ref{eqn:assign}) demands that each store is assigned to
 exactly one plant. Equation (\ref{eqn:open}) makes sure that a plant
 that serves a shop is build. And Equaltion (\ref{eqn:capacity})
 restricts the shops that are served by a plant to the plants capacity.
-Putting it into \zimpl yields:
+Putting this into \zimpl yields:
 {\small
 \begin{verbatim}
 set PLANTS := { "A", "B", "C", "D" };
 set STORES := { 1 .. 9 };
 set PS     := PLANTS * STORES;
 
-# How much does it cost to build a plant and what capacity will 
-# it then have?
+# How much does it cost to build a plant and what capacity 
+# will it then have?
 param building[PLANTS]:= <"A">500,<"B">600,<"C">700,<"D">800;
 param capacity[PLANTS]:= <"A"> 40,<"B"> 55,<"C"> 73,<"D"> 90;
 
@@ -873,6 +890,11 @@ subto build: forall <p,s> in PS : x[p,s] <= z[p];
 subto limit: forall <p> in PLANTS :
    sum <s> in S : demand[s] * x[p,s] <= capacity[p];
 \end{verbatim}
+}
+
+The optimal solution in this case is to build plants \code{A} and
+\code{C}. Stores 2, 3, and 4 are served by plant \code{A}, the rest by
+plant \code{C}. Total cost would be 1457.
 
 \section{Error messages}
 Here is a list of the incomprehensible error messages \zimpl
@@ -991,8 +1013,8 @@ can produce:
    E.g, \code{set A[\{ 1 to 5 \}] := $<$1$>$ \{ 1 \}, $<$6$>$ \{ 2 \};}
 \item[132 Values in parameter list missing, probably wrong read
   template]\ \\
-  As the message said, probable the template of a read statement looks
-  like \code{"$<$1n$>$"} instead of \code{"$<$1n$>$ 2n"}.
+  Probably the template of a read statement looks
+  like \code{"$<$1n$>$"} only having a tuple, instead of \code{"$<$1n$>$ 2n"}.
 \item[133 Unknown local symbol \code{xxx}]\ \\
   A (local) symbol was used, that is not defined anywhere in scope.
 \item[134 Illegal element \code{xxx} for symbol]\ \\
@@ -1147,6 +1169,12 @@ can produce:
 \item[173 Illegal type in element \code{xxx} for symbol]\ \\
   A parameter can be only have one type of values. Either numbers or
   strings. In the initialisation both types were present.
+%
+% iread.c
+\item[174 Numeric field \code{xxx} read as \code{"yyy"}. This is not a
+  number]\ \\
+  It was tried to read a field with a 'n' designation in the template,
+  but what was read is not a valid number.
 %
 % numbgmp.c
 %
