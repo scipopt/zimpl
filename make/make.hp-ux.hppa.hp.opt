@@ -1,5 +1,5 @@
-#--- $Id: make.hp-ux.hppa.hp.opt,v 1.1 2003/09/29 15:54:22 bzfkocht Exp $
+#--- $Id: make.hp-ux.hppa.hp.opt,v 1.2 2003/10/29 19:15:45 bzfkocht Exp $
 CC		=	cc
-CPPFLAGS	+=	-DFREEMEM -Dinline="" 
+CPPFLAGS	+=	-DFREEMEM -DNO_MSHELL -Dinline="" -Dfinite=isfinite
 CFLAGS		=	+O3 +DD64 +W21,486,474 
 LDFLAGS		=	-noshared -lgmp -lz -lm 
