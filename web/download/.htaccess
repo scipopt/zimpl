@@ -8,6 +8,7 @@ AddDescription "Solaris" *sunos*
 AddDescription "AIX Power4" *aix.pwr4*
 AddDescription "HP-UX" *hp-ux*
 AddDescription "Tru64/OSF1" *osf1*
+AddDescription "MacOS-X" *darwin*
 AddDescription "Use this for Windooze" *win*exe
 AddDescription "Zimpl User Guide" zimpl.pdf
 AddDescription "List of recent changes" CHANGELOG*
