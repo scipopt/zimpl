@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.8 2003/10/03 09:02:26 bzfkocht Exp $
+# $Id: check.sh,v 1.9 2003/10/16 08:20:30 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -28,7 +28,7 @@
 # $1 = Binary
 PASS=0
 COUNT=0
-for i in expr param set subto var bool define
+for i in expr param set subto var bool define vinst
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.7 2003/10/16 07:42:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.8 2003/10/16 08:20:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -96,7 +96,7 @@ static Entry* create_new_var_entry(
    assert(bound_is_valid(lower));
    assert(bound_is_valid(upper));
    
-   vname = malloc(strlen(basename) + strlen(extension) + strlen(SYMBOL_NAME_INTERNAL) + 1);
+   vname = malloc(strlen(basename) + strlen(extension) + strlen(SYMBOL_NAME_INTERNAL) + 16);
    sprintf(vname, "%s%s%s_%d", SYMBOL_NAME_INTERNAL, basename, extension, internal_vars++);
    var   = xlp_addvar(vname, var_class, lower, upper, numb_zero(), numb_zero());
    tuple = tuple_new(1);
@@ -595,7 +595,7 @@ CodeNode* i_vbool_or(CodeNode* self)
    bound_zero = bound_new(BOUND_VALUE, numb_zero());
    bound_one  = bound_new(BOUND_VALUE, numb_one());
    term_a     = code_eval_child_term(self, 0);
-   term_b     = code_eval_child_term(self, 0);
+   term_b     = code_eval_child_term(self, 1);
 
    assert(term_get_elements(term_a) == 1);
    assert(term_get_elements(term_b) == 1);
@@ -659,7 +659,7 @@ CodeNode* i_vbool_xor(CodeNode* self)
    bound_zero = bound_new(BOUND_VALUE, numb_zero());
    bound_one  = bound_new(BOUND_VALUE, numb_one());
    term_a     = code_eval_child_term(self, 0);
-   term_b     = code_eval_child_term(self, 0);
+   term_b     = code_eval_child_term(self, 1);
 
    assert(term_get_elements(term_a) == 1);
    assert(term_get_elements(term_b) == 1);
