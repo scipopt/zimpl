@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.13 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.14 2003/08/22 07:06:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -45,8 +45,6 @@ struct hash_element
    {
       const Tuple* tuple;
       const Entry* entry;
-      //      const Con*   con;
-      //      const Var*   var;
    } value;
    HElem* next;
 };

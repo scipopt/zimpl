@@ -1,6 +1,7 @@
-#--- $Id: make.osf1.alpha.compaq.opt,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+#--- $Id: make.osf1.alpha.compaq.opt,v 1.2 2003/08/22 07:06:11 bzfkocht Exp $
 CC		=	cc
-CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -I/usr/local/include -Dinline=""
 CFLAGS		=	-O4 -fast
 LDFLAGS		+=	-non_shared
+LDFLAGS		=	-L/usr/local/lib -lgmp 
 

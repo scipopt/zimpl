@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.c,v 1.2 2003/08/02 08:44:10 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.c,v 1.3 2003/08/22 07:06:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -24,8 +24,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-//#include <sys/types.h>
-//#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,6 +1,6 @@
-#--- $Id: make.sunos.sparc.sun.dbg,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+#--- $Id: make.sunos.sparc.sun.dbg,v 1.2 2003/08/22 07:06:11 bzfkocht Exp $
 CC		=	cc
-CPPFLAGS	+=	-DFREEMEM
-CFLAGS		=	-g
-
+CPPFLAGS	+=	-DFREEMEM -I/sw/sun4_57/gmp-4.1.2/include
+CFLAGS		=	-g -xcheck=stkovf
+LDFLAGS		=	-Bstatic -L/sw/sun4_57/gmp-4.1.2/lib -lgmp
 
