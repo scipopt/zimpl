@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.43 2003/08/02 08:44:10 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.44 2003/08/04 08:15:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1171,21 +1171,50 @@ CodeNode* i_set_cross(CodeNode* self)
 
 CodeNode* i_set_range(CodeNode* self)
 {
-   Set*   set;
-   int    from;
-   int    upto;
-   int    step;
+   Set*        set;
+   const Numb* from;
+   const Numb* upto;
+   const Numb* step;
    
    Trace("i_set_range");
 
    assert(code_is_valid(self));
 
-   /* ??? TODO This is shitty
-    */
-   from = (int)numb_todbl(code_eval_child_numb(self, 0));
-   upto = (int)numb_todbl(code_eval_child_numb(self, 1));
-   step = (int)numb_todbl(code_eval_child_numb(self, 2));
-   set  = set_range(from, upto, step);
+   from = code_eval_child_numb(self, 0);
+   upto = code_eval_child_numb(self, 1);
+   step = code_eval_child_numb(self, 2);
+
+   if (!numb_is_int(from))
+   {
+      fprintf(stderr, "*** Error: \"from\" value ");
+      numb_print(stderr, from);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   if (!numb_is_int(upto))
+   {
+      fprintf(stderr, "*** Error: \"upto\" value ");
+      numb_print(stderr, upto);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   if (!numb_is_int(step))
+   {
+      fprintf(stderr, "*** Error: \"step\" value ");
+      numb_print(stderr, step);
+      fprintf(stderr, " in range too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   if (numb_equal(step, numb_zero()))
+   {
+      fprintf(stderr, "*** Error: zero \"step\" value in range\n");
+      code_errmsg(self);
+      abort();
+   }
+   set  = set_range(numb_toint(from), numb_toint(upto), numb_toint(step));
 
    code_value_set(self, set);
 
@@ -1199,6 +1228,7 @@ CodeNode* i_set_proj(CodeNode* self)
    const Set*   set_a;
    const Tuple* tuple;
    const Elem*  elem;
+   const Numb*  numb;
    int          dim;
    int          idx;
    Set*         set_r;
@@ -1226,14 +1256,24 @@ CodeNode* i_set_proj(CodeNode* self)
          code_errmsg(self);
          abort();
       }
-      idx = (int)numb_todbl(elem_get_numb(elem)); /* ??? */
+      numb = elem_get_numb(elem);
+      
+      if (!numb_is_int(numb))
+      {
+         fprintf(stderr, "*** Error: index value ");
+         numb_print(stderr, numb);
+         fprintf(stderr, " in proj too big or not an integer\n");
+         code_errmsg(self);
+         abort();
+      }
+      idx = numb_toint(numb);
       
       /* Are all the number between 1 and dim(set) ?
        */
       if (idx < 1 || idx > dim)
       {
          fprintf(stderr, "*** Error: Illegal index %d, ", idx);
-         fprintf(stderr, "           set has only dimension %d\n", dim);
+         fprintf(stderr, " set has only dimension %d\n", dim);
          code_errmsg(self);
          abort();
       }
@@ -1640,12 +1680,13 @@ CodeNode* i_newsym_var(CodeNode* self)
    Var*          var;
    Entry*        entry;
    int           idx = 0;
-   const Bound*  lower;
-   const Bound*  upper;
+   Bound*        lower;
+   Bound*        upper;
    const Numb*   priority;
    const Numb*   startval;
    char*         tuplestr;
    char*         varname;
+   Numb*         temp;
    
    Trace("i_newsym_var");
 
@@ -1662,8 +1703,8 @@ CodeNode* i_newsym_var(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
       
-      lower       = code_eval_child_bound(self, 3);
-      upper       = code_eval_child_bound(self, 4);
+      lower       = bound_copy(code_eval_child_bound(self, 3));
+      upper       = bound_copy(code_eval_child_bound(self, 4));
       priority    = code_eval_child_numb(self, 5);
       startval    = code_eval_child_numb(self, 6);
       usevarclass = varclass;
@@ -1680,41 +1721,77 @@ CodeNode* i_newsym_var(CodeNode* self)
             "*** Warning: upper bound for var %s set to -infinity -- ignored\n",
             name);
       }
-#if 0 /* noch reparieren, lower ist nict mehr numb */
-      if ((varclass == VAR_BIN)
-         && !numb_equal(lower, numb_zero()) && !numb_equal(upper, numb_one()))
-         fprintf(stderr,
-            "*** Warning: Bounds for binary variable %s ignored\n",
-            name);
-     /* ??? */
+      if (varclass == VAR_BIN)
+      {
+         if (  bound_get_type(lower) != BOUND_VALUE
+            || bound_get_type(upper) != BOUND_VALUE
+            || !numb_equal(bound_get_value(lower), numb_zero())
+            || !numb_equal(bound_get_value(upper), numb_one()))
+         {
+            fprintf(stderr,
+               "*** Warning: Bounds for binary variable %s ignored\n",
+               name);
+
+            bound_free(lower);
+            bound_free(upper);
+
+            lower = bound_new(BOUND_VALUE, numb_zero());
+            upper = bound_new(BOUND_VALUE, numb_one());
+         }
+      }
       if ((varclass == VAR_CON)
-         && (NE(priority, 0.0) || LT(startval, INFINITY)))
+         && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
          fprintf(stderr,
             "*** Warning: Priority/Startval for continous var %s ignored\n",
             name);
-      /* ??? TODO */
       
       /* Integral bounds for integral variables ?
        */
-      if ((varclass != VAR_CON) && NE(ceil(lower), lower))
+      if (varclass != VAR_CON)
       {
-         lower = ceil(lower);
-         fprintf(stderr,
-            "*** Warning: Lower bound for integral var %s truncated to %g\n",
-            name, lower);
+         if (bound_get_type(lower) == BOUND_VALUE)
+         {
+            temp = numb_copy(bound_get_value(lower));
+            numb_ceil(temp);
+      
+            if (!numb_equal(temp, bound_get_value(lower)))
+            {
+               bound_free(lower);
+               lower = bound_new(BOUND_VALUE, temp);
+               
+               fprintf(stderr,
+                  "*** Warning: Lower bound for integral var %s truncated to ", name);
+               numb_print(stderr, temp);
+               fputc('\n', stderr);
+            }
+            numb_free(temp);
+         }
+         if (bound_get_type(upper) == BOUND_VALUE)
+         {
+            temp = numb_copy(bound_get_value(upper));
+            numb_floor(temp);
+      
+            if (!numb_equal(temp, bound_get_value(upper)))
+            {
+               bound_free(upper);
+               upper = bound_new(BOUND_VALUE, temp);
+               
+               fprintf(stderr,
+                  "*** Warning: Upper bound for integral var %s truncated to ", name);
+               numb_print(stderr, temp);
+               fputc('\n', stderr);
+            }
+            numb_free(temp);
+         }
       }
-      if ((varclass != VAR_CON) && NE(floor(upper), upper))
+      if (varclass == VAR_INT
+         && bound_get_type(lower) == BOUND_VALUE
+         && bound_get_type(upper) == BOUND_VALUE
+         && numb_equal(bound_get_value(lower), numb_zero())
+         && numb_equal(bound_get_value(upper), numb_one()))
       {
-         upper = floor(upper);
-         fprintf(stderr,
-            "*** Warning: Upper bound for integral var %s truncated to %g\n",
-            name, upper);
-      }
-      if ((varclass == VAR_INT)
-         && numb_equal(lower, numb_zero()) && numb_equal(upper, numb_zero()))
          usevarclass = VAR_BIN;
-#endif
-
+      }
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
       tuplestr = tuple_tostr(tuple);
@@ -1738,6 +1815,8 @@ CodeNode* i_newsym_var(CodeNode* self)
       local_drop_frame();
 
       entry_free(entry);
+      bound_free(lower);
+      bound_free(upper);
    }
    code_value_void(self);
 
@@ -2224,11 +2303,12 @@ CodeNode* i_entry_list_add(CodeNode* self)
 
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {
-   const Set* set;
-   int        subset_size;
-   List*      list;
-   int        idx  = 0;
-   int        used;
+   const Set*  set;
+   const Numb* numb;
+   int         subset_size;
+   List*       list;
+   int         idx  = 0;
+   int         used;
    
    Trace("i_entry_list_subsets");
 
@@ -2236,7 +2316,17 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
 
    set         = code_eval_child_set(self, 0);
    used        = set_get_used(set);
-   subset_size = (int)numb_todbl(code_eval_child_numb(self, 1)); /* ??? */
+   numb        = code_eval_child_numb(self, 1);
+
+   if (!numb_is_int(numb))
+   {
+      fprintf(stderr, "*** Error: Size for subsets ");
+      numb_print(stderr, numb);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      abort();
+   }
+   subset_size = numb_toint(numb);
    
    if (used < 1)
    {

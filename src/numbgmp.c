@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.4 2003/07/17 07:36:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.5 2003/08/04 08:15:25 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -501,7 +501,27 @@ const Numb* numb_minusone()
    return numb_const_minusone;
 }
 
+Bool numb_is_int(const Numb* numb)
+{
+   /* Do we have an integer ?
+    */
+   if (mpz_get_si(mpq_denref(numb->value.numb)) == 1)
+   {
+      /* And is it small enough ?
+       */
+      if (mpz_fits_sint_p(mpq_numref(numb->value.numb)) == 1)
+         return TRUE;
+   }
+   return FALSE;
+}
 
+int numb_toint(const Numb* numb)
+{
+   assert(numb_is_valid(numb));
+   assert(numb_is_int(numb));
+   
+   return mpz_get_si(mpq_numref(numb->value.numb)); 
+}
 
 
 

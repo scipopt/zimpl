@@ -1,3 +1,5 @@
+check:  var.zpl fehlt
+
 Speedups:
 
 numbgmp: mpq_clear aufrufen für verwendete oder schon erledigt.
