@@ -1,7 +1,7 @@
-#--- $Id: make.linux.x86.intel.dbg,v 1.3 2003/08/22 08:21:22 bzfkocht Exp $
+#--- $Id: make.linux.x86.intel.dbg,v 1.4 2003/08/27 20:23:58 bzfkocht Exp $
 CC		=	icc
-CPPFLAGS	+=	-DFREEMEM -I/tmp/gmp/include
+CPPFLAGS	+=	-DFREEMEM 
 CFLAGS		=	-g -mp -Xc -w2 -par_report0 -vec_report0 \
 			-wd171,279,981,1173
-LDFLAGS         =       -L/tmp/gmp/lib -lgmp -lz -static
+LDFLAGS         =       -lgmp -lz -static
 # -wd383,444,810 

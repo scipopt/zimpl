@@ -1,3 +1,6 @@
+ - We now get an error message instead of an abort()
+   if the initialisation list of an parameter is empty.
+
  - New functions min/max that take a list of expression,
    like min(2, 5, a[4], b[7] / 2);
    (a and b are parameters)

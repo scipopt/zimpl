@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.52 2003/08/25 08:24:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.53 2003/08/27 20:23:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1648,11 +1648,21 @@ CodeNode* i_newsym_para1(CodeNode* self)
       abort();
    }
    
-   /* First element will determine the type
+   /* First element will determine the type (see SYM_ERR below)
     */
-   lelem = NULL;
    count = list_get_elems(list);
-   sym  = symbol_new(name, SYM_ERR, iset, count, deflt);
+
+   /* So if there is no first element, we are in trouble.
+    */
+   if (count == 0)
+   {
+      fprintf(stderr, "*** Error: Empty initialisation for parameter \"%s\"\n",
+         name);
+      code_errmsg(self);
+      abort();
+   }
+   sym   = symbol_new(name, SYM_ERR, iset, count, deflt);
+   lelem = NULL;
    
    for(i = 0; i < count; i++)
    {

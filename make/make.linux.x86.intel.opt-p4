@@ -1,5 +1,5 @@
 CC              =       icc
-CPPFLAGS        +=      -DNDEBUG -DNO_MSHELL -I/tmp/gmp/include
+CPPFLAGS        +=      -DNDEBUG -DNO_MSHELL
 CFLAGS          =       -O3 -tpp7 -xW -ipo -Xc -w1 \
 			-par_report0 -vec_report0 -wd1173
-LDFLAGS         =       -L/tmp/gmp/lib -lgmp -lz -static
+LDFLAGS         =       -lgmp -lz -static

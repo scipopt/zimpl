@@ -1,4 +1,28 @@
-make.rei system einbauen
+bug suchen bei steinerbaum.
+
+Funktion statistik Anzahl vars/Cons/Boxed/Fixed/NZOs etc, 
+         (bei soplex/extr gibts schon so was)
+
+Funktion timing.
+
+{} als EMPTYSET einführen. (zum vergleich)
+
+define fun(name_list) := expr | term? | constraint?
+              ^
+              | Kein Problem, weil keine lokalen Variablen definiert sind.
+
+Neuer Symboltyp SYM_FUN
+return is klar aus dem was hinter ist.
+Aufruf: fun(expr_list)
+local_setup_match_name_list(name_list, expr_list)
+eval.
+u.u. müßte expr_list keine sein, sonder irgendwas, das sich als local auflösen läßt.
+Fehlerausgabe Trace?
+Recursion geht einfach so.
+
+
+Test mit 1 Mill var einbauen oder Sascha fragen
+ewtl :    x1 + x2, x2 + x3, ... x98 + x99, x99 = 5 => preprocessing
 
 if (....) constraint else constraint endif 
 und/oder

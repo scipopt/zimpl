@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.valgrind,v 1.2 2003/08/22 08:21:22 bzfkocht Exp $
-CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -DFREEMEM -I/tmp/gmp/include
+#--- $Id: make.linux.x86.gnu.valgrind,v 1.3 2003/08/27 20:23:58 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -DFREEMEM 
 CFLAGS		=	-O6 -march=pentiumpro -g
 LDFLAGS		=	/tmp/gmp/lib/libgmp.a -lz
