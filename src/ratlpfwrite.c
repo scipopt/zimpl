@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.7 2003/08/22 09:20:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.8 2003/08/22 09:25:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -196,18 +196,18 @@ void lpf_write(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
+      /* A variable without any entries in the matrix
+       * or the objective function can be ignored.
+       */
+      if (var->size == 0 && mpq_equal(var->cost, const_zero))
+         continue;
+
       lps_makename(name, namelen + 1, var->name, var->number);
 
       if (var->type == VAR_FIXED)
          fprintf(fp, " %s = %.15g\n", name, mpq_get_d(var->lower));
       else
       {
-         /* A non fixed variable without any entries in the matrix
-          * or the objective function can be ignored.
-          */
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
-            continue;
-
          /* Check if we have binaries and/or integers variable
           */
          if (var->class == VAR_BIN)

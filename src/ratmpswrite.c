@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.5 2003/08/21 10:59:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.6 2003/08/22 09:25:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -200,6 +200,12 @@ void mps_write(
     */
    for(var = lp->var_root; var != NULL; var = var->next)
    {
+      /* A variable without any entries in the matrix
+       * or the objective function can be ignored.
+       */
+      if (var->size == 0 && mpq_equal(var->cost, const_zero))
+         continue;
+
       /*   0, oo  -> nix
        *   l, oo  -> LO
        *   0, u   -> UP
@@ -213,12 +219,6 @@ void mps_write(
          write_data(fp, TRUE, 'F', 'X', "BOUND", vtmp, var->lower);
       else
       {
-         /* A non fixed variable without any entries in the matrix
-          * or the objective function can be ignored.
-          */
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
-            continue;
-
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             write_data(fp, TRUE, 'L', 'O', "BOUND", vtmp, var->lower);
          else
