@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.59 2003/10/27 08:43:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.60 2003/10/27 11:16:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -806,6 +806,7 @@ cexpr
    : cproduct              { $$ = $1; }
    | cexpr '+' cproduct    { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
    | cexpr '-' cproduct    { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }
+   ;
 
 cproduct
    : cfactor               { $$ = $1; }
