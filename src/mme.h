@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.10 2002/02/24 11:05:29 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.11 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -47,7 +47,7 @@ enum code_type
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
    CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARTYPE, CODE_CONTYPE,
-   CODE_RDEF, CODE_RPAR
+   CODE_RDEF, CODE_RPAR, CODE_BITS
 };
 
 typedef enum element_type        ElemType;
@@ -431,6 +431,9 @@ extern RPar*       rpar_copy(const RPar* rpar);
 
 /* lpstore.c
  */
+#define LP_FLAG_CON_SCALE    1
+#define LP_FLAG_CON_SEPAR    2
+
 /*lint -sem(        lps_alloc, 1p) */
 extern void         lps_alloc(const char* name);
 extern void         lps_free(void);
@@ -445,7 +448,8 @@ extern Nzo*         lps_getnzo(const Con* con, const Var* var);
 extern Var*         lps_addvar(const char* name, VarType type,
                        double lower, double upper); 
 /*lint -sem(        lps_addcon, 1p, @p == 1) */
-extern Con*         lps_addcon(const char* name, ConType sense, double rhs);
+extern Con*         lps_addcon(
+   const char* name, ConType sense, double rhs, unsigned int flags);
 /*lint -sem(        lps_addnzo, 1p == 1 && 2p == 1) */
 extern void         lps_addnzo(Con* con, Var* var, double value);
 /*lint -sem(        lps_delnzo, 1p == 1) */
@@ -479,6 +483,7 @@ extern void         lps_makename(
    char* target, int size, const char* name, int no);
 /*lint -sem(        lps_transtable, 1p == 1) */
 extern void         lps_transtable(FILE* fp);
+extern void         lps_scale(void);
 
 /* lpfwrite.c
  */

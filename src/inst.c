@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.11 2002/05/11 07:44:56 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.12 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -49,22 +49,24 @@ void i_nop(CodeNode* self)
 
 void i_once(CodeNode* self)
 {
-   const char* name;
-   Term*       term;
-   ConType     type;
-   double      rhs;
-   Con*        con;
-
+   const char*  name;
+   Term*        term;
+   ConType      type;
+   double       rhs;
+   Con*         con;
+   unsigned int flags;
+   
    Trace("i_once");
    
    assert(code_is_valid(self));
 
-   name = Code_eval_child_name(self, 0);
-   term = Code_eval_child_term(self, 1);
-   type = Code_eval_child_contype(self, 2);
-   rhs  = Code_eval_child_numb(self, 3);
-   con  = lps_addcon(name, type, rhs);
-   
+   name  = Code_eval_child_name(self, 0);
+   term  = Code_eval_child_term(self, 1);
+   type  = Code_eval_child_contype(self, 2);
+   rhs   = Code_eval_child_numb(self, 3);
+   flags = Code_eval_child_bits(self, 4);
+   con   = lps_addcon(name, type, rhs, flags);
+
    term_to_nzo(term, con);
    term_free(term);   
    
@@ -73,19 +75,20 @@ void i_once(CodeNode* self)
 
 void i_forall(CodeNode* self)
 {
-   const char* name;
-   char*       conname;
-   Con*        con;
-   IdxSet*     idxset;
-   Term*       term;
-   ConType     type;
-   double      rhs;
-   Set*        set;
-   Tuple*      pattern;
-   Tuple*      tuple;
-   CodeNode*   lexpr;
-   int         idx   = 0;
-   int         count = 0;
+   const char*  name;
+   char*        conname;
+   Con*         con;
+   IdxSet*      idxset;
+   Term*        term;
+   ConType      type;
+   double       rhs;
+   unsigned int flags;
+   Set*         set;
+   Tuple*       pattern;
+   Tuple*       tuple;
+   CodeNode*    lexpr;
+   int          idx   = 0;
+   int          count = 0;
    
    Trace("i_forall");
    
@@ -94,6 +97,7 @@ void i_forall(CodeNode* self)
    name    = Code_eval_child_name(self, 0);
    idxset  = Code_eval_child_idxset(self, 1);
    type    = Code_eval_child_contype(self, 3);
+   flags   = Code_eval_child_bits(self, 5);
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
@@ -110,8 +114,8 @@ void i_forall(CodeNode* self)
          
          term = Code_eval_child_term(self, 2);
          rhs  = Code_eval_child_numb(self, 4);         
-         con  = lps_addcon(conname, type, rhs);
-   
+         con  = lps_addcon(conname, type, rhs, flags);
+
          term_to_nzo(term, con);
 
          term_free(term);   

@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.6 2001/10/30 14:23:17 thor Exp $"
+#ident "$Id: zimpl.c,v 1.7 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -48,7 +48,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.01, Copyright (C)2001 by Thorsten Koch *\n" \
+"* Release 1.02, Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -179,6 +179,8 @@ int main(int argc, char* const* argv)
 
    prog_execute(prog);
 
+   lps_scale();
+   
    /* Write Output
     */
    if (NULL == (fp_out = fopen(outfile, "w")))

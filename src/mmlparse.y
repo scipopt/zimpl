@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.8 2002/05/11 07:44:56 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.9 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -51,15 +51,17 @@ extern void yyerror(const char* s);
 
 %union
 {
-   double      numb;
-   const char* strg;
-   const char* name;
-   CodeNode*   code;
+   unsigned int bits;
+   double       numb;
+   const char*  strg;
+   const char*  name;
+   CodeNode*    code;
 };
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
+%token RSCALE SEPARATE
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
 %token AND OR NOT
 %token SUM MIN MAX
@@ -74,11 +76,14 @@ extern void yyerror(const char* s);
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
+%token <bits> SCALE
+%token <bits> SEPARATE
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset product factor term entry entry_list
 %type <code> var_type con_type lower upper condition
+%type <bits> con_attr con_attr_list
 
 %right ASGN
 %left  ','
@@ -207,12 +212,24 @@ decl_obj
  * ----------------------------------------------------------------------------
  */
 decl_sub
-   : DECLSUB NAME DO term con_type expr ';' {
-         $$ = code_new_inst(i_once, 4, code_new_name($2), $4, $5, $6);
+   : DECLSUB NAME DO term con_type expr con_attr_list ';' {
+         $$ = code_new_inst(i_once, 5, code_new_name($2),
+            $4, $5, $6, code_new_bits($7));
       }
-   | DECLSUB NAME DO FORALL idxset DO term con_type expr ';' {
-         $$ = code_new_inst(i_forall, 5, code_new_name($2), $5, $7, $8, $9); 
+   | DECLSUB NAME DO FORALL idxset DO term con_type expr con_attr_list ';' {
+         $$ = code_new_inst(i_forall, 6, code_new_name($2),
+            $5, $7, $8, $9, code_new_bits($10)); 
       }
+   ;
+
+con_attr_list
+   : /* empty */                { $$ = 0; }
+   | con_attr_list ',' con_attr { $$ = $1 | $3; }
+   ;
+
+con_attr
+   : SCALE     { $$ = LP_FLAG_CON_SCALE; }
+   | SEPARATE  { $$ = LP_FLAG_CON_SEPAR; }
    ;
 
 con_type

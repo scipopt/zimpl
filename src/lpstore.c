@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.3 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.4 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -450,9 +450,10 @@ Var* lps_addvar(
 }
 
 Con* lps_addcon(
-   const char* name,
-   ConType     type,
-   double      rhs)
+   const char*  name,
+   ConType      type,
+   double       rhs,
+   unsigned int flags)
 {
    Con* c;
    
@@ -468,6 +469,7 @@ Con* lps_addcon(
    c->number    = lp->cons;   
    c->size      = 0;
    c->type      = type;
+   c->flags     = flags;
    c->rhs       = rhs;
    c->first     = NULL;
    c->prev      = NULL;
@@ -790,4 +792,31 @@ void lps_transtable(FILE* fp)
          con->number, MPS_NAME_LEN, temp, con->name);
    }
 }
+
+void lps_scale()
+{
+   Con*   con;
+   Nzo*   nzo;
+   double maximum;
+   double scale;
+   
+   for(con = lp->con_root; con != NULL; con = con->next)
+   {
+      if ((con->flags & LP_FLAG_CON_SCALE) > 0)
+      {         
+         maximum = con->rhs;
+      
+         for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+            if (fabs(nzo->value) > maximum)
+               maximum = fabs(nzo->value);
+
+         scale     = 1.0 / maximum;
+         con->rhs *= scale;
+
+         for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+            nzo->value *= scale;
+      }
+   }
+}
+
 

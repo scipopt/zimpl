@@ -1,4 +1,4 @@
-/* $Id: portab.h,v 1.2 2001/03/09 16:12:36 bzfkocht Exp $ */
+/* $Id: portab.h,v 1.3 2002/05/26 12:44:57 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: portab.h                                                      */
@@ -56,7 +56,7 @@ typedef int            Bool;
 #endif
 
 #define INFINITY  (DBL_MAX / 1e5)
-#define EPS_ZERO  (DBL_EPSILON * 1e4)
+#define EPS_ZERO  (DBL_MIN * 1e5) /* (DBL_EPSILON * 1e4)*/
 
 #ifndef Fsgn
 #define Fsgn(x)   ((((x) > -EPS_ZERO) && ((x) < EPS_ZERO)) ? 0 : (((x) < 0.0) ? -1 : 1))

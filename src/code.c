@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.9 2001/10/30 14:23:16 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.10 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -43,21 +43,22 @@ typedef union code_value CodeValue;
 
 union code_value
 {
-   double      numb;
-   const char* strg;
-   const char* name;
-   Tuple*      tuple;
-   Set*        set;
-   Term*       term;
-   Entry*      entry;
-   IdxSet*     idxset;
-   Bool        bool;
-   int         size;
-   List*       list;
-   VarType     vartype;
-   ConType     contype;
-   RDef*       rdef;
-   RPar*       rpar;
+   double       numb;
+   const char*  strg;
+   const char*  name;
+   Tuple*       tuple;
+   Set*         set;
+   Term*        term;
+   Entry*       entry;
+   IdxSet*      idxset;
+   Bool         bool;
+   int          size;
+   List*        list;
+   VarType      vartype;
+   ConType      contype;
+   RDef*        rdef;
+   RPar*        rpar;
+   unsigned int bits;
 };
 
 #define MAX_CHILDS 6
@@ -219,6 +220,24 @@ CodeNode* code_new_contype(ConType contype)
    return node;
 }
 
+CodeNode* code_new_bits(unsigned int bits)
+{
+   CodeNode* node = calloc(1, sizeof(*node));
+
+   assert(node != NULL);
+
+   node->type       = CODE_BITS;
+   node->eval       = i_nop;
+   node->value.bits = bits;
+   node->stmt       = scan_get_stmt();
+   node->column     = scan_get_column();
+
+   SID_set(node, CODE_SID);
+   assert(code_is_valid(node));
+   
+   return node;
+}
+
 static void code_free_value(const CodeNode* node)
 {
    assert(code_is_valid(node));
@@ -264,6 +283,8 @@ static void code_free_value(const CodeNode* node)
       break;
    case CODE_RPAR :
       rpar_free(node->value.rpar);
+      break;
+   case CODE_BITS :
       break;
    default :
       abort();
@@ -437,6 +458,11 @@ RPar* code_get_rpar(CodeNode* node)
    return rpar_copy(code_check_type(node, CODE_RPAR)->value.rpar);
 }
 
+unsigned int code_get_bits(CodeNode* node)
+{
+   return code_check_type(node, CODE_BITS)->value.bits;
+}
+
 /* ----------------------------------------------------------------------------
  * Value Funktionen
  * ----------------------------------------------------------------------------
@@ -601,6 +627,16 @@ void code_value_rpar(CodeNode* node, const RPar* rpar)
    node->value.rpar = rpar_copy(rpar);
 }
 
+void code_value_bits(CodeNode* node, unsigned int bits)
+{
+   assert(code_is_valid(node));
+
+   code_free_value(node);
+
+   node->type       = CODE_BITS;
+   node->value.bits = bits;
+}
+
 void code_value_void(CodeNode* node)
 {
    assert(code_is_valid(node));
@@ -609,6 +645,4 @@ void code_value_void(CodeNode* node)
 
    node->type = CODE_VOID;
 }
-
-
 

@@ -1,3 +1,11 @@
+ - Added "attributes" to the constraints. At the moment the following 
+   are understood:
+   scale : scales the constraint before writing the LP file.
+      After scaling the absolut larges coefficient will be one.
+   separate : Means "this constraint should be separated". 
+      At the moment, such constraints are written in an "User constraint"
+      section in the LP-File. But CPlex does not recognise this.      
+
  - "sum" is now also valid for expressions without variables.
 
  - Fixed error in LPF Writing Routine, that would write "Inf"

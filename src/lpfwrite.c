@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.4 2002/03/11 11:14:26 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.5 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -45,8 +45,10 @@ void lpf_write(
    const Con* con;
    const Nzo* nzo;
    Bool  first;
+   Bool  separate = FALSE;
    int   cnt;
    char  tmp[MPS_NAME_LEN + 1];
+   int   i;
    
    assert(lp     != NULL);
    assert(fp     != NULL);
@@ -70,31 +72,48 @@ void lpf_write(
          if (++cnt % 6 == 0)
             fprintf(fp, "\n ");
       }
-   }  
-   fprintf(fp, "\nSubject to\n");
+   }
+   /* ---------------------------------------------------------------------- */
 
-   for(con = lp->con_root; con != NULL; con = con->next)
-   {
-      if (con->size == 0)
-         continue;
-      
-      lps_makename(tmp, MPS_NAME_LEN + 1, con->name, con->number);
-      fprintf(fp, " %s: ", tmp);
+   /* First loop run for normal constraints, secound one for
+    * user constraints, if any.
+    */
+   for(i = 0; i < 2; i++)
+   {      
+      fprintf(fp, "\n%s\n", (i == 0) ? "Subject to" : "User Constraints");
 
-      for(nzo = con->first, cnt = 0; nzo != NULL; nzo = nzo->con_next)
+      for(con = lp->con_root; con != NULL; con = con->next)
       {
-         lps_makename(tmp, MPS_NAME_LEN + 1, nzo->var->name, nzo->var->number);
+         if (con->size == 0)
+            continue;
 
-         if (EQ(nzo->value, 1.0))
-            fprintf(fp, " + %s", tmp);
-         else
-            fprintf(fp, " %+.16g %s", nzo->value, tmp);
+         if ((con->flags & LP_FLAG_CON_SEPAR) == LP_FLAG_CON_SEPAR)
+         {
+            separate = TRUE;
+            if (i == 0)
+               continue;
+         }
+         else if (i == 1)
+            continue;
+         
+         lps_makename(tmp, MPS_NAME_LEN + 1, con->name, con->number);
+         fprintf(fp, " %s:\n ", tmp);
 
-         if (++cnt % 6 == 0)
-            fprintf(fp, "\n ");         
-      }
-      switch(con->type)
-      {
+         for(nzo = con->first, cnt = 0; nzo != NULL; nzo = nzo->con_next)
+         {
+            lps_makename(tmp, MPS_NAME_LEN + 1,
+               nzo->var->name, nzo->var->number);
+
+            if (EQ(nzo->value, 1.0))
+               fprintf(fp, " + %s", tmp);
+            else
+               fprintf(fp, " %+.16g %s", nzo->value, tmp);
+            
+            /* if (++cnt % 6 == 0) */
+               fprintf(fp, "\n ");         
+         }
+         switch(con->type)
+         {
          case CON_LE :
             fprintf(fp, " <= ");
             break;
@@ -106,9 +125,15 @@ void lpf_write(
             break;
          default :
             abort();
+         }
+         fprintf(fp, "%.16g\n", con->rhs);
       }
-      fprintf(fp, "%.16g\n", con->rhs);
+      if (!separate)
+         break;
    }
+
+   /* ---------------------------------------------------------------------- */
+
    fprintf(fp, "Bounds\n");
 
    for(var = lp->var_root; var != NULL; var = var->next)

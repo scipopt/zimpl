@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.2 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.3 2002/05/26 12:44:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -57,14 +57,15 @@ struct variable
 
 struct constraint
 {
-   char*   name;
-   int     number;
-   ConType type;
-   int     size;
-   double  rhs;
-   Con*    prev;
-   Con*    next;
-   Nzo*    first;
+   char*        name;
+   int          number;
+   ConType      type;
+   unsigned int flags;
+   int          size;
+   double       rhs;
+   Con*         prev;
+   Con*         next;
+   Nzo*         first;
 };
 
 struct lpstorage
@@ -84,6 +85,6 @@ struct lpstorage
    RBT*     con_tree;
 }; 
 
-#define MPS_NAME_LEN 8
+#define MPS_NAME_LEN  8
 
 #endif /* _LPSTORE_H_ */
