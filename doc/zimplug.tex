@@ -1,0 +1,1135 @@
+% $Id: zimplug.tex,v 1.1 2003/10/01 08:51:12 bzfkocht Exp $
+%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+%*                                                                           *
+%*   File....: zimplug.tex                                                   *
+%*   Name....: Zimpl User Guide                                              *
+%*   Author..: Thorsten Koch                                                 *
+%*   Copyright (C) 2003 by Author, All rights reserved                       *
+%*                                                                           *
+%* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+%
+\section{Introduction}
+A linear program (\lp) might look like this:
+$$
+\begin{array}{rll}
+\min& 2 x + 3 y\\
+\mbox{subject to}& x + y& \leq 6\\
+&x,y&\ge 0\\
+\end{array}
+$$
+The usual format to store the description of such a problem is \mps
+invented by \ibm \cite{IBM97} long ago. 
+Nearly all available \lp and \mip solvers can read this format.
+While \mps is a nice format to punch into a punch card and at least a
+reasonable format to read for a computer it is quite unreadable
+for humans. 
+
+{
+\small
+\begin{verbatim}
+   NAME        ex1.mps
+   ROWS
+    N  OBJECTIV          
+    L  c1                
+   COLUMNS
+       x         OBJECTIV             2
+       x         c1                   1
+       y         OBJECTIV             3
+       y         c1                   1
+   RHS
+       RHS       c1                   6
+   ENDATA
+\end{verbatim}
+}
+Another possibility is the \lpf format \cite{ILO02}, which is more
+readable\footnote{
+The \lpf format has also some idiosyncratic restrictions. For example
+variables should not be named \code{e12} or the like. And it is not
+possible to specify ranged constraints.}
+but is only supported by a few solvers. 
+{
+\small
+\begin{verbatim}
+   Minimize
+    cost:  +2 x +3 y
+   Subject to
+    c1:  +1 x +1 y <= 6
+   End
+\end{verbatim}
+}
+But since each coefficient of the matrix $A$ must be stated
+explicitly it is also not a desirable choice to develop a mathematical
+model.
+
+\medskip
+Now, with \zimpl it is possible to write this:
+{\small
+\begin{verbatim}
+   var x;
+   var y;
+   minimize cost: 2 * x + 3 * y;
+   subto c1: x + y <= 6;
+\end{verbatim}
+}
+and have it automatically translated into \mps or \lpf format.
+While this looks not much different from what is in the \lpf format,
+the difference can be seen, if we use indexed variables.
+Here is an example. This is the \lp 
+$$
+\begin{array}{rl}
+\min& 2 x_1 + 3 x_2 + 1.5 x_3\\
+\mbox{subject to}&\sum^3_{i=1} x_i \leq 6\\
+&x_i\ge 0\\
+\end{array}
+$$
+And this is how to tell it \zimpl
+{
+\small
+\begin{verbatim}
+set I      := { 1 to 3 };
+param c[I] := <1> 2, <2> 3, <3> 1.5;
+var   x[I] >= 0;
+minimize value: sum <i> in I : c[i] * x[i];
+subto     cons: sum <i> in I : x[i] <= 6;
+\end{verbatim}
+}
+
+% -----------------------------------------------------------------------------
+% --- Invocation
+% -----------------------------------------------------------------------------
+\section{Invocation}
+
+To run \zimpl on a model given in the file \code{ex1.zpl} type the command
+\begin{verbatim}
+   zimpl ex1.zpl
+\end{verbatim}
+
+The general case is \code{zimpl} \code{[options]} $<$\code{input-files}$>$.
+
+\medskip
+It is possible to give more than one input file. They are read one
+after the other as if they were all one big file.
+If any error occurs while processing, \zimpl will print out an 
+error message and abort. In case everything goes well, the results 
+will be written into two or three files, depending on the options specified.
+
+The first file is the problem generated from the model in either 
+\lpf or \mps format with extension \code{.lp} or \code{.mps}.
+The next one is the ``table'' file, which has the extension \code{.tbl}.
+This file lists all variable and constraint names used in the model 
+and there corresponding name in the problem file. 
+
+The reason for this name translation is that the \mps format
+can only handle names up to eight characters long. Also the the \lp format
+restricts the length of names to 16 characters.
+
+The third file is and optional \cplex branching order file.
+
+\medskip
+The following options are possible (only the first two are normally
+of interest):
+
+\medskip
+\begin{tabular}{lp{115mm}}
+%\hline
+-t {\em format} & Selects the output format. Can be either \code{lp}
+                  which is default, or \code{mps} or \code{hum} which
+                  is only human readable.\\
+-o {\em name}   & Sets the base-name for the output files.\\ 
+                & Defaults to the name of the first input file striped 
+                  of the path and
+                  extension.\\ 
+-F {\em filter} & The output is piped through a filter. A \%s in the
+                  string is replaced by the output filename. For example 
+                  \code{-p "gzip -c >\%s.gz"} would compress all the 
+                  output files.\\
+-n {\em cform}  & Select the format for the generation of constraint
+                  names. Can be either {\em cm} which will number them 
+                  $1\ldots n$ with a `c' in front. {\em cn} will use 
+                  the name supplied in the \code{subto} statement and 
+                  number them $1\ldots n$ within the statement. 
+                  {\em cf} will use the name given with the \code{subto},
+                  then a $1\ldots n$ number like in \emph{cm} and then 
+                  append all the local variables from the forall statements.\\
+-v {\em 1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
+                  2 is verbose, 3 is chatter, and 5 is debug.\\
+%\hline
+-b & Enables bison debugging output.\\
+-f & Enables flex debugging output.\\
+-h & Prints a help message.\\
+-p & Does some presolve analysis to fix variables.\\
+-r & Writes an \cplex \code{ord} branching order file.\\
+%\hline
+\end{tabular}
+
+\medskip
+A typical invocation is for example:
+\begin{verbatim}
+   zimpl -o hardone -t mps data.zpl model.zpl
+\end{verbatim}
+This reads the files \code{data.zpl} and \code{model.zpl} and
+produces \code{hardone.mps} and \code{hardone.tbl}.
+
+\medskip
+{\bfseries If \mps-output is specified for a maximization problem,
+the objective function will be inverted.}
+% -----------------------------------------------------------------------------
+% --- Format
+% -----------------------------------------------------------------------------
+\section{Format}
+
+Each \zpl-file consists of six types of statements: 
+\begin{itemize}
+\item Sets
+\item Parameters
+\item Variables
+\item Objective
+\item Constraints
+\item Function definitions
+\end{itemize}
+
+Each statement ends with a semicolon \code{;}. 
+Everything from a number-sign \code{\#} to 
+the end of the line is treated as a
+comment and is ignored.
+
+If a line starts with the word \code{include} followed by a filename in double
+quotation marks, this file is read instead of this line.
+
+\subsection{Expressions}
+\zimpl works on the lowest level with two types of data: Strings and
+numbers. 
+
+Wherever a number or string is required, it is also possible to give a
+parameter of the right value type. Usually expressions are
+allowed instead of just a number or a string.
+The precedence of operators should be the usual one, but
+parenthesis can allways be used to specify the order of evaluation explicitly.
+If in doubt use parenthesis to be save.
+
+\subsubsection{Numeric expressions}
+A number in \zimpl can be given in the usual format, \eg as 2, -6.5 or 5.234e-12. 
+Numeric expressions consist of numbers, numeric valued parameters, and
+any of the following operators and functions:
+
+\begin{tabular}{lll}
+\code{a${}^\wedge$b}, \code{a**b}&$a$ to the power of $b$   & $a^b$\\
+\code{a+b}                       &addition                  & $a+b$\\
+\code{a-b}                       &subtraction               & $a-b$\\
+\code{a*b}                       &multiplication            & $a\cdot b$\\
+\code{a/b}                       &division                  & $a/b$\\
+\code{a mod b}                   &modulo                    & $a\mod b$\\
+\code{a div b}                   &integer divison           & \\
+\code{abs(a)}                    &absolute value            & $|a|$\\
+\code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
+\code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
+\code{a!}                        &factorial                 & $a!$\\
+\code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
+\code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
+\code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
+\code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\min (a,b,c,\ldots,n)$\\
+\code{card(S)}                   &cardinality of a set      &$|S|$\\
+\code{if a then b else c}        &conditional               &\\
+\end{tabular}
+
+\medskip
+%With $\min$ and $\max$ it is possible to find the minimum/maximum
+%member of an one dimensional set of numeric values.
+%\code{card} gives the cardinality of a set.
+
+The following functions are only computed with normal double precision
+floating point arithmetic. So be careful:
+
+\medskip
+\begin{tabular}{lll}
+\code{sqrt(a)}                   &square root               & $\sqrt a$\\
+\code{log(a)}                    &logarithm to base 10      & $\log_{10}a$\\
+\code{ln(a)}                     &natural logarithm         & $\ln a$\\
+\code{exp(a)}                    &exponential function      & $e^a$\\
+%\code{random(a,b)}               &random number in $\left[a,b\right]$&\\
+\end{tabular}
+
+
+\subsubsection{String expressions}
+A string is delimited by double quotation marks \code{"},
+\eg, \code{"Hallo"}. 
+
+The following is either a numeric or a string expression, depending if
+\emph{expression} is a string or a numeric expression.
+
+\code{if} \emph{boolean-expression} \code{then}
+\emph{expression} \code{else} \emph{expression} \code{end}.
+
+At this time no further functions or operators
+for strings are implemented.
+
+\subsubsection{Boolean expressions}
+These evaluate either to \emph{true} or \emph{false}. For numbers the
+relational operators $<$, $<=$, $==$, $!=$, $>=$, and $>$ are
+defined. For strings only $==$ and $!=$ are available. 
+Combinations of boolean expressions with \code{and},
+or \code{or}, and negation with \code{not} are possible.
+
+The expression \emph{tuple} \code{in} \emph{set-expression} can be used to test set
+membership of a tuple. 
+
+\subsection{Sets}
+Sets consist of tuples. The tuples in a sets are unordered, \ie, each tuple can only
+be once in a set. Sets are delimited by braces, \code{\{} and \code{\}},
+resp.
+Tuples consist of components. The components are ordered. 
+Each tuple of a specific set has the same number of components. 
+The components are either numbers or strings. The type of the $n$-th
+component of each tuple of a set must be the same. A tuple starts and ends with
+$<$ and $>$, resp., \eg \code{$<$1,2,"x"$>$}. The components are separated by commas.
+If tuples are one-dimensional, it is possible 
+to omit the tuple delimiters in a list of elements, but then 
+they must be omitted from all tuples of the set, \eg \code{\{1,2,3}\}.
+
+Sets can be defined with the set statement. This consists of
+the keyword \code{set}, the name of the set, an assignment operator
+(\code{:=}) and a valid set expression.
+
+Sets are referenced by use of an \emph{template} tuple, consisting
+of placeholders that are replaced by the value of the components of
+the respective tuple. For example a set $S$ consisting of two dimensional
+tuples could be referenced by \code{<a,b> in S}. If any of the
+placeholders are actual values, only those tuples will be extacted
+that match these values. For example \code{<1,b> in S} will only get
+those tuples whose first component is \code{1}. Please not that if
+one of the placeholders is the name of an already defined parameter,
+set or variable, it will be subtituted which will either result in an
+error or an actual value.
+
+\paragraph{Examples}
+{\small 
+\begin{verbatim}
+set A := { 1, 2, 3 };
+set B := { "hi", "ha", "ho" };
+set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
+\end{verbatim}
+}
+
+For set expressions these functions and
+operators are defined:
+
+\medskip
+\begin{tabular}{llp{7cm}}
+%\hline
+\code{A*B},&\\
+\code{A cross B}   &Cross product & $\{(x,y)| x\in A\wedge y\in B\}$\\
+\code{A+B},&\\
+\code{A union B}   &Union & $\{x | x\in A\vee x\in B\}$\\
+\code{A inter B}   &Intersection & $\{x |x\in A\wedge x\in B\}$\\
+\code{A$\setminus$B, A-B},&\\
+\code{A without B} &Difference & $\{ x |x\in A\wedge x\not\in B\}$\\
+\code{A symdiff B} &Symmetric difference & 
+   $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
+\code{\{n\,{..}\,m\}},&\\
+\code{\{n to m {\em by s}\}}& Generate, & 
+   $\{ x | x=n + is \leq m, i\in\N_0\}$\\
+   &(default $s = 1$)&\\ 
+\code{proj(A, t)}& Projection & 
+   The new set will consist of $n$-tuples, with\\
+   &$t=(e_1,\ldots,e_n)$&
+   the $i$-th component beeing the $e_i$-th component of $A$.\\
+\code{if a then}\\
+\code{\ b else c}        &conditional               &\\
+%\hline
+\end{tabular}
+
+\medskip
+An example for the use of the \code{if} \emph{boolean-expression} \code{then}
+\emph{set expression} \code{else} \emph{set expression} \code{end} can
+be found below with the examples for indexed sets.
+
+\paragraph{Examples}
+{\small 
+\begin{verbatim}
+set D := A cross B;
+set E := { 6 to 9 } union A without { <2>, <3> }; 
+set F:= { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+set G := proj(F, <3,1>) 
+# will give: <"A",1>, <"A",2"> ... <"B",9>
+\end{verbatim}
+}
+
+\subsubsection{Conditional sets}
+It is possible to restrict a set to tuples that 
+satisfy a boolean expression. The expression given by the \code{with}
+clause is evaluated for each tuple in the set and only tuples for
+which the expression evaluated to \emph{true} are included in the new set.
+
+\paragraph{Examples}
+{\small 
+\begin{verbatim}
+set F := { <i,j> in Q with i > j and i < 5 };
+set A := { "a", "b", "c" };
+set B := { 1, 2, 3 };
+set V := { <a,2> in A*B with a == "a" or a == "b" };
+# will give: <"a",2>, <"b",2>
+\end{verbatim}
+}
+
+
+\subsubsection{Indexed sets}
+It is possible to index one set with another set.
+Here is a list of functions that use this:
+
+\medskip
+\begin{tabular}{llp{5cm}}
+\code{powerset(A)}& Generates all subsets of $A$&$\{x | x\subseteq A\}$\\
+\code{subset(A,n)}& Generates all subsets of $A$\\
+                    & with $n$ elements&$\{x | x\subseteq A\wedge |x|=n\}$\\
+\code{indexset(A)}&The index set of $A$&$\{1\ldots |A|\}$\\
+\end{tabular}
+
+\medskip
+Indexed sets are accessed by adding the index of the set in brackets
+\code{[} and \code{]}, like \code{S[7]}. 
+There are three possibilites how to assign to an indexed set:
+\begin{itemize}
+\item The assignment expression is a list of comma separated pairs, 
+      consisting of a tuple from the index set and a set expression to assign.
+\item A set reference expression is given as index, then
+      the assignment expression is evaluated for each index tuple.
+\item By use of a function that returns a indexed set.
+\end{itemize}
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set I           := { 1..3 };
+set A[I]        := <1> { "a", "b" }, 
+                   <2> { "c", "e" }, <3> { "f" };
+set B[<i> in I] := { 3 * i };
+set P[]         := powerset(N);
+set J           := indexset(P);
+set S[]         := subset(I, 2);
+set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
+\end{verbatim}
+}
+
+\subsection{Parameters}
+Parameters can be declared with or without an indexing
+set. Without indexing the parameter is just one value, which is either
+a number or a string. For indexed parameters there is one
+value for each member of the set. It is possible to declare a
+\emph{default} value.
+
+Parameters are declared in the following way: 
+The keyword \code{param} is followed by the name of the parameter
+optionally followed by the indexing set. 
+Then after the assignment sign comes a list of pairs. The first element of each
+pair is a tuple from the index set, the second element is the value of
+the parameter for this index.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+param q := 5;
+param u[A] := <1> 17, <2> 29, <3> 12 default 99;
+param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
+param x[<i> in I with i mod 2 == 0] := 3 * i;
+\end{verbatim}
+}
+
+\medskip
+In the example, no value is given for index $<$787,12.6,"oh"$>$ of
+parameter \code{w}, that is assignments need not to be complete. This
+is correct as long as it is never referenced.
+
+\subsubsection{Parameter tables}
+It is possible to initialise multi-dimensional indexed parameters from
+tables. This is especially usefull for two-dimensional parameters.
+The data is put in a table structure with \code{$|$} signs on each
+margin. Then a head line with column indices has to be added, and one index
+for each row of the table is needed. The row index can also be
+multi-dimensional. The complete index for the entry is build by
+appending the colum index to the row index.
+The value entries are separated by commas. Any valid expression is
+allowed here.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set I := { 1 .. 10 };
+set J := { "a", "b", "c", "x", "y", "z" };
+
+param h[I*J] :=   | "a", "c", "x", "z"   |
+                |1|  12,  17, 99,     23 |
+                |3|   4,   3,-17, 66*5.5 |
+                |5| 2/3, -.4,  3, abs(-4)|
+                |9|   1,   2,  0,      3 | default -99;
+
+param g[I*I*I] :=     | 1, 2, 3 |
+                  |1,1| 0, 1, 0 |
+                  |1,2| 1, 1, 1 |
+                  |1,3| 0, 0, 1 | 
+                  |2,1| 1, 0, 1 |;
+\end{verbatim}
+}
+
+\subsection{Variables}
+Like parameters, variables can be indexed. 
+A variable has to be one out of three possible types: 
+Continuous (called {\em real}), binary or integer. The default is real. 
+Variables may have lower and upper bounds. Defaults are
+zero as lower and infinity as upper bound. Binary variables are
+always bounded between zero and one.
+It is possible to compute the value of the lower or upper bounds
+depending on the index for the variable (see last declaration in the
+example). Bounds can also be set to \code{infinity} and \code{-infinity}.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+var x1;
+var x2 binary;
+var y[A] real >= 2 <= 18;
+var z[<a,b,c> in C] integer 
+    >= a * 10 
+    <= if b <= 3 then p[b] else 10 end; 
+\end{verbatim}
+}
+
+\fbox{Remember: if nothing is specified a lower bounds of zero is assumed.}
+
+\subsection{Objective}
+There must be at most one objective statement in a model. The objective
+can be either \code{minimize} or \code{maximize}. Following the
+keyword is a name, a colon (\code{:}) and then a term consisting 
+of variables.
+
+\subsubsection{Example}
+{\small 
+\begin{verbatim}
+minimize cost: 12 * x1 -4.4 * x2 
+   + sum <a> in A : u[a] * y[a]
+   + sum <a,b,c> in C with a in E and b > 3 : -a/2 * z[a,b,c];
+\end{verbatim}
+}
+
+\subsection{Constraints}
+The general format for a constraint is 
+\code{subto name: term sense term}.
+Name can be any name starting with a letter. The term is defined
+as in the objective. Sense is one of
+\code{<=}, \code{>=} and \code{==}. 
+Many constraints can be generated with one statement by the use of the
+\code{forall} instruction, see below.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+subto time : 3 * x1 + 4 * x2 <= 7;
+subto space: sum <a> in A : 2 * u[a] * y[a] >= 50;
+subto weird: forall <a> in A : 
+   sum <a,b,c> in C : z[a,b,c] == 55;
+subto c21: 6 * (sum <i> in A : x[i] 
+   + sum <j> in B : y[j]) >= 2;
+subto c40: x[1] == a[1] + 
+   2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
+\end{verbatim}
+}
+
+\subsection{Details on \code{sum} and \code{forall}}
+The general forms are
+
+\qquad\code{forall} \emph{index} \code{do} \emph{term}
+and 
+\code{sum} \emph{index} \code{do} \emph{term}.
+ 
+It is possible to nest several forall instructions.
+%It should be noted, that a \code{sum}-expression is a \emph{term}
+%itself, so it is possible to nest or concatenate them.
+The general form of \emph{index} is 
+
+\qquad\emph{tuple} \code{in} \emph{set} \code{with} \emph{boolean-expression}.
+
+It is allowed to write a colon (\code{:}) instead of \code{do} and a
+vertical bar (\code{|}) instead of \code{with}.
+The number of components in the \emph{tuple} and in the components of the
+mebers of the \emph{set} must match. The \code{with} part of an \emph{index} is
+optional. The \emph{set} can be any expression giving a set.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+forall <i,j> in X cross { 1 to 5 } without { <2,3> } 
+   with i > 5 and j < 2 do 
+      sum <i,j,k> in X cross { 1 to 3 } cross Z do 
+         p[i] * q[j] * w[j,k] >= if i == 2 then 17 else 53;
+\end{verbatim}
+}
+
+Note that in the example \emph{i} and \emph{j} are set by the \code{forall}
+instruction. So they are fixed for all invocations of \code{sum}.
+
+\subsection{Details on \code{if} in constraints}
+It is possible to put two variants of a constraint into an
+\code{if}-statement. The same is true for \emph{terms}.
+It is also possible to have a \code{forall} statement inside
+an \code{if}.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+subto c1: forall <i> in I do
+  if (i mod 2 == 0) then  3 * x[i] >= 4
+                    else -2 * y[i] <= 3 end;
+subto c2: sum <i> in I :
+     if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
+\end{verbatim}
+}
+
+\subsection{Initialising sets and parameters from a file}
+It is possible to load the values for a set or a parameter from a
+file. The syntax is
+
+\smallskip
+\code{read} \emph{filename} \code{as} \emph{template} 
+[\code{skip} \emph{n}] [\code{use} \emph{n}] 
+[\code{fs} \emph{s}] [\code{comment} \emph{s}]
+
+\smallskip
+\emph{filename} is the name of the file to read.
+
+\emph{template} is a string with a template for the tuples to
+generate. Each input line from the file is split in fields. The
+splitting is done according to the following rules:
+Whenever a space, tab, comma, semicolon or double colon is encountered
+a new field is started. Text that is enclosed in double quotes is not
+split, the quotes are allways removed. When a field is split all space
+and tab charaters around the splitting are removed. If the split is
+due to a comma, semicolon or double colon, each occurence of these
+characters starts a new field. 
+
+\subsubsection{Examples}
+{\small 
+All these lines have three fields:
+\begin{verbatim}
+Hallo;12;3    
+Moin   7  2
+"Hallo, Peter"; "Nice to meet you" 77
+,,2
+\end{verbatim}
+}
+
+For each component of the tuple the number of the field
+to use for the value is given, followed by either a \code{n} if the
+field should be interpreted as a number or \code{s} for a string. 
+Have a look at the example, it is quite obvious how it works.
+After the template some optional modifiers can be given. The order
+does not matter. 
+
+\code{skip} \emph{n} instructs to skip the first
+\emph{n} lines of the file. 
+
+\code{use} \emph{n} limits the number of
+lines to use to \emph{n}. 
+
+\code{comment} \emph{s} sets a list of characters that start
+comments in the file. Each line is ended when any of the comment
+characters is found.
+
+When a file is read, empty lines are skiped and not counted for the
+\code{use} clause. They are counted for the \code{skip} clause.
+ 
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set P := { read "nodes.txt" as <1s> };
+
+nodes.txt:
+   Hamburg   ->   <"Hamburg">
+   München   ->   <"München">
+   Berlin    ->   <"Berlin">
+
+set Q := { read "blabla.txt" as "<1s,5n,2n>" skip 1 use 2 };
+
+blabla.txt:
+   Name;Nr;X;Y;No     ->   skip   
+   Hamburg;12;x;y;7   ->   <"Hamburg",7,12>
+   Bremen;4;x;y;5     ->   <"Bremen,5,4>
+   Berlin;2;x;y;8     ->   skip
+   
+param cost[P] := read "cost.txt" as "<1s> 4n" comment "#";
+
+cost.txt:
+   # Name Price   ->   skip
+   Hamburg 1000   ->   <"Hamburg"> 1000
+   München 1200   ->   <"München"> 1200
+   Berlin  1400   ->   <"Berlin">  1400
+
+param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s";
+
+haha.txt:
+   1:2:ab:con1    ->   <"ab",1,2> "con1"
+   2:3:bc:con2    ->   <"bc",2,3> "con1"
+   4:5:de:con3    ->   <"de",4,5> "con1"
+\end{verbatim}
+}  
+
+\subsection{Function Definitions}
+
+It is possible to define function within \zimpl. The value a
+function returns has to be either a number, a string or a set.
+The arguments to a function can only be numbers or strings, but within
+the function definition it is possible to access all otherwise
+declared sets, parameters and variables.
+
+Depending on the return value, the definition of a function has to start with 
+\code{defnumb}, \code{defstrg} or \code{defset}. Then follows the name
+of the function and a list of argument names enclosed in parenthesis.
+
+After this comes an assignment operator (\code{:=}) and a valid
+expression or set expression.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+defnumb dist(a,b)  := a*a + b*b;
+defstrg huehott(a) := if a < 0 then "hue" else "hott" end;
+defset  bigger(i)  := { <j> in K with j > i };
+\end{verbatim}
+}
+
+\newpage
+\section{Examples}
+\subsection{Diet problem}
+{\small
+\begin{verbatim}
+#
+# From V. Chvatal: Linear Programming
+# Chapter 1, Page 3ff.
+#
+# A diet problem
+#
+set Food := {"Oatmeal","Chicken","Eggs","Milk","Pie","Pork"};
+set Attr := {"Servings","Energy","Protein","Calcium","Price"};
+
+param min_energy  := 2000; # kcal
+param min_protein := 55;   # g
+param min_calcium := 800;  # mg
+
+param nutrition[Food * Attr] := 
+          |"Servings","Energy","Protein","Calcium","Price"|
+|"Oatmeal"|        4 ,    110 ,       4 ,       2 ,     3 |
+|"Chicken"|        3 ,    205 ,      32 ,      12 ,    24 |
+|"Eggs"   |        2 ,    160 ,      13 ,      54 ,    13 |
+|"Milk"   |        8 ,    160 ,       8 ,     284 ,     9 |
+|"Pie"    |        2 ,    420 ,       4 ,      22 ,    20 |
+|"Pork"   |        2 ,    260 ,      14 ,      80 ,    19 |;
+#                       (kcal)       (g)      (mg) (cents)       
+
+var x[<f> in Food] integer >= 0 <= nutrition[f, "Servings"];
+
+minimize cost: sum <f> in Food : nutrition[f, "Price"]*x[f];
+
+subto energy : 
+  sum <f> in Food: nutrition[f,"Energy" ]*x[f] >= min_energy;
+subto protein: 
+  sum <f> in Food: nutrition[f,"Protein"]*x[f] >= min_protein;
+subto calcium: 
+  sum <f> in Food: nutrition[f,"Calcium"]*x[f] >= min_calcium;
+\end{verbatim}
+}
+\newpage
+\subsection{TSP}
+{\small
+\begin{verbatim}
+#
+# Generic formulation of the Travelling Salesmen Problem
+#
+set V   := { read "tsp.dat" as "<1n>" comment "#" };
+set E   := { <i,j> in V * V with i < j };
+set P[] := powerset(V);
+set K   := indexset(P);
+
+param px[V] := read "tsp.dat" as "<1n> 2n" comment "#";
+param py[V] := read "tsp.dat" as "<1n> 3n" comment "#";
+
+defnumb dist(a,b) := sqrt((px[a]-px[b])^2 + (py[a]-py[b])^2);
+
+var x[E] binary;
+
+minimize cost: sum <i,j> in E : dist(i,j) * x[i, j];
+
+subto two_connected:
+   forall <v> in V do
+      (sum <v,j> in E : x[v,j]) 
+    + (sum <i,v> in E : x[i,v]) == 2;
+
+subto no_subtour:
+   forall <k> in K with 
+      card(P[k]) > 2 and card(P[k]) < card(V) - 2 do
+      sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] 
+      <= card(P[k]) - 1;
+\end{verbatim}
+}
+\subsubsection{Data for TSP}
+{\small
+\begin{verbatim}
+# Data for TSP 
+# x y
+1 1 1
+2 3 1
+3 2 2
+4 1 3
+5 3 3
+6 2 4
+\end{verbatim}
+}
+\newpage
+\subsection{Capacitated Facility Location Problem}
+Generic formulation for the Capacitated Facility Location Problem
+Of course this is also kind of a bin packing problem with packing costs
+and variable sized bins, or a cutting stock problem with cutting costs.
+
+\begin{eqnarray}
+\sum_{p\in P} x_{ps}& =& 1\quad\forall s\in S\\
+x_{ps}&\leq&z_{s}\quad\forall s\in S, p\in P\\
+\sum_{s\in S} \delta_s x_{ps}&\leq&\kappa_p\quad\forall p\in P
+\end{eqnarray}
+
+{\small
+\begin{verbatim}
+set PLANTS := { "A", "B", "C", "D" };
+set STORES := { 1 .. 9 };
+set PS     := PLANTS * STORES;
+
+# How much does it cost to build a plant and what capacity will 
+# it then have?
+param building[PLANTS]:= <"A">500,<"B">600,<"C">700,<"D">800;
+param capacity[PLANTS]:= <"A"> 40,<"B"> 55,<"C"> 73,<"D"> 90;
+
+# Here is the demand of each store
+param demand  [STORES]:= <1> 10,<2> 14,<3> 17,<4> 8,<5> 9,
+                         <6> 12,<7> 11,<8> 15,<9> 16;
+
+# Transportation cost from each plant to each store
+param transport[PS] := 
+      |  1,  2,  3,  4,  5,  6,  7,  8,  9 |
+  |"A"| 55,  4, 17, 33, 47, 98, 19, 10,  6 |
+  |"B"| 42, 12,  4, 23, 16, 78, 47,  9, 82 | 
+  |"C"| 17, 34, 65, 25,  7, 67, 45, 13, 54 |
+  |"D"| 60,  8, 79, 24, 28, 19, 62, 18, 45 |;
+
+var x[PS]     binary;  # Is plant p suppling store s ?
+var z[PLANTS] binary;  # Is plant p build ?
+
+# We want it cheap
+minimize cost: sum <p> in PLANTS : building[p] * z[p]
+             + sum <p,s> in PS : transport[p,s] * x[p,s];
+
+# Each store is supplied by exactly one plant
+subto assign: 
+  forall <s> in STORES : sum <p> in PLANTS : x[p,s] == 1;
+   
+# To be able to supply a store, a plant must be build
+subto build: forall <p,s> in PS : x[p,s] <= z[p];
+
+# The plant must be able to meet the demands from all stores
+# that are connected to it
+subto limit: forall <p> in PLANTS :
+   sum <s> in S : demand[s] * x[p,s] <= capacity[p];
+\end{verbatim}
+
+\section{Error messages}
+Here is a list of the incomprehensible error messages \zimpl
+can produce:
+
+\begin{description}
+%
+% zimpl.c
+%
+\item[101 Bad filename]\ \\
+   The name given with the \code{-o} option is either missing, 
+   a directory name, or starts with a dot.
+\item[102 File write error]\ \\
+   Some error occured when writing to an output file. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+\item[103 Output format not supported, using LP format]\ \\
+   You tried to select another format then \code{lp}, \code{mps}, or \code{hum}.
+\item[104 File open failed]\ \\
+   Some error occured when trying to open a file for writing. A description of 
+   the error follows on the next line. For the meaning 
+   consult your OS documentation.
+%
+% inst.c
+%
+\item[105 Dublicate constraint name ``xxx'']\ \\
+   Two \code{subto} statements have the same name.
+\item[106 Empty LHS, constraint trivially violated]\ \\
+   One side of your constraint is empty and the other not equal to
+   zero. This mostly happens if a set to sum up is empty.
+\item[107 Range must be $l\leq x\leq u$, or $u \geq x\geq l$]\ \\
+   If you specify a range you must have the same comparison operators
+   on both sides.
+\item[108 Empty Term with nonempty LHS/RHS, constraint trivially
+   violated]\ \\
+   The middle of your constraint is empty and either the left- or
+   right-hand side of the range is not zero.
+   This mostly happens if a set to sum up is empty.
+\item[109 LHS/RHS contradiction, constraint trivially violated]\ \\
+   The lower side of your range is bigger than the upper side, e.g.
+   $15\leq x\leq 2$. 
+\item[110 Division by zero]\ \\
+   You tried to divide by zero. This is not a good idea.
+\item[111 Modulo by zero]\ \\
+   You tried to compute a number modulo zero. This does not work well.
+\item[112 Exponent value \code{xxx} is too big or not an integer]\ \\
+   It is only allowed to raise a number to the power of integers. Also trying to
+   raise a number to the power of more than two billion is 
+   prohibited.\footnote{The behaviour of this operation could 
+   easily be imlemented as \code{for(;;)} or more elaborate as 
+   \code{void f()\{f();\}}.}
+\item[113 Factorial value \code{xxx} is too big or not an integer]\ \\
+   You can only compute the factorial of integers.
+   Also computing the factorial of a number bigger then two billion
+   is generaly a bad idea. See also Error 115.
+\item[114 Negative factorial value]\ \\
+   To compute the factorial of a number it has to be positive.
+   In case you need it from a negative number, remember that for all 
+   even numbers the outcome will be positive and for all odd number negative.
+\item[115 Timeout!]\ \\
+   You tried to compute a number bigger than $1000!$. 
+   See also the footnote to Error 112.
+\item[116 Illegal value type in min: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the minimum of some strings.
+\item[117 Illegal value type in max: \code{xxx} only numbers are
+   possible]\ \\
+   You tried to build the maximum of some strings.
+\item[118 Comparison of different types]\ \\
+   You tried to compare apples with oranges, i.e, numbers with
+   strings. Note that the use of an undefined parmeter could also
+   lead to this message.
+\item[119 Union of incompatible sets]\ \\
+   To unite two sets, both must have the same dimension tuples,\ie
+   the tuples must have the same number of components.
+\item[120 Minus of incompatible sets]\ \\
+   To subtract two sets, both must have the same dimension tuples.
+\item[121 Intersection of incompatible sets]\ \\
+   To intersect two sets, both must have the same dimension tuples.
+\item[122 Symetric Difference of incompatible sets]\ \\
+   Two build the symetric difference of two sets, 
+   both must have the same dimension tuples.
+\item[123 ``from'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``from'' number must be an integer with an
+   absolute value of less than two billion.
+\item[124 ``upto'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``upto'' number must be an integer with an
+   absolute value of less than two billion.
+\item[125 ``step'' value \code{xxx} in range too big or not an
+   integer]\ \\
+   To generate a set, the ``step'' number must be an integer with an
+   absolute value of less than two billion.
+\item[126 Zero ``step'' value in range]\ \\
+   The given ``step'' value for the generation of a set is
+   zero. So the ``upto'' value can never be reached. 
+\item[127 Illegal value type in tuple: \code{xxx} only numbers are
+   possible]\ \\
+   The selection typle in a call to the \code{proj} function can
+   only contain numbers.
+\item[128 Index value \code{xxx} in proj too big or not an integer]\ \\
+   The value given in a selection tuple of a \code{proj} function is
+   not an integer or bigger than two billion.
+\item[129 Illegal index \code{xxx}, set has only dimension
+   \code{yyy}]\ \\
+   The index value given in a selection tuple is bigger than the
+   dimension of the tuples in the set.
+\item[130 Duplicate index \code{xxx} for initialisation]\ \\
+   In the initialisation of a indexed set, two initialisation elements
+   have the same index. 
+   E.g, \code{set A[] := $<$1$>$ \{ 1 \}, $<$1$>$ \{ 2 \};}
+\item[131 Illegal element \code{xxx} for symbol]\ \\
+   The index tuple used in the initialisation list of a index set, is
+   not member of the index set of the set.
+   E.g, \code{set A[\{ 1 to 5 \}] := $<$1$>$ \{ 1 \}, $<$6$>$ \{ 2 \};}
+\item[132 Values in parameter list missing, probably wrong read
+  template]\ \\
+  As the message said, probable the template of a read statement looks
+  like \code{"$<$1n$>$"} instead of \code{"$<$1n$>$ 2n"}.
+\item[133 Unknown local symbol \code{xxx}]\ \\
+  A (local) symbol was used, that is not defined anywhere in scope.
+\item[134 Illegal element \code{xxx} for symbol]\ \\
+  The index tuple given in the initialisation is not member of the
+  index set of the parameter.
+\item[135 Index set for parameter \code{xxx} is empty]\ \\
+  The attempt was made to declare an indexed parameter with the
+  empty set as index set. Most likely the index set has a \code{with}
+  clause which has rejected all elements.
+\item[136 Lower bound for var \code{xxx} set to infinity -- ignored]\ \\
+  In the zimpl code something like \code{$\ge$ infinity} must have
+  been appeared. This makes no sense and is therefore ignored.
+\item[137 Upper bound for var \code{xxx} set to -infinity -- ignored]\ \\
+  In the zimpl code something like \code{$\le$ -infinity} must have 
+  been appeared. This makes no sense and is therefore ignored.
+\item[138 Priority/Startval for continous var \code{xxx} ignored]\ \\
+  There has been set a priority or a starting value for a continous 
+  (\code{real}) variable. This is not possible and therefore ignored.
+\item[139 Lower bound for integral var \code{xxx} truncated to
+  \code{yyy}]\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was ajusted.
+\item[140 Upper bound for integral var \code{xxx} truncated to
+  \code{yyy}]\ \\
+  An integral variable can only have an integral bound. So the given
+  non integral bound was ajusted.
+\item[141 Infeasible due to conflicting bounds for var \code{xxx}]\ \\
+  The upper bound given for a variable was smaller than the lower bound.
+\item[142 Unknown index \code{xxx} for symbol \code{yyy}]\ \\
+  The index tuple given is not member of the index set of the symbol.
+\item[143 Size for subsets \code{xxx} is too big or not an integer]\ \\
+  The cardinality for the subsets to generate must be given as an
+  integer smaller than two billion.
+\item[144 Tried to build subsets of empty set]\ \\
+  The set given to build the subsets of, was the empty set.
+\item[145 Illegal size for subsets \code{xxx}, should be between 1 
+  and \code{yyy}]\ \\
+  The cardinality for the subsets to generate must be between 1 
+  and the cardinality of the base set.
+\item[146 Tried to build powerset of empty set ]\ \\
+  The set given to build the powerset of, was the empty set.
+%
+% iread.c
+%
+\item[147 use value \code{xxx} is too big or not an integer]\ \\
+  The use value must be given as an integer smaller than two billion.
+\item[148 use value \code{xxx} is not positive]\ \\
+  Negative or zero values for the use parameter are not allowed.
+\item[149 skip value \code{xxx} is too big or not an integer]\ \\
+  The skip value must be given as an integer smaller than two billion.
+\item[150 skip value \code{xxx} is not positive]\ \\
+  Negative or zero values for the skip parameter are not allowed.
+\item[151 Not a valid read template]\ \\
+  A read template must look something like \code{"$<$1n,2n$>$"}.
+  There have to be a $<$ and a $>$ in this order.
+\item[152 Invalid read template syntax]\ \\
+  Apart from any delimiters like \code{$<$}, \code{$>$}, and commas a
+  template must consists of number charater pairs like \code{1n}, \code{3s}.
+\item[153 Invalid field number \code{xxx}]\ \\
+  The field numbers in a template have to be between 1 and 255.
+\item[154 Invalid field type \code{xxx}]\ \\
+  The only possible field types are \code{n} and \code{s}.
+\item[155 Invalid read template, not enough fields]\ \\
+  There has to be at least one field inside the delimters.
+\item[156 Not enough fields in data]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. 
+\item[157 Not enough fields in data (value)]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. The error occured behind the 
+  index tuple in the value field.
+\item[158 Read from file found no data]\ \\
+  Not a single record could be read out of the data file. Either the
+  file is empty, or all lines are comments.
+%
+% code.c
+%  
+\item[159 Type error, expected \code{xxx} got \code{yyy}]\ \\
+  The type found was not the expected one, e.g. subtracting 
+  a string from a number would result in this message.
+%
+% elem.c
+% 
+\item[160 Comparison of elements with different types \code{xxx} /
+  \code{yyy}]\ \\
+  Two elements from different tuples were compared and found to be 
+  of different types. Probably you have a index expression with a 
+  constant element, that does not match the elements of the set.
+  Example: \code{set B:=\{$<$i,"a"$>$ in \{$<$1,2$>$\}\};}
+%
+% load.c
+%
+\item[161 Line \code{xxx}: Unterminated string]\ \\
+  This line has an odd number of \code{"} characters. 
+  A String was started, but not ended.
+\item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored]\ \\
+  Something was found after the last semicolon in the file.
+\item[163 Line \code{xxx}: Syntax Error]\ \\
+  Either a new statement was not started with one of the keywords:
+  \code{set}, \code{param}, \code{var}, \code{minimize}, 
+  \code{maximize}, \code{subto}, and \code{print}, or no name
+  was given after the keyword.
+%
+% set.c
+%
+\item[164 Dublicate element \code{xxx} for set rejected]\ \\
+   An element was added to a set that was already in it.
+\item[165 Comparison of differen dimension sets]\ \\
+   Two sets were compared, but have different dimension tuples.
+   (This means they never had a chance other then beeing empty sets to
+   be equal.)
+%
+% symbol.c
+%
+\item[166 Dublicate element \code{xxx} for symbol \code{yyy} rejected]\ \\
+  An element that was already there was added to a symbol.
+%
+% tuple.c
+%
+\item[167 Comparison of different dimension tuples]\ \\
+  Two tuples with different dimensions were compared.
+  Probably you have a index expression which does not match the  
+  dimension of the tuples in the set.
+  Example: \code{set B:=\{$<$1$>$ in \{$<$1,2$>$\}\};}
+%
+% zimpl.c
+%
+\item[168 No program statements to execute]\ \\
+  No \zimpl statements were found in the files loaded.
+%
+% code.c
+%
+\item[169 Execute must return void element]\ \\
+  This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+%
+% inst.c
+%
+\item[170 Use of unintialised local variable \code{xxx} in call of
+  define \code{yyy}]\ \\
+  A define was called and one of the arguments was a ``name'' 
+  (of a variable) for which no value was defined.
+\item[171 Wrong number of arguments (\code{xxx} instead of \code{yyy})
+  for call of define \code{zzz}]\ \\
+  A define was called with the a different number of arguments than in
+  its definition.
+\item[172 Wrong number of entries (\code{xxx}) in table line, 
+  expected \code{yyy} entries]\ \\
+  Each line of a parameter initialisation table must have
+  exactly the same number of entries as the index (first) line of
+  the table.
+\item[173 Illegal type in element \code{xxx} for symbol]\ \\
+  A parameter can be only have one type of values. Either numbers or
+  strings. In the initialisation both types were present.
+%
+% numbgmp.c
+%
+\item[700 log(): \code{OS specific domain or range error message}]\ \\
+Function \code{log} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+\item[701 sqrt(): \code{OS specific domain error message}]\ \\
+Function \code{sqrt} was called with a negative argument.
+\item[702 ln(): \code{OS specific domain or range error message}]\ \\
+Function \code{ln} was called with a zero or negative argument, or
+the argument was too small to be represented as a \code{double}.
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+% mmlscan.l
+\item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
+  Parsing error. What was found was not what was expected.
+  The statement you entered is not valid.
+\item[801 Parser failed]\ \\
+  The parsing routine failed. This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+\end{description}

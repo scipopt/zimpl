@@ -1,12 +1,12 @@
-# $Id: expr.zpl,v 1.6 2003/09/19 08:30:14 bzfkocht Exp $
-#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#*                                                                           */
-#*   File....: expr.zpl                                                      */
-#*   Name....: Expression test                                               */
-#*   Author..: Thorsten Koch                                                 */
-#*   Copyright by Author, All rights reserved                                */
-#*                                                                           */
-#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+# $Id: expr.zpl,v 1.7 2003/10/01 08:51:11 bzfkocht Exp $
+#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+#*                                                                           *
+#*   File....: expr.zpl                                                      *
+#*   Name....: Expression test                                               *
+#*   Author..: Thorsten Koch                                                 *
+#*   Copyright by Author, All rights reserved                                *
+#*                                                                           *
+#* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
 #* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
 #* 
