@@ -9,5 +9,8 @@ tar -cvzhf zimpl-2.01.tgz \
 --exclude=".\#*" \
 --exclude="zimpl/make/local/*" \
 zimpl/LICENSE zimpl/README zimpl/COPYING zimpl/CHANGELOG \
-zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf zimpl/check
+zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf zimpl/check \
+zimpl/example/chvatal_diet.zpl zimpl/example/facility_location.zpl \
+zimpl/example/queens[12].zpl zimpl/example/steinerbaum.zpl
+zimpl/example/tsp.zpl zimpl/example/tsp.dat
 

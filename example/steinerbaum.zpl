@@ -1,4 +1,5 @@
-# $Id: steinerbaum.zpl,v 1.1 2003/09/03 07:27:27 bzfkocht Exp $
+# $Id: steinerbaum.zpl,v 1.2 2003/10/29 19:44:46 bzfkocht Exp $
+#
 # This is a classical Steiner-Tree Problem in Networks formulation.
 # BEWARE: This grows exponentially
 #
