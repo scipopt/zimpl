@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.7 2004/04/19 11:44:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.8 2004/05/11 19:16:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -125,7 +125,7 @@ Set* set_copy(const Set* set)
    return set_vtab_global[set->head.type].set_copy(set);
 }
 
-int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+inline int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, offset);
 }
@@ -135,7 +135,7 @@ Bool set_lookup(const Set* set, const Tuple* tuple)
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
 
-void set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset)
+inline void set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset)
 {
    set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
 }
@@ -155,7 +155,7 @@ Tuple* set_get_tuple(const Set* set, int idx)
    return tuple;
 }
      
-SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
+inline SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
 {
    return set_vtab_global[set->head.type].iter_init(set, pattern, offset);
 }
@@ -165,7 +165,7 @@ SetIter* set_iter_init(const Set* set, const Tuple* pattern)
    return set_iter_init_intern(set, pattern, 0);
 }
 
-Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
+inline Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].iter_next(iter, set, tuple, offset);
 }
@@ -184,7 +184,7 @@ Tuple* set_iter_next(SetIter* iter, const Set* set)
    return NULL;
 }
      
-void set_iter_exit_intern(SetIter* iter, const Set* set)
+inline void set_iter_exit_intern(SetIter* iter, const Set* set)
 {
    set_vtab_global[set->head.type].iter_exit(iter, set);
 }
@@ -194,7 +194,7 @@ void set_iter_exit(SetIter* iter, const Set* set)
    set_iter_exit_intern(iter, set);
 }
      
-void set_iter_reset_intern(SetIter* iter, const Set* set)
+inline void set_iter_reset_intern(SetIter* iter, const Set* set)
 {
    set_vtab_global[set->head.type].iter_reset(iter, set);
 }

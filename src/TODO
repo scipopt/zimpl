@@ -1,3 +1,8 @@
+var/con macht einzeln mallocs
+sto_size ist fix 1000
+Hash size ist fix 1000003
+
+
 
 "read from file found no data" in warning bei sets umwandeln.
 

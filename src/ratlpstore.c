@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.19 2004/01/09 12:45:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.20 2004/05/11 19:16:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -48,7 +48,10 @@ struct storage
 
 static const unsigned int sto_size  = 1000;
 
+#ifndef LHT_BUCKETS
 #define LHT_BUCKETS  1000003U
+#endif
+
 #define DISPERSE(x) (1664525U * (x) + 1013904223U);
 
 enum lps_hash_type { LHT_ERR = 0, LHT_VAR, LHT_CON };

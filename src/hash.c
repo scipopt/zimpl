@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.20 2004/05/09 08:36:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.21 2004/05/11 19:16:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -72,8 +72,8 @@ Hash* hash_new(HashType type, int size)
 {
    static unsigned int bucket_size[] =
    {
-      53U, 103U, 503U, 1009U, 5003U, 10007U, 50021U, 100003U, 500009U, 1000003U, 0U
-      /* 5000011U */
+      53U, 103U, 503U, 1009U, 5003U, 10007U, 50021U, 100003U, 500009U, 1000003U, 
+      5000011U, 10000019U, 50000017U, 0U
    };
    
    Hash* hash = calloc(1, sizeof(*hash));
