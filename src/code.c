@@ -1,12 +1,29 @@
-#ident "@(#) $Id: code.c,v 1.5 2001/01/30 08:23:46 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.6 2001/01/30 19:14:10 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
-/*   Name....: Code Functions                                                */
+/*   Name....: Code Node Functions                                           */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,10 +34,10 @@
 #include "portab.h"
 #include "mshell.h"
 #include "mme.h"
+#include "code.h"
+#include "inst.h"
 
 #define CODE_SID  0x436f6465
-#define INST_NULL ((Inst)0)
-//#define CODE_NULL ((CodeNode*)0)
 
 typedef union code_value CodeValue;
 
@@ -248,7 +265,7 @@ static void code_free_value(CodeNode* node)
    case CODE_INEQTYPE :
       break;
    default :
-      assert(0);
+      abort();
    }
 }
 
@@ -298,58 +315,13 @@ CodeNode* code_get_root(void)
    return root;
 }
 
-CodeType code_eval(CodeNode* node)
+CodeNode* code_eval(CodeNode* node)
 {
    assert(code_is_valid(node));
 
    (*node->eval)(node);
 
-   return node->type;
-}
-
-void code_execute(CodeNode* node)
-{
-   if (verbose)
-      fprintf(stderr, "Execute\n");
-
-   switch(code_eval(node))
-   {
-   case CODE_VOID :
-      return;
-   case CODE_NUMB :
-      fprintf(stderr, "%.16g\n", code_get_numb(node));
-      break;
-   case CODE_STRG :
-      fprintf(stderr, "%s\n", code_get_strg(node));
-      break;
-   case CODE_TUPLE :
-      tuple_print(stderr, code_get_tuple(node));
-      fprintf(stderr, "\n");
-      break;
-   case CODE_SET :
-      set_print(stderr, code_get_set(node));
-      fprintf(stderr, "\n");
-      break;
-   case CODE_IDXSET :
-      idxset_print(stderr, code_get_idxset(node));
-      fprintf(stderr, "\n");
-      break;
-   case CODE_TERM :
-      term_print(stderr, code_get_term(node), TERM_PRINT_SYMBOL);
-      fprintf(stderr, "\n");
-      break;
-   case CODE_INEQ :
-      ineq_print(stderr, code_get_ineq(node));
-      fprintf(stderr, "\n");
-      break;
-   case CODE_BOOL :
-      fprintf(stderr, "%s\n", code_get_bool(node) ? "True" : "False");
-      break;
-   default :
-      fprintf(stderr, "Unknown element type\n");
-   }
-   fprintf(stderr, "Execute must return void element\n");
-   assert(0);
+   return node;
 }
 
 static CodeNode* code_check_type(CodeNode* node, CodeType expected)
@@ -359,10 +331,10 @@ static CodeNode* code_check_type(CodeNode* node, CodeType expected)
    if (node->type != expected)
    {
       fprintf(stderr, 
-         "Type error: expected %d, is %d, lineno=%d, column=%d\n",
+         "*** Line %d Col %d: Type error, expected %d got %d\n",
+         node->lineno, node->column,
          expected,
-         node->type,
-         node->lineno, node->column);      
+         node->type);
 
       exit(1);
    }
@@ -376,11 +348,9 @@ static CodeNode* code_check_type(CodeNode* node, CodeType expected)
 CodeNode* code_get_child(CodeNode* node, int no)
 {
    assert(code_is_valid(node));
-   assert(no >= 0);
-   assert(no <  MAX_CHILDS);
-
-   if (node->child[no] != NULL)
-      (void)code_eval(node->child[no]);
+   assert(no              >= 0);
+   assert(no              <  MAX_CHILDS);
+   assert(node->child[no] != NULL);
    
    return node->child[no];
 }

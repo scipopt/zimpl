@@ -1,12 +1,29 @@
-#ident "@(#) $Id: load.c,v 1.3 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.4 2001/01/30 19:14:10 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
-/*   Name....: program loading Routines                                      */
+/*   Name....: Modell Loading Routines                                       */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,7 +81,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
    return *buf;
 }
 
-static int add_stmt(Prog* prog, int lineno, const char* text)
+static void add_stmt(Prog* prog, int lineno, const char* text)
 {
    const char* separ = " :;";
    StmtType type;
@@ -107,23 +124,21 @@ static int add_stmt(Prog* prog, int lineno, const char* text)
 
    prog_add_stmt(prog, stmt_new(type, lineno, name, text));
    
-   return SUCCESS;
+   return;
    
  syntax_error:
    
-   fprintf(stderr, "Syntax Error Line %d\n", lineno);
-
-   return FAILURE;
+   fprintf(stderr, "*** Line %d: Syntax Error\n", lineno);
+   exit(1);
 }
 
-int prog_load(Prog* prog)
+void prog_load(Prog* prog)
 {
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);
    FILE* fp;
    char* s;
    int   lineno = 1;
-   int   result = SUCCESS;
    
    assert(prog != NULL);
    assert(buf  != NULL);
@@ -131,8 +146,7 @@ int prog_load(Prog* prog)
    if ((fp = fopen(prog_get_filename(prog), "r")) == NULL)
    {
       perror(prog_get_filename(prog));
-      free(buf);
-      return FAILURE;
+      exit(1);
    }
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
@@ -143,16 +157,10 @@ int prog_load(Prog* prog)
       if (*s == '\0')
          continue;
 
-      if (add_stmt(prog, lineno, s))
-      {
-         result = FAILURE;         
-         break;
-      }
+      add_stmt(prog, lineno, s);
    }   
    fclose(fp);
    free(buf);
-   
-   return result;
 }
 
 

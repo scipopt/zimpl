@@ -6,8 +6,25 @@
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.3 2001/01/30 08:23:46 thor Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.4 2001/01/30 19:14:10 thor Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -43,6 +60,12 @@ static int yycolumn = 0;
 "=="                      { yycolumn += yyleng; return CMP_EQ; }
 "<="                      { yycolumn += yyleng; return CMP_LE; }
 ">="                      { yycolumn += yyleng; return CMP_GE; }
+"<"                       { yycolumn += yyleng; return CMP_LT; }
+">"                       { yycolumn += yyleng; return CMP_GT; }
+"!="                      { yycolumn += yyleng; return CMP_NE; }
+"not"                     { yycolumn += yyleng; return NOT; }
+"and"                     { yycolumn += yyleng; return OR; }
+"or"                      { yycolumn += yyleng; return AND; }
 "set"                     { yycolumn += yyleng; return DECLSET; }
 "param"                   { yycolumn += yyleng; return DECLPAR; }
 "var"                     { yycolumn += yyleng; return DECLVAR; }
@@ -89,7 +112,7 @@ static int yycolumn = 0;
          case SYM_SET :
             return SETSYM;
          default :
-            assert(0);
+            abort();
          }
       }
       return NAME;
@@ -119,7 +142,7 @@ static int yylineno = -1;
 
 void yyerror(const char* s)
 {
-   fprintf(stderr, "Error line: %d Col: %d %s\n", yylineno, yycolumn, s);
+   fprintf(stderr, "*** Line %d col %d: %s\n", yylineno, yycolumn, s);
    exit(-1);
 }
 
@@ -133,10 +156,9 @@ int scan_get_column(void)
    return yycolumn;
 }
 
-int parse_string(const char* s, int lineno)
+void parse_string(const char* s, int lineno)
 {
    YY_BUFFER_STATE state;
-   int             ret;
 
    yy_delete_buffer(YY_CURRENT_BUFFER);
 
@@ -144,9 +166,10 @@ int parse_string(const char* s, int lineno)
    yycolumn = 0;
    state    = yy_scan_string(s);
 
-   ret = yyparse();
-
+   if (yyparse() != 0)
+   {
+      fprintf(stderr, "*** Parsing error\n");
+      exit(1);
+   }
    yy_delete_buffer(state);
-
-   return ret;
 }

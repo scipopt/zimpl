@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.4 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: hash.c,v 1.5 2001/01/30 19:14:10 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -7,6 +7,23 @@
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,6 +58,8 @@ struct hash
    HElem**  bucket;
 };
 
+static void hash_statist(FILE* fp, const Hash* hash);
+
 Hash* hash_new(HashType type)
 {
    Hash* hash = calloc(1, sizeof(*hash));
@@ -68,6 +87,9 @@ void hash_free(Hash* hash)
       
    assert(hash_is_valid(hash));
 
+   if (verbose)
+      hash_statist(stderr, hash);
+   
    SID_del(hash);
 
    for(i = 0; i < hash->size; i++)
@@ -179,5 +201,45 @@ Entry* hash_lookup_entry(Hash* hash, Tuple* tuple)
    return entry;
 }
 
+static void hash_statist(FILE* fp, const Hash* hash)
+{
+   HElem* he;
+   int    min    = (int)hash->size;
+   int    max    = 0;
+   int    sum    = 0;
+   int    zeros  = 0;
+   int    filled = 0;
+   int    count;
+   unsigned int i;
+
+   assert(fp != NULL);
+   assert(hash_is_valid(hash));
+
+   for(i = 0; i < hash->size; i++)
+   {
+      count = 0;
+      
+      for(he = hash->bucket[i]; he != NULL; he = he->next)
+         count++;
+
+      if (count == 0)
+         zeros++;
+      else
+         filled++;
+
+      if (count < min)
+         min = count;
+      if (count > max)
+         max = count;
+      sum += count;
+   }
+   assert(sum == hash->elems);
+
+   fprintf(fp,
+      "HashStat: size=%d sum=%d min=%d max=%d avg=%.1f zero=%d filled=%d\n",
+      hash->size, sum, min, max,
+      (double)sum / (double)filled,
+      zeros, filled);
+}
 
 

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.2 2001/01/29 17:14:38 thor Exp $"
+#ident "@(#) $Id: tuple.c,v 1.3 2001/01/30 19:14:10 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -7,6 +7,23 @@
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,6 +117,7 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
    if (tuple_a->dim != tuple_b->dim)
    {
       fprintf(stderr, "Warning: Comparison of different dimension tuples\n");
+
       return FALSE;
    }
    assert(tuple_a->dim == tuple_b->dim);
@@ -168,7 +186,7 @@ void tuple_print(FILE* fp, const Tuple* tuple)
 
    assert(tuple_is_valid(tuple));
    
-   fprintf(fp, "(");
+   fprintf(fp, "<");
       
    for(i = 0; i < tuple->dim; i++)
    {
@@ -176,7 +194,7 @@ void tuple_print(FILE* fp, const Tuple* tuple)
       
       fprintf(fp, "%s", (i < tuple->dim - 1) ? "," : "");
    }
-   fprintf(fp, ")");
+   fprintf(fp, ">");
 }
 
 unsigned int tuple_hash(const Tuple* tuple)

@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.3 2001/01/30 08:23:46 thor Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.4 2001/01/30 19:14:10 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -8,6 +8,23 @@
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+ * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 /*lint -e428 -e574 -e525 -e750 -e737 -e734 -e744 -e732 -e713 */
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
@@ -19,9 +36,11 @@
 #include <string.h>
 #include <math.h>
 
-#include <portab.h>
-#include <mshell.h>
-#include <mme.h>
+#include "portab.h"
+#include "mshell.h"
+#include "mme.h"
+#include "code.h"
+#include "inst.h"
    
 #define YYERROR_VERBOSE 1
    
@@ -41,7 +60,8 @@ extern void yyerror(const char* s);
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN FORALL EMPTY_TUPLE
-%token CMP_LE CMP_GE CMP_EQ
+%token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
+%token AND OR NOT
 %token SUM
 %token <name> NUMBSYM
 %token <name> STRGSYM
@@ -52,12 +72,16 @@ extern void yyerror(const char* s);
 %token <numb> NUMB
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
-%type <code> expr expr_list symidx tuple tuple_list sexpr 
+%type <code> expr expr_list symidx tuple tuple_list sexpr lexpr
 %type <code> idxset product factor term ineq entry entry_list
-%type <code> var_type ineq_type lower upper;
+%type <code> var_type ineq_type lower upper condition;
 
 %right ASGN
 %left  ','
+%left  OR
+%left  AND
+%left  CMP_EQ CMP_NE CMP_LE CMP_LT CMP_GE CMP_GT
+%left  NOT
 %left  '+' '-' 
 %left  SUM
 %left  '*' '/'
@@ -195,9 +219,14 @@ factor
    ;
 
 idxset
-   : tuple IN sexpr {
-         $$ = code_new_inst(i_idxset_new, 2, $1, $3);
+   : tuple IN sexpr condition {
+         $$ = code_new_inst(i_idxset_new, 3, $1, $3, $4);
       }
+   ;
+
+condition
+   : /* empty */ { $$ = code_new_inst(i_bool_true, 0); }
+   | WITH lexpr  { $$ = $2; }
    ;
 
 sexpr
@@ -219,9 +248,22 @@ tuple_list
       }
    ;
 
+lexpr
+   : expr CMP_EQ expr { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
+   | expr CMP_NE expr { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
+   | expr CMP_GT expr { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
+   | expr CMP_GE expr { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
+   | expr CMP_LT expr { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
+   | expr CMP_LE expr { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
+   | lexpr AND lexpr  { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
+   | lexpr OR lexpr   { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
+   | NOT lexpr        { $$ = code_new_inst(i_bool_not, 2, $2); }
+   | '(' lexpr ')'    { $$ = $2; }
+   ;
+ 
 tuple
-   : EMPTY_TUPLE       { $$ = code_new_inst(i_tuple_empty, 0); }
-   | '<' expr_list '>' { $$ = code_new_inst(i_tuple_new, 1, $2);  }
+   : EMPTY_TUPLE             { $$ = code_new_inst(i_tuple_empty, 0); }
+   | CMP_LT expr_list CMP_GT { $$ = code_new_inst(i_tuple_new, 1, $2);  }
    ;
 
 symidx
