@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.9 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.10 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -144,6 +144,8 @@ void entry_free(Entry* entry)
       switch(entry->type)
       {
       case SYM_NUMB :
+         numb_free(entry->value.numb);
+         break;
       case SYM_STRG :
          break;
       case SYM_SET :

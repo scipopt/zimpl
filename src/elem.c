@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.11 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.12 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -65,6 +65,7 @@ struct element_storage
 
 static ElemStore* store_anchor = NULL;
 static Elem*      store_free   = NULL;
+static int        store_count  = 0;
 
 static void extend_storage(void)
 {
@@ -111,6 +112,8 @@ static Elem* new_elem(void)
    elem       = store_free;
    store_free = elem->value.next;
 
+   store_count++;
+   
    assert(elem->type == ELEM_FREE);
    assert(elem_is_valid(elem));
    
@@ -125,6 +128,9 @@ void elem_exit()
 {
    ElemStore* store;
    ElemStore* next;
+   
+   if (store_count != 0)
+      printf("Elem store count %d\n", store_count);
    
    for(store = store_anchor; store != NULL; store = next)
    {
@@ -177,9 +183,13 @@ void elem_free(Elem* elem)
 {
    assert(elem_is_valid(elem));
 
+   if (elem->type == ELEM_NUMB)
+      numb_free(elem->value.numb);
+   
    elem->type       = ELEM_FREE;
    elem->value.next = store_free;
    store_free       = elem;
+   store_count--;
 }
 
 Bool elem_is_valid(const Elem* elem)
@@ -193,9 +203,14 @@ Elem* elem_copy(const Elem* source)
 
    assert(elem_is_valid(source));
    assert(elem_is_valid(elem));
-   
-   *elem = *source;
 
+   if (source->type != ELEM_NUMB)
+      *elem = *source;
+   else
+   {
+      elem->type       = ELEM_NUMB;
+      elem->value.numb = numb_copy(source->value.numb);
+   }
    return elem;
 }
 

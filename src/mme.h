@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.32 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.33 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -106,18 +106,6 @@ typedef enum hash_type           HashType;
 typedef struct hash              Hash;
 typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
-
-#if 0 /* ??? kann weg */
-typedef struct nonzero           Nzo;
-typedef struct variable          Var;
-typedef struct constraint        Con;
-typedef struct lpstorage         Lps;
-typedef enum lp_direct           LpDirect;
-typedef enum lp_type             LpType;
-typedef enum lp_form             LpForm;
-typedef enum con_type            ConType;
-typedef enum var_type            VarType;
-#endif
 
 typedef enum con_name_format     ConNameForm;
 typedef enum statement_type      StmtType;
@@ -548,6 +536,8 @@ extern void         term_negate(Term* term);
 extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
 extern void         term_to_nzo(const Term* term, Con* con);
+/*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
+extern int          term_get_elements(const Term* term);
 
 /* rdefpar.c
  */

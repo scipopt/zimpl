@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.15 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.16 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -30,6 +30,8 @@
 #include <string.h>
 #include <assert.h>
 
+#define TRACE 1
+
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -60,6 +62,8 @@ Term* term_new(int size)
 {
    Term* term = calloc(1, sizeof(*term));
 
+   Trace("term_new");
+   
    assert(term != NULL);
    assert(size >  0);
    
@@ -76,6 +80,8 @@ Term* term_new(int size)
 
 void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
 {
+   Trace("term_add_elem");
+
    assert(term_is_valid(term));
    assert(entry_is_valid(entry));
    assert(!numb_equal(coeff, numb_zero()));
@@ -101,7 +107,9 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
 void term_free(Term* term)
 {
    int i;
-   
+
+   Trace("term_free");
+
    assert(term_is_valid(term));
 
    SID_del(term);
@@ -127,6 +135,8 @@ Term* term_copy(const Term* term)
    Term* tnew = term_new(term->used + TERM_EXTEND_SIZE);
    int   i;
    
+   Trace("term_copy");
+   
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
 
@@ -136,7 +146,7 @@ Term* term_copy(const Term* term)
       tnew->elem[i].coeff = numb_copy(term->elem[i].coeff);
    }
    tnew->used     = term->used;
-   tnew->constant = numb_copy(term->constant);
+   numb_set(tnew->constant, term->constant);
 
    assert(term_is_valid(tnew));
 
@@ -147,6 +157,8 @@ void term_append_term(Term* term_a, const Term* term_b)
 {
    int i;
    
+   Trace("term_append_term");
+
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
@@ -163,6 +175,8 @@ Term* term_add_term(const Term* term_a, const Term* term_b)
    Term* term;
    int   i;
    
+   Trace("term_add_term");
+
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
@@ -193,6 +207,8 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
    int   i;
+
+   Trace("term_sub_term");
    
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
@@ -223,6 +239,8 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
 
 void term_add_constant(Term* term, const Numb* value)
 {
+   Trace("term_add_constant");
+
    assert(term_is_valid(term));
 
    numb_add(term->constant, value);
@@ -233,6 +251,8 @@ void term_add_constant(Term* term, const Numb* value)
 void term_mul_coeff(Term* term, const Numb* value)
 {
    int i;
+
+   Trace("term_mul_coeff");
 
    assert(term_is_valid(term));
 
@@ -262,17 +282,19 @@ const Numb* term_get_constant(const Term* term)
 
 void term_negate(Term* term)
 {
+   Trace("term_negate");
+
    assert(term_is_valid(term));
 
    term_mul_coeff(term, numb_minusone());
 }
 
-/* HIER GEHTS WEITER */
-
 void term_to_nzo(const Term* term, Con* con)
 {
    Var*   var;
    int    i;
+
+   Trace("term_to_nzo");
    
    assert(con != NULL);
    assert(term_is_valid(term));
@@ -292,7 +314,9 @@ void term_to_objective(const Term* term)
 {
    Var* var;
    int  i;
-   
+
+   Trace("term_to_objective");
+
    assert(term_is_valid(term));
    assert(numb_equal(term->constant, numb_zero()));
 
@@ -304,6 +328,13 @@ void term_to_objective(const Term* term)
       
       xlp_addtocost(var, term->elem[i].coeff);
    }
+}
+
+int term_get_elements(const Term* term)
+{
+   assert(term_is_valid(term));
+
+   return term->used;
 }
 
 #ifndef NDEBUG

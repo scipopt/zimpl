@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.3 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -24,6 +24,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#define TRACE 1
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +56,7 @@ struct number
       mpq_t  numb;
       Numb*  next;
    } value;
+   int serial;
 };
 
 struct numb_storage
@@ -64,6 +67,8 @@ struct numb_storage
 
 static NumbStore* store_anchor = NULL;
 static Numb*      store_free   = NULL;
+static int        store_count  = 0;
+static int        store_serial = 1;
 
 /* constants
  */
@@ -116,6 +121,13 @@ void numb_exit()
 {
    NumbStore* store;
    NumbStore* next;
+
+   numb_free(numb_const_zero);
+   numb_free(numb_const_one);
+   numb_free(numb_const_minusone);
+
+   if (store_count != 0)
+      printf("Numb store count %d\n", store_count);
    
    for(store = store_anchor; store != NULL; store = next)
    {
@@ -132,6 +144,8 @@ void numb_exit()
 Numb* numb_new(void)
 {
    Numb* numb;
+
+   Trace("numb_new");
    
    if (store_free == NULL)
       extend_storage();
@@ -140,9 +154,14 @@ Numb* numb_new(void)
 
    numb             = store_free;
    store_free       = numb->value.next;
+   store_count++;
 
    mpq_init(numb->value.numb);
 
+   numb->serial = store_serial++;
+
+   fprintf(stderr, "A %d\n", numb->serial);
+   
    return numb;
 }
 
@@ -170,12 +189,20 @@ Numb* numb_new_integer(int val)
 
 void numb_free(Numb* numb)
 {
+   Trace("numb_free");
+
    assert(numb_is_valid(numb));
 
+   fprintf(stderr, "Z %d ", numb->serial);
+   mpq_out_str(stderr, 10, numb->value.numb);
+   fprintf(stderr, "\n");
+   
    mpq_clear(numb->value.numb);
    
    numb->value.next = store_free;
    store_free       = numb;
+
+   store_count--;   
 }
 
 Bool numb_is_valid(const Numb* numb)

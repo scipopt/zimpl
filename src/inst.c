@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.40 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.41 2003/07/16 21:04:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -24,6 +24,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#define TRACE  1
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,6 +90,7 @@ CodeNode* i_constraint(CodeNode* self)
    Con*         con;
    Numb*        rhs;
    unsigned int flags;
+   int          res;
    
    Trace("i_constraint");
    
@@ -100,11 +103,34 @@ CodeNode* i_constraint(CodeNode* self)
 
    rhs        = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
    term       = term_sub_term(term_lhs, term_rhs);
-   con        = xlp_addcon(conname_get(), type, rhs, flags);
 
-   term_add_constant(term, rhs);
-   term_to_nzo(term, con);
-   
+   /* Check if trival infeasible
+    */
+   if (term_get_elements(term) == 0)
+   {
+      /* If zero, trival ok, otherwise ...
+       */
+      res = numb_cmp(rhs, numb_zero());
+
+      assert(type != CON_RANGE);
+      assert(type != CON_FREE);
+      
+      if (  (type == CON_EQUAL && res != 0)
+         || (type == CON_LHS   && res >  0)
+         || (type == CON_RHS   && res <  0))
+      {
+         fprintf(stderr, "*** Error: Empty LHS, contraint trivally violated\n");
+         code_errmsg(self);
+         abort();
+      }
+   }
+   else
+   {
+      con = xlp_addcon(conname_get(), type, rhs, flags);
+
+      term_add_constant(term, rhs);
+      term_to_nzo(term, con);
+   }
    code_value_void(self);
 
    numb_free(rhs);
