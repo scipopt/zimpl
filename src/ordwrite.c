@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ordwrite.c,v 1.1 2002/06/18 20:37:21 bzfkocht Exp $"
+#ident "@(#) $Id: ordwrite.c,v 1.2 2002/07/22 15:43:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -56,6 +56,9 @@ void ord_write(
    {
       if (var->type == VAR_CON)
          continue;
+
+      if (var->size == 0)
+          continue;
       
       lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
