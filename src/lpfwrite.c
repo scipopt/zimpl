@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.10 2002/08/20 10:38:03 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.11 2002/08/23 11:31:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -108,7 +108,7 @@ void lpf_write(
 
             if (EQ(nzo->value, 1.0))
                fprintf(fp, " + %s", tmp);
-            else if (EQ(nzo->cost, -1.0))
+            else if (EQ(nzo->value, -1.0))
                fprintf(fp, " - %s", tmp);
             else
                fprintf(fp, " %+.15g %s", nzo->value, tmp);
