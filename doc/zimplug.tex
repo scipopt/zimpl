@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.10 2003/10/27 13:57:40 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.11 2003/10/27 17:19:33 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -847,7 +847,7 @@ do forall <p> in P do check sum <p,i> in PI : 1 >= 1;
 \end{verbatim}
 }
 
-\newpage
+\clearpage
 \section{Examples}
 In this section we will show examples how to translate a problem
 into \zimpl format.
@@ -900,7 +900,7 @@ subto need :
     sum <f> in Food : data[f, n] * x[f] >= needed[n];
 \end{verbatim}
 }
-\newpage
+\clearpage
 \subsection{TSP}
 In this example we show how to generate an exponential 
 description of the \emph{Traveling Salesmen Problem} 
@@ -951,7 +951,7 @@ subto no_subtour:
       <= card(P[k]) - 1;
 \end{verbatim}
 }
-\newpage
+\clearpage
 \subsection{Capacitated Facility Location Problem}
 Here we have a formulation for the \emph{Capacitated Facility
 Location} Problem. Of course this is also kind of a \emph{bin packing} problem
@@ -1031,7 +1031,72 @@ The optimal solution in this case is to build plants \code{A} and
 \code{C}. Stores 2, 3, and 4 are served by plant \code{A}, the rest by
 plant \code{C}. Total cost would be 1457.
 
-\newpage
+\clearpage
+\subsection{$n$-Queens Problem}
+
+We now show two formulations of the $n$-Queens problems using 
+extended constraints and functions. 
+
+The first formulation uses 
+one general integer variable for each row of the board.
+Each variable can take the value of a column. So we have $n$ variables 
+with bounds $1\ldots n$. Next we use the 
+\code{vabs} extended function to model an \emph{all different}
+constraint on the variables (see constraint c1). 
+This makes sure that no queen is located
+on the same column than any other queen.
+The second constraint (c2) is used to block all the diagonals of a
+queen. This is done by demanding that the absolute row and the column 
+distance of each pair of queens is different. We model $a\neq b$ by
+$\mbox{abs}(a-b)\geq 1$.
+
+Note that this formulation only works if a queen can be placed in each
+row,\ie the board size has to be at least $4\times4$.
+
+{\small
+\begin{verbatim}
+param queens := 8;
+
+set I := { 1 .. queens };
+set P := { <i,j> in I * I with i < j };
+ 
+var x[I] integer >= 1 <= queens;
+
+subto c1: forall <i,j> in P do vabs(x[i] - x[j]) >= 1;
+subto c2: forall <i,j> in P do 
+   vabs(vabs(x[i] - x[j]) - abs(i - j)) >= 1;
+\end{verbatim}
+}
+
+Here we do the same with one binary variable for each field of the
+board. The variable is one iff a queen is on this field.
+We compute in advance which other fields are blocked if a queen is
+placed on a particular field. Then we use the extended \code{vif}
+constraint to set the variables of the blocked fields to zero if a
+queens is placed. %We maximize the number of queens allowed.
+
+{\small
+\begin{verbatim}
+param columns := 8;
+
+set I   := { 1 .. columns };
+set IxI := I * I;
+
+set TABU[<i,j> in IxI] := { <m,n> in IxI with 
+   (m != i or n != j) and 
+   (m == i or n == j or abs(m - i) == abs(n - j)) };
+
+var x[IxI] binary;
+
+maximize queens: sum <i,j> in IxI : x[i,j];
+
+subto c1: forall <i,j> in IxI do
+   vif x[i,j] == 1 then 
+      sum <m,n> in TABU[i,j] : x[m,n] <= 0 end;
+\end{verbatim}
+}
+
+
 \section{Error messages}
 Here is a complete list of the incomprehensible error messages \zimpl
 can produce:

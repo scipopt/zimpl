@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.14 2003/10/08 08:03:05 bzfkocht Exp $
+# $Id: Makefile,v 1.15 2003/10/27 17:19:32 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -41,6 +41,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
+VERSION		=	2.01c
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -72,7 +73,7 @@ GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
-TARGET		=	$(NAME).$(BASE)
+TARGET		=	$(NAME)-$(VERSION).$(BASE)
 BINARY		=	$(BINDIR)/$(TARGET)
 DEPEND		=	$(SRCDIR)/depend
 

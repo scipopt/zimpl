@@ -1,4 +1,4 @@
-# $Id: queens1.zpl,v 1.1 2003/10/27 11:13:19 bzfkocht Exp $
+# $Id: queens1.zpl,v 1.2 2003/10/27 17:19:33 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: queens1.zpl                                                   *
@@ -27,8 +27,8 @@
 #
 # This is a formulation of the n queens problem using general integer
 # variables. Please note that this particular formulation only works,
-# if a queen can be placed in each row. 
-# So suitable number of queens are 4 or 8 for example.
+# if a queen can be placed in each row, so queens should be greater
+# equal to 4
 #
 param queens := 8;
 
