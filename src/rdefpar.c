@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rdefpar.c,v 1.1 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: rdefpar.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -60,7 +60,6 @@ struct read_definition
    SID
    const char* filename;
    const char* template;
-   const char* fieldsep;
    const char* comment;
    int         use;
    int         skip;
@@ -77,7 +76,6 @@ RDef* rdef_new(const char* filename, const char* template)
    
    rdef->filename = filename;
    rdef->template = template;
-   rdef->fieldsep = str_new(" ;");
    rdef->comment  = str_new("");
    rdef->skip     = 0;
    rdef->use      = -1;
@@ -110,7 +108,6 @@ Bool rdef_is_valid(const RDef* rdef)
       && SID_ok(rdef, RDEF_SID)
       && (rdef->filename != NULL)
       && (rdef->template != NULL)
-      && (rdef->fieldsep != NULL)
       && (rdef->comment  != NULL));
 }
 
@@ -123,7 +120,7 @@ RDef* rdef_copy(RDef* rdef)
    return rdef;
 }
 
-void rdef_set_param(RDef* rdef, RPar* rpar)
+void rdef_set_param(RDef* rdef, const RPar* rpar)
 {
    assert(rdef_is_valid(rdef));
    assert(rpar_is_valid(rpar));
@@ -135,9 +132,6 @@ void rdef_set_param(RDef* rdef, RPar* rpar)
       break;
    case RPAR_USE :
       rdef->use  = rpar->val.i;
-      break;
-   case RPAR_FS :
-      rdef->fieldsep = rpar->val.s;
       break;
    case RPAR_CMNT :
       rdef->comment = rpar->val.s;
@@ -160,13 +154,6 @@ const char* rdef_get_template(const RDef* rdef)
    assert(rdef_is_valid(rdef));
    
    return rdef->template;
-}
-
-const char* rdef_get_fieldsep(const RDef* rdef)
-{
-   assert(rdef_is_valid(rdef));
-   
-   return rdef->fieldsep;
 }
 
 const char* rdef_get_comment(const RDef* rdef)
@@ -226,22 +213,6 @@ RPar* rpar_new_use(int use)
    return rpar;
 }
 
-RPar* rpar_new_fieldsep(const char* fieldsep)
-{
-   RPar* rpar = calloc(1, sizeof(*rpar));
-
-   assert(rpar != NULL);
-   
-   rpar->type  = RPAR_FS;
-   rpar->val.s = fieldsep;
-   
-   SID_set(rpar, RPAR_SID);
-
-   assert(rpar_is_valid(rpar));
-
-   return rpar;
-}
-
 RPar* rpar_new_comment(const char* comment)
 {
    RPar* rpar = calloc(1, sizeof(*rpar));
@@ -273,7 +244,7 @@ Bool rpar_is_valid(const RPar* rpar)
       && (rpar->type != RPAR_ERR));
 }
 
-RPar* rpar_copy(RPar* rpar)
+RPar* rpar_copy(const RPar* rpar)
 {
    RPar* rpnew = calloc(1, sizeof(*rpar));
 

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.h,v 1.3 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: inst.h,v 1.4 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -106,8 +106,8 @@ extern void i_forall(CodeNode* self);
 extern void i_idxset_new(CodeNode* self);
 /*lint -sem(i_local_deref, 1p == 1) */
 extern void i_local_deref(CodeNode* self);
-/*lint -sem(i_newsym_numb, 1p == 1) */
-extern void i_newsym_numb(CodeNode* self);
+/*lint -sem(i_newsym_para, 1p == 1) */
+extern void i_newsym_para(CodeNode* self);
 /*lint -sem(i_newsym_set, 1p == 1) */
 extern void i_newsym_set(CodeNode* self);
 /*lint -sem(i_newsym_var, 1p == 1) */
@@ -163,8 +163,6 @@ extern void i_tuple_list_new(CodeNode* self);
 extern void i_read_new(CodeNode* self);
 /*lint -sem(i_read_param, 1p == 1) */
 extern void i_read_param(CodeNode* self);
-/*lint -sem(i_read_fieldsep, 1p == 1) */
-extern void i_read_fieldsep(CodeNode* self);
 /*lint -sem(i_read_comment, 1p == 1) */
 extern void i_read_comment(CodeNode* self);
 /*lint -sem(i_read_use, 1p == 1) */

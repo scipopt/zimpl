@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: code.c,v 1.9 2001/10/30 14:23:16 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -219,7 +219,7 @@ CodeNode* code_new_contype(ConType contype)
    return node;
 }
 
-static void code_free_value(CodeNode* node)
+static void code_free_value(const CodeNode* node)
 {
    assert(code_is_valid(node));
 
@@ -297,7 +297,7 @@ void code_set_child(CodeNode* node, int idx, CodeNode* child)
    node->child[idx] = child;
 }
 
-CodeType code_get_type(CodeNode* node)
+CodeType code_get_type(const CodeNode* node)
 {
    assert(code_is_valid(node));
 
@@ -352,7 +352,7 @@ void code_errmsg(const CodeNode* node)
  * Get Funktionen
  * ----------------------------------------------------------------------------
  */
-CodeNode* code_get_child(CodeNode* node, int no)
+CodeNode* code_get_child(const CodeNode* node, int no)
 {
    assert(code_is_valid(node));
    assert(no              >= 0);
@@ -495,7 +495,7 @@ void code_value_set(CodeNode* node, Set* set)
    node->value.set = set_copy(set);
 }
 
-void code_value_idxset(CodeNode* node, IdxSet* idxset)
+void code_value_idxset(CodeNode* node, const IdxSet* idxset)
 {
    assert(code_is_valid(node));
    assert(idxset_is_valid(idxset));
@@ -517,7 +517,7 @@ void code_value_entry(CodeNode* node, Entry* entry)
    node->value.entry = entry_copy(entry);
 }
 
-void code_value_term(CodeNode* node, Term* term)
+void code_value_term(CodeNode* node, const Term* term)
 {
    assert(code_is_valid(node));
    assert(term_is_valid(term));
@@ -590,7 +590,7 @@ void code_value_rdef(CodeNode* node, RDef* rdef)
    node->value.rdef = rdef_copy(rdef);
 }
 
-void code_value_rpar(CodeNode* node, RPar* rpar)
+void code_value_rpar(CodeNode* node, const RPar* rpar)
 {
    assert(code_is_valid(node));
    assert(rpar_is_valid(rpar));

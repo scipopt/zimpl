@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: inst.c,v 1.9 2001/10/30 14:23:16 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -888,7 +888,7 @@ void i_newsym_set(CodeNode* self)
    code_value_void(self);
 }
 
-void i_newsym_numb(CodeNode* self)
+void i_newsym_para(CodeNode* self)
 {
    const char*  name;
    Set*         set;
@@ -900,14 +900,17 @@ void i_newsym_numb(CodeNode* self)
    int          count;
    int          i;
    
-   Trace("i_newsym_numb");
+   Trace("i_newsym_para");
 
    assert(code_is_valid(self));
 
    name = Code_eval_child_name(self, 0);
    set  = Code_eval_child_set(self, 1);
    list = Code_eval_child_list(self, 2);
-   sym  = symbol_new(name, SYM_NUMB, set);
+
+   /* First element will determine the type
+    */
+   sym  = symbol_new(name, SYM_ERR, set);
    
    lelem = NULL;
    count = list_get_elems(list);

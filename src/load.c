@@ -1,4 +1,4 @@
-#ident "@(#) $Id: load.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: load.c,v 1.7 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <alloca.h>
 #include <ctype.h>
 
 #include "portab.h"
@@ -57,6 +56,11 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
       
       c = fgetc(fp);
 
+      if (in_string && ((c == EOF) || c == '\n'))
+      {
+         fprintf(stderr, "*** Line %d: Unterminated string\n", *lineno);
+         abort();
+      }
       if (c == EOF)
          return NULL;
 
@@ -131,7 +135,7 @@ static void add_stmt(
    if (strlen(text) < 4)
       goto syntax_error;
 
-   copy = strcpy(alloca(strlen(text) + 1), text);
+   copy = strdup(text);
 
    assert(copy != NULL);
    
@@ -160,6 +164,7 @@ static void add_stmt(
 
    prog_add_stmt(prog, stmt_new(type, filename, lineno, name, text));
 
+   free(copy);
    return;
    
  syntax_error:
@@ -201,8 +206,9 @@ void prog_load(Prog* prog, const char* filename)
 
       if (1 == sscanf(s, "include \"%1023[^\"]\"", newname))
       {
-         temp = alloca(strlen(filename) + strlen(newname) + 1);
+         temp = malloc(strlen(filename) + strlen(newname) + 2);
          prog_load(prog, make_pathname(temp, filename, newname));
+         free(temp);
       }
       else
       { 

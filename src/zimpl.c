@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.5 2001/05/06 11:43:21 thor Exp $"
+#ident "$Id: zimpl.c,v 1.6 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -48,7 +48,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.0, Copyright (C) 2001 by Thorsten Koch *\n" \
+"* Release 1.01, Copyright (C)2001 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -104,9 +104,9 @@ static char* extend_basename(const char* filename, const char* extension)
    return strcat(basename, extension);
 }
 
-int main(int argc, char** argv)
+int main(int argc, char* const* argv)
 {
-   const char* usage = "usage: %s [-h][-t lp|mps][-o outfile] filename\n";
+   const char* usage = "usage: %s [-h][-v][-t lp|mps][-o outfile] filename\n";
    
    Prog*  prog;
    char*  outfile  = NULL;
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bfho:t:v")) != -1)
+   while((c = getopt(argc, argv, "bdfho:t:v")) != -1)
    {
       switch(c)
       {

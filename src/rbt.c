@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rbt.c,v 1.1 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: rbt.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   Datei...: rbt.c                                                         */
@@ -411,7 +411,7 @@ void rbt_exit(
 /*---------------------------------------------------------------------------*/
 static struct rbt_node* rbt_rotate(
    const RBT*       rbt,
-   void*            key,
+   const void*      key,
    struct rbt_node* y)
 {
    struct rbt_node* yc;
@@ -452,8 +452,8 @@ static struct rbt_node* rbt_rotate(
 /*--- Returns  : Pointer to the deepest (youngest) node.                  ---*/
 /*---------------------------------------------------------------------------*/
 static struct rbt_node* rbt_split(
-   RBT*             rbt,
-   void*            key,
+   const RBT*       rbt,
+   const void*      key,
    struct rbt_node* xppp,
    struct rbt_node* xpp,
    struct rbt_node* xp,

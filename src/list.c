@@ -1,4 +1,4 @@
-#ident "@(#) $Id: list.c,v 1.6 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: list.c,v 1.7 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -67,7 +67,7 @@ struct list
    ListElem anchor;
 };
 
-static void list_add_data(List* list, ListData* data)
+static void list_add_data(List* list, const ListData* data)
 {
    ListElem* elem = calloc(1, sizeof(*elem));
 
@@ -83,7 +83,7 @@ static void list_add_data(List* list, ListData* data)
    list->elems++;
 }
 
-static List* list_new(ListType type, ListData* data)
+static List* list_new(ListType type, const ListData* data)
 {
    List* list = calloc(1, sizeof(*list));
    

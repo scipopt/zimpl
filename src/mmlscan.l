@@ -24,14 +24,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#ident "@(#) $Id: mmlscan.l,v 1.6 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: mmlscan.l,v 1.7 2001/10/30 14:23:17 thor Exp $"
 
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
 
 #include "portab.h"
-#include "mshell.h"
+/* Leads to problems with stdlib.h - reason? */
+/* #include "mshell.h" */
 #include "mme.h"
 #include "mmlparse.h"
 
@@ -102,7 +103,6 @@ static int yycolumn = 0;
 "as"                      { yycolumn += yyleng; return AS; }
 "skip"                    { yycolumn += yyleng; return SKIP; }
 "use"                     { yycolumn += yyleng; return USE; }
-"fs"                      { yycolumn += yyleng; return FS; }
 "comment"                 { yycolumn += yyleng; return COMMENT; }
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 

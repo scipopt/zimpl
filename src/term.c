@@ -1,4 +1,4 @@
-#ident "@(#) $Id: term.c,v 1.8 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: term.c,v 1.9 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -132,7 +132,7 @@ Term* term_copy(const Term* term)
    return tnew;
 }
 
-Term* term_add_term(Term* term_a, Term* term_b)
+Term* term_add_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
    
@@ -188,7 +188,7 @@ void term_mul_coeff(Term* term, double value)
    }
 }
 
-double term_get_constant(Term* term)
+double term_get_constant(const Term* term)
 {
    assert(term_is_valid(term));
    

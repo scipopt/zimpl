@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.6 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.7 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -66,7 +66,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT
 %token MOD DIV POW
-%token READ AS SKIP USE FS COMMENT
+%token READ AS SKIP USE COMMENT
 %token <name> NUMBSYM
 %token <name> STRGSYM
 %token <name> VARSYM
@@ -124,10 +124,10 @@ decl_set
  */
 decl_par
    : DECLPAR NAME '[' sexpr ']' ASGN entry_list ';' {
-         $$ = code_new_inst(i_newsym_numb, 3, code_new_name($2), $4, $7);
+         $$ = code_new_inst(i_newsym_para, 3, code_new_name($2), $4, $7);
       }
    | DECLPAR NAME ASGN expr ';' {
-         $$ = code_new_inst(i_newsym_numb, 3,
+         $$ = code_new_inst(i_newsym_para, 3,
             code_new_name($2),
             code_new_inst(i_set_empty, 1, code_new_size(0)),
             code_new_inst(i_entry_list_new, 1,
@@ -239,6 +239,14 @@ factor
    : VARSYM symidx          {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_name($1), $2);
       } 
+   | '+' VARSYM symidx %prec UNARY  {
+         $$ = code_new_inst(i_symbol_deref, 2, code_new_name($2), $3);
+      } 
+   | '-' VARSYM symidx %prec UNARY  { 
+         $$ = code_new_inst(i_term_coeff, 2,
+            code_new_inst(i_symbol_deref, 2, code_new_name($2), $3),
+            code_new_numb(-1.0));
+      } 
    | expr '*' VARSYM symidx { 
          $$ = code_new_inst(i_term_coeff, 2,
             code_new_inst(i_symbol_deref, 2, code_new_name($3), $4), $1);
@@ -298,7 +306,6 @@ read
 read_par
    : SKIP expr    { $$ = code_new_inst(i_read_skip, 1, $2); }
    | USE expr     { $$ = code_new_inst(i_read_use, 1, $2); }
-   | FS expr      { $$ = code_new_inst(i_read_fieldsep, 1, $2); }
    | COMMENT expr { $$ = code_new_inst(i_read_comment, 1, $2); }
    ;
  

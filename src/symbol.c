@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.8 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: symbol.c,v 1.9 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -67,7 +67,7 @@ Symbol* symbol_new(const char* name, SymbolType type, Set* set)
    assert(name         != NULL);
    assert(strlen(name) >  0);
    assert(set          != NULL);
-   assert((type > SYM_ERR) && (type <= SYM_VAR));
+   assert((type >= SYM_ERR) && (type <= SYM_VAR));
 
    sym = calloc(1, sizeof(*sym));
 
@@ -137,7 +137,7 @@ Symbol* symbol_lookup(const char* name)
    return sym;
 }
 
-Bool symbol_has_entry(const Symbol* sym, Tuple* tuple)
+Bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -145,7 +145,7 @@ Bool symbol_has_entry(const Symbol* sym, Tuple* tuple)
    return hash_has_entry(sym->hash, tuple);
 }
 
-const Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple)
+const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -246,7 +246,7 @@ const char* symbol_get_strg(const Symbol* sym, int idx)
    return entry_get_strg(sym->entry[idx]);
 }
 
-Set* symbol_get_set(Symbol* sym, int idx)
+Set* symbol_get_set(const Symbol* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);
@@ -255,7 +255,7 @@ Set* symbol_get_set(Symbol* sym, int idx)
    return entry_get_set(sym->entry[idx]);
 }
 
-Var* symbol_get_var(Symbol* sym, int idx)
+Var* symbol_get_var(const Symbol* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);

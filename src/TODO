@@ -1,3 +1,5 @@
+Flag für make_tmpname in lpfwrite das angibt ob der Name gemangelt oder
+korrekt als x["hallo",5] ausgegeben werden soll.
 
 ----------------------------
 Potenzmengen und mengen element kann dann auch eine menge sein,
@@ -37,3 +39,7 @@ Im LP reihenfolge der sets beibehalten
 bessere fehlermeldungen
 
 Warning wenn locale Variable eine globale uerbschreibt.
+
+sparse symbols. Dazu brauchen wir das urspüngliche indexset.
+Dann können wir für alle derefs mit einem index für den kein Wert
+vorliegt, der aber zulässig wäre, den default zurück liefern.

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.2 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.3 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -375,8 +375,8 @@ Con* lps_getcon(
 }
    
 Nzo* lps_getnzo(
-   Con*   con,
-   Var*   var)
+   const Con* con,
+   const Var* var)
 {
    Nzo*   nzo;
    
@@ -619,7 +619,7 @@ void lps_objname(
 }
 
 double lps_getcost(
-   Var* var)
+   const Var* var)
 {
    assert(var != NULL);
 
@@ -723,12 +723,12 @@ void lps_makename(
    const char* name,
    int         no)
 {
-   char temp[13];
-   int  len;
-   int  i;
+   char* temp;
+   int   len;
+   int   i;
    
    assert(target != NULL);
-   assert(size   >= 3);
+   assert(size   >= MPS_NAME_LEN);
    assert(name   != NULL);
    assert(no     >= 0);
    
@@ -736,6 +736,12 @@ void lps_makename(
       strcpy(target, name);
    else
    {
+      /* The 16 is to make sure the %d later has enough room
+       */
+      temp = malloc((size_t)size + 16);
+
+      assert(temp != NULL);
+      
       sprintf(temp, "%d", no);
 
       /* -2 : fuer '#' und '\0'
@@ -752,6 +758,8 @@ void lps_makename(
       strcpy(&target[i], temp);
    
       assert(strlen(target) == (size_t)size - 1);
+
+      free(temp);
    }
 }
 
@@ -759,25 +767,27 @@ void lps_transtable(FILE* fp)
 {
    Var* var;
    Con* con;
-   char tmp[MPS_NAME_LEN + 1];
+   char temp[MPS_NAME_LEN + 1];
 
    assert(lps_valid());
+
+   assert(fp != NULL);
 
    lps_number();
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      lps_makename(tmp, MPS_NAME_LEN + 1, var->name, var->number);
+      lps_makename(temp, MPS_NAME_LEN + 1, var->name, var->number);
 
-      fprintf(fp, "zimpl\tv %7d\t%-*s\t%s\n",
-         var->number, MPS_NAME_LEN, tmp, var->name);
+      fprintf(fp, "zimpl\tv %7d\t%-*s\t\"%s\"\n",
+         var->number, MPS_NAME_LEN, temp, var->name);
    }
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      lps_makename(tmp, MPS_NAME_LEN + 1, con->name, con->number);
+      lps_makename(temp, MPS_NAME_LEN + 1, con->name, con->number);
 
       fprintf(fp, "zimpl\tc %7d\t%-*s\t%s\n",
-         con->number, MPS_NAME_LEN, tmp, con->name);
+         con->number, MPS_NAME_LEN, temp, con->name);
    }
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.3 2001/10/09 21:06:44 thor Exp $ -->
+<!-- $Id: zimpl.php,v 1.4 2001/10/30 14:23:17 thor Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2001/10/09 21:06:44 $">
+<meta name="date" content="$Date: 2001/10/30 14:23:17 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -73,8 +73,10 @@ documentation. There is <em>no</em> Windows version.</p>
 <hr noshade>
 <h3>Download</h3>
 <p>
-The latest Version is 1.0. Download complete source code and documentation
-<a href="zimpl-1.00.tgz">here</a>. 
+The latest Version is 1.01. Download complete source code and documentation
+<a href="zimpl-1.01.tgz">here</a>. 
+<br>
+Differences to the older versions are in the <a href="CHANGELOG">Changelog</a>.
 </p>
 <h3>Bugs</h3>
 <p>
@@ -133,7 +135,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2001/10/09 21:06:44 $ by
+Last Update $Date: 2001/10/30 14:23:17 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2001 by Thorsten Koch
 </font>

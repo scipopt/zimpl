@@ -1,4 +1,4 @@
-#ident "@(#) $Id: tuple.c,v 1.4 2001/03/09 16:12:36 bzfkocht Exp $"
+#ident "@(#) $Id: tuple.c,v 1.5 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -141,7 +141,7 @@ int tuple_get_dim(const Tuple* tuple)
    return tuple->dim;
 }
 
-void tuple_set_elem(Tuple* tuple, int idx, const Elem* elem)
+void tuple_set_elem(const Tuple* tuple, int idx, const Elem* elem)
 {
    assert(tuple_is_valid(tuple));
    assert(idx         >= 0);

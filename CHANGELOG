@@ -1,0 +1,35 @@
+1.01 30.Oct 2001 Bug fix release
+ - Added several missing const's to the code.
+
+ - Unterminated string constants where not reported as errors.
+   This led to very irritating behavior. Fixed.
+
+ - Since it is possible that string type set members include spaces,
+   the "real" name in the .tbl file is now surrounded by doublequotes.
+   (I am not totally sure this is a good idea. Maybe I should just,
+   change all spaces to underscores.)
+
+ - It is now possible to write -x[3] in a constraint. Before
+   it was neccessary to write -1*x[3].
+
+ - Changed the field splitting for the read statement. The FS
+   keyword is gone. Read now tries to do the "right" thing.
+   Look at the documentation for details.
+
+ - When writing LP-format files, one's as coefficents are 
+   no longer written. This makes the files somewhat shorter.
+
+ - -d (Debug) Option is no longer be ignored.
+
+ - Default field separators for the read statement are 
+   now <space>, <;> and <tab> (<tab> is new).
+
+ - Fixed one minor malloc error with the include statement.
+
+ - Removed all uses of alloca() for better AIX compatibility.
+
+ - String valued parameters now work.
+
+1.00 09.Oct 2001 Initial release
+
+

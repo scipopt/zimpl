@@ -1,4 +1,4 @@
-#ident "@(#) $Id: iread.c,v 1.1 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: iread.c,v 1.2 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -30,7 +30,6 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <alloca.h>
 
 #include "portab.h"
 #include "mshell.h"
@@ -79,23 +78,6 @@ void i_read_param(CodeNode* self)
    code_value_rdef(self, rdef);
 
    rdef_free(rdef);
-   rpar_free(rpar);
-}
-
-void i_read_fieldsep(CodeNode* self)
-{
-   RPar*       rpar;
-   const char* fieldsep;
-   
-   Trace("i_read_fieldsep");
-   
-   assert(code_is_valid(self));
-
-   fieldsep = Code_eval_child_strg(self, 0);
-   rpar     = rpar_new_fieldsep(fieldsep);   
-
-   code_value_rpar(self, rpar);
-
    rpar_free(rpar);
 }
 
@@ -159,7 +141,7 @@ static int parse_template(
 {
    const char* sep = " ,<>";
    
-   char* temp = strcpy(alloca(strlen(template) + 1), template);
+   char* temp = strdup(template);
    char* s;
    int   field;
    char  type;
@@ -215,7 +197,73 @@ static int parse_template(
       param_type [params] = type;
       params++;
    }
+   free(temp);
+
+   if (params - (is_tuple_list ? 0 : 1) < 1)
+   {
+      fprintf(stderr, "*** Error: Invalid read template, not enough fields\n");
+      code_errmsg(self);
+      abort();
+      
+   }
    return params;
+}
+
+static int split_fields(char* s, char* field[])
+{
+   char* t = s;
+   char* u;
+   int   fields = 0;
+   Bool  new_field;
+   
+   for(;;)
+   {
+      new_field = FALSE;
+      
+      switch(*s)
+      {
+      case '\"' :
+         s++;
+         t = s;
+         while((*s != '\0') && (*s != '\"'))
+            s++;
+         new_field = TRUE;
+         break;
+      case '\0' :
+      case '\t' :
+      case ' ' :
+      case ',' :
+      case ';' :
+      case ':' :
+         new_field = TRUE;
+         break;
+      default :
+         s++;
+         break;
+      }
+      if (new_field)
+      {
+         u = s;
+         field[fields] = t;
+         fields++;
+
+         if (*s == '\"')
+            s++;
+         while(isspace(*s))
+            s++;
+         if (*s == ',' || *s == ';' || *s == ':')
+            s++;
+         while(isspace(*s))
+            s++;
+         *u = '\0';
+
+         if (*s == '\0')
+            break;
+
+         t  = s;
+      }
+   }
+   return fields;
 }
 
 void i_read(CodeNode* self)
@@ -236,7 +284,6 @@ void i_read(CodeNode* self)
    Tuple*      tuple;
    Entry*      entry;
    const char* filename;
-   const char* fieldsep;
    char*       comment;
    int         skip;
    int         use;
@@ -251,12 +298,15 @@ void i_read(CodeNode* self)
    use      = rdef_get_use(rdef);
    skip     = rdef_get_skip(rdef);
    filename = rdef_get_filename(rdef);
-   fieldsep = rdef_get_fieldsep(rdef);
    dim      = parse_template(self,
       rdef_get_template(rdef), param_field, param_type, &is_tuple_list);
 
-   comment    = alloca(strlen(rdef_get_comment(rdef)) + 2);
+   comment    = malloc(strlen(rdef_get_comment(rdef)) + 2);
+
+   assert(comment != NULL);
+   
    comment[0] = '\n';
+
    strcpy(&comment[1], rdef_get_comment(rdef));
 
    /* The last template parameter is the value for the entry_list.
@@ -304,13 +354,15 @@ void i_read(CodeNode* self)
 
          /* Now we break the line in fields.
           */
+#if 0
          fields = 0;
         
          for(s = strtok(buf, fieldsep);
             (s != NULL) && (fields < MAX_FIELDS);
              s = strtok(NULL, fieldsep))
             field[fields++] = s;
-
+#endif
+         fields = split_fields(s, field);
 #if 0
          fprintf(stderr, "Fields=%d\n", fields);
          for(i = 0; i < fields; i++)
@@ -383,4 +435,5 @@ void i_read(CodeNode* self)
 
    rdef_free(rdef);
    list_free(list);
+   free(comment);
 }

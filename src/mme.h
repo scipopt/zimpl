@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.8 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: mme.h,v 1.9 2001/10/30 14:23:17 thor Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -194,7 +194,8 @@ extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
 /*lint -sem(        tuple_get_dim, 1p == 1, @n >= 0) */
 extern int          tuple_get_dim(const Tuple* tuple);
 /*lint -sem(        tuple_set_elem, 1p == 1 && 2n >= 0 && 3p == 1) */
-extern void         tuple_set_elem(Tuple* tuple, int idx, const Elem* elem);
+extern void         tuple_set_elem(
+   const Tuple* tuple, int idx, const Elem* elem);
 /*lint -sem(        tuple_get_elem, 1p == 1 && 2n >= 0, @p == 1) */
 extern const Elem*  tuple_get_elem(const Tuple* tuple, int idx);
 /*lint -sem(        tuple_combine, 1p == 1 && 2p == 1, @p == 1) */
@@ -299,9 +300,9 @@ extern Bool         symbol_is_valid(const Symbol* symbol);
 /*lint -sem(        symbol_lookup, 1p == 1, r_null) */
 extern Symbol*      symbol_lookup(const char* name);
 /*lint -sem(        symbol_has_entry, 1p == 1 && 2p == 1) */
-extern Bool         symbol_has_entry(const Symbol* sym, Tuple* tuple);
+extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1, @p == 1) */
-extern const Entry* symbol_lookup_entry(const Symbol* sym, Tuple* tuple);
+extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_add_entry, 1p == 1 && 2p == 1) */
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
@@ -317,9 +318,9 @@ extern double       symbol_get_numb(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_strg, 1p == 1, @p) */
 extern const char*  symbol_get_strg(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_set, 1p == 1, @p == 1) */
-extern Set*         symbol_get_set(Symbol* sym, int idx);
+extern Set*         symbol_get_set(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_var, 1p == 1, @p == 1) */
-extern Var*         symbol_get_var(Symbol* sym, int idx);
+extern Var*         symbol_get_var(const Symbol* sym, int idx);
 /*lint -sem(        symbol_print, 1p == 1 && 2p == 1) */
 extern void         symbol_print(FILE* fp, const Symbol* sym);
 /*lint -sem(        symbol_print_all, 1p == 1) */
@@ -374,13 +375,13 @@ extern Term*        term_copy(const Term* term);
 /*lint -sem(        term_print, 1p == 1 && 2p == 1 && 3n >= 1) */
 extern void         term_print(FILE* fp, const Term* term, int flag);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
-extern Term*        term_add_term(Term* term_a, Term* term_b);
+extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_constant, 1p == 1) */
 extern void         term_add_constant(Term* term, double value);
 /*lint -sem(        term_mul_coeff, 1p == 1) */
 extern void         term_mul_coeff(Term* term, double value);
 /*lint -sem(        term_get_constant, 1p == 1) */
-extern double       term_get_constant(Term* term);
+extern double       term_get_constant(const Term* term);
 /*lint -sem(        term_negate, 1p == 1) */
 extern void         term_negate(Term* term);
 /*lint -sem(        term_to_objective, 1p == 1) */
@@ -399,13 +400,11 @@ extern Bool        rdef_is_valid(const RDef* rdef);
 /*lint -sem(       rdef_copy, 1p == 1, @p == 1) */
 extern RDef*       rdef_copy(RDef* rdef);
 /*lint -sem(       rdef_set_param, 1p == 1 && 2p == 1) */
-extern void        rdef_set_param(RDef* rdef, RPar* rpar);
+extern void        rdef_set_param(RDef* rdef, const RPar* rpar);
 /*lint -sem(       rdef_get_filename, 1p == 1, @p) */
 extern const char* rdef_get_filename(const RDef* rdef);
 /*lint -sem(       rdef_get_template, 1p == 1, @p) */
 extern const char* rdef_get_template(const RDef* rdef);
-/*lint -sem(       rdef_get_fieldsep, 1p == 1, @p) */
-extern const char* rdef_get_fieldsep(const RDef* rdef);
 /*lint -sem(       rdef_get_comment, 1p == 1, @p) */
 extern const char* rdef_get_comment(const RDef* rdef);
 /*lint -sem(       rdef_get_use, 1p == 1) */
@@ -417,16 +416,14 @@ extern int         rdef_get_skip(const RDef* rdef);
 extern RPar*       rpar_new_skip(int skip);
 /*lint -sem(       rpar_new_use, @p == 1) */
 extern RPar*       rpar_new_use(int use);
-/*lint -sem(       rpar_new_fieldsep, 1p, @p == 1) */
-extern RPar*       rpar_new_fieldsep(const char* fieldsep);
 /*lint -sem(       rpar_new_comment, 1p, @p == 1) */
-extern RPar*       rpar_new_comment(const char* fieldsep);
+extern RPar*       rpar_new_comment(const char* comment);
 /*lint -sem(       rpar_free, 1p == 1) */
 extern void        rpar_free(RPar* rpar);
 /*lint -sem(       rpar_is_valid, 1p == 1) */
 extern Bool        rpar_is_valid(const RPar* rpar);
 /*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
-extern RPar*       rpar_copy(RPar* rpar);
+extern RPar*       rpar_copy(const RPar* rpar);
 
 /* lpstore.c
  */
@@ -439,7 +436,7 @@ extern Var*         lps_getvar(const char* name);
 /*lint -sem(        lps_getcon, 1p) */
 extern Con*         lps_getcon(const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1) */
-extern Nzo*         lps_getnzo(Con* con, Var* var);
+extern Nzo*         lps_getnzo(const Con* con, const Var* var);
 /*lint -sem(        lps_addvar, 1p, @p == 1) */
 extern Var*         lps_addvar(const char* name, VarType type,
                        double lower, double upper); 
@@ -458,7 +455,7 @@ extern void         lps_setdir(LpDirect direct);
 /*lint -sem(        lps_objname, 1p) */
 extern void         lps_objname(const char* name);
 /*lint -sem(        lps_getcost, 1p == 1) */
-extern double       lps_getcost(Var* var);
+extern double       lps_getcost(const Var* var);
 /*lint -sem(        lps_setcost, 1p == 1) */
 extern void         lps_setcost(Var* var, double cost);
 /*lint -sem(        lps_setlower, 1p == 1) */
