@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.22 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.23 2003/09/08 15:41:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -400,12 +400,21 @@ CodeNode* code_get_root(void)
 
 static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
 {
+   static const char* tname[] =
+   {
+      "Error", "Number", "String", "Name", "Tuple", "Set", "Term", "Bool", "Size",
+      "IndexSet", "List", "Nothing", "Entry", "VarClass", "ConType",
+      "ReadDefinition", "ReadParameter", "BitFlag", "Symbol", "Bound"
+   };
    assert(code_is_valid(node));
-
+   assert(sizeof(tname) / sizeof(tname[0]) > (size_t)node->type);
+   
    if (node->type != expected)
    {
-      fprintf(stderr, "*** Error: Type error, expected %d got %d\n",
-         expected, node->type);
+      assert(sizeof(tname) / sizeof(tname[0]) > (size_t)expected);
+      
+      fprintf(stderr, "*** Error 159: Type error, expected %s got %s\n",
+         tname[expected], tname[node->type]);
       code_errmsg(node);
       abort();
    }

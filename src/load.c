@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.15 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -63,7 +63,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
 
       if (in_string && ((c == EOF) || c == '\n'))
       {
-         fprintf(stderr, "*** Line %d: Unterminated string\n", *lineno);
+         fprintf(stderr, "*** Error 161: Line %d: Unterminated string\n", *lineno);
          abort();
       }
       if (c == EOF)
@@ -71,7 +71,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
          if (cnt > 0)
          {
             (*buf)[cnt] = '\0';
-            fprintf(stderr, "*** Line %d: Trailing \"%s\" ignored\n",
+            fprintf(stderr, "*** Error 162: Line %d: Trailing \"%s\" ignored\n",
                *lineno, *buf);
          }
          return NULL;
@@ -187,7 +187,7 @@ static void add_stmt(
    
  syntax_error:
    
-   fprintf(stderr, "*** Line %d: Syntax Error\n", lineno);
+   fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
    abort();
 }
 

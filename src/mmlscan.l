@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.28 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.29 2003/09/08 15:41:31 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -223,7 +223,7 @@ static const Stmt* yystmt = NULL;
 
 void yyerror(const char* s)
 {
-   fprintf(stderr, "*** File %s Line %d : %s\n", 
+   fprintf(stderr, "*** Error 800: File %s Line %d : %s\n", 
       stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);
    show_source(stderr, stmt_get_text(yystmt), yycolumn);
    abort();
@@ -251,8 +251,10 @@ void parse_stmt(const Stmt* stmt)
 
    if (yyparse() != 0)
    {
-      fprintf(stderr, "*** Error 800: Parsing error\n");
+      fprintf(stderr, "*** Error 801: Parser failed\n");
       exit(1);
    }
    yy_delete_buffer(state);
 }
+
+

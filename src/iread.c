@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.10 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.11 2003/09/08 15:41:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -123,9 +123,9 @@ CodeNode* i_read_use(CodeNode* self)
    }
    int_use = numb_toint(use);
 
-   if (int_use < 0)
+   if (int_use <= 0)
    {
-      fprintf(stderr, "*** Error 148: use value %d is negative\n", int_use);
+      fprintf(stderr, "*** Error 148: use value %d is not positive\n", int_use);
       code_errmsg(self);
       abort();
    }
@@ -240,7 +240,7 @@ static int parse_template(
    }
    free(temp);
 
-   if (params - (is_tuple_list ? 0 : 1) < 1)
+   if (params - (*is_tuple_list ? 0 : 1) < 1)
    {
       fprintf(stderr, "*** Error 155: Invalid read template, not enough fields\n");
       code_errmsg(self);
@@ -457,7 +457,7 @@ CodeNode* i_read(CodeNode* self)
          {
             if (param_field[i] >= fields)
             {
-               fprintf(stderr, "*** Error 156: Not enough fields in data\n");
+               fprintf(stderr, "*** Error 157: Not enough fields in data (value)\n");
                fprintf(stderr, "***            File: %s line %d\n",
                   rdef_get_filename(rdef), line);
                code_errmsg(self);
@@ -492,7 +492,7 @@ CodeNode* i_read(CodeNode* self)
    
    if (list == NULL)
    {
-      fprintf(stderr, "*** Error 157: Read from file found no data\n");
+      fprintf(stderr, "*** Error 158: Read from file found no data\n");
       code_errmsg(self);
       abort();
    }
@@ -503,5 +503,6 @@ CodeNode* i_read(CodeNode* self)
    
    return self;
 }
+
 
 

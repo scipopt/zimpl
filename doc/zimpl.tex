@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.15 2003/09/05 13:53:55 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.15 2003/09/05 13:53:55 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.16 2003/09/08 15:41:31 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -892,15 +892,101 @@ can produce:
 %
 % iread.c
 %
-%\item[147 use value ]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
+\item[147 use value \code{xxx} is too big or not an integer]\ \\
+  The use value must be given as an integer smaller than two billion.
+\item[148 use value \code{xxx} is not positive]\ \\
+  Negative or zero values for the use parameter are not allowed.
+\item[149 skip value \code{xxx} is too big or not an integer]\ \\
+  The skip value must be given as an integer smaller than two billion.
+\item[150 skip value \code{xxx} is not positive]\ \\
+  Negative or zero values for the skip parameter are not allowed.
+\item[151 Not a valid read template]\ \\
+  A read template must look something like \code{"$<$1n,2n$>$"}.
+  There have to be a $<$ and a $>$ in this order.
+\item[152 Invalid read template syntax]\ \\
+  Apart from any delimiters like \code{$<$}, \code{$>$}, and commas a
+  template must consists of number charater pairs like \code{1n}, \code{3s}.
+\item[153 Invalid field number \code{xxx}]\ \\
+  The field numbers in a template have to be between 1 and 255.
+\item[154 Invalid field type \code{xxx}]\ \\
+  The only possible field types are \code{n} and \code{s}.
+\item[155 Invalid read template, not enough fields]\ \\
+  There has to be at least one field inside the delimters.
+\item[156 Not enough fields in data]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. 
+\item[157 Not enough fields in data (value)]\ \\
+  The template specified a field number that is higher than the actual
+  number of field found in the data. The error occured behind the 
+  index tuple in the value field.
+\item[158 Read from file found no data]\ \\
+  Not a single record could be read out of the data file. Either the
+  file is empty, or all lines are comments.
+%
+% code.c
+%  
+\item[159 Type error, expected \code{xxx} got \code{yyy}]\ \\
+  The type found was not the expected one, e.g. subtracting 
+  a string from a number would result in this message.
+%
+% elem.c
+% 
+\item[160 Comparison of elements with different types \code{xxx} /
+  \code{yyy}]\ \\
+  Two elements from different tuples were compared and found to be 
+  of different types. Probably you have a index expression with a 
+  constant element, that does not match the elements of the set.
+  Example: \code{set B:=\{$<$i,"a"$>$ in \{$<$1,2$>$\}\};}
+%
+% load.c
+%
+\item[161 Line \code{xxx}: Unterminated string]\ \\
+  This line has an odd number of \code{"} characters. 
+  A String was started, but not ended.
+\item[162 Line \code{xxx}: Trailing \code{"yyy"} ignored]\ \\
+  Something was found after the last semicolon in the file.
+\item[163 Line \code{xxx}: Syntax Error]\ \\
+  Either a new statement was not started with one of the keywords:
+  \code{set}, \code{param}, \code{var}, \code{minimize}, 
+  \code{maximize}, \code{subto}, and \code{print}, or no name
+  was given after the keyword.
+%
+% set.c
+%
+\item[164 Dublicate element \code{xxx} for set rejected]\ \\
+   An element was added to a set that was already in it.
+\item[165 Comparison of differen dimension sets]\ \\
+   Two sets were compared, but have different dimension tuples.
+   (This means they never had a chance other then beeing empty sets to
+   be equal.)
+%
+% symbol.c
+%
+\item[166 Dublicate element \code{xxx} for symbol \code{yyy} rejected]\ \\
+  An element that was already there was added to a symbol.
+%
+% tuple.c
+%
+\item[167 Comparison of different dimension tuples]\ \\
+  Two tuples with different dimensions were compared,
+  Probably you have a index expression which does not match the  
+  dimension of the tuples in the set.
+  Example: \code{set B:=\{$<$1$>$ in \{$<$1,2$>$\}\};}
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+\item[]\ \\
+% mmlscan.l
+\item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
+  Parsing error. What was found was not what was expected.
+  The statement you entered is not valid.
+\item[801 Parser failed]\ \\
+  The parsing routine failed. This should not happen. If you encounter
+  this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
 \end{description}
 
 

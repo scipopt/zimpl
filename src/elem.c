@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.12 2003/07/16 21:04:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.13 2003/09/08 15:41:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -236,7 +236,7 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr,
-         "*** Warning: Comparison of elements with different types ");
+         "*** Warning 160: Comparison of elements with different types ");
       elem_print(stderr, elem_a);
       fprintf(stderr, " / ");
       elem_print(stderr, elem_b);

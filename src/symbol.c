@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.18 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.19 2003/09/08 15:41:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -205,7 +205,7 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
 
    if (hash_has_entry(sym->hash, tuple))
    {
-      fprintf(stderr, "*** Warning: Dublicate element ");
+      fprintf(stderr, "--- Warning 166: Dublicate element ");
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol %s rejected\n", sym->name);
 
