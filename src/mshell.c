@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.c,v 1.9 2004/04/18 14:32:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.c,v 1.10 2004/11/08 09:01:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -186,9 +186,9 @@ void* mem_malloc(
    const int    line) 
 {
    const char* errmsg1 =
-      "mem_malloc(size=%u, file=%s, line=%d): out of memory";
+      "mem_malloc(size=%u, file=%s, line=%d): out of memory\n";
    const char* errmsg2 =
-      "mem_malloc(size=%u, file=%s, line=%d): zero size";
+      "mem_malloc(size=%u, file=%s, line=%d): zero size\n";
 
    MHDR* p;
    size_t alloc_size;
@@ -227,9 +227,9 @@ void* mem_calloc(
    const int    line)
 {
    const char* errmsg1 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory";
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory\n";
    const char* errmsg2 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): zero item/size";
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): zero item/size\n";
 
    MHDR* p;
    
@@ -264,11 +264,11 @@ void* mem_realloc(
    const int    line)
 {
    const char* errmsg1 =
-      "mem_realloc(size=%u, file=%s, line=%d): out of memory";
+      "mem_realloc(size=%u, file=%s, line=%d): out of memory\n";
    const char* errmsg2 =
-      "mem_realloc(file=%s, line=%d): null pointer";
+      "mem_realloc(file=%s, line=%d): null pointer\n";
    const char* errmsg3 =
-      "mem_realloc(size=%u, file=%s, line=%d): zero size";
+      "mem_realloc(size=%u, file=%s, line=%d): zero size\n";
 
    MHDR* p;
 
@@ -310,7 +310,7 @@ char* mem_strdup(
    const char* file,
    const int   line)
 {
-   const char* errmsg1 = "mem_strdup(file=%s, line=%d): null pointer";
+   const char* errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
 
    if (str == NULL)
    {
@@ -325,7 +325,7 @@ void mem_free(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_free(file=%s, line=%d): null pointer";
+   const char *errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
    MHDR* p;
 
@@ -347,7 +347,7 @@ void mem_xhide(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_checkout(file=%s, line=%d): null pointer";
+   const char *errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
 
    MHDR* p;
 
@@ -417,7 +417,7 @@ void* mem_malloc(
    const int    line) 
 {
    const char* errmsg1 =
-      "mem_malloc(size=%u, file=%s, line=%d): out of memory";
+      "mem_malloc(size=%u, file=%s, line=%d): out of memory\n";
 
    void* p;
 
@@ -438,7 +438,7 @@ void* mem_calloc(
    const int    line)
 {
    const char* errmsg1 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory";
+      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory\n";
 
    void* p;
 
@@ -460,7 +460,7 @@ void* mem_realloc(
    const int    line)
 {
    const char* errmsg1 =
-      "mem_realloc(size=%u, file=%s, line=%d): out of memory";
+      "mem_realloc(size=%u, file=%s, line=%d): out of memory\n";
 
    void* p;
 
@@ -481,7 +481,7 @@ char* mem_strdup(
    const int   line)
 {
    const char* errmsg1 =
-      "mem_strdup(size=%u, file=%s, line=%d): out of memory";
+      "mem_strdup(size=%u, file=%s, line=%d): out of memory\n";
 
    char* s;
    
@@ -500,7 +500,7 @@ void mem_free(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_free(file=%s, line=%d): null pointer";
+   const char *errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
 #ifndef NDEBUG
    if (ptr == NULL)

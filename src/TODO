@@ -1,3 +1,30 @@
+Bei -v0 alle warnings aus.
+
+min2/max2 warnung wenn empty list
+
+graph datei besser lesen konnen,
+sowas wie param xyz := read zeile spalte "1n" sollte gehen
+
+x[i,j] = y[i] xor y[j];
+wie formuliert man das, warum geht 
+subto c1: forall <i,j> in E do 
+   vif (y[i] == 1) xor (y[j] == 1) then x[i,j] == 1 else x[i,j] == 0 end;
+nicht
+
+
+table sizes anpassen.
+
+static SetIter* set_multi_iter_init(
+Warum wird nicht der index mit der groessten anzahl von membern als fixed genommen?
+
+-fcheck-memory-usage ?
+
+Zielfunktion als Rows* einrichten
+Vorteile: nur non-zeros belegen speicher, mehrere Zielfunktionen möglich.
+
+Cann man vabs in der Zielfunktion einsetzen?
+Und wenn nichtwarum nicht?
+
 MPSwrite Warning objective invertet maximal einmal 
 
 TeX output?

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.58 2004/05/29 11:29:36 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.59 2004/11/08 09:01:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -554,10 +554,16 @@ int main(int argc, char* const* argv)
    free(cmdpipe);
    
    if (verbose >= VERB_NORMAL)
+   {
       mem_display(stdout);
-   
+   }
 #endif /* __INSURE__ || !NDEBUG || FREEMEM */
    return 0;
 }
+
+
+
+
+
 
 
