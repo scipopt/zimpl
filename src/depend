@@ -1,0 +1,58 @@
+$(OBJDIR)/bound.o: src/bound.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/code.o: src/code.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+ src/code.h src/inst.h
+$(OBJDIR)/conname.o: src/conname.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/xlpglue.h
+$(OBJDIR)/elem.o: src/elem.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/entry.o: src/entry.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/hash.o: src/hash.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/idxset.o: src/idxset.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/iread.o: src/iread.c src/lint.h src/bool.h src/mshell.h \
+ src/ratlptypes.h src/mme.h src/code.h src/inst.h
+$(OBJDIR)/list.o: src/list.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/load.o: src/load.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/local.o: src/local.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/mmlparse.o: src/mmlparse.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/code.h src/inst.h
+$(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/ratlptypes.h src/mme.h \
+ src/mmlparse.h
+$(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h \
+ src/gmpmisc.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/prog.o: src/prog.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/rdefpar.o: src/rdefpar.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/set.o: src/set.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/source.o: src/source.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/stmt.o: src/stmt.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h src/code.h src/inst.h
+$(OBJDIR)/strstore.o: src/strstore.c src/lint.h src/bool.h src/mshell.h \
+ src/ratlptypes.h src/mme.h
+$(OBJDIR)/symbol.o: src/symbol.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/term.o: src/term.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+ src/xlpglue.h
+$(OBJDIR)/tuple.o: src/tuple.c src/bool.h src/mshell.h src/ratlptypes.h \
+ src/mme.h
+$(OBJDIR)/zimpl.o: src/zimpl.c src/lint.h src/bool.h src/mshell.h \
+ src/ratlptypes.h src/mme.h src/xlpglue.h src/gmpmisc.h
+$(OBJDIR)/ratlpstore.o: src/ratlpstore.c src/lint.h src/bool.h src/ratlp.h \
+ src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/ratlpfwrite.o: src/ratlpfwrite.c src/bool.h src/ratlp.h \
+ src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/ratmpswrite.o: src/ratmpswrite.c src/bool.h src/ratlp.h \
+ src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/mshell.o: src/mshell.c src/lint.h src/mshell.h
+$(OBJDIR)/inst.o: src/inst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+ src/code.h src/inst.h src/xlpglue.h
+$(OBJDIR)/ratordwrite.o: src/ratordwrite.c src/mshell.h src/bool.h src/ratlp.h \
+ src/ratlptypes.h src/ratlpstore.h src/mme.h
+$(OBJDIR)/xlpglue.o: src/xlpglue.c src/bool.h src/mshell.h src/ratlp.h \
+ src/ratlptypes.h src/mme.h src/gmpmisc.h src/xlpglue.h
+$(OBJDIR)/gmpmisc.o: src/gmpmisc.c src/bool.h src/mshell.h src/gmpmisc.h
