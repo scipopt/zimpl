@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.18 2003/09/17 11:42:17 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.19 2003/10/29 15:04:19 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2003/09/17 11:42:17 $">
+<meta name="date" content="$Date: 2003/10/29 15:04:19 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -61,32 +61,41 @@ by a LP or MIP solver.
 <h3>Where does is run?</h3>
 <p>
 Zimpl is a command line 
-program written in plain C and released under GNU GPL. 
+program written in plain C and released under 
+<a href="http://www.gnu.org">GNU</a>
+<a href="http://www.gnu.org/licenses/gpl.html">GPL</a>. 
 It has been tested to compile under
-Linux/Intel, Solaris, Tru64 and AIX. 
-Probably it will compile and run wherever a decent OS and C compiler
-is available. Zimpl has been successfully compiled under Windows using 
-<a href="http://www.cygwin.com">Cygwin</a>.
+Linux/Intel, Solaris, Tru64, HPUX and AIX. 
+Probably it will compile and run wherever 
+<a href="http://www.swox.com/gmp/">GMP</a> 
+is available. Zimpl has even been successfully compiled for Windows using 
+<a href="http://www.mingw.org">MinGW</a> and the 
+<a href="http://gcc.gnu.org">GCC</a> as a cross compiler.
 </p>
 <p>
 <hr noshade>
-<h3>What's new in 2.00</h3>
+<h3>What's new in 2.01</h3>
 <ul>
+<li>Zimpl can automatically generate IP's for <em>if</em> constructs
+    involving variables and computing the absolute value of variables.
 <li>Zimpl now uses rational arithmetic. So it needs more memory and is slower.
 <li>Preprocessing is now implemented, but not yet tested.
 <li>Numerous bug fixes and enhancements.
 </ul>
 <h3>Download</h3>
 <p>
-The latest Version is 2.00. 
-<a href="download/zimpl-2.00.tgz">Download</a>
-complete source code and 
-<a href="zimpl.pdf">documentation</a>.
-<br>
-Older versions are still available <a href="download/">here</a>.
+The latest Version is 2.01. 
+<a href="download">Download</a>
+complete
+<a href="download/zimpl-2.01.tgz">source code</a>
+and 
+<a href="download/zimpl.pdf">documentation</a>.
 <br>
 Differences to the older versions are described in the 
-<a href="CHANGELOG.txt">Changelog</a>.
+<a href="download/CHANGELOG.txt">Changelog</a>.
+<br>
+Precompiled 
+<a href="download">binaries</a> are also available.
 </p>
 <h3>Bugs</h3>
 <p>
@@ -171,7 +180,7 @@ border="0" width="88" height="36" align="bottom"></a>
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
 <a href="http://www.zib.de/impressum.en.html">Imprint</a>
-Last Update $Date: 2003/09/17 11:42:17 $ by
+Last Update $Date: 2003/10/29 15:04:19 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2003 by Thorsten Koch
 </font>

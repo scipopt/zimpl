@@ -1,0 +1,10 @@
+FancyIndexing on
+IndexOptions NameWidth=*
+HeaderName header.html
+IndexIgnore .. header.html
+AddDescription "Linux, optimized for P4" *linux.x86.*.opt-p4 
+AddDescription "Linux, PPro and later" *linux.x86.*.opt 
+AddDescription "Use this for Windooze" *win*opt*exe
+AddDescription "Zimpl User Guide" zimpl.pdf
+AddDescription "List of recent changes" CHANGELOG*
+AddDescription "Source code" zimpl*tgz
