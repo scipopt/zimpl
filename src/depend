@@ -64,6 +64,8 @@ $(OBJDIR)/ratlpfwrite.o: src/ratlpfwrite.c src/bool.h src/gmpmisc.h src/ratlp.h 
  src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/ratmpswrite.o: src/ratmpswrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
  src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/ratmstwrite.o: src/ratmstwrite.c src/mshell.h src/bool.h src/ratlp.h \
+ src/ratlptypes.h src/ratlpstore.h src/mme.h
 $(OBJDIR)/mshell.o: src/mshell.c src/lint.h src/mshell.h
 $(OBJDIR)/inst.o: src/inst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
  src/code.h src/inst.h src/xlpglue.h

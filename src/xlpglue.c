@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.16 2003/10/27 11:13:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.17 2004/04/27 09:56:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -73,6 +73,13 @@ void xlp_orderfile(FILE* fp, LpFormat format)
    assert(fp != NULL);
 
    lps_orderfile(lp, fp, format, title);
+}
+
+void xlp_mstfile(FILE* fp, LpFormat format)
+{
+   assert(fp != NULL);
+
+   lps_mstfile(lp, fp, format, title);
 }
 
 void xlp_free()

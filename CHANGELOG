@@ -1,3 +1,6 @@
+ - New -m switch that will write a CPLEX MST
+   file with MIP starting values.
+
  - Complete new Set implementation.
 
  - If verbose is >= 3, the local variable

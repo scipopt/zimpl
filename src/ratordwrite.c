@@ -1,7 +1,7 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.6 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.7 2004/04/27 09:56:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: ordwrite.c                                                    */
+/*   File....: ratordwrite.c                                                 */
 /*   Name....: ORD File Write                                                */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */

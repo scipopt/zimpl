@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.55 2004/04/18 10:08:11 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.56 2004/04/27 09:56:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -62,7 +62,7 @@ static const char* banner =
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n\n";
 
-static const char* options = "bD:fF:hn:o:Ort:v:V";
+static const char* options = "bD:fF:hmn:o:Ort:v:V";
 static const char* usage =
 "usage: %s [-bfhOrV][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] file ...\n";
 
@@ -73,11 +73,12 @@ static const char* help =
 "  -f             enable flex debugging output.\n" \
 "  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \
+"  -m             write CPLEX MIP start value file.\n"
 "  -n cm|cn|cf    name column make/name/full\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
 "                 the input file without extension.\n" \
 "  -O             optimize LP by preprocessing.\n" \
-"  -r             write branching order file.\n" \
+"  -r             write CPLEX branching order file.\n" \
 "  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
 "                 or human readable HUM.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
@@ -224,11 +225,13 @@ int main(int argc, char* const* argv)
    char*       outfile  = NULL;
    char*       tblfile  = NULL;
    char*       ordfile  = NULL;
+   char*       mstfile  = NULL;
    char*       basefile = NULL;
    char*       cmdpipe  = NULL;
    LpFormat    format   = LP_FORM_LPF;
    FILE*       fp;
    Bool        write_order = FALSE;
+   Bool        write_mst   = FALSE;
    Bool        presolve    = FALSE;
    char**      param_table;
    int         param_count = 0;
@@ -267,6 +270,9 @@ int main(int argc, char* const* argv)
          filter    = strdup(optarg);
          openfile  = popen;
          closefile = pclose;
+         break;
+      case 'm' :
+         write_mst = TRUE;
          break;
       case 'n' :
          if (*optarg != 'c')
@@ -362,6 +368,7 @@ int main(int argc, char* const* argv)
    outfile = add_extention(basefile, extension);
    tblfile = add_extention(basefile, ".tbl");
    ordfile = add_extention(basefile, ".ord");
+   mstfile = add_extention(basefile, ".mst");
    
    cmdpipe = malloc(strlen(basefile) + strlen(filter) + 256);
 
@@ -433,7 +440,7 @@ int main(int argc, char* const* argv)
    (void)(*closefile)(fp);
 
    /* We do not need the translation table for human readable format
-    * (And the orderfile is also senseless)
+    * (And the orderfile and mstffile are also senseless)
     */
    if (format != LP_FORM_HUM)
    {
@@ -477,6 +484,27 @@ int main(int argc, char* const* argv)
          
          (void)(*closefile)(fp);
       }
+      /* Write MST file 
+       */
+      if (write_mst)
+      {
+         sprintf(cmdpipe, filter, mstfile);
+
+         if (verbose >= VERB_NORMAL)
+            printf("Writing [%s]\n", cmdpipe);
+
+         if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+         {
+            fprintf(stderr, "*** Error 104: File open failed ");
+            perror(mstfile);
+            exit(EXIT_FAILURE);
+         }
+         xlp_mstfile(fp, format);
+         
+         check_write_ok(fp, mstfile);
+         
+         (void)(*closefile)(fp);
+      }
    }  
    if (verbose >= VERB_DEBUG) 
       symbol_print_all(stderr);
@@ -500,6 +528,7 @@ int main(int argc, char* const* argv)
    str_exit();
    gmp_exit();
 
+   free(mstfile);
    free(ordfile);
    free(outfile);
    free(tblfile);

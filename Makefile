@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.18 2004/04/23 07:39:18 bzfkocht Exp $
+# $Id: Makefile,v 1.19 2004/04/27 09:56:02 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -42,7 +42,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
 
-VERSION		=	2.02b
+VERSION		=	2.02c
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -87,7 +87,7 @@ OBJECT  =       	bound.o code.o conname.o define.o elem.o entry.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
-			ratlpstore.o ratlpfwrite.o ratmpswrite.o \
+			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
 			mshell.o inst.o ratordwrite.o xlpglue.o gmpmisc.o \
 			ratpresolve.o rathumwrite.o vinst.o
 
