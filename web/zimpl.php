@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.13 2002/10/29 10:42:48 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.14 2002/12/20 12:56:31 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -34,9 +34,9 @@ fclose($fp);
 <html lang="en">
 <head>
 <meta name="author" content="Thorsten Koch">
-<meta name="description" content="Zimple Homepage">
+<meta name="description" content="Zimpl Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2002/10/29 10:42:48 $">
+<meta name="date" content="$Date: 2002/12/20 12:56:31 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -100,6 +100,15 @@ and at
 NEOS Optimization Software</a>.
 <hr noshade>
 <h3>Links</h3>
+<h4>Zimpl related:</h4>
+<dl>
+<dt><a href="http://www.iot.ntnu.no/~mkaut/files/zimpl_info.htm">
+    Precompiled Zimpl for Windoze</a></dt>
+<dt><a href="http://www.math.tu-berlin.de/Vorlesungen/WS02/LinOpt/">
+    TU-Berlin, Lecture on Linear Optimization</a></dt>
+<dt><a href="http://www.mathematik.tu-darmstadt.de/ags/ag7/Lehrveranstaltungen/WS2002_de.html">
+    TU-Darmstadt, Lecture on Discrete Optimization</a></dt>
+</dl>
 <h4>The commercial ones:</h4>
 <p>
 <a href="http://www.ampl.com">AMPL</a>,
@@ -148,7 +157,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2002/10/29 10:42:48 $ by
+Last Update $Date: 2002/12/20 12:56:31 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2002 by Thorsten Koch
 </font>
