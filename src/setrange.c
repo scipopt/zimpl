@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.6 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.7 2005/02/19 10:45:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -155,18 +155,15 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    
    elem = tuple_get_elem(tuple, offset);
 
-   if (elem_get_type(elem) != ELEM_NUMB)
-   {
-      fprintf(stderr, "Shit! %d\n", offset);
-      return -1;
-   }
+   /* If this fails, this means we have a set with mixed number
+    * and integer types.
+    */
+   assert(elem_get_type(elem) == ELEM_NUMB);
+
    numb = elem_get_numb(elem);
 
-   if (!numb_is_int(numb))
-   {
-      fprintf(stderr, "Minor shit! %d\n", offset);
-      return -1;
-   }
+   assert(numb_is_int(numb));
+
    val = numb_toint(numb);
 
    if (set->range.step > 0)
@@ -266,11 +263,9 @@ static SetIter* set_range_iter_init(
          }
          break;
       case ELEM_STRG :
-         fprintf(stderr, "Shit! %d\n", offset);
-
-         iter->range.first = 1;
-         iter->range.last  = 0;
-         break;
+         /* This should not happen. Probably a set with mixed
+          * numbers and string was generated.
+          */
       default :
          abort();
       }

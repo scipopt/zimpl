@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.82 2005/02/12 09:56:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.83 2005/02/19 10:45:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1412,10 +1412,66 @@ CodeNode* i_set_empty(CodeNode* self)
    return self;
 }
 
+static void check_sets_compatible(
+   CodeNode*   self,
+   const Set*  set_a,
+   const Set*  set_b,
+   const char* op_name)
+{
+   const Elem* elem;
+   Tuple*      tuple_a;
+   Tuple*      tuple_b;
+   ElemType    elem_type_a;
+   ElemType    elem_type_b;
+   int         i;
+
+   /* If one of the two involved sets is empty, the dimension of the
+    * other one does not matter.
+    */
+   if (set_get_members(set_a) == 0 || set_get_members(set_b) == 0)
+      return;
+   
+   if (set_get_dim(set_a) != set_get_dim(set_b))
+   {
+      fprintf(stderr, "*** Error 119: %s of sets with different dimension\n", op_name);
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   tuple_a = set_get_tuple(set_a, 0);
+   tuple_b = set_get_tuple(set_b, 0);
+
+   assert(tuple_get_dim(tuple_a) == set_get_dim(set_b));
+   assert(tuple_get_dim(tuple_a) == tuple_get_dim(tuple_b));
+
+   for(i = 0; i < tuple_get_dim(tuple_a); i++)
+   {
+      elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
+      elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
+
+      assert(elem_type_a == ELEM_NUMB || elem_type_a == ELEM_STRG);
+      assert(elem_type_b == ELEM_NUMB || elem_type_b == ELEM_STRG);
+      
+      if (elem_type_a != elem_type_b)
+      {
+         fprintf(stderr, "*** Error 120: %s of sets with different types\n", op_name);
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
+   tuple_free(tuple_a);
+   tuple_free(tuple_b);
+}
+
 CodeNode* i_set_union(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   const Set*  set_a;
+   const Set*  set_b;
+   const Elem* elem;
+   Tuple*      tuple_a;
+   Tuple*      tuple_b;
+   ElemType    elem_type_a;
+   ElemType    elem_type_b;
+   int         i;
    
    Trace("i_set_union");
 
@@ -1424,12 +1480,8 @@ CodeNode* i_set_union(CodeNode* self)
    set_a = code_eval_child_set(self, 0);
    set_b = code_eval_child_set(self, 1);
 
-   if (set_get_dim(set_a) != set_get_dim(set_b))
-   {
-      fprintf(stderr, "*** Error 119: Union of incompatible sets\n");
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
+   check_sets_compatible(self, set_a, set_b, "Union");
+   
    code_value_set(self, set_union(set_a, set_b));
 
    return self;
@@ -1447,12 +1499,8 @@ CodeNode* i_set_minus(CodeNode* self)
    set_a = code_eval_child_set(self, 0);
    set_b = code_eval_child_set(self, 1);
 
-   if (set_get_dim(set_a) != set_get_dim(set_b))
-   {
-      fprintf(stderr, "*** Error 120: Minus of incompatible sets\n");
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
+   check_sets_compatible(self, set_a, set_b, "Minus");
+   
    code_value_set(self, set_minus(set_a, set_b));
 
    return self;
@@ -1470,12 +1518,8 @@ CodeNode* i_set_inter(CodeNode* self)
    set_a = code_eval_child_set(self, 0);
    set_b = code_eval_child_set(self, 1);
 
-   if (set_get_dim(set_a) != set_get_dim(set_b))
-   {
-      fprintf(stderr, "*** Error 121: Intersection of incompatible sets\n");
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
+   check_sets_compatible(self, set_a, set_b, "Intersection");
+
    code_value_set(self, set_inter(set_a, set_b));
 
    return self;
@@ -1493,12 +1537,8 @@ CodeNode* i_set_sdiff(CodeNode* self)
    set_a = code_eval_child_set(self, 0);
    set_b = code_eval_child_set(self, 1);
 
-   if (set_get_dim(set_a) != set_get_dim(set_b))
-   {
-      fprintf(stderr, "*** Error 122: Symmetric Difference of incompatible sets\n");
-      code_errmsg(self);
-      exit(EXIT_FAILURE);
-   }
+   check_sets_compatible(self, set_a, set_b, "Symmetric Difference");
+
    code_value_set(self, set_sdiff(set_a, set_b));
 
    return self;

@@ -1,3 +1,7 @@
+ - Applying union, minus, intersection, or symmetric
+   difference to two sets with tuples that have different component
+   types will now result in a useful error message.
+ 
  - Fixed a bug that let unknown names evaluate to a member of a set.
    Example: subto c1: forall <i> in I do w[k] <= 1; 
    did not result in an error.

@@ -65,16 +65,19 @@
    You tried to compare apples with oranges, i.e, numbers with
    strings. Note that the use of an undefined parameter could also
    lead to this message.
-\item[119 Union of incompatible sets]\ \\
-   To unite two sets, both must have the same dimension tuples,\ie
+\item[119 \code{xxx} of sets with different dimension]\ \\
+   To apply Operation \code{xxx} (union, minus, intersection, symmetric
+   difference) on two sets, 
+   both must have the same dimension tuples,\ie
    the tuples must have the same number of components.
 \item[120 Minus of incompatible sets]\ \\
-   To subtract two sets, both must have the same dimension tuples.
-\item[121 Intersection of incompatible sets]\ \\
-   To intersect two sets, both must have the same dimension tuples.
-\item[122 Symmetric Difference of incompatible sets]\ \\
-   Two build the symmetric difference of two sets, 
-   both must have the same dimension tuples.
+   To apply Operation \code{xxx} (union, minus, intersection, symmetric
+   difference) on two sets, 
+   both must have tuples of the same type,\ie
+   the components of the tuples must have the same type (number,
+   string).
+%\item[121]\ \\
+%\item[122]\ \\
 \item[123 ``from'' value \code{xxx} in range too big or not an
    integer]\ \\
    To generate a set, the ``from'' number must be an integer with an
