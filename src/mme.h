@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.53 2003/10/13 16:11:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.54 2003/10/27 13:57:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -652,6 +652,7 @@ extern void        conname_free(void);
 extern Bool        conname_set(const char* prefix);
 /*lint -sem(       conname_set, @p && nulterm(@)) */
 extern const char* conname_get(void);
+extern void        conname_next(void);
 
 /* stmt.c
  */

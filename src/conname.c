@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: conname.c,v 1.9 2003/09/03 14:30:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: conname.c,v 1.10 2003/10/27 13:57:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -85,6 +85,11 @@ Bool conname_set(const char* prefix)
    strcpy(cname, cpfix);
    strcat(cname, "_1");
 
+   if (xlp_conname_exists(cname))
+      return FALSE;
+
+   strcat(cname, "_a_0");
+
    return !xlp_conname_exists(cname);
 }
 
@@ -125,10 +130,11 @@ const char* conname_get()
    }
    assert(strlen(cname) < clen);
    
-   count++;
-
    return cname;
 }
 
-
+void conname_next()
+{
+   count++;
+}
 

@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.9 2003/10/27 08:43:53 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.10 2003/10/27 13:57:40 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -1349,6 +1349,16 @@ can produce:
    The term inside a \code{vabs} has at least one unbounded variable.
 \item[185 Term in Boolean constraint not bounded]\ \\
    The term inside a \code{vif} has at least one unbounded variable.
+%
+% inst.c
+%
+\item[186 Minimizing over empty set -- zero assumed] (warning)\ \\
+   The index expression for the minimization was empty. The result
+   used for this expression was zero.
+\item[187 Maximizing over empty set -- zero assumed] (warning)\ \\
+   The index expression for the maximization was empty. The result
+   used for this expression was zero.
+%
 % numbgmp.c
 %
 \item[700 log(): \code{OS specific domain or range error message}]\ \\

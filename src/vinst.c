@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.12 2003/10/27 11:13:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.13 2003/10/27 13:57:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -784,6 +784,8 @@ static void generate_conditional_constraint(
    Con*         con;
    const Numb*  bound_val;
    const Numb*  new_rhs;
+   const char*  basename;
+   char*        cname;
    
    assert(con_type == CON_RHS || con_type == CON_LHS);
 
@@ -818,12 +820,19 @@ static void generate_conditional_constraint(
 
       term_append_term(big_term, lhs_term);
 
-      con = xlp_addcon(conname_get(), con_type, new_rhs, new_rhs, flags);
+      basename = conname_get();
+      cname    = malloc(strlen(basename) + 5);
+      sprintf(cname, "%s_%c_%c", basename,
+         then_case           ? 't' : 'e',
+         con_type == CON_RHS ? 'r' : 'l');
+
+      con = xlp_addcon(cname, con_type, new_rhs, new_rhs, flags);
    
       term_to_nzo(big_term, con);
 
       numb_free(big_m);
       term_free(big_term);
+      free(cname);
    }
    bound_free(bound);
 }
@@ -899,6 +908,8 @@ CodeNode* i_vif_else(CodeNode* self)
 
    code_value_void(self);
 
+   conname_next();
+
    return self;
 }
 
@@ -924,6 +935,8 @@ CodeNode* i_vif(CodeNode* self)
    
    code_value_void(self);
 
+   conname_next();
+   
    return self;
 }
 
@@ -975,13 +988,6 @@ CodeNode* i_vabs(CodeNode* self)
    lower      = term_get_lower_bound(term);
    upper      = term_get_upper_bound(term);
 
-#if 0
-   printf("[%s] ", cname);
-   numb_print(stdout, rhs);
-   term_print(stdout, term, TERM_PRINT_SYMBOL);
-   printf("---\n");
-#endif
-   
    if (bound_get_type(lower) != BOUND_VALUE || bound_get_type(upper) != BOUND_VALUE)
    {
       fprintf(stderr, "*** Error 184: vabs term not bounded\n");
@@ -1033,7 +1039,7 @@ CodeNode* i_vabs(CodeNode* self)
    if (!numb_equal(bound_get_value(upper), numb_zero()))
       term_add_elem(term, entry_bplus, bound_get_value(upper));
    term_add_elem(term, entry_xplus, numb_minusone());
-   create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
+   create_new_constraint(cname, "_b", term, CON_LHS, numb_zero(), flags);
 
    /* (1 - bplus) * lower >= xminus
     * lower - bplus * lower - xminus >= 0
@@ -1044,7 +1050,7 @@ CodeNode* i_vabs(CodeNode* self)
    if (!numb_equal(bound_get_value(lower), numb_zero()))
       term_add_elem(term, entry_bplus, bound_get_value(lower));
    term_add_elem(term, entry_xminus, numb_one());
-   create_new_constraint(cname, "_d", term, CON_RHS, bound_get_value(lower), flags);
+   create_new_constraint(cname, "_c", term, CON_RHS, bound_get_value(lower), flags);
 
    /* result - xplus - xminus == 0
     */
@@ -1052,7 +1058,7 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_result, numb_one());
    term_add_elem(term, entry_xplus,  numb_minusone());
    term_add_elem(term, entry_xminus, numb_minusone());
-   create_new_constraint(cname, "_f", term, CON_EQUAL, numb_zero(), flags);
+   create_new_constraint(cname, "_d", term, CON_EQUAL, numb_zero(), flags);
 
    //------------------------------------------------------
    term = term_new(1);

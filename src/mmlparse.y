@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.60 2003/10/27 11:16:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.61 2003/10/27 13:57:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -875,8 +875,6 @@ cfactor
          $$ = code_new_inst(i_expr_max2, 1, $3);
       }
    ;
-
-
 
 
 

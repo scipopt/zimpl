@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.68 2003/10/23 09:22:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.69 2003/10/27 13:57:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -129,6 +129,7 @@ CodeNode* i_constraint(CodeNode* self)
 
       term_add_constant(term, rhs);
       term_to_nzo(term, con);
+      conname_next();
    }
    code_value_void(self);
 
@@ -193,6 +194,7 @@ CodeNode* i_rangeconst(CodeNode* self)
          
       term_sub_constant(term, term_get_constant(term));
       term_to_nzo(term, con);
+      conname_next();
    }
    code_value_void(self);
 
@@ -649,6 +651,11 @@ CodeNode* i_expr_min(CodeNode* self)
       }
       local_drop_frame();
    }
+   if (first)
+   {
+      fprintf(stderr, "-- Warning 186: Minimizing over empty set -- zero assumed\n");
+      code_errmsg(code_get_child(self, 0));
+   }
    code_value_numb(self, min);
 
    return self;
@@ -690,6 +697,11 @@ CodeNode* i_expr_max(CodeNode* self)
          }
       }
       local_drop_frame();
+   }
+   if (first)
+   {
+      fprintf(stderr, "-- Warning 187: Maximizing over empty set -- zero assumed\n");
+      code_errmsg(code_get_child(self, 0));
    }
    code_value_numb(self, max);
 
@@ -746,7 +758,9 @@ CodeNode* i_expr_min2(CodeNode* self)
    list  = code_eval_child_list(self, 0);
    n     = list_get_elems(list);
    min   = numb_new();
-   
+
+   assert(n > 0);
+
    while(n-- > 0)
    {
       elem = list_get_elem(list, &le);
@@ -791,6 +805,8 @@ CodeNode* i_expr_max2(CodeNode* self)
    list  = code_eval_child_list(self, 0);
    n     = list_get_elems(list);
    max   = numb_new();
+
+   assert(n > 0);
    
    while(n-- > 0)
    {
