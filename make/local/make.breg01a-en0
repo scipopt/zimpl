@@ -1,0 +1,4 @@
+#--- $Id: make.breg01a-en0,v 1.1 2003/09/17 11:30:53 bzfkocht Exp $
+CPPFLAGS        +=      -I/home/b/bemkocht/gmp/include -I/home/b/bemkocht/zlib-1.1.4
+LDFLAGS         +=      -L/home/b/bemkocht/gmp/lib -L/home/b/bemkocht/zlib-1.1.4
+
