@@ -1,4 +1,4 @@
-*** Error 170: Use of unintialised local variable "k"
+*** Error 170: Uninitialised local parameter "k"
                in call of define "test".
 *** File: e170.zpl Line 3
 *** param x := test(k);

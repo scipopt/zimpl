@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.14 2004/05/29 11:29:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.15 2005/02/12 09:53:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -227,12 +227,15 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
     */
    if (elem_a == elem_b)
       return FALSE;
-   
+
+#if 0  /*??? Schneint mit der neuen Set implementierung nicht mehr
+        *    gebraucht zu werden. Mit dem naechsten Release loeschen.
+        */
    /* Wenn einer ein Name ist, sind sie gleich.
     */
    if ((elem_a->type == ELEM_NAME) || (elem_b->type == ELEM_NAME))
       return FALSE;
-
+#endif
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr,

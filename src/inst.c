@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.80 2005/02/09 08:56:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.81 2005/02/12 09:53:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1037,7 +1037,7 @@ CodeNode* i_bool_eq(CodeNode* self)
       result = strcmp(code_get_strg(op1), code_get_strg(op2)) == 0;
       break;
    case CODE_NAME :
-      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+      fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
       exit(EXIT_FAILURE);
@@ -1094,7 +1094,7 @@ CodeNode* i_bool_ge(CodeNode* self)
       result = strcmp(code_get_strg(op1), code_get_strg(op2)) >= 0;
       break;
    case CODE_NAME :
-      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+      fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
       exit(EXIT_FAILURE);
@@ -1140,7 +1140,7 @@ CodeNode* i_bool_gt(CodeNode* self)
       result = strcmp(code_get_strg(op1), code_get_strg(op2)) > 0;
       break;
    case CODE_NAME :
-      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+      fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
       exit(EXIT_FAILURE);
@@ -1305,7 +1305,9 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    const List*  list;
    const Tuple* tuple;
    ListElem*    le    = NULL;
+   ElemType     elem_type;
    int          dim;
+   int          i;
    
    Trace("i_set_new_tuple");
    
@@ -1317,7 +1319,8 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    assert(tuple != NULL);
 
    dim   = tuple_get_dim(tuple);
-      
+   le    = NULL; /* Start again */
+   
    while(NULL != (tuple = list_get_tuple(list, &le)))
    {
       if (tuple_get_dim(tuple) != dim)
@@ -1331,6 +1334,20 @@ CodeNode* i_set_new_tuple(CodeNode* self)
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
+      for(i = 0; i < dim; i++)
+      {
+         elem_type = elem_get_type(tuple_get_elem(tuple, i));
+      
+         if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
+         {
+            assert(elem_type == ELEM_NAME);
+         
+            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+               elem_get_name(tuple_get_elem(tuple, i)));
+            code_errmsg(self);
+            exit(EXIT_FAILURE);
+         }
+      }
    }
    code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
@@ -1339,11 +1356,34 @@ CodeNode* i_set_new_tuple(CodeNode* self)
 
 CodeNode* i_set_new_elem(CodeNode* self)
 {
+   const List*  list;
+   const Elem*  elem;
+   ListElem*    le    = NULL;
+   ElemType     elem_type;
+   int          dim;
+   int          i;
+   
    Trace("i_set_new_elem");
 
    assert(code_is_valid(self));
 
-   code_value_set(self, set_new_from_list(code_eval_child_list(self, 0), SET_CHECK_WARN));
+   list = code_eval_child_list(self, 0);
+
+   while(NULL != (elem = list_get_elem(list, &le)))
+   {
+      elem_type = elem_get_type(elem);
+      
+      if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
+      {
+         assert(elem_type == ELEM_NAME);
+         
+         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+            elem_get_name(elem));
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
+   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
    return self;
 }
@@ -2111,7 +2151,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
          entry = entry_new_strg(tuple, code_get_strg(child));
          break;
       case CODE_NAME :
-         fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             code_get_name(child));
          code_errmsg(self);
          exit(EXIT_FAILURE);
@@ -2316,7 +2356,9 @@ CodeNode* i_symbol_deref(CodeNode* self)
    const Symbol* sym;
    const Tuple*  tuple;
    const Entry*  entry;
+   const Elem*   elem;
    Term*         term;
+   int           i;
    
    Trace("i_symbol_deref");
    
@@ -2329,9 +2371,23 @@ CodeNode* i_symbol_deref(CodeNode* self)
     */
    assert(sym != NULL);
 
+   for(i = 0; i < tuple_get_dim(tuple); i++)
+   {
+      elem = tuple_get_elem(tuple, i);
+
+      /* Are there any unresolved names in the tuple?
+       */
+      if (ELEM_NAME == elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+            elem_get_name(elem));
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
+   
    entry = symbol_lookup_entry(sym, tuple);
 
-   
    if (NULL == entry)
    {
       fprintf(stderr, "*** Error 142: Unknown index ");
@@ -2404,7 +2460,7 @@ CodeNode* i_define_deref(CodeNode* self)
       {
          assert(elem_type == ELEM_NAME);
          
-         fprintf(stderr, "*** Error 170: Use of unintialised local variable \"%s\"\n",
+         fprintf(stderr, "*** Error 170: Uninitialised local parameter \"%s\"\n",
             elem_get_name(tuple_get_elem(tuple, i)));
          fprintf(stderr, "               in call of define \"%s\".\n",
             define_get_name(def));
@@ -2768,7 +2824,7 @@ CodeNode* i_entry(CodeNode* self)
       entry = entry_new_set(tuple, code_get_set(child));
       break;
    case CODE_NAME :
-      fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+      fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(child));
       code_errmsg(self);
       exit(EXIT_FAILURE);
@@ -3078,7 +3134,7 @@ CodeNode* i_list_matrix(CodeNode* self)
             entry = entry_new_strg(tuple, elem_get_strg(elem));
             break;
          case ELEM_NAME :
-            fprintf(stderr, "*** Error 133: Unknown local symbol \"%s\"\n",
+            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
                elem_get_name(elem));
             code_errmsg(self);
             exit(EXIT_FAILURE);

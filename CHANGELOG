@@ -1,49 +1,46 @@
- - There is now a difference between 
-   "to" and "..". "to" tries to do exactly
-   what is requested possibly resulting in
-   an empty set. ".." does as before its best
-   to produce a range
+ - Fixed a bug that let unknown names evaluate to a member of a set.
+   Example: subto c1: forall <i> in I do w[k] <= 1; 
+   did not result in an error.
 
- - Fixed Bug in print command appearing in 
-   connection with default clause
+ - Fixed a bug that made it possible to put an undefined name in a set.
 
- - Fixed Bug in handling of set products
+ - There is now a difference between "to" and "..". 
+   "to" tries to do exactly what is requested possibly resulting in
+   an empty set. ".." does as before its best to produce a range.
 
- - Decreased memory consumption of hash tables
+ - Fixed Bug in print command appearing in connection with default clause.
 
- - Slightly faster string hashing 
+ - Fixed Bug in handling of set products.
 
- - Improved error handling for wrong components in
-   sets.
+ - Decreased memory consumption of hash tables.
+
+ - Slightly faster string hashing.
+
+ - Improved error handling for wrong components in sets.
 
 2.02 15.May 2004 Release
 
  - New function ordinal ord(s,t,c) implemented.
-   While there is no specific order, all sets
-   have one. That is ord will evaluate to the 
-   c-th component of the t-th tuple in set s.
-   ord({1..10}*{"a","b"}, 3, 1) is something
+   While there is no specific order, all sets have one. 
+   That is ord will evaluate to the c-th component of the t-th 
+   tuple in set s. ord({1..10}*{"a","b"}, 3, 1) is something
    between 1 and 10, possibly 3. But doing 
    do forall <i> in {1..card(I)} do print ord(E,i,1);
-   will print every element in I if it is one 
-   domensional.
+   will print every element in I if it is one dimensional.
 
- - Improved detection of incorrect initialization
-   of sets and params.
+ - Improved detection of incorrect initialization of sets and params.
 
- - Bug in mod function fixed. Before mod
-   gave the wrong result, if the two numbers
-   had factors in common.
+ - Bug in mod function fixed. Before mod gave the wrong result, 
+   if the two numbers had factors in common.
 
- - New -m switch that will write a CPLEX MST
-   file with MIP starting values.
+ - New -m switch that will write a CPLEX MST file with MIP starting values.
 
  - Complete new Set implementation.
 
- - If verbose is >= 3, the local variable
+ - If verbose is >= 3, the local variable 
    stack is printed if an error occurs.
 
- - Makefile changed to support Mac OS-X
+ - Makefile changed to support Mac OS-X.
 
  - New -V flag to show the version number.
    -h now also prints the banner text.
@@ -52,22 +49,18 @@
 
 2.01 29.Oct 2003 Release
 
- - min/max over a indexed set of numbers,
-   will now issue a warning, if the index set
-   is empty.
+ - min/max over a indexed set of numbers, will now issue a warning, 
+   if the index set is empty.
 
- - Preprocessing is now switched on with the -O
-   (optimize) switch.
+ - Preprocessing is now switched on with the -O (optimize) switch.
 
  - Fixed a major bug that occured, if two number
-   were subtracted from a constraint like in
-   x - 5 + 3 >= 1
+   were subtracted from a constraint like in x - 5 + 3 >= 1
 
  - Documentation update. Many spelling errors removed.
    do print and do check statements documented.
 
- - vif and vabs implemented. See documentation
-   for details.
+ - vif and vabs implemented. See documentation for details.
 
  - set implementation changed. Generated powersets
    and subsets do not use a hash table anymore.
@@ -85,8 +78,7 @@
 
  - Implemented the "do" statement. This changes the
    syntax for print. It is now "do print".
-   Now "do forall <i> in I do print i; " is
-   possible.
+   Now "do forall <i> in I do print i; " is possible.
 
  - Error 163 now shows the location of the error. 
    (Always start of the line ;-)
@@ -121,31 +113,23 @@
 
  - Fixed bugs with MPS format.
 
- - New output format "hum" for -t parameter
-   generates unmangled human readable, maschine
-   unreadble LP format output. This replaces
-   the -m switch.
+ - New output format "hum" for -t parameter generates unmangled human readable, 
+   maschine unreadble LP format output. This replaces the -m switch.
 
- - Changed -v switch to -v0..3
-   and also the outputs that appear by default.
+ - Changed -v switch to -v0..3 and also the outputs that appear by default.
 
- - It is now possible to omit the .zpl extension on 
-   the input files.
+ - It is now possible to omit the .zpl extension on the input files.
 
- - Changed output routine , so that it should work 
+ - Changed output routine, so that it should work 
    even with with braindead OS like Windoof.
-   Also allowed to use a different directory
-   separator.
+   Also allowed to use a different directory separator.
 
- - Trailing text on the last line should now draw
-   a message.
+ - Trailing text on the last line should now draw a message.
 
  - Bug fixed, that resulted in an unreadable LP file 
-   if the index set of the variable has negative 
-   numbers. 
+   if the index set of the variable has negative numbers. 
 
- - Fixed bug, that cut extensions from basenames 
-   given by -o .
+ - Fixed bug, that cut extensions from basenames given by -o .
 
  - Fixed internal bug with bool not function.
 
@@ -153,26 +137,20 @@
    if the initialisation list of an parameter is empty.
 
  - New functions min/max that take a list of expression,
-   like min(2, 5, a[4], b[7] / 2);
-   (a and b are parameters)
+   like min(2, 5, a[4], b[7] / 2); (a and b are parameters)
 
- - Included zlib. It is now possible to read in 
-   .gz transparantly. 
+ - Included zlib. It is now possible to read in .gz transparantly. 
 
  - New function exists() that looks if a set has 
-   at least one member, e.g.
-   exists( <i> in I with i > 5 )
-   should be equivatent to
-   card( { <i> in I with i > 5 }) > 0
+   at least one member, e.g. exists( <i> in I with i > 5 )
+   should be equivatent to card( { <i> in I with i > 5 }) > 0
 
- - Better diagnosis if a variable/parameter/set name
-   is used a second time.
+ - Better diagnosis if a variable/parameter/set name is used a second time.
 
  - It is now possible to have contraint/obective names
    that are identical to variable/parameter/set names.
 
- - Changed gererated numbers for long names to 
-   hex. This needs less space.
+ - Changed gererated numbers for long names to hex. This needs less space.
 
  - Names are now 8 characters long for MPS output,
    but 16 for LPF. This is accroding to the CPLEX 7.0
@@ -193,8 +171,7 @@
    (MPS output not yet here)
 
  - First presolve implemented.
-   -p now switches on presolve, -F does what 
-   -p did before.
+   -p now switches on presolve, -F does what -p did before.
 
  - Fixed bug that empty constraints were ignored,
    even with a non zero right hand side.
@@ -213,11 +190,9 @@
 
  - Removed senseless default in non indexed parameter.
 
- - New Makefile that allows different architectures in 
-   parallel.
+ - New Makefile that allows different architectures in parallel.
 
- - Replaced rbt functions by a hash table. Mainly for
-   portability.
+ - Replaced rbt functions by a hash table. Mainly for portability.
 
  - Fixed bug in print statement that accured when trying to 
    print a indexed set, without giving an index.
@@ -245,9 +220,8 @@
 
  - Change the implementation of SUM command. Major speedup.
 
- - Implemented random(min, max) generates a random number
-   between min and max. At the moment rand() is used,
-   but this will change.
+ - Implemented random(min, max) generates a random number between min and max. 
+   At the moment rand() is used, but this will change.
 
  - It is now possible to have a default value for a parameter.
    param p[A] := <1> 1, <2> 2 default 99
@@ -267,8 +241,7 @@
 
  - New possible value infinit/-infinity for upper/lower bounds.
 
- - We might display a warning if writing to a file fails 
-   somewhere in the middle.
+ - We might display a warning if writing to a file fails somewhere in the middle.
 
  - When writing MPS there is a warning if the problem was inverted.
 

@@ -114,8 +114,8 @@
   template]\ \\
   Probably the template of a read statement looks
   like \code{"$<$1n$>$"} only having a tuple, instead of \code{"$<$1n$>$ 2n"}.
-\item[133 Unknown local symbol \code{xxx}]\ \\
-  A (local) symbol was used, that is not defined anywhere in scope.
+\item[133 Unknown symbol \code{xxx}]\ \\
+  A name was used, that is not defined anywhere in scope.
 \item[134 Illegal element \code{xxx} for symbol]\ \\
   The index tuple given in the initialization is not member of the
   index set of the parameter.
@@ -247,7 +247,7 @@
 %
 % inst.c
 %
-\item[170 Use of uninitialized local variable \code{xxx} in call of
+\item[170 Uninitialized local parameter \code{xxx} in call of
   define \code{yyy}]\ \\
   A define was called and one of the arguments was a ``name'' 
   (of a variable) for which no value was defined.
@@ -331,22 +331,22 @@
   The component number must be between one and the dimension of the set.
 \item[193 Different dimension tuples in set initialization]\ \\
   The tuples that should be part of the list have different dimension.
-\item[194: Indexing tuple \code{xxx} has wrong dimension
+\item[194 Indexing tuple \code{xxx} has wrong dimension
            \code{yyy}, expected \code{zzz}]\ \\
   The index tuple of an entry in a parameter initialization list must
   have the same dimension as the indexing set of the parameter. This
   is just another kind of error 134.
-\item[195: Empty index set for parameter]\ \\
+\item[195 Empty index set for parameter]\ \\
   The index set for a parameter is empty.
-\item[196: Indexing tuple \code{xxx} has wrong dimension
+\item[196 Indexing tuple \code{xxx} has wrong dimension
            \code{yyy}, expected \code{zzz}]\ \\
   The index tuple of an entry in a set initialization list must
   have the same dimension as the indexing set of the set. 
   If you use a \code{powerset} or \code{subset} instruction, the index
   set has to be one dimension.
-\item[197: Empty index set for set]\ \\
+\item[197 Empty index set for set]\ \\
   The index set for a set is empty.
-\item[198: Incompatible index tuple]\ \\
+\item[198 Incompatible index tuple]\ \\
   The index tuple given had fixed components. The type of such a
   component was not the same as the type of the same component of tuples
   from the set.
