@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.18 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.19 2004/01/09 12:45:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -485,7 +485,7 @@ static Bool lps_valid(const Lps* lp)
    }
    if (sto_count * (int)sto_size < lp->nonzeros)
    {
-      fprintf(stderr, "%s %d %d %d\n",
+      fprintf(stderr, "%s %d %u %d\n",
          err11, sto_count, sto_size, lp->nonzeros);
       return FALSE;
    }
