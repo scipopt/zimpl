@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mpswrite.c,v 1.2 2001/05/06 11:43:21 thor Exp $"
+#ident "@(#) $Id: mpswrite.c,v 1.3 2002/07/03 13:02:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -154,6 +154,11 @@ void mps_write(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
+      /* Is the variable not used at all ?
+       */
+      if (var->first == NULL)
+         continue;
+      
       /*   0, oo  -> nix
        *   l, oo  -> LO
        *   0, u   -> UP
@@ -171,8 +176,7 @@ void mps_write(
       if (var->upper < INFINITY)
          write_data(fp, TRUE, 'U', 'P', "BOUND", vtmp, var->upper);
       else
-         write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, 0.0);
-            
+         write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, 0.0);            
    }
    fprintf(fp, "ENDATA\n");
 }   

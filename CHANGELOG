@@ -1,7 +1,10 @@
+ - Bug fixed in MPS output that lets zimpl write BOUND lines
+   for variables that are not used.
+
  - new flag -r that write a CPLEX branching order file (.ord).
    Two new attributes for variables: 
-   prio_up expr and prio_down expr that set the branching priority for
-   the variable. 
+   "priority expr" sets the branching priority for the variable. 
+   "startval expr" sets the start values for the variable
 
  - new function ABS(expr) that returns the absolut value of expr.
 

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.14 2002/06/18 20:37:21 bzfkocht Exp $
+# $Id: Makefile,v 1.15 2002/07/03 13:02:03 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -36,7 +36,7 @@ OPTI_FLAGS      =       -O3 -fomit-frame-pointer
 WARN_FLAGS	=	-Wall -W -Wno-unused -Wno-char-subscripts -Wshadow \
 			-Wcast-align -Wwrite-strings -Waggregate-return \
 			-Wmissing-prototypes -Wmissing-declarations -Winline
-DEBU_FLAGS      =       -g #-DNDEBUG #-DNO_MSHELL
+DEBU_FLAGS      =       -g -DNDEBUG #-DNO_MSHELL
 LDFLAGS		=	-lm 
 DFLAGS		=	-MM 
 YFLAGS		=	-d -t #-v  
@@ -63,7 +63,7 @@ mmlparse.c:	mmlparse.y mme.h
 mmlscan.c:	mmlscan.l mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
-include		$(OBJECT:.o=.d)
+-include	$(OBJECT:.o=.d)
 
 lint:		$(OBJECT:.o=.c)
 		$(LINT) project.lnt -os\(lint.out\) $(CPPFLAGS) \
