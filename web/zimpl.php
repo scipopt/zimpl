@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.4 2001/10/30 14:23:17 thor Exp $ -->
+<!-- $Id: zimpl.php,v 1.5 2001/10/30 14:56:18 thor Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2001/10/30 14:23:17 $">
+<meta name="date" content="$Date: 2001/10/30 14:56:18 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -67,7 +67,7 @@ program written in plain C and released under GNU GPL.
 It has been tested to compile under
 Linux/Intel, Linux/Alpha, Solaris and Tru64. 
 Probably it will compile and run werever a decent OS and C compiler
-is available. There is even some
+is available (I heard this includes AIX). There is even some
 documentation. There is <em>no</em> Windows version.</p>
 <p>
 <hr noshade>
@@ -135,7 +135,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2001/10/30 14:23:17 $ by
+Last Update $Date: 2001/10/30 14:56:18 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2001 by Thorsten Koch
 </font>
