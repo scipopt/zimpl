@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.20 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.21 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -234,6 +234,7 @@ void set_print(FILE* fp, const Set* set)
 {
    int i;
 
+   assert(fp != NULL);
    assert(set_is_valid(set));
 
    fprintf(fp, "|%d|", set->dim);
@@ -253,17 +254,24 @@ Set* set_range(int start, int end, int step)
    Tuple*    tuple;
    Numb*     numb;
    int       x;
-   
-   set = set_new(1, (abs(end - start) / step) + 1);
 
-   for(x = start; x <= end; x += step)
+   assert(step != 0);
+   
+   set = set_new(1, (abs(end - start) / abs(step)) + 1);
+   x   = start; 
+
+   do
    {
       tuple = tuple_new(1);
       numb  = numb_new_integer(x);
       tuple_set_elem(tuple, 0, elem_new_numb(numb));
       set_add_member(set, tuple, SET_ADD_END, SET_CHECK_NONE);
       numb_free(numb);
+
+      x += step;
    }
+   while(step != 0 && ((step > 0 && x <= end) || (step < 0 && x >= end)));
+
    assert(set_is_valid(set));
 
    return set;   

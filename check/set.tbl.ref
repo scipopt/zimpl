@@ -83,6 +83,21 @@ zimpl	v     172	u$B#9           	"u$B#9"
 zimpl	v     173	v$a#2           	"v$a#2"
 zimpl	v     174	v$b#2           	"v$b#2"
 zimpl	v     175	xabcdefghijkl@af	"xabcdefghijklmno#4"
+zimpl	v     176	y#_2@b0         	"y#-2"
+zimpl	v     177	y#_4@b1         	"y#-4"
+zimpl	v     178	y#_6@b2         	"y#-6"
+zimpl	v     179	y#_8@b3         	"y#-8"
+zimpl	v     180	y#_16@b4        	"y#-16"
+zimpl	v     181	y#_14@b5        	"y#-14"
+zimpl	v     182	y#_12@b6        	"y#-12"
+zimpl	v     183	y#_10@b7        	"y#-10"
+zimpl	v     184	y#7             	"y#7"
+zimpl	v     185	y#6             	"y#6"
+zimpl	v     186	y#5             	"y#5"
+zimpl	v     187	y#4             	"y#4"
+zimpl	v     188	y#3             	"y#3"
+zimpl	v     189	y#2             	"y#2"
+zimpl	v     190	y#1             	"y#1"
 zimpl	c       0	a1_1            	"a1_1"	0.0000000000000000e+00
 zimpl	c       1	b1_1            	"b1_1"	0.0000000000000000e+00
 zimpl	c       2	c1_1            	"c1_1"	0.0000000000000000e+00
@@ -145,3 +160,4 @@ zimpl	c      58	w1_1            	"w1_1"	0.0000000000000000e+00
 zimpl	c      59	w1_2            	"w1_2"	0.0000000000000000e+00
 zimpl	c      60	w1_3            	"w1_3"	0.0000000000000000e+00
 zimpl	c      61	x1_1            	"x1_1"	0.0000000000000000e+00
+zimpl	c      62	y1_1            	"y1_1"	0.0000000000000000e+00

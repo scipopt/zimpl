@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.58 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.59 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -118,7 +118,7 @@ CodeNode* i_constraint(CodeNode* self)
          || (type == CON_LHS   && res >  0)
          || (type == CON_RHS   && res <  0))
       {
-         fprintf(stderr, "*** Error 106: Empty LHS, contraint trivally violated\n");
+         fprintf(stderr, "*** Error 106: Empty LHS, constraint trivially violated\n");
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
@@ -175,7 +175,8 @@ CodeNode* i_rangeconst(CodeNode* self)
        */
       if (numb_cmp(lhs, numb_zero()) > 0 || numb_cmp(rhs, numb_zero()) < 0)
       {
-         fprintf(stderr, "*** Error 108: Empty Term with nonempty LHS/RHS, contraint trivally violated\n");
+         fprintf(stderr,
+            "*** Error 108: Empty Term with nonempty LHS/RHS, constraint trivially violated\n");
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
@@ -184,7 +185,7 @@ CodeNode* i_rangeconst(CodeNode* self)
    {
       if (numb_cmp(lhs, rhs) > 0)
       {
-         fprintf(stderr, "*** Error 109: LHS/RHS contradiction, contraint trivally violated\n");
+         fprintf(stderr, "*** Error 109: LHS/RHS contradiction, constraint trivially violated\n");
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
@@ -394,6 +395,22 @@ CodeNode* i_expr_abs(CodeNode* self)
 
    numb = numb_copy(code_eval_child_numb(self, 0));
    numb_abs(numb);
+   
+   code_value_numb(self, numb);
+
+   return self;
+}
+
+CodeNode* i_expr_sgn(CodeNode* self)
+{
+   Numb* numb;
+   
+   Trace("i_expr_sgn");
+
+   assert(code_is_valid(self));
+
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_sgn(numb);
    
    code_value_numb(self, numb);
 
@@ -1290,6 +1307,7 @@ CodeNode* i_set_range(CodeNode* self)
    int         int_from;
    int         int_upto;
    int         int_step;
+   int         diff;
    
    Trace("i_set_range");
 
@@ -1326,12 +1344,15 @@ CodeNode* i_set_range(CodeNode* self)
    int_from = numb_toint(from);
    int_upto = numb_toint(upto);
    int_step = numb_toint(step);
+   diff     = int_upto - int_from;
+   int_step = Sgn(diff) * abs(int_step);
+
+   if (diff == 0)
+      int_step = 1;
    
-   if (Sgn(int_upto - int_from) != Sgn(int_step))
+   if (int_step == 0) 
    {
-      fprintf(stderr,
-         "*** Error 126: \"step\" value %d in range not moving from %d to %d\n",
-         int_step, int_from, int_upto);
+      fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }

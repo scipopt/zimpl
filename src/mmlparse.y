@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.47 2003/09/05 13:53:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.48 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -73,7 +73,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW
-%token CARD ABS FLOOR CEIL LOG LN EXP RANDOM
+%token CARD ABS SGN FLOOR CEIL LOG LN EXP RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
@@ -109,7 +109,7 @@ extern void yyerror(const char* s);
 %left  '+' '-' 
 %left  SUM MIN MAX
 %left  '*' '/' MOD DIV
-%left  ABS CARD FLOOR CEIL PROJ LOG LN EXP
+%left  ABS SGN CARD FLOOR CEIL PROJ LOG LN EXP
 %left  UNARY
 %left  POW
 %left  FAC
@@ -571,6 +571,7 @@ expr
    | expr FAC              { $$ = code_new_inst(i_expr_fac, 1, $1); }
    | CARD '(' sexpr ')'    { $$ = code_new_inst(i_expr_card, 1, $3); }
    | ABS '(' expr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
+   | SGN '(' expr ')'      { $$ = code_new_inst(i_expr_sgn, 1, $3); }
    | FLOOR '(' expr ')'    { $$ = code_new_inst(i_expr_floor, 1, $3); }
    | CEIL '(' expr ')'     { $$ = code_new_inst(i_expr_ceil, 1, $3); }
    | LOG '(' expr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.41 2003/09/10 11:33:38 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.42 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -55,7 +55,7 @@ int verbose = VERB_NORMAL;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.99f Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release 2.00 Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.44 2003/09/10 11:33:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.45 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -180,6 +180,8 @@ extern Numb*        numb_new_mod(const Numb* numb_a, const Numb* numb_b);
 extern void         numb_neg(Numb* numb);
 /*lint -sem(        numb_abs, 1p == 1) */
 extern void         numb_abs(Numb* numb);
+/*lint -sem(        numb_sgn, 1p == 1) */
+extern void         numb_sgn(Numb* numb);
 /*lint -sem(        numb_ceil, 1p == 1) */
 extern void         numb_ceil(Numb* numb);
 /*lint -sem(        numb_floor, 1p == 1) */

@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.18 2003/09/10 11:33:38 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.19 2003/09/16 14:24:29 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.18 2003/09/10 11:33:38 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.19 2003/09/16 14:24:29 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -704,37 +704,8 @@ haha.txt:
 \newpage
 
 \section{Error messages}
-Here are some of the incomprehensible error messages \zimpl
+Here is a list of the incomprehensible error messages \zimpl
 can produce:
-
-\begin{description}
-\item[Comparison of different types]\ \\
- It is not possible to compare a number with a string.
-\item[xxx of incompatible sets]\ \\
- The members of the two sets involved in operation \emph{xxx} have not
- the same number of components.
-\item[Illegal element xxx for symbol]\ \\
- In the initialisation of a parameter, tuple \emph{xxx} is not a member
- in the index set.
-\item[WITH not allowed here]\ \\
- When initialising the bounds of variables by index, 
- the \code{with} clause to exclude some of the elements is not allowed.
-\item[Comparison of different dimension tuples]\ \\
- Two tuples were compared which have a different number of components.
- This is never a good idea, since such tuples are always different.
-\item[Comparison of elements with different types]\ \\
- Two tuples were compared which have a different type for the 
- n-th element. 
- This is never a good idea, since such tuples are always different.
-\item[Type error, expected xxx got yyy]\ \\
- In some context type \emph{xxx} was expected, but the interpreter
- found type \emph{yyy}. The meaning of the numbers could be looked up
- in \code{code.h}.
-\item[Duplicate constraint name "xxx"]\ \\
- The name given to a \code{subto} statement was allready used with
- another \code{subto} statement. Either change the name, or use 
- \code{-n cm} or \code{-n cf}.
-\end{description}
 
 \begin{description}
 %
@@ -758,18 +729,18 @@ can produce:
 %
 \item[105 Dublicate constraint name ``xxx'']\ \\
    Two \code{subto} statements have the same name.
-\item[106 Empty LHS, contraint trivally violated]\ \\
+\item[106 Empty LHS, constraint trivially violated]\ \\
    One side of your constraint is empty and the other not equal to
    zero. This mostly happens if a set to sum up is empty.
 \item[107 Range must be $l\leq x\leq u$, or $u \geq x\geq l$]\ \\
    If you specify a range you must have the same comparison operators
    on both sides.
-\item[108 Empty Term with nonempty LHS/RHS, contraint trivally
+\item[108 Empty Term with nonempty LHS/RHS, constraint trivially
    violated]\ \\
    The middle of your constraint is empty and either the left- or
    right-hand side of the range is not zero.
    This mostly happens if a set to sum up is empty.
-\item[109 LHS/RHS contradiction, contraint trivally violated]\ \\
+\item[109 LHS/RHS contradiction, constraint trivially violated]\ \\
    The lower side of your range is bigger than the upper side, e.g.
    $15\leq x\leq 2$. 
 \item[110 Division by zero]\ \\
@@ -802,7 +773,8 @@ can produce:
 \item[118 Comparison of different types]\ \\
    You tried to compare apples with oranges, i.e, numbers with strings.
 \item[119 Union of incompatible sets]\ \\
-   To unite two sets, both must have the same dimension tuples.
+   To unite two sets, both must have the same dimension tuples,\ie
+   the tuples must have the same number of components.
 \item[120 Minus of incompatible sets]\ \\
    To subtract two sets, both must have the same dimension tuples.
 \item[121 Intersection of incompatible sets]\ \\
@@ -822,11 +794,9 @@ can produce:
    integer]\ \\
    To generate a set, the ``step'' number must be an integer with an
    absolute value of less than two billion.
-\item[126 ``step'' value \code{xxx} in range not moving from
-   \code{yyy} to \code{zzz}]\ \\
-   If the given ``step'' value for the generation of a set is
-   repeatedly added to the ``from'' value, the ``upto'' value 
-   will never be reached. 
+\item[126 Zero ``step'' value in range]\ \\
+   The given ``step'' value for the generation of a set is
+   zero. So the ``upto'' value can never be reached. 
 \item[127 Illegal value type in tuple: \code{xxx} only numbers are
    possible]\ \\
    The selection typle in a call to the \code{proj} function can
@@ -970,7 +940,7 @@ can produce:
 % tuple.c
 %
 \item[167 Comparison of different dimension tuples]\ \\
-  Two tuples with different dimensions were compared,
+  Two tuples with different dimensions were compared.
   Probably you have a index expression which does not match the  
   dimension of the tuples in the set.
   Example: \code{set B:=\{$<$1$>$ in \{$<$1,2$>$\}\};}
@@ -985,12 +955,11 @@ can produce:
 \item[169 Execute must return void element]\ \\
   This should not happen. If you encounter
   this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
-\item[]\ \\
-\item[]\ \\
-\item[]\ \\
-\item[]\ \\
-\item[]\ \\
-\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
+%\item[]\ \\
 % mmlscan.l
 \item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
   Parsing error. What was found was not what was expected.

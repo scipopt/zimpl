@@ -50,7 +50,7 @@ set U := proj(T, <3,1>);
 set V := { <a,2> in A*B with a == "a" or a == "b" };
 set W[<i> in B] := { <c> in C with c <= i };
 set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
-
+set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 to -10 by -2 } + { 7 .. 1 } ;
 
 var a[A];
 var b[B];
@@ -70,6 +70,7 @@ var q[C];
 var u[U];
 var v[V];
 var xabcdefghijklmno[X];
+var y[Y];
 
 subto a1: sum <i> in A : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= 0;
@@ -95,7 +96,7 @@ subto v1: sum <i1,i2> in V : v[i1,i2] >= 0;
 subto w1: forall <i> in B do
    sum <w> in W[i]: n[w] >= 0; 
 subto x1: sum <i> in X : xabcdefghijklmno[i] >= 0;
-
+subto y1: sum <i> in Y : y[i] >= 0;
 
 
 

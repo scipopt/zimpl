@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.21 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.22 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -88,6 +88,8 @@ extern CodeNode* i_entry_list_powerset(CodeNode* self);
 extern CodeNode* i_entry_list_subsets(CodeNode* self);
 /*lint -sem(     i_expr_abs, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_abs(CodeNode* self);
+/*lint -sem(     i_expr_sgn, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_sgn(CodeNode* self);
 /*lint -sem(     i_expr_add, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_add(CodeNode* self);
 /*lint -sem(     i_expr_card, 1p == 1, type(1), @p == 1p) */

@@ -1,6 +1,3 @@
-usage korrigieren.
-doku auch.
-
 was passiert bei <i,i> in { <1,1>, <1,2>, <2,1>, <2,2> } = |2|{<1,1>,<1,2>,<2,1>,<2,2>} genau ?
 
 warum gibt set A:= {1,"hallo", 2, "a"}; keine fehler ? soll das so? 
@@ -41,6 +38,8 @@ if (....) term else term endif
 einbauen
 
 parameter mit -s auf der Kommandozeile setzen können.
+
+unterstuetzung von semi-continous variablen in cplex
 
 check mit fixierten variablen.
 

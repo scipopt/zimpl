@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.7 2003/08/22 15:01:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.8 2003/09/16 14:24:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -445,6 +445,26 @@ void numb_abs(Numb* numb)
    assert(numb_is_valid(numb));
 
    mpq_abs(numb->value.numb, numb->value.numb);
+}
+
+void numb_sgn(Numb* numb)
+{
+   assert(numb_is_valid(numb));
+
+   switch(mpq_sgn(numb->value.numb))
+   {
+   case -1 :
+      mpq_set(numb->value.numb, const_minus_one);
+      break;
+   case 0 :
+      mpq_set(numb->value.numb, const_zero);
+      break;
+   case 1 :
+      mpq_set(numb->value.numb, const_one);
+      break;
+   default :
+      abort();
+   }
 }
 
 void numb_ceil(Numb* numb)

@@ -129,6 +129,10 @@ Subject to
   + n#3 + n#2 + n#1 >= 0
  x1_1:
   + xabcdefghijkl@af >= 0
+ y1_1:
+  + y#1 + y#2 + y#3 + y#4 + y#5 + y#6
+  + y#7 + y#_10@b7 + y#_12@b6 + y#_14@b5 + y#_16@b4 + y#_8@b3
+  + y#_6@b2 + y#_4@b1 + y#_2@b0 >= 0
 Bounds
  0 <= a$a <= +Inf
  0 <= a$b <= +Inf
@@ -215,4 +219,19 @@ Bounds
  0 <= v$a#2 <= +Inf
  0 <= v$b#2 <= +Inf
  0 <= xabcdefghijkl@af <= +Inf
+ 0 <= y#_2@b0 <= +Inf
+ 0 <= y#_4@b1 <= +Inf
+ 0 <= y#_6@b2 <= +Inf
+ 0 <= y#_8@b3 <= +Inf
+ 0 <= y#_16@b4 <= +Inf
+ 0 <= y#_14@b5 <= +Inf
+ 0 <= y#_12@b6 <= +Inf
+ 0 <= y#_10@b7 <= +Inf
+ 0 <= y#7 <= +Inf
+ 0 <= y#6 <= +Inf
+ 0 <= y#5 <= +Inf
+ 0 <= y#4 <= +Inf
+ 0 <= y#3 <= +Inf
+ 0 <= y#2 <= +Inf
+ 0 <= y#1 <= +Inf
 End

@@ -1,3 +1,8 @@
+ - Function sgn(expr) implemented.
+
+ - Fixed a bug in the set range routine. Now ranges with
+   negative numbers are allowed.
+
  - Fixed bugs with MPS format.
 
  - New output format "hum" for -t parameter
