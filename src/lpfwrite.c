@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.3 2001/10/30 14:23:17 thor Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.4 2002/03/11 11:14:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -124,7 +124,7 @@ void lpf_write(
          fprintf(fp, " <= %s <= ", tmp);
          
          if (GE(var->upper, INFINITY))
-            fprintf(fp, "Inf\n");
+            fprintf(fp, "+Inf\n");
          else
             fprintf(fp, "%.16g\n", var->upper);
       }

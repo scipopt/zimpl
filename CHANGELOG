@@ -1,3 +1,6 @@
+ - Fixed error in LPF Writing Routine, that would write "Inf"
+   instead of "+Inf".
+
  - Wrong template in read now gives an error message instead of
    an segment violation.
 
