@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.14 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.15 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -428,7 +428,7 @@ Set* set_proj(const Set* set_a, const Tuple* pattern)
    assert(idx != NULL);
    
    for(i = 0; i < dim; i++)
-      idx[i] = (int)elem_get_numb(tuple_get_elem(pattern, i)) - 1;
+      idx[i] = (int)numb_todbl(elem_get_numb(tuple_get_elem(pattern, i))) - 1; /* ??? */
       
    for(k = 0; k < set_a->used; k++)
    {

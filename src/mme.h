@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.31 2003/07/16 08:48:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.32 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -148,26 +148,10 @@ extern Numb*        numb_new_ascii(const char* val);
 /*lint -sem(        numb_new_integer, @p == 1) */
 extern Numb*        numb_new_integer(int val);
 
-#if 0
-/*lint -sem(        numb_new_posinfty, @p == 1) */
-extern Numb*        numb_new_posinfty(void);
-/*lint -sem(        numb_new_neginfty, @p == 1) */
-extern Numb*        numb_new_neginfty(void);
-#endif
-
 /*lint -sem(        numb_free, 1p == 1) */
 extern void         numb_free(Numb* numb);
 /*lint -sem(        numb_is_valid, 1p == 1) */
 extern Bool         numb_is_valid(const Numb* numb);
-
-#if 0
-/*lint -sem(        numb_is_posinfty, 1p == 1) */
-extern Bool         numb_is_posinfty(const Numb* numb);
-/*lint -sem(        numb_is_neginfty, 1p == 1) */
-extern Bool         numb_is_neginfty(const Numb* numb);
-/*lint -sem(        numb_is_number, 1p == 1) */
-extern Bool         numb_is_number(const Numb* numb);
-#endif
 
 /*lint -sem(        numb_copy, 1p == 1, @p == 1) */
 extern Numb*        numb_copy(const Numb* source);
@@ -175,8 +159,6 @@ extern Numb*        numb_copy(const Numb* source);
 extern Bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_cmp,p, 1p == 1 && 2p == 1) */
 extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_todbl, 1p == 1) */
-extern double       numb_todbl(const Numb* numb);
 /*lint -sem(        numb_set, 1p == 1 && 2p == 1) */
 extern void         numb_set(Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_add, 1p == 1 && 2p == 1) */
@@ -195,13 +177,24 @@ extern Numb*        numb_new_mul(const Numb* numb_a, const Numb* numb_b);
 extern void         numb_div(Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_new_div, 1p == 1 && 2p == 1, @p == 1) */
 extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_intdiv, 1p == 1 && 2p == 1) */
+extern void         numb_intdiv(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_intdiv, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_intdiv(const Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_mod, 1p == 1 && 2p == 1) */
+extern void         numb_mod(Numb* numb_a, const Numb* numb_b);
+/*lint -sem(        numb_new_mod, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_mod(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_neg, 1p == 1) */
 extern void         numb_neg(Numb* numb);
 /*lint -sem(        numb_abs, 1p == 1) */
 extern void         numb_abs(Numb* numb);
+/*lint -sem(        numb_ceil, 1p == 1) */
+extern void         numb_ceil(Numb* numb);
+/*lint -sem(        numb_floor, 1p == 1) */
+extern void         numb_floor(Numb* numb);
 /*lint -sem(        numb_todbl, 1p == 1) */
 extern double       numb_todbl(const Numb* numb);
-
 /*lint -sem(        numb_print, 1p == 1 && 2p == 1) */
 extern void         numb_print(FILE* fp, const Numb* numb);
 /*lint -sem(        numb_hash, 1p == 1) */

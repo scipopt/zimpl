@@ -52,6 +52,8 @@
 -esym(424, yyss, yyvs) // klappt nicht
 -esym(613, yyss, yyvs)
 -esym(673, yyss, yyvs) // klappt nicht
+//--- GMP ---
+-esym(534,__gmpf_out_str,__gmpq_set_str,__gmpq_out_str)
 //-------------- NOCH ZU TUN --------------------------------
 -e714 // Symbol not referenced
 -e765 // external could be made static

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -124,8 +124,8 @@ extern void         lps_setscale(Con* con, const mpq_t scale);
 extern void         lps_setpriority(Var* var, int priority);
 /*lint -sem(        lps_setvalue, 1p == 1) */
 extern void         lps_setvalue(Var* var, const mpq_t value);
-/*lint -sem(        lps_write, 1p == 1 && 2p == 1) */
-extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format);
+/*lint -sem(        lps_write, 1p == 1 && 2p == 1 && nulterm(4)) */
+extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, 1p == 1 && 2p == 1 && 3n > 0 && 4p && nulterm(4)) */
 extern void         lps_transtable(const Lps* lp, FILE* fp, int size, const char* head);
 /*lint -sem(        lps_scale, 1p == 1) */
@@ -139,13 +139,13 @@ extern Lps*         lps_readmps(const char* filename);
 
 /* ratlpfwrite.c
  */
-/*lint -sem(        lpf_write, 1p == 1 && 2p && nulterm(2)) */
-extern void         lpf_write(const Lps* lp, const char* filename);
+/*lint -sem(        lpf_write, 1p == 1 && 2p == 1 && nulterm(3)) */
+extern void         lpf_write(const Lps* lp, FILE* fp, const char* text);
 
 /* ratmpswrite.c
  */
-/*lint -sem(        lpf_write, 1p == 1 && 2p == 1) */
-extern void         mps_write(const Lps* lp, FILE* fp);
+/*lint -sem(        lpf_write, 1p == 1 && 2p == 1) && nulterm(3)) */
+extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
 
 
 #endif /* _RATLP_H_ */

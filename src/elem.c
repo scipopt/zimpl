@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.10 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.11 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -36,8 +36,8 @@
 #include "ratlptypes.h"
 #include "mme.h"
 
-#define STORE_SIZE  100
-#define ELEM_SID    0x456c656d
+#define ELEM_STORE_SIZE  100
+#define ELEM_SID         0x456c656d
 
 typedef union element_value    ElemValue;
 typedef struct element_storage ElemStore;
@@ -74,11 +74,11 @@ static void extend_storage(void)
    
    assert(store != NULL);
    
-   store->begin = malloc(STORE_SIZE * sizeof(*store->begin));
+   store->begin = malloc(ELEM_STORE_SIZE * sizeof(*store->begin));
    store->next  = store_anchor;
    store_anchor = store;
 
-   for(i = 0; i < STORE_SIZE - 1; i++)
+   for(i = 0; i < ELEM_STORE_SIZE - 1; i++)
    {
       elem             = &store->begin[i];
       elem->type       = ELEM_FREE;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.13 2003/07/16 08:48:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.14 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -186,7 +186,7 @@ extern Bool         code_eval_child_bool(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_list, 1p == 1 && 2n >= 0, @p == 1) */
 extern const List*  code_eval_child_list(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_varclass, 1p == 1 && 2n >= 0) */
-extern VarType      code_eval_child_varclass(const CodeNode* node, int no);
+extern VarClass     code_eval_child_varclass(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_contype, 1p == 1 && 2n >= 0) */
 extern ConType      code_eval_child_contype(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_rdef, 1p == 1 && 2n >= 0, @p == 1) */

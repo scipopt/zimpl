@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2003/07/12 15:24:39 bzfkocht Exp $
+# $Id: Makefile,v 1.5 2003/07/16 13:32:07 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -75,8 +75,8 @@ DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
 
-OBJECT  =       	code.o conname.o elem.o entry.o hash.o idxset.o \
-			iread.o list.o load.o local.o \
+OBJECT  =       	bound.o code.o conname.o elem.o entry.o hash.o \
+			idxset.o iread.o list.o load.o local.o \
 			mmlparse.o mmlscan.o numbgmp.o \
 			prog.o rdefpar.o set.o source.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
@@ -104,7 +104,7 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 
 lint:		$(OBJSRC)
 		$(LINT) $(SRCDIR)/project.lnt -os\(lint.out\) \
-		$(CPPFLAGS) -UNDEBUG -DNO_MSHELL $^
+		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
 
 doc:
 		cd doc; make -f Makefile

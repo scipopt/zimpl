@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -37,7 +37,7 @@
 
 typedef struct storage Sto;
 
-typedef struct hash Hash;
+typedef struct lps_hash LpsHash;
 
 struct nonzero
 {
@@ -107,8 +107,8 @@ struct lpstorage
    Con*     con_root;
    Sto*     sto_root;
    Nzo*     next;
-   Hash*    var_hash;
-   Hash*    con_hash;
+   LpsHash* var_hash;
+   LpsHash* con_hash;
    Var*     var_last;
    Con*     con_last;
 }; 

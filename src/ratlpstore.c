@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -46,17 +46,17 @@ struct storage
 
 static const unsigned int sto_size  = 1000;
 
-#define HASH_BUCKETS  1000003U
+#define LHT_BUCKETS  1000003U
 #define DISPERSE(x) (1664525U * (x) + 1013904223U);
 
-enum hash_type { HASH_ERR = 0, HASH_VAR, HASH_CON };
+enum lps_hash_type { LHT_ERR = 0, LHT_VAR, LHT_CON };
 
-typedef struct hash_element HElem;
-typedef enum   hash_type    HashType;
+typedef struct lps_hash_element LpsHElem;
+typedef enum   lps_hash_type    LpsHashType;
 
-struct hash_element
+struct lps_hash_element
 {
-   HElem* next;
+   LpsHElem* next;
    union
    {
       Con* con;
@@ -64,19 +64,19 @@ struct hash_element
    } value;
 };
 
-struct hash
+struct lps_hash
 {
    unsigned int size;
    int          elems;
-   HashType     type;
-   HElem**      bucket;
+   LpsHashType  type;
+   LpsHElem**   bucket;
 };
 
-static void hash_statist(FILE* fp, const Hash* hash);
+static void hash_statist(FILE* fp, const LpsHash* hash);
 
-static Bool hash_valid(const Hash* hash)
+static Bool hash_valid(const LpsHash* hash)
 {
-   return hash != NULL && (hash->type == HASH_CON || hash->type == HASH_VAR);
+   return hash != NULL && (hash->type == LHT_CON || hash->type == LHT_VAR);
 }
 
 static unsigned int hashit(const char* s)
@@ -93,13 +93,13 @@ static unsigned int hashit(const char* s)
    return hcode;
 }
 
-static Hash* hash_new(HashType type)
+static LpsHash* lps_hash_new(LpsHashType type)
 {
-   Hash* hash = calloc(1, sizeof(*hash));
+   LpsHash* hash = calloc(1, sizeof(*hash));
 
    assert(hash != NULL);
 
-   hash->size   = HASH_BUCKETS;
+   hash->size   = LHT_BUCKETS;
    hash->elems  = 0;
    hash->type   = type;
    hash->bucket = calloc(hash->size, sizeof(*hash->bucket));
@@ -111,10 +111,10 @@ static Hash* hash_new(HashType type)
    return hash;
 }
 
-static void hash_free(Hash* hash)
+static void lps_hash_free(LpsHash* hash)
 {
-   HElem*       he;
-   HElem*       hq;
+   LpsHElem*    he;
+   LpsHElem*    hq;
    unsigned int i;
       
    assert(hash_valid(hash));
@@ -137,13 +137,13 @@ static void hash_free(Hash* hash)
 
 /* Liefert NULL wenn nicht gefunden.
  */
-static Var* hash_lookup_var(const Hash* hash, const char* name)
+static Var* hash_lookup_var(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   HElem*       he     = NULL;
+   LpsHElem*    he     = NULL;
    
    assert(hash_valid(hash));
-   assert(hash->type == HASH_VAR);
+   assert(hash->type == LHT_VAR);
    assert(name != NULL);
    
    hcode  = hashit(name) % hash->size;
@@ -157,13 +157,13 @@ static Var* hash_lookup_var(const Hash* hash, const char* name)
 
 /* Liefert NULL wenn nicht gefunden.
  */
-static Con* hash_lookup_con(const Hash* hash, const char* name)
+static Con* hash_lookup_con(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   HElem*       he     = NULL;
+   LpsHElem*    he     = NULL;
    
    assert(hash_valid(hash));
-   assert(hash->type == HASH_CON);
+   assert(hash->type == LHT_CON);
    assert(name != NULL);
    
    hcode  = hashit(name) % hash->size;
@@ -175,14 +175,14 @@ static Con* hash_lookup_con(const Hash* hash, const char* name)
    return (he == NULL) ? (Con*)0 : he->value.con;
 }
 
-static void hash_add_var(Hash* hash, Var* var)
+static void hash_add_var(LpsHash* hash, Var* var)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   LpsHElem*    he = calloc(1, sizeof(*he));
    unsigned int hcode;
 
    assert(hash_valid(hash));
    assert(var        != NULL);
-   assert(hash->type == HASH_VAR);
+   assert(hash->type == LHT_VAR);
    assert(he         != NULL);
    
    hcode               = hashit(var->name) % hash->size;
@@ -194,14 +194,14 @@ static void hash_add_var(Hash* hash, Var* var)
    assert(hash_lookup_var(hash, var->name) == var);
 }
 
-static void hash_add_con(Hash* hash, Con* con)
+static void hash_add_con(LpsHash* hash, Con* con)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   LpsHElem*    he = calloc(1, sizeof(*he));
    unsigned int hcode;
 
    assert(hash_valid(hash));
    assert(con        != NULL);
-   assert(hash->type == HASH_CON);
+   assert(hash->type == LHT_CON);
    assert(he         != NULL);
    
    hcode               = hashit(con->name) % hash->size;
@@ -213,16 +213,16 @@ static void hash_add_con(Hash* hash, Con* con)
    assert(hash_lookup_con(hash, con->name) == con);
 }
 
-static void hash_statist(FILE* fp, const Hash* hash)
+static void hash_statist(FILE* fp, const LpsHash* hash)
 {
-   HElem* he;
-   int    min    = (int)hash->size;
-   int    max    = 0;
-   int    sum    = 0;
-   int    zeros  = 0;
-   int    filled = 0;
-   int    count;
-   double avg    = 0.0;
+   LpsHElem*    he;
+   int          min    = (int)hash->size;
+   int          max    = 0;
+   int          sum    = 0;
+   int          zeros  = 0;
+   int          filled = 0;
+   int          count;
+   double       avg    = 0.0;
    unsigned int i;
 
    assert(fp != NULL);
@@ -509,8 +509,8 @@ Lps* lps_alloc(
    lp->con_root = NULL;
    lp->sto_root = NULL;
    lp->next     = NULL;
-   lp->var_hash = hash_new(HASH_VAR);
-   lp->con_hash = hash_new(HASH_CON);
+   lp->var_hash = lps_hash_new(LHT_VAR);
+   lp->con_hash = lps_hash_new(LHT_CON);
    lp->var_last = NULL;
    lp->con_last = NULL;
 
@@ -531,8 +531,8 @@ void lps_free(Lps* lp)
    
    assert(lps_valid(lp));
 
-   hash_free(lp->var_hash);
-   hash_free(lp->con_hash);
+   lps_hash_free(lp->var_hash);
+   lps_hash_free(lp->con_hash);
    
    for(sto = lp->sto_root; sto != NULL; sto = sto_next)
    {
@@ -1271,20 +1271,24 @@ void lps_stat(const Lps* lp)
       lp->name, lp->vars, lp->cons, lp->nonzeros);
 }
 
-void lps_write(const Lps* lp, FILE* fp, LpFormat format)
+void lps_write(
+   const Lps*  lp,
+   FILE*       fp,
+   LpFormat    format,
+   const char* text)
 {
-   assert(lp != NULL);
-   assert(fp != NULL);
+   assert(lp   != NULL);
+   assert(fp   != NULL);
    
    lps_number(lp);
 
    switch(format)
    {
    case LP_FORM_LPF :
-      lpf_write(lp, fp);
+      lpf_write(lp, fp, text);
       break;
    case LP_FORM_MPS :
-      mps_write(lp, fp);
+      mps_write(lp, fp, text);
       break;
    default :
       abort();

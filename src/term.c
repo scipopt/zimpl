@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.14 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.15 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -94,6 +94,8 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
    term->elem[term->used].entry = entry;
    term->elem[term->used].coeff = numb_copy(coeff);
    term->used++;
+
+   assert(term_is_valid(term));
 }
 
 void term_free(Term* term)
@@ -134,8 +136,10 @@ Term* term_copy(const Term* term)
       tnew->elem[i].coeff = numb_copy(term->elem[i].coeff);
    }
    tnew->used     = term->used;
-   tnew->constant = term->constant;
-   
+   tnew->constant = numb_copy(term->constant);
+
+   assert(term_is_valid(tnew));
+
    return tnew;
 }
 
@@ -222,6 +226,8 @@ void term_add_constant(Term* term, const Numb* value)
    assert(term_is_valid(term));
 
    numb_add(term->constant, value);
+
+   assert(term_is_valid(term));
 }
 
 void term_mul_coeff(Term* term, const Numb* value)
@@ -238,15 +244,13 @@ void term_mul_coeff(Term* term, const Numb* value)
          numb_free(term->elem[i].coeff);
       
       term->used = 0;
-      
-#warning "Nicht klar ob das gesetzt werden muss, aber term_negate ist sonst falsch"
-      numb_set(term->constant, numb_zero());
    }
    else
    {
       for(i = 0; i < term->used; i++)
          numb_mul(term->elem[i].coeff, value);
    }
+   assert(term_is_valid(term));
 }
 
 const Numb* term_get_constant(const Term* term)

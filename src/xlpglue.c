@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.2 2003/07/16 08:48:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.3 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -51,9 +51,9 @@ void xlp_scale()
    lps_scale(lp);
 }
 
-void xlp_write(FILE* fp, LpFormat format)
+void xlp_write(FILE* fp, LpFormat format, const char* text)
 {
-   lps_write(lp, fp, format);
+   lps_write(lp, fp, format, text);
 }
 
 void xlp_transtable(FILE* fp)
@@ -127,8 +127,6 @@ Var* xlp_addvar(
    const Numb*  startval)
 {
    Var*      var;
-   Numb*     value;
-   BoundType bt;
    mpq_t     temp;
    
    assert(name  != NULL);
@@ -137,6 +135,8 @@ Var* xlp_addvar(
 
    var = lps_addvar(lp, name);
 
+   lps_setclass(var, varclass);
+   
    mpq_init(temp);
 
    if (bound_get_type(lower) == BOUND_VALUE)

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.39 2003/07/16 08:48:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.40 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -66,7 +66,7 @@ CodeNode* i_subto(CodeNode* self)
 
    if (!conname_set(name))
    {
-      fprintf(stderr, "*** Error: Duplicate constraint name \"%s\"\n", name);
+      fprintf(stderr, "*** Error: Dublicate constraint name \"%s\"\n", name);
       code_errmsg(self);
       abort();
    }
@@ -228,33 +228,53 @@ CodeNode* i_expr_div(CodeNode* self)
 
 CodeNode* i_expr_mod(CodeNode* self)
 {
+   Numb*       numb;
+   const Numb* divisor;
+   
    Trace("i_mod");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self,
-      fmod(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
-#endif
-   
+   divisor = code_eval_child_numb(self, 1);
+
+   if (numb_equal(divisor, numb_zero()))
+   {
+      fprintf(stderr, "*** Error: Modulo by zero\n");
+      code_errmsg(self);
+      abort();
+   }      
+   numb = numb_new_mod(code_eval_child_numb(self, 0), divisor);
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+
    return self;
 }
 
 CodeNode* i_expr_intdiv(CodeNode* self)
 {
+   Numb*       numb;
+   const Numb* divisor;
+   
    Trace("i_intdiv");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self,
-      floor(code_eval_child_numb(self, 0) / code_eval_child_numb(self, 1)));
-#endif
-   
+   divisor = code_eval_child_numb(self, 1);
+
+   if (numb_equal(divisor, numb_zero()))
+   {
+      fprintf(stderr, "*** Error: Division by zero\n");
+      code_errmsg(self);
+      abort();
+   }      
+   numb = numb_new_intdiv(code_eval_child_numb(self, 0), divisor);
+
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+
    return self;
 }
 
@@ -312,31 +332,37 @@ CodeNode* i_expr_abs(CodeNode* self)
 
 CodeNode* i_expr_floor(CodeNode* self)
 {
+   Numb* numb;
+   
    Trace("i_floor");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self, floor(code_eval_child_numb(self, 0)));
-#endif
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_floor(numb);
    
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+
    return self;
 }
 
 CodeNode* i_expr_ceil(CodeNode* self)
 {
+   Numb* numb;
+   
    Trace("i_ceil");
 
    assert(code_is_valid(self));
 
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   code_value_numb(self, ceil(code_eval_child_numb(self, 0)));
-#endif
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_ceil(numb);
    
+   code_value_numb(self, numb);
+
+   numb_free(numb);
+
    return self;
 }
 
@@ -1175,7 +1201,7 @@ CodeNode* i_set_proj(CodeNode* self)
          code_errmsg(self);
          abort();
       }
-      idx = (int)elem_get_numb(elem);
+      idx = (int)numb_todbl(elem_get_numb(elem)); /* ??? */
       
       /* Are all the number between 1 and dim(set) ?
        */
@@ -2185,7 +2211,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
 
    set         = code_eval_child_set(self, 0);
    used        = set_get_used(set);
-   subset_size = (int)code_eval_child_numb(self, 1);
+   subset_size = (int)numb_todbl(code_eval_child_numb(self, 1)); /* ??? */
    
    if (used < 1)
    {

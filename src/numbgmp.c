@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -33,16 +33,14 @@
 #include <gmp.h>
 
 #include "bool.h"
-#include "gmpmisc.h"
-
 #include "lint.h"
-#include "bool.h"
 #include "mshell.h"
+#include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "mme.h"
 
-#define STORE_SIZE  1000
-#define NUMB_SID    0x4e756d62
+#define NUMB_STORE_SIZE  1000
+#define NUMB_SID         0x4e756d62
 
 typedef struct numb_storage NumbStore;
 
@@ -81,11 +79,11 @@ static void extend_storage(void)
    
    assert(store != NULL);
    
-   store->begin = malloc(STORE_SIZE * sizeof(*store->begin));
+   store->begin = malloc(NUMB_STORE_SIZE * sizeof(*store->begin));
    store->next  = store_anchor;
    store_anchor = store;
 
-   for(i = 0; i < STORE_SIZE - 1; i++)
+   for(i = 0; i < NUMB_STORE_SIZE - 1; i++)
    {
       numb             = &store->begin[i];
       numb->value.next = &store->begin[i + 1];
@@ -170,30 +168,6 @@ Numb* numb_new_integer(int val)
    return numb;
 }
 
-#if 0
-Numb* numb_new_posinfty()
-{
-   Numb* numb = numb_new();
-   
-   assert(numb != NULL);
-
-   numb->value.numb = INFINITY;
-   
-   return numb;
-}
-
-Numb* numb_new_neginfty()
-{
-   Numb* numb = numb_new();
-   
-   assert(numb != NULL);
-
-   numb->value.numb = INFINITY;
-   
-   return numb;
-}
-#endif
-
 void numb_free(Numb* numb)
 {
    assert(numb_is_valid(numb));
@@ -208,23 +182,6 @@ Bool numb_is_valid(const Numb* numb)
 {
    return numb != NULL && SID_ok(numb, NUMB_SID);
 }
-
-#if 0
-Bool numb_is_posinfty(const Numb* numb)
-{
-   return numb->value.numb >= INFINITY;   
-}
-
-Bool numb_is_neginfty(const Numb* numb)
-{
-   return numb->value.numb <= -INFINITY;   
-}
-
-Bool numb_is_number(const Numb* numb)
-{
-   return numb->value.numb > -INFINITY && numb->value.numb < INFINITY;   
-}
-#endif
 
 Numb* numb_copy(const Numb* source)
 {
@@ -350,6 +307,74 @@ Numb* numb_new_div(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
+void numb_intdiv(Numb* numb_a, const Numb* numb_b)
+{
+   mpz_t q;
+
+   assert(numb_is_valid(numb_a));
+   assert(numb_is_valid(numb_b));
+
+   mpq_div(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
+
+   mpz_init(q);
+   mpz_tdiv_q(q, mpq_numref(numb_a->value.numb), mpq_denref(numb_a->value.numb));
+   mpq_set_z(numb_a->value.numb, q);
+   mpz_clear(q);
+}
+
+Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
+{
+   Numb* numb = numb_new();
+   mpz_t q;
+
+   assert(numb != NULL);
+   assert(numb_is_valid(numb_a));
+   assert(numb_is_valid(numb_b));
+
+   mpq_div(numb->value.numb, numb_a->value.numb, numb_b->value.numb);
+
+   mpz_init(q);
+   mpz_tdiv_q(q, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+   mpq_set_z(numb->value.numb, q);
+   mpz_clear(q);
+
+   return numb;
+}
+
+void numb_mod(Numb* numb_a, const Numb* numb_b)
+{
+   mpz_t r;
+
+   assert(numb_is_valid(numb_a));
+   assert(numb_is_valid(numb_b));
+
+   mpq_div(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
+
+   mpz_init(r);
+   mpz_tdiv_r(r, mpq_numref(numb_a->value.numb), mpq_denref(numb_a->value.numb));
+   mpq_set_z(numb_a->value.numb, r);
+   mpz_clear(r);
+}
+
+Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
+{
+   Numb* numb = numb_new();
+   mpz_t        r;
+
+   assert(numb != NULL);
+   assert(numb_is_valid(numb_a));
+   assert(numb_is_valid(numb_b));
+
+   mpq_div(numb->value.numb, numb_a->value.numb, numb_b->value.numb);
+
+   mpz_init(r);
+   mpz_tdiv_r(r, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+   mpq_set_z(numb->value.numb, r);
+   mpz_clear(r);
+
+   return numb;
+}
+
 void numb_neg(Numb* numb)
 {
    assert(numb_is_valid(numb));
@@ -362,6 +387,30 @@ void numb_abs(Numb* numb)
    assert(numb_is_valid(numb));
 
    mpq_abs(numb->value.numb, numb->value.numb);
+}
+
+void numb_ceil(Numb* numb)
+{
+   mpz_t q;
+   
+   assert(numb_is_valid(numb));
+
+   mpz_init(q);
+   mpz_cdiv_q(q, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+   mpq_set_z(numb->value.numb, q);
+   mpz_clear(q);
+}
+
+void numb_floor(Numb* numb)
+{
+   mpz_t q;
+   
+   assert(numb_is_valid(numb));
+
+   mpz_init(q);
+   mpz_fdiv_q(q, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+   mpq_set_z(numb->value.numb, q);
+   mpz_clear(q);
 }
 
 double numb_todbl(const Numb* numb)

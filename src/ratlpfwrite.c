@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -40,10 +40,10 @@
  * ILOG CPLEX 7.0 Reference Manual page 527.
  */
 void lpf_write(
-   const Lps* lp,
-   const char* filename)
+   const Lps*  lp,
+   FILE*       fp,
+   const char* text)
 {
-   FILE*      fp;
    const Var* var;
    const Con* con;
    const Nzo* nzo;
@@ -52,21 +52,19 @@ void lpf_write(
    mpq_t one;
    mpq_t minus_one;
 
-   assert(lp       != NULL);
-   assert(filename != NULL);
+   assert(lp != NULL);
+   assert(fp != NULL);
 
-   if (NULL == (fp = fopen(filename, "w")))
-   {
-      perror(filename);
-      abort();
-   }
    mpq_init(zero);
    mpq_init(one);
    mpq_init(minus_one);
 
    mpq_set_ui(one, 1, 1); /* = 1 */
    mpq_set_si(minus_one, -1, 1); /* = -1 */
-   
+
+   if (text != NULL)
+      fprintf(fp, "\\%s\n", text);   
+      
    fprintf(fp, "\\Problem name: %s\n", lp->name);   
    fprintf(fp, "%s\n", (lp->direct == LP_MIN) ? "Minimize" : "Maximize");
    fprintf(fp, " %s: ", lp->objname == NULL ? "Objective" : lp->objname);
@@ -161,8 +159,6 @@ void lpf_write(
    }
    fprintf(fp, "End\n");
 
-   fclose(fp);
-   
    mpq_clear(zero);
    mpq_clear(one);
    mpq_clear(minus_one);
