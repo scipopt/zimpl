@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: hash.c,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -43,7 +43,7 @@ struct hash
 
 Hash* hash_new(HashType type)
 {
-   Hash* hash = calloc(1, sizeof(hash));
+   Hash* hash = calloc(1, sizeof(*hash));
 
    assert(hash != NULL);
 
@@ -62,10 +62,22 @@ Hash* hash_new(HashType type)
 
 void hash_free(Hash* hash)
 {
+   HElem* he;
+   HElem* hq;
+   int    i;
+      
    assert(hash_is_valid(hash));
 
    SID_del(hash);
-   
+
+   for(i = 0; i < hash->size; i++)
+   {
+      for(he = hash->bucket[i]; he != NULL; he = hq)
+      {
+         hq = he->next;
+         free(he);
+      }
+   }
    free(hash->bucket);
    free(hash);
 }
@@ -79,7 +91,7 @@ int hash_is_valid(const Hash* hash)
 
 void hash_add_tuple(Hash* hash, const Tuple* tuple)
 {
-   HElem*       he = calloc(1, sizeof(he));
+   HElem*       he = calloc(1, sizeof(*he));
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
@@ -124,7 +136,7 @@ int hash_has_tuple(Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-int hash_has_entry(Hash* hash, Entry* entry)
+int hash_has_entry(Hash* hash, Tuple* tuple)
 {
    unsigned int hcode = entry_hash(entry) % hash->size;
    Tuple*       tuple = entry_get_tuple(entry);

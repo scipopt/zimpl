@@ -1,4 +1,4 @@
-#ident "@(#) $Id: strstore.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: strstore.c,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore.c                                                    */
@@ -29,14 +29,14 @@ static Str* anchor = NULL;
 
 const char* str_new(const char* s)
 {
-   Str* str = malloc(sizeof(str));
+   Str* str = malloc(sizeof(*str));
 
    assert(s   != NULL);
    assert(str != NULL);
 
    str->value = strdup(s);
    str->next  = anchor;
-   anchor    = str;
+   anchor     = str;
 
    assert(str->value != NULL);
    

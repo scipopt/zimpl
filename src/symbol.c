@@ -1,4 +1,4 @@
-#ident "@(#) $Id: symbol.c,v 1.1 2001/01/26 07:11:37 thor Exp $"
+#ident "@(#) $Id: symbol.c,v 1.2 2001/01/26 12:18:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -31,6 +31,7 @@ struct symbol
    int          extend;
    SymbolType   type;
    Set*         set;
+   Hash*        hash;
    Entry**      entry;
    Symbol*      next;
 };
@@ -61,6 +62,7 @@ Symbol* symbol_new(const char* name, SymbolType type, Set* set)
    sym->used   = 0;
    sym->extend = SYMBOL_EXTEND_SIZE;
    sym->set    = set_copy(set);
+   sym->hash   = hash_new(HASH_ENTRY);
    sym->entry  = calloc(1, sizeof(*sym->entry));
    sym->next   = anchor.next;
    anchor.next = sym;
@@ -93,6 +95,7 @@ void symbol_exit(void)
 
       free(p->entry);
       set_free(p->set);
+      hash_free(p->hash);
       free(p);
    }
    anchor.next = NULL;
@@ -124,11 +127,14 @@ int symbol_lookup_tuple(const Symbol* sym, const Tuple* tuple)
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
 
+   return hash_has_entry(sym->hash, tuple);
+#if 0
    for(i = 0; i < sym->used; i++)
       if (!entry_cmp(sym->entry[i], tuple))
          break;
    
-   return i < sym->used ? i : -1;   
+   return i < sym->used ? i : -1;
+#endif
 }
 
 /* Entry wird gefressen.
@@ -155,11 +161,9 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
 
    tuple = entry_get_tuple(entry);
 
-#if TEST_DUBLICATE   
-   if (symbol_lookup_tuple(sym, tuple) >= 0)
+   if (hash_has_entry(sym->hash, tuple))
       fprintf(stderr, "Dublicate entry\n");
    else
-#endif
    {
       /* Falls noch nicht geschehen, legen wir hier den Typ des
        * Symbols fest.
@@ -167,7 +171,9 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
       if ((sym->type == SYM_ERR) && (sym->used == 0))
          sym->type = entry_get_type(entry);
 
-      sym->entry[sym->used] = entry_copy(entry);
+      hash_add_entry(sym->hash, entry);
+      
+      sym->entry[sym->used] = entry_copy(entry);      
       sym->used++;
    }
    tuple_free(tuple);
