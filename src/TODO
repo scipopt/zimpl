@@ -1,3 +1,10 @@
+Einleseroutinen für indizerte Sets
+Einleseroutinen für Matrizen:
+    <1> <2> <3>
+<5>  2   3   4
+<6>  3   4   5
+=> <5,1> 2, <5,2> 3 ...
+
 tru64/opt INFINITY warnung
 hp complett
 valgrind opt/expr meldung
