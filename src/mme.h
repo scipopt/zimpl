@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.52 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.53 2003/10/13 16:11:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -185,6 +185,8 @@ extern void         numb_neg(Numb* numb);
 extern void         numb_abs(Numb* numb);
 /*lint -sem(        numb_sgn, 1p == 1) */
 extern void         numb_sgn(Numb* numb);
+/*lint -sem(        numb_get_sgn, 1p == 1, @n >= -1 && @n <= 1) */
+extern int          numb_get_sgn(const Numb* numb);
 /*lint -sem(        numb_ceil, 1p == 1) */
 extern void         numb_ceil(Numb* numb);
 /*lint -sem(        numb_floor, 1p == 1) */
@@ -384,8 +386,11 @@ extern char*        tuple_tostr(const Tuple* tuple);
 
 /* set.c
  */
+#define SET_DEFAULT 0x0
+#define SET_NO_HASH 0x1
+
 /*lint -sem(        set_new, 1n >= 0 && 2n >= 0, @p == 1) */
-extern Set*         set_new(int dim, int estimated_size);
+extern Set*         set_new(int dim, int estimated_size, unsigned int flags);
 /*lint -sem(        set_free, custodial(1), 1p == 1) */
 extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */

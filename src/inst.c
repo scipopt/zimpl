@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.66 2003/10/12 10:36:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.67 2003/10/13 16:11:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1196,7 +1196,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    const Tuple* tuple = list_get_tuple(list, &le);
    int          dim   = tuple_get_dim(tuple);
    int          n     = list_get_elems(list);
-   Set*         set   = set_new(dim, n);
+   Set*         set   = set_new(dim, n, SET_DEFAULT);
    int          i;
    
    Trace("i_set_new_tuple");
@@ -1222,7 +1222,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
    const List* list  = code_eval_child_list(self, 0);
    ListElem*   le    = NULL;
    int         n     = list_get_elems(list);
-   Set*        set   = set_new(1, n);
+   Set*        set   = set_new(1, n, SET_DEFAULT);
    Tuple*      tuple;
    const Elem* elem;
    int         i;
@@ -1256,7 +1256,7 @@ CodeNode* i_set_pseudo(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   set = set_new(0, 1);
+   set = set_new(0, 1, SET_NO_HASH);
 
    set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
 
@@ -1275,7 +1275,7 @@ CodeNode* i_set_empty(CodeNode* self)
    assert(code_is_valid(self));
 
    dim = code_eval_child_size(self, 0);
-   set = set_new(dim, 1);
+   set = set_new(dim, 1, SET_NO_HASH);
 
    code_value_set(self, set);
 
@@ -1582,7 +1582,7 @@ static Set* set_from_idxset(const IdxSet* idxset)
    set     = idxset_get_set(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    pattern = idxset_get_tuple(idxset);
-   newset  = set_new(tuple_get_dim(pattern), set_get_used(set));
+   newset  = set_new(tuple_get_dim(pattern), set_get_used(set), SET_DEFAULT);
    idx     = 0;
       
    while((tuple = set_match_next(set, pattern, &idx)) != NULL)
@@ -1650,7 +1650,7 @@ static Set* iset_from_list(const CodeNode* self, const List* list)
    
    entry  = list_get_entry(list, &lelem);
    tuple  = entry_get_tuple(entry);
-   set    = set_new(tuple_get_dim(tuple), list_get_elems(list));
+   set    = set_new(tuple_get_dim(tuple), list_get_elems(list), SET_DEFAULT);
 
    assert(set != NULL);
 

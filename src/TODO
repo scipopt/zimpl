@@ -1,3 +1,9 @@
+set.c testen ob bestimmte tuple automatisch in reihenfolge 
+erzeugt werden. Wenn ja, markieren, damit binsearch eingesetzt 
+werden kann. (z.B. range oder subset)
+
+set.c SET_ADD_BEGIN wird nie genutzt.
+
 105 kann auch von der Zielfunktion kommen.
 
 Frage, wie bring man Kosten an den internen variablen an.

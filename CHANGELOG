@@ -1,3 +1,8 @@
+ - set implementation changed. Generated powersets
+   and subsets do not use a hash table anymore.
+   This should reduce memory consumption, but
+   might slow things down a little bit.
+
  - xor implemented.
 
  - Fixed bug in presolve that resulted in fixed

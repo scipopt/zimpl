@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.14 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.15 2003/10/13 16:11:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -479,6 +479,14 @@ void numb_sgn(Numb* numb)
    default :
       abort();
    }
+}
+
+int numb_get_sgn(const Numb* numb)
+{
+   assert(numb_is_valid(numb));
+
+   /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
+   return mpq_sgn(numb->value.numb);
 }
 
 void numb_ceil(Numb* numb)

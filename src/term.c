@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.20 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.21 2003/10/13 16:11:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -360,11 +360,20 @@ Bound* term_get_lower_bound(const Term* term)
    Numb*       lower;
    Numb*       value;
    int         i;
+   int         sign;
    
    lower = numb_new_integer(0);
       
    for(i = 0; i < term->used; i++)
    {
+      sign = numb_get_sgn(term->elem[i].coeff);
+
+      assert(sign != 0);
+
+      bound = (sign > 0)
+         ? xlp_getlower(entry_get_var(term->elem[i].entry))
+         : xlp_getupper(entry_get_var(term->elem[i].entry));
+      
       bound = xlp_getlower(entry_get_var(term->elem[i].entry));
 
       if (bound_get_type(bound) != BOUND_VALUE)
@@ -391,13 +400,20 @@ Bound* term_get_upper_bound(const Term* term)
    Numb*       upper;
    Numb*       value;
    int         i;
+   int         sign;
    
    upper = numb_new_integer(0);
       
    for(i = 0; i < term->used; i++)
    {
-      bound = xlp_getupper(entry_get_var(term->elem[i].entry));
+      sign = numb_get_sgn(term->elem[i].coeff);
 
+      assert(sign != 0);
+
+      bound = (sign > 0)
+         ? xlp_getupper(entry_get_var(term->elem[i].entry))
+         : xlp_getlower(entry_get_var(term->elem[i].entry));
+      
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
 
