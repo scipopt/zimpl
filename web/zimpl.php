@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.5 2001/10/30 14:56:18 thor Exp $ -->
+<!-- $Id: zimpl.php,v 1.6 2002/06/18 09:17:15 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2001/10/30 14:56:18 $">
+<meta name="date" content="$Date: 2002/06/18 09:17:15 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -94,7 +94,7 @@ or even better a working fix with a runnable example .zpl file to
 <a href="http://www.gams.com">GAMS</a>,
 <a href="http://www.dash.co.uk">XPRESS-MP</a>,
 <a href="http://www6.software.ibm.com/es/oslv2/features/welcome.htm">OSL2</a>.
-<a href="http://www.paragon.nl">AIMMS</a>,
+<a href="http://www.aimms.com">AIMMS</a>,
 <a href="http://www.lindo.com">LINDO</a>,
 </p>
 <h4>Interesting sites</h4>
@@ -135,7 +135,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2001/10/30 14:56:18 $ by
+Last Update $Date: 2002/06/18 09:17:15 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2001 by Thorsten Koch
 </font>
