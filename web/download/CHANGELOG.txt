@@ -1,3 +1,37 @@
+2.02 15.May 2004 Release
+
+ - New function ordinal ord(s,t,c) implemented.
+   While there is no specific order, all sets
+   have one. That is ord will evaluate to the 
+   c-th component of the t-th tuple in set s.
+   ord({1..10}*{"a","b"}, 3, 1) is something
+   between 1 and 10, possibly 3. But doing 
+   do forall <i> in {1..card(I)} do print ord(E,i,1);
+   will print every element in I if it is one 
+   domensional.
+
+ - Improved detection of incorrect initialization
+   of sets and params.
+
+ - Bug in mod function fixed. Before mod
+   gave the wrong result, if the two numbers
+   had factors in common.
+
+ - New -m switch that will write a CPLEX MST
+   file with MIP starting values.
+
+ - Complete new Set implementation.
+
+ - If verbose is >= 3, the local variable
+   stack is printed if an error occurs.
+
+ - Makefile changed to support Mac OS-X
+
+ - New -V flag to show the version number.
+   -h now also prints the banner text.
+
+ - man page created
+
 2.01 29.Oct 2003 Release
 
  - min/max over a indexed set of numbers,

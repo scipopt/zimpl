@@ -1,4 +1,4 @@
-tar -cvzhf zimpl-2.01.tgz \
+tar -cvzhf zimpl-2.02.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
@@ -10,7 +10,7 @@ tar -cvzhf zimpl-2.01.tgz \
 --exclude="zimpl/make/local/*" \
 --exclude="zimpl/check/warnings/*" \
 zimpl/LICENSE zimpl/README zimpl/COPYING zimpl/CHANGELOG \
-zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf 
+zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf \
 zimpl/doc/zimpl.man zimpl/check \
 zimpl/example/chvatal_diet.zpl zimpl/example/facility_location.zpl \
 zimpl/example/queens[12].zpl zimpl/example/steinerbaum.zpl \
