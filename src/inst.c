@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.67 2003/10/13 16:11:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.68 2003/10/23 09:22:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -67,7 +67,7 @@ CodeNode* i_subto(CodeNode* self)
 
    if (!conname_set(name))
    {
-      fprintf(stderr, "*** Error 105: Dublicate constraint name \"%s\"\n", name);
+      fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
@@ -1365,7 +1365,7 @@ CodeNode* i_set_sdiff(CodeNode* self)
 
    if (set_get_dim(set_a) != set_get_dim(set_b))
    {
-      fprintf(stderr, "*** Error 122: Symetric Difference of incompatible sets\n");
+      fprintf(stderr, "*** Error 122: Symmetric Difference of incompatible sets\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }
@@ -1669,7 +1669,7 @@ static Set* iset_from_list(const CodeNode* self, const List* list)
       {
          fprintf(stderr, "*** Error 130: Duplicate index ");
          tuple_print(stderr, tuple);
-         fprintf(stderr, " for initialisation\n");
+         fprintf(stderr, " for initialization\n");
          code_errmsg(self);
          exit(EXIT_FAILURE);
       }
@@ -2854,7 +2854,7 @@ static void objective(CodeNode* self, Bool minimize)
 
    if (!conname_set(name))
    {
-      fprintf(stderr, "*** Error 105: Dublicate constraint name \"%s\"\n", name);
+      fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
       code_errmsg(self);
       exit(EXIT_FAILURE);
    }

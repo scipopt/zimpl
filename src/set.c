@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.23 2003/10/13 16:11:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.24 2003/10/23 09:22:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -161,7 +161,7 @@ void set_add_member(
       {
          assert(check == SET_CHECK_WARN);
 
-         fprintf(stderr, "--- Warning 164: Dublicate element ");
+         fprintf(stderr, "--- Warning 164: Duplicate element ");
          tuple_print(stderr, tuple);
          fprintf(stderr, " for set rejected\n");
       }
@@ -487,7 +487,7 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
    
    if (set_a->dim != set_b->dim)
    {
-      fprintf(stderr, "--- Warning 165: Comparison of differen dimension sets.\n");
+      fprintf(stderr, "--- Warning 165: Comparison of different dimension sets.\n");
       set_print(stderr, set_a);
       fputc('\n', stderr);
       set_print(stderr, set_b);

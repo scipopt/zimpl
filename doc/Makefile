@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.2 2002/10/29 10:42:47 bzfkocht Exp $
+# $Id: Makefile,v 1.3 2003/10/23 09:22:55 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 
-.PHONY:		clean all
+.PHONY:		clean spell all
 
 all:		zimpl.pdf
 
@@ -40,6 +40,9 @@ zimpl.dvi:	zimpl.tex zimpl.bib ziblogo2.eps
 		bibtex zimpl
 		latex zimpl
 		latex zimpl
+
+spell:
+		ispell -t -S zimpl.tex zimplug.tex
 
 clean:
 		-rm -f *.aux *.log *.bbl *.blg zimpl.dvi zimpl.ps

@@ -1,3 +1,11 @@
+Zugriff auf die Bounds der Variablen einbauen. Z.B. mit
+getupper(x), getlower(x). Geht das überhaupt?
+
+Bie sowas sollte es gehen daß das template wie <i, "xx", 1n> 
+aussieht.
+
+set A[<i> in I] := { read ipfile[i] as "<1n>" comment "#" };
+
 gcov -f -b -o obj/O.linux.x86.gnu.gcov/ src/vinst.c
 ist auch sehr geeignet um Statements und branches zu zählen.
 Automatische auswertung ?
@@ -39,7 +47,6 @@ var x[I] integer >= -7 <= 0;
 subto c1: vif x[1] + x[4] != 5 then x[2] + x[3] <= 7 end;
 
 
-check dokumentieen
 check und print in checks expr? einbauen
 do print expr_list
 

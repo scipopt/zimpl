@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.8 2003/10/16 08:20:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.9 2003/10/23 09:22:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -275,7 +275,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
     */
    if (term_get_elements(term) == 0)
    {
-      fprintf(stderr, "--- Warning 176: Empty LHS, in boolean constraint\n");
+      fprintf(stderr, "--- Warning 176: Empty LHS, in Boolean constraint\n");
       code_errmsg(code_get_child(self, 0));
 
       fixed = check_how_fixed(cmp_op, rhs);
