@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.37 2003/08/19 10:11:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.38 2003/08/19 11:27:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -300,6 +300,11 @@ decl_sub
 constraint
    : term con_type term con_attr_list {
         $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
+     }
+   | expr con_type term con_attr_list {
+        $$ = code_new_inst(i_constraint, 4,
+           code_new_inst(i_term_expr, 1, $1),
+           $2, $3, code_new_bits($4));
      }
    | expr con_type term con_type expr con_attr_list {
         $$ = code_new_inst(i_rangeconst, 6, $1, $2, $3, $4, $5, code_new_bits($6)); 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.2 2003/08/19 07:54:37 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.3 2003/08/19 11:27:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -201,15 +201,25 @@ static PSResult simple_rows(
             
             return PRESOLVE_INFEASIBLE;
          }
-         assert(mpq_cmp(var->lower, var->upper) <= 0);
+         assert(!HAS_LOWER(var) || !HAS_UPPER(var) || mpq_cmp(var->lower, var->upper) <= 0);
+
+         printf("A %g %g\n", mpq_get_d(var->lower), mpq_get_d(var->upper));
+         printf("B %d %d\n", HAS_LOWER(var), HAS_UPPER(var));
+         printf("C %d %d\n", have_lo, have_up);
+         printf("D %g %g\n", mpq_get_d(lo), mpq_get_d(up));
 
          if (have_up && (!HAS_UPPER(var) || mpq_cmp(up, var->upper) < 0))
             lps_setupper(var, up);
 
          if (have_lo && (!HAS_LOWER(var) || mpq_cmp(lo, var->lower) > 0))
             lps_setlower(var, lo);
-         
-         assert(mpq_cmp(var->lower, var->upper) <= 0);
+
+         printf("Y %d %d\n", HAS_LOWER(var), HAS_UPPER(var));
+         printf("Z %g %g\n", mpq_get_d(var->lower), mpq_get_d(var->upper));
+
+         /* ??? Muss nicht sein, kann auch infeasible werden.
+          */
+         assert(!HAS_LOWER(var) || !HAS_UPPER(var) || mpq_cmp(var->lower, var->upper) <= 0);
 
          if (verbose_level > 1)
             printf("Row %s singleton var %s set to lower=%g upper=%g\n",
