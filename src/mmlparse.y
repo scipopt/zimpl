@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.25 2002/10/31 09:28:55 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.26 2002/11/04 07:14:57 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -358,6 +358,10 @@ factor
    : vexpr                  { $$ = $1; }
    | expr '*' vexpr         { $$ = code_new_inst(i_term_coeff, 2, $3, $1); }
    | '(' term ')'           { $$ = $2; }   
+   | '+' '(' term ')' %prec UNARY { $$ = $3; }           
+   | '-' '(' term ')' %prec UNARY {
+         $$ = code_new_inst(i_term_coeff, 2, $3, code_new_numb(-1.0));
+      }
    | expr '*' '(' term ')'  { $$ = code_new_inst(i_term_coeff, 2, $4, $1); }
    ;
 
@@ -383,7 +387,8 @@ stmt_print
    : PRINT expr ';'    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT tuple ';'   { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT sexpr ';'   { $$ = code_new_inst(i_print, 1, $2); }
-   | PRINT SETSYM ';'  { $$ = code_new_inst(i_print, 1, code_new_name($2)); }
+/*   | PRINT SETSYM ';'  { $$ = code_new_inst(i_print, 1, code_new_name($2)); }
+ */
    ;
 
 
