@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.h,v 1.7 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: code.h,v 1.8 2002/07/29 09:21:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -32,9 +32,9 @@
 extern CodeNode*    code_new_inst(Inst inst, int childs, ...);
 /*lint -sem(        code_new_numb, 1p == 1, @p == 1) */
 extern CodeNode*    code_new_numb(double numb);
-/*lint -sem(        code_new_strg, 1p, @p == 1) */
+/*lint -sem(        code_new_strg, 1p && nulterm(1), @p == 1) */
 extern CodeNode*    code_new_strg(const char* strg);
-/*lint -sem(        code_new_name, 1p, @p == 1) */
+/*lint -sem(        code_new_name, 1p && nulterm(1), @p == 1) */
 extern CodeNode*    code_new_name(const char* name);
 /*lint -sem(        code_new_size, @p == 1) */
 extern CodeNode*    code_new_size(int size);
@@ -50,6 +50,8 @@ extern void         code_free(CodeNode* node);
 extern Bool         code_is_valid(const CodeNode* node);
 /*lint -sem(        code_get_type, 1p == 1) */
 extern CodeType     code_get_type(const CodeNode* node);
+/*lint -sem(        code_get_inst, 1p == 1, @p) */
+extern Inst         code_get_inst(const CodeNode* node);
 /*lint -sem(        code_set_root, 1p == 1) */
 extern void         code_set_root(CodeNode* node);
 /*lint -sem(        code_get_root, @p == 1) */
@@ -68,9 +70,9 @@ extern CodeNode*    code_eval(CodeNode* node);
 extern CodeNode*    code_get_child(const CodeNode* node, int no);
 /*lint -sem(        code_get_numb, 1p == 1) */
 extern double       code_get_numb(CodeNode* node);
-/*lint -sem(        code_get_strg, 1p == 1, @p) */
+/*lint -sem(        code_get_strg, 1p == 1, @p && nulterm(@)) */
 extern const char*  code_get_strg(CodeNode* node);
-/*lint -sem(        code_get_name, 1p == 1, @p) */
+/*lint -sem(        code_get_name, 1p == 1, @p && nulterm(@)) */
 extern const char*  code_get_name(CodeNode* node);
 /*lint -sem(        code_get_tuple, 1p == 1, @p == 1) */
 extern const Tuple* code_get_tuple(CodeNode* node);
@@ -100,9 +102,9 @@ extern const RPar*  code_get_rpar(CodeNode* node);
 extern unsigned int code_get_bits(CodeNode* node);
 /*lint -sem(        code_value_numb, 1p == 1) */
 extern void         code_value_numb(CodeNode* node, double numb);
-/*lint -sem(        code_value_strg, 1p == 1 && 2p) */
+/*lint -sem(        code_value_strg, 1p == 1 && 2p && nulterm(2)) */
 extern void         code_value_strg(CodeNode* node, const char* strg);
-/*lint -sem(        code_value_name, 1p == 1 && 2p) */
+/*lint -sem(        code_value_name, 1p == 1 && 2p && nulterm(2)) */
 extern void         code_value_name(CodeNode* node, const char* name);
 /*lint -sem(        code_value_tuple, 1p == 1 && 2p == 1) */
 extern void         code_value_tuple(CodeNode* node, const Tuple* tuple);
@@ -137,9 +139,11 @@ extern void         code_value_void(CodeNode* node);
 extern CodeNode*    code_eval_child(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_numb, 1p == 1 && 2n >= 0) */
 extern double       code_eval_child_numb(const CodeNode* node, int no);
-/*lint -sem(        char* code_eval_child_strg, 1p == 1 && 2n >= 0, @p) */
+/*lint -sem(        char* code_eval_child_strg, 1p == 1 && 2n >= 0,
+                    @p && nulterm(@)) */
 extern const char*  code_eval_child_strg(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_name, 1p == 1 && 2n >= 0, @p) */
+/*lint -sem(        code_eval_child_name, 1p == 1 && 2n >= 0,
+                    @p && nulterm(@)) */
 extern const char*  code_eval_child_name(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_tuple, 1p == 1 && 2n >= 0, @p == 1) */
 extern const Tuple* code_eval_child_tuple(const CodeNode* node, int no);

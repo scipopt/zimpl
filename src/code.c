@@ -1,4 +1,4 @@
-#ident "@(#) $Id: code.c,v 1.13 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: code.c,v 1.14 2002/07/29 09:21:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -327,6 +327,13 @@ CodeType code_get_type(const CodeNode* node)
    return node->type;
 }
 
+Inst code_get_inst(const CodeNode* node)
+{
+   assert(code_is_valid(node));
+
+   return node->eval;
+}
+     
 void code_set_root(CodeNode* node)
 {
    assert(code_is_valid(node));

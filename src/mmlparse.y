@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.16 2002/07/29 07:48:35 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.17 2002/07/29 09:21:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -118,7 +118,7 @@ stmt
  * ----------------------------------------------------------------------------
  */
 decl_set
-   : DECLSET NAME ASGN sexpr ';' {
+   : DECLSET NAME ASGN idxset ';' {
          $$ = code_new_inst(i_newsym_set, 3,
             code_new_name($2),                                /* Name */
             code_new_inst(i_set_empty, 1, code_new_size(0)),  /* index set */

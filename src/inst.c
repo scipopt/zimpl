@@ -1,4 +1,4 @@
-#ident "@(#) $Id: inst.c,v 1.19 2002/07/29 07:48:35 bzfkocht Exp $"
+#ident "@(#) $Id: inst.c,v 1.20 2002/07/29 09:21:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -127,90 +127,6 @@ CodeNode* i_forall(CodeNode* self)
 
    return self;
 }
-
-#if 0
-
-CodeNode* i_once(CodeNode* self)
-{
-   const char*  name;
-   const Term*  term;
-   ConType      type;
-   double       rhs;
-   Con*         con;
-   unsigned int flags;
-   
-   Trace("i_once");
-   
-   assert(code_is_valid(self));
-
-   name  = code_eval_child_name(self, 0);
-   term  = code_eval_child_term(self, 1);
-   type  = code_eval_child_contype(self, 2);
-   rhs   = code_eval_child_numb(self, 3);
-   flags = code_eval_child_bits(self, 4);
-   con   = lps_addcon(name, type, rhs, flags);
-
-   term_to_nzo(term, con);
-   
-   code_value_void(self);
-
-   return self;
-}
-
-CodeNode* i_forall(CodeNode* self)
-{
-   const char*   name;
-   char*         conname;
-   Con*          con;
-   const IdxSet* idxset;
-   const Term*   term;
-   ConType       type;
-   double        rhs;
-   unsigned int  flags;
-   const Set*    set;
-   const Tuple*  pattern;
-   const Tuple*  tuple;
-   CodeNode*     lexpr;
-   int           idx   = 0;
-   int           count = 0;
-   
-   Trace("i_forall");
-   
-   assert(code_is_valid(self));
-
-   name    = code_eval_child_name(self, 0);
-   idxset  = code_eval_child_idxset(self, 1);
-   type    = code_eval_child_contype(self, 3);
-   flags   = code_eval_child_bits(self, 5);
-   set     = idxset_get_set(idxset);
-   pattern = idxset_get_tuple(idxset);
-   lexpr   = idxset_get_lexpr(idxset);
-   
-   while((tuple = set_match_next(set, pattern, &idx)) != NULL)
-   {
-      local_install_tuple(pattern, tuple);
-
-      if (code_get_bool(code_eval(lexpr)))
-      {
-         conname = malloc(strlen(name) + 13);
-         assert(conname != NULL);
-         sprintf(conname, "%s_%d", name, ++count);
-         
-         term = code_eval_child_term(self, 2);
-         rhs  = code_eval_child_numb(self, 4);         
-         con  = lps_addcon(conname, type, rhs, flags);
-
-         term_to_nzo(term, con);
-
-         free(conname);
-      }
-      local_drop_frame();
-   }
-   code_value_void(self);
-
-   return self;
-}
-#endif
 
 /* ----------------------------------------------------------------------------
  * Arithmetische Funktionen
@@ -1056,20 +972,53 @@ CodeNode* i_tuple_empty(CodeNode* self)
  */
 CodeNode* i_newsym_set(CodeNode* self)
 {
-   const char*  name  = code_eval_child_name(self, 0);
-   const Set*   iset  = code_eval_child_set(self, 1);
-   Symbol*      sym   = symbol_new(name, SYM_SET, iset);
-   Tuple*       tuple = tuple_new(0);   
-   const Set*   set   = code_eval_child_set(self, 2);
-   Entry*       entry = entry_new_set(tuple, set);
+   const char*   name    = code_eval_child_name(self, 0);
+   const Set*    iset    = code_eval_child_set(self, 1);
+   const IdxSet* idxset  = code_eval_child_idxset(self, 2);
 
-   Trace("i_newsym_set");
+   const Set*    set     = idxset_get_set(idxset);
+   CodeNode*     lexpr   = idxset_get_lexpr(idxset);
+   Symbol*       sym     = symbol_new(name, SYM_SET, iset);
+   Tuple*        empty   = tuple_new(0);   
+
+   const Tuple*  pattern;
+   const Tuple*  tuple;
+   Set*          newset;
+   Entry*        entry;
+   int           idx;
    
+   Trace("i_newsym_set");
+
    assert(code_is_valid(self));
 
+   /* Is it a simple set ?
+    */
+   if (code_get_inst(lexpr) == (Inst)i_bool_true)
+   {
+      entry = entry_new_set(empty, set);
+   }
+   else
+   {
+      pattern = idxset_get_tuple(idxset);
+      newset  = set_new(tuple_get_dim(pattern));
+      idx     = 0;
+      
+      while((tuple = set_match_next(set, pattern, &idx)) != NULL)
+      {
+         local_install_tuple(pattern, tuple);
+
+         if (code_get_bool(code_eval(lexpr)))
+            set_add_member(newset, tuple, SET_ADD_END);
+
+         local_drop_frame();
+      }
+      entry = entry_new_set(empty, newset);
+
+      set_free(newset);
+   }
    symbol_add_entry(sym, entry);
 
-   tuple_free(tuple);
+   tuple_free(empty);
    entry_free(entry);
    
    code_value_void(self);
@@ -1099,7 +1048,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
    name   = code_eval_child_name(self, 0);
    idxset = code_eval_child_idxset(self, 1);
    set    = idxset_get_set(idxset);
-   list = code_eval_child_list(self, 2);
+   list   = code_eval_child_list(self, 2);
 
    if (!list_is_entrylist(list))
    {
@@ -1159,9 +1108,9 @@ CodeNode* i_newsym_para2(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   name   = code_eval_child_name(self, 0);
-   idxset = code_eval_child_idxset(self, 1);
-   set    = idxset_get_set(idxset);
+   name    = code_eval_child_name(self, 0);
+   idxset  = code_eval_child_idxset(self, 1);
+   set     = idxset_get_set(idxset);
    sym     = symbol_new(name, SYM_NUMB, set);
    pattern = idxset_get_tuple(idxset);
 

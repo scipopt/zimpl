@@ -1,13 +1,8 @@
-lint:  type(1) bei allen semantics in inst.h
-       nulterm() bei allen wo es so ist.
-
+lint: check bei passes(2+)
 
 Initialisierung von set's
 
-1. ASGN idxset statt sexpr 
-   es solltegehen  { <u,v> in X*X with class[u] == class[v] }
-
-2. Indizierung der sets erlauben.
+1. Indizierung der sets erlauben.
 
 Warnung bei set operationen auf sets mit inkompatiblen tupeln
 z.B. { 1, 2, 3 } \ { "3" }
@@ -15,8 +10,6 @@ z.B. { 1, 2, 3 } \ { "3" }
 -------------------------------
 
 Demangle script. das die .lp + .tbl für menschen lesbar macht.
-
-link auf der website auf soplex und test ob das geht.
 
 Flag für make_tmpname in lpfwrite das angibt ob der Name gemangelt oder
 korrekt als x["hallo",5] ausgegeben werden soll.
@@ -28,7 +21,6 @@ so das man sagen kann:
 forall w in pot(V) with s in W do
 
 --------------------------------------------------------
-Attribut generate_covers oder ander ungleichungen für ein subto
 Attribut branch / dontbranch / branchweight für variablen
 Sogar branch bereiche füer integer variablen denkbar oder
 alternative unlgeichnungen zum branchen
@@ -47,7 +39,6 @@ ewtl bei lp_format etwas längere Dateinamen
 
 default für parameter
 
-forall verschachteln
 sum verschachtlung überprüfung
 
 shortcummings and Tips&Trick Abschnitt
@@ -63,3 +54,7 @@ Warning wenn locale Variable eine globale uerbschreibt.
 sparse symbols. Dazu brauchen wir das urspüngliche indexset.
 Dann können wir für alle derefs mit einem index für den kein Wert
 vorliegt, der aber zulässig wäre, den default zurück liefern.
+
+
+
+

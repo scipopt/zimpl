@@ -1,3 +1,4 @@
+-passes(1)
 -I/usr/local/lib/flexelint/posix
 -function(exit,_assert)
 -function(exit,__assert)
