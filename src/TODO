@@ -1,3 +1,19 @@
+105 kann auch von der Zielfunktion kommen.
+
+Frage, wie bring man Kosten an den internen variablen an.
+Idee:  VABS(..., "name");  VIF(..., name) vieleich dann doch
+       VAND(a, b, "name);  VCMP(.... <= 5, "name") oder so
+Dann Deklaration: var name binary bei den bool sachen und
+                  var name integer bei vabs und dann wird
+nichts erzeugt, sondern die angegebene variable benutzt. 
+
+checken was passiert wenn man if bin_var == 1 then schreibt.
+
+xor testen, docu
+
+überprüfen ob type() in der semantic von inst.h richtig ist
+
+
 Mon sollte erkennen, das dies immer false ist
 var x[I] integer >= -7 <= 0;
 subto c1: vif x[1] + x[4] != 5 then x[2] + x[3] <= 7 end;

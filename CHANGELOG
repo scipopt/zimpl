@@ -1,3 +1,5 @@
+ - xor implemented.
+
  - Fixed bug in presolve that resulted in fixed
    variables not removed.
 

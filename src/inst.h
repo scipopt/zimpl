@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.28 2003/10/10 08:32:47 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.29 2003/10/12 10:36:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -66,6 +66,8 @@ extern CodeNode* i_bool_sseq(CodeNode* self);
 extern CodeNode* i_bool_subs(CodeNode* self);
 /*lint -sem(     i_bool_true, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_bool_true(CodeNode* self);
+/*lint -sem(     i_bool_xor, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_bool_xor(CodeNode* self);
 /*lint -sem(     i_bound_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_bound_new(CodeNode* self);
 /*lint -sem(     i_check, 1p == 1, type(1), @p == 1p) */
@@ -242,6 +244,10 @@ extern CodeNode* i_read(CodeNode* self);
 
 /* vinst.c
  */
+/*lint -sem(     i_vabs, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vabs(CodeNode* self);
+/*lint -sem(     i_vbool_and, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_and(CodeNode* self);
 /*lint -sem(     i_vbool_eq, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vbool_eq(CodeNode* self);
 /*lint -sem(     i_vbool_ne, 1p == 1, type(1), @p == 1p) */
@@ -254,6 +260,12 @@ extern CodeNode* i_vbool_gt(CodeNode* self);
 extern CodeNode* i_vbool_le(CodeNode* self);
 /*lint -sem(     i_vbool_lt, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vbool_lt(CodeNode* self);
+/*lint -sem(     i_vbool_not, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_not(CodeNode* self);
+/*lint -sem(     i_vbool_or, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_or(CodeNode* self);
+/*lint -sem(     i_vbool_xor, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_xor(CodeNode* self);
 /*lint -sem(     i_vif, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vif(CodeNode* self);
 /*lint -sem(     i_vif_else, 1p == 1, type(1), @p == 1p) */

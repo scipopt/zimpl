@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.65 2003/10/04 16:22:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.66 2003/10/12 10:36:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -876,6 +876,23 @@ CodeNode* i_bool_or(CodeNode* self)
    
    code_value_bool(self,
       code_eval_child_bool(self, 0) || code_eval_child_bool(self, 1));
+
+   return self;
+}
+
+CodeNode* i_bool_xor(CodeNode* self)
+{
+   Bool a;
+   Bool b;
+   
+   Trace("i_bool_or");
+
+   assert(code_is_valid(self));
+
+   a = code_eval_child_bool(self, 0);
+   b = code_eval_child_bool(self, 1);
+
+   code_value_bool(self, (a && !b) || (b && !a));
 
    return self;
 }
@@ -2834,12 +2851,21 @@ static void objective(CodeNode* self, Bool minimize)
    assert(code_is_valid(self));
 
    name = code_eval_child_name(self, 0);
+
+   if (!conname_set(name))
+   {
+      fprintf(stderr, "*** Error 105: Dublicate constraint name \"%s\"\n", name);
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
    term = code_eval_child_term(self, 1);
 
    xlp_objname(name);
    xlp_setdir(minimize);
    term_to_objective(term);
 
+   conname_free();
+   
    code_value_void(self);
 }
 

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.57 2003/10/10 08:32:47 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.58 2003/10/12 10:36:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -70,7 +70,7 @@ extern void yyerror(const char* s);
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
-%token AND OR NOT
+%token AND OR XOR NOT
 %token SUM MIN MAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
@@ -78,7 +78,7 @@ extern void yyerror(const char* s);
 %token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
-%token VIF VBOOL VAND VOR VNOT
+%token VIF VABS
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
 %token <def> NUMBDEF STRGDEF SETDEF DEFNAME
 %token <name> NAME
@@ -103,7 +103,7 @@ extern void yyerror(const char* s);
 %left  ','
 %right '('
 %left  ')'
-%left  OR
+%left  OR XOR
 %left  EXISTS
 %left  AND
 %left  CMP_EQ CMP_NE CMP_LE CMP_LT CMP_GE CMP_GT
@@ -433,9 +433,11 @@ vbool
    | expr CMP_LT term { $$ = code_new_inst(i_vbool_lt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
    | term CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, $1, $3); }
    | expr CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | vbool AND vbool  { $$ = $1; }
-   | vbool OR  vbool  { $$ = $1; }
-   | NOT vbool        { $$ = $2; }
+   | vbool AND vbool  { $$ = code_new_inst(i_vbool_and, 2, $1, $3); }
+   | vbool OR  vbool  { $$ = code_new_inst(i_vbool_or,  2, $1, $3); }
+   | vbool XOR vbool  { $$ = code_new_inst(i_vbool_xor, 2, $1, $3); }
+   | NOT vbool        { $$ = code_new_inst(i_vbool_not, 1, $2);; }
+   | '(' vbool ')'    { $$ = $2; }
    ;
 
 con_attr_list
@@ -514,7 +516,9 @@ vexpr
             code_new_inst(i_symbol_deref, 2, code_new_symbol($2), $3),
             code_new_numb(numb_new_integer(-1)));
       } 
-   ;   
+   | VABS '(' term ')' { $$ = code_new_inst(i_vabs, 1, $3); }
+
+;   
 
 /* ----------------------------------------------------------------------------
  * --- Do Statement
@@ -633,7 +637,8 @@ sexpr
     | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
     | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
     | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
-    | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or, 2, $1, $3); }
+    | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or,  2, $1, $3); }
+    | lexpr XOR lexpr    { $$ = code_new_inst(i_bool_xor, 2, $1, $3); }
     | NOT lexpr          { $$ = code_new_inst(i_bool_not, 1, $2); }
     | '(' lexpr ')'      { $$ = $2; }
     | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
