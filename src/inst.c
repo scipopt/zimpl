@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.71 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.72 2004/04/14 13:04:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1627,7 +1627,7 @@ static Set* set_from_idxset(const IdxSet* idxset)
          tuple_free(tuple);
       }
       set_iter_exit(iter, set);
-   
+
       if (first)
       {
          newset = set_empty_new(tuple_get_dim(pattern));

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.4 2004/04/14 11:56:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.5 2004/04/14 13:04:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -117,7 +117,7 @@ Set* set_multi_new_from_list(const List* list)
       : list_get_tuple(list, &le);
    dim   = tuple_get_dim(tuple);
 
-   assert(n   > 1);
+   assert(n   > 0);
    assert(dim > 1);
    
    set = calloc(1, sizeof(*set));
@@ -347,14 +347,14 @@ static SetIter* iter_init(
    if (i < set->head.dim)
    {
       iter->multi.members = 0;
-      iter->multi.now     = 1;
+      iter->multi.now     = 0;
    }
    else
    {
       iter->multi.dim = set->head.dim;
    
-      iter->multi.subset = malloc(
-         (size_t)set->head.dim * (size_t)set->head.members * sizeof(*iter->multi.subset));
+      iter->multi.subset = calloc((size_t)set->head.members, 
+         (size_t)set->head.dim * sizeof(*iter->multi.subset));
 
       assert(iter->multi.subset);
       
@@ -366,7 +366,7 @@ static SetIter* iter_init(
          {
             /* can entry match ?
              */
-            if (idx[i] > 0 && idx[i] != set->multi.subset[k * set->head.dim + i])
+            if (idx[i] >= 0 && idx[i] != set->multi.subset[k * set->head.dim + i])
                break;
 
             iter->multi.subset[j * set->head.dim + i] = set->multi.subset[k * set->head.dim + i];
@@ -377,6 +377,11 @@ static SetIter* iter_init(
       iter->multi.members = j;
       iter->multi.now     = 0;
    }
+#if 0
+   fprintf(stderr, "set_multi_iter_init members=%d\n", iter->multi.members);
+   for(i = 0; i < set->head.dim; i++)
+      fprintf(stderr, "idx[%d]=%d\n", i, idx[i]);
+#endif
    free(idx);
    
    SID_set2(iter->multi, SET_MULTI_ITER_SID);
