@@ -20,11 +20,6 @@ so das man sagen kann:
 
 forall w in pot(V) with s in W do
 
---------------------------------------------------------
-Attribut branch / dontbranch / branchweight für variablen
-Sogar branch bereiche füer integer variablen denkbar oder
-alternative unlgeichnungen zum branchen
-
 ---------------------------------------------------
 exists <a,b,c> in X : b == 4 and c == 3  shift/reduce beseitigen count?
 

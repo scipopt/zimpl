@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.5 2002/07/05 12:47:47 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.6 2002/07/31 06:58:42 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -21,7 +21,7 @@
 \usepackage{url}
 %\usepackage{zibtitlepage}
 \usepackage[notoday,nofancy]{rcsinfo}
-\rcsInfo $Id: zimpl.tex,v 1.5 2002/07/05 12:47:47 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.6 2002/07/31 06:58:42 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -62,7 +62,7 @@
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small 5. July 2002}
+\date{\small 31. July 2002}
 \maketitle
 \vfill
 \begin{abstract}
@@ -314,6 +314,7 @@ set B := { "hi", "ha", "ho" };
 set C := { <1,2,"x">, <6,5,"y">, <787,12.6,"oh"> };
 set D := A cross B;
 set E := { 6 to 9 } union A without { <2>, <3> }; 
+set F := <i,j> in Q with i > j and i < 5;
 \end{verbatim}
 }
 
@@ -407,6 +408,7 @@ The general forms are
 and 
 \code{sum} \emph{index} \code{do} \emph{term}.
  
+It is possible to nest several forall instructions.
 %It should be noted, that a \code{sum}-expression is a \emph{term}
 %itself, so it is possible to nest or concatenate them.
 The general form of \emph{index} is 
@@ -511,7 +513,7 @@ cost.txt:
    München 1200   ->   <"München"> 1200
    Berlin  1400   ->   <"Berlin">  1400
 
-param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s" fs ":";
+param cost[Q] := read "haha.txt" as "<3s,1n,2n> 4s";
 
 haha.txt:
    1:2:ab:con1    ->   <"ab",1,2> "con1"

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
 "http://www.w3.org/TR/REC-html40/loose.dtd">
-<!-- $Id: zimpl.php,v 1.9 2002/07/28 07:03:33 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.10 2002/07/31 06:58:42 bzfkocht Exp $ -->
 <?php
 #
 #	Author: Philip Gatt
@@ -36,7 +36,7 @@ fclose($fp);
 <meta name="author" content="Thorsten Koch">
 <meta name="description" content="Zimple Homepage">
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language">
-<meta name="date" content="$Date: 2002/07/28 07:03:33 $">
+<meta name="date" content="$Date: 2002/07/31 06:58:42 $">
 <meta name="robots" content="index|follow">
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 <title>Zimpl</title> 
@@ -44,8 +44,6 @@ fclose($fp);
 <body bgcolor="#FFFFFF" text="#000000" 
       link="#0000FF" alink="#FF0000" vlink="#800080">
 <p>
-<!-- <img src="http://www.zib.de/global/images/zib_logo1.gif" -->
-
 <a href="http://www.zib.de/index.en.html">
    <img src="images/zib_logo1.gif" 
    alt="Goto ZIB" border=0 align=right width=86 height=118>
@@ -73,8 +71,9 @@ documentation. There is <em>no</em> Windows version.</p>
 <hr noshade>
 <h3>Download</h3>
 <p>
-The latest Version is 1.02. Download complete source code and documentation
-<a href="zimpl-1.02.tgz">here</a>. 
+The latest Version is 1.03. 
+<a href="zimpl-1.03.tgz">Download</a>
+complete source code and documentation
 <br>
 Differences to the older versions are in the <a href="CHANGELOG">Changelog</a>.
 </p>
@@ -147,7 +146,7 @@ border="0" width="88" height="36" align="bottom"></a>
 <img src="images/valid-html40.png" alt="Valid HTML 4.0!"
 border="0" height="31" width="88" align="bottom"></a>
 <hr noshade><address><font size=-1>
-Last Update $Date: 2002/07/28 07:03:33 $ by
+Last Update $Date: 2002/07/31 06:58:42 $ by
 <a href="/personal/personal.pl?name=koch">Thorsten Koch</a>
 <br>&copy; 2002 by Thorsten Koch
 </font>

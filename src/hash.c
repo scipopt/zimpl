@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.8 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.9 2002/07/31 06:58:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -52,10 +52,10 @@ struct hash_element
 struct hash
 {
    SID
-   size_t   size;
-   int      elems;
-   HashType type;
-   HElem**  bucket;
+   unsigned int size;
+   int          elems;
+   HashType     type;
+   HElem**      bucket;
 };
 
 static void hash_statist(FILE* fp, const Hash* hash);

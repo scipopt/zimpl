@@ -1,3 +1,24 @@
+ - A division by Zero now gives an error message
+   (instead of an exception or whatever)
+
+ - It is now possible to assign a qualified set expression 
+   to a set, like
+   set C := <i,j> in A * B with i < j;
+
+ - It is now possible to nest "forall" statements. This
+   can vastly reduce the memory needed, because it is no
+   longer neccessary to build big cross products to loop
+   over them.
+   So instead of 
+      forall <i,j> in I * J with i < j do 
+   it is possible to write
+      forall <i> in I do forall <j> in J with i < j do
+     
+ - elems where now reused, this reduces the memory needed.
+
+ - changed to not copy in principle const objects, this should
+   have improved speed.
+
 1.02 05.Jul 2002 Release
 
  - new functions FLOOR(expr) and CEIL(expr) which find the

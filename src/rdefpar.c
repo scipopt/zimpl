@@ -1,4 +1,4 @@
-#ident "@(#) $Id: rdefpar.c,v 1.3 2002/07/28 07:03:32 bzfkocht Exp $"
+#ident "@(#) $Id: rdefpar.c,v 1.4 2002/07/31 06:58:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -37,7 +37,7 @@
 #define RDEF_SID     0x52446566
 #define RPAR_SID     0x52506172
 
-enum read_param_type { RPAR_ERR = 0, RPAR_SKIP, RPAR_USE, RPAR_FS, RPAR_CMNT };
+enum read_param_type { RPAR_ERR = 0, RPAR_SKIP, RPAR_USE, RPAR_CMNT };
 
 typedef enum read_param_type   RParType;
 typedef union read_param_value RParVal;

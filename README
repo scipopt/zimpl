@@ -52,7 +52,7 @@ with runnable example .zpl file to koch@zib.de
 REMARK
 ------
 If anything is changed in the code I would recommend recompiling without
-NDEBUG defined. This will slow down the code considerably but
+NDEBUG and NO_MSHELL defined. This will slow down the code considerably but
 will do a lot of consistency checking.
 In the source code are a lot of comments starting with
 /*lint ... and also a target in the Makefile.
