@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: strstore.c,v 1.6 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore.c,v 1.7 2004/12/23 09:42:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore.c                                                    */
@@ -86,7 +86,7 @@ unsigned int str_hash(const char* s)
    int          i;
    
    for(sum = 0, i = 0; s[i] != '\0'; i++)
-      sum = DISPERSE(sum + s[i]);
+      sum = sum * 31 + s[i];
 
    return sum;
 }

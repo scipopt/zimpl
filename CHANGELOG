@@ -1,3 +1,5 @@
+ - Decreased memory consumption of hash tables
+
  - Improved error handling for wrong components in
    sets.
 
