@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.2 2003/10/09 08:20:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.3 2003/10/10 08:32:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -39,7 +39,34 @@
 #include "inst.h"
 #include "xlpglue.h"
 
-static CodeNode* handle_vbool_eq_ne(CodeNode* self, Bool eq)
+enum vbool_cmp_operator { VBOOL_LT, VBOOL_LE, VBOOL_EQ, VBOOL_NE, VBOOL_GE, VBOOL_GT };
+
+typedef enum vbool_cmp_operator VBCmpOp;
+
+static Entry* create_new_var_entry(
+   const char*  basename,
+   const char*  extension,
+   VarClass     var_class,
+   const Bound* lower,
+   const Bound* upper)
+{
+   char*  vname;
+   Tuple* tuple;
+   Entry* entry;
+
+   vname = malloc(strlen(basename) + strlen(extension) + strlen(SYMBOL_NAME_INTERNAL) + 1);
+   sprintf(vname, "%s%s%s", SYMBOL_NAME_INTERNAL, basename, extension);
+   var   = xlp_addvar(vname, var_class, lower, upper, numb_zero(), numb_zero());
+   tuple = tuple_new(1);
+   tuple_set_elem(tuple, 0, elem_new_strg(str_new(vname + strlen(SYMBOL_NAME_INTERNAL))));
+   entry = entry_new_var(tuple, var);
+   tuple_free(tuple);
+   free(vname);
+
+   return entry;
+}
+
+static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
 {
    Symbol*      sym;
    Term*        term;
@@ -211,8 +238,9 @@ static CodeNode* handle_vbool_eq_ne(CodeNode* self, Bool eq)
    term_to_nzo(term, con);
    term_free(term);
 
-   if (eq)
+   switch(cmp_op)
    {
+   case VBOOL_EQ :
       /* 1 - result = bplus + bminus =>  result + bplus + bminus = 1 */
       term = term_new(3);
       term_add_elem(term, entry_result, numb_one());
@@ -222,10 +250,9 @@ static CodeNode* handle_vbool_eq_ne(CodeNode* self, Bool eq)
       con = xlp_addcon(temp, CON_EQUAL, numb_one(), numb_one(), flags);
       term_to_nzo(term, con);
       term_free(term);
-   }
-   else
-   {
-      /* result = bplus + bminus */
+      break;
+   case VBOOL_NE :
+      /* result = bplus + bminus  =>  result - bplus - bminus = 0*/
       term = term_new(3);
       term_add_elem(term, entry_result, numb_one());
       term_add_elem(term, entry_bplus,  numb_minusone());
@@ -234,6 +261,93 @@ static CodeNode* handle_vbool_eq_ne(CodeNode* self, Bool eq)
       con = xlp_addcon(temp, CON_EQUAL, numb_zero(), numb_zero(), flags);
       term_to_nzo(term, con);
       term_free(term);
+      break;
+   case VBOOL_LE :
+      /* bplus + bminus <= 1,
+       * result = 1 - bplus => result + bplus = 1
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_bplus,  numb_one());
+      term_add_elem(term, entry_bminus, numb_one());
+      sprintf(temp, "%s_f", cname);
+      con = xlp_addcon(temp, CON_RHS, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+
+      term = term_new(2);
+      term_add_elem(term, entry_result, numb_one());
+      term_add_elem(term, entry_bplus,  numb_one());
+      sprintf(temp, "%s_g", cname);
+      con = xlp_addcon(temp, CON_EQUAL, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+      break;
+   case VBOOL_GE :
+      /* bplus + bminus <= 1,
+       * result = 1 - bminus => result + bminus = 1
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_bplus,  numb_one());
+      term_add_elem(term, entry_bminus, numb_one());
+      sprintf(temp, "%s_f", cname);
+      con = xlp_addcon(temp, CON_RHS, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+
+      term = term_new(2);
+      term_add_elem(term, entry_result, numb_one());
+      term_add_elem(term, entry_bminus,  numb_one());
+      sprintf(temp, "%s_g", cname);
+      con = xlp_addcon(temp, CON_EQUAL, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+      break;
+   case VBOOL_LT :
+      /* bplus + bminus <= 1,
+       * result = bminus => result - bminus = 0
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_bplus,  numb_one());
+      term_add_elem(term, entry_bminus, numb_one());
+      sprintf(temp, "%s_f", cname);
+      con = xlp_addcon(temp, CON_RHS, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+
+      /* This is somewhat superflous
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_result, numb_one());
+      term_add_elem(term, entry_bminus,  numb_minusone());
+      sprintf(temp, "%s_g", cname);
+      con = xlp_addcon(temp, CON_EQUAL, numb_zero(), numb_zero(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+      break;
+   case VBOOL_GT :
+      /* bplus + bminus <= 1,
+       * result = bplus => result - bplus = 0
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_bplus,  numb_one());
+      term_add_elem(term, entry_bminus, numb_one());
+      sprintf(temp, "%s_f", cname);
+      con = xlp_addcon(temp, CON_RHS, numb_one(), numb_one(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+
+      /* This is somewhat superflous
+       */
+      term = term_new(2);
+      term_add_elem(term, entry_result, numb_one());
+      term_add_elem(term, entry_bplus,  numb_minusone());
+      sprintf(temp, "%s_g", cname);
+      con = xlp_addcon(temp, CON_EQUAL, numb_zero(), numb_zero(), flags);
+      term_to_nzo(term, con);
+      term_free(term);
+      break;
+   default :
+      abort();
    }
    //------------------------------------------------------
    term = term_new(1);
@@ -264,12 +378,32 @@ static CodeNode* handle_vbool_eq_ne(CodeNode* self, Bool eq)
 
 CodeNode* i_vbool_ne(CodeNode* self)
 {
-   return handle_vbool_eq_ne(self, FALSE);
+   return handle_vbool_cmp(self, VBOOL_NE);
 }
 
 CodeNode* i_vbool_eq(CodeNode* self)
 {
-   return handle_vbool_eq_ne(self, TRUE);
+   return handle_vbool_cmp(self, VBOOL_EQ);
+}
+
+CodeNode* i_vbool_lt(CodeNode* self)
+{
+   return handle_vbool_cmp(self, VBOOL_LT);
+}
+
+CodeNode* i_vbool_le(CodeNode* self)
+{
+   return handle_vbool_cmp(self, VBOOL_LE);
+}
+
+CodeNode* i_vbool_gt(CodeNode* self)
+{
+   return handle_vbool_cmp(self, VBOOL_GT);
+}
+
+CodeNode* i_vbool_ge(CodeNode* self)
+{
+   return handle_vbool_cmp(self, VBOOL_GE);
 }
 
 static void generate_conditional_constraint(

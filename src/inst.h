@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.27 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.28 2003/10/10 08:32:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -246,6 +246,14 @@ extern CodeNode* i_read(CodeNode* self);
 extern CodeNode* i_vbool_eq(CodeNode* self);
 /*lint -sem(     i_vbool_ne, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vbool_ne(CodeNode* self);
+/*lint -sem(     i_vbool_ge, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_ge(CodeNode* self);
+/*lint -sem(     i_vbool_gt, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_gt(CodeNode* self);
+/*lint -sem(     i_vbool_le, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_le(CodeNode* self);
+/*lint -sem(     i_vbool_lt, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vbool_lt(CodeNode* self);
 /*lint -sem(     i_vif, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vif(CodeNode* self);
 /*lint -sem(     i_vif_else, 1p == 1, type(1), @p == 1p) */

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.56 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.57 2003/10/10 08:32:47 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -425,10 +425,14 @@ vbool
    | expr CMP_NE term { $$ = code_new_inst(i_vbool_ne, 2, code_new_inst(i_term_expr, 1, $1), $3); }
    | term CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, $1, $3); }
    | expr CMP_EQ term { $$ = code_new_inst(i_vbool_eq, 2, code_new_inst(i_term_expr, 1, $1), $3); }
-   | term CMP_LE term { $$ = $1; }
-   | expr CMP_LE term { $$ = $1; }
-   | term CMP_GE term { $$ = $1; }
-   | expr CMP_GE term { $$ = $1; }
+   | term CMP_LE term { $$ = code_new_inst(i_vbool_le, 2, $1, $3); }
+   | expr CMP_LE term { $$ = code_new_inst(i_vbool_le, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   | term CMP_GE term { $$ = code_new_inst(i_vbool_ge, 2, $1, $3); }
+   | expr CMP_GE term { $$ = code_new_inst(i_vbool_ge, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   | term CMP_LT term { $$ = code_new_inst(i_vbool_lt, 2, $1, $3); }
+   | expr CMP_LT term { $$ = code_new_inst(i_vbool_lt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
+   | term CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, $1, $3); }
+   | expr CMP_GT term { $$ = code_new_inst(i_vbool_gt, 2, code_new_inst(i_term_expr, 1, $1), $3); }
    | vbool AND vbool  { $$ = $1; }
    | vbool OR  vbool  { $$ = $1; }
    | NOT vbool        { $$ = $2; }
