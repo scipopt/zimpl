@@ -1,0 +1,4 @@
+#--- $Id: make.darwin.ppc.gnu.opt,v 1.1 2004/11/04 07:48:53 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
+CFLAGS		=	-O6
+LDFLAGS		=	-lgmp -lz -lm 
