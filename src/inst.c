@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.59 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.60 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1982,10 +1982,10 @@ CodeNode* i_newsym_var(CodeNode* self)
 
 CodeNode* i_symbol_deref(CodeNode* self)
 {
-   const Tuple* tuple;
-   const Entry* entry;
-   Symbol*      sym;
-   Term*        term;
+   const Symbol* sym;
+   const Tuple*  tuple;
+   const Entry*  entry;
+   Term*         term;
    
    Trace("i_symbol_deref");
    
@@ -2028,6 +2028,84 @@ CodeNode* i_symbol_deref(CodeNode* self)
    default :
       abort();
    }
+   return self;
+}
+
+CodeNode* i_newdef(CodeNode* self)
+{
+   Define*       def;
+   const List*   list;
+   ListElem*     lelem;
+   int           count;
+   Tuple*        tuple;
+   int           i;
+   
+   Trace("i_newdef_expr");
+
+   def     = code_eval_child_define(self, 0);
+   list    = code_eval_child_list(self, 1);
+   count   = list_get_elems(list);
+   tuple   = tuple_new(count);
+   lelem   = NULL;
+   
+   for(i = 0; i < count; i++)
+      tuple_set_elem(tuple, i, elem_copy(list_get_elem(list, &lelem)));
+   
+   define_set_param(def, tuple);
+   define_set_code(def, code_get_child(self, 2));
+   
+   code_value_void(self);
+
+   return self;
+}
+
+CodeNode* i_define_deref(CodeNode* self)
+{
+   const Define* def;
+   const List*   list;
+   ListElem*     lelem;
+   Tuple*        tuple;
+   const Tuple*  param;
+   int           count;
+   int           i;
+   
+   Trace("i_define_deref");
+   
+   assert(code_is_valid(self));
+
+   def   = code_eval_child_define(self, 0);
+   list  = code_eval_child_list(self, 1);   
+   count = list_get_elems(list);
+   tuple = tuple_new(count);
+   lelem = NULL;
+
+   for(i = 0; i < count; i++)
+      tuple_set_elem(tuple, i, elem_copy(list_get_elem(list, &lelem)));
+   
+   /* wurde schon in mmlscan ueberprueft
+    */
+   assert(def != NULL);
+
+   param = define_get_param(def);
+   
+   if (tuple_get_dim(tuple) != tuple_get_dim(param))
+   {
+      fprintf(stderr, "*** Error 170: Wrong number of arguments (%d instead of %d)\n",
+         tuple_get_dim(tuple),
+         tuple_get_dim(param));
+      fprintf(stderr, "               for call of define \"%s\".\n",
+         define_get_name(def));
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   local_install_tuple(param, tuple);
+
+   code_copy_value(self, code_eval(define_get_code(def)));
+
+   local_drop_frame();
+
+   tuple_free(tuple);
+   
    return self;
 }
 

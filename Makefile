@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.11 2003/09/04 13:09:09 bzfkocht Exp $
+# $Id: Makefile,v 1.12 2003/09/18 11:55:49 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -78,8 +78,8 @@ DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
 
-OBJECT  =       	bound.o code.o conname.o elem.o entry.o hash.o \
-			idxset.o iread.o list.o load.o local.o \
+OBJECT  =       	bound.o code.o conname.o define.o elem.o entry.o \
+			hash.o idxset.o iread.o list.o load.o local.o \
 			mmlparse.o mmlscan.o numbgmp.o \
 			prog.o rdefpar.o set.o source.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \

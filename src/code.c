@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.24 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.25 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -59,6 +59,7 @@ union code_value
    RPar*        rpar;
    unsigned int bits;
    Symbol*      sym;
+   Define*      def;
    Bound*       bound;
 };
 
@@ -270,6 +271,24 @@ CodeNode* code_new_symbol(Symbol* sym)
    return node;
 }
 
+CodeNode* code_new_define(Define* def)
+{
+   CodeNode* node = calloc(1, sizeof(*node));
+
+   assert(node != NULL);
+
+   node->type       = CODE_DEF;
+   node->eval       = i_nop;
+   node->value.def  = def;
+   node->stmt       = scan_get_stmt();
+   node->column     = scan_get_column();
+
+   SID_set(node, CODE_SID);
+   assert(code_is_valid(node));
+   
+   return node;
+}
+
 /* We eat the bound, i.e. we will free it!
  */
 CodeNode* code_new_bound(BoundType type)
@@ -343,6 +362,8 @@ static inline void code_free_value(const CodeNode* node)
       break;
    case CODE_SYM :
       break;
+   case CODE_DEF :
+      break;
    case CODE_BOUND :
       bound_free(node->value.bound);
       break;
@@ -410,7 +431,7 @@ static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
    {
       "Error", "Number", "String", "Name", "Tuple", "Set", "Term", "Bool", "Size",
       "IndexSet", "List", "Nothing", "Entry", "VarClass", "ConType",
-      "ReadDefinition", "ReadParameter", "BitFlag", "Symbol", "Bound"
+      "ReadDefinition", "ReadParameter", "BitFlag", "Symbol", "Define", "Bound"
    };
    assert(code_is_valid(node));
    assert(sizeof(tname) / sizeof(tname[0]) > (size_t)node->type);
@@ -543,6 +564,11 @@ inline unsigned int code_get_bits(CodeNode* node)
 inline Symbol* code_get_symbol(CodeNode* node)
 {
    return code_check_type(node, CODE_SYM)->value.sym;
+}
+
+inline Define* code_get_define(CodeNode* node)
+{
+   return code_check_type(node, CODE_DEF)->value.def;
 }
 
 inline const Bound* code_get_bound(CodeNode* node)
@@ -903,6 +929,11 @@ unsigned int code_eval_child_bits(const CodeNode* node, int no)
 Symbol* code_eval_child_symbol(const CodeNode* node, int no)
 {
    return code_get_symbol(code_eval(code_get_child(node, no)));
+}
+
+Define* code_eval_child_define(const CodeNode* node, int no)
+{
+   return code_get_define(code_eval(code_get_child(node, no)));
 }
 
 const Bound* code_eval_child_bound(const CodeNode* node, int no)

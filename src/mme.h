@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.45 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.46 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -41,12 +41,13 @@ enum element_type
 };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_VAR, HASH_CON };
+enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_SET };
 
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
-   STMT_CONS, STMT_PRINT
+   STMT_CONS, STMT_DEF, STMT_PRINT
 };
 
 enum set_check_type
@@ -72,7 +73,7 @@ enum code_type
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
    CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARCLASS, CODE_CONTYPE,
-   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM, CODE_BOUND
+   CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM, CODE_DEF, CODE_BOUND
 };
 
 typedef enum code_type           CodeType;
@@ -92,6 +93,8 @@ typedef enum set_check_type      SetCheckType;
 typedef struct entry             Entry;
 typedef enum symbol_type         SymbolType;
 typedef struct symbol            Symbol;
+typedef enum define_type         DefineType;
+typedef struct define            Define;
 typedef struct index_set         IdxSet;
 typedef struct term              Term;
 typedef struct local             Local;
@@ -477,6 +480,28 @@ extern Var*         symbol_get_var(const Symbol* sym, int idx);
 extern void         symbol_print(FILE* fp, const Symbol* sym);
 /*lint -sem(        symbol_print_all, 1p == 1) */
 extern void         symbol_print_all(FILE* fp);
+
+/* define.c
+ */
+/*lint -sem(        define_new, 1p && nulterm(1), @p == 1) */
+extern Define*      define_new(const char* name, DefineType type);
+/*lint -sem(        define_set_param, 1p == 1 && 2p == 1) */
+extern void         define_set_param(Define* def, Tuple* param);
+/*lint -sem(        define_set_code, 1p == 1 && 2p == 1) */
+extern void         define_set_code(Define* def, CodeNode* code);
+extern void         define_exit(void);
+/*lint -sem(        define_is_valid, 1p == 1) */
+extern Bool         define_is_valid(const Define* def);
+/*lint -sem(        define_lookup, 1p && nulterm(1), r_null) */
+extern Define*      define_lookup(const char* name);
+/*lint -sem(        define_get_name, 1p == 1, @p && nulterm(@)) */
+extern const char*  define_get_name(const Define* def);
+/*lint -sem(        define_get_type, 1p == 1) */
+extern DefineType   define_get_type(const Define* def);
+/*lint -sem(        define_get_param, 1p == 1) */
+extern const Tuple* define_get_param(const Define* def);
+/*lint -sem(        define_get_code, 1p == 1) */
+extern CodeNode*    define_get_code(const Define* def);
 
 /* idxset.c
  */

@@ -1,3 +1,12 @@
+defset bigger(i) := { <j> in K with j > i };
+
+subto c3: sum <i> in bigger(i) : y[i] >= 0;
+gibt eine execption!
+zimpl.linux.x86.gnu.dbg: src/local.c:125: local_install_tuple: Assertion `elem_get_type(elem) != ELEM_NAME' failed.
+
+defnumb/strg/set im Handbuch fehlt noch.
+
+
 spricht irgendwas dagenen auch
 
 if lexpr then sexpr else sexpr end

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.32 2003/09/17 11:33:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.33 2003/09/18 11:55:49 bzfkocht Exp $"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -44,8 +44,8 @@ extern void yyerror(const char* s);
 
 YY_DECL;
 
-static int  yycolumn = 0;
-static int  yydecl   = 0;
+static int        yycolumn  = 0;
+static int        yydecl    = 0;
 
 /*lint -e506 -e525 -e528 -e527 -e551 -e553 -e613 -e633 */
 /*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
@@ -80,6 +80,9 @@ static int  yydecl   = 0;
 "maximize"                { yycolumn += yyleng; yydecl = DECLMAX; return DECLMAX; }
 "minimize"                { yycolumn += yyleng; yydecl = DECLMIN; return DECLMIN; }
 "subto"                   { yycolumn += yyleng; yydecl = DECLSUB; return DECLSUB; }
+"defnumb"                 { yycolumn += yyleng; yydecl = DEFNUMB; return DEFNUMB; }
+"defstrg"                 { yycolumn += yyleng; yydecl = DEFSTRG; return DEFSTRG; }
+"defset"                  { yycolumn += yyleng; yydecl = DEFSET;  return DEFSET; }
 "in"                      { yycolumn += yyleng; return IN; }
 "with"|"|"                { yycolumn += yyleng; return WITH; }
 "do"|":"                  { yycolumn += yyleng; return DO; }
@@ -146,8 +149,11 @@ static int  yydecl   = 0;
    }
 
 [A-Za-z_][A-Za-z0-9_]* {
+
       Symbol* sym;
+      Define* def;
       char    errmsg[256];
+      int     what;
 
       yycolumn += yyleng; 
 
@@ -161,14 +167,34 @@ static int  yydecl   = 0;
        * we check only if the name is unused and otherwise give
        * an appropriate error message.
        */
-      else if (yydecl == DECLSET || yydecl == DECLPAR || yydecl == DECLVAR)
+      else if (yydecl == DECLSET || yydecl == DECLPAR || yydecl == DECLVAR 
+	    || yydecl == DEFNUMB || yydecl == DEFSTRG || yydecl == DEFSET)
       {
-         if (NULL != symbol_lookup(yytext))
+         if (NULL != symbol_lookup(yytext) || NULL != define_lookup(yytext))
          {
             sprintf(errmsg, "Name \"%s\" already in use\n", yytext);
             yyerror(errmsg);
          }
+         what   = yydecl;
          yydecl = 0;
+
+         /* if this is a define, we have to install it here,
+          * so that recursive call succseed.
+          */
+         switch(what)
+         {
+         case DEFNUMB :
+            lval->def = define_new(str_new(yytext), DEF_NUMB);
+            return DEFNAME;
+         case DEFSTRG :
+            lval->def = define_new(str_new(yytext), DEF_STRG);
+            return DEFNAME;
+         case DEFSET :
+            lval->def = define_new(str_new(yytext), DEF_SET);
+            return DEFNAME;
+         default :
+            break;
+         }
       }
       else
       {
@@ -188,8 +214,27 @@ static int  yydecl   = 0;
                return VARSYM;
             case SYM_SET :
                return SETSYM;
-            case SYM_ERR :
+            case SYM_ERR : /* should not happen */
                sprintf(errmsg, "Symbol \"%s\" not initialised\n", yytext);
+               yyerror(errmsg);
+            default :
+               abort();
+            }
+         }
+         if (NULL != (def = define_lookup(yytext)))
+         {
+            lval->def = def;
+
+            switch(define_get_type(def))
+            {
+            case DEF_NUMB :
+               return NUMBDEF;
+            case DEF_STRG :
+               return STRGDEF;
+            case DEF_SET :
+               return SETDEF;
+            case DEF_ERR : /* should not happen */
+               sprintf(errmsg, "Define \"%s\" not initialised\n", yytext);
                yyerror(errmsg);
             default :
                abort();

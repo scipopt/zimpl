@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.22 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.23 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -140,6 +140,8 @@ extern CodeNode* i_forall(CodeNode* self);
 extern CodeNode* i_idxset_new(CodeNode* self);
 /*lint -sem(     i_local_deref, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_local_deref(CodeNode* self);
+/*lint -sem(     i_newdef, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_newdef(CodeNode* self);
 /*lint -sem(     i_newsym_para1, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_newsym_para1(CodeNode* self);
 /*lint -sem(     i_newsym_para2, 1p == 1, type(1), @p == 1p) */
@@ -188,6 +190,8 @@ extern CodeNode* i_set_union(CodeNode* self);
 extern CodeNode* i_subto(CodeNode* self);
 /*lint -sem(     i_symbol_deref, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_symbol_deref(CodeNode* self);
+/*lint -sem(     i_define_deref, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_define_deref(CodeNode* self);
 /*lint -sem(     i_term_coeff, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_coeff(CodeNode* self);
 /*lint -sem(     i_term_const, 1p == 1, type(1), @p == 1p) */

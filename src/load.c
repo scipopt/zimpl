@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.18 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.19 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -172,6 +172,12 @@ static void add_stmt(
       type = STMT_MAX;
    else if (!strcmp(s, "subto"))
       type = STMT_CONS;
+   else if (!strcmp(s, "defnumb"))
+      type = STMT_DEF;
+   else if (!strcmp(s, "defstrg"))
+      type = STMT_DEF;
+   else if (!strcmp(s, "defset"))
+      type = STMT_DEF;
    else if (!strcmp(s, "print"))
       type = STMT_PRINT;
    else

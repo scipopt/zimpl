@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.42 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.43 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -391,6 +391,7 @@ int main(int argc, char* const* argv)
 
    xlp_free();
    symbol_exit();
+   define_exit();
    elem_exit();
    numb_exit();
    str_exit();

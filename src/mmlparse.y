@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.48 2003/09/16 14:24:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.49 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -60,10 +60,12 @@ extern void yyerror(const char* s);
    const char*  strg;
    const char*  name;
    Symbol*      sym;
+   Define*      def;
    CodeNode*    code;
 };
 
-%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB PRINT
+%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
+%token DEFNUMB DEFSTRG DEFSET PRINT
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
@@ -77,6 +79,7 @@ extern void yyerror(const char* s);
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
+%token <def> NUMBDEF STRGDEF SETDEF DEFNAME
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
@@ -84,10 +87,11 @@ extern void yyerror(const char* s);
 %token <bits> SEPARATE
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
+%type <code> def_numb def_strg def_set
 %type <code> stmt_print
 %type <code> constraint
 %type <code> expr expr_list symidx tuple tuple_list sexpr lexpr read read_par
-%type <code> idxset subterm summand factor vexpr term
+%type <code> idxset subterm summand factor vexpr term name_list
 %type <code> expr_entry expr_entry_list set_entry set_entry_list par_default
 %type <code> var_type con_type lower upper priority startval condition
 %type <bits> con_attr con_attr_list
@@ -120,11 +124,14 @@ stmt
    | decl_var   { code_set_root($1); }
    | decl_obj   { code_set_root($1); }
    | decl_sub   { code_set_root($1); }
+   | def_numb   { code_set_root($1); }
+   | def_strg   { code_set_root($1); }
+   | def_set    { code_set_root($1); }
    | stmt_print { code_set_root($1); }
    ;
 
 /* ----------------------------------------------------------------------------
- * --- SET Declaration
+ * --- Set Declaration
  * ----------------------------------------------------------------------------
  */
 decl_set
@@ -179,7 +186,38 @@ set_entry
 
 
 /* ----------------------------------------------------------------------------
- * --- PARAM Declaration
+ * --- Define Declaration
+ * ----------------------------------------------------------------------------
+ */
+def_numb
+   : DEFNUMB DEFNAME '(' name_list ')' ASGN expr ';' {
+         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+      }
+   ;
+
+def_strg
+   : DEFSTRG DEFNAME '(' name_list ')' ASGN expr ';' {
+         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+      }
+   ;
+
+def_set
+   : DEFSET DEFNAME '(' name_list ')' ASGN sexpr ';' {
+         $$ = code_new_inst(i_newdef, 3, code_new_define($2), $4, $7);
+      }
+   ;
+
+name_list
+   : NAME {
+         $$ = code_new_inst(i_elem_list_new, 1, code_new_name($1));
+      }
+   | name_list ',' NAME {
+         $$ = code_new_inst(i_elem_list_add, 2, $1, code_new_name($3));
+      }
+   ;
+
+/* ----------------------------------------------------------------------------
+ * --- Param Declaration
  * ----------------------------------------------------------------------------
  */
 decl_par
@@ -451,6 +489,9 @@ sexpr
    : SETSYM symidx  {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       }
+   | SETDEF '(' expr_list ')' {
+         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
+      }
    | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
    | '{' expr TO expr BY expr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, $6);
@@ -560,6 +601,12 @@ expr
       }
    | STRGSYM symidx { 
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
+      }
+   | NUMBDEF '(' expr_list ')' {
+         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
+      }
+   | STRGDEF '(' expr_list ')' {
+         $$ = code_new_inst(i_define_deref, 2, code_new_define($1), $3);
       }
    | expr '+' expr         { $$ = code_new_inst(i_expr_add, 2, $1, $3); }
    | expr '-' expr         { $$ = code_new_inst(i_expr_sub, 2, $1, $3); }

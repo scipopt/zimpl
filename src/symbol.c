@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.19 2003/09/08 15:41:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.20 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -55,7 +55,6 @@ struct symbol
    Symbol*      next;
 };
 
-static int    symbols = 0;
 #ifndef NDEBUG
 static Symbol anchor  = { 0, "", 0, 0, 0, SYM_ERR, NULL, NULL, NULL, NULL, NULL };
 #else
@@ -91,7 +90,6 @@ Symbol* symbol_new(
    sym->deflt   = (deflt != ENTRY_NULL) ? entry_copy(deflt) : ENTRY_NULL;
    sym->next    = anchor.next;
    anchor.next  = sym;
-   symbols++;
 
    assert(sym->entry != NULL);
 
@@ -128,7 +126,6 @@ void symbol_exit(void)
       free(p);
    }
    anchor.next = NULL;
-   symbols     = 0;
 }
 
 Bool symbol_is_valid(const Symbol* symbol)

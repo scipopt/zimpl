@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.16 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.17 2003/09/18 11:55:49 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -58,6 +58,8 @@ extern CodeNode*    code_new_contype(ConType contype);
 extern CodeNode*    code_new_bits(unsigned int bits);
 /*lint -sem(        code_new_symbol, @p == 1) */
 extern CodeNode*    code_new_symbol(Symbol* sym);
+/*lint -sem(        code_new_define, @p == 1) */
+extern CodeNode*    code_new_define(Define* def);
 /*lint -sem(        code_new_bound, @p == 1) */
 extern CodeNode*    code_new_bound(BoundType type);
 /*lint -sem(        code_free, 1p == 1) */
@@ -119,6 +121,8 @@ extern const RPar*  code_get_rpar(CodeNode* node);
 extern unsigned int code_get_bits(CodeNode* node);
 /*lint -sem(        code_get_symbol, 1p == 1) */
 extern Symbol*      code_get_symbol(CodeNode* node);
+/*lint -sem(        code_get_define, 1p == 1) */
+extern Define*      code_get_define(CodeNode* node);
 /*lint -sem(        code_get_bound, 1p == 1) */
 extern const Bound* code_get_bound(CodeNode* node);
 /*lint -sem(        code_value_numb, 1p == 1) */
@@ -198,6 +202,8 @@ extern const RPar*  code_eval_child_rpar(const CodeNode* node, int no);
 extern unsigned int code_eval_child_bits(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_symbol, 1p == 1 && 2n >= 0) */
 extern Symbol*      code_eval_child_symbol(const CodeNode* node, int no);
+/*lint -sem(        code_eval_child_define, 1p == 1 && 2n >= 0) */
+extern Define*      code_eval_child_define(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_bound, 1p == 1 && 2n >= 0) */
 extern const Bound* code_eval_child_bound(const CodeNode* node, int no);
 
