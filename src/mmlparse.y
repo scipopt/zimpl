@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.36 2003/07/16 08:48:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.37 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -300,7 +300,10 @@ decl_sub
 constraint
    : term con_type term con_attr_list {
         $$ = code_new_inst(i_constraint, 4, $1, $2, $3, code_new_bits($4));
-     }   
+     }
+   | expr con_type term con_type expr con_attr_list {
+        $$ = code_new_inst(i_rangeconst, 6, $1, $2, $3, $4, $5, code_new_bits($6)); 
+     }
    | FORALL idxset DO constraint {
         $$ = code_new_inst(i_forall, 2, $2, $4);
      }
@@ -455,6 +458,7 @@ sexpr
    | '(' sexpr ')'      { $$ = $2; }
    | '{' tuple_list '}' { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
    | '{' expr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
+   | '{' idxset '}'     { $$ = code_new_inst(i_set_idxset, 1, $2); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
       }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.6 2003/08/19 07:54:37 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.7 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1553,19 +1553,17 @@ void lps_transtable(const Lps* lp, FILE* fp, int size, const char* head)
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->size == 0 && mpq_equal(var->cost, zero))
-         continue;
-
       lps_makename(temp, size + 1, var->name, var->number);
 
-      fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
-         head, var->number, size, temp, var->name);
+      if (var->type == VAR_FIXED)
+         fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\t%.16e\n",
+            head, var->number, size, temp, var->name, mpq_get_d(var->lower));
+      else
+         fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
+            head, var->number, size, temp, var->name);
    }
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      if (con->size == 0 && mpq_equal(con->lhs, zero) && mpq_equal(con->rhs, zero))
-         continue;
-
       lps_makename(temp, size + 1, con->name, con->number);
       
       fprintf(fp, "%s\tc %7d\t%-*s\t\"%s\"\t%.16e\n",

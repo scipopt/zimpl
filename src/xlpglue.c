@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.6 2003/08/19 07:54:37 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.7 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -80,11 +80,13 @@ Bool xlp_conname_exists(const char* conname)
 Con* xlp_addcon(
    const char*  name,
    ConType      contype,
+   const Numb*  lhs,
    const Numb*  rhs,
    unsigned int flags)
 {
-   Con* con;
-   mpq_t temp;
+   Con*  con;
+   mpq_t tlhs;
+   mpq_t trhs;
    
    assert(name != NULL);
    assert(rhs  != NULL);
@@ -93,27 +95,34 @@ Con* xlp_addcon(
 
    assert(con != NULL);
 
-   mpq_init(temp);
-   numb_get_mpq(rhs, temp);
+   mpq_init(tlhs);
+   mpq_init(trhs);
+   
+   numb_get_mpq(rhs, trhs);
+   numb_get_mpq(lhs, tlhs);
    
    switch(contype)
    {
    case CON_RHS :
-      lps_setrhs(con, temp);
+      lps_setrhs(con, trhs);
       break;
    case CON_LHS :
-      lps_setlhs(con, temp);
+      lps_setlhs(con, tlhs);
       break;
-   case CON_EQUAL :
-      lps_setrhs(con, temp);
-      lps_setlhs(con, temp);
+   case CON_EQUAL : /* In case of EQUAL, both should be equal */
+      assert(mpq_equal(tlhs, trhs));
+      /*FALLTHROUGH*/
+   case CON_RANGE :
+      lps_setlhs(con, tlhs);
+      lps_setrhs(con, trhs);
       break;
    default :
       abort();
    }
    lps_addflags(con, flags);
 
-   mpq_clear(temp);
+   mpq_clear(trhs);
+   mpq_clear(tlhs);
    
    return con;
 }

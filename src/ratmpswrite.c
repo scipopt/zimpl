@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.3 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -99,19 +99,6 @@ static void write_vars(
        */
       if (!mpq_equal(var->cost, zero))
       {
-#if 0    /* We should do this in the preprocessing step
-          * otherwise we have problems in case of variable
-          * that have only bounds, but are not part of any
-          * constraint.
-          */
-         /* If the variable not free or when minimizing the lower or
-          * when maximizing the upper bound is not zero,
-          * we have to include it.
-          */
-         if ((var->size != 0) || (fabs((lp->direct == LP_MIN) ?
-            var->lower : var->upper) > EPS_ZERO))
-         
-#endif
          lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
          if (lp->direct == LP_MIN)
@@ -228,11 +215,6 @@ void mps_write(
     */
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      /* This could be put into a preprocessor
-       */
-      if (var->size == 0 && mpq_equal(var->cost, zero))
-         continue;
-      
       /*   0, oo  -> nix
        *   l, oo  -> LO
        *   0, u   -> UP
@@ -242,20 +224,36 @@ void mps_write(
        */
       lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
 
-      if (var->type == VAR_LOWER || var->type == VAR_BOXED)
-         write_data(fp, TRUE, 'L', 'O', "BOUND", vtmp, var->lower);
+      if (var->type == VAR_FIXED)
+         write_data(fp, TRUE, 'F', 'X', "BOUND", vtmp, var->lower);
       else
-         write_data(fp, FALSE, 'M', 'I', "BOUND", vtmp, zero);
+      {
+         if (var->type == VAR_LOWER || var->type == VAR_BOXED)
+            write_data(fp, TRUE, 'L', 'O', "BOUND", vtmp, var->lower);
+         else
+            write_data(fp, FALSE, 'M', 'I', "BOUND", vtmp, zero);
          
-      if (var->type == VAR_UPPER || var->type == VAR_BOXED)
-         write_data(fp, TRUE, 'U', 'P', "BOUND", vtmp, var->upper);
-      else
-         write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, zero);            
+         if (var->type == VAR_UPPER || var->type == VAR_BOXED)
+            write_data(fp, TRUE, 'U', 'P', "BOUND", vtmp, var->upper);
+         else
+            write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, zero);
+      }
    }
    fprintf(fp, "ENDATA\n");
 
    mpq_clear(zero);
 }   
+
+
+
+
+
+
+
+
+
+
+
 
 
 

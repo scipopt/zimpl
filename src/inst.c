@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.45 2003/08/07 08:56:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.46 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -125,7 +125,7 @@ CodeNode* i_constraint(CodeNode* self)
    }
    else
    {
-      con = xlp_addcon(conname_get(), type, rhs, flags);
+      con = xlp_addcon(conname_get(), type, rhs, rhs, flags);
 
       term_add_constant(term, rhs);
       term_to_nzo(term, con);
@@ -133,6 +133,88 @@ CodeNode* i_constraint(CodeNode* self)
    code_value_void(self);
 
    numb_free(rhs);
+   term_free(term);
+   
+   return self;
+}
+
+CodeNode* i_rangeconst(CodeNode* self)
+{
+   Term*        term;
+   Numb*        lhs;
+   Numb*        rhs;
+   const Numb*  numb;
+   ConType      type1;
+   ConType      type2;
+   Con*         con;
+   unsigned int flags;
+   int          res1;
+   int          res2;
+   
+   Trace("i_constraint");
+   
+   assert(code_is_valid(self));
+   
+   lhs        = numb_copy(code_eval_child_numb(self, 0));
+   type1      = code_eval_child_contype(self, 1);
+   term       = term_copy(code_eval_child_term(self, 2));
+   type2      = code_eval_child_contype(self, 3);
+   rhs        = numb_copy(code_eval_child_numb(self, 4));
+   flags      = code_eval_child_bits(self, 5);
+
+   if (type1 != type2 || type1 == CON_EQUAL)
+   {
+      fprintf(stderr, "*** Error: Ranged constraint with different comparison operators\n");
+      code_errmsg(self);
+      abort();
+   }
+   assert(type1 == type2);
+   assert(type1 == CON_LHS || type1 == CON_RHS);
+
+   numb_sub(lhs, term_get_constant(term));
+   numb_sub(rhs, term_get_constant(term));
+      
+   /* Check if trival infeasible
+    */
+   if (term_get_elements(term) == 0)
+   {
+      res1 = numb_cmp(lhs, numb_zero());
+      res2 = numb_cmp(rhs, numb_zero());
+
+      /* If zero, trival ok, otherwise ...
+       */
+      if (  (type1 == CON_LHS && (res1 < 0 || res2 > 0))
+         || (type1 == CON_RHS && (res1 > 0 || res2 < 0)))
+      {
+         fprintf(stderr, "*** Error: Empty Term with nonempty LHS/RHS, contraint trivally violated\n");
+         code_errmsg(self);
+         abort();
+      }
+   }
+   else
+   {
+      res1 = numb_cmp(lhs, rhs);
+
+      if (  (type1 == CON_LHS && res1 < 0)
+         || (type1 == CON_RHS && res1 > 0))
+      {
+         fprintf(stderr, "*** Error: LHS/RHS contradiction, contraint trivally violated\n");
+         code_errmsg(self);
+         abort();
+      }
+
+      if (type1 == CON_LHS)
+         con = xlp_addcon(conname_get(), CON_RANGE, lhs, rhs, flags);
+      else
+         con = xlp_addcon(conname_get(), CON_RANGE, rhs, lhs, flags);
+         
+      term_sub_constant(term, term_get_constant(term));
+      term_to_nzo(term, con);
+   }
+   code_value_void(self);
+
+   numb_free(rhs);
+   numb_free(lhs);
    term_free(term);
    
    return self;
@@ -1414,7 +1496,6 @@ static Set* set_from_idxset(const IdxSet* idxset)
    return newset;
 }
 
-
 CodeNode* i_newsym_set1(CodeNode* self)
 {
    const char*   name;
@@ -1923,6 +2004,23 @@ CodeNode* i_symbol_deref(CodeNode* self)
  * Index Set Funktionen
  * ----------------------------------------------------------------------------
  */
+CodeNode* i_set_idxset(CodeNode* self)
+{
+   const IdxSet* idxset;
+   Set*          set;
+
+   Trace("i_set_idxset");
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = set_from_idxset(idxset);
+   
+   code_value_set(self, set);
+
+   set_free(set);
+   
+   return self;
+}
+
 CodeNode* i_idxset_new(CodeNode* self)
 {
    IdxSet*      idxset;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.2 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.3 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -32,9 +32,54 @@
 #include <gmp.h>
 
 #include "bool.h"
-
+#include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
+
+static void write_rhs(FILE* fp, const Con* con, ConType type)
+{
+   assert(fp  != NULL);
+   assert(con != NULL);
+   
+   switch(type)
+   {
+   case CON_RHS :
+      fprintf(fp, " <= %.15g\n", mpq_get_d(con->rhs));
+      break;
+   case CON_LHS :
+      fprintf(fp, " >= %.15g\n", mpq_get_d(con->lhs));
+      break;
+   case CON_EQUAL :
+      fprintf(fp, " = %.15g\n", mpq_get_d(con->rhs));
+      break;
+   case CON_RANGE :
+      abort();
+   default :
+      abort();
+   }
+}
+
+static void write_row(FILE* fp, const Con* con)
+{
+   const Nzo* nzo;
+   int        cnt = 0;
+
+   assert(fp  != NULL);
+   assert(con != NULL);
+   
+   for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+   {
+      if (mpq_equal(nzo->value, const_one))
+         fprintf(fp, " + %s", nzo->var->name);
+      else if (mpq_equal(nzo->value, const_minus_one))
+         fprintf(fp, " - %s", nzo->var->name);
+      else
+         fprintf(fp, " %+.15g %s", mpq_get_d(nzo->value), nzo->var->name);
+      
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n ");         
+   }
+}
 
 /* A specification for the LP file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 527.
@@ -46,21 +91,10 @@ void lpf_write(
 {
    const Var* var;
    const Con* con;
-   const Nzo* nzo;
    int   cnt;
-   mpq_t zero;
-   mpq_t one;
-   mpq_t minus_one;
 
    assert(lp != NULL);
    assert(fp != NULL);
-
-   mpq_init(zero);
-   mpq_init(one);
-   mpq_init(minus_one);
-
-   mpq_set_ui(one, 1, 1); /* = 1 */
-   mpq_set_si(minus_one, -1, 1); /* = -1 */
 
    if (text != NULL)
       fprintf(fp, "\\%s\n", text);   
@@ -73,12 +107,12 @@ void lpf_write(
    {
       /* If cost is zero, do not include in objective function
        */
-      if (mpq_equal(var->cost, zero))
+      if (mpq_equal(var->cost, const_zero))
          continue;
 
-      if (mpq_equal(var->cost, one))
+      if (mpq_equal(var->cost, const_one))
          fprintf(fp, " + %s", var->name);
-      else if (mpq_equal(var->cost, minus_one))
+      else if (mpq_equal(var->cost, const_minus_one))
          fprintf(fp, " - %s", var->name);
       else
          fprintf(fp, " %+.15g %s", mpq_get_d(var->cost), var->name);
@@ -92,42 +126,25 @@ void lpf_write(
 
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      if (con->size == 0)
-         continue;
-
-      fprintf(fp, " %s:\n ", con->name);
-
-      if (con->type == CON_RANGE)
-         fprintf(fp, " %.15g <= ", mpq_get_d(con->lhs));
-         
-      for(nzo = con->first, cnt = 0; nzo != NULL; nzo = nzo->con_next)
+      if (con->size > 0)
       {
-         if (mpq_equal(nzo->value, one))
-            fprintf(fp, " + %s", nzo->var->name);
-         else if (mpq_equal(nzo->value, minus_one))
-            fprintf(fp, " - %s", nzo->var->name);
+         if (con->type == CON_RANGE)
+         {
+            /* Split ranges, because LP format can't handle them.
+             */
+            fprintf(fp, " %sR:\n ", con->name);
+            write_row(fp, con);
+            write_rhs(fp, con, CON_RHS);
+            fprintf(fp, " %sL:\n ", con->name);
+            write_row(fp, con);
+            write_rhs(fp, con, CON_LHS);
+         }
          else
-            fprintf(fp, " %+.15g %s", mpq_get_d(nzo->value), nzo->var->name);
-            
-         if (++cnt % 6 == 0)
-            fprintf(fp, "\n ");         
-      }
-      switch(con->type)
-      {
-      case CON_RHS :
-         fprintf(fp, " <= %.15g\n", mpq_get_d(con->rhs));
-         break;
-      case CON_LHS :
-         fprintf(fp, " >= %.15g\n", mpq_get_d(con->lhs));
-         break;
-      case CON_EQUAL :
-         fprintf(fp, " = %.15g\n", mpq_get_d(con->rhs));
-         break;
-      case CON_RANGE :
-         fprintf(fp, " <= %.15g\n", mpq_get_d(con->rhs));
-         break;
-      default :
-         abort();
+         {
+            fprintf(fp, " %s:\n ", con->name);
+            write_row(fp, con);
+            write_rhs(fp, con, con->type);
+         }
       }
    }
 
@@ -137,31 +154,24 @@ void lpf_write(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->size > 0)
+      if (var->type == VAR_FIXED)
+         fprintf(fp, " %s = %.15g", var->name, mpq_get_d(var->lower));
+      else
       {
-         if (var->type == VAR_FIXED)
-            fprintf(fp, " %s = %.15g", var->name, mpq_get_d(var->lower));
+         if (var->type == VAR_LOWER || var->type == VAR_BOXED)
+            fprintf(fp, " %.15g", mpq_get_d(var->lower));
          else
-         {
-            if (var->type == VAR_LOWER || var->type == VAR_BOXED)
-               fprintf(fp, " %.15g", mpq_get_d(var->lower));
-            else
-               fprintf(fp, " -Inf");
-
-            fprintf(fp, " <= %s <= ", var->name);
-
-            if (var->type == VAR_UPPER || var->type == VAR_BOXED)
-               fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
-            else
-               fprintf(fp, "+Inf\n");
-         }
+            fprintf(fp, " -Inf");
+         
+         fprintf(fp, " <= %s <= ", var->name);
+         
+         if (var->type == VAR_UPPER || var->type == VAR_BOXED)
+            fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
+         else
+            fprintf(fp, "+Inf\n");
       }
    }
    fprintf(fp, "End\n");
-
-   mpq_clear(zero);
-   mpq_clear(one);
-   mpq_clear(minus_one);
 }   
 
 /* ------------------------------------------------------------------------- */

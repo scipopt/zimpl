@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.35 2003/08/07 08:56:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.36 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -534,6 +534,8 @@ extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_constant, 1p == 1 && 2p == 1) */
 extern void         term_add_constant(Term* term, const Numb* value);
+/*lint -sem(        term_sub_constant, 1p == 1 && 2p == 1) */
+extern void         term_sub_constant(Term* term, const Numb* value);
 /*lint -sem(        term_mul_coeff, 1p == 1 && 2p == 1) */
 extern void         term_mul_coeff(Term* term, const Numb* value);
 /*lint -sem(        term_get_constant, 1p == 1) */

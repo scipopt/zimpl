@@ -1,3 +1,19 @@
+ - It is now possible to write { <a> in A with a > 5 }
+   whenever a set is needed.
+
+ - Ranges are now possible: 7 <= 5x + 6 y <= 99
+   (MPS output not yet here)
+
+ - First presolve implemented.
+   -p now switches on presolve, -F does what 
+   -p did before.
+
+ - Fixed bug that empty constraints were ignored,
+   even with a non zero right hand side.
+
+ - Changed everything to rational numbers (GMP)
+   (Funktions exp, log, ln, rand are out of order)
+
  - Fixed that variable which were not part of a constraint, 
    were omitted in the Bounds section of the LPF/MPS file.
    

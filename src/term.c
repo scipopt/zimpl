@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.17 2003/07/17 07:36:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.18 2003/08/19 10:11:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -244,6 +244,17 @@ void term_add_constant(Term* term, const Numb* value)
    assert(term_is_valid(term));
 
    numb_add(term->constant, value);
+
+   assert(term_is_valid(term));
+}
+
+void term_sub_constant(Term* term, const Numb* value)
+{
+   Trace("term_sub_constant");
+
+   assert(term_is_valid(term));
+
+   numb_sub(term->constant, value);
 
    assert(term_is_valid(term));
 }
