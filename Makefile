@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.3 2003/03/23 12:12:15 bzfkocht Exp $
+# $Id: Makefile,v 1.4 2003/07/12 15:24:39 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -54,7 +54,7 @@ SRCDIR		=	src
 BINDIR		=	bin
 LIBDIR		=	lib
 
-CPPFLAGS	=	-I$(SRCDIR)
+CPPFLAGS	=	-I$(SRCDIR) -I/tmp/gmp/include
 CFLAGS		=	-O
 LDFLAGS		=	-lm
 YFLAGS		=	-d -t -v  
@@ -75,12 +75,13 @@ DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
 
-OBJECT  =       	code.o conname.o elem.o entry.o hash.o idxset.o inst.o \
-			iread.o list.o load.o local.o lpstore.o lpfwrite.o \
-			mmlparse.o mmlscan.o mpswrite.o ordwrite.o \
+OBJECT  =       	code.o conname.o elem.o entry.o hash.o idxset.o \
+			iread.o list.o load.o local.o \
+			mmlparse.o mmlscan.o numbgmp.o \
 			prog.o rdefpar.o set.o source.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
-			mshell.o
+			ratlpstore.o ratlpfwrite.o ratmpswrite.o \
+			mshell.o inst.o ordwrite.o xlpglue.o gmpmisc.o 
 
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))

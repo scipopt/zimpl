@@ -1,3 +1,4 @@
-#--- $Id: make.linux.x86.gnu.dbg,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+#--- $Id: make.linux.x86.gnu.dbg,v 1.2 2003/07/12 15:24:39 bzfkocht Exp $
 CPPFLAGS	+=	-DFREEMEM
 CFLAGS		=	-O -g $(GCCWARN)
+LDFLAGS		=	-L/tmp/gmp/lib -lgmp -static
