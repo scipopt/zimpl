@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.23 2003/09/27 11:57:01 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.24 2003/09/28 13:56:51 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,11 +29,11 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.23 2003/09/27 11:57:01 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.24 2003/09/28 13:56:51 bzfkocht Exp $
 %
 \parindent0ex
-\setcounter{tocdepth}{1}
-\setcounter{secnumdepth}{1}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
 \renewcommand{\labelitemi}{$\blacktriangleright$}
 %
 \newcommand{\eg}{{e.\,g.}\xspace}
@@ -77,14 +77,14 @@ pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimizati
 \date{\small for Version 2.01\\19. September 2003}
 \maketitle
 \vfill
+\tableofcontents
+\newpage
 \begin{abstract}
 \zimpl is a little language to translate the mathematical model of a 
 problem into a linear or (mixed-)integer mathematical program
 expressed in \lpf or \mps file format which can be read
 by a \lp or \mip solver.
 \end{abstract}
-%\tableofcontents
-%\newpage
 % -----------------------------------------------------------------------------
 % --- Introduction
 % -----------------------------------------------------------------------------
@@ -793,6 +793,93 @@ defset  bigger(i)  := { <j> in K with j > i };
 }
 
 \newpage
+\section{Examples}
+\subsection{Diet problem}
+{\small
+\begin{verbatim}
+#
+# From V. Chvatal: Linear Programming
+# Chapter 1, Page 3ff.
+#
+# A diet problem
+#
+set Food := {"Oatmeal","Chicken","Eggs","Milk","Pie","Pork"};
+set Attr := {"Servings","Energy","Protein","Calcium","Price"};
+
+param min_energy  := 2000; # kcal
+param min_protein := 55;   # g
+param min_calcium := 800;  # mg
+
+param nutrition[Food * Attr] := 
+          |"Servings","Energy","Protein","Calcium","Price"|
+|"Oatmeal"|        4 ,    110 ,       4 ,       2 ,     3 |
+|"Chicken"|        3 ,    205 ,      32 ,      12 ,    24 |
+|"Eggs"   |        2 ,    160 ,      13 ,      54 ,    13 |
+|"Milk"   |        8 ,    160 ,       8 ,     284 ,     9 |
+|"Pie"    |        2 ,    420 ,       4 ,      22 ,    20 |
+|"Pork"   |        2 ,    260 ,      14 ,      80 ,    19 |;
+#                       (kcal)       (g)      (mg) (cents)       
+
+var x[<f> in Food] integer >= 0 <= nutrition[f, "Servings"];
+
+minimize cost: sum <f> in Food : nutrition[f, "Price"]*x[f];
+
+subto energy : 
+  sum <f> in Food: nutrition[f,"Energy" ]*x[f] >= min_energy;
+subto protein: 
+  sum <f> in Food: nutrition[f,"Protein"]*x[f] >= min_protein;
+subto calcium: 
+  sum <f> in Food: nutrition[f,"Calcium"]*x[f] >= min_calcium;
+\end{verbatim}
+}
+\newpage
+\subsection{TSP}
+{\small
+\begin{verbatim}
+#
+# Generic formulation of the Travelling Salesmen Problem
+#
+set V   := { read "tsp.dat" as "<1n>" comment "#" };
+set E   := { <i,j> in V * V with i < j };
+set P[] := powerset(V);
+set K   := indexset(P);
+
+param px[V] := read "tsp.dat" as "<1n> 2n" comment "#";
+param py[V] := read "tsp.dat" as "<1n> 3n" comment "#";
+
+defnumb dist(a,b) := sqrt((px[a]-px[b])^2 + (py[a]-py[b])^2);
+
+var x[E] binary;
+
+minimize cost: sum <i,j> in E : dist(i,j) * x[i, j];
+
+subto two_connected:
+   forall <v> in V do
+      (sum <v,j> in E : x[v,j]) 
+    + (sum <i,v> in E : x[i,v]) == 2;
+
+subto no_subtour:
+   forall <k> in K with 
+      card(P[k]) > 2 and card(P[k]) < card(V) - 2 do
+      sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] 
+      <= card(P[k]) - 1;
+\end{verbatim}
+}
+\subsubsection{Data for TSP}
+{\small
+\begin{verbatim}
+# Data for TSP 
+# x y
+1 1 1
+2 3 1
+3 2 2
+4 1 3
+5 3 3
+6 2 4
+\end{verbatim}
+}
+\newpage
+
 
 \section{Error messages}
 Here is a list of the incomprehensible error messages \zimpl

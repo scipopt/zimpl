@@ -1,4 +1,7 @@
-# $Id: tsp1.zpl,v 1.2 2003/09/25 19:35:31 bzfkocht Exp $
+# $Id: tsp.zpl,v 1.1 2003/09/28 13:56:51 bzfkocht Exp $
+#
+# Generic formulation of the Travelling Salesmen Problem
+#
 set V   := { read "tsp.dat" as "<1n>" comment "#" };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
@@ -7,7 +10,7 @@ set K   := indexset(P);
 param px[V] := read "tsp.dat" as "<1n> 2n" comment "#";
 param py[V] := read "tsp.dat" as "<1n> 3n" comment "#";
 
-defnumb dist(a,b) := (px[a] - px[b])^2 + (py[a] - py[b])^2;
+defnumb dist(a,b) := sqrt((px[a] - px[b])^2 + (py[a] - py[b])^2);
 
 var x[E] binary;
 
@@ -19,14 +22,8 @@ subto two_connected:
 
 subto no_subtour:
    forall <k> in K with card(P[k]) > 2 and card(P[k]) < card(V) - 2 do
-     sum <i,j> in E with <i> in P[k] and <j> in P[k] : 
-       x[i,j] <= card(P[k]) - 1;
-
-#Alternativ
-#param dist[<i,j> in E] := (px[i] - px[i])^2 + (py[i] - py[i])^2;
-#subto two_con:
-#   forall <v> in V do
-#      sum <i,j> in E with i == v or j == v : x[i,j] == 2;
+      sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] 
+      <= card(P[k]) - 1;
 
 
 
