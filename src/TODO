@@ -1,5 +1,12 @@
+ceil/floor
+
+mshell version von snappfisch so das eine out of memory meldung kommt.
+
 Initialisierung von set's
+
 1. ASGN idxset statt sexpr 
+   es solltegehen  { <u,v> in X*X with class[u] == class[v] }
+
 2. Indizierung der sets erlauben.
 
 Warnung bei set operationen auf sets mit inkompatiblen tupeln
