@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.26 2003/09/01 06:31:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.27 2003/09/03 14:30:39 bzfkocht Exp $"
 
 #include <ctype.h>
 #include <assert.h>
@@ -145,6 +145,7 @@ static int  yydecl   = 0;
 
 [A-Za-z_][A-Za-z0-9_]* {
       Symbol* sym;
+      char    errmsg[256];
 
       yycolumn += yyleng; 
 
@@ -162,8 +163,6 @@ static int  yydecl   = 0;
       {
          if (NULL != symbol_lookup(yytext))
          {
-            char errmsg[256];
-
             sprintf(errmsg, "Name \"%s\" already in use\n", yytext);
             yyerror(errmsg);
          }
@@ -187,6 +186,9 @@ static int  yydecl   = 0;
                return VARSYM;
             case SYM_SET :
                return SETSYM;
+            case SYM_ERR :
+               sprintf(errmsg, "Symbol \"%s\" not initialised\n", yytext);
+               yyerror(errmsg);
             default :
                abort();
             }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.12 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.13 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -64,17 +64,30 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
          abort();
       }
       if (c == EOF)
+      {
+         if (cnt > 0)
+         {
+            (*buf)[cnt] = '\0';
+            fprintf(stderr, "*** Line %d: Trailing \"%s\" ignored\n",
+               *lineno, *buf);
+         }
          return NULL;
-
+      }
       if (c == '\n')
       {
          c = ' ';
          (*lineno)++;
       }
-
+      /* Skip leading white space
+       */
+      if (cnt == 0 && isspace(c))
+         continue;
+      
       if (c == '"')
          in_string = !in_string;
-      
+
+      /* Remove comments
+       */
       if (!in_string && (c == '#'))
       {
          do { c = fgetc(fp); } while((c != EOF) && (c != '\n'));
@@ -200,9 +213,15 @@ void prog_load(Prog* prog, const char* filename)
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
+      assert(!isspace(*s));
+
+#if 0
       while(isspace(*s))
          s++;
+#endif
 
+      /* This could happen if we have a ;; somewhere.
+       */
       if (*s == '\0')
          continue;
 

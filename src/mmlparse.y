@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.45 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.46 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,12 +25,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e574 -e525 -e527 -e662 -e750 -e737 -e734 -e744 -e732 -e713 */
+/*lint -e428 -e574 -e525 -e527 -e661 -e662 -e676 */
+/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e764 */
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
 /*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
 /*lint -esym(553,__GNUC__)  -esym(578,yylen) */
-/*lint -esym(768,bits) */ 
+/*lint -esym(768,bits) -esym(553,YYSTACK_USE_ALLOCA) */ 
    
 #include <stdio.h>
 #include <stdlib.h>

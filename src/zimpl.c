@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.35 2003/09/01 08:27:29 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.36 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -284,8 +284,12 @@ int main(int argc, char* const* argv)
 
    if (verbose)
       printf("Writing [%s]\n", cmdpipe);
-   
+
+#ifdef WINDOWS
+   if (NULL == (fp = fopen(outfile, "w")))
+#else
    if (NULL == (fp = popen(cmdpipe, "w")))
+#endif
    {
       fprintf(stderr, "*** Error: when writing file %s", outfile);
       perror(" ");
@@ -294,9 +298,12 @@ int main(int argc, char* const* argv)
    xlp_write(fp, format);
 
    check_write_ok(fp, outfile);
-   
-   pclose(fp);
 
+#ifdef WINDOWS
+   close(fp);
+#else
+   pclose(fp);
+#endif
    /* Write translation table
     */
    sprintf(cmdpipe, filter, tblfile);
@@ -304,7 +311,11 @@ int main(int argc, char* const* argv)
    if (verbose)
       printf("Writing [%s]\n", cmdpipe);
 
+#ifdef WINDOWS
+   if (NULL == (fp = fopen(outfile, "w")))
+#else
    if (NULL == (fp = popen(cmdpipe, "w")))
+#endif
    {
       fprintf(stderr, "*** Error: when writing file %s", tblfile);
       perror(" ");
@@ -314,8 +325,12 @@ int main(int argc, char* const* argv)
 
    check_write_ok(fp, tblfile);
 
+#ifdef WINDOWS
+   close(fp);
+#else
    pclose(fp);
-
+#endif
+   
    /* Write order file 
     */
    if (write_order)
@@ -325,7 +340,11 @@ int main(int argc, char* const* argv)
       if (verbose)
          printf("Writing [%s]\n", cmdpipe);
 
+#ifdef WINDOWS
+      if (NULL == (fp = fopen(outfile, "w")))
+#else
       if (NULL == (fp = popen(cmdpipe, "w")))
+#endif
       {
          fprintf(stderr, "*** Error: when writing file %s", ordfile);
          perror(" ");
@@ -335,7 +354,11 @@ int main(int argc, char* const* argv)
 
       check_write_ok(fp, ordfile);
       
+#ifdef WINDOWS
+      close(fp);
+#else
       pclose(fp);
+#endif
    }
    
    if (zpldebug) 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.13 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.14 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1465,6 +1465,7 @@ void lps_write(
    const Lps*  lp,
    FILE*       fp,
    LpFormat    format,
+   Bool        use_long_names,
    const char* text)
 {
    assert(lp   != NULL);
@@ -1475,7 +1476,7 @@ void lps_write(
    switch(format)
    {
    case LP_FORM_LPF :
-      lpf_write(lp, fp, text, LPF_NAME_LEN);
+      lpf_write(lp, fp, text, use_long_names ? 255 : LPF_NAME_LEN);
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);

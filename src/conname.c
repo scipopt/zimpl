@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: conname.c,v 1.8 2003/07/16 13:32:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: conname.c,v 1.9 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -115,9 +115,8 @@ const char* conname_get()
 
          assert(cname != NULL);
       }
-      sprintf(cname, "%s_%d%s%s",
+      sprintf(cname, "%s_%s%s",
          cpfix,
-         count,
          strlen(localstr) > 0 ? "|" : "",
          localstr);
 

@@ -1,3 +1,6 @@
+ - Trailing text on the last line should now draw
+   a message.
+
  - Bug fixed, that resulted in an unreadable LP file 
    if the index set of the variable has negative 
    numbers. 

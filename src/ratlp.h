@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.6 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.7 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -131,7 +131,8 @@ extern void         lps_setvalue(Var* var, const mpq_t value);
 /*lint -sem(        lps_setstartval, 1p == 1) */
 extern void         lps_setstartval(Var* var, const mpq_t startval);
 /*lint -sem(        lps_write, 1p == 1 && 2p == 1 && nulterm(4)) */
-extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
+extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format,
+   Bool use_long_names, const char* text);
 /*lint -sem(        lps_transtable, 1p == 1 && 2p == 1 && 3n > 0 && 4p && nulterm(4)) */
 extern void         lps_transtable(const Lps* lp, FILE* fp, int namelen, const char* head);
 /*lint -sem(        lps_scale, 1p == 1) */

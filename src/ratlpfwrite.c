@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.8 2003/08/22 09:25:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.9 2003/09/03 14:30:39 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -131,7 +131,7 @@ void lpf_write(
          fprintf(fp, " - %s", name);
       else
          fprintf(fp, " %+.15g %s", mpq_get_d(var->cost), name);
-      
+
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");
    }

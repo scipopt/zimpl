@@ -107,7 +107,6 @@ tru64/opt INFINITY warnung
 hp complett
 ibm ggf -qwarn64
 
-VAR section in check
 
 es fehlt noch sowas wie sum of sets (Big Uninion)
 
@@ -119,8 +118,6 @@ Es sind doch alle indices initialisiert.
 
 indexset sollte auch für variablen und parametergehen.
 -----------------------
-Sollte man auf 0 fixierte Variablen entfernen ?
-------------------------
 
 Mal überlegen ob es nicht eine ide wäre 
 Metakontruckte eiinzuführen wie
