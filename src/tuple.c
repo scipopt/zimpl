@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.14 2003/08/20 19:32:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.15 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -227,10 +227,11 @@ unsigned int tuple_hash(const Tuple* tuple)
    return hcode;
 }
 
+#if 0
 char* tuple_tostr(const Tuple* tuple)
 {
    unsigned int   size = TUPLE_STR_SIZE;
-   unsigned int   len  = 2; /* fuer die '\0', ggf. fuer das [ */
+   unsigned int   len  = 2; /* for the '\0' and the '[' */
    char*          str  = malloc(size);
    char*          selem;
    unsigned int   selemlen;
@@ -239,7 +240,7 @@ char* tuple_tostr(const Tuple* tuple)
    assert(tuple_is_valid(tuple));
    assert(str != NULL);
 
-   strcpy(str, mangling ? "" : "[");
+   strcpy(str, "[");
    
    for(i = 0; i < tuple->dim; i++)
    {
@@ -255,20 +256,57 @@ char* tuple_tostr(const Tuple* tuple)
       }
       assert(len + selemlen < size);
 
-      if (mangling)
-      {
-         strcat(str, i > 0 ? "@" : "");
-         strcat(str, selem);
-      }
-      else
-      {
-         strcat(str, selem);
-         strcat(str, i < tuple->dim - 1 ? "," : "]");
-      }
+      strcat(str, selem);
+      strcat(str, i < tuple->dim - 1 ? "," : "]");
+
       free(selem);
       
       len += selemlen;
    }
    return str;
 }
+#endif
+
+char* tuple_tostr(const Tuple* tuple)
+{
+   unsigned int   size = TUPLE_STR_SIZE;
+   unsigned int   len  = 1; /* one for the zero '\0' */
+   char*          str  = malloc(size);
+   char*          selem;
+   unsigned int   selemlen;
+   int            i;
+   
+   assert(tuple_is_valid(tuple));
+   assert(str != NULL);
+
+   str[0] = '\0';
+   
+   for(i = 0; i < tuple->dim; i++)
+   {
+      selem    = elem_tostr(tuple->element[i]);
+      selemlen = strlen(selem) + 1;
+
+      if (len + selemlen >= size)
+      {
+         size += selemlen + TUPLE_STR_SIZE;
+         str   = realloc(str, size);
+
+         assert(str != NULL);
+      }
+      assert(len + selemlen < size);
+
+      assert(elem_get_type(tuple->element[i]) == ELEM_NUMB
+          || elem_get_type(tuple->element[i]) == ELEM_STRG);
+
+      strcat(str, elem_get_type(tuple->element[i]) == ELEM_NUMB ? "#" : "$");
+      strcat(str, selem);
+
+      free(selem);
+      
+      len += selemlen;
+   }
+   return str;
+}
+
+
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpsread.c,v 1.1 2003/07/12 15:24:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpsread.c,v 1.2 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: readmps.c                                                     */
@@ -38,6 +38,12 @@
 #include "mpsinput.h"
 #include "gmpmisc.h"
 
+/* Directory separator, so we could redefine it for Windoof.
+ */
+#ifndef DIRSEP
+#define DIRSEP '/'
+#endif /* DIRSEP */
+
 static const char* corename(char* filename)
 {
    char* s;
@@ -46,7 +52,7 @@ static const char* corename(char* filename)
    assert(filename != NULL);
    assert(strlen(filename) > 0);
    
-   s = strrchr(filename, '/');
+   s = strrchr(filename, DIRSEP);
    s = (s == NULL) ? filename : s + 1;
 
    if (NULL != (t = strrchr(s, '.')))

@@ -1,3 +1,8 @@
+ - Changed output routine , so that it should work 
+   even with with braindead OS like Windoof.
+   Also allowed to use a different directory
+   separator.
+
  - Trailing text on the last line should now draw
    a message.
 

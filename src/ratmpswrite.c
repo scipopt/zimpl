@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.6 2003/08/22 09:25:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.7 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -147,7 +147,7 @@ void mps_write(
          switch(lps_contype(con))
          {
          case CON_EQUAL:
-            indicator = 'N';
+            indicator = 'E';
             break;
          case CON_LHS:
             indicator = 'G';

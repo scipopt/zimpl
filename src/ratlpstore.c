@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.14 2003/09/03 14:30:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.15 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1465,7 +1465,6 @@ void lps_write(
    const Lps*  lp,
    FILE*       fp,
    LpFormat    format,
-   Bool        use_long_names,
    const char* text)
 {
    assert(lp   != NULL);
@@ -1476,7 +1475,10 @@ void lps_write(
    switch(format)
    {
    case LP_FORM_LPF :
-      lpf_write(lp, fp, text, use_long_names ? 255 : LPF_NAME_LEN);
+      lpf_write(lp, fp, text);
+      break;
+   case LP_FORM_HUM :
+      hum_write(lp, fp, text);
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);
@@ -1484,6 +1486,25 @@ void lps_write(
    default :
       abort();
    }
+}
+
+static void lpfstrncpy(char* t, const char* s, int len)
+{
+   /* '@' was excluded, to make sure the appendix is unique.
+    */
+   static const char* allowed = "!#$%&()/,.;?_{}|~"; 
+
+   while(--len >= 0 && *s != '\0')
+   {
+      if (isalnum(*s) || strchr(allowed, *s) != NULL)
+         *t = *s;
+      else
+         *t = '_';
+      
+      s++;
+      t++;
+   }
+   *t = '\0';
 }
 
 /* size has to be big enough to store a '#', a '\0'
@@ -1497,7 +1518,6 @@ void lps_makename(
 {
    char  temp[16];
    int   len;
-   int   i;
    int   nlen;
 
    assert(target != NULL);
@@ -1507,48 +1527,50 @@ void lps_makename(
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
    nlen = strlen(name);
-   
+
    if (nlen < size)
    {
-      for(i = 0; i < nlen; i++)
-         target[i] = isalnum(name[i]) ? name[i] : '_';
-      target[i] = '\0';
+      lpfstrncpy(target, name, nlen);
    }
    else
    {
       /* The 16 is to make sure the %x later has enough room
        */
       sprintf(temp, "%x", no);
-
-      /* -2 : fuer '#' und '\0'
+      
+      /* -2 : fuer '@' und '\0'
        */
       len = size - (int)strlen(temp) - 2;
-   
+      
       assert(len >= 0);
-     
-      for(i = 0; i < len; i++)
-         target[i] = isalnum(name[i]) ? name[i] : '_';
-         
-      target[i++] = '#';
-
-      strcpy(&target[i], temp);
-
+      
+      lpfstrncpy(target, name, len);
+      
+      target[len] = '@';
+      
+      strcpy(&target[len + 1], temp);
+      
       assert(strlen(target) == (size_t)size - 1);
-   }   
+   }
    assert(strlen(target) <= (size_t)size - 1);
 }
 
-void lps_transtable(const Lps* lp, FILE* fp, int namelen, const char* head)
+void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
 {
    Var*  var;
    Con*  con;
-   char* temp = malloc((size_t)namelen + 1);
+   char* temp;
+   int   namelen;
    
    assert(lps_valid(lp));
    assert(fp      != NULL);
-   assert(namelen >= 8);
    assert(head    != NULL);
-   assert(temp    != NULL);
+   assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
+   
+   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
+   temp    = malloc((size_t)namelen + 1);
+
+   assert(temp != NULL);
 
    lps_number(lp);
    

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlptypes.h,v 1.2 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlptypes.h,v 1.3 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlptypes.h                                                  */
@@ -38,7 +38,7 @@ enum var_state       { VAR_ERR     = 0, VAR_BASIC, VAR_ON_LO, VAR_ON_UP };
 enum var_class       { VAR_CON     = 0, VAR_INT,   VAR_BIN };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
-enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
+enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS };
 enum presolve_result
 {
    PRESOLVE_ERROR = 0, PRESOLVE_OKAY, PRESOLVE_INFEASIBLE,

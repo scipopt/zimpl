@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.10 2003/08/22 08:21:22 bzfkocht Exp $
+# $Id: Makefile,v 1.11 2003/09/04 13:09:09 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -85,7 +85,7 @@ OBJECT  =       	bound.o code.o conname.o elem.o entry.o hash.o \
 			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o \
 			mshell.o inst.o ratordwrite.o xlpglue.o gmpmisc.o \
-			ratpresolve.o
+			ratpresolve.o rathumwrite.o
 
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))

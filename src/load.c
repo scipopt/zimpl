@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.13 2003/09/03 14:30:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.14 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -116,13 +116,13 @@ static const char* make_pathname(
    assert(filename != NULL);
 
    /* Absolute Name ? */
-   if (*filename == '/')
+   if (*filename == DIRSEP)
       strcpy(target, filename);
    else
    {
       strcpy(target, pathname);
    
-      if (NULL == (s = strrchr(target, '/')))
+      if (NULL == (s = strrchr(target, DIRSEP)))
          strcpy(target, filename);
       else
          strcpy(s + 1, filename);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.39 2003/08/21 08:12:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.40 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -109,7 +109,6 @@ typedef struct program           Prog;
 
 extern Bool         verbose;
 extern Bool         zpldebug;
-extern Bool         mangling;
 
 /* strstore.c
  */
@@ -734,6 +733,11 @@ extern int          yylen(void);
 
 #define Min(a, b)    (((a) <= (b)) ? (a) : (b)) 
 
+/* Directory separator, so we could redefine it for Windoof.
+ */
+#ifndef DIRSEP
+#define DIRSEP '/'
+#endif /* DIRSEP */
 
 #ifndef NDEBUG
 #define SID unsigned int sid;

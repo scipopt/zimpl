@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.36 2003/09/03 14:30:39 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.37 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -52,7 +52,6 @@ extern int yy_flex_debug;
 
 Bool verbose   = FALSE;
 Bool zpldebug  = FALSE;
-Bool mangling  = TRUE;
 
 static const char* banner = 
 "****************************************************\n" \
@@ -64,22 +63,22 @@ static const char* banner =
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n" \
 "\n" \
-"usage: zimpl [-bdfhv][-t lp|mps][-o outfile] files\n" \
+"usage: zimpl [-bdfhv][-t lp|mps|hum][-o outfile] files\n" \
 "\n" \
-"  -b          enable bison debugging output.\n" \
-"  -d          enable zimpl debugging output.\n" \
-"  -f          enable flex debugging output.\n" \
-"  -r          write branching order file.\n" \
-"  -h          show this help.\n" \
-"  -p          presolve LP.\n" \
-"  -v          enable verbose output.\n" \
-"  -n cm|cn|cf name column make/name/full\n" \
-"  -m          do not mangle variable names\n" \
-"  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
-"  -o outfile  select name for the output file. Default is the name of\n" \
-"              the input file without extension.\n" \
-"  -F filter   filter output, for example \"gzip -c >%%s.gz\"\n" \
-"  filename    is the name of the input ZPL file.\n" \
+"  -b             enable bison debugging output.\n" \
+"  -d             enable zimpl debugging output.\n" \
+"  -f             enable flex debugging output.\n" \
+"  -r             write branching order file.\n" \
+"  -h             show this help.\n" \
+"  -p             presolve LP.\n" \
+"  -v             enable verbose output.\n" \
+"  -n cm|cn|cf    name column make/name/full\n" \
+"  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
+"                 or human readable HUM.\n" \
+"  -o outfile     select name for the output file. Default is the name of\n" \
+"                 the input file without extension.\n" \
+"  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
+"  filename       is the name of the input ZPL file.\n" \
 "\n" ; 
 
 static char* add_extention(const char* filename, const char* extension)
@@ -106,7 +105,7 @@ static const char* strip_path(const char* filename)
    assert(filename != NULL);
    assert(strlen(filename) > 0);
    
-   s = strrchr(filename, '/');
+   s = strrchr(filename, DIRSEP);
 
    return (s == NULL) ? filename : s + 1;
 }
@@ -119,7 +118,7 @@ static char* strip_extension(char* filename)
    assert(strlen(filename) > 0);
 
    for(i = strlen(filename) - 1; i >= 0; i--)
-      if (filename[i] == '/' || filename[i] == '.')
+      if (filename[i] == DIRSEP || filename[i] == '.')
          break;
 
    if (i >= 0 && filename[i] == '.')
@@ -127,7 +126,7 @@ static char* strip_extension(char* filename)
 
    i = strlen(filename);
    
-   if (i == 0 || filename[i - 1] == '/')
+   if (i == 0 || filename[i - 1] == DIRSEP)
    {
       fprintf(stderr, "*** Error: Bad filename\n");
       abort();
@@ -147,10 +146,11 @@ static void check_write_ok(FILE* fp, const char* filename)
 int main(int argc, char* const* argv)
 {
    const char* usage =
-      "usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps][-o outfile][-F filter] filename\n";
+      "usage: %s [-hvrp][-n cs|cn|cf][-t lp|mps|hum][-o outfile][-F filter] filename\n";
 
    Prog*       prog;
-   char*       filter   = NULL;
+   const char* extension;
+   char*       filter   = strdup("%s");
    char*       outfile  = NULL;
    char*       tblfile  = NULL;
    char*       ordfile  = NULL;
@@ -162,11 +162,13 @@ int main(int argc, char* const* argv)
    Bool        presolve    = FALSE;
    int         c;
    int         i;
+   FILE*       (*openfile)(const char*, const char*) = fopen;
+   int         (*closefile)(FILE*)                   = fclose;
    
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfF:hmn:o:prt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfF:hn:o:prt:v")) != -1)
    {
       switch(c)
       {
@@ -183,12 +185,11 @@ int main(int argc, char* const* argv)
          yy_flex_debug = 1;
          break;
       case 'F' :
-         filter = strdup(optarg);
-         break;
-      case 'm' :
-         fprintf(stderr,
-            "*WARNING* the generated LP/MPS files will be invalid\n");
-         mangling = FALSE;
+         free(filter);
+         
+         filter    = strdup(optarg);
+         openfile  = popen;
+         closefile = pclose;
          break;
       case 'n' :
          if (*optarg != 'c')
@@ -222,7 +223,23 @@ int main(int argc, char* const* argv)
          write_order = TRUE;
          break;
       case 't' :
-         format = (tolower(*optarg) == 'm') ? LP_FORM_MPS : LP_FORM_LPF;
+         switch(tolower(*optarg))
+         {
+         case 'h' :
+            format = LP_FORM_HUM;
+            break;
+         case 'm' :
+            format = LP_FORM_MPS;
+            break;
+         case 'l' :
+            format = LP_FORM_LPF;
+            break;
+         default :
+            fprintf(stderr, "Output format \"%s\" not supported, using LP format\n",
+               optarg);
+            format = LP_FORM_LPF;
+            break;
+         }
          break;
       case 'v' :
          verbose = TRUE;
@@ -242,14 +259,24 @@ int main(int argc, char* const* argv)
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));
 
-   outfile = add_extention(basefile,
-      (format == LP_FORM_LPF) ? ".lp" : ".mps");
+   switch(format)
+   {
+   case LP_FORM_LPF :
+      extension = ".lp";
+      break;
+   case LP_FORM_MPS :
+      extension = ".mps";
+      break;
+   case LP_FORM_HUM :
+      extension = ".hum";
+      break;
+   default :
+      abort();
+   }
+   outfile = add_extention(basefile, extension);
    tblfile = add_extention(basefile, ".tbl");
    ordfile = add_extention(basefile, ".ord");
-
-   if (filter == NULL)
-      filter = strdup("cat >%s");
-
+   
    cmdpipe = malloc(strlen(basefile) + strlen(filter) + 256);
 
    assert(cmdpipe != NULL);
@@ -285,11 +312,7 @@ int main(int argc, char* const* argv)
    if (verbose)
       printf("Writing [%s]\n", cmdpipe);
 
-#ifdef WINDOWS
-   if (NULL == (fp = fopen(outfile, "w")))
-#else
-   if (NULL == (fp = popen(cmdpipe, "w")))
-#endif
+   if (NULL == (fp = (*openfile)(cmdpipe, "w")))
    {
       fprintf(stderr, "*** Error: when writing file %s", outfile);
       perror(" ");
@@ -299,66 +322,53 @@ int main(int argc, char* const* argv)
 
    check_write_ok(fp, outfile);
 
-#ifdef WINDOWS
-   close(fp);
-#else
-   pclose(fp);
-#endif
-   /* Write translation table
+   (void)(*closefile)(fp);
+
+   /* We do not need the translation table for human readable format
+    * (And the orderfile is also senseless)
     */
-   sprintf(cmdpipe, filter, tblfile);
-
-   if (verbose)
-      printf("Writing [%s]\n", cmdpipe);
-
-#ifdef WINDOWS
-   if (NULL == (fp = fopen(outfile, "w")))
-#else
-   if (NULL == (fp = popen(cmdpipe, "w")))
-#endif
+   if (format != LP_FORM_HUM)
    {
-      fprintf(stderr, "*** Error: when writing file %s", tblfile);
-      perror(" ");
-      abort();
-   }
-   xlp_transtable(fp, format);
-
-   check_write_ok(fp, tblfile);
-
-#ifdef WINDOWS
-   close(fp);
-#else
-   pclose(fp);
-#endif
-   
-   /* Write order file 
-    */
-   if (write_order)
-   {
-      sprintf(cmdpipe, filter, ordfile);
+      /* Write translation table
+       */
+      sprintf(cmdpipe, filter, tblfile);
 
       if (verbose)
          printf("Writing [%s]\n", cmdpipe);
 
-#ifdef WINDOWS
-      if (NULL == (fp = fopen(outfile, "w")))
-#else
-      if (NULL == (fp = popen(cmdpipe, "w")))
-#endif
+      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
       {
-         fprintf(stderr, "*** Error: when writing file %s", ordfile);
+         fprintf(stderr, "*** Error: when writing file %s", tblfile);
          perror(" ");
          abort();
       }
-      xlp_orderfile(fp, format);
+      xlp_transtable(fp, format);
 
-      check_write_ok(fp, ordfile);
-      
-#ifdef WINDOWS
-      close(fp);
-#else
-      pclose(fp);
-#endif
+      check_write_ok(fp, tblfile);
+
+      (void)(*closefile)(fp);
+
+      /* Write order file 
+       */
+      if (write_order)
+      {
+         sprintf(cmdpipe, filter, ordfile);
+
+         if (verbose)
+            printf("Writing [%s]\n", cmdpipe);
+
+         if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+         {
+            fprintf(stderr, "*** Error: when writing file %s", ordfile);
+            perror(" ");
+            abort();
+         }
+         xlp_orderfile(fp, format);
+         
+         check_write_ok(fp, ordfile);
+         
+         (void)(*closefile)(fp);
+      }
    }
    
    if (zpldebug) 

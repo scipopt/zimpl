@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.55 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.56 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1906,7 +1906,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       assert(varname != NULL);
       
-      sprintf(varname, "%s_%s", name, tuplestr);
+      sprintf(varname, "%s%s", name, tuplestr);
 
       /* Und nun legen wir sie an.
        */

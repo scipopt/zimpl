@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.4 2003/08/18 12:55:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.5 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -113,6 +113,9 @@ struct lpstorage
    Var*     var_last;
    Con*     con_last;
 }; 
+
+#define LPF_NAME_LEN  16
+#define MPS_NAME_LEN  8
 
 /* Internal functions
  */

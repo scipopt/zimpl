@@ -1,0 +1,4 @@
+#--- $Id: make.linux.x86.gnu.gcov,v 1.1 2003/09/04 13:09:09 bzfkocht Exp $
+CPPFLAGS	+=	-DFREEMEM 
+CFLAGS		=	-fprofile-arcs -ftest-coverage 
+LDFLAGS		=	-lgmp -lz -static

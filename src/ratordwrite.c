@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.5 2003/09/01 08:27:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.6 2003/09/04 13:09:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -45,19 +45,25 @@
 void lps_orderfile(
    const Lps*  lp,
    FILE*       fp,
-   int         namelen,
+   LpFormat    format,
    const char* text)
 {
    const Var*  var;
-   char*       vtmp = malloc((size_t)namelen + 1);
+   char*       vtmp;
+   int         namelen;
    
-   assert(lp      != NULL);
-   assert(fp      != NULL);
-   assert(namelen >= 8);
-   assert(text    != NULL);
-   assert(vtmp    != NULL);
+   assert(lp     != NULL);
+   assert(fp     != NULL);
+   assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
+   
+   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
+   vtmp    = malloc((size_t)namelen + 1);
 
-   fprintf(fp, "* %s\n", text);
+   assert(vtmp != NULL);
+
+   if (text != NULL)
+      fprintf(fp, "* %s\n", text);
+   
    fprintf(fp, "NAME        %8.8s\n", lp->name);
 
    for(var = lp->var_root; var != NULL; var = var->next)
