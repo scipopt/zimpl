@@ -80,7 +80,8 @@ subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
 subto c41: x[1] == a[1] + 2 * sum <i> in A do 2*x[i]*a[i]*3 + 4;
 subto c42: 17 <= x[1] + x[2] <= 23;
 subto c43: 13 * a[1] / 2 >= sum <i> in A do a[i]*x[i] + 6 >= a[2];
-
+subto c44: sum <i> in A : 10^-i * x[i] >= 5, scale;
+subto c45: sum <i> in A : 0.0001 * x[i] >= 6, scale;
 
 
 

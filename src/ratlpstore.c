@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.11 2003/08/22 15:01:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.12 2003/08/22 15:53:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1571,28 +1571,28 @@ void lps_scale(const Lps* lp)
 {
    Con*   con;
    Nzo*   nzo;
-   mpq_t  maximum;
+   mpq_t  maxi;
    mpq_t  v;
 
    assert(lps_valid(lp));
       
-   mpq_init(maximum);
+   mpq_init(maxi);
    mpq_init(v);
    
    for(con = lp->con_root; con != NULL; con = con->next)
    {
       if ((con->flags & LP_FLAG_CON_SCALE) > 0)
       {
-         mpq_set_ui(maximum, 0, 1);  /* = 0 */
+         mpq_set_ui(maxi, 0, 1);  /* = 0 */
 
          for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
          {
             mpq_abs(v, nzo->value);
             
-            if (mpq_cmp(v, maximum) > 0)
-               mpq_set(maximum, v);
+            if (mpq_cmp(v, maxi) > 0)
+               mpq_set(maxi, v);
          }
-         mpq_inv(con->scale, maximum); /* scale = 1 / maximum */
+         mpq_inv(con->scale, maxi); /* scale = 1 / maxi */
 
          if (HAS_RHS(con))
             mpq_mul(con->rhs, con->rhs, con->scale);
@@ -1605,7 +1605,7 @@ void lps_scale(const Lps* lp)
       }
    }
    mpq_clear(v);
-   mpq_clear(maximum);
+   mpq_clear(maxi);
 }
 
 
