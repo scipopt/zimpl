@@ -1,4 +1,4 @@
-% $Id: zimplug.tex,v 1.20 2004/06/08 15:57:12 bzfkocht Exp $
+% $Id: zimplug.tex,v 1.21 2004/06/17 08:18:33 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimplug.tex                                                   *
@@ -18,7 +18,7 @@ $$
 \end{array}
 $$
 The usual format to store the description of such a problem is \mps
-invented by \ibm \cite{IBM1997} long ago. 
+invented by \ibm \citep[see the][]{IBM1997} long ago. 
 Nearly all available \lp and \mip solvers can read this format.
 While \mps is a nice format to punch into a punch card and at least a
 reasonable format to read for a computer it is quite unreadable
@@ -89,8 +89,8 @@ And this is how to tell it to \zimpl
 set I      := { 1 to 3 };
 param c[I] := <1> 2, <2> 3, <3> 1.5;
 var   x[I] >= 0;
-minimize value: sum <i> in I : c[i] * x[i];
-subto     cons: sum <i> in I : x[i] <= 6;
+minimize cost: sum <i> in I : c[i] * x[i];
+subto    cons: sum <i> in I : x[i] <= 6;
 \end{verbatim}
 }
 
@@ -111,7 +111,7 @@ It is possible to give more than one input file. They are read one
 after the other as if they were all one big file.
 If any error occurs while processing, \zimpl will print out an 
 error message and abort. In case everything goes well, the results 
-will be written into two or three files, depending on the options specified.
+will be written into two or more files, depending on the options specified.
 
 The first file is the problem generated from the model in either 
 \lpf or \mps format with extension \code{.lp} or \code{.mps}.
@@ -121,9 +121,12 @@ and their corresponding names in the problem file.
 
 The reason for this name translation is that the \mps format
 can only handle names up to eight characters long. Also the the \lp format
-restricts the length of names to 16 characters.
+restricts the length of names. The precise limit is depending on the
+version. \cplex~7.0 has a limit of 16 characters, and ignores
+silently the rest of the name, while \cplex~9.0 has a limit of 255
+characters, but will ony show the first 20 in the output of some commands.
 
-The third file is and optional \cplex branching order file.
+%The third file is and optional \cplex branching order file.
 
 \medskip
 The following options are possible (only the first two are normally
@@ -132,27 +135,27 @@ of interest):
 \medskip
 \begin{tabular}{lp{105mm}}
 %\hline
--t {\em format} & Selects the output format. Can be either \code{lp}
+-t \emph{format} & Selects the output format. Can be either \code{lp}
                   which is default, or \code{mps} or \code{hum} which
                   is only human readable.\\
--o {\em name}   & Sets the base-name for the output files.\\ 
+-o \emph{name}   & Sets the base-name for the output files.\\ 
                 & Defaults to the name of the first input file stripped 
                   off its path and extension.\\ 
--F {\em filter} & The output is piped through a filter. A \%s in the
+-F \emph{filter} & The output is piped through a filter. A \%s in the
                   string is replaced by the output filename. For example 
                   \code{-F "gzip -c >\%s.gz"} would compress all the 
                   output files.\\
--n {\em cform}  & Select the format for the generation of constraint
-                  names. Can be either {\em cm} which will number them 
-                  $1\ldots n$ with a `c' in front. {\em cn} will use 
+-n \emph{cform}  & Select the format for the generation of constraint
+                  names. Can be either \emph{cm} which will number them 
+                  $1\ldots n$ with a `c' in front. \emph{cn} will use 
                   the name supplied in the \code{subto} statement and 
                   number them $1\ldots n$ within the statement. 
-                  {\em cf} will use the name given with the \code{subto},
+                  \emph{cf} will use the name given with the \code{subto},
                   then a $1\ldots n$ number like in \emph{cm} and then 
                   append all the local variables from the forall statements.\\
--v {\em 1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
+-v \emph{1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
                   2 is verbose, 3 is chatter, and 5 is debug.\\
--D {\em name=val} & Sets the parameter \emph{name} to the specified
+-D \emph{name=val} & Sets the parameter \emph{name} to the specified
                   value. This is equivalent with having this line in the
                   \zimpl program: \code{param name:=val}.\\
 %\hline
@@ -340,7 +343,7 @@ operators are defined:
 \code{A symdiff B} &Symmetric difference & 
    $\{ x |(x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
 \code{\{n\,{..}\,m\}},&\\
-\code{\{n to m {\em by s}\}}& Generate, & 
+\code{\{n to m \emph{by s}\}}& Generate, & 
    $\{ x | x=n + is \leq m, i\in\N_0\}$\\
    &(default $s = 1$)&\\ 
 \code{proj(A, t)}& Projection & 
@@ -499,7 +502,7 @@ param k[I*I] :=  |  7,  8,  9 |
 %------------------------------------------------------------------------------
 Like parameters, variables can be indexed. 
 A variable has to be one out of three possible types: 
-Continuous (called {\em real}), binary or integer. The default is real. 
+Continuous (called \emph{real}), binary or integer. The default is real. 
 Variables may have lower and upper bounds. Defaults are
 zero as lower and infinity as upper bound. Binary variables are
 always bounded between zero and one.
