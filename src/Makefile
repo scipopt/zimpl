@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.31 2003/03/17 09:32:00 bzfkocht Exp $
+# $Id: Makefile,v 1.32 2003/03/18 09:37:03 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -51,7 +51,7 @@ CFLAGS	=	$(OPTI_FLAGS) $(DEBU_FLAGS) $(PROG_FLAGS) $(WARN_FLAGS)
 OBJECT  =       code.o conname.o elem.o entry.o hash.o idxset.o inst.o \
 		iread.o list.o load.o local.o lpstore.o lpfwrite.o \
 		mmlparse.o mmlscan.o mpswrite.o ordwrite.o \
-		prog.o rbt.o rdefpar.o set.o source.o \
+		prog.o rdefpar.o set.o source.o \
 		stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
 		mshell.o
 

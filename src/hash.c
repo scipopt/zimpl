@@ -1,4 +1,4 @@
-#ident "@(#) $Id: hash.c,v 1.10 2003/03/17 09:32:01 bzfkocht Exp $"
+#ident "@(#) $Id: hash.c,v 1.11 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -44,6 +44,8 @@ struct hash_element
    {
       const Tuple* tuple;
       const Entry* entry;
+      const Con*   con;
+      const Var*   var;
    } value;
    HElem* next;
 };
@@ -123,7 +125,8 @@ void hash_free(Hash* hash)
 Bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
-      && ((hash->type == HASH_TUPLE) || (hash->type == HASH_ENTRY))
+      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
+         || hash->type == HASH_CON || hash->type == HASH_VAR)
       && SID_ok(hash, HASH_SID));
 }
 
@@ -158,6 +161,40 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    tuple               = entry_get_tuple(entry);
    hcode               = tuple_hash(tuple) % hash->size;
    he->value.entry     = entry;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+}
+
+void hash_add_con(Hash* hash, const Con* con)
+{
+   HElem*       he = calloc(1, sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_is_valid(hash));
+   assert(con        != NULL);
+   assert(hash->type == HASH_CON);
+   assert(he         != NULL);
+   
+   hcode               = lps_hash(lps_conname(con)) % hash->size;
+   he->value.con       = con;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+}
+
+void hash_add_var(Hash* hash, const Var* var)
+{
+   HElem*       he = calloc(1, sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_is_valid(hash));
+   assert(var        != NULL);
+   assert(hash->type == HASH_VAR);
+   assert(he         != NULL);
+   
+   hcode               = lps_hash(lps_varname(var)) % hash->size;
+   he->value.var       = var;
    he->next            = hash->bucket[hcode];
    hash->bucket[hcode] = he;
    hash->elems++;
@@ -215,6 +252,52 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
    assert(entry_is_valid(he->value.entry));
 
    return he->value.entry;
+}
+
+/* Liefert NULL wenn nicht gefunden.
+ */
+const Con* hash_lookup_con(const Hash* hash, const char* name)
+{
+   unsigned int hcode = lps_hash(name) % hash->size;
+   HElem*       he    = NULL;
+   
+   assert(hash_is_valid(hash));
+   assert(name != NULL);
+
+   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
+      if (!strcmp(lps_conname(he->value.con), name))
+         break;
+
+   if (he == NULL)
+      return NULL;
+
+   assert(he != NULL);
+   assert(he->value.con != NULL);
+
+   return he->value.con;
+}
+
+/* Liefert NULL wenn nicht gefunden.
+ */
+const Var* hash_lookup_var(const Hash* hash, const char* name)
+{
+   unsigned int hcode = lps_hash(name) % hash->size;
+   HElem*       he    = NULL;
+   
+   assert(hash_is_valid(hash));
+   assert(name != NULL);
+
+   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
+      if (!strcmp(lps_varname(he->value.var), name))
+         break;
+
+   if (he == NULL)
+      return NULL;
+
+   assert(he != NULL);
+   assert(he->value.var != NULL);
+
+   return he->value.var;
 }
 
 static void hash_statist(FILE* fp, const Hash* hash)

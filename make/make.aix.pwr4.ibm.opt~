@@ -1,0 +1,7 @@
+#--- $Id: make.aix.pwr4.ibm.opt~,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+CC		=	xlc
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
+CFLAGS		=	-O3 -q64 -qmaxmem=-1 \
+			-qarch=auto -qtune=auto -qcache=auto
+#LDFLAGS		+=	-L/client/lib
+

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: ordwrite.c,v 1.2 2002/07/22 15:43:32 bzfkocht Exp $"
+#ident "@(#) $Id: ordwrite.c,v 1.3 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ordwrite.c                                                    */
@@ -33,7 +33,6 @@
 #include "mshell.h"
 #include "portab.h"
 #include "mme.h"
-#include "rbt.h"
 #include "lpstore.h"
 
 /* A specification for the ORD file format can be found in the

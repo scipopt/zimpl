@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpfwrite.c,v 1.12 2002/10/13 16:05:21 bzfkocht Exp $"
+#ident "@(#) $Id: lpfwrite.c,v 1.13 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -31,7 +31,6 @@
 #include "mshell.h"
 #include "portab.h"
 #include "mme.h"
-#include "rbt.h"
 #include "lpstore.h"
 
 /* A specification for the LP file format can be found in the

@@ -1,0 +1,5 @@
+#--- $Id: make.sunos.sparc.sun.opt,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+CC		=	cc
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
+CFLAGS		=	-fast -xprefetch=auto -xipo=2
+

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.h,v 1.7 2002/10/20 09:17:39 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.h,v 1.8 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.h                                                     */
@@ -90,8 +90,8 @@ struct lpstorage
    Con*     con_root;
    Sto*     sto_root;
    Nzo*     next;
-   RBT*     var_tree;
-   RBT*     con_tree;
+   Hash*    var_hash;
+   Hash*    con_hash;
 }; 
 
 #define MPS_NAME_LEN  8

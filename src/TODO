@@ -1,3 +1,8 @@
+macht es einen Sinn param x[<i> in I ...] := 3 * i mit default zu haben.
+Es sind doch alle indices initialisiert.
+
+indexset sollte auch für variablen und parametergehen.
+-----------------------
 Sollte man auf 0 fixierte Variablen entfernen ?
 ------------------------
 idxset und sexpr vereinheitlichen, eigendlich ist ein

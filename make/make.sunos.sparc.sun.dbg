@@ -1,0 +1,6 @@
+#--- $Id: make.sunos.sparc.sun.dbg,v 1.1 2003/03/18 09:37:03 bzfkocht Exp $
+CC		=	cc
+CPPFLAGS	+=	-DFREEMEM
+CFLAGS		=	-g
+
+

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mme.h,v 1.26 2003/03/17 09:32:01 bzfkocht Exp $"
+#ident "@(#) $Id: mme.h,v 1.27 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -32,7 +32,7 @@ enum element_type
    ELEM_ERR = 0, ELEM_FREE, ELEM_NUMB, ELEM_STRG, ELEM_NAME
 };
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
-enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY };
+enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_VAR, HASH_CON };
 enum lp_direct       { LP_MIN = 0, LP_MAX };
 enum lp_type         { LP_ERR = 0, LP_LP, LP_IP };
 enum lp_form         { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_MPS };
@@ -159,12 +159,20 @@ extern Bool         hash_is_valid(const Hash* hash);
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */
 extern void         hash_add_entry(Hash* hash, const Entry* entry);
+/*lint -sem(        hash_add_con, 1p == 1 && 2p == 1) */
+extern void         hash_add_con(Hash* hash, const Con* con);
+/*lint -sem(        hash_add_var, 1p == 1 && 2p == 1) */
+extern void         hash_add_var(Hash* hash, const Var* var);
 /*lint -sem(        hash_has_tuple, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
+/*lint -sem(        hash_lookup_con, 1p == 1 && 2p && nulterm(2)) */
+extern const Con*   hash_lookup_con(const Hash* hash, const char* name);
+/*lint -sem(        hash_lookup_var, 1p == 1 && 2p && nulterm(2)) */
+extern const Var*   hash_lookup_var(const Hash* hash, const char* name);
 
 /* element.c
  */
@@ -474,9 +482,9 @@ extern void         lps_alloc(const char* name);
 extern void         lps_free(void);
 extern void         lps_number(void);
 /*lint -sem(        lps_getvar, 1p && nulterm(1)) */
-extern Var*         lps_getvar(const char* name);
+extern const Var*   lps_getvar(const char* name);
 /*lint -sem(        lps_getcon, 1p && nulterm(1)) */
-extern Con*         lps_getcon(const char* name);
+extern const Con*   lps_getcon(const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1) */
 extern Nzo*         lps_getnzo(const Con* con, const Var* var);
 /*lint -sem(        lps_addvar, 1p && nulterm(1), @p == 1) */
@@ -494,6 +502,12 @@ extern void         lps_stat(void);
 extern void         lps_setval(Nzo* nzo, double value);
 /*lint -sem(        lps_getval, 1p == 1) */
 extern double       lps_getval(const Nzo* nzo);
+/*lint -sem(        lps_hash, 1p && nulterm(1)) */
+extern unsigned int lps_hash(const char* name);
+/*lint -sem(        lps_varname, 1p == 1, @p && nulterm(@)) */
+extern const char*  lps_varname(const Var* var);
+/*lint -sem(        lps_conname, 1p == 1, @p && nulterm(@)) */
+extern const char*  lps_conname(const Con* con);
 extern void         lps_setdir(LpDirect direct);
 /*lint -sem(        lps_objname, 1p && nulterm(1)) */
 extern void         lps_objname(const char* name);

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: mpswrite.c,v 1.5 2002/11/11 21:17:35 bzfkocht Exp $"
+#ident "@(#) $Id: mpswrite.c,v 1.6 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -33,7 +33,6 @@
 #include "mshell.h"
 #include "portab.h"
 #include "mme.h"
-#include "rbt.h"
 #include "lpstore.h"
 
 static void write_data(

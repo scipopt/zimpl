@@ -1,3 +1,6 @@
+ - Replaced rbt functions by a hash table. Mainly for
+   portability.
+
  - Fixed bug in print statement that accured when trying to 
    print a indexed set, without giving an index.
 
@@ -32,7 +35,7 @@
    param p[A] := <1> 1, <2> 2 default 99
    will declare all p[i] with i in A and not 1 or 2 to return 99.
 
- - Corrected a type, that resulted in .orf files instead of .ord
+ - Corrected a typo, that resulted in .orf files instead of .ord
 
  - sym_lookup is now resolved in the scanner (speedup).
 

@@ -1,38 +1,139 @@
-# $Id: Makefile,v 1.1 2001/05/06 11:43:18 thor Exp $
+# $Id: Makefile,v 1.2 2003/03/18 09:37:03 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
-#*   Name....: ZIMPL Top level makefile                                      *
+#*   Name....: Zimpl Makefile                                                *
 #*   Author..: Thorsten Koch                                                 *
 #*   Copyright by Author, All rights reserved                                *
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+#*
+#* Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+#* 
+#* This program is free software; you can redistribute it and/or
+#* modify it under the terms of the GNU General Public License
+#* as published by the Free Software Foundation; either version 2
+#* of the License, or (at your option) any later version.
+#* 
+#* This program is distributed in the hope that it will be useful,
+#* but WITHOUT ANY WARRANTY; without even the implied warranty of
+#* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#* GNU General Public License for more details.
+#* 
+#* You should have received a copy of the GNU General Public License
+#* along with this program; if not, write to the Free Software
+#* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#*
 #
-#    Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
-# 
-#    This program is free software; you can redistribute it and/or
-#    modify it under the terms of the GNU General Public License
-#    as published by the Free Software Foundation; either version 2
-#    of the License, or (at your option) any later version.
-# 
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-# 
-#    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-#
-.PHONY:		all clean
+.PHONY:		depend clean lint doc check
 
-all:
-		cd src; $(MAKE) -f Makefile; cd ..
-		cd doc; $(MAKE) -f Makefile; cd ..
-		cd test; $(MAKE) -f Makefile; cd ..
+ARCH            :=      $(shell uname -m | \
+                        sed \
+			-e s/sun../sparc/ \
+			-e s/i.86/x86/ \
+			-e s/IP../mips/ \
+			-e s/9000..../hppa/ \
+			-e s/00........../pwr4/)
+OSTYPE          :=      $(shell uname -s | \
+                        tr A-Z a-z | \
+                        sed \
+                        -e s/irix../irix/ )
+HOSTNAME	:=      $(shell uname -n | tr A-Z a-z)
+
+OPT		=	opt
+COMP		=	gnu
+CC		=	gcc
+YACC		=	bison
+LEX		=	flex
+DCC		=	gcc
+LINT		=	flexelint
+AR		=	ar
+RANLIB		=	ranlib
+
+SRCDIR		=	src
+BINDIR		=	bin
+LIBDIR		=	lib
+
+CPPFLAGS	=	-I$(SRCDIR)
+CFLAGS		=	-O
+LDFLAGS		=	-lm
+YFLAGS		=	-d -t -v  
+LFLAGS		=	-d
+DFLAGS		=	-MM
+
+GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
+			-Wstrict-prototypes -Wmissing-prototypes -Winline \
+			-Wmissing-declarations -Wshadow -Waggregate-return \
+			-Wno-unused -Wno-unknown-pragmas 
+
+BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
+OBJDIR		=	obj/O.$(BASE)
+NAME		=	zimpl
+TARGET		=	$(NAME).$(BASE)
+BINARY		=	$(BINDIR)/$(TARGET)
+DEPEND		=	$(SRCDIR)/depend
+
+#-----------------------------------------------------------------------------
+
+OBJECT  =       	code.o conname.o elem.o entry.o hash.o idxset.o inst.o \
+			iread.o list.o load.o local.o lpstore.o lpfwrite.o \
+			mmlparse.o mmlscan.o mpswrite.o ordwrite.o \
+			prog.o rdefpar.o set.o source.o \
+			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
+			mshell.o
+
+OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
+OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
+
+#-----------------------------------------------------------------------------
+include make/make.$(BASE)
+-include make/local/make.$(HOSTNAME)
+-include make/local/make.$(HOSTNAME).$(COMP)
+-include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
+#-----------------------------------------------------------------------------
+
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX)  
+		$(CC) $(CFLAGS) $(OBJXXX) $(LDFLAGS) -o $@
+
+$(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
+		$(YACC) $(YFLAGS) -o $@ $<
+
+$(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
+		$(LEX) $(LFLAGS) -o$@ $< 
+
+lint:		$(OBJSRC)
+		$(LINT) $(SRCDIR)/project.lnt -os\(lint.out\) \
+		$(CPPFLAGS) -UNDEBUG -DNO_MSHELL $^
+
+doc:
+		cd doc; $(DOXY) sip.dxy
+
+check:
+		cd check; \
+		/bin/sh ./check.sh ../$(BINARY) 
+
+$(OBJDIR):	
+		-mkdir -p $(OBJDIR)
+
+$(BINDIR):
+		-mkdir -p $(BINDIR)
 
 clean:
-		cd src; $(MAKE) -f Makefile clean; cd ..
-		cd doc; $(MAKE) -f Makefile clean; cd ..
-		cd test; $(MAKE) -f Makefile clean; cd ..
+		-rm -rf $(OBJDIR)/* $(TARGET)
+
+depend:
+		$(SHELL) -ec '$(DCC) $(DFLAGS) $(CPPFLAGS) $(OBJSRC) \
+		| sed '\''s|^\([0-9A-z\_]\{1,\}\)\.o|$$\(OBJDIR\)/\1.o|g'\'' \
+		>$(DEPEND)'
+
+-include	$(DEPEND)
+
+$(OBJDIR)/%.o:	$(SRCDIR)/%.c
+		$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+# --- EOF ---------------------------------------------------------------------
+
+
+
+
 

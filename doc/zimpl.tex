@@ -1,4 +1,4 @@
-% $Id: zimpl.tex,v 1.9 2002/11/11 21:17:35 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.10 2003/03/18 09:37:03 bzfkocht Exp $
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 %*                                                                           */
 %*   File....: zimpl.tex                                                     */
@@ -29,7 +29,7 @@ pdfsubject={Zuse Institute Mathematical Programming Language},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimization, Algebraic Modelling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.9 2002/11/11 21:17:35 bzfkocht Exp $
+\rcsInfo $Id: zimpl.tex,v 1.10 2003/03/18 09:37:03 bzfkocht Exp $
 %
 \parindent0ex
 \setcounter{tocdepth}{1}
@@ -70,7 +70,7 @@ pdfkeywords={Mathematical Modelling Language,Mathematical Programming,Optimizati
 \LARGE\zimpl\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small for Version 1.04\\20. October 2002}
+\date{\small for Version 1.05\\18. March 2003}
 \maketitle
 \vfill
 \begin{abstract}
@@ -216,7 +216,11 @@ of interest):
 -t {\em format}& Selects the output format. Can be either \code{lp}
 which is default or \code{mps}.\\
 -o {\em name} & Sets the base-name for the output files.\\ 
-& Defaults to the first input file striped of the extension.\\ 
+& Defaults to the name of the first input file striped of the path and
+extension.\\ 
+-p {\em filter} & The output is piped through a filter. A \%s in the
+string is replaced by the output filename. For example 
+\code{-p "gzip -c >\%s.gz"} would compress all the output files.\\
 -n {\em cform}& Select the format for the generation of constraint
 names. Can be either {\em cm} which will number them $1\ldots n$ with
 a `c' in front. {\em cn} will use the name supplied in the
@@ -225,6 +229,7 @@ statement. {\em cf} will use the name of given with the \code{subto},
 then a $1\ldots n$ number like in \emph{cm} and then append all the
 local variables from the forall statements.\\
 %\hline
+-r&Writes an \cplex \code{ord} branching order file.\\
 -b&Enables bison debugging output.\\
 -d&Enables zimpl debugging output.\\
 -f&Enables flex debugging output.\\
@@ -274,7 +279,7 @@ The following functions are currently implemented:
 $^\wedge$, \code{+}, \code{-}, \code{*}, \code{/}, \code{mod},
 \code{div}, \code{abs}, \code{floor}, \code{ceil}, 
 \code{log} (logarithm with base 10),
-\code{ln} (logarithm with base $e$), \code{exp} ($e^x$), \code{$!$}. 
+\code{ln} (logarithm with base $e$), \code{exp} ($e^x$), \code{$!$} (factorial). 
 $^\wedge$ stands for \emph{to the
 power of}. \code{mod} is the modulo function and
 \code{div} gives the integer part of a division. \code{**} can be used
@@ -282,11 +287,13 @@ as synonym for $^\wedge$.
 With $\min$ and $\max$ it is possible to find the minimum/maximum
 member of an one dimensional set of numeric values.
 \code{card} gives the cardinality of a set.
+\code{random(a, b)} generates a random number between $a$ and $b$.
 
-The following is also a numeric expression:
+The following is either a numeric or a string expression, depending if
+\emph{expression} is a string or a numeric expression.
 
 \code{if} \emph{boolean-expression} \code{then}
-\emph{numeric-expression} \code{else} \emph{numeric-expression} \code{end}.
+\emph{expression} \code{else} \emph{expression} \code{end}.
 
 \subsubsection{Boolean expressions}
 For numbers $<,<=,==,!=,>=,>$ are defined. For strings only $==$ and
@@ -345,12 +352,37 @@ set H := proj(G, <3,1>)
 \end{verbatim}
 }
 
+It is possible to index one set with another set.
+Here is a list of functions that use this:
+
+\begin{tabular}{llp{5cm}}
+\hline
+$\mbox{powerset}(A)$& Generates all subsets of $A$&$\{x | x\subseteq A\}$\\
+$\mbox{subset}(A,n)$& Generates all subsets of $A$\\
+                    & with $n$ elements&$\{x | x\subseteq A\wedge |x|=n\}$\\
+$\mbox{indexset}(A)$&The index set of $A$&$\{1\ldots |A|\}$\\
+\hline
+\end{tabular}
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+set I           := { 1..3 };
+set A[I]        := <1> { "a", "b" }, 
+                   <2> { "c", "e" }, <3> { "f" };
+set B[<i> in I] := { 3 * i };
+set P[]         := powerset(N);
+set J           := indexset(P);
+set S[]         := subset(I, 2);
+\end{verbatim}
+}
+
 \subsection{Parameters}
 Parameters can be declared with or without an indexing
 set. Without indexing the parameter is just one value, which is either
 a number or a string. For indexed parameters there is one
-value for each member of the set. There are not much uses for string valued
-parameters, so normally they are all numbers. 
+value for each member of the set. It is possible to declare a
+\emph{default} value.
 
 Parameters are declared in the following way: 
 The keyword \code{param} is followed by the name of the parameter
@@ -363,8 +395,9 @@ the parameter for this index.
 {\small 
 \begin{verbatim}
 param q := 5;
-param u[A] := <1> 17, <2> 29, <3> 12;
+param u[A] := <1> 17, <2> 29, <3> 12 default 99;
 param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
+param x[<i> in I with i mod 2 == 0] := 3 * i;
 \end{verbatim}
 }
 
@@ -381,7 +414,9 @@ Variables may have lower and upper bounds. Defaults are
 zero as lower and infinity as upper bound. Binary variables are
 always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
-depending on the index for the variable (see last declaration in the example).
+depending on the index for the variable (see last declaration in the
+example). Bounds can also be set to \code{infinity} and \code{-infinity}.
+
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}

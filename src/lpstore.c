@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lpstore.c,v 1.11 2002/10/20 09:17:39 bzfkocht Exp $"
+#ident "@(#) $Id: lpstore.c,v 1.12 2003/03/18 09:37:04 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -34,9 +34,10 @@
 #include "lint.h"
 #include "mshell.h"
 #include "portab.h"
-#include "rbt.h"
 #include "mme.h"
 #include "lpstore.h"
+
+#define HASH_BUCKETS  65537U
 
 struct storage
 {
@@ -46,7 +47,6 @@ struct storage
 };
 
 static const unsigned int sto_size  = 1000;
-static const unsigned int tree_size = 1000;
 
 static Lps* lp = NULL;
 
@@ -245,44 +245,6 @@ static void lps_storage()
    lp->next      = s->begin;
 }
 
-/* If var_name_cmp() is called internally two Var* are passed as
- * arguments. If rbt_search is called, only a string with the name
- * is used as key. To distinguish the two cases the sid is used.
- */
-static int var_name_cmp(
-   const void* a,
-   const void* b)
-{
-   assert(a != NULL);
-   assert(b != NULL);
-
-   assert(((const Var*)b)->sid == VAR_SID);
-
-   if (((const Var*)a)->sid == VAR_SID)
-      return(strcmp(((const Var*)a)->name, ((const Var*)b)->name));
-
-   return(strcmp((const char*)a, ((const Var*)b)->name));
-}   
-   
-/* If con_name_cmp() is called internally two Con* are passed as
- * arguments. If rbt_search is called, only a string with the name
- * is used as key. To distinguish the two cases the sid is used.
- */
-static int con_name_cmp(
-   const void* a,
-   const void* b)
-{
-   assert(a != NULL);
-   assert(b != NULL);
-
-   assert(((const Con*)b)->sid == CON_SID);
-
-   if (((const Con*)a)->sid == CON_SID)
-      return(strcmp(((const Con*)a)->name, ((const Con*)b)->name));
-   
-   return(strcmp((const char*)a, ((const Con*)b)->name));
-}   
-
 void lps_alloc(
    const char* name)
 {
@@ -303,8 +265,8 @@ void lps_alloc(
    lp->con_root = NULL;
    lp->sto_root = NULL;
    lp->next     = NULL;
-   lp->var_tree = rbt_init(tree_size, var_name_cmp);
-   lp->con_tree = rbt_init(tree_size, con_name_cmp);
+   lp->var_hash = hash_new(HASH_VAR, HASH_BUCKETS);
+   lp->con_hash = hash_new(HASH_CON, HASH_BUCKETS);
    
    assert(lps_valid());
 }
@@ -320,8 +282,8 @@ void lps_free()
    
    assert(lps_valid());
 
-   rbt_exit(lp->var_tree);
-   rbt_exit(lp->con_tree);
+   hash_free(lp->var_hash);
+   hash_free(lp->con_hash);
    
    for(sto = lp->sto_root; sto != NULL; sto = sto_next)
    {
@@ -384,15 +346,15 @@ void lps_number()
    assert(i == lp->cons);
 }
 
-Var* lps_getvar(
+const Var* lps_getvar(
    const char* name)
 {
-   Var* vr;
+   const Var* vr;
    
    assert(lps_valid());
    assert(name != NULL);
 
-   vr = rbt_search(lp->var_tree, name);
+   vr = hash_lookup_var(lp->var_hash, name);
 
    assert((vr == NULL) || (vr->sid == VAR_SID));
    assert((vr == NULL) || (!strcmp(vr->name, name)));
@@ -411,15 +373,15 @@ Var* lps_getvar(
    return vr;
 }
    
-Con* lps_getcon(
+const Con* lps_getcon(
    const char* name)
 {
-   Con* cr;
+   const Con* cr;
    
    assert(lps_valid());
    assert(name != NULL);
     
-   cr = rbt_search(lp->con_tree, name);
+   cr = hash_lookup_con(lp->con_hash, name);
 
    assert((cr == NULL) || (cr->sid == CON_SID));
    assert((cr == NULL) || (!strcmp(cr->name, name)));
@@ -511,7 +473,7 @@ Var* lps_addvar(
    }
    lp->vars++;
 
-   rbt_insert(lp->var_tree, v, RBT_STORE_REFERENCE);
+   hash_add_var(lp->var_hash, v);
 
    if (type != VAR_CON)
       lp->type = LP_IP;
@@ -558,7 +520,7 @@ Con* lps_addcon(
    }
    lp->cons++;
 
-   rbt_insert(lp->con_tree, c, RBT_STORE_REFERENCE);
+   hash_add_con(lp->con_hash, c);
 
    assert(lps_valid());
 
@@ -674,6 +636,36 @@ double lps_getval(const Nzo* nzo)
    assert(nzo != NULL);
 
    return nzo->value;
+}
+
+unsigned int lps_hash(const char* s)
+{
+   unsigned int hcode = 0;
+   
+   /* I am not too sure this works well for 64bit integers.
+    */
+   assert(sizeof(hcode) == 4); 
+
+   for(; *s != '\0'; s++)
+      hcode = DISPERSE((unsigned char)*s + hcode);
+
+   return hcode;
+}
+
+const char* lps_varname(const Var* var)
+{
+   assert(var               != NULL);
+   assert(var->name         != NULL);
+
+   return var->name;
+}
+
+const char* lps_conname(const Con* con)
+{
+   assert(con               != NULL);
+   assert(con->name         != NULL);
+
+   return con->name;
 }
 
 void lps_setdir(
