@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.15 2003/09/09 11:13:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.16 2004/04/12 07:04:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -32,19 +32,26 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
 #include "mme.h"
 
 #define HASH_SID      0x48617368
 
 typedef struct hash_element HElem;
+typedef struct set_elem_idx SetElemIdx;
+
+struct set_elem_idx
+{
+   const Elem* elem;
+   int         idx;
+};
 
 struct hash_element
 {
    union
    {
-      const Tuple* tuple;
+      //      const Tuple* tuple;
       const Entry* entry;
+      SetElemIdx   elem_idx;
    } value;
    HElem* next;
 };
@@ -134,6 +141,7 @@ Bool hash_is_valid(const Hash* hash)
       && SID_ok(hash, HASH_SID));
 }
 
+#if 0 // wird nicht gebraucht !!! ???
 void hash_add_tuple(Hash* hash, const Tuple* tuple)
 {
    HElem*       he = calloc(1, sizeof(*he));
@@ -150,6 +158,8 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
    hash->bucket[hcode] = he;
    hash->elems++;
 }
+#endif
+
 
 void hash_add_entry(Hash* hash, const Entry* entry)
 {
@@ -169,42 +179,8 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    hash->bucket[hcode] = he;
    hash->elems++;
 }
-#if 0
-void hash_add_con(Hash* hash, const Con* con)
-{
-   HElem*       he = calloc(1, sizeof(*he));
-   unsigned int hcode;
 
-   assert(hash_is_valid(hash));
-   assert(con        != NULL);
-   assert(hash->type == HASH_CON);
-   assert(he         != NULL);
-   
-   hcode               = lps_hash(lps_conname(con)) % hash->size;
-   he->value.con       = con;
-   he->next            = hash->bucket[hcode];
-   hash->bucket[hcode] = he;
-   hash->elems++;
-}
-
-void hash_add_var(Hash* hash, const Var* var)
-{
-   HElem*       he = calloc(1, sizeof(*he));
-   unsigned int hcode;
-
-   assert(hash_is_valid(hash));
-   assert(var        != NULL);
-   assert(hash->type == HASH_VAR);
-   assert(he         != NULL);
-   
-   hcode               = lps_hash(lps_varname(var)) % hash->size;
-   he->value.var       = var;
-   he->next            = hash->bucket[hcode];
-   hash->bucket[hcode] = he;
-   hash->elems++;
-}
-#endif
-
+#if 0 // wird im moment nicht gebraucht !!!???
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
@@ -219,6 +195,7 @@ Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 
    return he != NULL;
 }
+#endif
 
 Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 {
@@ -259,54 +236,44 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
    return he->value.entry;
 }
 
-#if 0
-/* Liefert NULL wenn nicht gefunden.
- */
-const Con* hash_lookup_con(const Hash* hash, const char* name)
+void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
 {
-   unsigned int hcode = lps_hash(name) % hash->size;
+   HElem*       he = calloc(1, sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_is_valid(hash));
+   assert(tuple_is_valid(tuple));
+   assert(he != NULL);
+   
+   hcode               = elem_hash(elem) % hash->size;
+   he->elem            = elem;
+   he->idx             = idx;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+}
+
+/* Liefert -1 wenn nicht gefunden.
+ */
+int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
+{
+   unsigned int hcode = elem_hash(elem) % hash->size;
    HElem*       he    = NULL;
    
    assert(hash_is_valid(hash));
-   assert(name != NULL);
+   assert(elem_is_valid(elem));
 
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
-      if (!strcmp(lps_conname(he->value.con), name))
+      if (!elem_cmp(he->elem, elem))
          break;
 
    if (he == NULL)
-      return NULL;
+      return -1;
 
    assert(he != NULL);
-   assert(he->value.con != NULL);
 
-   return he->value.con;
+   return he->idx;
 }
-
-/* Liefert NULL wenn nicht gefunden.
- */
-const Var* hash_lookup_var(const Hash* hash, const char* name)
-{
-   unsigned int hcode = lps_hash(name) % hash->size;
-   HElem*       he    = NULL;
-   
-   assert(hash_is_valid(hash));
-   assert(name != NULL);
-
-   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
-      if (!strcmp(lps_varname(he->value.var), name))
-         break;
-
-   if (he == NULL)
-      return NULL;
-
-   assert(he != NULL);
-   assert(he->value.var != NULL);
-
-   return he->value.var;
-}
-#endif
-
 
 static void hash_statist(FILE* fp, const Hash* hash)
 {

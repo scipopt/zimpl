@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.54 2003/10/27 13:57:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.55 2004/04/12 07:04:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -87,7 +87,9 @@ typedef struct bound             Bound;
 typedef enum element_type        ElemType;
 typedef struct element           Elem;
 typedef struct tuple             Tuple;
-typedef struct set               Set;
+//???!!!typedef struct set               Set;
+typedef union set          Set;
+/////////////////////////////
 typedef enum set_add_type        SetAddType;
 typedef enum set_check_type      SetCheckType;
 typedef struct entry             Entry;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.25 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.26 2004/04/12 07:04:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -455,6 +455,9 @@ void code_errmsg(const CodeNode* node)
       stmt_get_lineno(node->stmt));
 
    show_source(stderr, stmt_get_text(node->stmt), node->column);
+
+   if (verbose >= VERB_CHATTER)
+      local_print_all(stderr);
 }
 
 inline CodeNode* code_eval(CodeNode* node)

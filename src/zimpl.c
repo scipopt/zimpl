@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.52 2003/10/29 17:47:25 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.53 2004/04/12 07:04:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -55,16 +55,16 @@ int verbose = VERB_NORMAL;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 2.01  Copyright (C)2003 by Thorsten Koch *\n" \
+"* Release %-5s Copyright (C)2003 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
-"****************************************************\n";
+"****************************************************\n\n";
 
-static const char* options = "bD:fF:hn:o:Ort:v:";
+static const char* options = "bD:fF:hn:o:Ort:v:V";
 static const char* usage =
-"usage: %s [-bfhOr][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] filename\n";
+"usage: %s [-bfhOrV][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] file ...\n";
 
 static const char* help =
 "\n" \
@@ -81,6 +81,7 @@ static const char* help =
 "  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
 "                 or human readable HUM.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
+"  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
 "\n" ; 
 
@@ -255,6 +256,7 @@ int main(int argc, char* const* argv)
          param_count++;
          break;
       case 'h' :
+         printf(banner, VERSION);
          printf(usage, argv[0]);
          puts(help);
          exit(0);
@@ -322,6 +324,10 @@ int main(int argc, char* const* argv)
       case 'v' :
          verbose = atoi(optarg);
          break;
+      case 'V' :
+         printf("%s\n", VERSION);
+         exit(0);
+         break;
       case '?':
          fprintf(stderr, usage, argv[0]);
          exit(0);
@@ -336,7 +342,7 @@ int main(int argc, char* const* argv)
    }
 
    if (verbose >= VERB_NORMAL)
-      puts(banner);
+      printf(banner, VERSION);
    
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));

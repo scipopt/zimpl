@@ -1,3 +1,12 @@
+Schnelleren hash-code von numb über nenner/zaehler
+außerdem ggf im Tuple cachen.
+
+AND OR XOR mit variablen einfach als audruck für binärvariablen erlauben.
+z.b.  x[i] AND x[j] == 1
+
+
+Schneller machen, insbesonder <i,p> in I wenn p schon gesetzt ist dauert viel zu lange. Direkten zugrif auf die submenge einrichten.
+
 Einige Systeme zählen in check.sh nur die
 ersten 16, dann nicht weiter.
 
