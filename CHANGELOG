@@ -1,3 +1,13 @@
+ - Added new flag -p "filter" which pipes the output 
+   through the filter, enabling for example compression.
+   (Daniels idea)
+
+ - The output files will be created in the current directory,
+   if no -o flag is given. If it is present the name and path
+   given will be used.
+
+ - New possible value infinit/-infinity for upper/lower bounds.
+
  - We might display a warning if writing to a file fails 
    somewhere in the middle.
 

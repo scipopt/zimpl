@@ -52,8 +52,6 @@ ewtl bei lp_format etwas längere Dateinamen
 
 default für parameter
 
-sum verschachtlung überprüfung
-
 shortcummings and Tips&Trick Abschnitt
 
 check statement mit forall als reductionsoperator expr* -> bool

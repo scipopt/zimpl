@@ -1,5 +1,6 @@
 -passes(1)
 -I/usr/local/lib/flexelint/posix
++libh(lint.h)
 -function(exit,_assert)
 -function(exit,__assert)
 -function(exit,__assertfail)

@@ -1,4 +1,4 @@
-#ident "@(#) $Id: lint.h,v 1.1 2002/07/24 13:39:41 bzfkocht Exp $"
+#ident "@(#) $Id: lint.h,v 1.2 2002/11/25 09:08:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -34,18 +34,22 @@
 
 /* Unfortunately strdup() is not a POSIX function.
  */
-/*lint -esym(526, strdup) */
 /*lint -sem(strdup, nulterm(1), malloc(1p), 1p, @p > 0) */ 
 extern char* strdup(const char* s);
 
 /*lint -esym(757, optarg, optind, opterr, optopt) */
-/*lint -esym(526, getopt, optarg, optind, opterr, optopt) */
 /*lint -sem(getopt, 1n > 0 && 2p && 3p) */
 extern int getopt(int argc, char* const argv[], const char* optstring);
 extern char* optarg;
 extern int optind;
 extern int opterr;
 extern int optopt;
+
+/*lint -function(fopen, popen) */
+extern FILE* popen(const char *command, const char *type);
+/*lint -function(fclose, pclose) */
+/*lint -esym(534, pclose) */
+extern int   pclose(FILE *stream);
 
 #endif /* _LINT_H_ */
 #endif /* _lint */

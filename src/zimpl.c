@@ -1,4 +1,4 @@
-#ident "$Id: zimpl.c,v 1.16 2002/11/11 21:17:36 bzfkocht Exp $"
+#ident "$Id: zimpl.c,v 1.17 2002/11/25 09:08:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -51,7 +51,7 @@ Bool zpldebug = FALSE;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release 1.05c Copyright (C)2002 by Thorsten Koch *\n" \
+"* Release 1.05d Copyright (C)2002 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
@@ -70,43 +70,52 @@ static const char* banner =
 "  -t lp|mps   select output format. Either LP (default) or MPS format.\n" \
 "  -o outfile  select name for the output file. Default is the name of\n" \
 "              the input file without extension.\n" \
+"  -p filter   filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  filename    is the name of the input ZPL file.\n" \
 "\n" ; 
 
-static char* extend_basename(const char* filename, const char* extension)
+static char* change_extention(const char* filename, const char* extension)
 {
-   const char* s;
-   const char* e;
-   char*       basename;
-   char*       t;
+   char* basename;
+   int   i;
    
    assert(filename != NULL);
    assert(strlen(filename) > 0);
    assert(extension != NULL);
+
+   basename = malloc(strlen(filename) + strlen(extension) + 1);
+
+   assert(basename != NULL);
+
+   strcpy(basename, filename);
    
-   s = strrchr(filename, '/');
-   s = (s == NULL) ? filename : s + 1;
-   e = strrchr(filename, '.');
+   /* clip old extention (if any)
+    */
+   for(i = strlen(basename) - 1; i >= 0; i--)
+      if (basename[i] == '/' || basename[i] == '.')
+         break;
 
-   if ((e == NULL) || (e < s))
-      e = filename + strlen(filename);
+   if (basename[i] == '.')
+      basename[i] = '\0';
 
-   if (s >= e)
+   if (strlen(basename) == 0)
    {
       fprintf(stderr, "*** Error: Bad filename \"%s\"\n", filename);
       abort();
    }
-   assert(e - s > 0);
-   
-   basename = malloc(e - s + strlen(extension) + 1);
-
-   assert(basename != NULL);
-   
-   for(t = basename; s < e; s++)
-      *t++ = *s;
-   *t = '\0';
-
    return strcat(basename, extension);
+}
+
+static const char* strip_path(const char* filename)
+{
+   const char* s;
+   
+   assert(filename != NULL);
+   assert(strlen(filename) > 0);
+   
+   s = strrchr(filename, '/');
+
+   return (s == NULL) ? filename : s + 1;
 }
 
 static void check_write_ok(FILE* fp, const char* filename)
@@ -121,13 +130,15 @@ static void check_write_ok(FILE* fp, const char* filename)
 int main(int argc, char* const* argv)
 {
    const char* usage =
-      "usage: %s [-h][-v][-r][-n cs|cn|cf][-t lp|mps][-o outfile] filename\n";
+      "usage: %s [-hvr][-n cs|cn|cf][-t lp|mps][-o outfile][-p filter] filename\n";
    
    Prog*       prog;
+   char*       filter   = NULL;
    char*       outfile  = NULL;
    char*       tblfile  = NULL;
    char*       ordfile  = NULL;
    char*       basefile = NULL;
+   char*       cmdpipe  = NULL;
    LpForm      format   = LP_FORM_LPF;
    FILE*       fp;
    Bool        write_order = FALSE;
@@ -137,7 +148,7 @@ int main(int argc, char* const* argv)
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   while((c = getopt(argc, argv, "bdfhn:o:rt:v")) != -1)
+   while((c = getopt(argc, argv, "bdfhn:o:p:rt:v")) != -1)
    {
       switch(c)
       {
@@ -178,6 +189,9 @@ int main(int argc, char* const* argv)
       case 'o' :
          basefile = strdup(optarg);
          break;
+      case 'p' :
+         filter = strdup(optarg);
+         break;
       case 'r' :
          write_order = TRUE;
          break;
@@ -186,7 +200,7 @@ int main(int argc, char* const* argv)
          break;
       case 'v' :
          verbose = TRUE;
-         break;         
+         break;
       case '?':
          fprintf(stderr, usage, argv[0]);
          exit(0);
@@ -199,13 +213,20 @@ int main(int argc, char* const* argv)
       fprintf(stderr, usage, argv[0]);      
       exit(0);
    }
-   outfile = extend_basename(
-      (basefile == NULL) ? argv[optind] : basefile,
+   if (basefile == NULL)
+      basefile = strdup(strip_path(argv[optind]));
+   
+   outfile = change_extention(basefile,
       (format == LP_FORM_LPF) ? ".lp" : ".mps");
-   tblfile = extend_basename(
-      (basefile == NULL) ? argv[optind] : basefile, ".tbl");
-   ordfile = extend_basename(
-      (basefile == NULL) ? argv[optind] : basefile, ".ord");
+   tblfile = change_extention(basefile, ".tbl");
+   ordfile = change_extention(basefile, ".orf");
+
+   if (filter == NULL)
+      filter = strdup("cat >%s");
+
+   cmdpipe = malloc(strlen(basefile) + strlen(filter) + 256);
+
+   assert(cmdpipe != NULL);
    
    str_init();
    elem_init();
@@ -222,16 +243,16 @@ int main(int argc, char* const* argv)
 
    prog_execute(prog);
 
-   if (verbose)
-      printf("Generating output\n");
-   
-   //mem_display(stderr);
-   
    lps_scale();
    
    /* Write Output
     */
-   if (NULL == (fp = fopen(outfile, "w")))
+   sprintf(cmdpipe, filter, outfile);
+
+   if (verbose)
+      printf("Writing [%s]\n", cmdpipe);
+   
+   if (NULL == (fp = popen(cmdpipe, "w")))
    {
       fprintf(stderr, "*** Error: when writing file %s", outfile);
       perror(" ");
@@ -241,11 +262,16 @@ int main(int argc, char* const* argv)
 
    check_write_ok(fp, outfile);
    
-   fclose(fp);
+   pclose(fp);
 
    /* Write translation table
     */
-   if (NULL == (fp = fopen(tblfile, "w")))
+   sprintf(cmdpipe, filter, tblfile);
+
+   if (verbose)
+      printf("Writing [%s]\n", cmdpipe);
+
+   if (NULL == (fp = popen(cmdpipe, "w")))
    {
       fprintf(stderr, "*** Error: when writing file %s", tblfile);
       perror(" ");
@@ -255,13 +281,18 @@ int main(int argc, char* const* argv)
 
    check_write_ok(fp, tblfile);
 
-   fclose(fp);
+   pclose(fp);
 
    /* Write order file 
     */
    if (write_order)
    {
-      if (NULL == (fp = fopen(ordfile, "w")))
+      sprintf(cmdpipe, filter, ordfile);
+
+      if (verbose)
+         printf("Writing [%s]\n", cmdpipe);
+
+      if (NULL == (fp = popen(cmdpipe, "w")))
       {
          fprintf(stderr, "*** Error: when writing file %s", ordfile);
          perror(" ");
@@ -271,7 +302,7 @@ int main(int argc, char* const* argv)
 
       check_write_ok(fp, ordfile);
       
-      fclose(fp);
+      pclose(fp);
    }
    
    if (zpldebug) 
@@ -290,9 +321,8 @@ int main(int argc, char* const* argv)
    free(ordfile);
    free(outfile);
    free(tblfile);
-
-   if (basefile != NULL)
-      free(basefile);
+   free(basefile);
+   free(filter);
    
    mem_display(stderr);
 #endif /* __INSURE__ || !NDEBUG || FREEMEM */

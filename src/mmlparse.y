@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.26 2002/11/04 07:14:57 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.27 2002/11/25 09:08:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -63,7 +63,7 @@ extern void yyerror(const char* s);
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO BY FORALL EMPTY_TUPLE EXISTS
 %token PRIORITY STARTVAL
-%token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE
+%token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR NOT
 %token SUM MIN MAX
 %token IF THEN ELSE END
@@ -214,30 +214,32 @@ decl_var
    ;
 
 var_type
-   : /* empty */ { $$ = code_new_vartype(VAR_CON); }
-   | REAL        { $$ = code_new_vartype(VAR_CON); }
-   | INTEGER     { $$ = code_new_vartype(VAR_INT); }
-   | BINARY      { $$ = code_new_vartype(VAR_BIN); }
+   : /* empty */      { $$ = code_new_vartype(VAR_CON); }
+   | REAL             { $$ = code_new_vartype(VAR_CON); }
+   | INTEGER          { $$ = code_new_vartype(VAR_INT); }
+   | BINARY           { $$ = code_new_vartype(VAR_BIN); }
    ;
 
 lower
-   : /* empty */ { $$ = code_new_numb(0.0); }
-   | CMP_GE expr { $$ = $2; }
+   : /* empty */      { $$ = code_new_numb(0.0); }
+   | CMP_GE expr      { $$ = $2; }
+   | CMP_GE '-' INFTY { $$ = code_new_numb(-INFINITY); }
    ;
 
 upper
-   : /* empty */ { $$ = code_new_numb(INFINITY); }
-   | CMP_LE expr { $$ = $2; }
+   : /* empty */      { $$ = code_new_numb(INFINITY); }
+   | CMP_LE expr      { $$ = $2; }
+   | CMP_LE INFTY     { $$ = code_new_numb(INFINITY); }
    ;
 
 priority
-   : /* empty */   { $$ = code_new_numb(0.0); }
-   | PRIORITY expr { $$ = $2; }
+   : /* empty */      { $$ = code_new_numb(0.0); }
+   | PRIORITY expr    { $$ = $2; }
    ;
 
 startval
-   : /* empty */   { $$ = code_new_numb(INFINITY); }
-   | STARTVAL expr { $$ = $2; }
+   : /* empty */      { $$ = code_new_numb(INFINITY); }
+   | STARTVAL expr    { $$ = $2; }
    ;
 
 /* ----------------------------------------------------------------------------
