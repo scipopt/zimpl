@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.54 2003/09/01 06:31:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.55 2003/09/01 08:27:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1139,6 +1139,23 @@ CodeNode* i_set_new_elem(CodeNode* self)
    return self;
 }
 
+CodeNode* i_set_pseudo(CodeNode* self)
+{
+   Set* set;
+   
+   Trace("i_set_pseudo");
+
+   assert(code_is_valid(self));
+
+   set = set_new(0, 1);
+
+   set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
+
+   code_value_set(self, set);
+
+   return self;
+}
+
 CodeNode* i_set_empty(CodeNode* self)
 {
    Set* set;
@@ -1150,9 +1167,6 @@ CodeNode* i_set_empty(CodeNode* self)
 
    dim = code_eval_child_size(self, 0);
    set = set_new(dim, 1);
-
-   if (dim == 0)
-      set_add_member(set, tuple_new(0), SET_ADD_END, SET_CHECK_NONE);
 
    code_value_set(self, set);
 

@@ -1,3 +1,10 @@
+ - Bug fixed, that resulted in an unreadable LP file 
+   if the index set of the variable has negative 
+   numbers. 
+
+ - Fixed bug, that cut extensions from basenames 
+   given by -o .
+
  - Fixed internal bug with bool not function.
 
  - We now get an error message instead of an abort()

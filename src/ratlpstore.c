@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.12 2003/08/22 15:53:45 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.13 2003/09/01 08:27:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1497,15 +1497,22 @@ void lps_makename(
    char  temp[16];
    int   len;
    int   i;
+   int   nlen;
 
    assert(target != NULL);
    assert(size   >= 9);         /* so we have at lest '#' + 7 + '\0' */
    assert(name   != NULL);
    assert(no     >= 0);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
+
+   nlen = strlen(name);
    
-   if (strlen(name) < (size_t)size)
-      strcpy(target, name);
+   if (nlen < size)
+   {
+      for(i = 0; i < nlen; i++)
+         target[i] = isalnum(name[i]) ? name[i] : '_';
+      target[i] = '\0';
+   }
    else
    {
       /* The 16 is to make sure the %x later has enough room
@@ -1515,18 +1522,19 @@ void lps_makename(
       /* -2 : fuer '#' und '\0'
        */
       len = size - (int)strlen(temp) - 2;
-
+   
       assert(len >= 0);
      
-      for(i = 0; i < len; i++)      
+      for(i = 0; i < len; i++)
          target[i] = isalnum(name[i]) ? name[i] : '_';
-
+         
       target[i++] = '#';
 
       strcpy(&target[i], temp);
-   
+
       assert(strlen(target) == (size_t)size - 1);
-   }
+   }   
+   assert(strlen(target) <= (size_t)size - 1);
 }
 
 void lps_transtable(const Lps* lp, FILE* fp, int namelen, const char* head)

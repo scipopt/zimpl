@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.44 2003/09/01 06:31:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.45 2003/09/01 08:27:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -132,7 +132,7 @@ decl_set
             code_new_name($2),                                       /* Name */
             code_new_inst(i_idxset_new, 3,                      /* index set */
                code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             $4);                                              /* initial set */
       }
@@ -153,7 +153,7 @@ decl_set
             code_new_name($2),                                       /* Name */
             code_new_inst(i_idxset_new, 3,                      /* index set */
                code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             $6);                                   /* initial set_entry_list */
       }
@@ -193,7 +193,7 @@ decl_par
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
                code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             code_new_inst(i_entry_list_new, 1,
                code_new_inst(i_entry, 2,
@@ -230,7 +230,7 @@ decl_var
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
                code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             $3, $4, $5, $6, $7);
       }
@@ -239,7 +239,7 @@ decl_var
             code_new_name($2),
             code_new_inst(i_idxset_new, 3,
                code_new_inst(i_tuple_empty, 0),
-               code_new_inst(i_set_empty, 1, code_new_size(0)),
+               code_new_inst(i_set_pseudo, 0),
                code_new_inst(i_bool_true, 0)),
             code_new_varclass(VAR_BIN),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),

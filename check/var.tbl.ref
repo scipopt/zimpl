@@ -27,9 +27,15 @@ zimpl	v      25	y_2             	"y_2"
 zimpl	v      26	y_3             	"y_3"
 zimpl	v      27	y_4             	"y_4"
 zimpl	v      28	y_5             	"y_5"
+zimpl	v      29	z__5            	"z_-5"
+zimpl	v      30	z__4            	"z_-4"
+zimpl	v      31	z__3            	"z_-3"
+zimpl	v      32	z__2            	"z_-2"
+zimpl	v      33	z__1            	"z_-1"
 zimpl	c       0	ca1_1           	"ca1_1"	0.0000000000000000e+00
 zimpl	c       1	cb1_1           	"cb1_1"	0.0000000000000000e+00
 zimpl	c       2	cc1_1           	"cc1_1"	0.0000000000000000e+00
 zimpl	c       3	cd1_1           	"cd1_1"	0.0000000000000000e+00
 zimpl	c       4	ce1_1           	"ce1_1"	0.0000000000000000e+00
 zimpl	c       5	cy_1            	"cy_1"	0.0000000000000000e+00
+zimpl	c       6	cd_1            	"cd_1"	0.0000000000000000e+00

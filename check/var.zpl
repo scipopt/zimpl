@@ -24,6 +24,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 set I := { 1 .. 5 };
+set K := { -5 .. -1 };
 
 var a1;
 var b1 real;
@@ -46,6 +47,7 @@ var e6 integer <= 10 startval 5;
 var e7 integer >= 2 <= 6 priority 15 startval 4;
 var x[I];
 var y[<i> in I] integer >= -5 * i <= 6 * i priority 3 startval i;
+var z[K];
 
 subto ca1: a1 + sum <i> in I : x[i] >= 17;
 subto cb1: b1 + b2 + b3 + b4 <= 99;
@@ -53,4 +55,5 @@ subto cc1: c1 + c2 + c3 <= 77;
 subto cd1: d1 + d2 + d3 + d4>= 2;
 subto ce1: e1 + e2 + e3 + e4 + e5 + e6 + e7 <= 18;
 subto cy: sum <i> in I : y[i] == -6;
+subto cd: sum <k> in K : k * z[k] <= -8; 
 

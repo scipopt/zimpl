@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.5 2003/08/20 11:34:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.6 2003/09/01 08:27:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -160,7 +160,7 @@ extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
 /* ratordwrite.c
  */
 /*lint -sem(        lps_ordwrite, 1p == 1 && 2p == 1) */
-extern void         lps_orderfile(const Lps* lp, FILE* fp);
+extern void         lps_orderfile(const Lps* lp, FILE* fp, int namelen, const char* text);
 
 /* ratpresolve.c
  */

@@ -1,8 +1,8 @@
-{} EMPTY SET ist drin, funktioniert aber nicht, weil
-die definition von EmptySet nicht klar ist 
-(hat ein tuple dimension 0 ?) Was kommt bei set_inter raus
-wenn die menge leer ist.
+option fuer gerneiruung von kurzen variablenamen (nur x#262626)
+überprüfen ob man mit unterschiedlichen strings gleiche namen bekommen kann.
 
+set check erweitern fuer mengenoperationen inbesondere auch
+boolsche mit der leeren menge. s.u.
 
 Tests für boolsche operatoren. z.B. not wird nirgends getestet.
 

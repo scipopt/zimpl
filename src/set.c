@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.c,v 1.18 2003/08/20 14:45:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.c,v 1.19 2003/09/01 08:27:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -70,9 +70,10 @@ Set* set_new(int dim, int estimated_size)
    set->dim     = dim;
    set->hash    = hash_new(HASH_TUPLE, estimated_size);
    
-   /* Falls wir dim == 0 haben, liefert das nachfolgende calloc je
+   /* Falls wir size == 0 haben, liefert das nachfolgende calloc je
     * nach Implementierung einen pointer oder NULL zurueck.
-    * Um die sonderfaelle mit der NULL auszuschliessen, also...
+    * Um die sonderfaelle mit der NULL auszuschliessen, also
+    * size == 1.
     */
    set->member = calloc((size_t)set->size, sizeof(*set->member));
 
@@ -456,9 +457,19 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
 
+   /* If A is the empty set and B is non empty,
+    * A is a subset of B
+    */
+   if (set_a->used == 0)
+      return TRUE;
+   
    if (set_a->dim != set_b->dim)
    {
+      fprintf(stderr, "B %d %d\n", set_a->used, set_b->used);
+   
       fprintf(stderr, "*** Warning: Comparison of differen dimension sets.\n");
+      set_print(stderr, set_a);
+      set_print(stderr, set_b);
       return FALSE;
    }
    if (set_a->used > set_b->used)
