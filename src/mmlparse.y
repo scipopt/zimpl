@@ -1,5 +1,5 @@
 %{
-#ident "@(#) $Id: mmlparse.y,v 1.21 2002/09/15 08:53:20 bzfkocht Exp $"
+#ident "@(#) $Id: mmlparse.y,v 1.22 2002/10/08 15:41:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -287,6 +287,10 @@ term
 
 subterm
    : summand '*' expr       { $$ = code_new_inst(i_term_coeff, 2, $1, $3); }
+   | summand '/' expr       {
+         $$ = code_new_inst(i_term_coeff, 2, $1,
+            code_new_inst(i_expr_div, 2, code_new_numb(1.0), $3));
+      }
    | summand                { $$ = $1; }
    | expr %prec TERMOP      { $$ = code_new_inst(i_term_expr, 1, $1); }
    | expr '+' summand       { $$ = code_new_inst(i_term_const, 2, $3, $1); }
