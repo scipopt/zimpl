@@ -24,5 +24,17 @@ hr {
    vertical-align: bottom;
 }
 
+img.logo {
+   border-style:   none;
+   border:         0px;
+   vertical-align: bottom;
+   float:          right;
+}
+
+img.inline {
+   border-style:   none;
+   border:         0px;
+   vertical-align: baseline;
+}
 
 
