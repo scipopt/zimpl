@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.21 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.22 2005/03/02 20:49:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -71,8 +71,9 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
          if (cnt > 0)
          {
             (*buf)[cnt] = '\0';
-            fprintf(stderr, "--- Warning 162: Line %d: Trailing \"%.20s\" ignored\n",
-               *lineno, *buf);
+            if (verbose > VERB_QUIET)
+               fprintf(stderr, "--- Warning 162: Line %d: Trailing \"%.20s\" ignored\n",
+                  *lineno, *buf);
          }
          return NULL;
       }

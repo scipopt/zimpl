@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2004/05/15 15:18:08 bzfkocht Exp $
+# $Id: Makefile,v 1.5 2005/03/02 20:49:07 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -30,7 +30,7 @@
 all:		zimpl.pdf
 
 zimpl.ps:	zimpl.dvi
-		dvips -o $@ zimpl.dvi
+		dvips -ta4 -O0in,-1in -o $@ zimpl.dvi
 
 zimpl.pdf:	zimpl.ps
 		ps2pdf13 zimpl.ps

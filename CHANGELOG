@@ -1,3 +1,7 @@
+ - If -v=0 ist set, most warnings are now suppressed.
+
+ - Documentation improved.
+
  - Applying union, minus, intersection, or symmetric
    difference to two sets with tuples that have different component
    types will now result in a useful error message.

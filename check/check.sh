@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.11 2004/05/29 11:29:35 bzfkocht Exp $
+# $Id: check.sh,v 1.12 2005/03/02 20:49:06 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -108,7 +108,7 @@ for i in w*.zpl
 do
    COUNT=`expr $COUNT + 1` 
    NAME=`basename $i .zpl`
-   ../$1 -v0 $i 2>$NAME.warn
+   ../$1 $i 2>$NAME.warn >/dev/null
    diff $NAME.warn $NAME.warn.ref >/dev/null
    case $? in
     0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;

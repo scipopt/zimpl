@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.83 2005/02/19 10:45:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.84 2005/03/02 20:49:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -663,8 +663,11 @@ CodeNode* i_expr_min(CodeNode* self)
    
    if (first)
    {
-      fprintf(stderr, "-- Warning 186: Minimizing over empty set -- zero assumed\n");
-      code_errmsg(code_get_child(self, 0));
+      if (verbose > VERB_QUIET)
+      {
+         fprintf(stderr, "-- Warning 186: Minimizing over empty set -- zero assumed\n");
+         code_errmsg(code_get_child(self, 0));
+      }
    }
    code_value_numb(self, min);
 
@@ -715,8 +718,11 @@ CodeNode* i_expr_max(CodeNode* self)
    
    if (first)
    {
-      fprintf(stderr, "-- Warning 187: Maximizing over empty set -- zero assumed\n");
-      code_errmsg(code_get_child(self, 0));
+      if (verbose > VERB_QUIET)
+      {
+         fprintf(stderr, "-- Warning 187: Maximizing over empty set -- zero assumed\n");
+         code_errmsg(code_get_child(self, 0));
+      }
    }
    code_value_numb(self, max);
 
@@ -2275,25 +2281,28 @@ CodeNode* i_newsym_var(CodeNode* self)
          bound_free(lower);
          lower = bound_new(BOUND_VALUE, numb_zero());
 
-         fprintf(stderr,
-            "--- Warning 136: Lower bound for var %s set to infinity -- ignored\n",
-            name);
+         if (verbose > VERB_QUIET)
+            fprintf(stderr,
+               "--- Warning 136: Lower bound for var %s set to infinity -- ignored\n",
+               name);
       }
       if (bound_get_type(upper) == BOUND_MINUS_INFTY)
       {
          bound_free(upper);
          upper = bound_new(BOUND_INFTY, NULL);
 
-         fprintf(stderr,
-            "--- Warning 137: Upper bound for var %s set to -infinity -- ignored\n",
-            name);
+         if (verbose > VERB_QUIET)
+            fprintf(stderr,
+               "--- Warning 137: Upper bound for var %s set to -infinity -- ignored\n",
+               name);
       }
 
       if ((varclass == VAR_CON)
          && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
-         fprintf(stderr,
-            "--- Warning 138: Priority/Startval for continous var %s ignored\n",
-            name);
+         if (verbose > VERB_QUIET)
+            fprintf(stderr,
+               "--- Warning 138: Priority/Startval for continous var %s ignored\n",
+               name);
       
       /* Integral bounds for integral variables ?
        */
@@ -2309,10 +2318,14 @@ CodeNode* i_newsym_var(CodeNode* self)
                bound_free(lower);
                lower = bound_new(BOUND_VALUE, temp);
                
-               fprintf(stderr,
-                  "--- Warning 139: Lower bound for integral var %s truncated to ", name);
-               numb_print(stderr, temp);
-               fputc('\n', stderr);
+               if (verbose > VERB_QUIET)
+               {
+                  fprintf(stderr,
+                     "--- Warning 139: Lower bound for integral var %s truncated to ",
+                     name);
+                  numb_print(stderr, temp);
+                  fputc('\n', stderr);
+               }
             }
             numb_free(temp);
          }
@@ -2326,10 +2339,14 @@ CodeNode* i_newsym_var(CodeNode* self)
                bound_free(upper);
                upper = bound_new(BOUND_VALUE, temp);
                
-               fprintf(stderr,
-                  "--- Warning 140: Upper bound for integral var %s truncated to ", name);
-               numb_print(stderr, temp);
-               fputc('\n', stderr);
+               if (verbose > VERB_QUIET)
+               {
+                  fprintf(stderr,
+                     "--- Warning 140: Upper bound for integral var %s truncated to ",
+                     name);
+                  numb_print(stderr, temp);
+                  fputc('\n', stderr);
+               }
             }
             numb_free(temp);
          }

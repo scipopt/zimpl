@@ -1,4 +1,5 @@
-% $Id: zimpl.tex,v 1.32 2005/02/09 08:56:12 bzfkocht Exp $
+% $Id: zimpl.tex,v 1.33 2005/03/02 20:49:07 bzfkocht Exp $
+% dvips -ta4 -O0in,-1in zimpl.dvi
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %*                                                                           *
 %*   File....: zimpl.tex                                                     *
@@ -8,7 +9,7 @@
 %*                                                                           *
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 \renewcommand{\rmdefault}{pmnj}
 \renewcommand{\ttdefault}{pcr}
 \renewcommand{\sfdefault}{pmy}
@@ -23,10 +24,12 @@
 \usepackage{epsfig}
 \usepackage{fancyhdr}
 \usepackage{xspace}
+\usepackage{multicol}
 \usepackage{url}
+\usepackage{color}
+\usepackage{booktabs}
 \usepackage{listings}
 %\usepackage{zibtitlepage}
-\usepackage[notoday,nofancy]{rcsinfo}
 \usepackage[dvips,%
 bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
 \hypersetup{%
@@ -35,9 +38,59 @@ pdfsubject={Zuse Institute Mathematical Programming Language Version 2.03},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimization, Algebraic Modeling Language}
 }
-\rcsInfo $Id: zimpl.tex,v 1.32 2005/02/09 08:56:12 bzfkocht Exp $
+%
+\definecolor{seagreen}{rgb}{0.18,0.74,0.56}
+\definecolor{darkgreen}{rgb}{0.0,0.35,0.00}
+\definecolor{navyblue}{rgb}{0.0,0.0,0.5}
+\definecolor{steelblue}{rgb}{0.27,0.51,0.71}
+\definecolor{siennabrown}{rgb}{0.63,0.32,0.18}
+\definecolor{firebrickred}{rgb}{0.69,0.13,0.13}
+\definecolor{gray75}{rgb}{0.75,0.75,0.75}
+%
+\lstloadlanguages{C}
+\lstdefinelanguage{mps}{%
+   keywords={NAME,ROWS,COLUMNS,RHS,BOUNDS,ENDATA},%
+   sensitive,%
+   keywordstyle=\color{navyblue},%
+}[keywords]%
+%
+\lstdefinelanguage{YACC}{%
+   keywords={\%token,\%type,\%left,\%right,\%union},%
+   sensitive,%
+   singlecomment={/*}{*/},%
+   stringizer=[b]',%
+   keywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue}%
+}[keywords,comments,strings]%
+%
+\lstdefinelanguage{zimpl}{%
+   keywords={set,var,param,minimize,maximize,subto},%
+   ndkeywords={read,as,comment,binary,integer,real,sum,forall,do,in,proj,vif,vabs,and,or,then,else,end},%
+   sensitive,%
+   showstringspaces=false,%
+   morecomment=[l]\#,
+   morestring=[b]",%
+   keywordstyle=\color{red},%
+   ndkeywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue}%
+}[keywords,comments,strings]%
+%
+\lstdefinestyle{myc}{%
+   basicstyle=\sffamily\footnotesize,%
+   numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1,%
+   keywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue},%
+   directivestyle=\color{firebrickred}%
+}
 %
 %\parindent0ex
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.2}
+\renewcommand{\floatpagefraction}{0.75}
 \setcounter{tocdepth}{2}
 \setcounter{secnumdepth}{2}
 \renewcommand{\labelitemi}{$\blacktriangleright$}
@@ -46,7 +99,10 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \newcommand{\ie}{{i.\,e.}\xspace}
 \newcommand{\zimpl}{{\sc Zimpl}\xspace}
 \newcommand{\lp}{{\sc lp}\xspace}
+\newcommand{\ip}{{\sc ip}\xspace}
+\newcommand{\cpu}{{\sc cpu}\xspace}
 \newcommand{\mip}{{\sc mip}\xspace}
+\newcommand{\tsp}{{\sc tsp}\xspace}
 \newcommand{\mps}{{\sc mps}\xspace}
 \newcommand{\lpf}{{\sc lp}\xspace}
 \newcommand{\ibm}{{\sc ibm}\xspace}
@@ -55,11 +111,14 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \newcommand{\ilog}{{\sc ilog}\xspace}
 \newcommand{\cplex}{{\sc cplex}\xspace}
 \newcommand{\code}[1]{{\tt #1}\xspace}
-\newcommand{\N}{\ensuremath{\mathbb{N}}}
-\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
-\newcommand{\BB}{\ensuremath{\{0,1\}}}%
+\newcommand{\NN}{\ensuremath{\mathbb{N}}}
+\newcommand{\NNZ}{\ensuremath{\mathbb{N}_0}}
+\newcommand{\ZZ}{\ensuremath{\mathbb{Z}}}
+\newcommand{\BB}{\ensuremath{\{0,1\}}}
+\newcommand{\fa}{\ensuremath{\text{for all }}}
+%
 \headheight5mm
-\renewcommand{\footrulewidth}{\headrulewidth}
+%\renewcommand{\footrulewidth}{\headrulewidth}
 \lhead{\zimpl}
 \chead{}
 \rhead{}
@@ -90,7 +149,7 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \zimpl is a little language to translate the mathematical model of a 
 problem into a linear or (mixed-)integer mathematical program
 expressed in \lpf or \mps file format which can be read
-by a \lp or \mip solver.
+and (hopefully) solved by a \lp or \mip solver.
 \end{abstract}
 % -----------------------------------------------------------------------------
 % --- Introduction
@@ -99,15 +158,17 @@ by a \lp or \mip solver.
 \begin{flushright}
 {\em May the source be with you, Luke!}
 \end{flushright}
-Most of the things in \zimpl (and a lot more) can be found in 
+Many of the things in \zimpl (and a lot more) can be found in 
 the excellent book about the modeling language \ampl 
 from Robert Fourer, David N. Gay and Brian W. Kernighan
-\cite{FourierGrayKernighan2003}.
+\cite{FourierGayKernighan2003}. Those interested in an overview of the
+current state-of-the-art in (commercial) modeling languages might have
+a look at \cite{Kallrath2004}.
 %Indeed if not the guys at \ilog had needed more than three months just
 %to tell me the price of \ampl for \cplex, I would probably use
 %\ampl today.
 %On the other hand, 
-But having the source code of a program has its advantages. The
+Having the source code of a program has its advantages. The
 possibility to run it regardless of architecture and operating system, the
 ability to modify it to suite the needs, and not having to hassle with license
 managers may make a much less powerful program the better choice.
@@ -118,8 +179,9 @@ By now \zimpl has grown up and matured. It has been used in several
 industry projects and university lectures, showing that it is able to
 cope with large scale models and also with students.
 This would have not been possible without my early adopters 
-Armin F\"ugenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas
-and Tobias Achterberg. Thanks for there comments and bug reports.
+Armin F\"ugenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas, J\"org
+Rambau and Tobias Achterberg. Thanks for there comments and bug
+reports.
 
 \bigskip
 \zimpl is licensed under the GNU general public license version 2.
@@ -132,6 +194,19 @@ But do not forget to
 include an example that shows the problem.
 If somebody extends \zimpl, I am interested in getting patches
 to include them in the main distribution.
+
+\bigskip
+\noindent\emph{The best way to refer to \zimpl in a publication is to cite my
+  PhD thesis \cite{Koch2004}}
+\begin{verbatim}
+   @PHDTHESIS{Koch2004,
+      author      = "Thorsten Koch",
+      title       = "Rapid Mathematical Programming",
+      school      = "Technische {Universit\"at} Berlin",
+      year        = "2004",
+   }   
+\end{verbatim}
+
 %--------------------------------------------------------------------------------------
 \include{zimplug}
 %--------------------------------------------------------------------------------------
@@ -145,8 +220,6 @@ can produce:
 \small
 \bibliographystyle{alpha}
 \bibliography{zimpl}
-
-{\vfill\tiny\hfill\fbox{\rcsInfoRevision}}
 \end{document}
 
 

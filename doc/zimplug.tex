@@ -14,18 +14,18 @@ $$
 The standard format used to feed such a problem into a solver 
 is called \mps.
 \ibm invented it for the Mathematical
-Programming System/360 \citep{Kallrath2004b,Spielberg2004} in the sixties.
+Programming System/360 \cite{Kallrath2004b,Spielberg2004} in the sixties.
 Nearly all available \lp and \mip solvers can read this format.
 While \mps is a nice format to punch into a punch card and at least a
 reasonable format to read for a computer, it is quite unreadable
 for humans. For instance, the \mps file of the above linear program
-looks as shown in Figure~\ref{fig:mps-file}. 
+looks as follows:
 
-\begin{figure}[hbtp]
+\medskip
 \lstset{language=mps,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
-\begin{lstlisting}[frame=b]{}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[frame=]{}
     NAME        ex1.mps
     ROWS
      N  OBJECTIV          
@@ -42,11 +42,9 @@ labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
      LO BND       y                    0
     ENDATA
 \end{lstlisting}
-\caption{\mps file format example}
-\label{fig:mps-file}
-\end{figure}
 
-Another possibility is the \lpf format \cite{CPlex80}, which is more
+\bigskip
+\noindent Another possibility is the \lpf format \cite{CPlex80}, which is more
 readable\footnote{
 The \lpf format has also some idiosyncratic restrictions. For example
 variables should not be named \code{e12} or the like. And it is not
@@ -62,12 +60,12 @@ but is only supported by a few solvers.
    End
 \end{verbatim}
 }
-But since each coefficient of the matrix $A$ must be stated
+\noindent But since each coefficient of the matrix $A$ must be stated
 explicitly it is also not a desirable choice to develop a mathematical
 model.
 
 \medskip
-Now, with \zimpl it is possible to write this:
+\noindent Now, with \zimpl it is possible to write this:
 {\small
 \begin{verbatim}
    var x;
@@ -76,10 +74,10 @@ Now, with \zimpl it is possible to write this:
    subto c1: x + y <= 6;
 \end{verbatim}
 }
-and have it automatically translated into \mps or \lpf format.
+\noindent and have it automatically translated into \mps or \lpf format.
 While this looks not much different from what is in the \lpf format,
 the difference can be seen, if we use indexed variables.
-Here is an example. This is the \lp 
+Here is an example. This is the \lp: 
 $$
 \begin{array}{rl}
 \min& 2 x_1 + 3 x_2 + 1.5 x_3\\
@@ -87,17 +85,19 @@ $$
 &x_i\ge 0\\
 \end{array}
 $$
-And this is how to tell it to \zimpl
-{
-\small
-\begin{verbatim}
-set I      := { 1 to 3 };
-param c[I] := <1> 2, <2> 3, <3> 1.5;
-var   x[I] >= 0;
-minimize cost: sum <i> in I : c[i] * x[i];
-subto    cons: sum <i> in I : x[i] <= 6;
-\end{verbatim}
-}
+And this is how to tell it to \zimpl:
+
+\medskip
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[frame=]{}
+   set I      := { 1 to 3 };
+   param c[I] := <1> 2, <2> 3, <3> 1.5;
+   var   x[I] >= 0;
+   minimize cost: sum <i> in I : c[i] * x[i];
+   subto    cons: sum <i> in I : x[i] <= 6;
+\end{lstlisting}
 
 \section{Invocation}
 
@@ -114,49 +114,6 @@ after the other as if they were all one big file.
 If any error occurs while processing, \zimpl prints out an 
 error message and aborts. In case everything goes well, the results 
 are written into two or more files, depending on the specified options.
-
-\begin{table}[hbtp]
-\centering
-{\sffamily\small
-\begin{tabular}{lp{96mm}}
-\toprule
--t \emph{format} & Selects the output format. Can be either \code{lp},
-                  which is default, or \code{mps}, or \code{hum}, which
-                  is only human readable.\\
--o \emph{name}   & Sets the base-name for the output files.\\ 
-                & Defaults to the name of the first input file with 
-                  its path and extension stripped off.\\ 
--F \emph{filter} & The output is piped through a filter. A \%s in the
-                  string is replaced by the output filename. For example 
-                  \code{-F "gzip -c >\%s.gz"} would compress all the 
-                  output files.\\
--n \emph{cform}  & Select the format for the generation of constraint
-                  names. Can be \code{cm}, which will number them 
-                  $1\ldots n$ with a `c' in front. \code{cn} will use 
-                  the name supplied in the \code{subto} statement and 
-                  number them $1\ldots n$ within the statement. 
-                  \code{cf} will use the name given with the \code{subto},
-                  then a $1\ldots n$ number like in \code{cm} and then 
-                  append all the local variables from the forall statements.\\
--v \emph{1..5}   & Set the verbosity level. 0 is quiet, 1 is default,
-                  2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
--D \emph{name=val} & Sets the parameter \emph{name} to the specified
-                  value. This is equivalent with having this line in the
-                  \zimpl program: \code{param name:=val}.\\
-%\hline
--b & Enables bison debug output.\\
--f & Enables flex debug output.\\
--h & Prints a help message.\\
--m & Writes a CPLEX \code{mst} (Mip STart) file.\\
--O & Try to reduce the generated LP by doing some presolve analysis.\\
--r & Writes a CPLEX \code{ord} branching order file.\\
--V & Prints the version number.\\
-\bottomrule
-\end{tabular}
-}
-\caption{\zimpl options}
-\label{tab:zimpl-options}
-\end{table}
 
 The first output file is the problem generated from the model in either 
 \cplex \lp, \mps, or  a ``human readable'' format, 
@@ -187,6 +144,48 @@ Note that in case \mps-output is specified for a maximization problem,
 the objective function will be inverted, because the \mps format has no
 provision for stating the sense of the objective function. The default
 is to assume maximization.
+
+\begin{table}[hbtp]
+{\sffamily\small\centering
+\begin{tabular}{lp{104mm}}
+\toprule
+-t \emph{format} & Selects the output format. Can be either \code{lp},
+                  which is default, or \code{mps}, or \code{hum}, which
+                  is only human readable.\\
+-o \emph{name}   & Sets the base-name for the output files.\\ 
+                & Defaults to the name of the first input file with 
+                  its path and extension stripped off.\\ 
+-F \emph{filter} & The output is piped through a filter. A \%s in the
+                  string is replaced by the output filename. For example 
+                  \code{-F "gzip -c >\%s.gz"} would compress all the 
+                  output files.\\
+-n \emph{cform}  & Select the format for the generation of constraint
+                  names. Can be \code{cm}, which will number them 
+                  $1\ldots n$ with a `c' in front. \code{cn} will use 
+                  the name supplied in the \code{subto} statement and 
+                  number them $1\ldots n$ within the statement. 
+                  \code{cf} will use the name given with the \code{subto},
+                  then a $1\ldots n$ number like in \code{cm} and then 
+                  append all the local variables from the forall statements.\\
+-v \emph{0..5}   & Set the verbosity level. 0 is quiet, 1 is default,
+                  2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
+-D \emph{name=val} & Sets the parameter \emph{name} to the specified
+                  value. This is equivalent with having this line in the
+                  \zimpl program: \code{param name:=val}.\\
+%\hline
+-b & Enables bison debug output.\\
+-f & Enables flex debug output.\\
+-h & Prints a help message.\\
+-m & Writes a CPLEX \code{mst} (Mip STart) file.\\
+-O & Try to reduce the generated LP by doing some presolve analysis.\\
+-r & Writes a CPLEX \code{ord} branching order file.\\
+-V & Prints the version number.\\
+\bottomrule
+\end{tabular}
+}
+\caption{\zimpl options}
+\label{tab:zimpl-options}
+\end{table}
 
 % -----------------------------------------------------------------------------
 % --- Format
@@ -384,7 +383,7 @@ set G := proj(F, <3,1>);
 \begin{table}[htbp]
 \centering
 {\sffamily\small
-\begin{tabular}{llp{56mm}}
+\begin{tabular}{llp{61mm}}
 \toprule
 \code{A*B},&\\
 \code{A cross B}   &\raisebox{1ex}[0cm][0cm]{cross product} 
@@ -432,7 +431,7 @@ set V := { <a,2> in A*B with a == "a" or a == "b" };
 # will give: { <"a",2>, <"b",2> }
 \end{verbatim}
 }
-
+\clearpage
 \subsubsection{Indexed sets}
 \label{sec:indexed-sets}
 It is possible to index one set with another set resulting in a set of sets.
@@ -458,7 +457,7 @@ set A[I]        := <1> {"a","b"}, <2> {"c","e"}, <3> {"f"};
 set B[<i> in I] := { 3 * i };
 set P[]         := powerset(I);
 set J           := indexset(P);
-set S[]         := subset(I, 2);
+set S[]         := subsets(I, 2);
 set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 \end{verbatim}
 }
@@ -469,7 +468,7 @@ set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 \begin{tabular}{llp{5cm}}
 \toprule
 \code{powerset(A)}& generates all subsets of $A$&$\{X\mid X\subseteq A\}$\\
-\code{subset(A,n)}& generates all subsets of $A$\\
+\code{subsets(A,n)}& generates all subsets of $A$\\
                     & with $n$ elements&$\{X\mid X\subseteq A\wedge |X|=n\}$\\
 \code{indexset(A)}&the index set of $A$&$\{1\ldots |A|\}$\\
 \bottomrule
@@ -567,7 +566,7 @@ always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
 depending on the index of the variable (see the last declaration in the
 example). Bounds can also be set to \code{infinity} and \code{-infinity}.
-\clearpage 
+
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
@@ -626,9 +625,9 @@ Many constraints can be generated with one statement by the use of the
 \begin{verbatim}
 subto time:  3 * x1 + 4 * x2 <= 7;
 subto space: 50 >= sum <a> in A: 2 * u[a] * y[a] >= 5;
-subto weird: forall <a> in A: sum <a,b,c> in C: z[a,b,c] == 55;
-subto c21: 6 * (sum <i> in A: x[i] + sum <j> in B : y[j]) >= 2;
-subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3 + 4;
+subto weird: forall <a> in A: sum <a,b,c> in C: z[a,b,c]==55;
+subto c21: 6*(sum <i> in A: x[i] + sum <j> in B : y[j]) >= 2;
+subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3+4;
 \end{verbatim}
 }
 
@@ -904,14 +903,14 @@ do forall <i> in I with i > 5 do print sqrt(i);
 do forall <p> in P do check sum <p,i> in PI : 1 >= 1;
 \end{verbatim}
 }
-
+\clearpage
 \section{Modeling examples}
 In this section we show some examples of well-known problems
 translated into \zimpl format.
 
 \subsection{The diet problem}
 This is the first example in 
-\citet[Chapter 1, page 3]{Chvatal1983}.
+\cite[Chapter 1, page 3]{Chvatal1983}.
 It is a classic so-called \emph{diet} problem, see for example
 \cite{Dantzig1990} about its implications in practice.
 
@@ -925,19 +924,19 @@ variable $x_f$ is introduced for each $f\in F$ indicating the number of servings
 food $f$. Integer variables are used, because only complete servings can be
 obtained, \ie half an egg is not an option.
 The problem may be stated as:
-\begin{align}
+\begin{align*}
 \min&\sum_{f\in F}c_{f} x_{f}&&\mbox{subject to}\nonumber\\
 \sum_{f\in F} \pi_{fn} x_{f}&\ge\Pi_n&&\fa n\in N\nonumber\\
 0\leq x_{f}&\leq\Delta_f&&\fa f\in F\nonumber\\
-x_{f}&\in\NNZ&&\fa f\in F\label{eqn:integrality}
-\end{align}
+x_{f}&\in\NNZ&&\fa f\in F
+\end{align*}
 
 \noindent This translates into \zimpl as follows:
 
 \medskip
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
 \begin{lstlisting}[frame=tb]{}
 set Food      := { "Oatmeal", "Chicken", "Eggs",
                    "Milk",    "Pie",     "Pork" };
@@ -978,19 +977,19 @@ servings of pie.
 In this example we show how to generate an exponential 
 description of the \emph{symmetric traveling salesman problem} (\tsp)
 as given for example in 
-\citet[Section 58.5]{Schrijver2003}.
+\cite[Section 58.5]{Schrijver2003}.
 
 Let $G=(V,E)$ be a complete graph, with $V$ being the set of cities
 and $E$ being the set of links between the cities. Introducing binary
 variables $x_{ij}$ for each $(i,j)\in E$ indicating if edge $(i,j)$ is
 part of the tour, the \tsp can be written as:
-\begin{align}
+\begin{align*}
 \min &\sum_{(i,j)\in E}d_{ij} x_{ij}&&\text{subject to}\nonumber\\
 \sum_{(i,j)\in\delta_v} x_{ij}&=2&&\fa v\in V\nonumber\\
 \sum_{(i,j)\in E(U)} x_{ij}&\leq |U|-1&&\fa U\subseteq V, \emptyset\neq
-U\neq V\label{tsp:subtour}\\
+U\neq V\\
 x_{ij}&\in\{0,1\}&&\fa (i,j)\in E\nonumber
-\end{align}
+\end{align*}
 %
 The data is read in from a file that gives the number of the city and the
 x and y coordinates. Distances between cities are assumed Euclidean. For example:
@@ -1043,14 +1042,16 @@ Information on how to solve much larger instances can be found on the
 \medskip
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
 \begin{lstlisting}[frame=tb]{}
 set V             := { read "tsp.dat" as "<1s>" comment "#" };
 set E             := { <i,j> in V * V with i < j };
 set P[]           := powerset(V);
 set K             := indexset(P);
+
 param px[V]       := read "tsp.dat" as "<1s> 2n" comment "#";
 param py[V]       := read "tsp.dat" as "<1s> 3n" comment "#";
+
 defnumb dist(a,b) := sqrt((px[a]-px[b])^2 + (py[a]-py[b])^2);
 
 var x[E] binary;
@@ -1068,7 +1069,7 @@ subto no_subtour:
 \end{lstlisting}
 
 \medskip
-\noindent The resulting \LP has 171 variables, 239,925 constraints, and
+\noindent The resulting \lp has 171 variables, 239,925 constraints, and
 22,387,149 non-zero entries in the constraint matrix, giving an \mps-file
 size of 936\,\textsc{mb}. \cplex solves this to optimality
 without branching in less than a minute.\footnote{Only 40
@@ -1116,11 +1117,12 @@ next page.
 The optimal solution for the instance described by the program is to build plants \code{A} and
 \code{C}. Stores 2, 3, and 4 are served by plant \code{A} and the others by
 plant \code{C}. The total cost is 1457.
+
 \clearpage
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
-\begin{lstlisting}[frame=b]{}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[frame=]{}
 set PLANTS := { "A", "B", "C", "D" };
 set STORES := { 1 .. 9 };
 set PS     := PLANTS * STORES;
@@ -1202,7 +1204,7 @@ row, \ie if the size of the board is at least $4\times4$.
 %\noindent\textsf{Integer formulation}
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
 \begin{lstlisting}[frame=tb]{}
 param queens := 8;
 
@@ -1259,8 +1261,8 @@ queen is placed.
 \medskip
 %\noindent\textsf{Binary formulation A}
 \lstset{language=zimpl,%
-basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1,escapechar=@}
+basicstyle=\sffamily\footnotesize,escapechar=@,%
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
 \begin{lstlisting}[frame=tb]{}
 param columns := 8;
 
@@ -1287,8 +1289,8 @@ leads to a formulation that is much harder to understand.
 \medskip
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
-\begin{lstlisting}[firstlabel=13]{}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[firstnumber=13]{}
 subto c2: forall <i,j> in CxC do
              card(TABU[i,j]) * x[i,j] 
            + sum <m,n> in TABU[i,j] : x[m,n] <= card(TABU[i,j]);
@@ -1334,8 +1336,8 @@ If we use the following formulation instead of constraint c2, this changes:
 %\noindent\textsf{Binary formulation B}
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
-\begin{lstlisting}[firstlabel=13]{}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[firstnumber=13]{}
 subto c3: forall <i,j> in CxC do
              forall <m,n> in TABU[i,j] do x[i,j] + x[m,n] <= 1;
 \end{lstlisting}
@@ -1375,15 +1377,14 @@ Queens & S & Vars & Cons &   NZ   &  NZ   & Node & Nodes & [s]\\
 }
 \end{center}
 
-\clearpage
 Finally, we will try the following set packing formulation:
 
 \medskip
 %\noindent\textsf{Set packing formulation}
 \lstset{language=zimpl,%
 basicstyle=\sffamily\footnotesize,%
-labelstyle=\sffamily\tiny\color{siennabrown},labelstep=1}
-\begin{lstlisting}[frame=tb,firstlabel=13]{}
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1}
+\begin{lstlisting}[frame=tb,firstnumber=13]{}
 subto row: forall <i> in C do
    sum <i,j> in CxC : x[i,j] <= 1;
 

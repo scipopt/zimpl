@@ -1,0 +1,28 @@
+a:link            { color: #0000FF; text-decoration: underline; }
+a:visited         { color: #800080; text-decoration: underline; }
+
+body {
+   color:            black;
+   background-color: white;
+   font-size:        1em;
+}
+
+address {
+   color    : #202020;
+   font-size: smaller;
+}
+
+hr {
+   border-style: solid;
+   border-width: thin;
+   border-color: black;   
+}
+
+.logobar {
+   border-style:   none;
+   border:         0px;
+   vertical-align: bottom;
+}
+
+
+

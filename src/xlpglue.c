@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.17 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.18 2005/03/02 20:49:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -192,7 +192,8 @@ Var* xlp_addvar(
    
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    if (mpz_get_si(mpq_denref(temp)) != 1)
-      fprintf(stderr, "*** Warning variable priority has to be integral\n");
+      if (verbose > VERB_QUIET)
+         fprintf(stderr, "*** Warning variable priority has to be integral\n");
 
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    lps_setpriority(var, (int)mpz_get_si(mpq_numref(temp)));

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.22 2003/10/23 09:22:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.23 2005/03/02 20:49:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -202,10 +202,12 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
 
    if (hash_has_entry(sym->hash, tuple))
    {
-      fprintf(stderr, "--- Warning 166: Duplicate element ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol %s rejected\n", sym->name);
-
+      if (verbose > VERB_QUIET)
+      {
+         fprintf(stderr, "--- Warning 166: Duplicate element ");
+         tuple_print(stderr, tuple);
+         fprintf(stderr, " for symbol %s rejected\n", sym->name);
+      }
       entry_free(entry);
    }
    else

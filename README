@@ -5,6 +5,16 @@ problem into a linear or (mixed-)integer mathematical program
 expressed in .lp or .mps file format which can be read by a LP or MIP
 solver.
 
+If you use Zimpl for research and publish results, the best way
+to refer to Zimpl is to cite my Ph.d. thesis:
+
+@PHDTHESIS{Koch2004,
+   author      = "Thorsten Koch",
+   title       = "Rapid Mathematical Programming",
+   school      = "Technische {Universit\"at} Berlin",
+   year        = "2004",
+}   
+
 
 COMPILING
 ---------
@@ -36,7 +46,12 @@ If your configuration is not in the list or does not work,
 you have to change the Makefile. Go to make/local
 an add a file make.<hostname_of_your_computer>
 There you can set the usual suspects like CC, CFLAGS, LDFLAG,
-and so on. Example:
+and so on. 
+The most likely reason that you can't compile, is that
+gmp.h or zlib.h are not in your include path (-I) or
+that libgmp.a oder libz.a are not in your library path (-L). 
+
+Example:
 
 CPPFLAGS        +=      -I/tmp/gmp/include
 LDFLAGS         +=      -L/tmp/gmp/lib
@@ -93,8 +108,8 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fügenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas
-and Tobias Achterberg for there comments and bug reports.
+To Armin Fügenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas,
+Jörg Rambau and Tobias Achterberg for there comments and bug reports.
 
 
 COMPLAINS
