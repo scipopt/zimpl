@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.15 2003/10/13 16:11:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.16 2003/10/29 16:57:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -522,7 +522,7 @@ Numb* numb_new_log(const Numb* numb)
 
    d = log10(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || isnan(d) || isinf(d))
+   if (errno != 0 || !finite(d))
    {
       perror("*** Error 700: log()");
       return NULL;
@@ -541,7 +541,7 @@ Numb* numb_new_sqrt(const Numb* numb)
 
    d = sqrt(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || isnan(d) || isinf(d))
+   if (errno != 0 || !finite(d))
    {
       perror("*** Error 701: sqrt()");
       return NULL;
@@ -571,7 +571,7 @@ Numb* numb_new_ln(const Numb* numb)
 
    d = log(mpq_get_d(numb->value.numb));
 
-   if (errno != 0 || isnan(d) || isinf(d))
+   if (errno != 0 || !finite(d))
    {
       perror("*** Error 702: ln()");
       return NULL;
