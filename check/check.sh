@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.9 2003/10/16 08:20:30 bzfkocht Exp $
+# $Id: check.sh,v 1.10 2004/05/15 15:09:38 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -74,13 +74,12 @@ do
    ../$1 -v0 $i 2>$NAME.err
    diff $NAME.err $NAME.err.ref >/dev/null
    case $? in
-    0) echo Test $i "(err)" OK;; #PASS=`expr $PASS + 1`  ;;
+    0) echo Test $i "(err)" OK;; 
     1) echo Test $i "(err)" FAIL "(ignored)";;
     *) echo Test $i "(err)" ERROR ;;
    esac
    rm $NAME.err
 done 2>/dev/null
-
 
 if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
 else echo FAILURE! Only $PASS of $COUNT tests passed; 
