@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.12 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.13 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -52,6 +52,8 @@ extern void     xlp_transtable(FILE* fp, LpFormat format);
 extern void     xlp_orderfile(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_mstfile, 1p == 1) */
 extern void     xlp_mstfile(FILE* fp, LpFormat format);
+/*lint -sem(    xlp_sosfile, 1p == 1) */
+extern void     xlp_sosfile(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_conname, nulterm(1), 1p) */
 extern Bool     xlp_conname_exists(const char* conname);
 /*lint -sem(    xlp_addcon, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
@@ -60,6 +62,10 @@ extern Con*     xlp_addcon(const char* name, ConType type,
 /*lint -sem(    xlp_addvar, nulterm(1), 1p && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
+/*lint -sem(    xlp_addsos, nulterm(1), 1p && 3p == 1, @p == 1) */
+extern Sos*     xlp_addsos(const char* name, SosType type, const Numb* priority);
+/*lint -sem(    xlp_addsse, nulterm(1), 1p && 3p == 1, @p == 1) */
+extern void     xlp_addtosos(Sos* sos, Var* var, const Numb* weight);
 /*lint -sem(    xlp_getclass, 1p == 1) */
 extern VarClass xlp_getclass(const Var* var);
 /*lint -sem(    xlp_getlower, 1p == 1, @p == 1) */
@@ -74,6 +80,7 @@ extern void     xlp_addtonzo(Var* var, Con* von, const Numb* numb);
 /*lint -sem(    xlp_addtocost, 1p == 1 && 2p == 1) */
 extern void     xlp_addtocost(Var* var, const Numb* cost);
 extern void     xlp_presolve(void);
+extern Bool     xlp_hassos(void);
 
 #endif /* _XLPGLUE_H */
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: local.c,v 1.11 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -166,7 +166,7 @@ char* local_tostrall()
        */
       if (local->element == NULL)
       {
-         selem      = strdup("|");
+         selem      = strdup(";");
          selemlen   = 1;
          after_elem = FALSE;
       }

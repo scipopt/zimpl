@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.65 2005/02/09 08:56:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.66 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -68,7 +68,7 @@ extern void yyerror(const char* s);
    CodeNode*    code;
 };
 
-%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB
+%token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB DECLSOS
 %token DEFNUMB DEFSTRG DEFSET PRINT CHECK
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO UNTIL BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
@@ -83,6 +83,7 @@ extern void yyerror(const char* s);
 %token READ AS SKIP USE COMMENT
 %token SUBSETS INDEXSET POWERSET
 %token VIF VABS
+%token TYPE1 TYPE2
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
 %token <def> NUMBDEF STRGDEF SETDEF DEFNAME
 %token <name> NAME
@@ -91,7 +92,7 @@ extern void yyerror(const char* s);
 %token <bits> SCALE
 %token <bits> SEPARATE
 
-%type <code> stmt decl_set decl_par decl_var decl_obj decl_sub
+%type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
 %type <code> def_numb def_strg def_set
 %type <code> exec_do command
 %type <code> constraint vbool
@@ -101,6 +102,7 @@ extern void yyerror(const char* s);
 %type <code> cexpr_entry cexpr_entry_list set_entry set_entry_list par_default
 %type <code> var_type con_type lower upper priority startval condition
 %type <code> matrix_body matrix_head
+%type <code> soset sos_type
 %type <bits> con_attr con_attr_list
 
 %right ASGN
@@ -128,6 +130,7 @@ stmt
    | decl_var   { code_set_root($1); }
    | decl_obj   { code_set_root($1); }
    | decl_sub   { code_set_root($1); }
+   | decl_sos   { code_set_root($1); }
    | def_numb   { code_set_root($1); }
    | def_strg   { code_set_root($1); }
    | def_set    { code_set_root($1); }
@@ -301,22 +304,22 @@ lower
          $$ = code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0)));
       }
    | CMP_GE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
-   | CMP_GE '-' INFTY { $$ = code_new_bound(BOUND_MINUS_INFTY); }
+   | CMP_GE '-' INFTY  { $$ = code_new_bound(BOUND_MINUS_INFTY); }
    ;
 
 upper
-   : /* empty */      { $$ = code_new_bound(BOUND_INFTY); }
+   : /* empty */       { $$ = code_new_bound(BOUND_INFTY); }
    | CMP_LE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
-   | CMP_LE INFTY     { $$ = code_new_bound(BOUND_INFTY); }
+   | CMP_LE INFTY      { $$ = code_new_bound(BOUND_INFTY); }
    ;
 
 priority
-   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
+   : /* empty */       { $$ = code_new_numb(numb_new_integer(0)); }
    | PRIORITY cexpr    { $$ = $2; }
    ;
 
 startval
-   : /* empty */      { $$ = code_new_numb(numb_new_integer(0)); }
+   : /* empty */       { $$ = code_new_numb(numb_new_integer(0)); }
    | STARTVAL cexpr    { $$ = $2; }
    ;
 
@@ -648,6 +651,31 @@ vfactor
 ;   
 
 /* ----------------------------------------------------------------------------
+ * --- SOS Declaration
+ * ----------------------------------------------------------------------------
+ */
+decl_sos
+   : DECLSOS NAME DO soset ';' {
+        $$ = code_new_inst(i_sos, 2, code_new_name($2), $4);
+     }
+   ;
+
+soset
+   : vexpr CMP_EQ sos_type priority {
+        $$ = code_new_inst(i_soset, 3, $1, $3, $4);
+     }
+   | FORALL idxset DO soset {
+         $$ = code_new_inst(i_forall, 2, $2, $4);
+      }
+   ;
+
+sos_type
+   : /* empty */ { $$ = code_new_numb(numb_new_integer(1)); }
+   | TYPE1       { $$ = code_new_numb(numb_new_integer(1)); }
+   | TYPE2       { $$ = code_new_numb(numb_new_integer(2)); }
+   ;
+
+/* ----------------------------------------------------------------------------
  * --- Do Statement
  * ----------------------------------------------------------------------------
  */
@@ -656,7 +684,7 @@ exec_do
    ;
 
 command
-   : PRINT cexpr     { $$ = code_new_inst(i_print, 1, $2); }
+   : PRINT cexpr    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT tuple    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT sexpr    { $$ = code_new_inst(i_print, 1, $2); }
    | CHECK lexpr    { $$ = code_new_inst(i_check, 1, $2); }

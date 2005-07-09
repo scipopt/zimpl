@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.7 2004/04/19 08:28:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.8 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -103,16 +103,40 @@ struct lpstorage
    char*    rngname;
    int      vars;
    int      cons;
+   int      soss;
    int      nonzeros;
    Var*     var_root;
    Con*     con_root;
+   Sos*     sos_root;
    Sto*     sto_root;
    Nzo*     next;
    LpsHash* var_hash;
    LpsHash* con_hash;
+   LpsHash* sos_hash;
    Var*     var_last;
    Con*     con_last;
+   Sos*     sos_last;
 }; 
+
+struct soselement
+{
+   Var*  var;
+   mpq_t weight;
+   Sse*  next;
+};
+
+struct soset
+{
+   unsigned int sid;
+   char*        name;
+   SosType      type;
+   int          priority;
+   int          sses;
+   Sos*         next;
+   Sse*         first;
+};
+
+#define SOS_SID 0x5e534f53
 
 #define LPF_NAME_LEN  16
 #define MPS_NAME_LEN  8

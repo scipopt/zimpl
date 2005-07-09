@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.61 2004/04/23 07:39:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.62 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -53,7 +53,7 @@ enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type
 {
    STMT_ERR = 0, STMT_SET, STMT_PARAM, STMT_VAR, STMT_MIN, STMT_MAX,
-   STMT_CONS, STMT_DEF, STMT_DO
+   STMT_CONS, STMT_DEF, STMT_DO, STMT_SOS
 };
 
 enum bound_type
@@ -606,6 +606,8 @@ extern void         term_negate(Term* term);
 extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
 extern void         term_to_nzo(const Term* term, Con* con);
+/*lint -sem(        term_to_sos, 1p == 1 && 2p == 1) */
+extern void         term_to_sos(const Term* term, Sos* sos);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
 /*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */

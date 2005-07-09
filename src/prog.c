@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.11 2005/01/24 20:49:17 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -158,4 +158,5 @@ void prog_execute(const Prog* prog)
    if (verbose >= VERB_NORMAL)
       printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
+
 

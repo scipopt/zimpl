@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.18 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.19 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -82,6 +82,13 @@ void xlp_mstfile(FILE* fp, LpFormat format)
    lps_mstfile(lp, fp, format, title);
 }
 
+void xlp_sosfile (FILE* fp, LpFormat format)
+{
+  assert(fp != NULL);
+
+  lps_sosfile(lp, fp, format, title);
+}
+
 void xlp_free()
 {
    lps_free(lp);
@@ -91,6 +98,11 @@ void xlp_free()
 void xlp_stat()
 {
    lps_stat(lp);
+}
+
+Bool xlp_hassos()
+{
+   return lps_has_sos(lp);
 }
 
 Bool xlp_conname_exists(const char* conname)
@@ -201,6 +213,51 @@ Var* xlp_addvar(
    mpq_clear(temp);
    
    return var;
+}
+
+Sos* xlp_addsos(
+   const char*  name,
+   SosType      type,
+   const Numb*  priority)
+{
+   Sos*   sos;
+   mpq_t  temp;
+   
+   assert(name     != NULL);
+   assert(priority != NULL);
+
+   mpq_init(temp);
+
+   numb_get_mpq(priority, temp);
+   
+   /*lint -e{663} supress "Suspicious array to pointer conversion" */
+   if (mpz_get_si(mpq_denref(temp)) != 1)
+      if (verbose > VERB_QUIET)
+         fprintf(stderr, "*** Warning SOS priority has to be integral\n");
+
+   /*lint -e{663} supress "Suspicious array to pointer conversion" */
+   sos = lps_addsos(lp, name, type, (int)mpz_get_si(mpq_numref(temp)));
+
+   mpq_clear(temp);
+   
+   return sos;
+}
+
+void xlp_addtosos(Sos* sos, Var* var, const Numb* weight)
+{
+   mpq_t temp;
+   
+   assert(weight != NULL);
+   assert(var    != NULL);
+   assert(sos    != NULL);
+
+   mpq_init(temp);
+
+   numb_get_mpq(weight, temp);
+   
+   lps_addsse(lp, sos, var, temp);
+
+   mpq_clear(temp);
 }
 
 VarClass xlp_getclass(const Var* var)

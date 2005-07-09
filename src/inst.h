@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.32 2005/02/09 08:56:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.33 2005/07/09 18:51:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -204,6 +204,10 @@ extern CodeNode* i_set_range2(CodeNode* self);
 extern CodeNode* i_set_sdiff(CodeNode* self);
 /*lint -sem(     i_set_union, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_union(CodeNode* self);
+/*lint -sem(     i_sos, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_sos(CodeNode* self);
+/*lint -sem(     i_soset, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_soset(CodeNode* self);
 /*lint -sem(     i_subto, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_subto(CodeNode* self);
 /*lint -sem(     i_symbol_deref, 1p == 1, type(1), @p == 1p) */

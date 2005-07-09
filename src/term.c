@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.22 2003/10/15 16:31:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.23 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -324,6 +324,27 @@ void term_to_nzo(const Term* term, Con* con)
       var = entry_get_var(term->elem[i].entry);
 
       xlp_addtonzo(var, con, term->elem[i].coeff);
+   }
+}
+
+void term_to_sos(const Term* term, Sos* sos)
+{
+   Var*   var;
+   int    i;
+
+   Trace("term_to_sos");
+   
+   assert(sos != NULL);
+   assert(term_is_valid(term));
+   assert(numb_equal(term->constant, numb_zero()));
+
+   for(i = 0; i < term->used; i++)
+   {
+      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
+
+      var = entry_get_var(term->elem[i].entry);
+
+      xlp_addtosos(sos, var, term->elem[i].coeff);
    }
 }
 

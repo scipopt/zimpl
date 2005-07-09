@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.11 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -46,12 +46,18 @@ extern Lps*         lps_alloc(const char* name);
 extern void         lps_free(Lps* lp);
 /*lint -sem(        lps_number, 1p == 1) */
 extern void         lps_number(const Lps* lp);
+/*lint -sem(        lps_getsos, nulterm(2), 1p && 2p) */
+extern Sos*         lps_getsos(const Lps* lp, const char* name);
 /*lint -sem(        lps_getvar, nulterm(2), 1p && 2p) */
 extern Var*         lps_getvar(const Lps* lp, const char* name);
 /*lint -sem(        lps_getcon, nulterm(2), 1p && 2p) */
 extern Con*         lps_getcon(const Lps* lp, const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
+/*lint -sem(        lps_addsos, nulterm(2), 1p == 1 && 2p && 4n >= 0, @p == 1) */
+extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority); 
+/*lint -sem(        lps_addsosvar, 1p == 1 && 2p == 1 && 3p == 1 && 4p == 1) */
+extern void         lps_addsse(Lps* lp, Sos* sos, Var* var, const mpq_t weight); 
 /*lint -sem(        lps_addvar, nulterm(2), 1p == 1 && 2p, @p == 1) */
 extern Var*         lps_addvar(Lps* lp, const char* name); 
 /*lint -sem(        lps_delvar, 1p == 1 && 2p == 1) */
@@ -144,7 +150,8 @@ extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const ch
 extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern void         lps_scale(const Lps* lp);
-
+/*lint -sem(        lps_scale, 1p == 1) */
+extern Bool         lps_has_sos(const Lps* lp);
 
 /* ratmpsread.c
  */
@@ -180,6 +187,11 @@ extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const 
  */
 /*lint -sem(        lps_presolve, 1p == 1 && 2n >= 0) */
 extern PSResult     lps_presolve(Lps* lp, int verbose_level);
+
+/* ratsoswrite.c
+ */
+/*lint -sem(        lps_soswrite, nulterm(4), 1p == 1 && 2p == 1) */
+extern void         lps_sosfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 
 #endif /* _RATLP_H_ */
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.60 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.61 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -244,6 +244,7 @@ int main(int argc, char* const* argv)
    char*       tblfile  = NULL;
    char*       ordfile  = NULL;
    char*       mstfile  = NULL;
+   char*       sosfile  = NULL;
    char*       basefile = NULL;
    char*       cmdpipe  = NULL;
    LpFormat    format   = LP_FORM_LPF;
@@ -387,6 +388,7 @@ int main(int argc, char* const* argv)
    tblfile = add_extention(basefile, ".tbl");
    ordfile = add_extention(basefile, ".ord");
    mstfile = add_extention(basefile, ".mst");
+   sosfile = add_extention(basefile, ".sos");
    
    cmdpipe = malloc(strlen(basefile) + strlen(filter) + 256);
 
@@ -504,6 +506,27 @@ int main(int argc, char* const* argv)
          
       (void)(*closefile)(fp);
    }
+   /* Write SOS file 
+    */
+   if (xlp_hassos())
+   {
+      sprintf(cmdpipe, filter, sosfile, "sos");
+
+      if (verbose >= VERB_NORMAL)
+         printf("Writing [%s]\n", cmdpipe);
+
+      if (NULL == (fp = (*openfile)(cmdpipe, "w")))
+      {
+         fprintf(stderr, "*** Error 104: File open failed ");
+         perror(sosfile);
+         exit(EXIT_FAILURE);
+      }
+      xlp_sosfile(fp, format);
+         
+      check_write_ok(fp, sosfile);
+         
+      (void)(*closefile)(fp);
+   }
    /* Write Output
     */
    sprintf(cmdpipe, filter, outfile, "lp");
@@ -545,6 +568,7 @@ int main(int argc, char* const* argv)
    str_exit();
    gmp_exit();
 
+   free(sosfile);
    free(mstfile);
    free(ordfile);
    free(outfile);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.23 2005/03/25 10:03:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.24 2005/07/09 18:51:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -149,28 +149,28 @@ static void add_stmt(
    assert(filename != NULL);
    assert(text     != NULL);
 
-   fprintf(stderr, "%d@%s@\n", lineno, text);
-   
-   if (!strncmp(text, "set ", 4))
+   if (!strncmp(text, "set", 3) && isspace(text[3]))
       type = STMT_SET;
-   else if (!strncmp(text, "param ", 6))
+   else if (!strncmp(text, "param", 5) && isspace(text[5]))
       type = STMT_PARAM;
-   else if (!strncmp(text, "var ", 4))
+   else if (!strncmp(text, "var", 3) && isspace(text[3]))
       type = STMT_VAR;
-   else if (!strncmp(text, "minimize ", 9))
+   else if (!strncmp(text, "minimize", 8) && isspace(text[8]))
       type = STMT_MIN;
-   else if (!strncmp(text, "maximize ", 9))
+   else if (!strncmp(text, "maximize", 8) && isspace(text[8]))
       type = STMT_MAX;
-   else if (!strncmp(text, "subto ", 6))
+   else if (!strncmp(text, "subto", 5) && isspace(text[5]))
       type = STMT_CONS;
-   else if (!strncmp(text, "defnumb ", 8))
+   else if (!strncmp(text, "defnumb", 7) && isspace(text[7]))
       type = STMT_DEF;
-   else if (!strncmp(text, "defstrg ", 8))
+   else if (!strncmp(text, "defstrg", 7) && isspace(text[7]))
       type = STMT_DEF;
-   else if (!strncmp(text, "defset ", 7))
+   else if (!strncmp(text, "defset", 6) && isspace(text[6]))
       type = STMT_DEF;
-   else if (!strncmp(text, "do ", 3))
+   else if (!strncmp(text, "do", 2) && isspace(text[2]))
       type = STMT_DO;
+   else if (!strncmp(text, "sos", 3) && isspace(text[3]))
+      type = STMT_SOS;
    else
    {
       fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
@@ -224,8 +224,6 @@ void prog_load(Prog* prog, const char* filename)
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
-      fprintf(stderr, "@%s@\n", s);
-
       assert(!isspace(*s));
 
       /* This could happen if we have a ;; somewhere.

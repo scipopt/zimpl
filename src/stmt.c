@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.15 2003/10/04 16:22:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.16 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -155,7 +155,7 @@ void stmt_print(FILE* fp, const Stmt* stmt)
 {
    static const char* type_name[] =
    {
-      "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Define", "Print"
+      "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Define", "Print", "SOS"
    };
    assert(stmt_is_valid(stmt));
 

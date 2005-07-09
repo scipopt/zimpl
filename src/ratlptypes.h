@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlptypes.h,v 1.3 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlptypes.h,v 1.4 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlptypes.h                                                  */
@@ -33,6 +33,7 @@
 
 enum con_type        { CON_FREE    = 0, CON_LHS,   CON_RHS,   CON_RANGE, CON_EQUAL };
 enum var_type        { VAR_FREE    = 0, VAR_LOWER, VAR_UPPER, VAR_BOXED, VAR_FIXED };
+enum sos_type        { SOS_ERR     = 0, SOS_TYPE1, SOS_TYPE2 };
 enum con_state       { CON_ERR     = 0, CON_BASIC, CON_ON_LO, CON_ON_UP }; 
 enum var_state       { VAR_ERR     = 0, VAR_BASIC, VAR_ON_LO, VAR_ON_UP };
 enum var_class       { VAR_CON     = 0, VAR_INT,   VAR_BIN };
@@ -48,10 +49,13 @@ enum presolve_result
 typedef struct nonzero       Nzo;
 typedef struct variable      Var;
 typedef struct constraint    Con;
+typedef struct soset         Sos;
+typedef struct soselement    Sse;
 typedef struct lpstorage     Lps;
 
 typedef enum   var_type      VarType;
 typedef enum   con_type      ConType;
+typedef enum   sos_type      SosType;
 typedef enum   var_state     VarState;
 typedef enum   con_state     ConState;
 typedef enum   var_class     VarClass;

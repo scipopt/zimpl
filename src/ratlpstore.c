@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.21 2004/05/29 11:29:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.22 2005/07/09 18:51:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -52,9 +52,7 @@ static const unsigned int sto_size  = 1000;
 #define LHT_BUCKETS  1000003U
 #endif
 
-#define DISPERSE(x) (1664525U * (x) + 1013904223U);
-
-enum lps_hash_type { LHT_ERR = 0, LHT_VAR, LHT_CON };
+enum lps_hash_type { LHT_ERR = 0, LHT_VAR, LHT_CON, LHT_SOS };
 
 typedef struct lps_hash_element LpsHElem;
 typedef enum   lps_hash_type    LpsHashType;
@@ -66,6 +64,7 @@ struct lps_hash_element
    {
       Con* con;
       Var* var;
+      Sos* sos;
    } value;
 };
 
@@ -81,7 +80,8 @@ static void hash_statist(FILE* fp, const LpsHash* hash);
 
 static Bool hash_valid(const LpsHash* hash)
 {
-   return hash != NULL && (hash->type == LHT_CON || hash->type == LHT_VAR);
+   return hash != NULL
+      && (hash->type == LHT_CON || hash->type == LHT_VAR || hash->type == LHT_SOS);
 }
 
 static unsigned int hashit(const char* s)
@@ -93,7 +93,7 @@ static unsigned int hashit(const char* s)
    assert(sizeof(hcode) == 4); 
 
    for(; *s != '\0'; s++)
-      hcode = DISPERSE((unsigned char)*s + hcode);
+      hcode = 31 * hcode + (unsigned char)*s;
 
    return hcode;
 }
@@ -181,6 +181,26 @@ static Con* hash_lookup_con(const LpsHash* hash, const char* name)
    return (he == NULL) ? (Con*)0 : he->value.con;
 }
 
+/* Liefert NULL wenn nicht gefunden.
+ */
+static Sos* hash_lookup_sos(const LpsHash* hash, const char* name)
+{
+   unsigned int hcode;
+   LpsHElem*    he     = NULL;
+   
+   assert(hash_valid(hash));
+   assert(hash->type == LHT_SOS);
+   assert(name != NULL);
+   
+   hcode  = hashit(name) % hash->size;
+
+   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
+      if (!strcmp(he->value.sos->name, name))
+         break;
+
+   return (he == NULL) ? (Sos*)0 : he->value.sos;
+}
+
 static void hash_add_var(LpsHash* hash, Var* var)
 {
    LpsHElem*    he = calloc(1, sizeof(*he));
@@ -247,6 +267,25 @@ static void hash_add_con(LpsHash* hash, Con* con)
    hash->elems++;
 
    assert(hash_lookup_con(hash, con->name) == con);
+}
+
+static void hash_add_sos(LpsHash* hash, Sos* sos)
+{
+   LpsHElem*    he = calloc(1, sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_valid(hash));
+   assert(sos        != NULL);
+   assert(hash->type == LHT_SOS);
+   assert(he         != NULL);
+   
+   hcode               = hashit(sos->name) % hash->size;
+   he->value.sos       = sos;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+
+   assert(hash_lookup_sos(hash, sos->name) == sos);
 }
 
 static void hash_del_con(LpsHash* hash, const Con* con)
@@ -339,6 +378,10 @@ static Bool lps_valid(const Lps* lp)
    const char* err12 = "Wrong Variable SID";
    const char* err13 = "Wrong Constraint SID";
    const char* err14 = "Strange lhs/rhs";
+   const char* err15 = "Wrong SOS SID";
+   const char* err16 = "Wrong SOS Variable SID";
+   const char* err18 = "Wrong SOS element count";
+   const char* err19 = "Wrong SOS count";
    
    Var* var;
    Var* var_prev;
@@ -347,10 +390,14 @@ static Bool lps_valid(const Lps* lp)
    Nzo* nzo;
    Nzo* nzo_prev;
    Sto* sto;
+   Sos* sos;
+   Sse* sse;
    int  var_count;
    int  con_count;
    int  nzo_count;
    int  sto_count;
+   int  sos_count;
+   int  sse_count;
    
    assert(lp != NULL);
 
@@ -476,7 +523,41 @@ static Bool lps_valid(const Lps* lp)
       fprintf(stderr, "%s\n", err8);
       return FALSE;
    }
+   /* SOS Test
+    */
+   sos_count = lp->soss;
 
+   for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+   {
+      if (sos->sid != SOS_SID)
+      {
+         fprintf(stderr, "%s\n", err15);
+         return FALSE;
+      }
+      sos_count--;
+      sse_count = sos->sses;
+
+      for(sse = sos->first; sse != NULL; sse = sse->next)
+      {
+         if (sse->var->sid != VAR_SID)
+         {
+            fprintf(stderr, "%s\n", err16);
+            return FALSE;
+         }
+         sse_count--;
+      }
+      if (sse_count)
+      {
+         fprintf(stderr, "%s\n", err18);
+         return FALSE;
+      }
+   }
+   if (sos_count)
+   {
+      fprintf(stderr, "%s\n", err19);
+      return FALSE;
+   }
+   
    /* Storage Test
     */
    sto_count = 0;
@@ -565,15 +646,19 @@ Lps* lps_alloc(
    lp->direct   = LP_MIN;
    lp->vars     = 0;
    lp->cons     = 0;
+   lp->soss     = 0;
    lp->nonzeros = 0;
    lp->var_root = NULL;
    lp->con_root = NULL;
+   lp->sos_root = NULL;
    lp->sto_root = NULL;
    lp->next     = NULL;
    lp->var_hash = lps_hash_new(LHT_VAR);
    lp->con_hash = lps_hash_new(LHT_CON);
+   lp->sos_hash = lps_hash_new(LHT_SOS);
    lp->var_last = NULL;
    lp->con_last = NULL;
+   lp->sos_last = NULL;
 
    assert(lps_valid(lp));
 
@@ -586,6 +671,10 @@ void lps_free(Lps* lp)
    Var* var_next;
    Con* con;
    Con* con_next;
+   Sos* sos;
+   Sos* sos_next;
+   Sse* sse;
+   Sse* sse_next;
    Sto* sto;
    Sto* sto_next;
    unsigned int  i;
@@ -594,6 +683,7 @@ void lps_free(Lps* lp)
 
    lps_hash_free(lp->var_hash);
    lps_hash_free(lp->con_hash);
+   lps_hash_free(lp->sos_hash);
 
    for(sto = lp->sto_root; sto != NULL; sto = sto_next)
    {
@@ -630,6 +720,20 @@ void lps_free(Lps* lp)
       
       free(con->name);
       free(con);
+   }
+   for(sos = lp->sos_root; sos != NULL; sos = sos_next)
+   {
+      sos_next = sos->next;
+      sos->sid = 0x0;
+
+      for(sse = sos->first; sse != NULL; sse = sse_next)
+      {
+         sse_next = sse->next;
+         mpq_clear(sse->weight);
+         free(sse);
+      }
+      free(sos->name);
+      free(sos);
    }
    if (lp->probname != NULL)
       free(lp->probname);
@@ -727,6 +831,34 @@ Con* lps_getcon(
    }
 #endif
    return cr;   
+}
+   
+Sos* lps_getsos(
+   const Lps*  lp,
+   const char* name)
+{
+   Sos* sr;
+   
+   assert(lps_valid(lp));
+   assert(name != NULL);
+
+   sr = hash_lookup_sos(lp->sos_hash, name);
+
+   assert((sr == NULL) || (sr->sid == VAR_SID));
+   assert((sr == NULL) || (!strcmp(sr->name, name)));
+
+#ifndef NDEBUG
+   {
+      const Sos* sos;
+      
+      for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+         if (!strcmp(sos->name, name))
+            break;
+
+      assert(sos == sr);
+   }
+#endif
+   return sr;
 }
    
 Nzo* lps_getnzo(
@@ -982,6 +1114,75 @@ void lps_delcon(
    lp->cons--;
    
    assert(lps_valid(lp));
+}
+
+Sos* lps_addsos(
+   Lps*        lp,
+   const char* name,
+   SosType     type,
+   int         priority)
+{
+   Sos* sos;
+   
+   assert(lps_valid(lp));
+   assert(name                 != NULL);
+   assert(lps_getsos(lp, name) == NULL);
+   
+   sos = malloc(sizeof(*sos));
+   
+   assert(sos != NULL);
+
+   sos->sid       = SOS_SID;
+   sos->name      = strdup(name);
+   sos->type      = type;
+   sos->priority  = priority;
+   sos->sses      = 0;
+   sos->first     = NULL;
+   sos->next      = NULL;   
+
+   if (lp->sos_last != NULL)
+      lp->sos_last->next = sos;
+   
+   lp->sos_last       = sos;
+
+   if (lp->sos_root == NULL)
+      lp->sos_root = sos;
+
+   lp->soss++;
+
+   hash_add_sos(lp->sos_hash, sos);
+
+   assert(lps_valid(lp));
+
+   return sos;
+}
+
+void lps_addsse(
+   Lps* lp,
+   Sos* sos,
+   Var* var,
+   const mpq_t weight)
+{
+   Sse* sse;
+
+   assert(lps_valid(lp));
+   assert(sos         != NULL);
+   assert(sos->sid    == SOS_SID);
+   assert(var         != NULL);   
+   assert(var->sid    == VAR_SID);
+
+   sse = malloc(sizeof(*sse));
+   
+   assert(sse != NULL);
+
+   mpq_init(sse->weight);
+   mpq_set(sse->weight, weight);
+   
+   sse->var    = var;
+   sse->next   = sos->first;   
+   sos->first  = sse;
+
+   sos->sses++;
 }
 
 void lps_addnzo(
@@ -1698,6 +1899,12 @@ void lps_scale(const Lps* lp)
    mpq_clear(maxi);
 }
 
+Bool lps_has_sos(const Lps* lp)
+{
+   assert(lps_valid(lp));
+   
+   return lp->soss > 0;
+}
 
 /* ------------------------------------------------------------------------- */
 /* Emacs Local Variables:                                                    */

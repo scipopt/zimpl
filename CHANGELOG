@@ -1,3 +1,8 @@
+ - Changed a problem with the -n cf option due to a change in
+   the LP file format specification.
+
+ - Tabs are now allowed as separators after keywords (set, param, ...)
+
  - Control characters (notably CR from DOS files) are now 
    ignored (treated as space) on input.
 

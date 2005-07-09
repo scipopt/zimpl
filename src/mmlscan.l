@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.40 2005/02/09 08:56:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.41 2005/07/09 18:51:21 bzfkocht Exp $"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -81,6 +81,7 @@ static int        yydecl    = 0;
 "maximize"                { yycolumn += yyleng; yydecl = DECLMAX; return DECLMAX; }
 "minimize"                { yycolumn += yyleng; yydecl = DECLMIN; return DECLMIN; }
 "subto"                   { yycolumn += yyleng; yydecl = DECLSUB; return DECLSUB; }
+"sos"                     { yycolumn += yyleng; yydecl = DECLSOS; return DECLSOS; }
 "defnumb"                 { yycolumn += yyleng; yydecl = DEFNUMB; return DEFNUMB; }
 "defstrg"                 { yycolumn += yyleng; yydecl = DEFSTRG; return DEFSTRG; }
 "defset"                  { yycolumn += yyleng; yydecl = DEFSET;  return DEFSET; }
@@ -141,6 +142,8 @@ static int        yydecl    = 0;
 "infinity"                { yycolumn += yyleng; return INFTY; }
 "random"                  { yycolumn += yyleng; return RANDOM; }
 "ord"                     { yycolumn += yyleng; return ORD; }
+"type1"                   { yycolumn += yyleng; return TYPE1; }
+"type2"                   { yycolumn += yyleng; return TYPE2; }
 
 [0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
@@ -165,9 +168,10 @@ static int        yydecl    = 0;
       yycolumn += yyleng; 
 
       /* If it is sure that this is the name for a constraint or 
-       * objective, we do not need to lookup the name.
+       * objective, or sos, we do not need to lookup the name.
        */
-      if (yydecl == DECLSUB || yydecl == DECLMIN || yydecl == DECLMAX)
+      if (yydecl == DECLSUB || yydecl == DECLMIN || yydecl == DECLMAX 
+       || yydecl == DECLSOS)
          yydecl     = 0;
 
       /* If it is sure that this is the name for a set, param or var

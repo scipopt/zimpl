@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.85 2005/03/02 20:58:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.86 2005/07/09 18:51:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -202,6 +202,71 @@ CodeNode* i_rangeconst(CodeNode* self)
    numb_free(lhs);
    term_free(term);
    
+   return self;
+}
+
+CodeNode* i_sos(CodeNode* self)
+{
+   const char* name;
+   
+   Trace("i_sos");
+   
+   assert(code_is_valid(self));
+
+   name = code_eval_child_name(self, 0);
+
+   if (!conname_set(name))
+   {
+      fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   (void)code_eval_child(self, 1); /* soset */
+
+   conname_free();
+   
+   code_value_void(self);
+
+   return self;
+}
+
+CodeNode* i_soset(CodeNode* self)
+{
+   const Term*  term;
+   const Numb*  typenumb;
+   const Numb*  priority;
+   Sos*         sos;
+   SosType      type;
+   
+   Trace("i_constraint");
+   
+   assert(code_is_valid(self));
+
+   term       = code_eval_child_term(self, 0);
+   typenumb   = code_eval_child_numb(self, 1);
+   priority   = code_eval_child_numb(self, 2);
+
+   if (!numb_equal(term_get_constant(term), numb_zero()))
+   {
+      fprintf(stderr, "*** Error 199: Constants are not allowed in SOS declarations\n");
+      code_errmsg(self);
+      exit(EXIT_FAILURE);
+   }
+   if (numb_equal(typenumb, numb_one()))
+      type = SOS_TYPE1;
+   else
+      type = SOS_TYPE2;
+   
+   sos = xlp_addsos(conname_get(), type, priority);
+
+   assert(sos != NULL);
+
+   term_to_sos(term, sos);
+      
+   conname_next();
+
+   code_value_void(self);
+
    return self;
 }
 
