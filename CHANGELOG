@@ -1,3 +1,5 @@
+ - Special Ordered Sets (SOS) implemented. Thanks Daniel.
+
  - Changed a problem with the -n cf option due to a change in
    the LP file format specification.
 

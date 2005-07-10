@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.62 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.63 2005/07/10 10:19:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -46,7 +46,7 @@ enum set_check_type
 };
 
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
-enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX };
+enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH_NUMB };
 enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_SET };
 
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
@@ -298,25 +298,18 @@ extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 extern void         hash_add_entry(Hash* hash, const Entry* entry);
 /*lint -sem(        hash_add_elem_idx, 1p == 1 && 2p == 1 && 3n >= 0) */
 extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx);
+/*lint -sem(        hash_add_numb, 1p == 1 && 2p == 1) */
+extern void         hash_add_numb(Hash* hash, const Numb* numb);
 /*lint -sem(        hash_has_tuple, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
 extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
+/*lint -sem(        hash_has_numb, 1p == 1 && 2p == 1) */
+extern Bool         hash_has_numb(const Hash* hash, const Numb* numb);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_elem_idx, 1p == 1 && 2p == 1) */
 extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
-
-#if 0 /* ??? kann weg? */
-/*lint -sem(        hash_add_con, 1p == 1 && 2p == 1) */
-extern void         hash_add_con(Hash* hash, const Con* con);
-/*lint -sem(        hash_add_var, 1p == 1 && 2p == 1) */
-extern void         hash_add_var(Hash* hash, const Var* var);
-/*lint -sem(        hash_lookup_con, nulterm(2), 1p == 1 && 2p)) */
-extern const Con*   hash_lookup_con(const Hash* hash, const char* name);
-/*lint -sem(        hash_lookup_var, nulterm(2), 1p == 1 && 2p)) */
-extern const Var*   hash_lookup_var(const Hash* hash, const char* name);
-#endif
 
 /* element.c
  */
@@ -607,7 +600,7 @@ extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
 extern void         term_to_nzo(const Term* term, Con* con);
 /*lint -sem(        term_to_sos, 1p == 1 && 2p == 1) */
-extern void         term_to_sos(const Term* term, Sos* sos);
+extern Bool         term_to_sos(const Term* term, Sos* sos);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
 /*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */

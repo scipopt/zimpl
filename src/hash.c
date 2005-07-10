@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.22 2004/12/23 09:42:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.23 2005/07/10 10:19:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -53,6 +53,7 @@ struct hash_element
       const Tuple* tuple;
       const Entry* entry;
       SetElemIdx   elem_idx;
+      const Numb*  numb;
    } value;
    HElem* next;
 };
@@ -132,7 +133,8 @@ void hash_free(Hash* hash)
 Bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
-      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY || hash->type == HASH_ELEM_IDX)
+      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
+       || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB)
       && SID_ok(hash, HASH_SID));
 }
 
@@ -173,6 +175,23 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    hash->elems++;
 }
 
+void hash_add_numb(Hash* hash, const Numb* numb)
+{
+   HElem*       he = calloc(1, sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_is_valid(hash));
+   assert(numb_is_valid(numb));
+   assert(hash->type == HASH_NUMB);
+   assert(he != NULL);
+   
+   hcode               = numb_hash(numb) % hash->size;
+   he->value.numb      = numb;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+}
+
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
@@ -198,6 +217,21 @@ Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
    
    for(he = hash->bucket[hcode]; he != NULL; he = he->next)
       if (!entry_cmp(he->value.entry, tuple))
+         break;
+
+   return he != NULL;
+}
+
+Bool hash_has_numb(const Hash* hash, const Numb* numb)
+{
+   unsigned int hcode = numb_hash(numb) % hash->size;
+   HElem*       he    = NULL;
+   
+   assert(hash_is_valid(hash));
+   assert(numb_is_valid(numb));
+
+   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
+      if (numb_equal(he->value.numb, numb))
          break;
 
    return he != NULL;

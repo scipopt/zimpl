@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.12 2005/03/02 20:49:06 bzfkocht Exp $
+# $Id: check.sh,v 1.13 2005/07/10 10:19:17 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -103,6 +103,19 @@ done
    rm print.out print.tbl print.lp
 # 
 #
+for i in sos
+do
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 $i.zpl
+   diff $i.sos $i.sos.ref >/dev/null
+   case $? in
+    0) echo Test $i "(sos)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test $i "(sos)" FAIL ;;
+    *) echo Test $i "(sos)" ERROR ;;
+   esac
+   rm $i.tbl $i.lp $i.sos
+done 
+#
 cd warnings
 for i in w*.zpl
 do
@@ -115,7 +128,7 @@ do
     1) echo Test $i "(warn)" FAIL ;;
     *) echo Test $i "(warn)" ERROR ;;
    esac
-   rm $NAME.warn $NAME.tbl $NAME.lp
+   rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.sos
 done 2>/dev/null
 cd ..
 cd errors

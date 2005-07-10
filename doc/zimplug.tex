@@ -2,6 +2,8 @@
 %       Ergenis zeigen:
 %       set A := { 1..4}     |  { 1, 2, 3, 4 }
 %
+%       min/max expr beispiel
+%
 \section{Introduction}
 Consider the following linear program:
 $$
@@ -689,6 +691,37 @@ subto c2: sum <i> in I :
 \end{verbatim}
 }
 
+
+%------------------------------------------------------------------------------
+\subsection{Special ordered sets}
+%------------------------------------------------------------------------------
+\zimpl can be used to specify special ordered sets (\sos) for an
+integer program. If a model contains any \sos a \code{sos} file will
+be written together with the \code{lp} or \code{mps} file.
+The general format of a special ordered set is:
+
+\smallskip
+\verb@sos name: term == [type1|type2] priority expr@
+
+\smallskip
+\noindent \code{name} can be any name starting with a letter. \sos use
+the same namespace as constraints.
+\code{term} is defined as in the objective. \code{type1} or
+\code{type2} indicate whether a type-1 or type-2 special ordered set
+is declared. The priority is optional and equal to the priority
+setting for variables.
+Many \sos can be generated with one statement by the use of the
+\code{forall} instruction, as shown above.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+sos s1: 100 * x[1] + 200 * x[2] + 400 * x[3] == type1;
+sos s2: sum <i> in I: a[i] * x[i] == type2 priority 100;
+sos s3: forall <i> in I with i > 2: 
+           (100 + i) * x[i] + i * x[i-1] == type1;
+\end{verbatim}
+}
 
 %------------------------------------------------------------------------------
 \subsection{Initializing sets and parameters from a file}

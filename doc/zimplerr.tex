@@ -353,6 +353,12 @@
   The index tuple given had fixed components. The type of such a
   component was not the same as the type of the same component of tuples
   from the set.
+\item[199 Constants are not allowed in SOS declarations]\ \\
+  When declaring an SOS, weights are only allowed together with
+  variabled. A weight alone does not make sense.
+\item[200 Weights are not unique for SOS \code{xxx} (warning)]\ \\
+  All weights assigned to variables in an special ordered set have to
+  be unique. 
 %
 % numbgmp.c
 %

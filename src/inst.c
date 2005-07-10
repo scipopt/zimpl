@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.86 2005/07/09 18:51:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.87 2005/07/10 10:19:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -261,8 +261,13 @@ CodeNode* i_soset(CodeNode* self)
 
    assert(sos != NULL);
 
-   term_to_sos(term, sos);
-      
+   if (term_to_sos(term, sos))
+   {
+      if (verbose > VERB_QUIET)
+         fprintf(stderr,
+            "--- Warning 200: Weights are not unique for SOS %s\n", conname_get());
+      code_errmsg(self);
+   }
    conname_next();
 
    code_value_void(self);
@@ -730,7 +735,7 @@ CodeNode* i_expr_min(CodeNode* self)
    {
       if (verbose > VERB_QUIET)
       {
-         fprintf(stderr, "-- Warning 186: Minimizing over empty set -- zero assumed\n");
+         fprintf(stderr, "--- Warning 186: Minimizing over empty set -- zero assumed\n");
          code_errmsg(code_get_child(self, 0));
       }
    }
@@ -785,7 +790,7 @@ CodeNode* i_expr_max(CodeNode* self)
    {
       if (verbose > VERB_QUIET)
       {
-         fprintf(stderr, "-- Warning 187: Maximizing over empty set -- zero assumed\n");
+         fprintf(stderr, "--- Warning 187: Maximizing over empty set -- zero assumed\n");
          code_errmsg(code_get_child(self, 0));
       }
    }

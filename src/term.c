@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.23 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.24 2005/07/10 10:19:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -327,25 +327,40 @@ void term_to_nzo(const Term* term, Con* con)
    }
 }
 
-void term_to_sos(const Term* term, Sos* sos)
+Bool term_to_sos(const Term* term, Sos* sos)
 {
+   Hash*  hash;
    Var*   var;
    int    i;
-
+   Bool   has_duplicates = FALSE;
+   
    Trace("term_to_sos");
    
    assert(sos != NULL);
    assert(term_is_valid(term));
    assert(numb_equal(term->constant, numb_zero()));
 
+   hash = hash_new(HASH_NUMB, term->used);
+
+   assert(hash != NULL);
+   
    for(i = 0; i < term->used; i++)
    {
       assert(!numb_equal(term->elem[i].coeff, numb_zero()));
 
       var = entry_get_var(term->elem[i].entry);
 
+      /* Each weight is allowed only once.
+       */
+      if (hash_has_numb(hash, term->elem[i].coeff))
+         has_duplicates = TRUE;
+
+      hash_add_numb(hash, term->elem[i].coeff);
       xlp_addtosos(sos, var, term->elem[i].coeff);
    }
+   hash_free(hash);
+   
+   return has_duplicates;
 }
 
 void term_to_objective(const Term* term)
