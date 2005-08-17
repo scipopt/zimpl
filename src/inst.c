@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.87 2005/07/10 10:19:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.88 2005/08/17 17:26:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1826,6 +1826,84 @@ CodeNode* i_set_indexset(CodeNode* self)
    assert(sym != NULL);
 
    code_value_set(self, set_copy(symbol_get_iset(sym)));
+
+   return self;
+}
+
+CodeNode* i_set_expr(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    iset;
+   const Tuple*  pattern;
+   Tuple*        tuple;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   CodeNode*     cexpr;
+   Elem*         elem;
+   List*         list;
+   Bool          first = TRUE;
+
+   Trace("i_expr_max");
+
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   iset    = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(iset, pattern);
+   
+   while((tuple = set_iter_next(iter, iset)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         cexpr = code_eval_child(self, 1);      
+
+         switch(code_get_type(cexpr))
+         {
+         case CODE_NUMB :
+            elem = elem_new_numb(code_get_numb(cexpr));
+            break;
+         case CODE_STRG :
+            elem = elem_new_strg(code_get_strg(cexpr));
+            break;
+         case CODE_NAME :
+            abort();
+            break;
+         default :
+            abort();
+            break;
+         }
+         if (first)
+         {
+            list  = list_new_elem(elem);
+            first = FALSE;
+         }
+         else
+         {
+            list_add_elem(list, elem);
+         }
+         elem_free(elem);
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, iset);
+   
+   if (first)
+   {
+      if (verbose > VERB_QUIET)
+      {
+         fprintf(stderr, "--- Warning XXX: Indexing over empty set -- zero assumed\n");
+         code_errmsg(code_get_child(self, 0));
+      }
+   }
+   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
+
+   list_free(list);
 
    return self;
 }

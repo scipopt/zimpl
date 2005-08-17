@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.15 2003/10/03 12:47:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.16 2005/08/17 17:26:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -180,6 +180,7 @@ static int parse_template(
    int   field;
    char  type;
    int   params = 0;
+   Bool  is_single_value = FALSE;
    
    assert(self          != NULL);
    assert(template      != NULL);
@@ -188,10 +189,10 @@ static int parse_template(
    assert(is_tuple_list != NULL);
    
    /* Is this a tuple_list "<1n,2s>" or
-    * an entry_list "<1n,2n> 3s" template ?
+    * an entry_list "<1n,2n> 3s" template
+    * or a single value "2n" ?
     */
-   if (  (NULL               == strchr(temp, '>'))
-      || (NULL               == strchr(temp, '<'))
+   if (( (NULL == strchr(temp, '>')) != (NULL == strchr(temp, '<')))
       || (strrchr(temp, '>') != strchr(temp, '>'))
       || (strrchr(temp, '<') != strchr(temp, '<')))
    {
@@ -201,13 +202,18 @@ static int parse_template(
    }
    s = strchr(temp, '>');
 
-   assert(s != NULL);
-   
-   for(++s; isspace(*s); s++)
-      ;
+   if (s == NULL)
+   {
+      *is_tuple_list  = FALSE;
+      is_single_value = TRUE;
+   }
+   else
+   {
+      for(++s; isspace(*s); s++)
+         ;
 
-   *is_tuple_list = (*s == '\0');
-
+      *is_tuple_list = (*s == '\0');
+   }
    /* Here we start to rip the template apart
     */
    for(s = strtok(temp, sep);
@@ -240,12 +246,20 @@ static int parse_template(
    }
    free(temp);
 
-   if (params - (*is_tuple_list ? 0 : 1) < 1)
+   if (is_single_value)
+   {
+      if (params != 1)
+      {
+         fprintf(stderr, "*** Error XXX: Invalid read template, too many fields\n");
+         code_errmsg(self);
+         exit(EXIT_FAILURE);
+      }
+   }
+   else if (params - (*is_tuple_list ? 0 : 1) < 1)
    {
       fprintf(stderr, "*** Error 155: Invalid read template, not enough fields\n");
       code_errmsg(self);
       exit(EXIT_FAILURE);
-      
    }
    return params;
 }
@@ -409,14 +423,6 @@ CodeNode* i_read(CodeNode* self)
 
          /* Now we break the line in fields.
           */
-#if 0
-         fields = 0;
-        
-         for(s = strtok(buf, fieldsep);
-            (s != NULL) && (fields < MAX_FIELDS);
-             s = strtok(NULL, fieldsep))
-            field[fields++] = s;
-#endif
          fields = split_fields(s, field);
 #if 0
          fprintf(stderr, "Fields=%d\n", fields);

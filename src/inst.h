@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.33 2005/07/09 18:51:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.34 2005/08/17 17:26:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -176,12 +176,14 @@ extern CodeNode* i_object_max(CodeNode* self);
 extern CodeNode* i_object_min(CodeNode* self);
 /*lint -sem(     i_print, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_print(CodeNode* self);
-/*lint -sem(     i_set_idxset, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_set_idxset(CodeNode* self);
 /*lint -sem(     i_set_cross, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_cross(CodeNode* self);
 /*lint -sem(     i_set_empty, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_empty(CodeNode* self);
+/*lint -sem(     i_set_expr, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_expr(CodeNode* self);
+/*lint -sem(     i_set_idxset, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_idxset(CodeNode* self);
 /*lint -sem(     i_set_indexset, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_indexset(CodeNode* self);
 /*lint -sem(     i_set_inter, 1p == 1, type(1), @p == 1p) */

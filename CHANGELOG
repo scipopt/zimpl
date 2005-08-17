@@ -1,3 +1,6 @@
+ - It is now possible to build sets by indexing an 
+   expression: { <i> in I with i != 3 : p[i] };
+
  - Special Ordered Sets (SOS) implemented. Thanks Daniel.
 
  - Changed a problem with the -n cf option due to a change in

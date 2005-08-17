@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.66 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.67 2005/08/17 17:26:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -241,6 +241,15 @@ decl_par
       }
    | DECLPAR NAME ASGN cexpr ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
+            code_new_name($2),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
+            code_new_inst(i_entry_list_new, 1,
+               code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
+            code_new_inst(i_nop, 0));
+      }
+   | DECLPAR NAME ASGN cexpr_entry_list ';' {
+         $$ = code_new_inst(i_newsym_para3, 4,
             code_new_name($2),
             code_new_inst(i_idxset_pseudo_new, 1,
                code_new_inst(i_bool_true, 0)),              
@@ -747,11 +756,12 @@ sexpr
    | sexpr '*' sexpr {
          $$ = code_new_inst(i_set_cross, 2, $1, $3);
       }
-   | sexpr INTER   sexpr  { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
-   | '(' sexpr ')'      { $$ = $2; }
-   | '{' tuple_list '}' { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
-   | '{' cexpr_list '}'  { $$ = code_new_inst(i_set_new_elem, 1, $2); }
-   | '{' idxset '}'     { $$ = code_new_inst(i_set_idxset, 1, $2); }
+   | sexpr INTER   sexpr     { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
+   | '(' sexpr ')'           { $$ = $2; }
+   | '{' tuple_list '}'      { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
+   | '{' cexpr_list '}'      { $$ = code_new_inst(i_set_new_elem, 1, $2); }
+   | '{' idxset '}'          { $$ = code_new_inst(i_set_idxset, 1, $2); }
+   | '{' idxset DO cexpr '}' { $$ = code_new_inst(i_set_expr, 2, $2, $4); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
        }

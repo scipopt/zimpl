@@ -1,3 +1,9 @@
+- single value read error
+- single value read doku / tests
+- " warning if moe than one line read.
+- doku index expressens in set.
+- warning / tests "
+
 Test fuer spezielle fehlersituationen.
 z,B. param x[E] : = ...
      do print x;
