@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.30 2005/07/09 18:51:20 bzfkocht Exp $
+# $Id: Makefile,v 1.31 2005/09/02 02:01:36 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -64,6 +64,7 @@ CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lz -lm
 YFLAGS		=	-d -t -v  
 LFLAGS		=	-d
+ARFLAGS		=	cr
 DFLAGS		=	-MM
 
 GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
@@ -75,24 +76,26 @@ BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
 TARGET		=	$(NAME)-$(VERSION).$(BASE)
+LIBRARY		=	$(LIBDIR)/lib$(TARGET).a
 BINARY		=	$(BINDIR)/$(TARGET)
 DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
 
-OBJECT  =       	bound.o code.o conname.o define.o elem.o entry.o \
-			hash.o idxset.o iread.o list.o load.o local.o \
-			mmlparse.o mmlscan.o numbgmp.o \
+OBJECT  	=       zimpl.o mshell.o xlpglue.o \
+			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
+			ratordwrite.o ratpresolve.o ratsoswrite.o rathumwrite.o 
+LIBOBJ		=	bound.o code.o conname.o define.o elem.o entry.o \
+			gmpmisc.o hash.o idxset.o inst.o iread.o list.o \
+			load.o local.o mmlparse.o mmlscan.o numbgmp.o \
 			prog.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o \
-			stmt.o strstore.o symbol.o term.o tuple.o zimpl.o \
-			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			mshell.o inst.o ratordwrite.o xlpglue.o gmpmisc.o \
-			ratpresolve.o ratsoswrite.o rathumwrite.o vinst.o
-
+			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
+			tuple.o vinst.o zimpllib.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
+LIBXXX		=	$(addprefix $(OBJDIR)/,$(LIBOBJ))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
+LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c))
 
 #-----------------------------------------------------------------------------
 include make/make.$(BASE)
@@ -101,8 +104,13 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX)  
-		$(CC) $(CFLAGS) $(OBJXXX) $(LDFLAGS) -o $@
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
+		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET) $(LDFLAGS) -o $@
+
+$(LIBRARY):	$(LIBDIR) $(LIBXXX) 
+		-rm -f $(LIBRARY)
+		$(AR) $(ARFLAGS) $@ $(LIBXXX)
+		$(RANLIB) $@
 
 $(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
 		$(YACC) $(YFLAGS) -o $@ $<
@@ -110,7 +118,7 @@ $(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
 $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
-lint:		$(OBJSRC)
+lint:		$(OBJSRC) $(LIBSRC)
 		$(LINT) $(SRCDIR)/project.lnt -os\(lint.out\) \
 		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
 
@@ -127,6 +135,9 @@ valgrind:
 
 $(OBJDIR):	
 		-mkdir -p $(OBJDIR)
+
+$(LIBDIR):
+		-mkdir -p $(LIBDIR)
 
 $(BINDIR):
 		-mkdir -p $(BINDIR)

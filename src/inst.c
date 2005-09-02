@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.88 2005/08/17 17:26:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.89 2005/09/02 02:01:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1489,10 +1489,10 @@ CodeNode* i_set_empty(CodeNode* self)
 }
 
 static void check_sets_compatible(
-   CodeNode*   self,
-   const Set*  set_a,
-   const Set*  set_b,
-   const char* op_name)
+   const CodeNode* self,
+   const Set*      set_a,
+   const Set*      set_b,
+   const char*     op_name)
 {
    Tuple*      tuple_a;
    Tuple*      tuple_b;
@@ -1840,7 +1840,7 @@ CodeNode* i_set_expr(CodeNode* self)
    SetIter*      iter;
    CodeNode*     cexpr;
    Elem*         elem;
-   List*         list;
+   List*         list  = NULL;
    Bool          first = TRUE;
 
    Trace("i_expr_max");
@@ -1883,6 +1883,7 @@ CodeNode* i_set_expr(CodeNode* self)
          }
          else
          {
+            assert(list != NULL);
             list_add_elem(list, elem);
          }
          elem_free(elem);
@@ -1901,6 +1902,7 @@ CodeNode* i_set_expr(CodeNode* self)
          code_errmsg(code_get_child(self, 0));
       }
    }
+#warning "Bug hier bei empty list"
    code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
    list_free(list);

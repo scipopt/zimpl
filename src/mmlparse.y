@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.67 2005/08/17 17:26:13 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.68 2005/09/02 02:01:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -248,7 +248,8 @@ decl_par
                code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
             code_new_inst(i_nop, 0));
       }
-   | DECLPAR NAME ASGN cexpr_entry_list ';' {
+/* 
+    | DECLPAR NAME ASGN cexpr_entry_list ';' {
          $$ = code_new_inst(i_newsym_para3, 4,
             code_new_name($2),
             code_new_inst(i_idxset_pseudo_new, 1,
@@ -257,7 +258,8 @@ decl_par
                code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
             code_new_inst(i_nop, 0));
       }
-   ;
+*/
+      ;
 
 par_default
    : /* empty */   { $$ = code_new_inst(i_nop, 0); }

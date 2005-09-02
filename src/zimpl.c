@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.61 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.62 2005/09/02 02:01:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -140,14 +140,14 @@ static char* strip_extension(char* filename)
    assert(filename != NULL);
    assert(strlen(filename) > 0);
 
-   for(i = strlen(filename) - 1; i >= 0; i--)
+   for(i = (int)strlen(filename) - 1; i >= 0; i--)
       if (filename[i] == DIRSEP || filename[i] == '.')
          break;
 
    if (i >= 0 && filename[i] == '.')
       filename[i] = '\0';
 
-   i = strlen(filename);
+   i = (int)strlen(filename);
    
    if (i == 0 || filename[i - 1] == DIRSEP)
    {
@@ -271,7 +271,8 @@ int main(int argc, char* const* argv)
          yydebug = 1;
          break;
       case 'D' :
-         param_table = realloc(param_table, (param_count + 1) * sizeof(*param_table));
+         param_table =
+            realloc(param_table, ((unsigned int)param_count + 1) * sizeof(*param_table));
          param_table[param_count] = strdup(optarg);
          param_count++;
          break;
@@ -403,7 +404,7 @@ int main(int argc, char* const* argv)
    /* Make symbol to hold entries of internal variables
     */
    set = set_pseudo_new();
-   (void)symbol_new("@@", SYM_VAR, set, 100, NULL);
+   (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
    set_free(set);
    
    /* Now store the param defines

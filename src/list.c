@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.16 2004/05/15 15:18:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.17 2005/09/02 02:01:36 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -378,13 +378,6 @@ void list_print(FILE* fp, const List* list)
       fprintf(fp, "\n");
    }
 }
-
-
-
-
-
-
-
 
 
 

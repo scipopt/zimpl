@@ -1,3 +1,7 @@
+Warning XXX ist noch nicht ok
+
+warum geht { <c> in C : {c} * W } nicht ?
+
 - single value read error
 - single value read doku / tests
 - " warning if moe than one line read.
