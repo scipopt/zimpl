@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.1 2005/09/02 02:02:43 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.2 2005/09/06 00:30:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -44,10 +44,18 @@
 #include "xlpglue.h"
 #include "gmpmisc.h"
 
-void zimpl_read(const char* filename)
+extern int yydebug;
+extern int yy_flex_debug;
+
+int verbose = VERB_QUIET;
+
+void zpl_read(const char* filename)
 {
    Prog*       prog;
    Set*        set;
+
+   yydebug       = 0;
+   yy_flex_debug = 0;
 
    gmp_init(verbose >= VERB_VERBOSE);
    str_init();
