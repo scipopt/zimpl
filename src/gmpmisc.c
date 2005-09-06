@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.c,v 1.3 2003/08/22 07:06:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.c,v 1.4 2005/09/06 00:25:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -107,6 +107,8 @@ static void pool_exit(void)
 
       free(p);
    }
+   pool_root = NULL;
+   pool_next = NULL;
 }
 
 /* [+|-]?[0-9]*.[0-9]+[[e|E][+|-][0-9]+]? */

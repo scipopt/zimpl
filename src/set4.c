@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.10 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.11 2005/09/06 00:25:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -72,6 +72,8 @@ void set_exit()
    assert(set_vtab_global != NULL);
    
    free(set_vtab_global);
+
+   set_vtab_global = NULL;
 }
 
 Set* set_new_from_list(const List* list, SetCheckType check)

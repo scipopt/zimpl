@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.15 2005/02/12 09:53:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.16 2005/09/06 00:25:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -139,6 +139,9 @@ void elem_exit()
       free(store->begin);
       free(store);
    }
+   store_anchor = NULL;
+   store_free   = NULL;
+   store_count  = 0;
 }
 
 Elem* elem_new_numb(const Numb* numb)

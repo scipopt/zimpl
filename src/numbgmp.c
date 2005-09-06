@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.19 2004/05/15 14:45:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.20 2005/09/06 00:25:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmt.c                                                     */
@@ -126,6 +126,10 @@ void numb_exit()
    numb_free(numb_const_one);
    numb_free(numb_const_minusone);
 
+   numb_const_zero     = NULL;
+   numb_const_one      = NULL;
+   numb_const_minusone = NULL;
+
    if (store_count != 0)
       printf("Numb store count %d\n", store_count);
    
@@ -139,6 +143,9 @@ void numb_exit()
       free(store->begin);
       free(store);
    }   
+   store_anchor = NULL;
+   store_free   = NULL;
+   store_count  = 0;
 }
 
 /* value is zero */
