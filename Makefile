@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.31 2005/09/02 02:01:36 bzfkocht Exp $
+# $Id: Makefile,v 1.32 2005/09/06 00:36:24 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -82,7 +82,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
 
-OBJECT  	=       zimpl.o mshell.o xlpglue.o \
+OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
 			ratordwrite.o ratpresolve.o ratsoswrite.o rathumwrite.o 
 LIBOBJ		=	bound.o code.o conname.o define.o elem.o entry.o \
@@ -91,7 +91,7 @@ LIBOBJ		=	bound.o code.o conname.o define.o elem.o entry.o \
 			prog.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
-			tuple.o vinst.o zimpllib.o
+			tuple.o vinst.o mshell.o zimpllib.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
 LIBXXX		=	$(addprefix $(OBJDIR)/,$(LIBOBJ))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
