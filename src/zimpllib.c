@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.3 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.4 2005/09/27 11:26:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -63,7 +63,7 @@ void zpl_exit(int retval)
 
 Bool zpl_read(const char* filename)
 {
-   Prog*       prog;
+   Prog*       prog = NULL;
    Set*        set;
    Bool        ret = FALSE;
    
@@ -99,14 +99,15 @@ Bool zpl_read(const char* filename)
 
          prog_execute(prog);
 
-         prog_free(prog);
-
          ret = TRUE;
       }
    }
    is_longjmp_ok = FALSE;
 
    xlp_free();
+
+   if (prog != NULL)
+      prog_free(prog);
 
    symbol_exit();
    define_exit();
