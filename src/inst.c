@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.89 2005/09/02 02:01:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.90 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -69,7 +69,7 @@ CodeNode* i_subto(CodeNode* self)
    {
       fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    (void)code_eval_child(self, 1); /* constraint */
 
@@ -120,7 +120,7 @@ CodeNode* i_constraint(CodeNode* self)
       {
          fprintf(stderr, "*** Error 106: Empty LHS, constraint trivially violated\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    else
@@ -157,7 +157,7 @@ CodeNode* i_rangeconst(CodeNode* self)
    {
       fprintf(stderr, "*** Error 107: Range must be l <= x <= u, or u >= x >= l\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    lhs        = numb_copy(code_eval_child_numb(self, 0));
@@ -179,7 +179,7 @@ CodeNode* i_rangeconst(CodeNode* self)
          fprintf(stderr,
             "*** Error 108: Empty Term with nonempty LHS/RHS, constraint trivially violated\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    else
@@ -188,7 +188,7 @@ CodeNode* i_rangeconst(CodeNode* self)
       {
          fprintf(stderr, "*** Error 109: LHS/RHS contradiction, constraint trivially violated\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       con = xlp_addcon(conname_get(), CON_RANGE, lhs, rhs, flags);
          
@@ -219,7 +219,7 @@ CodeNode* i_sos(CodeNode* self)
    {
       fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    (void)code_eval_child(self, 1); /* soset */
 
@@ -250,7 +250,7 @@ CodeNode* i_soset(CodeNode* self)
    {
       fprintf(stderr, "*** Error 199: Constants are not allowed in SOS declarations\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (numb_equal(typenumb, numb_one()))
       type = SOS_TYPE1;
@@ -366,7 +366,7 @@ CodeNode* i_expr_div(CodeNode* self)
    {
       fprintf(stderr, "*** Error: 110 Division by zero\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self,
       numb_new_div(code_eval_child_numb(self, 0), divisor));
@@ -388,7 +388,7 @@ CodeNode* i_expr_mod(CodeNode* self)
    {
       fprintf(stderr, "*** Error 111: Modulo by zero\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self,
       numb_new_mod(code_eval_child_numb(self, 0), divisor));
@@ -410,7 +410,7 @@ CodeNode* i_expr_intdiv(CodeNode* self)
    {
       fprintf(stderr, "*** Error 110: Division by zero\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self,
       numb_new_intdiv(
@@ -436,7 +436,7 @@ CodeNode* i_expr_pow(CodeNode* self)
       numb_print(stderr, expo);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    ex = numb_toint(expo);
 
@@ -539,7 +539,7 @@ CodeNode* i_expr_log(CodeNode* self)
    if (numb == NULL)
    {
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self, numb);
    
@@ -559,7 +559,7 @@ CodeNode* i_expr_ln(CodeNode* self)
    if (numb == NULL)
    {
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self, numb);
    
@@ -579,7 +579,7 @@ CodeNode* i_expr_sqrt(CodeNode* self)
    if (numb == NULL)
    {
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }      
    code_value_numb(self, numb);
    
@@ -614,7 +614,7 @@ CodeNode* i_expr_fac(CodeNode* self)
       numb_print(stderr, fac);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    n = numb_toint(fac);
 
@@ -622,13 +622,13 @@ CodeNode* i_expr_fac(CodeNode* self)
    {
       fprintf(stderr, "*** Error 114: Negative factorial value\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (n > 1000)
    {
       fprintf(stderr, "*** Error 115: Timeout!\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    code_value_numb(self, numb_new_fac(n));
 
@@ -869,7 +869,7 @@ CodeNode* i_expr_min2(CodeNode* self)
          elem_print(stderr, elem);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       numb = elem_get_numb(elem);
 
@@ -916,7 +916,7 @@ CodeNode* i_expr_max2(CodeNode* self)
          elem_print(stderr, elem);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       numb = elem_get_numb(elem);
 
@@ -955,7 +955,7 @@ CodeNode* i_expr_ord(CodeNode* self)
       numb_print(stderr, tuple_no);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!numb_is_int(compo_no))
    {
@@ -963,7 +963,7 @@ CodeNode* i_expr_ord(CodeNode* self)
       numb_print(stderr, compo_no);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    tno = numb_toint(tuple_no);
    cno = numb_toint(compo_no);
@@ -973,14 +973,14 @@ CodeNode* i_expr_ord(CodeNode* self)
       fprintf(stderr, "*** Error 191: Tuple number %d", tno);
       fprintf(stderr, " is not a valid value between 1..%d\n", set_get_members(set));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (cno < 1 || cno > set_get_dim(set))
    {
       fprintf(stderr, "*** Error 192: Component number %d", cno);
       fprintf(stderr, " is not a valid value between 1..%d\n", set_get_dim(set));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    tuple = set_get_tuple(set, tno - 1);
    elem  = tuple_get_elem(tuple, cno - 1);
@@ -1100,7 +1100,7 @@ CodeNode* i_bool_eq(CodeNode* self)
    {
       fprintf(stderr, "*** Error 118: Comparison of different types\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(tp1 == tp2);
 
@@ -1116,7 +1116,7 @@ CodeNode* i_bool_eq(CodeNode* self)
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
@@ -1157,7 +1157,7 @@ CodeNode* i_bool_ge(CodeNode* self)
    {
       fprintf(stderr, "*** Error 118: Comparison of different types\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(tp1 == tp2);
 
@@ -1173,7 +1173,7 @@ CodeNode* i_bool_ge(CodeNode* self)
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
@@ -1203,7 +1203,7 @@ CodeNode* i_bool_gt(CodeNode* self)
    {
       fprintf(stderr, "*** Error 118: Comparison of different types\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(tp1 == tp2);
 
@@ -1219,7 +1219,7 @@ CodeNode* i_bool_gt(CodeNode* self)
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
@@ -1408,7 +1408,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
          tuple_print(stderr, list_get_tuple(list, &le));
          fprintf(stderr, "\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       for(i = 0; i < dim; i++)
       {
@@ -1421,7 +1421,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
             fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
                elem_get_name(tuple_get_elem(tuple, i)));
             code_errmsg(self);
-            exit(EXIT_FAILURE);
+            zpl_exit(EXIT_FAILURE);
          }
       }
    }
@@ -1454,7 +1454,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
          fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             elem_get_name(elem));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
@@ -1510,7 +1510,7 @@ static void check_sets_compatible(
    {
       fprintf(stderr, "*** Error 119: %s of sets with different dimension\n", op_name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    tuple_a = set_get_tuple(set_a, 0);
    tuple_b = set_get_tuple(set_b, 0);
@@ -1530,7 +1530,7 @@ static void check_sets_compatible(
       {
          fprintf(stderr, "*** Error 120: %s of sets with different types\n", op_name);
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    tuple_free(tuple_a);
@@ -1654,7 +1654,7 @@ CodeNode* i_set_range(CodeNode* self)
       numb_print(stderr, from);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!numb_is_int(upto))
    {
@@ -1662,7 +1662,7 @@ CodeNode* i_set_range(CodeNode* self)
       numb_print(stderr, upto);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!numb_is_int(step))
    {
@@ -1670,7 +1670,7 @@ CodeNode* i_set_range(CodeNode* self)
       numb_print(stderr, step);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    int_from = numb_toint(from);
    int_upto = numb_toint(upto);
@@ -1685,7 +1685,7 @@ CodeNode* i_set_range(CodeNode* self)
    {
       fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    code_value_set(self, set_range_new(int_from, int_upto, int_step));
 
@@ -1716,7 +1716,7 @@ CodeNode* i_set_range2(CodeNode* self)
       numb_print(stderr, from);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!numb_is_int(upto))
    {
@@ -1724,7 +1724,7 @@ CodeNode* i_set_range2(CodeNode* self)
       numb_print(stderr, upto);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!numb_is_int(step))
    {
@@ -1732,7 +1732,7 @@ CodeNode* i_set_range2(CodeNode* self)
       numb_print(stderr, step);
       fprintf(stderr, " in range too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    int_from = numb_toint(from);
    int_upto = numb_toint(upto);
@@ -1743,7 +1743,7 @@ CodeNode* i_set_range2(CodeNode* self)
    {
       fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if ((Sgn(int_step) > 0 && diff < 0)
     || (Sgn(int_step) < 0 && diff > 0))
@@ -1784,7 +1784,7 @@ CodeNode* i_set_proj(CodeNode* self)
          tuple_print(stderr, tuple);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       numb = elem_get_numb(elem);
       
@@ -1794,7 +1794,7 @@ CodeNode* i_set_proj(CodeNode* self)
          numb_print(stderr, numb);
          fprintf(stderr, " in proj too big or not an integer\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       idx = numb_toint(numb);
       
@@ -1805,7 +1805,7 @@ CodeNode* i_set_proj(CodeNode* self)
          fprintf(stderr, "*** Error 129: Illegal index %d, ", idx);
          fprintf(stderr, " set has only dimension %d\n", dim);
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    code_value_set(self, set_proj(set_a, tuple));
@@ -2052,7 +2052,7 @@ CodeNode* i_newsym_set1(CodeNode* self)
    {
       fprintf(stderr, "*** Error 197: Empty index set for set\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
@@ -2108,7 +2108,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       fprintf(stderr, "*** Error 197: Empty index set for set\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    /* Pseudo set ?
@@ -2141,7 +2141,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
             tuple_get_dim(tuple),
             set_get_dim(iset));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
 
       if (set_lookup(iset, tuple))
@@ -2152,7 +2152,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
          tuple_print(stderr, tuple);
          fprintf(stderr, " for symbol\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    code_value_void(self);
@@ -2196,7 +2196,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
    {
       fprintf(stderr, "*** Error 195: Empty index set for parameter\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    if (!list_is_entrylist(list))
@@ -2209,7 +2209,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
       fprintf(stderr, "*** Error 132: Values in parameter list missing,\n");
       fprintf(stderr, "               probably wrong read template\n");      
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    /* First element will determine the type (see SYM_ERR below)
@@ -2232,7 +2232,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
 n",
          name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
 #endif
    sym   = symbol_new(name, SYM_ERR, iset, count, deflt);
@@ -2251,7 +2251,7 @@ n",
             tuple_get_dim(tuple),
             set_get_dim(iset));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       if (!set_lookup(iset, tuple))
       {
@@ -2259,7 +2259,7 @@ n",
          tuple_print(stderr, tuple);
          fprintf(stderr, " for symbol\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       if (i > 0 && symbol_get_type(sym) != entry_get_type(entry))
       {
@@ -2267,7 +2267,7 @@ n",
          entry_print(stderr, entry);
          fprintf(stderr, " for symbol\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       symbol_add_entry(sym, entry_copy(entry));
    }
@@ -2309,7 +2309,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
       fprintf(stderr, "*** Error 135: Index set for parameter \"%s\" is empty\n",
          name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    if (code_get_type(child3) == CODE_VOID)
@@ -2341,7 +2341,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
          fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             code_get_name(child));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       default :
          abort();
       }
@@ -2351,7 +2351,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
          entry_print(stderr, entry);
          fprintf(stderr, " for symbol\n");
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       symbol_add_entry(sym, entry);
       
@@ -2513,7 +2513,7 @@ CodeNode* i_newsym_var(CodeNode* self)
             numb_todbl(bound_get_value(lower)),
             numb_todbl(bound_get_value(upper)));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
 
       /* Hier geben wir der Variable einen eindeutigen Namen
@@ -2580,7 +2580,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
          fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             elem_get_name(elem));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    
@@ -2592,7 +2592,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
 
    switch(symbol_get_type(sym))
@@ -2663,7 +2663,7 @@ CodeNode* i_define_deref(CodeNode* self)
          fprintf(stderr, "               in call of define \"%s\".\n",
             define_get_name(def));
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
    }
    
@@ -2681,7 +2681,7 @@ CodeNode* i_define_deref(CodeNode* self)
       fprintf(stderr, "               for call of define \"%s\".\n",
          define_get_name(def));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    local_install_tuple(param, tuple);
 
@@ -2767,7 +2767,7 @@ CodeNode* i_idxset_new(CodeNode* self)
          tuple_print(stderr, tuple);
          fprintf(stderr, " should have dimension %d\n", dim);
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       if (dim > 0 && set_get_members(set) > 0)
       {
@@ -2789,7 +2789,7 @@ CodeNode* i_idxset_new(CodeNode* self)
                   tuple_print(stderr, t1);
                   fprintf(stderr, "\n");
                   code_errmsg(self);
-                  exit(EXIT_FAILURE);
+                  zpl_exit(EXIT_FAILURE);
                }
             }
          }
@@ -3025,7 +3025,7 @@ CodeNode* i_entry(CodeNode* self)
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(child));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
@@ -3188,7 +3188,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
       numb_print(stderr, numb);
       fprintf(stderr, " is too big or not an integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    subset_size = numb_toint(numb);
    
@@ -3196,7 +3196,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    {
       fprintf(stderr, "*** Error 144: Tried to build subsets of empty set\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(set_get_dim(set) > 0);
    
@@ -3207,7 +3207,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
       fprintf(stderr, "               should be between 1 and %d\n",
          set_get_members(set));
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    code_value_list(self, set_subsets_list(set, subset_size, NULL, &idx));
    
@@ -3233,7 +3233,7 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
    {
       fprintf(stderr, "*** Error 146: Tried to build powerset of empty set\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(set_get_dim(set) > 0);
 
@@ -3299,7 +3299,7 @@ CodeNode* i_list_matrix(CodeNode* self)
             list_get_elems(val_list));
          fprintf(stderr, "               expected %d entries\n", head_count);
          code_errmsg(self);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
 
       le_head = NULL;
@@ -3335,7 +3335,7 @@ CodeNode* i_list_matrix(CodeNode* self)
             fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
                elem_get_name(elem));
             code_errmsg(self);
-            exit(EXIT_FAILURE);
+            zpl_exit(EXIT_FAILURE);
          default :
             abort();
          }
@@ -3410,7 +3410,7 @@ static void objective(CodeNode* self, Bool minimize)
    {
       fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    term = code_eval_child_term(self, 1);
 
@@ -3513,7 +3513,7 @@ CodeNode* i_check(CodeNode* self)
       fprintf(stderr, "*** Error 900: Check failed!\n");
       local_print_all(stderr);
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    code_value_void(self);
 

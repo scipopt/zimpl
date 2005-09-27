@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.24 2005/07/09 18:51:20 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.25 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -64,7 +64,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
       if (in_string && ((c == EOF) || c == '\n'))
       {
          fprintf(stderr, "*** Error 161: Line %d: Unterminated string\n", *lineno);
-         exit(EXIT_FAILURE);
+         zpl_exit(EXIT_FAILURE);
       }
       if (c == EOF)
       {
@@ -176,7 +176,7 @@ static void add_stmt(
       fprintf(stderr, "*** Error 163: Line %d: Syntax Error\n", lineno);
       show_source(stderr, text, 1);
 
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    prog_add_stmt(prog, stmt_new(type, filename, lineno, text));
 }
@@ -219,7 +219,7 @@ void prog_load(Prog* prog, const char* filename)
    if ((fp = fopen(myfilename, "r")) == NULL)
    {
       perror(myfilename);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)

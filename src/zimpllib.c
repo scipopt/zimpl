@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.2 2005/09/06 00:30:19 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.3 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
+#include <setjmp.h>
 
 #include <gmp.h>
 
@@ -49,11 +50,23 @@ extern int yy_flex_debug;
 
 int verbose = VERB_QUIET;
 
-void zpl_read(const char* filename)
+static jmp_buf zpl_read_env;
+static Bool    is_longjmp_ok = FALSE;
+
+void zpl_exit(int retval)
+{
+   if (is_longjmp_ok)
+      longjmp(zpl_read_env, retval);
+
+   exit(retval);
+}
+
+Bool zpl_read(const char* filename)
 {
    Prog*       prog;
    Set*        set;
-
+   Bool        ret = FALSE;
+   
    yydebug       = 0;
    yy_flex_debug = 0;
 
@@ -62,28 +75,36 @@ void zpl_read(const char* filename)
    numb_init();
    elem_init();
    set_init();
-
-   set = set_pseudo_new();
-   (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
-   set_free(set);
-   
-   prog = prog_new();
-
-   prog_load(prog, filename);
-
-   if (prog_is_empty(prog))
+ 
+   if (0 == setjmp( zpl_read_env))
    {
-      fprintf(stderr, "*** Error 168: No program statements to execute\n");
-      exit(EXIT_FAILURE);
-   }
-   if (verbose >= VERB_DEBUG)
-      prog_print(stderr, prog);
+      is_longjmp_ok = TRUE;
+      
+      set = set_pseudo_new();
+      (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
+      set_free(set);
    
-   xlp_alloc(filename);
+      prog = prog_new();
 
-   prog_execute(prog);
+      prog_load(prog, filename);
 
-   prog_free(prog);
+      if (prog_is_empty(prog))
+         fprintf(stderr, "*** Error 168: No program statements to execute\n");
+      else
+      {
+         if (verbose >= VERB_DEBUG)
+            prog_print(stderr, prog);
+   
+         xlp_alloc(filename);
+
+         prog_execute(prog);
+
+         prog_free(prog);
+
+         ret = TRUE;
+      }
+   }
+   is_longjmp_ok = FALSE;
 
    xlp_free();
 
@@ -94,4 +115,6 @@ void zpl_read(const char* filename)
    numb_exit();
    str_exit();
    gmp_exit();
+
+   return ret;
 }

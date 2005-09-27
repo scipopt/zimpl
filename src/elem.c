@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.16 2005/09/06 00:25:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.17 2005/09/27 09:17:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -247,7 +247,7 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
       fprintf(stderr, " / ");
       elem_print(stderr, elem_b);
       fputc('\n', stderr);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(elem_a->type == elem_b->type);
    

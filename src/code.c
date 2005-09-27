@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.26 2004/04/12 07:04:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.27 2005/09/27 09:17:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -443,7 +443,7 @@ static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
       fprintf(stderr, "*** Error 159: Type error, expected %s got %s\n",
          tname[expected], tname[node->type]);
       code_errmsg(node);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    return node;
 }

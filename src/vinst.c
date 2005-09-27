@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.15 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.16 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -257,7 +257,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    {
       fprintf(stderr, "*** Error 177: Boolean constraint not all integer\n");
       code_errmsg(code_get_child(self, 0));
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    /* Symbol for internal entries
     */
@@ -275,7 +275,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    {
       fprintf(stderr, "*** Error 185: Term in Boolean constraint not bounded\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    
    /* Check if trival infeasible
@@ -802,7 +802,7 @@ static void generate_conditional_constraint(
    {
       fprintf(stderr, "*** Error 179: Conditional only possible on bounded constraints\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    bound_val = bound_get_value(bound);
 
@@ -866,7 +866,7 @@ static void handle_vif_then_else(
    {
       fprintf(stderr, "*** Error 181: Empty LHS, not allowed in conditional constraint\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    assert(con_type == CON_RHS || con_type == CON_LHS || con_type == CON_EQUAL);
    
@@ -979,13 +979,13 @@ CodeNode* i_vabs(CodeNode* self)
    {
       fprintf(stderr, "*** Error 182: Empty LHS, in variable vabs\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    if (!term_is_all_integer(term))
    {
       fprintf(stderr, "*** Error 183: vabs term not all integer\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    cname      = conname_get();
    bound_zero = bound_new(BOUND_VALUE, numb_zero());
@@ -997,7 +997,7 @@ CodeNode* i_vabs(CodeNode* self)
    {
       fprintf(stderr, "*** Error 184: vabs term not bounded\n");
       code_errmsg(self);
-      exit(EXIT_FAILURE);
+      zpl_exit(EXIT_FAILURE);
    }
    numb_neg(rhs);
    term_add_constant(term, rhs);

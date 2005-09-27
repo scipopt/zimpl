@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.62 2005/09/02 02:01:37 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.63 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -49,8 +49,6 @@
 
 extern int yydebug;
 extern int yy_flex_debug;
-
-int verbose = VERB_NORMAL;
 
 static const char* banner = 
 "****************************************************\n" \
@@ -261,6 +259,7 @@ int main(int argc, char* const* argv)
 
    yydebug       = 0;
    yy_flex_debug = 0;
+   verbose       = VERB_NORMAL;
    param_table   = malloc(sizeof(*param_table));
    
    while((c = getopt(argc, argv, options)) != -1)
@@ -434,7 +433,8 @@ int main(int argc, char* const* argv)
    /* Presolve
     */
    if (presolve)
-      xlp_presolve();
+      if (!xlp_presolve())
+         exit(EXIT_SUCCESS);
 
    if (verbose >= VERB_NORMAL)
       xlp_stat();

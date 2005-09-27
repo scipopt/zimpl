@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.32 2005/09/06 00:36:24 bzfkocht Exp $
+# $Id: Makefile,v 1.33 2005/09/27 09:17:06 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -146,7 +146,7 @@ clean:
 		-rm -rf $(OBJDIR)/* $(TARGET)
 
 depend:
-		$(SHELL) -ec '$(DCC) $(DFLAGS) $(CPPFLAGS) $(OBJSRC) \
+		$(SHELL) -ec '$(DCC) $(DFLAGS) $(CPPFLAGS) $(OBJSRC) $(LIBSRC) \
 		| sed '\''s|^\([0-9A-Za-z\_]\{1,\}\)\.o|$$\(OBJDIR\)/\1.o|g'\'' \
 		>$(DEPEND)'
 

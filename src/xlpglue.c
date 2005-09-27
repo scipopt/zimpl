@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.19 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.20 2005/09/27 09:17:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb2lp.c                                                     */
@@ -379,7 +379,7 @@ void xlp_addtocost(Var* var, const Numb* cost)
    mpq_clear(val2);
 }
 
-void xlp_presolve()
+Bool xlp_presolve()
 {
    PSResult res;
    
@@ -389,10 +389,10 @@ void xlp_presolve()
    {
    case PRESOLVE_INFEASIBLE :
       printf("Model is infeasible\n");
-      exit(EXIT_SUCCESS);
+      return FALSE;
    case PRESOLVE_UNBOUNDED :
       printf("Model is unbounded\n");
-      exit(EXIT_SUCCESS);
+      return FALSE;
    case PRESOLVE_VANISHED :
       printf("Presolve solved the problem -- see .tbl file for values\n");
       break;
@@ -401,6 +401,7 @@ void xlp_presolve()
    default :
       abort();
    }
+   return TRUE;
 }
 
      
