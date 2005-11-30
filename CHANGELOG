@@ -1,6 +1,8 @@
- - When reading DOS format data files, the CR at the
-   end of the line is now removed instead of being
+ - Fixed problem when reading DOS format data files. 
+   The CR at the end of the line is now removed instead of being
    attached to the last field.
+
+ - Fixed bug with IN operator and Rangesets.
 
  - It is now possible to build sets by indexing an 
    expression: { <i> in I with i != 3 : p[i] };

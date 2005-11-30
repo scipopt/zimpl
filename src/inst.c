@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.90 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.91 2005/11/30 20:08:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1318,6 +1318,56 @@ CodeNode* i_bool_sseq(CodeNode* self)
    return self;
 }
 
+static void check_tuple_set_compatible(
+   const CodeNode* self,
+   const Tuple*    tuple_a,
+   const Set*      set_b)
+{
+   Tuple*      tuple_b;
+   ElemType    elem_type_a;
+   ElemType    elem_type_b;
+   int         i;
+   int         dim;
+   
+   /* An empty set is compatible with any tuple.
+    */
+   if (set_get_members(set_b) == 0)
+      return;
+   
+   dim = set_get_dim(set_b);
+
+   if (tuple_get_dim(tuple_a) != dim)
+   {
+      fprintf(stderr, "*** Error XXX188: Index tuple has wrong dimension\n");
+      tuple_print(stderr, tuple_a);
+      fprintf(stderr, " should have dimension %d\n", dim);
+      code_errmsg(self);
+   }
+   tuple_b = set_get_tuple(set_b, 0);
+
+   assert(tuple_get_dim(tuple_a) == tuple_get_dim(tuple_b));
+
+   for(i = 0; i < tuple_get_dim(tuple_a); i++)
+   {
+      elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
+      elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
+
+      assert(elem_type_b == ELEM_NUMB || elem_type_b == ELEM_STRG);
+
+      if (elem_type_a != elem_type_b)
+      {
+         fprintf(stderr, "*** Error XXX198: Incompatible index tuple\nTuple ");
+         tuple_print(stderr, tuple_a);
+         fprintf(stderr, " component %d is not compatible with ", i + 1);
+         tuple_print(stderr, tuple_b);
+         fprintf(stderr, "\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+   }
+   tuple_free(tuple_b);
+}
+
 CodeNode* i_bool_is_elem(CodeNode* self)
 {
    const Tuple* tuple;
@@ -1330,6 +1380,8 @@ CodeNode* i_bool_is_elem(CodeNode* self)
    tuple = code_eval_child_tuple(self, 0);
    set   = code_eval_child_set(self, 1);
 
+   check_tuple_set_compatible(self, tuple, set);
+   
    code_value_bool(self, set_lookup(set, tuple));
 
    return self;

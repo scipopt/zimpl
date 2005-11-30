@@ -500,7 +500,7 @@ the parameter for this index.
 {\small 
 \begin{verbatim}
 set A := { 12 .. 30 };
-set C := { <1,2,"x">, <6,5,"y">, <3,7,"z" };
+set C := { <1,2,"x">, <6,5,"y">, <3,7,"z"> };
 param q := 5;
 param u[A] := <13> 17, <17> 29, <23> 12 default 99;
 param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
@@ -739,11 +739,11 @@ file. The syntax is:
 \emph{template} is a string with a template for the tuples to
 generate. Each input line from the file is split into fields. The
 splitting is done according to the following rules:
-Whenever a space, tab, comma, semicolon or double colon is encountered
+Whenever a space, tab, comma, semicolon or colon is encountered
 a new field is started. Text that is enclosed in double quotes is not
 split and the quotes are always removed. When a field is split all space
 and tab characters around the splitting point are removed. If the split is
-due to a comma, semicolon or double colon, each occurrence of these
+due to a comma, semicolon or colon, each occurrence of these
 characters starts a new field. 
 
 \subsubsection{Examples}
@@ -789,7 +789,7 @@ When a file is read, empty lines are skipped and not counted for the
 \noindent\verb|blabla.txt:|\\
 \verb|   Name;Nr;X;Y;No     | $\rightarrow$ skip\\   
 \verb|   Hamburg;12;x;y;7   | $\rightarrow$ $<$"Hamburg",7,12$>$\\
-\verb|   Bremen;4;x;y;5     | $\rightarrow$ $<$"Bremen,5,4$>$\\
+\verb|   Bremen;4;x;y;5     | $\rightarrow$ $<$"Bremen",5,4$>$\\
 \verb|   Berlin;2;x;y;8     | $\rightarrow$ skip\\
    
 \smallskip
@@ -1131,7 +1131,7 @@ Of course we are looking for the cheapest solution:
 %
 \begin{align}
 \min\sum_{p\in P}c_p z_p& 
-   +\!\!\!\sum_{p\in P, s\in S}\!\!\!c_{ps} z_{ps}&&\mbox{subject to}\nonumber\\ 
+   +\!\!\!\sum_{p\in P, s\in S}\!\!\!c_{ps} x_{ps}&&\mbox{subject to}\nonumber\\ 
 \sum_{p\in P} x_{ps}& = 1&&\fa s\in S\label{eqn:assign}\\
 x_{ps}&\leq z_{p}&&\fa s\in S, p\in P\label{eqn:open}\\
 \sum_{s\in S} \delta_s x_{ps}&\leq\kappa_p&&\fa p\in P\label{eqn:capacity}\\
