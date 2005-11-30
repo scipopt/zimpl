@@ -1,3 +1,7 @@
+ - When reading DOS format data files, the CR at the
+   end of the line is now removed instead of being
+   attached to the last field.
+
  - It is now possible to build sets by indexing an 
    expression: { <i> in I with i != 3 : p[i] };
 

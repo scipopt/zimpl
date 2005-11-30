@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.17 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.18 2005/11/30 20:06:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -362,10 +362,11 @@ CodeNode* i_read(CodeNode* self)
    assert(filename != NULL);
    strcpy(filename, rdef_get_filename(rdef));
 
-   comment  = malloc(strlen(rdef_get_comment(rdef)) + 2);
+   comment  = malloc(strlen(rdef_get_comment(rdef)) + 3);
    assert(comment  != NULL);
    comment[0] = '\n';
-   strcpy(&comment[1], rdef_get_comment(rdef));
+   comment[1] = '\r';
+   strcpy(&comment[2], rdef_get_comment(rdef));
 
    /* The last template parameter is the value for the entry_list.
     */
@@ -424,7 +425,7 @@ CodeNode* i_read(CodeNode* self)
          /* Now we break the line in fields.
           */
          fields = split_fields(s, field);
-#if 0
+#if 1
          fprintf(stderr, "Fields=%d\n", fields);
          for(i = 0; i < fields; i++)
             fprintf(stderr, "Field[%d]=[%s]\n", i, field[i]);    
