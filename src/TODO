@@ -1,15 +1,16 @@
-Error XXX noch nict ok
+new union inter  doku, tests, ewtl warning bei empty element
+min/max <i> in I : i  ist schlecht beschrieben.
+doku test objective constant.
 
-Warning XXX ist noch nicht ok
-aufrufe von exit() durch zimpl_exit ersetzen (ewtl setjmp/longjmp) 
+In check/param.zpl fehlen noch die read tests.
 
-warum geht { <c> in C : {c} * W } nicht ?
-
-- single value read error
-- single value read doku / tests
-- " warning if moe than one line read.
 - doku index expressens in set.
 - warning / tests "
+
+automatische generierung einer fixierten variablen für
+zielfunktionskonstanten.
+
+flag use_only "K" für read Befehle (Ralf)
 
 Test fuer spezielle fehlersituationen.
 z,B. param x[E] : = ...
@@ -19,9 +20,6 @@ Diser Fall sollte ewtl. behandelt werden.
 Auf jedenfall getestest werden.
 
 min2/max2 warnung wenn empty list
-
-graph datei besser lesen konnen,
-sowas wie param xyz := read zeile spalte "1n" sollte gehen
 
 x[i,j] = y[i] xor y[j];
 wie formuliert man das, warum geht 
@@ -42,8 +40,6 @@ Vorteile: nur non-zeros belegen speicher, mehrere Zielfunktionen möglich.
 
 Cann man vabs in der Zielfunktion einsetzen?
 Und wenn nichtwarum nicht?
-
-MPSwrite Warning objective invertet maximal einmal 
 
 TeX output?
 
@@ -172,6 +168,7 @@ check: Tests für preprocessing
 
 
 Speedups:
+
 
 numbgmp: mpq_clear aufrufen für verwendete oder schon erledigt.
 strstore: string table, jeder nur einmal und dann handle. Macht auch

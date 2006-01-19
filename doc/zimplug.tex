@@ -701,7 +701,7 @@ be written together with the \code{lp} or \code{mps} file.
 The general format of a special ordered set is:
 
 \smallskip
-\verb@sos name: term == [type1|type2] priority expr@
+\verb@sos name: [type1|type2] priority expr : term@
 
 \smallskip
 \noindent \code{name} can be any name starting with a letter. \sos use
@@ -716,10 +716,10 @@ Many \sos can be generated with one statement by the use of the
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-sos s1: 100 * x[1] + 200 * x[2] + 400 * x[3] == type1;
-sos s2: sum <i> in I: a[i] * x[i] == type2 priority 100;
+sos s1: type1: 100 * x[1] + 200 * x[2] + 400 * x[3];
+sos s2: type2 priority 100 : sum <i> in I: a[i] * x[i];
 sos s3: forall <i> in I with i > 2: 
-           (100 + i) * x[i] + i * x[i-1] == type1;
+           type1: (100 + i) * x[i] + i * x[i-1];
 \end{verbatim}
 }
 
@@ -823,6 +823,18 @@ param winniepoh[X] :=
 \end{verbatim}
 }  
 
+It is also possible to read a single value into a parameter. In this
+case, either the file should contain only a single line, or the read
+statement should be instructed by means of a \code{use 1} parameter
+only to read a single line.
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+# Read the fourth value in the fifth line
+param n := read "huhu.dat" as "4n" skip 4 use 1
+\end{verbatim}
+}  
 
 %------------------------------------------------------------------------------
 \subsection{Function definitions}

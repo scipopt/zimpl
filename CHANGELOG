@@ -1,3 +1,31 @@
+ - Objective function inversion warning for MPS files is
+   now only issued once.
+
+ - A constant value in the objective function is now translated
+   automatically into a variable __ObjOffset. This works on
+   all output formats.
+
+ - powerset() is now also generating the empty set.
+
+ - It is now possible to write:
+   UNION <i> in I with i > 5 : A[i];
+   INTER <i> in I with i > 5 : A[i];
+   to get the union or intersetction of all the involved sets. 
+
+ - When initialising an indexed set with a list any "with" clause 
+   on the set expresion was ignored.
+
+ - Error 195 was the same as 135. It is now all 135.
+   Error 195 has a new meaning.
+
+ - It is now possible to read a single value by
+   param n := read "huhu.dat" as "4n" skip 4 use 1
+   The above would read the fourth value in the fifth
+   line of the file huhu.dat.
+
+ - Fixed error in description of -n in -h output and some typos
+   in the documentation.
+
  - Fixed problem when reading DOS format data files. 
    The CR at the end of the line is now removed instead of being
    attached to the last field.
@@ -5,7 +33,8 @@
  - Fixed bug with IN operator and Rangesets.
 
  - It is now possible to build sets by indexing an 
-   expression: { <i> in I with i != 3 : p[i] };
+   expression: { <i> in I with i != 3 : p[i] }; or
+   { <i,j> in A with i != 3 : <p[i],j+i,2> };
 
  - Special Ordered Sets (SOS) implemented. Thanks Daniel.
 

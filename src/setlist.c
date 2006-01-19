@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.8 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.9 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -170,7 +170,7 @@ int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
 Set* set_list_new_from_elems(const List* list, SetCheckType check)
 {
    ListElem*   le = NULL;
-   Set*         set;
+   Set*        set;
    int         n;
 
    assert(list_is_valid(list));

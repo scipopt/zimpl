@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.64 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.65 2006/01/19 20:53:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -718,7 +718,6 @@ extern int          yyparse(void);
 extern void         parse_stmt(const Stmt* stmt);
 extern const Stmt*  scan_get_stmt(void);
 extern int          scan_get_column(void);
-extern int          yylen(void);
 
 #define Min(a, b)    (((a) <= (b)) ? (a) : (b)) 
 #define Sgn(a)       (((a) > 0) ? 1 : (((a) < 0) ? -1 : 0))

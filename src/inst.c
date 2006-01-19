@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.91 2005/11/30 20:08:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.92 2006/01/19 20:53:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1338,10 +1338,11 @@ static void check_tuple_set_compatible(
 
    if (tuple_get_dim(tuple_a) != dim)
    {
-      fprintf(stderr, "*** Error XXX188: Index tuple has wrong dimension\n");
+      fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
       tuple_print(stderr, tuple_a);
       fprintf(stderr, " should have dimension %d\n", dim);
       code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
    }
    tuple_b = set_get_tuple(set_b, 0);
 
@@ -1356,7 +1357,7 @@ static void check_tuple_set_compatible(
 
       if (elem_type_a != elem_type_b)
       {
-         fprintf(stderr, "*** Error XXX198: Incompatible index tuple\nTuple ");
+         fprintf(stderr, "*** Error 198: Incompatible index tuple\nTuple ");
          tuple_print(stderr, tuple_a);
          fprintf(stderr, " component %d is not compatible with ", i + 1);
          tuple_print(stderr, tuple_b);
@@ -1608,6 +1609,70 @@ CodeNode* i_set_union(CodeNode* self)
    return self;
 }
 
+CodeNode* i_set_union2(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   Tuple*        tuple;
+   Set*          set_r;
+   Bool          first = TRUE;
+   Set*          set_old;
+   const Set*    set_new;
+   
+   Trace("i_set_union2");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+
+   /* This routine is not efficient.
+    * It would be better to make pairs and then unite the pairs, etc.
+    * Now it is O(n) and it could be O(log n)
+    */
+   while((tuple = set_iter_next(iter, set)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         if (first)
+         {
+            set_r = set_copy(code_eval_child_set(self, 1));
+            first = FALSE;
+         }
+         else
+         {
+            set_old = set_copy(set_r);
+            set_new = code_eval_child_set(self, 1);
+
+            check_sets_compatible(self, set_old, set_new, "Union");
+
+            set_free(set_r);
+
+            set_r = set_union(set_old, set_new);
+
+            set_free(set_old);
+         }
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set);
+   
+   code_value_set(self, set_r);
+
+   return self;
+}
+
+
 CodeNode* i_set_minus(CodeNode* self)
 {
    const Set* set_a;
@@ -1645,6 +1710,70 @@ CodeNode* i_set_inter(CodeNode* self)
 
    return self;
 }
+
+CodeNode* i_set_inter2(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   Tuple*        tuple;
+   Set*          set_r;
+   Bool          first = TRUE;
+   Set*          set_old;
+   const Set*    set_new;
+   
+   Trace("i_set_inter2");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+
+   /* This routine is not efficient.
+    * It would be better to make pairs and then unite the pairs, etc.
+    * Now it is O(n) and it could be O(log n)
+    */
+   while((tuple = set_iter_next(iter, set)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         if (first)
+         {
+            set_r = set_copy(code_eval_child_set(self, 1));
+            first = FALSE;
+         }
+         else
+         {
+            set_old = set_copy(set_r);
+            set_new = code_eval_child_set(self, 1);
+
+            check_sets_compatible(self, set_old, set_new, "Intersection");
+
+            set_free(set_r);
+
+            set_r = set_inter(set_old, set_new);
+
+            set_free(set_old);
+         }
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set);
+   
+   code_value_set(self, set_r);
+
+   return self;
+}
+
 
 CodeNode* i_set_sdiff(CodeNode* self)
 {
@@ -1882,6 +2011,27 @@ CodeNode* i_set_indexset(CodeNode* self)
    return self;
 }
 
+static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
+{
+   const CodeNode* code_cexpr_list;
+   int             dim = 1;
+   
+   assert(code_is_valid(code_cexpr_or_tuple));
+
+   /* Is it a tuple or a cexpr ?
+    */
+   if (code_get_inst(code_cexpr_or_tuple) == &i_tuple_new)
+   {
+      for(code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
+          code_get_inst(code_cexpr_list) == &i_elem_list_add;
+          code_cexpr_list = code_get_child(code_cexpr_list, 0))
+      {
+         dim++;
+      }
+   }
+   return dim;
+}
+
 CodeNode* i_set_expr(CodeNode* self)
 {
    const IdxSet* idxset;
@@ -1890,11 +2040,12 @@ CodeNode* i_set_expr(CodeNode* self)
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   CodeNode*     cexpr;
+   CodeNode*     cexpr_or_tuple;
    Elem*         elem;
    List*         list  = NULL;
    Bool          first = TRUE;
-
+   Bool          is_tuple_list = FALSE;
+   
    Trace("i_expr_max");
 
    assert(code_is_valid(self));
@@ -1911,34 +2062,52 @@ CodeNode* i_set_expr(CodeNode* self)
 
       if (code_get_bool(code_eval(lexpr)))
       {
-         cexpr = code_eval_child(self, 1);      
+         cexpr_or_tuple = code_eval_child(self, 1);      
 
-         switch(code_get_type(cexpr))
+         switch(code_get_type(cexpr_or_tuple))
          {
+         case CODE_TUPLE :
+            assert(first || is_tuple_list);
+
+            is_tuple_list = TRUE;
+            break;
          case CODE_NUMB :
-            elem = elem_new_numb(code_get_numb(cexpr));
+            assert(!is_tuple_list);
+            elem = elem_new_numb(code_get_numb(cexpr_or_tuple));
             break;
          case CODE_STRG :
-            elem = elem_new_strg(code_get_strg(cexpr));
+            assert(!is_tuple_list);
+            
+            elem = elem_new_strg(code_get_strg(cexpr_or_tuple));
             break;
          case CODE_NAME :
-            abort();
-            break;
+            assert(!is_tuple_list);
+
+            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+               code_get_name(cexpr_or_tuple));
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
          default :
             abort();
-            break;
          }
          if (first)
          {
-            list  = list_new_elem(elem);
             first = FALSE;
+            list  = is_tuple_list
+               ? list_new_tuple(code_get_tuple(cexpr_or_tuple))
+               : list_new_elem(elem);
          }
          else
          {
             assert(list != NULL);
-            list_add_elem(list, elem);
+
+            if (is_tuple_list)
+               list_add_tuple(list, code_get_tuple(cexpr_or_tuple));
+            else
+               list_add_elem(list, elem);
          }
-         elem_free(elem);
+         if (!is_tuple_list)
+            elem_free(elem);
       }
       local_drop_frame();
 
@@ -1950,15 +2119,22 @@ CodeNode* i_set_expr(CodeNode* self)
    {
       if (verbose > VERB_QUIET)
       {
-         fprintf(stderr, "--- Warning XXX: Indexing over empty set -- zero assumed\n");
+         fprintf(stderr, "--- Warning 202: Indexing over empty set\n");
          code_errmsg(code_get_child(self, 0));
       }
+      /* If it is an cexpr list the dimension is 1, if it is a
+       * tuple list, it is the dimension of the tuple.
+       * Because of <i + j> we are not able to determine the dimension
+       * of the tuple just by tuple_get_dim(code_eval_child_tuple(self, 1)).
+       */
+      code_value_set(self, set_empty_new(noneval_get_dim(code_get_child(self, 1))));
    }
-#warning "Bug hier bei empty list"
-   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
+   else
+   {
+      code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
-   list_free(list);
-
+      list_free(list);
+   }
    return self;
 }
 
@@ -2133,7 +2309,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
 {
    const char*   name;
    const IdxSet* idxset;
-   const Set*    iset;
+   Set*          iset;
    Symbol*       sym;
    const List*   list;
    ListElem*     lelem;
@@ -2148,7 +2324,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
 
    name   = code_eval_child_name(self, 0);
    idxset = code_eval_child_idxset(self, 1);
-   iset   = idxset_get_set(idxset);
+   iset   = set_from_idxset(idxset);
    list   = code_eval_child_list(self, 2);
    count  = list_get_elems(list);
 
@@ -2165,18 +2341,13 @@ CodeNode* i_newsym_set2(CodeNode* self)
    
    /* Pseudo set ?
     */
-   if (set_get_dim(iset) > 0)
-      sym  = symbol_new(name, SYM_SET, iset, count, NULL);
-   else
+   if (set_get_dim(iset) == 0)
    {
-      Set* set;
-      
-      set  = set_new_from_list(list, SET_CHECK_WARN);
-      sym  = symbol_new(name, SYM_SET, set, count, NULL);
-      iset = symbol_get_iset(sym);
-      set_free(set);
+      set_free(iset);
 
+      iset = set_new_from_list(list, SET_CHECK_WARN);
    }
+   sym = symbol_new(name, SYM_SET, iset, count, NULL);
 
    lelem = NULL;
    
@@ -2209,6 +2380,8 @@ CodeNode* i_newsym_set2(CodeNode* self)
    }
    code_value_void(self);
 
+   set_free(iset);
+   
    return self;
 }
 
@@ -2246,14 +2419,14 @@ CodeNode* i_newsym_para1(CodeNode* self)
 
    if (set_get_members(iset) == 0)
    {
-      fprintf(stderr, "*** Error 195: Empty index set for parameter\n");
+      fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
    
    if (!list_is_entrylist(list))
    {
-      /* This errors occurs, if the parameter is mssing in the template
+      /* This errors occurs, if the parameter is missing in the template
        * for a "read" statement.
        */
       assert(list_is_tuplelist(list));
@@ -2786,7 +2959,19 @@ CodeNode* i_idxset_new(CodeNode* self)
    dim    = set_get_dim(set);
 
    is_unrestricted = code_get_inst(lexpr) == (Inst)i_bool_true;
-   
+
+   /* If we get any empty set with dimension 0, it is not the result
+    * of some other operation, but genuine empty.
+    * This is an error.
+    */
+   if (set_get_dim(set) == 0)
+   {
+      assert(set_get_members(set) == 0);
+
+      fprintf(stderr, "*** Error 195: Genuine empty index as index set\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
    /* Attention: set_get_members(set) == 0 is possible!
     */
    assert(set_get_dim(set) > 0);
@@ -2813,7 +2998,9 @@ CodeNode* i_idxset_new(CodeNode* self)
        * - any not NAME type entries are compatible.
        * - the set is unrestricted, ie all NAMES, no WITH.
        */
-      if (tuple_get_dim(tuple) != dim)
+      assert(dim > 0 || set_get_members(set) == 0);
+      
+      if (dim > 0 && tuple_get_dim(tuple) != dim)
       {
          fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
          tuple_print(stderr, tuple);
@@ -3289,7 +3476,7 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
    }
    assert(set_get_dim(set) > 0);
 
-   for(i = 1; i <= used; i++)
+   for(i = 0; i <= used; i++)
       list = set_subsets_list(set, i, list, &idx);
 
    assert(list != NULL);

@@ -1,4 +1,0 @@
-*** Error 195: Empty index set for parameter
-*** File: e195_1.zpl Line 2
-*** param y[{}] := <1> 6;
-***                     ^^^

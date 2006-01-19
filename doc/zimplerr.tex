@@ -339,8 +339,8 @@
   The index tuple of an entry in a parameter initialization list must
   have the same dimension as the indexing set of the parameter. This
   is just another kind of error 134.
-\item[195 Empty index set for parameter]\ \\
-  The index set for a parameter is empty.
+\item[195 Genuine empty set as index set]\ \\
+  The set of an index set is always the empty set.
 \item[196 Indexing tuple \code{xxx} has wrong dimension
            \code{yyy}, expected \code{zzz}]\ \\
   The index tuple of an entry in a set initialization list must
@@ -359,6 +359,9 @@
 \item[200 Weights are not unique for SOS \code{xxx} (warning)]\ \\
   All weights assigned to variables in an special ordered set have to
   be unique. 
+\item[201 Invalid read template, only one field allowed]\ \\
+  When reading a single parameter value, the read template must
+  consist of a single field specification.
 %
 % numbgmp.c
 %

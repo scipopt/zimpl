@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.63 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.64 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -72,7 +72,7 @@ static const char* help =
 "  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \
 "  -m             write CPLEX MIP start value file.\n"
-"  -n cm|cn|cf    name column make/name/full\n" \
+"  -n cm|cn|cf    name constraint make/name/full\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
 "                 the input file without extension.\n" \
 "  -O             optimize LP by preprocessing.\n" \

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.18 2005/11/30 20:06:23 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.19 2006/01/19 20:53:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -250,7 +250,7 @@ static int parse_template(
    {
       if (params != 1)
       {
-         fprintf(stderr, "*** Error XXX: Invalid read template, too many fields\n");
+         fprintf(stderr, "*** Error 201: Invalid read template, only one field allowed\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
@@ -425,7 +425,7 @@ CodeNode* i_read(CodeNode* self)
          /* Now we break the line in fields.
           */
          fields = split_fields(s, field);
-#if 1
+#if 0
          fprintf(stderr, "Fields=%d\n", fields);
          for(i = 0; i < fields; i++)
             fprintf(stderr, "Field[%d]=[%s]\n", i, field[i]);    

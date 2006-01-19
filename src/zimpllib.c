@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.4 2005/09/27 11:26:08 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.5 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -44,11 +44,18 @@
 #include "mme.h"
 #include "xlpglue.h"
 #include "gmpmisc.h"
+#include "zimpllib.h"
 
 extern int yydebug;
 extern int yy_flex_debug;
 
 int verbose = VERB_QUIET;
+
+static const char* banner = 
+"****************************************************\n" \
+"* Zuse Institute Mathematical Programming Language *\n" \
+"* Release %-5s Copyright (C)2005 by Thorsten Koch *\n" \
+"****************************************************\n\n";
 
 static jmp_buf zpl_read_env;
 static Bool    is_longjmp_ok = FALSE;
@@ -58,7 +65,11 @@ void zpl_exit(int retval)
    if (is_longjmp_ok)
       longjmp(zpl_read_env, retval);
 
+#ifdef NDEBUG
    exit(retval);
+#else
+   abort(); /* to get a stack strace */
+#endif
 }
 
 Bool zpl_read(const char* filename)
@@ -69,6 +80,8 @@ Bool zpl_read(const char* filename)
    
    yydebug       = 0;
    yy_flex_debug = 0;
+
+   printf(banner, VERSION);
 
    gmp_init(verbose >= VERB_VERBOSE);
    str_init();

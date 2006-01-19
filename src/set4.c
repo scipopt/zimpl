@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.11 2005/09/06 00:25:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.12 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -281,7 +281,9 @@ Set* set_union(const Set* set_a, const Set* set_b)
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->head.dim == set_b->head.dim);
+   assert(set_a->head.dim  == set_b->head.dim
+      ||  set_a->head.type == SET_EMPTY
+      ||  set_b->head.type == SET_EMPTY);
 
    iter = set_iter_init(set_a, NULL);
 
@@ -315,7 +317,8 @@ Set* set_union(const Set* set_a, const Set* set_b)
    {
       assert(set_get_members(set_a) + set_get_members(set_b) == 0);
 
-      set = set_empty_new(set_a->head.dim);
+      set = set_empty_new(
+         set_a->head.type == SET_EMPTY ? set_b->head.dim : set_a->head.dim);
    }
    else
    {
@@ -338,7 +341,9 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->head.dim == set_b->head.dim);
+   assert(set_a->head.dim  == set_b->head.dim
+      ||  set_a->head.type == SET_EMPTY
+      ||  set_b->head.type == SET_EMPTY);
 
    iter = set_iter_init(set_a, NULL);
 
@@ -356,7 +361,8 @@ Set* set_inter(const Set* set_a, const Set* set_b)
    set_iter_exit(iter, set_a);
    
    if (list == NULL)
-      set = set_empty_new(set_a->head.dim);
+      set = set_empty_new(
+         set_a->head.type == SET_EMPTY ? set_b->head.dim : set_a->head.dim);
    else
    {
       set = set_new_from_list(list, SET_CHECK_NONE);
@@ -378,7 +384,9 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->head.dim == set_b->head.dim);
+   assert(set_a->head.dim  == set_b->head.dim
+      ||  set_a->head.type == SET_EMPTY
+      ||  set_b->head.type == SET_EMPTY);
    
    iter = set_iter_init(set_a, NULL);
 
@@ -399,7 +407,8 @@ Set* set_minus(const Set* set_a, const Set* set_b)
    {
       assert(set_is_subseteq(set_a, set_b));
 
-      set = set_empty_new(set_a->head.dim);
+      set = set_empty_new(
+         set_a->head.type == SET_EMPTY ? set_b->head.dim : set_a->head.dim);
    }
    else
    {
@@ -422,7 +431,9 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
-   assert(set_a->head.dim == set_b->head.dim);
+   assert(set_a->head.dim  == set_b->head.dim
+      ||  set_a->head.type == SET_EMPTY
+      ||  set_b->head.type == SET_EMPTY);
    
    iter = set_iter_init(set_a, NULL);
 
@@ -458,7 +469,8 @@ Set* set_sdiff(const Set* set_a, const Set* set_b)
    {
       assert(set_is_equal(set_a, set_b));
 
-      set = set_empty_new(set_a->head.dim);
+      set = set_empty_new(
+         set_a->head.type == SET_EMPTY ? set_b->head.dim : set_a->head.dim);
    }
    else
    {
@@ -642,9 +654,27 @@ List* set_subsets_list(
    List*  subset_list;
    
    assert(set_is_valid(set));
-   assert(subset_size >= 1);
+   assert(subset_size >= 0);
    assert(subset_size <= set->head.members);
    assert(idx         != NULL);
+
+   if (subset_size == 0)
+   {
+      subset = set_empty_new(set_get_dim(set));
+      numb   = numb_new_integer(*idx);
+      *idx  += 1;
+      tuple  = tuple_new(1);
+      tuple_set_elem(tuple, 0, elem_new_numb(numb));
+      entry  = entry_new_set(tuple, subset);
+      list   = list_new_entry(entry);
+
+      numb_free(numb);
+      entry_free(entry);
+      tuple_free(tuple);
+      set_free(subset);
+
+      return list;
+   }
    
    counter = malloc(sizeof(*counter) * subset_size);
 

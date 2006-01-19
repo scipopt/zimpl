@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.8 2003/09/10 09:38:39 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.9 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -67,6 +67,8 @@ static void write_vars(
    FILE*      fp,
    VarClass   varclass)
 {
+   static Bool first = TRUE;
+
    const Var*  var;
    const Nzo*  nzo;
    char  vtmp  [MPS_NAME_LEN + 1];
@@ -96,9 +98,13 @@ static void write_vars(
          {
             mpq_neg(temp, var->cost);
 
-            fprintf(stderr, "%s\n%s\n",
-               "*** Warning: Objective function inverted to make",
-               "             minimization problem for MPS output\n");
+            if (first)
+            {
+               fprintf(stderr, "%s\n%s\n",
+                  "*** Warning: Objective function inverted to make",
+                  "             minimization problem for MPS output\n");
+               first = FALSE;
+            }
          }
          write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV", temp);
       }

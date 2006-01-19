@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.24 2005/07/10 10:19:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.25 2006/01/19 20:53:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -365,14 +365,35 @@ Bool term_to_sos(const Term* term, Sos* sos)
 
 void term_to_objective(const Term* term)
 {
-   Var* var;
-   int  i;
-
+   Var*   var;
+   int    i;
+   
    Trace("term_to_objective");
 
    assert(term_is_valid(term));
-   assert(numb_equal(term->constant, numb_zero()));
 
+   /* If we have a constant in the objective, generate an artificial
+    * variable @OOffset fixed to the value. This works allways.
+    * This is needed because there is no general way for example in
+    * MPS format to specify an objective value offset.
+    */
+   if (!numb_equal(term->constant, numb_zero()))
+   {
+      const char* format = "%sObjOffset";
+   
+      Bound* lower = bound_new(BOUND_VALUE, numb_one());
+      Bound* upper = bound_new(BOUND_VALUE, numb_one());
+      char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+
+      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
+      var = xlp_addvar(vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+      xlp_addtocost(var, term->constant);
+
+      free(vname);
+      bound_free(upper);
+      bound_free(lower);
+   }
+   
    for(i = 0; i < term->used; i++)
    {
       assert(!numb_equal(term->elem[i].coeff, numb_zero()));

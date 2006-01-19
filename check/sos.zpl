@@ -1,4 +1,4 @@
-# $Id: sos.zpl,v 1.1 2005/07/10 10:21:24 bzfkocht Exp $
+# $Id: sos.zpl,v 1.2 2006/01/19 20:53:04 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: sos.zpl                                                     */
@@ -32,14 +32,14 @@ var y[B];
 
 param a[A] := <1> 1, <2> 2, <3> 3, <4> 4, <5> 5 ;
 
-sos c01:  x[1] == type1;
-sos c02:  x[1] + 2 * x[2] == type1 priority 10;
-sos c03:  x[1] * 3 + 2 * x[2] + x[1] == type2;
-sos c04:  3 * (x[1] + 2 * x[2]) + x[4] == type1 priority 60;
-sos c05:  sum <i> in A do i * x[i] == type2;
-sos c06: - x[5] - 2 * sum <i> in A with i > 3 do i * x[i] + x[3] * 2 
-         + 90 * y[1] + 62 * y[2] == type1;
-sos c07:  sum <i> in A: a[i] * x[i] == type2;
-
+sos c01:  type1: x[1];
+sos c02:  type1 priority 10 : x[1] + 2 * x[2];
+sos c03:  type2: x[1] * 3 + 2 * x[2] + x[1];
+sos c04:  type1 priority 60 : 3 * (x[1] + 2 * x[2]) + x[4];
+sos c05:  type2 : sum <i> in A do i * x[i];
+sos c06:  type1 : - x[5] - 2 * sum <i> in A with i > 3 do i * x[i] + x[3] * 2 
+         + 90 * y[1] + 62 * y[2];
+sos c07:  type2 : sum <i> in A: a[i] * x[i];
+sos c08:  forall <i> in A do type2 priority 5 : sum <i> in B: a[i] * y[i];
 
 

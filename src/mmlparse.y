@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.68 2005/09/02 02:01:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.69 2006/01/19 20:53:06 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -99,7 +99,8 @@ extern void yyerror(const char* s);
 %type <code> cexpr cexpr_list cfactor cproduct
 %type <code> symidx tuple tuple_list sexpr lexpr read read_par
 %type <code> idxset vproduct vfactor vexpr name_list
-%type <code> cexpr_entry cexpr_entry_list set_entry set_entry_list par_default
+%type <code> cexpr_entry cexpr_entry_list set_entry set_entry_list
+%type <code> par_singleton par_default
 %type <code> var_type con_type lower upper priority startval condition
 %type <code> matrix_body matrix_head
 %type <code> soset sos_type
@@ -239,27 +240,21 @@ decl_par
    | DECLPAR NAME '[' idxset ']' ASGN cexpr par_default ';' {
          $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME ASGN cexpr ';' {
+   | DECLPAR NAME ASGN par_singleton ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
-            code_new_inst(i_idxset_pseudo_new, 1,
-               code_new_inst(i_bool_true, 0)),              
-            code_new_inst(i_entry_list_new, 1,
-               code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
+            code_new_inst(i_idxset_pseudo_new, 1, code_new_inst(i_bool_true, 0)),
+            $4,
             code_new_inst(i_nop, 0));
       }
-/* 
-    | DECLPAR NAME ASGN cexpr_entry_list ';' {
-         $$ = code_new_inst(i_newsym_para3, 4,
-            code_new_name($2),
-            code_new_inst(i_idxset_pseudo_new, 1,
-               code_new_inst(i_bool_true, 0)),              
-            code_new_inst(i_entry_list_new, 1,
-               code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $4)),
-            code_new_inst(i_nop, 0));
+   ;
+par_singleton
+   : cexpr_entry_list { $$ = $1; }
+   | cexpr            {
+         $$ = code_new_inst(i_entry_list_new, 1,
+            code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $1));
       }
-*/
-      ;
+   ;
 
 par_default
    : /* empty */   { $$ = code_new_inst(i_nop, 0); }
@@ -672,8 +667,8 @@ decl_sos
    ;
 
 soset
-   : vexpr CMP_EQ sos_type priority {
-        $$ = code_new_inst(i_soset, 3, $1, $3, $4);
+   : sos_type priority DO vexpr {
+        $$ = code_new_inst(i_soset, 3, $4, $1, $2);
      }
    | FORALL idxset DO soset {
          $$ = code_new_inst(i_forall, 2, $2, $4);
@@ -732,7 +727,7 @@ sexpr
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
-   | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(1)); }
+   | EMPTY_SET { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
    | '{' cexpr TO cexpr BY cexpr '}' {
          $$ = code_new_inst(i_set_range2, 3, $2, $4, $6);
       }
@@ -745,6 +740,7 @@ sexpr
    | '{' cexpr UNTIL cexpr '}' {
          $$ = code_new_inst(i_set_range, 3, $2, $4, code_new_numb(numb_new_integer(1)));
       }
+   | UNION idxset DO sexpr %prec SUM { $$ = code_new_inst(i_set_union2, 2, $2, $4); }
    | sexpr UNION sexpr  { $$ = code_new_inst(i_set_union, 2, $1, $3); }
    | sexpr '+' sexpr %prec UNION {
          $$ = code_new_inst(i_set_union, 2, $1, $3);
@@ -759,11 +755,13 @@ sexpr
          $$ = code_new_inst(i_set_cross, 2, $1, $3);
       }
    | sexpr INTER   sexpr     { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
+   | INTER idxset DO sexpr %prec SUM { $$ = code_new_inst(i_set_inter2, 2, $2, $4); }
    | '(' sexpr ')'           { $$ = $2; }
    | '{' tuple_list '}'      { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
    | '{' cexpr_list '}'      { $$ = code_new_inst(i_set_new_elem, 1, $2); }
    | '{' idxset '}'          { $$ = code_new_inst(i_set_idxset, 1, $2); }
    | '{' idxset DO cexpr '}' { $$ = code_new_inst(i_set_expr, 2, $2, $4); }
+   | '{' idxset DO tuple '}' { $$ = code_new_inst(i_set_expr, 2, $2, $4); }
    | PROJ '(' sexpr ',' tuple ')' {
          $$ = code_new_inst(i_set_proj, 2, $3, $5);
        }
