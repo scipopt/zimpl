@@ -75,4 +75,4 @@ $(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.
   src/code.h src/inst.h src/xlpglue.h
 $(OBJDIR)/mshell.o: src/mshell.c src/lint.h src/mshell.h
 $(OBJDIR)/zimpllib.o: src/zimpllib.c src/lint.h src/bool.h src/mshell.h \
-  src/ratlptypes.h src/mme.h src/xlpglue.h src/gmpmisc.h
+  src/ratlptypes.h src/mme.h src/xlpglue.h src/gmpmisc.h src/zimpllib.h
