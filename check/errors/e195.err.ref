@@ -1,0 +1,4 @@
+*** Error 195: Genuine empty index as index set
+*** File: e195.zpl Line 2
+*** set A := { <i> in {} : i };
+***                      ^^^
