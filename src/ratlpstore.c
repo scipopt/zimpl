@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.22 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.23 2006/01/20 08:32:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1770,7 +1770,7 @@ void lps_makename(
    assert(no     >= 0);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
-   nlen = strlen(name);
+   nlen = (int)strlen(name);
 
    /* There are 3 possibilities:
     *

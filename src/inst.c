@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.92 2006/01/19 20:53:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.93 2006/01/20 08:32:05 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1617,7 +1617,7 @@ CodeNode* i_set_union2(CodeNode* self)
    CodeNode*     lexpr;
    SetIter*      iter;
    Tuple*        tuple;
-   Set*          set_r;
+   Set*          set_r = NULL;
    Bool          first = TRUE;
    Set*          set_old;
    const Set*    set_new;
@@ -1649,6 +1649,8 @@ CodeNode* i_set_union2(CodeNode* self)
          }
          else
          {
+            assert(set_r != NULL);
+            
             set_old = set_copy(set_r);
             set_new = code_eval_child_set(self, 1);
 
@@ -2131,6 +2133,8 @@ CodeNode* i_set_expr(CodeNode* self)
    }
    else
    {
+      assert(list != NULL);
+      
       code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
       list_free(list);
@@ -2819,7 +2823,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-
+   
    switch(symbol_get_type(sym))
    {
    case SYM_NUMB :
