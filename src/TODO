@@ -1,4 +1,4 @@
-warning 202 not documented
+warning 202 amd 203 not documented
 
 new union inter  doku, tests, ewtl warning bei empty element
 min/max <i> in I : i  ist schlecht beschrieben.
@@ -8,9 +8,6 @@ In check/param.zpl fehlen noch die read tests.
 
 - doku index expressens in set.
 - warning / tests "
-
-automatische generierung einer fixierten variablen für
-zielfunktionskonstanten.
 
 flag use_only "K" für read Befehle (Ralf)
 

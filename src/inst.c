@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.93 2006/01/20 08:32:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.94 2006/01/21 09:15:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -275,6 +275,28 @@ CodeNode* i_soset(CodeNode* self)
    return self;
 }
 
+/* lint */
+static void warn_if_pattern_has_no_name(
+   const CodeNode* self,
+   const Tuple*    pattern)
+{
+   if (verbose > VERB_QUIET)
+   {
+      int dim = tuple_get_dim(pattern);
+      int i;
+
+      for(i = 0; i < dim; i++)
+         if (ELEM_NAME == elem_get_type(tuple_get_elem(pattern, i)))
+            break;
+
+      if (i == dim && dim > 0)
+      {
+         fprintf(stderr, "--- Warning 203: Indexing tuple is fixed\n");
+         code_errmsg(self);
+      }
+   }
+}
+
 CodeNode* i_forall(CodeNode* self)
 {
    const IdxSet* idxset;
@@ -293,6 +315,8 @@ CodeNode* i_forall(CodeNode* self)
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
+
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
    
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
@@ -710,7 +734,9 @@ CodeNode* i_expr_min(CodeNode* self)
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
-   
+
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -765,6 +791,8 @@ CodeNode* i_expr_max(CodeNode* self)
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
+
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
    
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
@@ -819,6 +847,8 @@ CodeNode* i_expr_sum(CodeNode* self)
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
    
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -1408,6 +1438,8 @@ CodeNode* i_bool_exists(CodeNode* self)
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
    
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
    while(!exists && (tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -1632,6 +1664,8 @@ CodeNode* i_set_union2(CodeNode* self)
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
 
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+   
    /* This routine is not efficient.
     * It would be better to make pairs and then unite the pairs, etc.
     * Now it is O(n) and it could be O(log n)
@@ -1736,6 +1770,8 @@ CodeNode* i_set_inter2(CodeNode* self)
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
 
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+   
    /* This routine is not efficient.
     * It would be better to make pairs and then unite the pairs, etc.
     * Now it is O(n) and it could be O(log n)
@@ -2058,6 +2094,8 @@ CodeNode* i_set_expr(CodeNode* self)
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(iset, pattern);
    
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -2289,6 +2327,8 @@ CodeNode* i_newsym_set1(CodeNode* self)
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
 
+   warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
+   
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -2549,6 +2589,8 @@ CodeNode* i_newsym_para2(CodeNode* self)
    sym     = symbol_new(name, SYM_ERR, iset, set_get_members(iset), deflt);
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
+
+   warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
    
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
@@ -2630,6 +2672,8 @@ CodeNode* i_newsym_var(CodeNode* self)
    pattern  = idxset_get_tuple(idxset);
    sym      = symbol_new(name, SYM_VAR, iset, set_get_members(iset), NULL);
    iter    = set_iter_init(iset, pattern);
+
+   warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
    
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
@@ -3199,6 +3243,8 @@ CodeNode* i_term_sum(CodeNode* self)
    iter    = set_iter_init(set, pattern);
    term_r  = term_new(1);
    
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
