@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.65 2006/01/19 20:53:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.66 2006/01/27 19:57:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -125,9 +125,9 @@ extern const char*  str_new(const char* s);
 /*lint -sem(        str_hash, 1p)           */
 extern unsigned int str_hash(const char* s);
 
-/* numbdbl.c
+/* numbgmp.c
  */
-extern void         numb_init(void);
+extern void         numb_init(unsigned long);
 extern void         numb_exit(void);
 /*lint -sem(        numb_new, @p == 1) */
 extern Numb*        numb_new(void);
@@ -197,6 +197,8 @@ extern Numb*        numb_new_sqrt(const Numb* numb);
 extern Numb*        numb_new_exp(const Numb* numb);
 /*lint -sem(        numb_new_ln, 1p == 1, @p == 1 || @p == 0) */
 extern Numb*        numb_new_ln(const Numb* numb);
+/*lint -sem(        numb_new_rand, 1p == 1 && 2p == 1, @p == 1) */
+extern Numb*        numb_new_rand(const Numb* mini, const Numb* maxi);
 /*lint -sem(        numb_todbl, 1p == 1) */
 extern double       numb_todbl(const Numb* numb);
 /*lint -sem(        numb_print, 1p == 1 && 2p == 1) */

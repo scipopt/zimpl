@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.64 2006/01/19 20:53:07 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.65 2006/01/27 19:57:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -53,16 +53,16 @@ extern int yy_flex_debug;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release %-5s Copyright (C)2005 by Thorsten Koch *\n" \
+"* Release %-5s Copyright (C)2006 by Thorsten Koch *\n" \
 "****************************************************\n" \
 "*   This is free software and you are welcome to   *\n" \
 "*     redistribute it under certain conditions     *\n" \
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n\n";
 
-static const char* options = "bD:fF:hmn:o:Ort:v:V";
+static const char* options = "bD:fF:hmn:o:Ors:t:v:V";
 static const char* usage =
-"usage: %s [-bfhOrV][-D name=value][-F filter][-n cs|cn|cf][-o outfile][-t lp|mps|hum][-v 0-5] file ...\n";
+"usage: %s [options] file ...\n";
 
 static const char* help =
 "\n" \
@@ -77,6 +77,7 @@ static const char* help =
 "                 the input file without extension.\n" \
 "  -O             optimize LP by preprocessing.\n" \
 "  -r             write CPLEX branching order file.\n" \
+"  -s seed        random number generator seed.\n" \
 "  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
 "                 or human readable HUM.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
@@ -234,28 +235,29 @@ static void add_parameter(const char* def)
 
 int main(int argc, char* const* argv)
 {
-   Prog*       prog;
-   Set*        set;
-   const char* extension;
-   char*       filter   = strdup("%s");
-   char*       outfile  = NULL;
-   char*       tblfile  = NULL;
-   char*       ordfile  = NULL;
-   char*       mstfile  = NULL;
-   char*       sosfile  = NULL;
-   char*       basefile = NULL;
-   char*       cmdpipe  = NULL;
-   LpFormat    format   = LP_FORM_LPF;
-   FILE*       fp;
-   Bool        write_order = FALSE;
-   Bool        write_mst   = FALSE;
-   Bool        presolve    = FALSE;
-   char**      param_table;
-   int         param_count = 0;
-   int         c;
-   int         i;
-   FILE*       (*openfile)(const char*, const char*) = fopen;
-   int         (*closefile)(FILE*)                   = fclose;
+   Prog*         prog;
+   Set*          set;
+   const char*   extension;
+   char*         filter   = strdup("%s");
+   char*         outfile  = NULL;
+   char*         tblfile  = NULL;
+   char*         ordfile  = NULL;
+   char*         mstfile  = NULL;
+   char*         sosfile  = NULL;
+   char*         basefile = NULL;
+   char*         cmdpipe  = NULL;
+   LpFormat      format   = LP_FORM_LPF;
+   FILE*         fp;
+   Bool          write_order = FALSE;
+   Bool          write_mst   = FALSE;
+   Bool          presolve    = FALSE;
+   unsigned long seed = 13021967UL;
+   char**        param_table;
+   int           param_count = 0;
+   int           c;
+   int           i;
+   FILE*         (*openfile)(const char*, const char*) = fopen;
+   int           (*closefile)(FILE*)                   = fclose;
 
    yydebug       = 0;
    yy_flex_debug = 0;
@@ -320,6 +322,9 @@ int main(int argc, char* const* argv)
          break;
       case 'O' :
          presolve = TRUE;
+         break;
+      case 's' :
+         seed = atol(optarg);
          break;
       case 'r' :
          write_order = TRUE;
@@ -396,7 +401,7 @@ int main(int argc, char* const* argv)
 
    gmp_init(verbose >= VERB_VERBOSE);
    str_init();
-   numb_init();
+   numb_init(seed);
    elem_init();
    set_init();
 

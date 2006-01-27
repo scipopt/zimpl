@@ -1,3 +1,10 @@
+ - Funktion random(minimum, maximum) implemented, which
+   generates (hopefully) uniformly distributed random values
+   between minimum and maximum. (not very well tested)
+
+ - A warning 203 is generated in many cases when the 
+   indexing tuple is completely fixed.
+
  - Objective function inversion warning for MPS files is
    now only issued once.
 
@@ -10,7 +17,7 @@
  - It is now possible to write:
    UNION <i> in I with i > 5 : A[i];
    INTER <i> in I with i > 5 : A[i];
-   to get the union or intersetction of all the involved sets. 
+   to get the union or intersetection of all the involved sets. 
 
  - When initialising an indexed set with a list any "with" clause 
    on the set expresion was ignored.

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.5 2006/01/19 20:53:07 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.6 2006/01/27 19:57:32 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -85,7 +85,7 @@ Bool zpl_read(const char* filename)
 
    gmp_init(verbose >= VERB_VERBOSE);
    str_init();
-   numb_init();
+   numb_init(13021967UL);
    elem_init();
    set_init();
  
