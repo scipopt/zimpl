@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.94 2006/01/21 09:15:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.95 2006/01/27 18:54:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -676,12 +676,9 @@ CodeNode* i_expr_card(CodeNode* self)
 
 CodeNode* i_expr_rand(CodeNode* self)
 {
-#if 1
-   fprintf(stderr, "Not yet implemented\n");
-#else
-   double mini;
-   double maxi;
-   double val;
+   const Numb* mini;
+   const Numb* maxi;
+   const Numb* val;
    
    Trace("i_rand");
 
@@ -690,9 +687,18 @@ CodeNode* i_expr_rand(CodeNode* self)
    mini = code_eval_child_numb(self, 0);
    maxi = code_eval_child_numb(self, 1);
 
+   val = numb_new_ulint(genrand_int32());
+   div = numb_new_ulint(4294967296UL);
+   
+   numb_div(val, div);
+   
    val = (double)rand() / (double)RAND_MAX;
+
+genrand_int32()*(1.0/4294967296.0);
+ 
    val = val * (maxi - mini) + mini;
 
+   
    code_value_numb(self, val);
 #endif
    
