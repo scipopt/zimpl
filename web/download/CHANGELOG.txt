@@ -55,6 +55,9 @@
  - Control characters (notably CR from DOS files) are now 
    ignored (treated as space) on input.
 
+ - Zimpl is now build as a library to simplify incorporation 
+   into other programs.
+
 2.03 2. Mar 2005 Release
 
  - If -v=0 ist set, most warnings are now suppressed.
