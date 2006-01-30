@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.25 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.26 2006/01/30 14:02:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -143,7 +143,7 @@ static void add_stmt(
    const int   lineno,
    const char* text)
 {
-   StmtType type;
+   StmtType type = STMT_ERR;
 
    assert(prog     != NULL);
    assert(filename != NULL);
