@@ -1,4 +1,61 @@
-2.03 2.Mar 2005 Release
+2.04 30. Jan 2006 Release
+
+ - Funktion random(minimum, maximum) implemented, which
+   generates (hopefully) uniformly distributed random values
+   between minimum and maximum. (not very well tested)
+
+ - A warning 203 is generated in many cases when the 
+   indexing tuple is completely fixed.
+
+ - Objective function inversion warning for MPS files is
+   now only issued once.
+
+ - A constant value in the objective function is now translated
+   automatically into a variable __ObjOffset. This works on
+   all output formats.
+
+ - powerset() is now also generating the empty set.
+
+ - It is now possible to write:
+   UNION <i> in I with i > 5 : A[i];
+   INTER <i> in I with i > 5 : A[i];
+   to get the union or intersetection of all the involved sets. 
+
+ - When initialising an indexed set with a list any "with" clause 
+   on the set expresion was ignored.
+
+ - Error 195 was the same as 135. It is now all 135.
+   Error 195 has a new meaning.
+
+ - It is now possible to read a single value by
+   param n := read "huhu.dat" as "4n" skip 4 use 1
+   The above would read the fourth value in the fifth
+   line of the file huhu.dat.
+
+ - Fixed error in description of -n in -h output and some typos
+   in the documentation.
+
+ - Fixed problem when reading DOS format data files. 
+   The CR at the end of the line is now removed instead of being
+   attached to the last field.
+
+ - Fixed bug with IN operator and Rangesets.
+
+ - It is now possible to build sets by indexing an 
+   expression: { <i> in I with i != 3 : p[i] }; or
+   { <i,j> in A with i != 3 : <p[i],j+i,2> };
+
+ - Special Ordered Sets (SOS) implemented. Thanks Daniel.
+
+ - Changed a problem with the -n cf option due to a change in
+   the LP file format specification.
+
+ - Tabs are now allowed as separators after keywords (set, param, ...)
+
+ - Control characters (notably CR from DOS files) are now 
+   ignored (treated as space) on input.
+
+2.03 2. Mar 2005 Release
 
  - If -v=0 ist set, most warnings are now suppressed.
 
@@ -28,7 +85,7 @@
 
  - Improved error handling for wrong components in sets.
 
-2.02 15.May 2004 Release
+2.02 15. May 2004 Release
 
  - New function ordinal ord(s,t,c) implemented.
    While there is no specific order, all sets have one. 
@@ -57,7 +114,7 @@
 
  - man page created
 
-2.01 29.Oct 2003 Release
+2.01 29. Oct 2003 Release
 
  - min/max over a indexed set of numbers, will now issue a warning, 
    if the index set is empty.
@@ -114,7 +171,7 @@
 
  - Self defined functions implemented.
 
-2.00 17.Sep 2003 Release
+2.00 17. Sep 2003 Release
 
  - Function sgn(expr) implemented.
 
@@ -194,7 +251,7 @@
    
  - new -m switch to write unmangled lp file.
 
-1.05 23.Mar 2003 Release
+1.05 23. Mar 2003 Release
 
  - make check now works.
 
