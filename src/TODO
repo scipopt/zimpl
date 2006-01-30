@@ -1,8 +1,3 @@
-test doku for random()
-new union inter  doku, tests, ewtl warning bei empty element
-min/max <i> in I : i  ist schlecht beschrieben.
-doku test objective constant.
-
 In check/param.zpl fehlen noch die read tests.
 
 - doku index expressens in set.

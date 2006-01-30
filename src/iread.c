@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.19 2006/01/19 20:53:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.20 2006/01/30 11:19:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -191,6 +191,8 @@ static int parse_template(
    /* Is this a tuple_list "<1n,2s>" or
     * an entry_list "<1n,2n> 3s" template
     * or a single value "2n" ?
+    */
+   /*lint -e{731} supress "Boolean argument to equal/not equal"
     */
    if (( (NULL == strchr(temp, '>')) != (NULL == strchr(temp, '<')))
       || (strrchr(temp, '>') != strchr(temp, '>'))

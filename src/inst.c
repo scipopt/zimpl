@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.96 2006/01/27 19:57:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.97 2006/01/30 11:19:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -686,8 +686,16 @@ CodeNode* i_expr_rand(CodeNode* self)
    mini = code_eval_child_numb(self, 0);
    maxi = code_eval_child_numb(self, 1);
 
-   /* ??? check for mini < maxi missing
-    */
+   if (numb_cmp(mini, maxi) >= 0)
+   {
+      fprintf(stderr, "*** Error 204: Randomfunction parameter minimum= ");
+      numb_print(stderr, mini);
+      fprintf(stderr, " >= maximum= ");
+      numb_print(stderr, maxi);
+      fprintf(stderr, "\n");
+      code_errmsg(code_get_child(self, 0));
+      zpl_exit(EXIT_FAILURE);
+   }
    code_value_numb(self, numb_new_rand(mini, maxi));
    
    return self;
@@ -1644,7 +1652,6 @@ CodeNode* i_set_union2(CodeNode* self)
    SetIter*      iter;
    Tuple*        tuple;
    Set*          set_r = NULL;
-   Bool          first = TRUE;
    Set*          set_old;
    const Set*    set_new;
    
@@ -1670,11 +1677,8 @@ CodeNode* i_set_union2(CodeNode* self)
 
       if (code_get_bool(code_eval(lexpr)))
       {
-         if (first)
-         {
+         if (set_r == NULL)
             set_r = set_copy(code_eval_child_set(self, 1));
-            first = FALSE;
-         }
          else
          {
             assert(set_r != NULL);
@@ -1696,6 +1700,9 @@ CodeNode* i_set_union2(CodeNode* self)
       tuple_free(tuple);
    }
    set_iter_exit(iter, set);
+
+   if (set_r == NULL)
+      set_r = set_empty_new(tuple_get_dim(pattern));
    
    code_value_set(self, set_r);
 
@@ -1749,8 +1756,7 @@ CodeNode* i_set_inter2(CodeNode* self)
    CodeNode*     lexpr;
    SetIter*      iter;
    Tuple*        tuple;
-   Set*          set_r;
-   Bool          first = TRUE;
+   Set*          set_r = NULL;
    Set*          set_old;
    const Set*    set_new;
    
@@ -1776,11 +1782,8 @@ CodeNode* i_set_inter2(CodeNode* self)
 
       if (code_get_bool(code_eval(lexpr)))
       {
-         if (first)
-         {
+         if (set_r == NULL)
             set_r = set_copy(code_eval_child_set(self, 1));
-            first = FALSE;
-         }
          else
          {
             set_old = set_copy(set_r);
@@ -1800,6 +1803,9 @@ CodeNode* i_set_inter2(CodeNode* self)
       tuple_free(tuple);
    }
    set_iter_exit(iter, set);
+   
+   if (set_r == NULL)
+      set_r = set_empty_new(tuple_get_dim(pattern));
    
    code_value_set(self, set_r);
 
@@ -2052,10 +2058,10 @@ static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
 
    /* Is it a tuple or a cexpr ?
     */
-   if (code_get_inst(code_cexpr_or_tuple) == &i_tuple_new)
+   if (code_get_inst(code_cexpr_or_tuple) == (Inst)i_tuple_new)
    {
       for(code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
-          code_get_inst(code_cexpr_list) == &i_elem_list_add;
+          code_get_inst(code_cexpr_list) == (Inst)i_elem_list_add;
           code_cexpr_list = code_get_child(code_cexpr_list, 0))
       {
          dim++;
@@ -2073,9 +2079,8 @@ CodeNode* i_set_expr(CodeNode* self)
    CodeNode*     lexpr;
    SetIter*      iter;
    CodeNode*     cexpr_or_tuple;
-   Elem*         elem;
-   List*         list  = NULL;
-   Bool          first = TRUE;
+   Elem*         elem          = NULL;
+   List*         list          = NULL;
    Bool          is_tuple_list = FALSE;
    
    Trace("i_expr_max");
@@ -2101,7 +2106,7 @@ CodeNode* i_set_expr(CodeNode* self)
          switch(code_get_type(cexpr_or_tuple))
          {
          case CODE_TUPLE :
-            assert(first || is_tuple_list);
+            assert(list == NULL || is_tuple_list);
 
             is_tuple_list = TRUE;
             break;
@@ -2124,24 +2129,25 @@ CodeNode* i_set_expr(CodeNode* self)
          default :
             abort();
          }
-         if (first)
+         if (list == NULL)
          {
-            first = FALSE;
             list  = is_tuple_list
                ? list_new_tuple(code_get_tuple(cexpr_or_tuple))
                : list_new_elem(elem);
          }
          else
          {
-            assert(list != NULL);
-
             if (is_tuple_list)
                list_add_tuple(list, code_get_tuple(cexpr_or_tuple));
             else
                list_add_elem(list, elem);
          }
          if (!is_tuple_list)
+         {
+            assert(elem != NULL);
+
             elem_free(elem);
+         }
       }
       local_drop_frame();
 
@@ -2149,7 +2155,7 @@ CodeNode* i_set_expr(CodeNode* self)
    }
    set_iter_exit(iter, iset);
    
-   if (first)
+   if (list == NULL)
    {
       if (verbose > VERB_QUIET)
       {
@@ -2165,8 +2171,6 @@ CodeNode* i_set_expr(CodeNode* self)
    }
    else
    {
-      assert(list != NULL);
-      
       code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
 
       list_free(list);
@@ -2221,7 +2225,6 @@ static Set* set_from_idxset(const IdxSet* idxset)
    SetIter*      iter;
    const Set*    set;
    CodeNode*     lexpr;
-   Bool          first = TRUE;
    List*         list  = NULL;
    
    assert(idxset != NULL);
@@ -2257,17 +2260,10 @@ static Set* set_from_idxset(const IdxSet* idxset)
 
          if (code_get_bool(code_eval(lexpr)))
          {
-            if (first)
-            {
-               list  = list_new_tuple(tuple);
-               first = FALSE;
-            }
+            if (list == NULL)
+               list = list_new_tuple(tuple);
             else
-            {
-               assert(list != NULL);
-
                list_add_tuple(list, tuple);
-            }
          }
          local_drop_frame();
 
@@ -2275,15 +2271,13 @@ static Set* set_from_idxset(const IdxSet* idxset)
       }
       set_iter_exit(iter, set);
 
-      if (first)
+      if (list == NULL)
       {
          newset = set_empty_new(tuple_get_dim(pattern));
          /* ??? maybe we need an error here ? */
       }
       else
       {
-         assert(list != NULL);
-
          newset = set_new_from_list(list, SET_CHECK_WARN);
 
          list_free(list);
@@ -3547,7 +3541,6 @@ CodeNode* i_list_matrix(CodeNode* self)
    Tuple*      tuple;
    const Elem* elem;
    Entry*      entry;
-   Bool        first = TRUE;
    int         i;
    int         j;
    int         k;
@@ -3622,24 +3615,15 @@ CodeNode* i_list_matrix(CodeNode* self)
          default :
             abort();
          }
-         if (!first)
-         {
-            assert(list != NULL);
-            
-            list_add_entry(list, entry);
-         }
-         else
-         {
-            assert(list == NULL);
-            
+         if (list == NULL)
             list  = list_new_entry(entry);
-            first = FALSE;
-         }
+         else
+            list_add_entry(list, entry);
+
          entry_free(entry);
          tuple_free(tuple);
       }
    }
-   assert(!first);
    assert(list != NULL);
    
    code_value_list(self, list);

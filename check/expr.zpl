@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.10 2004/05/29 11:29:35 bzfkocht Exp $
+# $Id: expr.zpl,v 1.11 2006/01/30 11:19:42 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2006 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -45,3 +45,4 @@ subto c12: x[3] >= min(6, 2/7, a[1], a[3]);
 subto c13: x[3] <= max(6, 2/7, a[1], a[3]);
 subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;
 subto c15: sum <i> in I do sgn(5 - i) * x[i] >= 3;
+subto c16: sum <i> in I do random(10,20) * x[i] >= random(50,1000);

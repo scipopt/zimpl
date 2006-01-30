@@ -11,8 +11,10 @@ to refer to Zimpl is to cite my Ph.d. thesis:
 @PHDTHESIS{Koch2004,
    author      = "Thorsten Koch",
    title       = "Rapid Mathematical Programming",
-   school      = "Technische {Universit\"at} Berlin",
    year        = "2004",
+   school      = "Technische {Universit\"at} Berlin",
+   url         = "http://www.zib.de/Publications/abstracts/ZR-04-58/",
+   note        = "ZIB-Report 04-58",
 }   
 
 
@@ -34,14 +36,15 @@ On a Linux system you might succeed with just saying: make
 
 Otherwise:
 
-  Linux/x86 with GNU C       :  gmake COMP=gnu
+  Whatever with GNU C        :  gmake 
   Linux/x86 with Intel C     :  gmake COMP=intel
   Tru64 with Compaq C        :  gmake COMP=compaq
   Solaris with SUN Forte C   :  gmake COMP=sun
   AIX with VisualAge C       :  gmake COMP=ibm
   Windows with Cygwin/GCC    :  gmake COMP=gnu
   HPUX with HP C             :  gmake COMP=hp
-
+  IRIX with SGI C            :  gmake COMP=sgi
+  
 If your configuration is not in the list or does not work,
 you have to change the Makefile. Go to make/local
 an add a file make.<hostname_of_your_computer>
@@ -108,8 +111,10 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fügenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas,
-Jörg Rambau and Tobias Achterberg for there comments and bug reports.
+To Armin Fügenschuh, Marc Pfetsch, Daniel Junglas, Jörg Rambau, Tobias Achterberg,
+Andreas Bley, Sebastian Orlowski, Bejamin Hiller, Ralf Borndörfer, Martin Assmann, 
+Nicolas Weber, Marc Mörig, Jens Hillmann, Dimitri Sverdlov, and all I forgot 
+for there comments and bug reports.
 
 
 COMPLAINS

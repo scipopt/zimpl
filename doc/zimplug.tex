@@ -169,6 +169,7 @@ is to assume maximization.
                   \code{cf} will use the name given with the \code{subto},
                   then a $1\ldots n$ number like in \code{cm} and then 
                   append all the local variables from the forall statements.\\
+-s \emph{seed}   & Positive \code{seed} number for the random number generator.\\
 -v \emph{0..5}   & Set the verbosity level. 0 is quiet, 1 is default,
                   2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
 -D \emph{name=val} & Sets the parameter \emph{name} to the specified
@@ -230,7 +231,9 @@ Numeric expressions consist of numbers, numeric valued parameters, and
 any of the operators and functions listed in Table~\ref{tab:zimpl-functions}.
 Additionally the functions shown in Table~\ref{tab:zimpl-double} can be
 used. Note that those functions are only computed with normal double precision
-floating-point arithmetic and therefore have limited accuracy.
+floating-point arithmetic and therefore have limited
+accuracy. Examples on how to use the \code{min} and \code{max}
+functions can be found in Section~\ref{ssec:parameters} on page~\pageref{ssec:parameters}. 
 
 \begin{table}[hbtp]
 \centering
@@ -250,11 +253,12 @@ $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
-\code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
-\code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
+\code{min(S)}                    &minimum of a set          &$\min_{s\in S} e(s)$\\
+\code{max(S)}                    &maximum of a set          &$\max_{s\in S} e(s)$\\
 \code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
 \code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\max (a,b,c,\ldots,n)$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
+\code{random(m,n)}               &pseudo random number      &$\in[m,n]$\\
 \code{ord(A,n,c)}                &ordinal                   &c-th component of the n-th\\ 
                                  &                          & element of set $A$.\\
 \code{if a then b}               &                          &\\
@@ -393,15 +397,23 @@ set G := proj(F, <3,1>);
 \code{A+B},&\\
 \code{A union B}   &\raisebox{1ex}[0cm][0cm]{union} 
                    &\raisebox{1ex}[0cm][0cm]{$\{x\mid x\in A\vee x\in B\}$}\\
+\code{union <i>}&\\
+\code{ in I: S}&\raisebox{1ex}[0cm][0cm]{union} 
+               &\raisebox{1ex}[0cm][0cm]{$\bigcup_{i\in I}S_i$} \\
 \code{A inter B}   &intersection & $\{x\mid x\in A\wedge x\in B\}$\\
+\code{inter <i>}&\\
+\code{ in I: S}&\raisebox{1ex}[0cm][0cm]{intersection} 
+               &\raisebox{1ex}[0cm][0cm]{$\bigcap_{i\in I}S_i$} \\
 \code{A$\setminus$B, A-B},&\\
 \code{A without B} &\raisebox{1ex}[0cm][0cm]{difference} 
                    &\raisebox{1ex}[0cm][0cm]{$\{x\mid x\in A\wedge x\not\in B\}$}\\
 \code{A symdiff B} &symmetric difference& 
    $\{x\mid (x\in A\wedge x\not\in B)\vee(x\in B\wedge x\not\in A)\}$\\
-\code{\{n\,{..}\,m\}},& generate, &\\
-\code{\{n to m \emph{by s}\}}&(default $s = 1$) & 
-   \raisebox{1ex}[0cm][0cm]{$\{x\mid x=n + is \leq m, i\in\NN_0, x,n,m,s\in\ZZ\}$}\\
+\code{\{n\,{..}\,m \emph{by s}\}},& generate, &
+   $\{x\mid x=\min(n,m) + i|s| \leq \max(n,m),$\\
+   &(default $s = 1$) & $i\in\NN_0, x,n,m,s\in\ZZ\}$\\
+\code{\{n to m \emph{by s}\}}&generate & 
+   $\{x\mid x=n + is \leq m, i\in\NN_0, x,n,m,s\in\ZZ\}$\\
 \code{proj(A, t)}& projection & 
    The new set will consist of $n$-tuples, with\\
    &$t=(e_1,\ldots,e_n)$&
@@ -461,6 +473,8 @@ set P[]         := powerset(I);
 set J           := indexset(P);
 set S[]         := subsets(I, 2);
 set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
+set U           := union <i> in I : A[i];
+set IN          := inter <j> in J : P[j]; # empty! 
 \end{verbatim}
 }
 
@@ -482,6 +496,7 @@ set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 
 %------------------------------------------------------------------------------
 \subsection{Parameters}
+\label{ssec:parameters}
 %------------------------------------------------------------------------------
 Parameters can be declared with or without an index
 set. Without indexing a parameter is just a single value, which is either
@@ -503,6 +518,8 @@ set A := { 12 .. 30 };
 set C := { <1,2,"x">, <6,5,"y">, <3,7,"z"> };
 param q := 5;
 param u[A] := <13> 17, <17> 29, <23> 12 default 99;
+param umin := min <a> in A : u[a]; 
+param mmax := max <i> in { 1 .. 10 } : i mod 5;
 param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
 param x[<i> in { 1 .. 8 } with i mod 2 == 0] := 3 * i;
 \end{verbatim}
@@ -588,10 +605,17 @@ can be either \code{minimize} or \code{maximize}. Following the
 keyword is a name, a colon : and then a linear term expressing the
 objective function.
 
+If there is an objective offset, \ie, a constant value in the
+objective function, \zimpl automatically generates an internal
+variable \code{@@ObjOffset} set to one. This variable is put into the
+objective function with the appropriate coefficient.\footnote{The reason for
+this is that there is no portable way to put an offset into the
+objective function in neither \lpf nor \mps-format.}
+
 \subsubsection{Example}
 {\small 
 \begin{verbatim}
-minimize cost: 12 * x1 -4.4 * x2 
+minimize cost: 12 * x1 -4.4 * x2 + 5
    + sum <a> in A : u[a] * y[a]
    + sum <a,b,c> in C with a in E and b > 3 : -a/2 * z[a,b,c];
 maximize profit: sum <i> in I : c[i] * x[i];

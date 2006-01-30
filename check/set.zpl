@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.9 2005/02/09 08:56:12 bzfkocht Exp $
+# $Id: set.zpl,v 1.10 2006/01/30 11:19:42 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -8,7 +8,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2006 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -37,9 +37,11 @@ set K := { <"a", 1>, <"b", 7>, <"c", 9> };
 set L[B] := <1> { "a", "b" },
             <2> { "c", "d", "e" },
             <3> { "f" };
+set LU   := union <b> in B : L[b];
 set L2[] := <1> { "a", "b" },
             <2> { "c", "d", "e" },
             <3> { "f" };
+set L2I  := inter <b> in B : (L2[b] + A);
 set M[<i> in D] := { <3 * i, 7, "d">, <i + 2, 9, "c"> };
 set N[<i,j> in C * B with i > j] := { i + j, i - j, i * j };
 set P[] := powerset(C);
@@ -54,8 +56,8 @@ set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
 set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
 set Y2:= { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
 set Z := C * (A * B);
- 
-var a[A];
+
+var a[L2I];
 var b[B];
 var c[C];
 var d[D];
@@ -65,7 +67,7 @@ var g[G];
 var h[H];
 var j[J];
 var k[K];
-var l[L[1] + L[2] + L[3]];
+var l[LU];
 var m[M[7]];
 var n[{ 1 .. 100 }];
 var p[C];
@@ -77,7 +79,7 @@ var y[Y];
 var y2[Y2];
 var z[Z];
 
-subto a1: sum <i> in A : a[i] >= 0;
+subto a1: sum <i> in L2I : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= 0;
 subto c1: sum <i> in C : c[i] >= 0;
 subto d1: sum <i> in D : d[i] >= 0;

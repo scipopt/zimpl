@@ -1,4 +1,4 @@
-# $Id: subto.zpl,v 1.5 2003/09/19 08:30:15 bzfkocht Exp $
+# $Id: subto.zpl,v 1.6 2006/01/30 11:19:42 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: subto.zpl                                                     */
@@ -32,7 +32,7 @@ var y[B];
 
 param a[A] := <1> 1, <2> 2, <3> 3, <4> 4, <5> 5 ;
 
-minimize cost: x[1] + x[2];
+minimize cost: x[1] + x[2] + 17;
 
 subto c01:  x[1] <= 5;
 subto c02:  x[1] + x[2] <= 5;

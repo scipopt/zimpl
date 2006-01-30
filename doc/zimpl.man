@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.1
 .\"
-.TH ZIMPL 1 "2 March 2005" Linux "User Manuals"
+.TH ZIMPL 1 "30 Jannuary 2006" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -15,6 +15,8 @@ zimpl \- Zuse Institute Mathematical Programming Language
 .I outfile
 .B ] [ -O ] [ -r ] [ -t
 .I lp|mps|hum
+.B ] [ -s
+.I seed
 .B ] [ -v
 .I 0-5
 .B ] [ -V ]
@@ -96,6 +98,8 @@ input file without extension.
 Optimize the generated LP by doing some presolve analysis (experimental).
 .IP -r 
 Write a CPLEX .ord branching order file.
+.IP "-s seed"
+Set the random number generator seed.
 .IP "-t lp|mps|hum"
 Selects the output format. Can be either 
 .I lp

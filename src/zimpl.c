@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.65 2006/01/27 19:57:32 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.66 2006/01/30 11:19:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -324,7 +324,7 @@ int main(int argc, char* const* argv)
          presolve = TRUE;
          break;
       case 's' :
-         seed = atol(optarg);
+         seed = (unsigned long)atol(optarg);
          break;
       case 'r' :
          write_order = TRUE;

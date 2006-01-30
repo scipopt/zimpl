@@ -8,6 +8,7 @@ zimpl	v       6	y#2             	"y#2"
 zimpl	v       7	y#3             	"y#3"
 zimpl	v       8	y#4             	"y#4"
 zimpl	v       9	y#5             	"y#5"
+zimpl	v      10	__ObjOffset@a   	"@@ObjOffset"	1.0000000000000000e+00
 zimpl	c       0	c01_1           	"c01_1"	0.0000000000000000e+00
 zimpl	c       1	c02_1           	"c02_1"	0.0000000000000000e+00
 zimpl	c       2	c03_1           	"c03_1"	0.0000000000000000e+00

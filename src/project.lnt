@@ -21,6 +21,7 @@
 -e766 // Include of header file not used
 -e788 // enum constant not used within defaulted switch
 -e801 // Use of goto is deprecated
+-e826 // Suspicious pointer-to-pointer conversion 
 -e834 // Operator followed by operator is confusing.  Use parentheses
 //
 -efile(766,mshell.h)

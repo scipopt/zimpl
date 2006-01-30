@@ -1,3 +1,5 @@
+2.04 30. Jan 2006 Release
+
  - Funktion random(minimum, maximum) implemented, which
    generates (hopefully) uniformly distributed random values
    between minimum and maximum. (not very well tested)
@@ -53,7 +55,7 @@
  - Control characters (notably CR from DOS files) are now 
    ignored (treated as space) on input.
 
-2.03 2.Mar 2005 Release
+2.03 2. Mar 2005 Release
 
  - If -v=0 ist set, most warnings are now suppressed.
 
@@ -83,7 +85,7 @@
 
  - Improved error handling for wrong components in sets.
 
-2.02 15.May 2004 Release
+2.02 15. May 2004 Release
 
  - New function ordinal ord(s,t,c) implemented.
    While there is no specific order, all sets have one. 
@@ -112,7 +114,7 @@
 
  - man page created
 
-2.01 29.Oct 2003 Release
+2.01 29. Oct 2003 Release
 
  - min/max over a indexed set of numbers, will now issue a warning, 
    if the index set is empty.
@@ -169,7 +171,7 @@
 
  - Self defined functions implemented.
 
-2.00 17.Sep 2003 Release
+2.00 17. Sep 2003 Release
 
  - Function sgn(expr) implemented.
 
@@ -249,7 +251,7 @@
    
  - new -m switch to write unmangled lp file.
 
-1.05 23.Mar 2003 Release
+1.05 23. Mar 2003 Release
 
  - make check now works.
 
