@@ -1,4 +1,4 @@
-tar -cvzhf zimpl-2.03.tgz \
+tar -cvzhf zimpl-2.04.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
@@ -8,7 +8,7 @@ tar -cvzhf zimpl-2.03.tgz \
 --exclude="lint.out" \
 --exclude=".\#*" \
 --exclude="zimpl/make/local/*" \
-zimpl/LICENSE zimpl/README zimpl/COPYING zimpl/CHANGELOG \
+zimpl/LICENSE zimpl/README zimpl/CHANGELOG \
 zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf \
 zimpl/doc/zimpl.man zimpl/check \
 zimpl/example/chvatal_diet.zpl zimpl/example/facility_location.zpl \
