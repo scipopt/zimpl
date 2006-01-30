@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.38 2006/01/30 11:29:22 bzfkocht Exp $
+# $Id: Makefile,v 1.39 2006/01/30 14:41:26 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2006 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ ARCH            :=      $(shell uname -m | \
                         sed \
 			-e s/sun../sparc/ \
 			-e s/i.86/x86/ \
+			-e s/i86pc/x86/ \
 			-e s/IP../mips/ \
 			-e s/9000..../hppa/ \
 			-e s/Power\ Macintosh/ppc/ \

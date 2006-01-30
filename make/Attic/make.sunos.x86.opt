@@ -1,0 +1,6 @@
+#--- $Id: make.sunos.x86.opt,v 1.1 2006/01/30 14:41:30 bzfkocht Exp $
+CC		=	cc
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -Dinline=""
+CFLAGS		=	-fast -xprefetch=auto -xipo=2 
+LDFLAGS		=	-Bstatic -lgmp -lz -lm
+
