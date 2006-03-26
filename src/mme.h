@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.66 2006/01/27 19:57:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.67 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -105,6 +105,7 @@ typedef enum con_name_format     ConNameForm;
 typedef enum statement_type      StmtType;
 typedef struct statement         Stmt;
 typedef struct program           Prog;
+typedef struct meta_file_ptr     MFP;
 
 #define VERB_QUIET    0
 #define VERB_NORMAL   1
@@ -709,6 +710,26 @@ extern void         prog_load(Prog* prog, const char* filename);
  */
 /*lint -sem(        shwo_source, nulterm(2), 1p == 1 && 2p) */
 extern void         show_source(FILE* fp, const char* text, int column);
+
+/* metaio.c
+ */
+/*lint -sem(        mio_add_strg_file, nulterm(1), nulterm(2), 1p && 2p) */
+extern void         mio_add_strg_file(const char* name, const char* content);
+extern void         mio_init(void);
+extern void         mio_exit(void);
+/*lint -sem(        mio_open, nulterm(2), 2p) */
+/*lint -function(   fopen(1), mio_open(1)) */
+/*lint -function(   fopen(r), mio_open(r)) */
+extern MFP*         mio_open(const char* name, const char* ext);
+/*lint -function(   fclose, mio_close) */
+extern void         mio_close(MFP* mfp);
+/*lint -function(   fgetc, mio_getc) */
+extern int          mio_getc(MFP* mfp);
+/*lint -function(   fgets(1), mio_gets(2))) */
+/*lint -function(   fgets(2), mio_gets(3))) */
+/*lint -function(   fgets(3), mio_gets(1))) */
+/*lint -function(   fgets(r), mio_gets(r))) */
+extern char*        mio_gets(MFP* mfp, char* buf, int len);
 
 /* mmlparse.y
  */

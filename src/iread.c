@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.20 2006/01/30 11:19:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.21 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#include <sys/types.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <fcntl.h>
 
 #ifndef _lint
 #include <zlib.h>
@@ -375,21 +372,7 @@ CodeNode* i_read(CodeNode* self)
    if (!is_tuple_list)
       dim--;
 
-   if (access(filename, R_OK) != 0)
-   {
-      strcat(filename, ".gz");
-
-      /* If .gz also does not work, revert to the old name
-       * to get a better error message.
-       */
-      if (access(filename, R_OK) != 0)
-         strcpy(filename, rdef_get_filename(rdef));
-   }
-
-   if (verbose >= VERB_NORMAL)
-      printf("Reading %s\n", filename);
-
-   if (NULL == (fp = gzopen(filename, "r")))
+   if (NULL == (fp = mio_open(filename, ".gz")))
    {
       perror(filename);
       code_errmsg(self);
@@ -397,7 +380,10 @@ CodeNode* i_read(CodeNode* self)
    }
    else
    {
-      while(NULL != gzgets(fp, buf, sizeof(buf)))
+      if (verbose >= VERB_NORMAL)
+         printf("Reading %s\n", filename);
+
+      while(NULL != mio_gets(fp, buf, sizeof(buf)))
       {
          /* Count the line
           */
@@ -509,7 +495,7 @@ CodeNode* i_read(CodeNode* self)
          if (--use == 0)
             break;
       }
-      gzclose(fp);
+      mio_close(fp);
    }
    
    if (list == NULL)

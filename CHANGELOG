@@ -1,3 +1,9 @@
+ - Input from stringfiles is now possible. This
+   allows to embed Zimpl programs into other programs 
+   without using any external files.
+
+ - Small bug in multi iterator validation fixed.
+
 2.04 30. Jan 2006 Release
 
  - Funktion random(minimum, maximum) implemented, which

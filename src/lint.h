@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.8 2004/05/09 09:12:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.9 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -81,6 +81,8 @@ extern int    gzputs(gzFile file, const char *s);
 /*lint -function(fgets(3), gzgets(1))) */
 /*lint -function(fgets(r), gzgets(r))) */
 extern char*  gzgets(gzFile file, char *buf, int len);
+/*lint -function(fgetc, gzgetc) */
+extern int    gzgetc(gzFile file);
 /*lint -sem(  gzclose, 1p == 1) */
 extern int    gzclose(gzFile file);
 

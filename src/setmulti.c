@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.10 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.11 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -64,7 +64,6 @@ static Bool set_multi_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
       && SID_ok2(iter->multi, SET_MULTI_ITER_SID)
-      && iter->multi.dim     >= 1 /* might be zero if subset is empty */
       && iter->multi.members >= 0
       && iter->multi.now     >= 0
       && (  (iter->multi.members == 0 && iter->multi.dim == 0 && iter->multi.subset == NULL)

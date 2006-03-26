@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.6 2006/01/27 19:57:32 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.7 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -54,7 +54,7 @@ int verbose = VERB_QUIET;
 static const char* banner = 
 "****************************************************\n" \
 "* Zuse Institute Mathematical Programming Language *\n" \
-"* Release %-5s Copyright (C)2005 by Thorsten Koch *\n" \
+"* Release %-5s Copyright (C)2006 by Thorsten Koch *\n" \
 "****************************************************\n\n";
 
 static jmp_buf zpl_read_env;
@@ -88,7 +88,8 @@ Bool zpl_read(const char* filename)
    numb_init(13021967UL);
    elem_init();
    set_init();
- 
+   mio_init();
+   
    if (0 == setjmp( zpl_read_env))
    {
       is_longjmp_ok = TRUE;
@@ -122,6 +123,7 @@ Bool zpl_read(const char* filename)
    if (prog != NULL)
       prog_free(prog);
 
+   mio_exit();
    symbol_exit();
    define_exit();
    set_exit();

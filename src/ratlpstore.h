@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.9 2005/09/02 02:01:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.10 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -147,9 +147,6 @@ struct soset
 void                lps_makename(char* target, int size, const char* name, int no);
 
 #endif /* _RATLPSTORE_H_ */
-
-
-
 
 
 

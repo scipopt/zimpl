@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.26 2006/01/30 14:02:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.27 2006/03/26 10:23:26 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -25,14 +25,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/types.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <fcntl.h>
 
 #include "lint.h"
 #include "bool.h"
@@ -42,7 +39,7 @@
 
 #define BUF_EXT 65536
 
-static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
+static char* get_line(char** buf, int* size, MFP* fp, int* lineno)
 {
    Bool in_string = FALSE;
    int  cnt = 0;
@@ -59,7 +56,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
       }
       assert(*buf != NULL);
       
-      c = fgetc(fp);
+      c = mio_getc(fp);
 
       if (in_string && ((c == EOF) || c == '\n'))
       {
@@ -97,7 +94,7 @@ static char* get_line(char** buf, int* size, FILE* fp, int* lineno)
        */
       if (!in_string && (c == '#'))
       {
-         do { c = fgetc(fp); } while((c != EOF) && (c != '\n'));
+         do { c = mio_getc(fp); } while((c != EOF) && (c != '\n'));
          (*lineno)++;
          continue;
       }
@@ -185,42 +182,23 @@ void prog_load(Prog* prog, const char* filename)
 {
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);
-   FILE* fp;
+   MFP*  fp;
    char* s;
    int   lineno  = 1;
    char  newname [1024];
    char* temp;
-   char* myfilename;
    
    assert(prog     != NULL);
    assert(filename != NULL);
    assert(buf      != NULL);
    assert(filename != NULL);
 
-   /* Allow for omission of the .zpl extension
-    */
-   myfilename = malloc(strlen(filename) + 5); /* ".zpl" + '\0' */
-   assert(myfilename != NULL);
-   strcpy(myfilename, filename);
-   
-   if (access(myfilename, R_OK) != 0)
-   {
-      strcat(myfilename, ".zpl");
-
-      /* If .zpl also does not work, revert to the old name
-       * to get a better error message.
-       */
-      if (access(myfilename, R_OK) != 0)
-         strcpy(myfilename, filename);
-   }
-   if (verbose)
-      printf("Reading %s\n", myfilename);
-
-   if ((fp = fopen(myfilename, "r")) == NULL)
-   {
-      perror(myfilename);
+   if (NULL == (fp = mio_open(filename, ".zpl")))
       zpl_exit(EXIT_FAILURE);
-   }
+
+   if (verbose)
+      printf("Reading %s\n", filename);
+
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
@@ -233,18 +211,18 @@ void prog_load(Prog* prog, const char* filename)
 
       if (1 == sscanf(s, "include \"%1023[^\"]\"", newname))
       {
-         temp = malloc(strlen(myfilename) + strlen(newname) + 2);
-         prog_load(prog, make_pathname(temp, myfilename, newname));
+         temp = malloc(strlen(filename) + strlen(newname) + 2);
+         prog_load(prog, make_pathname(temp, filename, newname));
          free(temp);
       }
       else
       { 
-         add_stmt(prog, myfilename, lineno, s);
+         add_stmt(prog, filename, lineno, s);
       }
    }
-   fclose(fp);
+   mio_close(fp);
    free(buf);
-   free(myfilename);
+   //   free(myfilename);
 }
 
 

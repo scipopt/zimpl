@@ -1,11 +1,11 @@
-# $Id: tspcut.zpl,v 1.1 2004/12/23 12:53:18 bzfkocht Exp $
+# $Id: tspcut.zpl,v 1.2 2006/03/26 10:23:25 bzfkocht Exp $
 #
 # Generic cut formulation of the Travelling Salesmen Problem
 #
 set V   := { read "city.dat" as "<1s>" comment "#" use cities };
 set E   := { <i,j> in V * V with i < j };
 set P[] := powerset(V);
-set K   := indexset(P);
+set K   := indexset(P) \ { 0 };
 
 param px[V] := read "city.dat" as "<1s> 2n" comment "#" use cities;
 param py[V] := read "city.dat" as "<1s> 3n" comment "#" use cities;
