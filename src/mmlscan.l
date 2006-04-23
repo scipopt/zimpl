@@ -24,7 +24,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.43 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.44 2006/04/23 14:50:43 bzfkocht Exp $"
+
+/*lint -e429 */
+/*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
+/*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e750 -e754 -e774 */ 
+/*lint -e770 -e775 -e825 */
+/*lint -esym(613,b,buf) -esym(563,find_rule) */
+/*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
+/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 
 #include <sys/types.h>
 #include <stdlib.h>
@@ -47,13 +55,6 @@ YY_DECL;
 static int        yycolumn  = 0;
 static int        yydecl    = 0;
 
-/*lint -e429 */
-/*lint -e506 -e525 -e528 -e527 -e537 -e551 -e553 -e613 -e633 */
-/*lint -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e774 -e750 */
-/*lint -e825 */
-/*lint -esym(613,b,buf) -esym(563,find_rule) */
-/*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
-/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 %}
 %option noyylineno
 %option never-interactive

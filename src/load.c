@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.27 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.28 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -39,7 +39,7 @@
 
 #define BUF_EXT 65536
 
-static char* get_line(char** buf, int* size, MFP* fp, int* lineno)
+static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
 {
    Bool in_string = FALSE;
    int  cnt = 0;

@@ -367,10 +367,15 @@
 \item[203 Indexing tuple is fixed] (warning)\ \\
   The indexing tuple of an index expression is completely fixed. As a
   result only this one element will be searched for.
-\item[204: Randomfunction parameter minimum= \code{xxx} $>=$ maximum=
+\item[204 Randomfunction parameter minimum= \code{xxx} $>=$ maximum=
   \code{yyy}]\ \\
   The second parameter to the function \code{random} has to be
   strictly greater than the first parameter.
+\item[205 \code{xxx} excess entries for symbol \code{yyy} ignored ]
+  (warning)\ \\
+  When reading the data for symbol \code{yyy} there were 
+  \code{xxx} more entries in the file than indices for the symbol.
+  The excess entries were ignored.  
 %
 % numbgmp.c
 %

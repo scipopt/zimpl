@@ -1,3 +1,7 @@
+Fehler abgefangen wenn default anderer typ als werte in param? read!
+
+priority startval sos nicht gut documentiert.
+
 g -Dcities=10 tspste.zpl
 Reading city.dat
 zimpl-2.03.linux.x86.gnu.dbg: src/setmulti.c:592: set_multi_iter_init: Assertion `set_multi_iter_is_valid(iter)' failed.

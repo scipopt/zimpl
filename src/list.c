@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.17 2005/09/02 02:01:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.18 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -292,7 +292,8 @@ int list_get_elems(const List* list)
 static ListData* list_get_data(const List* list, ListElem** idxp)
 {
    assert(list_is_valid(list));
-
+   assert(idxp != NULL);
+   
    if (*idxp == NULL)
       *idxp = list->anchor.next;
 
@@ -310,6 +311,7 @@ const Elem* list_get_elem(const List* list, ListElem** idxp)
    
    assert(list_is_valid(list));
    assert(list->type == LIST_ELEM);
+   assert(idxp != NULL);
 
    data = list_get_data(list, idxp);
 
@@ -322,6 +324,7 @@ const Tuple* list_get_tuple(const List* list, ListElem** idxp)
    
    assert(list_is_valid(list));
    assert(list->type == LIST_TUPLE);
+   assert(idxp != NULL);
 
    data = list_get_data(list, idxp);
 
@@ -334,6 +337,7 @@ const Entry* list_get_entry(const List* list, ListElem** idxp)
    
    assert(list_is_valid(list));
    assert(list->type == LIST_ENTRY);
+   assert(idxp != NULL);
 
    data = list_get_data(list, idxp);
 
@@ -346,6 +350,7 @@ const List* list_get_list(const List* list, ListElem** idxp)
    
    assert(list_is_valid(list));
    assert(list->type == LIST_LIST);
+   assert(idxp != NULL);
 
    data = list_get_data(list, idxp);
 

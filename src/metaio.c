@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.1 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.2 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -271,7 +271,7 @@ void mio_close(MFP* mfp)
    free(mfp);
 }
 
-int mio_getc(MFP* mfp)
+int mio_getc(const MFP* mfp)
 {
    int c;
    
@@ -294,7 +294,7 @@ int mio_getc(MFP* mfp)
    return c;
 }
 
-char* mio_gets(MFP* mfp, char* buf, int len)
+char* mio_gets(const MFP* mfp, char* buf, int len)
 {
    char* s = NULL;
    
@@ -323,7 +323,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.1 2006/03/26 10:23:26 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.2 2006/04/23 14:50:43 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

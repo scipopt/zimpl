@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.16 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.17 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -1037,7 +1037,6 @@ CodeNode* i_vabs(CodeNode* self)
    term_add_elem(term, entry_xplus, numb_minusone());
    term_add_elem(term, entry_xminus, numb_one());
    create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
-
    
    /* bplus * upper >= xplus */
    term = term_new(2);

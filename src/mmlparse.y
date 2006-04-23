@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.69 2006/01/19 20:53:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.70 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,9 +25,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e574 -e525 -e527 -e661 -e662 -e676 */
+/*lint -e428 -e525 -e527 -e537 -e574 -e661 -e662 -e676 */
 /*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 */
-/*lint -e818 -e830 */
+/*lint -e810 -e818 -e830 */
 /*lint -esym(530,yylen) */
 /*lint -esym(563,yyerrorlab) */   
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
@@ -237,8 +237,8 @@ decl_par
    : DECLPAR NAME '[' idxset ']' ASGN cexpr_entry_list par_default ';' {
          $$ = code_new_inst(i_newsym_para1, 4, code_new_name($2), $4, $7, $8);
       }
-   | DECLPAR NAME '[' idxset ']' ASGN cexpr par_default ';' {
-         $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, $8);
+   | DECLPAR NAME '[' idxset ']' ASGN cexpr ';' {
+         $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, code_new_inst(i_nop, 0));
       }
    | DECLPAR NAME ASGN par_singleton ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
@@ -775,7 +775,7 @@ sexpr
 
  read
     : READ cexpr AS cexpr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
-    | read read_par     { $$ = code_new_inst(i_read_param, 2, $1, $2); }
+    | read read_par       { $$ = code_new_inst(i_read_param, 2, $1, $2); }
     ;
 
  read_par

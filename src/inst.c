@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.97 2006/01/30 11:19:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.98 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -275,21 +275,26 @@ CodeNode* i_soset(CodeNode* self)
    return self;
 }
 
-/* lint */
+static Bool has_pattern_name(
+   const Tuple* pattern)
+{
+   int dim = tuple_get_dim(pattern);
+   int i;
+
+   for(i = 0; i < dim; i++)
+      if (ELEM_NAME == elem_get_type(tuple_get_elem(pattern, i)))
+         break;
+
+   return i < dim;
+}
+
 static void warn_if_pattern_has_no_name(
    const CodeNode* self,
    const Tuple*    pattern)
 {
    if (verbose > VERB_QUIET)
    {
-      int dim = tuple_get_dim(pattern);
-      int i;
-
-      for(i = 0; i < dim; i++)
-         if (ELEM_NAME == elem_get_type(tuple_get_elem(pattern, i)))
-            break;
-
-      if (i == dim && dim > 0)
+      if (tuple_get_dim(pattern) > 0 && !has_pattern_name(pattern))
       {
          fprintf(stderr, "--- Warning 203: Indexing tuple is fixed\n");
          code_errmsg(self);
@@ -2417,87 +2422,88 @@ CodeNode* i_newsym_set2(CodeNode* self)
    return self;
 }
 
-/* initialisation per list
- */
-CodeNode* i_newsym_para1(CodeNode* self)
+static void insert_param_list_by_index(
+   const CodeNode* self,
+   Symbol*         sym,
+   const Set*      iset,
+   const Tuple*    pattern,
+   const List*     list)
 {
-   const char*   name;
-   Set*          iset;
-   const IdxSet* idxset;
-   Symbol*       sym;
-   const List*   list;
-   ListElem*     lelem;
+   SetIter*      iter;
+   ListElem*     le_idx = NULL;
+   int           count  = 0;
+   Tuple*        tuple;
+   int           list_entries;
+   const Entry*  entry; 
+   Entry*        new_entry;
+
+   list_entries = list_get_elems(list); 
+   iter         = set_iter_init(iset, pattern);
+  
+   while((tuple = set_iter_next(iter, iset)) != NULL && count < list_entries)
+   {
+      /* bool is not needed, because iset has only true elems
+       */
+      entry = list_get_entry(list, &le_idx);
+
+      switch(entry_get_type(entry))
+      {
+      case SYM_NUMB:
+         new_entry = entry_new_numb(tuple, entry_get_numb(entry));
+         break;
+      case SYM_STRG :
+         new_entry = entry_new_strg(tuple, entry_get_strg(entry));
+         break;
+      default :
+         abort();
+      }
+      if (count > 0 && symbol_get_type(sym) != entry_get_type(new_entry))
+      {
+         fprintf(stderr, "*** Error 173: Illegal type in element ");
+         entry_print(stderr, new_entry);
+         fprintf(stderr, " for symbol\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      symbol_add_entry(sym, new_entry);
+      
+      tuple_free(tuple);
+      
+      count++;
+   }
+   if (tuple != NULL)
+      tuple_free(tuple);
+      
+   set_iter_exit(iter, iset);
+
+   if (count < list_entries)
+   {
+      if (verbose > VERB_QUIET)
+         fprintf(stderr,
+            "--- Warning 205: %d excess entries for symbol %s ignored\n",
+            list_entries - count,
+            symbol_get_name(sym));
+      code_errmsg(self);
+   }
+}
+
+static void insert_param_list_by_list(
+   const CodeNode* self,
+   Symbol*         sym,
+   const Set*      iset,
+   const List*     list)
+{
+   ListElem*     le_idx = NULL;
    const Entry*  entry;
    const Tuple*  tuple;
-   CodeNode*     child3;
-   const Entry*  deflt;
-   int           count;
+   int           list_entries;
    int           i;
+
+   list_entries = list_get_elems(list);
    
-   Trace("i_newsym_para1");
-
-   assert(code_is_valid(self));
-
-   name   = code_eval_child_name(self, 0);
-   idxset = code_eval_child_idxset(self, 1);
-   iset   = set_from_idxset(idxset);
-   list   = code_eval_child_list(self, 2);
-   child3 = code_eval_child(self, 3);
-
-   if (code_get_type(child3) == CODE_VOID)
-      deflt = ENTRY_NULL;
-   else
-      deflt = code_get_entry(code_eval(child3));
-
-   if (set_get_members(iset) == 0)
+   for(i = 0; i < list_entries; i++)
    {
-      fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   
-   if (!list_is_entrylist(list))
-   {
-      /* This errors occurs, if the parameter is missing in the template
-       * for a "read" statement.
-       */
-      assert(list_is_tuplelist(list));
-      
-      fprintf(stderr, "*** Error 132: Values in parameter list missing,\n");
-      fprintf(stderr, "               probably wrong read template\n");      
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   
-   /* First element will determine the type (see SYM_ERR below)
-    */
-   count = list_get_elems(list);
-
-   /* I found no way to make the following error happen.
-    * You will get either an error 157 or an parse error.
-    * In case there is a way a parse error with
-    * message "Symbol xxx not initialised" will result.
-    * In this case the code below should be reactivated.
-    */
-   assert(count > 0);
-#if 0
-   /* So if there is no first element, we are in trouble.
-    */
-   if (count == 0)
-   {
-      fprintf(stderr, "*** Error ???: Empty initialisation for parameter \"%s\
-n",
-         name);
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-#endif
-   sym   = symbol_new(name, SYM_ERR, iset, count, deflt);
-   lelem = NULL;
-   
-   for(i = 0; i < count; i++)
-   {
-      entry  = list_get_entry(list, &lelem);
+      entry  = list_get_entry(list, &le_idx);
       tuple  = entry_get_tuple(entry);
 
       if (set_get_dim(iset) != tuple_get_dim(tuple))
@@ -2528,6 +2534,97 @@ n",
       }
       symbol_add_entry(sym, entry_copy(entry));
    }
+}
+
+/* initialisation per list
+ */
+CodeNode* i_newsym_para1(CodeNode* self)
+{
+   const char*   name;
+   const IdxSet* idxset;
+   Set*          iset;
+   const List*   list;
+   CodeNode*     child3;
+   const Entry*  deflt = ENTRY_NULL;
+   Symbol*       sym;
+   int           list_entries;
+
+   ListElem*     le_idx;
+   const Entry*  entry;
+   const Tuple*  tuple;
+   
+   Trace("i_newsym_para1");
+
+   assert(code_is_valid(self));
+
+   name   = code_eval_child_name(self, 0);
+   idxset = code_eval_child_idxset(self, 1);
+   iset   = set_from_idxset(idxset);
+   list   = code_eval_child_list(self, 2);
+   child3 = code_eval_child(self, 3);
+
+   if (code_get_type(child3) != CODE_VOID)
+      deflt = code_get_entry(code_eval(child3));
+
+   if (set_get_members(iset) == 0)
+   {
+      fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   
+   if (!list_is_entrylist(list))
+   {
+      /* This errors occurs, if the parameter is missing in the template
+       * for a "read" statement.
+       */
+      assert(list_is_tuplelist(list));
+      
+      fprintf(stderr, "*** Error 132: Values in parameter list missing,\n");
+      fprintf(stderr, "               probably wrong read template\n");      
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   
+   /* First element will determine the type (see SYM_ERR below)
+    */
+   list_entries = list_get_elems(list);
+
+   /* I found no way to make the following error happen.
+    * You will get either an error 157 or an parse error.
+    * In case there is a way a parse error with
+    * message "Symbol xxx not initialised" will result.
+    * In this case the code below should be reactivated.
+    */
+   assert(list_entries > 0);
+#if 0
+   /* So if there is no first element, we are in trouble.
+    */
+   if (list_entries == 0)
+   {
+      fprintf(stderr, "*** Error ???: Empty initialisation for parameter \"%s\n",
+         name);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+#endif
+   sym    = symbol_new(name, SYM_ERR, iset, list_entries, deflt);
+   le_idx = NULL;
+
+   /* Now there is the question if we got an entry list with index tuples or without.
+    * A special case is the singleton, i.e. an entry for a single parameter value.
+    */
+   entry  = list_get_entry(list, &le_idx);
+   tuple  = entry_get_tuple(entry);
+
+   if (list_entries > 1 && tuple_get_dim(tuple) == 0 && set_get_dim(iset) > 0)
+   {
+      insert_param_list_by_index(self, sym, iset, idxset_get_tuple(idxset), list);
+   }
+   else
+   {
+      insert_param_list_by_list(self, sym, iset, list);
+   }
    code_value_void(self);
 
    set_free(iset);
@@ -2544,8 +2641,6 @@ CodeNode* i_newsym_para2(CodeNode* self)
    const IdxSet* idxset;
    Symbol*       sym;
    Entry*        entry;
-   const Entry*  deflt;
-   CodeNode*     child3;
    CodeNode*     child;
    Tuple*        tuple;
    const Tuple*  pattern;
@@ -2559,7 +2654,10 @@ CodeNode* i_newsym_para2(CodeNode* self)
    name    = code_eval_child_name(self, 0);
    idxset  = code_eval_child_idxset(self, 1);
    iset    = set_from_idxset(idxset);
-   child3  = code_eval_child(self, 3);
+
+   /* Since we alway initialise all elements, there is no use to evaluate the
+    * default parameter.
+    */
 
    if (set_get_members(iset) == 0)
    {
@@ -2569,12 +2667,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
       zpl_exit(EXIT_FAILURE);
    }
    
-   if (code_get_type(child3) == CODE_VOID)
-      deflt = ENTRY_NULL;
-   else
-      deflt = code_get_entry(code_eval(child3));
-   
-   sym     = symbol_new(name, SYM_ERR, iset, set_get_members(iset), deflt);
+   sym     = symbol_new(name, SYM_ERR, iset, set_get_members(iset), ENTRY_NULL);
    pattern = idxset_get_tuple(idxset);
    iter    = set_iter_init(iset, pattern);
 
@@ -2582,7 +2675,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
    
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
-      /* bool is not needed, because iset has only true elemens
+      /* bool is not needed, because iset has only true elems
        */
       local_install_tuple(pattern, tuple);
 

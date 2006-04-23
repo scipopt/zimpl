@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.67 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.68 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -394,7 +394,7 @@ extern Set*         set_copy(const Set* set);
 extern Bool         set_lookup(const Set* set, const Tuple* tuple);
 /*lint -sem(        set_iter_init, 1p == 1, @p == 1) */
 extern SetIter*     set_iter_init(const Set* set, const Tuple* pattern);
-/*lint -sem(        set_iter_next, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        set_iter_next, 1p == 1 && 2p == 1) */
 extern Tuple*       set_iter_next(SetIter* iter, const Set* set);
 /*lint -sem(        set_iter_exit, 1p == 1 && 2p == 1) */
 extern void         set_iter_exit(SetIter* iter, const Set* set);
@@ -724,12 +724,12 @@ extern MFP*         mio_open(const char* name, const char* ext);
 /*lint -function(   fclose, mio_close) */
 extern void         mio_close(MFP* mfp);
 /*lint -function(   fgetc, mio_getc) */
-extern int          mio_getc(MFP* mfp);
+extern int          mio_getc(const MFP* mfp);
 /*lint -function(   fgets(1), mio_gets(2))) */
 /*lint -function(   fgets(2), mio_gets(3))) */
 /*lint -function(   fgets(3), mio_gets(1))) */
 /*lint -function(   fgets(r), mio_gets(r))) */
-extern char*        mio_gets(MFP* mfp, char* buf, int len);
+extern char*        mio_gets(const MFP* mfp, char* buf, int len);
 
 /* mmlparse.y
  */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.23 2006/01/20 08:32:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.24 2006/04/23 14:50:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -89,6 +89,8 @@ static unsigned int hashit(const char* s)
    unsigned int hcode = 0;
    
    /* I am not too sure this works well for 64bit integers.
+    */
+   /*lint -e{506} supress "Constant value Boolean"
     */
    assert(sizeof(hcode) == 4); 
 
