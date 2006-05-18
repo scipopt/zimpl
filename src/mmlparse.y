@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.70 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.71 2006/05/18 19:41:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -75,7 +75,7 @@ extern void yyerror(const char* s);
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR XOR NOT
-%token SUM MIN MAX
+%token SUM MIN MAX ARGMIN ARGMAX
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
@@ -756,6 +756,18 @@ sexpr
       }
    | sexpr INTER   sexpr     { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
    | INTER idxset DO sexpr %prec SUM { $$ = code_new_inst(i_set_inter2, 2, $2, $4); }
+   | ARGMIN idxset DO cproduct %prec UNION {
+         $$ = code_new_inst(i_set_argmin, 3, code_new_numb(numb_new_integer(1)), $2, $4);
+      }
+   | ARGMIN '(' cexpr ')' idxset DO cproduct %prec UNION {
+         $$ = code_new_inst(i_set_argmin, 3, $3, $5, $7);
+      }
+   | ARGMAX idxset DO cproduct %prec UNION {
+         $$ = code_new_inst(i_set_argmax, 3, code_new_numb(numb_new_integer(1)), $2, $4);
+      }
+   | ARGMAX '(' cexpr ')' idxset DO cproduct %prec UNION {
+         $$ = code_new_inst(i_set_argmax, 3, $3, $5, $7);
+      }
    | '(' sexpr ')'           { $$ = $2; }
    | '{' tuple_list '}'      { $$ = code_new_inst(i_set_new_tuple, 1, $2); }
    | '{' cexpr_list '}'      { $$ = code_new_inst(i_set_new_elem, 1, $2); }

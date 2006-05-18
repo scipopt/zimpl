@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.98 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.99 2006/05/18 19:41:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -39,6 +39,26 @@
 #include "inst.h"
 #include "xlpglue.h"
 
+static int checked_eval_numb_toint(const CodeNode* self, int no, const char* errmsg)
+{
+   const Numb* numb;
+
+   assert(self   != NULL);
+   assert(no     >= 0);
+   assert(errmsg != NULL);
+
+   numb = code_eval_child_numb(self, no);
+   
+   if (!numb_is_int(numb))
+   {
+      fprintf(stderr, "*** Error %s ", errmsg);
+      numb_print(stderr, numb);
+      fprintf(stderr, " is too big or not an integer\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   return numb_toint(numb);
+}
 /* ----------------------------------------------------------------------------
  * Kontrollfluss Funktionen
  * ----------------------------------------------------------------------------
@@ -450,25 +470,14 @@ CodeNode* i_expr_intdiv(CodeNode* self)
 
 CodeNode* i_expr_pow(CodeNode* self)
 {
-   const Numb* expo;
-   int         ex;
+   int ex;
    
    Trace("i_expr_pow");
 
    assert(code_is_valid(self));
 
-   expo = code_eval_child_numb(self, 1);
-
-   if (!numb_is_int(expo))
-   {
-      fprintf(stderr, "*** Error 112: Exponent value ");
-      numb_print(stderr, expo);
-      fprintf(stderr, " is too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   ex = numb_toint(expo);
-
+   ex = checked_eval_numb_toint(self, 1, "112: Exponent value");
+   
    code_value_numb(self,
       numb_new_pow(code_eval_child_numb(self, 0), ex));
 
@@ -628,25 +637,14 @@ CodeNode* i_expr_exp(CodeNode* self)
 
 CodeNode* i_expr_fac(CodeNode* self)
 {
-   const Numb* fac;
-   int         n;
+   int n;
    
    Trace("i_expr_fac");
 
    assert(code_is_valid(self));
 
-   fac = code_eval_child_numb(self, 0);
-
-   if (!numb_is_int(fac))
-   {
-      fprintf(stderr, "*** Error 113: Factorial value ");
-      numb_print(stderr, fac);
-      fprintf(stderr, " is too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   n = numb_toint(fac);
-
+   n = checked_eval_numb_toint(self, 0, "113: Factorial value");
+   
    if (n < 0)
    {
       fprintf(stderr, "*** Error 114: Negative factorial value\n");
@@ -972,8 +970,6 @@ CodeNode* i_expr_ord(CodeNode* self)
 {
    const Set*  set;
    const Elem* elem;
-   const Numb* tuple_no;
-   const Numb* compo_no;
    Tuple*      tuple;
    int         tno;
    int         cno;
@@ -982,29 +978,10 @@ CodeNode* i_expr_ord(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   set      = code_eval_child_set(self, 0);
-   tuple_no = code_eval_child_numb(self, 1);
-   compo_no = code_eval_child_numb(self, 2);
-
-   if (!numb_is_int(tuple_no))
-   {
-      fprintf(stderr, "*** Error 189: Tuple number ");
-      numb_print(stderr, tuple_no);
-      fprintf(stderr, " is too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(compo_no))
-   {
-      fprintf(stderr, "*** Error 190: Component number ");
-      numb_print(stderr, compo_no);
-      fprintf(stderr, " is too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   tno = numb_toint(tuple_no);
-   cno = numb_toint(compo_no);
-
+   set = code_eval_child_set(self, 0);
+   tno = checked_eval_numb_toint(self, 1, "189: Tuple number");
+   cno = checked_eval_numb_toint(self, 2, "190: Component number");
+   
    if (tno < 1 || tno > set_get_members(set))
    {
       fprintf(stderr, "*** Error 191: Tuple number %d", tno);
@@ -1856,126 +1833,215 @@ CodeNode* i_set_cross(CodeNode* self)
 
 CodeNode* i_set_range(CodeNode* self)
 {
-   const Numb* from;
-   const Numb* upto;
-   const Numb* step;
-   int         int_from;
-   int         int_upto;
-   int         int_step;
-   int         diff;
+   int from;
+   int upto;
+   int step;
+   int diff;
    
    Trace("i_set_range");
 
    assert(code_is_valid(self));
 
-   from = code_eval_child_numb(self, 0);
-   upto = code_eval_child_numb(self, 1);
-   step = code_eval_child_numb(self, 2);
-
-   if (!numb_is_int(from))
-   {
-      fprintf(stderr, "*** Error 123: \"from\" value ");
-      numb_print(stderr, from);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(upto))
-   {
-      fprintf(stderr, "*** Error 124: \"upto\" value ");
-      numb_print(stderr, upto);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(step))
-   {
-      fprintf(stderr, "*** Error 125: \"step\" value ");
-      numb_print(stderr, step);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   int_from = numb_toint(from);
-   int_upto = numb_toint(upto);
-   int_step = numb_toint(step);
-   diff     = int_upto - int_from;
-   int_step = Sgn(diff) * abs(int_step);
+   from = checked_eval_numb_toint(self, 0, "123: \"from\" value");
+   upto = checked_eval_numb_toint(self, 1, "124: \"upto\" value");
+   step = checked_eval_numb_toint(self, 2, "125: \"step\" value");   
+   diff = upto - from;
+   step = Sgn(diff) * abs(step);
 
    if (diff == 0)
-      int_step = 1;
+      step = 1;
    
-   if (int_step == 0) 
+   if (step == 0) 
    {
       fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   code_value_set(self, set_range_new(int_from, int_upto, int_step));
+   code_value_set(self, set_range_new(from, upto, step));
 
    return self;
 }
 
 CodeNode* i_set_range2(CodeNode* self)
 {
-   const Numb* from;
-   const Numb* upto;
-   const Numb* step;
-   int         int_from;
-   int         int_upto;
-   int         int_step;
-   int         diff;
+   int from;
+   int upto;
+   int step;
+   int diff;
    
    Trace("i_set_range2");
 
    assert(code_is_valid(self));
 
-   from = code_eval_child_numb(self, 0);
-   upto = code_eval_child_numb(self, 1);
-   step = code_eval_child_numb(self, 2);
+   from = checked_eval_numb_toint(self, 0, "123: \"from\" value");
+   upto = checked_eval_numb_toint(self, 1, "124: \"upto\" value");
+   step = checked_eval_numb_toint(self, 2, "125: \"step\" value");   
+   diff = upto - from;
 
-   if (!numb_is_int(from))
-   {
-      fprintf(stderr, "*** Error 123: \"from\" value ");
-      numb_print(stderr, from);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(upto))
-   {
-      fprintf(stderr, "*** Error 124: \"upto\" value ");
-      numb_print(stderr, upto);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(step))
-   {
-      fprintf(stderr, "*** Error 125: \"step\" value ");
-      numb_print(stderr, step);
-      fprintf(stderr, " in range too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   int_from = numb_toint(from);
-   int_upto = numb_toint(upto);
-   int_step = numb_toint(step);
-   diff     = int_upto - int_from;
-
-   if (int_step == 0) 
+   if (step == 0) 
    {
       fprintf(stderr, "*** Error 126: Zero \"step\" value in range\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   if ((Sgn(int_step) > 0 && diff < 0)
-    || (Sgn(int_step) < 0 && diff > 0))
+   if ((Sgn(step) > 0 && diff < 0)
+    || (Sgn(step) < 0 && diff > 0))
       code_value_set(self, set_empty_new(1));
    else
-      code_value_set(self, set_range_new(int_from, int_upto, int_step));
+      code_value_set(self, set_range_new(from, upto, step));
 
    return self;
+}
+
+static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
+{
+   Entry* entry;
+   List*  list;
+   Set*   set;
+
+   assert(code_is_valid(self));
+   assert(heap_is_valid(heap));
+   assert(dim >= 0);
+   
+   if (heap_is_empty(heap))
+   {
+      if (verbose > VERB_QUIET)
+      {
+         fprintf(stderr, "--- Warning XXX: argmin/argmax over empty set\n");
+         code_errmsg(code_get_child(self, 0));
+      }
+      set = set_empty_new(dim);
+   }
+   else
+   {
+      entry = heap_pop_entry(heap);
+      list  = list_new_tuple(entry_get_tuple(entry));
+      entry_free(entry);
+
+      while(!heap_is_empty(heap))
+      {
+         entry = heap_pop_entry(heap);
+         list_add_tuple(list, entry_get_tuple(entry));
+         entry_free(entry);
+      }
+      set = set_new_from_list(list, SET_CHECK_WARN);
+
+      list_free(list);
+   }
+   return set;
+}
+
+static int argmin_entry_cmp_descending(const Entry* a, const Entry* b)
+{
+   assert(entry_is_valid(a));
+   assert(entry_is_valid(b));
+   assert(entry_get_type(a) == SYM_NUMB);  
+   assert(entry_get_type(b) == SYM_NUMB);
+   
+   return numb_cmp(entry_get_numb(b), entry_get_numb(a));
+}
+
+static int argmax_entry_cmp_ascending(const Entry* a, const Entry* b)
+{
+   assert(entry_is_valid(a));
+   assert(entry_is_valid(b));
+   assert(entry_get_type(a) == SYM_NUMB); 
+   assert(entry_get_type(b) == SYM_NUMB);
+   
+   return numb_cmp(entry_get_numb(a), entry_get_numb(b));
+}
+
+static CodeNode* do_set_argminmax(CodeNode* self, Bool is_min)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   Tuple*        tuple;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   const Numb*   value;
+   Heap*         heap;  
+   int           size;
+   
+   assert(code_is_valid(self));
+
+   size = checked_eval_numb_toint(self, 0, "XXX: \"size\" value");
+
+   if (size < 1)
+   {
+      fprintf(stderr, "*** Error XXX: \"size\" value %d not >= 1\n", size);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   heap = heap_new_entry(size, is_min ? argmin_entry_cmp_descending : argmax_entry_cmp_ascending);
+
+   assert(heap != NULL);
+
+   idxset  = code_eval_child_idxset(self, 1);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+
+   warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
+
+   while((tuple = set_iter_next(iter, set)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+      {
+         value = code_eval_child_numb(self, 2);      
+
+         if (heap_is_full(heap))
+         {
+            assert(!heap_is_empty(heap));
+
+            if (is_min)
+            {
+               /* Is value smaller than currently biggest in heap ?
+                * In this case drop biggest element in heap
+                */
+               if (numb_cmp(value, entry_get_numb(heap_top_entry(heap))) < 0)
+                  entry_free(heap_pop_entry(heap));
+            }
+            else
+            {
+               /* Is value bigger than currently smallest in heap ?
+                * In this case drop smallest element in heap
+                */
+               if (numb_cmp(value, entry_get_numb(heap_top_entry(heap))) > 0)
+                  entry_free(heap_pop_entry(heap));
+            }
+         }
+         if (!heap_is_full(heap))
+            heap_push_entry(heap, entry_new_numb(tuple, value));
+      }
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set);
+
+   code_value_set(self, heap_to_set(self, heap, tuple_get_dim(pattern)));
+
+   heap_free(heap);
+   
+   return self;
+}
+
+CodeNode* i_set_argmin(CodeNode* self)
+{
+   Trace("i_set_argmin");
+   
+   return do_set_argminmax(self, TRUE);
+}
+
+CodeNode* i_set_argmax(CodeNode* self)
+{
+   Trace("i_set_argmax");
+   
+   return do_set_argminmax(self, FALSE);
 }
 
 CodeNode* i_set_proj(CodeNode* self)
@@ -3538,11 +3604,10 @@ CodeNode* i_entry_list_add(CodeNode* self)
 
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {
-   const Set*  set;
-   const Numb* numb;
-   int         subset_size;
-   int         idx  = 0;
-   int         used;
+   const Set* set;
+   int        subset_size;
+   int        idx  = 0;
+   int        used;
    
    Trace("i_entry_list_subsets");
 
@@ -3550,18 +3615,8 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
 
    set         = code_eval_child_set(self, 0);
    used        = set_get_members(set);
-   numb        = code_eval_child_numb(self, 1);
+   subset_size = checked_eval_numb_toint(self, 1, "143: Size for subsets");
 
-   if (!numb_is_int(numb))
-   {
-      fprintf(stderr, "*** Error 143: Size for subsets ");
-      numb_print(stderr, numb);
-      fprintf(stderr, " is too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   subset_size = numb_toint(numb);
-   
    if (used < 1)
    {
       fprintf(stderr, "*** Error 144: Tried to build subsets of empty set\n");

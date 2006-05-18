@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.35 2006/01/19 20:53:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.36 2006/05/18 19:41:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -176,6 +176,10 @@ extern CodeNode* i_object_max(CodeNode* self);
 extern CodeNode* i_object_min(CodeNode* self);
 /*lint -sem(     i_print, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_print(CodeNode* self);
+/*lint -sem(     i_set_argmax, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_argmax(CodeNode* self);
+/*lint -sem(     i_set_argmin, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_set_argmin(CodeNode* self);
 /*lint -sem(     i_set_cross, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_set_cross(CodeNode* self);
 /*lint -sem(     i_set_empty, 1p == 1, type(1), @p == 1p) */

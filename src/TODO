@@ -1,3 +1,11 @@
+Lint typen fuer typedfs
+
+Regel bei Container sollte doch sein:
+
+Liefern wenn moeglich const
+Fressen wenn sie sichs merken (weil man immer ein copy zwischenschieben kann) oder?
+
+
 Fehler abgefangen wenn default anderer typ als werte in param? read!
 
 priority startval sos nicht gut documentiert.

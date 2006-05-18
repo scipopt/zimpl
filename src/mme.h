@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.68 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.69 2006/05/18 19:41:07 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,6 +98,7 @@ typedef struct list_element      ListElem;
 typedef struct list              List;
 typedef enum hash_type           HashType;
 typedef struct hash              Hash;
+typedef struct heap              Heap;
 typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
 
@@ -291,7 +292,7 @@ extern void         list_print(FILE* fp, const List* list);
 
 /* hash.c
  */
-/*lint -sem(        hash_new, @p == 1 && 2n >= 0) */
+/*lint -sem(        hash_new, 2n >= 0, @p == 1) */
 extern Hash*        hash_new(HashType type, int size);
 /*lint -sem(        hash_free, 1p == 1) */
 extern void         hash_free(Hash* hash);
@@ -315,6 +316,25 @@ extern Bool         hash_has_numb(const Hash* hash, const Numb* numb);
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_elem_idx, 1p == 1 && 2p == 1) */
 extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
+
+/* heap.c
+ */
+/*lint -sem(        heap_new_entry, 1n > 0 && 2p == 1, @p == 1) */
+extern Heap*        heap_new_entry(int size, int (*entry_cmp)(const Entry* a, const Entry* b));
+/*lint -sem(        heap_free, 1p == 1) */
+extern void         heap_free(Heap* heap);
+/*lint -sem(        heap_is_valid, 1p == 1) */
+extern Bool         heap_is_valid(const Heap* heap);
+/*lint -sem(        heap_push_entry, 1p == 1 && 2p == 1) */
+extern void         heap_push_entry(Heap* heap, Entry* entry);
+/*lint -sem(        heap_pop_entry, 1p == 1, @p == 1) */
+extern Entry*       heap_pop_entry(Heap* heap);
+/*lint -sem(        heap_top_entry, 1p == 1, @p == 1) */
+extern const Entry* heap_top_entry(const Heap* heap);
+/*lint -sem(        heap_is_full, 1p == 1) */
+extern Bool         heap_is_full(const Heap* heap);
+/*lint -sem(        heap_is_empty, 1p == 1) */
+extern Bool         heap_is_empty(const Heap* heap);
 
 /* element.c
  */
