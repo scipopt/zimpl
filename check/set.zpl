@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.10 2006/01/30 11:19:42 bzfkocht Exp $
+# $Id: set.zpl,v 1.11 2006/05/19 10:45:16 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -26,9 +26,12 @@
 #*
 set A := { "a", "b", "c" };
 set B := { 1, 2, 3 };
+set B2:= argmax <b> in B : abs(3-b);
 set C := { 1 to 4 };
+set C2:= argmin <c> in C : c;
 set D := { 7 .. 8 by 2 };
-set E := (B + C) * A;
+set E2:= (B + C) * A;
+set E := argmax(card(E2)) <i,j> in E2 : i; # does nothing ;-)
 set F := B inter C;
 set G := { 1 .. 5 } union D without B;
 set H := C symdiff { <1>, <2>, <7>, <8> };
@@ -48,14 +51,15 @@ set P[] := powerset(C);
 set Q[] := subsets(C, 3);
 set R   := indexset(P);
 set S   := R;
-set T := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
-set U := proj(T, <3,1>);
-set V := { <a,2> in A*B with a == "a" or a == "b" };
+set T   := { 1 to 9 } * { 10 to 19 } * { "A", "B" };
+set T2  := argmin(15) <i,j,k> in T : j - 2 * i;
+set U   := proj(T2, <3,1>);
+set V   := { <a,2> in A*B with a == "a" or a == "b" };
 set W[<i> in B] := { <c> in C with c <= i };
-set X := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
-set Y := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
-set Y2:= { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
-set Z := C * (A * B);
+set X   := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
+set Y   := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
+set Y2  := { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
+set Z   := C * (A * B);
 
 var a[L2I];
 var b[B];
@@ -80,8 +84,8 @@ var y2[Y2];
 var z[Z];
 
 subto a1: sum <i> in L2I : a[i] >= 0;
-subto b1: sum <i> in B : b[i] >= 0;
-subto c1: sum <i> in C : c[i] >= 0;
+subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
+subto c1: sum <i> in C : c[i] >= ord(C2,1,1);
 subto d1: sum <i> in D : d[i] >= 0;
 subto e1: sum <i1,i2> in E : e[i1,i2] >= 0;
 subto f1: sum <i> in F : f[i] >= 0;

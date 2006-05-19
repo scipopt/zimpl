@@ -78,15 +78,15 @@
    string).
 %\item[121]\ \\
 %\item[122]\ \\
-\item[123 ``from'' value \code{xxx} in range too big or not an
+\item[123 ``from'' value \code{xxx} is too big or not an
    integer]\ \\
    To generate a set, the ``from'' number must be an integer with an
    absolute value of less than two billion.
-\item[124 ``upto'' value \code{xxx} in range too big or not an
+\item[124 ``upto'' value \code{xxx} is too big or not an
    integer]\ \\
    To generate a set, the ``upto'' number must be an integer with an
    absolute value of less than two billion.
-\item[125 ``step'' value \code{xxx} in range too big or not an
+\item[125 ``step'' value \code{xxx} is too big or not an
    integer]\ \\
    To generate a set, the ``step'' number must be an integer with an
    absolute value of less than two billion.
@@ -376,6 +376,16 @@
   When reading the data for symbol \code{yyy} there were 
   \code{xxx} more entries in the file than indices for the symbol.
   The excess entries were ignored.  
+\item[206 argmin/argmax over empty set] (warning)\ \\
+   The index expression for the \code{argmin} or \code{argmax} was
+   empty. The result is the empty set.
+\item[207 ``size'' value \code{xxx} is too big or not an integer]\ \\
+   The size argument for an \code{argmin} or \code{argmax} function
+   must be an integer with an absolute value of less than two billion.
+\item[208 ``size'' value \code{xxx} not >= 1]\ \\
+   The size argument for an \code{argmin} or \code{argmax} function
+   must be at least one, since it represents the maximum cardinality
+   of the resulting set.
 %
 % numbgmp.c
 %

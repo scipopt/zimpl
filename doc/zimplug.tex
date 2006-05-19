@@ -418,6 +418,22 @@ set G := proj(F, <3,1>);
    The new set will consist of $n$-tuples, with\\
    &$t=(e_1,\ldots,e_n)$&
    the $i$-th component being the $e_i$-th component of $A$.\\
+\code{argmin <i>}&\\
+\code{ in I : e(i)} & minimum argument 
+   &$\argmin_{i\in I} e(i)$\\
+\code{argmin(n) <i>} & $n$ minimum
+   & The new set consists\\
+\code{ in I : e(i)} &  arguments 
+   &of those $n$ elemens of $i$ for which $e(i)$ was
+     smallest. The result can be ambiguous.\\
+\code{argmax <i>}&\\
+\code{ in I : e(i)} & maximum argument 
+   &$\argmax_{i\in I} e(i)$\\
+\code{argmax(n) <i>} & $n$ maximum 
+   & The new set consists\\ 
+\code{ in I : e(i)} & arguments 
+   & of those $n$ elemens of $i$ for which $e(i)$ was
+     biggest. The result can be ambiguous.\\
 \code{if a then b}\\
 \code{else c end}        &\raisebox{1ex}[0cm][0cm]{conditional}
    &\raisebox{1ex}[0cm][0cm]{$\left\{\begin{array}{rl}b,&\text{if }
@@ -443,6 +459,8 @@ set A := { "a", "b", "c" };
 set B := { 1, 2, 3 };
 set V := { <a,2> in A*B with a == "a" or a == "b" };
 # will give: { <"a",2>, <"b",2> }
+set W := argmin(3) <i,j> in B*B : i+j;
+# will give: { <1,1>, <1,2>, <2,1> } 
 \end{verbatim}
 }
 \clearpage

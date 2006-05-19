@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.99 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.100 2006/05/19 10:45:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1907,7 +1907,7 @@ static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
    {
       if (verbose > VERB_QUIET)
       {
-         fprintf(stderr, "--- Warning XXX: argmin/argmax over empty set\n");
+         fprintf(stderr, "--- Warning 206: argmin/argmax over empty set\n");
          code_errmsg(code_get_child(self, 0));
       }
       set = set_empty_new(dim);
@@ -1965,23 +1965,28 @@ static CodeNode* do_set_argminmax(CodeNode* self, Bool is_min)
    
    assert(code_is_valid(self));
 
-   size = checked_eval_numb_toint(self, 0, "XXX: \"size\" value");
-
-   if (size < 1)
-   {
-      fprintf(stderr, "*** Error XXX: \"size\" value %d not >= 1\n", size);
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   heap = heap_new_entry(size, is_min ? argmin_entry_cmp_descending : argmax_entry_cmp_ascending);
-
-   assert(heap != NULL);
-
    idxset  = code_eval_child_idxset(self, 1);
    set     = idxset_get_set(idxset);
    pattern = idxset_get_tuple(idxset);
    lexpr   = idxset_get_lexpr(idxset);
    iter    = set_iter_init(set, pattern);
+   size    = checked_eval_numb_toint(self, 0, "207: \"size\" value");
+
+   if (size < 1)
+   {
+      fprintf(stderr, "*** Error 208: \"size\" value %d not >= 1\n", size);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   /* There is no need for more entries than this
+    */
+   if (size > set_get_members(set))
+      size = set_get_members(set);
+
+   heap = heap_new_entry(size,
+      is_min ? argmin_entry_cmp_descending : argmax_entry_cmp_ascending);
+
+   assert(heap != NULL);
 
    warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
 

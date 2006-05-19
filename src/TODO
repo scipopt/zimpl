@@ -1,7 +1,4 @@
-Lint typen fuer typedfs
-
 Regel bei Container sollte doch sein:
-
 Liefern wenn moeglich const
 Fressen wenn sie sichs merken (weil man immer ein copy zwischenschieben kann) oder?
 
@@ -47,13 +44,10 @@ Warum wird nicht der index mit der groessten anzahl von membern als fixed genomm
 Zielfunktion als Rows* einrichten
 Vorteile: nur non-zeros belegen speicher, mehrere Zielfunktionen möglich.
 
-Cann man vabs in der Zielfunktion einsetzen?
+Kann man vabs in der Zielfunktion einsetzen?
 Und wenn nichtwarum nicht?
 
 TeX output?
-
-Matrxi einlesen rowwise or columwise. Nur die Werte,
-und die indizes werden automatisch weitergezählt.
 
 
 var/con macht einzeln mallocs

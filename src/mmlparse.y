@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.71 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.72 2006/05/19 10:45:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -55,7 +55,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
-%expect 1
+%expect 2
 
 %union
 {
@@ -756,16 +756,16 @@ sexpr
       }
    | sexpr INTER   sexpr     { $$ = code_new_inst(i_set_inter, 2, $1, $3); }
    | INTER idxset DO sexpr %prec SUM { $$ = code_new_inst(i_set_inter2, 2, $2, $4); }
-   | ARGMIN idxset DO cproduct %prec UNION {
+   | ARGMIN idxset DO cexpr %prec UNION {
          $$ = code_new_inst(i_set_argmin, 3, code_new_numb(numb_new_integer(1)), $2, $4);
       }
-   | ARGMIN '(' cexpr ')' idxset DO cproduct %prec UNION {
+   | ARGMIN '(' cexpr ')' idxset DO cexpr %prec UNION {
          $$ = code_new_inst(i_set_argmin, 3, $3, $5, $7);
       }
-   | ARGMAX idxset DO cproduct %prec UNION {
+   | ARGMAX idxset DO cexpr %prec UNION {
          $$ = code_new_inst(i_set_argmax, 3, code_new_numb(numb_new_integer(1)), $2, $4);
       }
-   | ARGMAX '(' cexpr ')' idxset DO cproduct %prec UNION {
+   | ARGMAX '(' cexpr ')' idxset DO cexpr %prec UNION {
          $$ = code_new_inst(i_set_argmax, 3, $3, $5, $7);
       }
    | '(' sexpr ')'           { $$ = $2; }
