@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: zimpllib.h,v 1.1 2006/01/20 20:13:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: zimpllib.h,v 1.2 2006/05/27 18:37:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,15 @@
 #error "Need to include bool.h before zimpllib.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*lint -sem(zpl_read, nulterm(1)) */
 extern Bool zpl_read(const char* filename);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _ZIMPLLIB_H_ */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.69 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.70 2006/05/27 18:37:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -33,6 +33,10 @@
 
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before mme.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 enum element_type
@@ -734,7 +738,7 @@ extern void         show_source(FILE* fp, const char* text, int column);
 /* metaio.c
  */
 /*lint -sem(        mio_add_strg_file, nulterm(1), nulterm(2), 1p && 2p) */
-extern void         mio_add_strg_file(const char* name, const char* content);
+extern void         mio_add_strg_file(const char* name, const char* content, Bool make_copy);
 extern void         mio_init(void);
 extern void         mio_exit(void);
 /*lint -sem(        mio_open, nulterm(2), 2p) */
@@ -796,5 +800,9 @@ extern int          scan_get_column(void);
 #else
 #define Trace(fname) /* */
 #endif /* TRACE */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _MME_H_ */

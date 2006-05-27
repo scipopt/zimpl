@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.100 2006/05/19 10:45:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.101 2006/05/27 18:37:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1983,6 +1983,8 @@ static CodeNode* do_set_argminmax(CodeNode* self, Bool is_min)
    if (size > set_get_members(set))
       size = set_get_members(set);
 
+   assert(size > 0);
+   
    heap = heap_new_entry(size,
       is_min ? argmin_entry_cmp_descending : argmax_entry_cmp_ascending);
 
