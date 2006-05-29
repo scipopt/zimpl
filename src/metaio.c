@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.3 2006/05/27 18:37:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.4 2006/05/29 14:08:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -59,7 +59,7 @@ struct strg_file
    const char* content;
    int         length;
    int         offset;
-   Bool        have_copy;
+   Bool        use_copy;
    StrgFile*   next;
 };
 
@@ -88,7 +88,7 @@ static Bool strgfile_is_valid(const StrgFile* sf)
       && (sf->offset <= sf->length);
 }
 
-void mio_add_strg_file(const char* name, const char* content, Bool make_copy)
+void mio_add_strg_file(const char* name, const char* content, Bool use_copy)
 {
    StrgFile* sf = calloc(1, sizeof(*sf));
    
@@ -96,12 +96,12 @@ void mio_add_strg_file(const char* name, const char* content, Bool make_copy)
    assert(content != NULL);
    assert(sf      != NULL);
 
-   sf->name      = strdup(name);
-   sf->content   = make_copy ? strdup(content) : content;
-   sf->length    = (int)strlen(content) - 1; /* the final '\0' is not part of the file */
-   sf->offset    = 0;
-   sf->have_copy = make_copy;
-   sf->next      = strg_file_root;
+   sf->name     = strdup(name);
+   sf->content  = make_copy ? strdup(content) : content;
+   sf->length   = (int)strlen(content) - 1; /* the final '\0' is not part of the file */
+   sf->offset   = 0;
+   sf->use_copy = make_copy;
+   sf->next     = strg_file_root;
 
    SID_set(sf, STRGFILE_SID);
    assert(strgfile_is_valid(sf));
@@ -325,7 +325,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.3 2006/05/27 18:37:31 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.4 2006/05/29 14:08:40 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"
@@ -389,7 +389,7 @@ void mio_exit()
 
       free((void*)p->name);
       
-      if (p->have_copy)
+      if (p->use_copy)
          free((void*)p->content);
       
       SID_del(p);
