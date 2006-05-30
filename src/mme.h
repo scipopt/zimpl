@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.70 2006/05/27 18:37:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.71 2006/05/30 05:58:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -738,7 +738,7 @@ extern void         show_source(FILE* fp, const char* text, int column);
 /* metaio.c
  */
 /*lint -sem(        mio_add_strg_file, nulterm(1), nulterm(2), 1p && 2p) */
-extern void         mio_add_strg_file(const char* name, const char* content, Bool make_copy);
+extern void         mio_add_strg_file(const char* name, const char* content, Bool use_copy);
 extern void         mio_init(void);
 extern void         mio_exit(void);
 /*lint -sem(        mio_open, nulterm(2), 2p) */

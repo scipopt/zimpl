@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.4 2006/05/29 14:08:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.5 2006/05/30 05:58:58 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -97,10 +97,10 @@ void mio_add_strg_file(const char* name, const char* content, Bool use_copy)
    assert(sf      != NULL);
 
    sf->name     = strdup(name);
-   sf->content  = make_copy ? strdup(content) : content;
+   sf->content  = use_copy ? strdup(content) : content;
    sf->length   = (int)strlen(content) - 1; /* the final '\0' is not part of the file */
    sf->offset   = 0;
-   sf->use_copy = make_copy;
+   sf->use_copy = use_copy;
    sf->next     = strg_file_root;
 
    SID_set(sf, STRGFILE_SID);
@@ -325,7 +325,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.4 2006/05/29 14:08:40 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.5 2006/05/30 05:58:58 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"
