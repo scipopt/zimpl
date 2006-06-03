@@ -1,3 +1,7 @@
+ - New function "zpl_read_with_args" to allow
+   processing of command line defines, -s seed and
+   multi file input in embedded apllications.
+
  - Funktions argmin/argmax implemented:
    argmin(5) <i> in { 1 .. 100 } : abs(50 - i)
    will generate the set containing the indices of the

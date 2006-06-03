@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.71 2006/05/30 05:58:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.72 2006/06/03 08:23:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -121,6 +121,8 @@ typedef struct meta_file_ptr     MFP;
 extern int          verbose;
 /*lint -function(exit,zpl_exit) */
 extern void         zpl_exit(int retval);
+/*lint -sem(        zpl_add_parameter, 1p && nulterm(1)) */
+extern void         zpl_add_parameter(const char* def);
 
 /* strstore.c
  */

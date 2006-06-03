@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.67 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.68 2006/06/03 08:23:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -163,74 +163,6 @@ static void check_write_ok(FILE* fp, const char* filename)
       fprintf(stderr, "*** Error 102: File write error\n");
       perror(filename);
    }
-}
-
-static Bool is_valid_identifier(const char* s)
-{
-   assert(s != NULL);
-
-   /* Identifiers start with a letter or a '_'
-    */
-   if (!isalpha(*s) || *s == '_')
-      return FALSE;
-
-   /* Then letters, digits or '_' can follow.
-    */
-   while(isalnum(*++s) || *s == '_')
-      ;
-
-   return *s == '\0';
-}
-
-static void add_parameter(const char* def)
-{
-   const char* warning =
-      "--- Warning 175: Illegal syntax for command line define \"%s\" -- ignored\n";
-   Set*    set;
-   Symbol* sym;
-   Numb*   numb;
-   Tuple*  tuple;
-   Entry*  entry;
-   char*   name;
-   char*   value;
-
-   assert(def != NULL);
-   
-   name  = strdup(def);
-   value = strchr(name, '=');
-   
-   if (value == NULL)
-   {
-      fprintf(stderr, warning, def);
-      free(name);
-      return;
-   }
-   *value = '\0';
-   value++;
-
-   if (strlen(name) == 0 || strlen(value) == 0 || !is_valid_identifier(name))
-   {
-      fprintf(stderr, warning, def);
-      free(name);
-      return;
-   }
-   set   = set_pseudo_new();
-   sym   = symbol_new(str_new(name), SYM_ERR, set, 1, ENTRY_NULL);
-   tuple = tuple_new(0);   
-
-   if (!numb_is_number(value))
-      entry = entry_new_strg(tuple, str_new(value));
-   else
-   {
-      numb  = numb_new_ascii(value);
-      entry = entry_new_numb(tuple, numb);
-      numb_free(numb);
-   }
-   symbol_add_entry(sym, entry);
-   
-   tuple_free(tuple);
-   set_free(set); 
-   free(name); 
 }
 
 int main(int argc, char* const* argv)
@@ -415,7 +347,7 @@ int main(int argc, char* const* argv)
    /* Now store the param defines
     */
    for(i = 0; i < param_count; i++)
-      add_parameter(param_table[i]);
+      zpl_add_parameter(param_table[i]);
 
    /* Next we read in the zpl program(s)
     */
