@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.72 2006/06/03 08:23:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.73 2006/06/08 10:26:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -756,6 +756,8 @@ extern int          mio_getc(const MFP* mfp);
 /*lint -function(   fgets(3), mio_gets(1))) */
 /*lint -function(   fgets(r), mio_gets(r))) */
 extern char*        mio_gets(const MFP* mfp, char* buf, int len);
+/*lint -sem(        mio_get_line, 1p) */
+extern char*        mio_get_line(const MFP* mfp);
 
 /* mmlparse.y
  */

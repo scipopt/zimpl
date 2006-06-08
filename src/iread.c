@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.22 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.23 2006/06/08 10:26:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -45,8 +45,7 @@
 
 /* read "datei" as "<1n,3s,12s,4n> %6s" skip 17 use 2000 fs " ;"
  */
-#define MAX_LINE_LEN 8192
-#define MAX_FIELDS    256
+#define MAX_FIELDS   1024
 
 CodeNode* i_read_new(CodeNode* self)
 {
@@ -169,7 +168,8 @@ static int parse_template(
    int*            param_field,
    int*            param_type,
    Bool*           is_tuple_list,
-   Bool*           is_streaming)
+   Bool*           is_streaming,
+   int*            hi_field_no)
 {
    const char* sep = " ,<>";
    
@@ -185,9 +185,11 @@ static int parse_template(
    assert(param_field   != NULL);
    assert(param_type    != NULL);
    assert(is_tuple_list != NULL);
-
+   assert(hi_field_no   != NULL);
+   
    *is_streaming  = FALSE;
    *is_tuple_list = FALSE;
+   *hi_field_no   = 0;
    
    /* Is this a tuple_list "<1n,2s>" or
     * an entry_list "<1n,2n> 3s" template
@@ -230,6 +232,7 @@ static int parse_template(
          param_field[0] = 0;
          param_type [0] = temp[0];
          params         = 1;
+         *hi_field_no   = MAX_FIELDS - 1;
 
          /* Stop further processing
           */
@@ -269,6 +272,9 @@ static int parse_template(
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
+      if (field > *hi_field_no)
+         *hi_field_no = field;
+      
       param_field[params] = field;
       param_type [params] = type;
       params++;
@@ -293,13 +299,18 @@ static int parse_template(
    return params;
 }
 
-/*lint -sem(split_fields, nulterm(1), 1p && 2p, @n >= 0) */
-static int split_fields(char* s, char* field[])
+/*lint -sem(split_fields, nulterm(1), 1p && 2n >= 0 && 2n < MAX_FIELDS && 3p, @n >= 0) */
+static int split_fields(char* s, int hi_field_no, char* field[])
 {
    char* t = s;
    char* u;
    int   fields = 0;
    Bool  new_field;
+
+   assert(s           != NULL);
+   assert(hi_field_no >= 0);
+   assert(hi_field_no <  MAX_FIELDS);
+   assert(field       != NULL);
    
    for(;;)
    {
@@ -328,7 +339,10 @@ static int split_fields(char* s, char* field[])
       }
       if (new_field)
       {
-         /*lint --e{661}  Possible access of out-of-bounds pointer */
+         assert(fields <= hi_field_no);
+         assert(fields <  MAX_FIELDS);
+         
+         /*xint --e{661}  Possible access of out-of-bounds pointer */
          u = s;
          field[fields] = t;
          fields++;
@@ -346,6 +360,11 @@ static int split_fields(char* s, char* field[])
          if (*s == '\0')
             break;
 
+         /* Have we collected all fields we are interested in?
+          */
+         if (fields - 1 == hi_field_no)
+            break;
+         
          t = s;
       }
    }
@@ -358,16 +377,17 @@ static int split_fields(char* s, char* field[])
  */
 CodeNode* i_read(CodeNode* self)
 {
-   gzFile      fp;
+   MFP*        fp;
    char*       s;
    char*       t;
-   char        buf[MAX_LINE_LEN];
+   char*       buf;
    char*       field[MAX_FIELDS];
    int         fields;
    int         param_field[MAX_FIELDS];  /* template parameter field number */
    int         param_type [MAX_FIELDS];  /* template parameter field type */
    Bool        is_tuple_list;
    Bool        is_streaming;
+   int         hi_field_no;
    int         dim;
    const RDef* rdef;
    List*       list = NULL;
@@ -390,7 +410,8 @@ CodeNode* i_read(CodeNode* self)
    use      = rdef_get_use(rdef);
    skip     = rdef_get_skip(rdef);
    dim      = parse_template(self,
-      rdef_get_template(rdef), param_field, param_type, &is_tuple_list, &is_streaming);
+      rdef_get_template(rdef), param_field, param_type,
+      &is_tuple_list, &is_streaming, &hi_field_no);
 
    filename = malloc(strlen(rdef_get_filename(rdef)) + 4);
    assert(filename != NULL);
@@ -418,7 +439,7 @@ CodeNode* i_read(CodeNode* self)
       if (verbose >= VERB_NORMAL)
          printf("Reading %s\n", filename);
 
-      while(NULL != mio_gets(fp, buf, sizeof(buf)))
+      while(NULL != (buf = mio_get_line(fp)))
       {
          /* Count the line
           */
@@ -427,7 +448,10 @@ CodeNode* i_read(CodeNode* self)
          /* Should we skip this line ?
           */
          if (skip-- > 0)
+         {
+            free(buf);
             continue;
+         }
 
          /* Is this a comment line or is there a comment on the line,
           * then remove it.
@@ -443,11 +467,13 @@ CodeNode* i_read(CodeNode* self)
          /* ... we skip it.
           */
          if (*s == '\0')
+         {
+            free(buf);
             continue;
-
+         }
          /* Now we break the line in fields.
           */
-         fields = split_fields(s, field);
+         fields = split_fields(s, hi_field_no, field);
 #if 0
          fprintf(stderr, "Fields=%d\n", fields);
          for(i = 0; i < fields; i++)
@@ -569,8 +595,11 @@ CodeNode* i_read(CodeNode* self)
                   entry_free(entry);
                }
             }
-            tuple_free(tuple);
          }
+         tuple_free(tuple);
+
+         free(buf);
+         
          if (--use == 0)
             break;
       }

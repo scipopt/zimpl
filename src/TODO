@@ -1,7 +1,12 @@
+Bugs beim lesen langer zeilen!
+
 Regel bei Container sollte doch sein:
 Liefern wenn moeglich const
 Fressen wenn sie sichs merken (weil man immer ein copy zwischenschieben kann) oder?
 
+Man könnte vorher mal gucken welche reads ingesamt vorkommen.
+Komt einer mehrfach vor, wird die ganze Datei eingelesen und ein
+strg read fdraus gemacht.
 
 Fehler abgefangen wenn default anderer typ als werte in param? read!
 

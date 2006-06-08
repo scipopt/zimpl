@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.5 2006/05/30 05:58:58 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.6 2006/06/08 10:26:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -51,6 +51,7 @@ enum file_type { MFP_ERR, MFP_STRG, MFP_FILE, MFP_ZLIB };
 
 #define STRGFILE_SID  0x53544649
 #define MFP_SID       0x4d46505f
+#define BUF_SIZE_INC  4096
 
 struct strg_file
 {
@@ -319,13 +320,44 @@ char* mio_gets(const MFP* mfp, char* buf, int len)
    return s;
 }
 
+char* mio_get_line(const MFP* mfp)
+{
+   int    size = 1;
+   int    pos;
+   char*  buf = NULL;
+   char*  s;
+   char*  t;
+   
+   assert(mfp_is_valid(mfp));
+
+   do
+   {
+      pos           = size - 1;
+      size         += BUF_SIZE_INC - 1;
+      buf           = (buf == NULL) ? malloc((size_t)size) : realloc(buf, (size_t)size);
+      t             = &buf[pos];
+      buf[size - 1] = '@';
+      s             = mio_gets(mfp, t, BUF_SIZE_INC);
+   }
+   while(s != NULL && buf[size - 1] == '\0' && buf[size - 2] != '\n');
+
+   /* nothing read at all ?
+    */
+   if (s == NULL && size == BUF_SIZE_INC)
+   {
+      free(buf);
+      buf = NULL;
+   }
+   return buf;
+}
+
 void mio_init()
 {
 #ifndef NDEBUG
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.5 2006/05/30 05:58:58 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.6 2006/06/08 10:26:53 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

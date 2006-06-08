@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.17 2005/09/27 09:17:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.18 2006/06/08 10:26:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -134,6 +134,15 @@ void elem_exit()
    
    for(store = store_anchor; store != NULL; store = next)
    {
+#if 0
+      int i;
+      
+      for(i = 0; i < ELEM_STORE_SIZE - 1; i++)
+      {
+         elem_print(stderr, &store->begin[i]);
+         fprintf(stderr, "\n");
+      }
+#endif
       next = store->next;
 
       free(store->begin);
@@ -308,6 +317,8 @@ void elem_print(FILE* fp, const Elem* elem)
       fprintf(fp, "%s", elem->value.name);
       break;
    case ELEM_FREE :
+      fprintf(fp, "Unused Elem!");
+      break;
    default :
       abort();
    }

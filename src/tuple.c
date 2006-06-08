@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.18 2005/03/02 20:49:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.19 2006/06/08 10:26:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -69,7 +69,7 @@ Tuple* tuple_new(int dim)
 
    SID_set(tuple, TUPLE_SID);
    assert(tuple_is_valid(tuple));
-   
+
    return tuple;
 }
 
