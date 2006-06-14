@@ -1,3 +1,18 @@
+ - It is now possible to define function that have a 
+   boolen value, like 
+   defbool(a,b) := a != b and (a > 5 or c <= 7);
+
+ - If boolean-expr THEN boolean-expr ELSE boolean-expr END
+   is now possible.
+
+ - It is now possible to read all values in a file 
+   into a set. { read "data.dat" as "<s+>" } will
+   real all values one after the other and put them
+   into the set. "<n+>" also works.
+
+ - Fixed several bugs that occured when 
+   reading lines longer than 8192 bytes long.
+
  - New function "zpl_read_with_args" to allow
    processing of command line defines, -s seed and
    multi file input in embedded apllications.

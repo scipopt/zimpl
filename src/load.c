@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.28 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.29 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -161,6 +161,8 @@ static void add_stmt(
    else if (!strncmp(text, "defnumb", 7) && isspace(text[7]))
       type = STMT_DEF;
    else if (!strncmp(text, "defstrg", 7) && isspace(text[7]))
+      type = STMT_DEF;
+   else if (!strncmp(text, "defbool", 7) && isspace(text[7]))
       type = STMT_DEF;
    else if (!strncmp(text, "defset", 6) && isspace(text[6]))
       type = STMT_DEF;

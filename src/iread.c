@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.23 2006/06/08 10:26:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.24 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -45,7 +45,7 @@
 
 /* read "datei" as "<1n,3s,12s,4n> %6s" skip 17 use 2000 fs " ;"
  */
-#define MAX_FIELDS   1024
+#define MAX_FIELDS   65536
 
 CodeNode* i_read_new(CodeNode* self)
 {
@@ -175,6 +175,7 @@ static int parse_template(
    
    char* temp = strdup(template);
    char* s;
+   char* t;
    int   field;
    char  type;
    int   params = 0;
@@ -195,6 +196,7 @@ static int parse_template(
     * an entry_list "<1n,2n> 3s" template
     * or a single value "2n"
     * or a stream "s+" or "n+"
+    * or a stream tuple list "<n+>" or "<s+>"
     */
    /*lint -e{731} supress "Boolean argument to equal/not equal"
     */
@@ -206,38 +208,55 @@ static int parse_template(
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   s = strchr(temp, '>');
 
-   /* Are there *no* tuples <> involved ?
-    * Then ist has to be either a single value or a stream.
+   /* Is there an + involved ? Than it is a stream.
     */
-   if (s == NULL)
+   if (NULL != strchr(temp, '+'))
    {
-      if (NULL == strchr(temp, '+'))
+      t = temp;
+      
+      /* We have a stream template
+       */
+      if (t[0] == '<')
       {
-         is_single_value = TRUE;
-      }
-      else
-      {
-         /* We have a stream template
-          */
-         if (strlen(temp) != 2 || (temp[0] != 'n' && temp[0] != 's') || temp[1] != '+')
+
+         if (strlen(t) != 4 || (t[1] != 'n' && t[1] != 's') || t[2] != '+' || t[3] != '>')
          {
             fprintf(stderr, "*** Error 151: Not a valid read template\n");
             code_errmsg(self);
             zpl_exit(EXIT_FAILURE);
          }
-         *is_streaming = TRUE;
+         *is_tuple_list = TRUE;
          
-         param_field[0] = 0;
-         param_type [0] = temp[0];
-         params         = 1;
-         *hi_field_no   = MAX_FIELDS - 1;
-
-         /* Stop further processing
-          */
-         temp[0] = '\0';
+         t++;
+         t[2] = '\0';
       }
+      if (strlen(t) != 2 || (t[0] != 'n' && t[0] != 's') || t[1] != '+')
+      {
+         fprintf(stderr, "*** Error 151: Not a valid read template\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      *is_streaming = TRUE;
+      
+      param_field[0] = 0;
+      param_type [0] = t[0];
+      params         = 1;
+      *hi_field_no   = MAX_FIELDS - 1;
+      
+      free(temp);
+      
+      return 1;
+   }
+
+   /* Single value or tuple list or entry list ?
+    */
+   s = strchr(temp, '>');
+      
+   if (NULL == s)
+   {
+      /* Single value */
+      is_single_value = TRUE;
    }
    else
    {
@@ -290,7 +309,7 @@ static int parse_template(
          zpl_exit(EXIT_FAILURE);
       }
    }
-   else if (params - ((*is_tuple_list || *is_streaming) ? 0 : 1) < 1)
+   else if (params - (*is_tuple_list ? 0 : 1) < 1)
    {
       fprintf(stderr, "*** Error 155: Invalid read template, not enough fields\n");
       code_errmsg(self);
@@ -371,6 +390,231 @@ static int split_fields(char* s, int hi_field_no, char* field[])
    return fields;
 }
 
+
+static List* process_entry_stream(
+   CodeNode*   self,
+   List*       list,
+   const RDef* rdef,
+   int         line,
+   int         fields,
+   char**      field,
+   int         param_type) /* param_type[0] */
+{
+   Tuple*      tuple;
+   Entry*      entry;
+   Numb*       numb;
+   int         i;
+
+   assert(rdef   != NULL);
+   assert(line   >= 1);
+   assert(fields >= 1);
+   assert(field  != NULL);
+   assert(param_type == 'n' || param_type == 's');
+
+   tuple = tuple_new(0);
+   
+   for(i = 0; i < fields; i++)
+   {
+      if (param_type == 'n')
+      {
+         if (!numb_is_number(field[i]))
+         {
+            fprintf(stderr, "*** Error 174: Numeric field");
+            fprintf(stderr, " read as \"%s\". This is not a number.\n", field[i]);
+            fprintf(stderr, "***            File: %s line %d\n",
+               rdef_get_filename(rdef), line);
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
+         }
+         numb = numb_new_ascii(field[i]);
+         entry = entry_new_numb(tuple, numb);
+         numb_free(numb);
+      }
+      else
+      {
+         entry = entry_new_strg(tuple, str_new(field[i]));
+      }
+      if (list == NULL)
+         list = list_new_entry(entry);
+      else
+         list_add_entry(list, entry);
+                  
+      entry_free(entry);
+   }
+   tuple_free(tuple);
+
+   return list;
+}
+
+static List* process_tuple_stream(
+   CodeNode*   self,
+   List*       list,
+   const RDef* rdef,
+   int         line,
+   int         fields,
+   char**      field,
+   int         param_type) /* param_type[0] */
+{
+   Tuple*      tuple;
+   Elem*       elem;
+   Numb*       numb;
+   int         i;
+
+   assert(rdef   != NULL);
+   assert(line   >= 1);
+   assert(fields >= 1);
+   assert(field  != NULL);
+   assert(param_type == 'n' || param_type == 's');
+
+   
+   for(i = 0; i < fields; i++)
+   {
+      tuple = tuple_new(1);
+      
+      if (param_type == 'n')
+      {
+         if (!numb_is_number(field[i]))
+         {
+            fprintf(stderr, "*** Error 174: Numeric field");
+            fprintf(stderr, " read as \"%s\". This is not a number.\n", field[i]);
+            fprintf(stderr, "***            File: %s line %d\n",
+               rdef_get_filename(rdef), line);
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
+         }
+         numb = numb_new_ascii(field[i]);
+         elem = elem_new_numb(numb);
+         numb_free(numb);
+      }
+      else
+      {
+         elem = elem_new_strg(str_new(field[i]));
+      }
+      tuple_set_elem(tuple, 0, elem);
+      
+      if (list == NULL)
+         list = list_new_tuple(tuple);
+      else
+         list_add_tuple(list, tuple);
+                  
+      tuple_free(tuple);
+   }
+   return list;
+}
+
+static List* process_line(
+   CodeNode*   self,
+   List*       list,
+   const RDef* rdef,
+   int         line,
+   Bool        is_tuple_list,
+   int         dim,
+   int         fields,
+   char**      field,
+   int*        param_field,
+   int*        param_type) 
+{
+   Tuple*      tuple;
+   Entry*      entry;
+   Elem*       elem;
+   Numb*       numb;
+   char*       t;
+   int         i;
+
+   assert(rdef        != NULL);
+   assert(line        >= 1);
+   assert(dim         >= 0);
+   assert(fields      >= 1);
+   assert(field       != NULL);
+   assert(param_type  != NULL);
+   assert(param_field != NULL);
+
+   tuple = tuple_new(dim);
+         
+   for(i = 0; i < dim; i++)
+   {
+      if (param_field[i] >= fields)
+      {
+         fprintf(stderr, "*** Error 156: Not enough fields in data\n");
+         fprintf(stderr, "***            File: %s line %d\n",
+            rdef_get_filename(rdef), line);
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      t = field[param_field[i]];
+            
+      if (param_type[i] == 'n')
+      {
+         if (!numb_is_number(t))
+         {
+            fprintf(stderr, "*** Error 174: Numeric field %d", param_field[i] + 1);
+            fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
+            fprintf(stderr, "***            File: %s line %d\n",
+               rdef_get_filename(rdef), line);
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
+         }
+         numb = numb_new_ascii(t);
+         elem = elem_new_numb(numb);
+         numb_free(numb);
+      }
+      else
+      {
+         elem = elem_new_strg(str_new(t));
+      }
+      tuple_set_elem(tuple, i, elem);
+   }
+         
+   if (is_tuple_list)
+   {
+      if (list == NULL)
+         list = list_new_tuple(tuple);
+      else
+         list_add_tuple(list, tuple);
+   }
+   else
+   {
+      if (param_field[i] >= fields)
+      {
+         fprintf(stderr, "*** Error 157: Not enough fields in data (value)\n");
+         fprintf(stderr, "***            File: %s line %d\n",
+            rdef_get_filename(rdef), line);
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      t = field[param_field[i]];
+
+      if (param_type[i] == 'n')
+      {
+         if (!numb_is_number(t))
+         {
+            fprintf(stderr, "*** Error 174: Numeric field %d", param_field[i] + 1);
+            fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
+            fprintf(stderr, "***            File: %s line %d\n",
+               rdef_get_filename(rdef), line);
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
+         }
+         numb = numb_new_ascii(t);
+         entry = entry_new_numb(tuple, numb);
+         numb_free(numb);
+      }
+      else
+      {
+         entry = entry_new_strg(tuple, str_new(t));
+      }
+      if (list == NULL)
+         list = list_new_entry(entry);
+      else
+         list_add_entry(list, entry);
+               
+      entry_free(entry);
+   }
+   tuple_free(tuple);
+
+   return list;
+}
+
 /* The result of this function is either a tuple_list "<1n,2s>" or
  * an entry_list "<2n,3s> 1s" or an elem_list "n+".
  * The single value "1s"generates an entry_list. 
@@ -379,7 +623,6 @@ CodeNode* i_read(CodeNode* self)
 {
    MFP*        fp;
    char*       s;
-   char*       t;
    char*       buf;
    char*       field[MAX_FIELDS];
    int         fields;
@@ -391,15 +634,10 @@ CodeNode* i_read(CodeNode* self)
    int         dim;
    const RDef* rdef;
    List*       list = NULL;
-   Elem*       elem;
-   Tuple*      tuple;
-   Entry*      entry;
-   Numb*       numb;
    char*       filename;
    char*       comment;
    int         skip;
    int         use;
-   int         i;
    int         line = 0;
    
    Trace("i_read");
@@ -479,125 +717,21 @@ CodeNode* i_read(CodeNode* self)
          for(i = 0; i < fields; i++)
             fprintf(stderr, "Field[%d]=[%s]\n", i, field[i]);    
 #endif
-         tuple = tuple_new(dim);
-         
-         for(i = 0; i < dim; i++)
+
+         if (is_streaming)
          {
-            if (param_field[i] >= fields)
-            {
-               fprintf(stderr, "*** Error 156: Not enough fields in data\n");
-               fprintf(stderr, "***            File: %s line %d\n",
-                  rdef_get_filename(rdef), line);
-               code_errmsg(self);
-               zpl_exit(EXIT_FAILURE);
-            }
-            t = field[param_field[i]];
-            
-            if (param_type[i] == 'n')
-            {
-               if (!numb_is_number(t))
-               {
-                  fprintf(stderr, "*** Error 174: Numeric field %d", param_field[i] + 1);
-                  fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
-                  fprintf(stderr, "***            File: %s line %d\n",
-                     rdef_get_filename(rdef), line);
-                  code_errmsg(self);
-                  zpl_exit(EXIT_FAILURE);
-               }
-               numb = numb_new_ascii(t);
-               elem = elem_new_numb(numb);
-               numb_free(numb);
-            }
-            else
-            {
-               elem = elem_new_strg(str_new(t));
-            }
-            tuple_set_elem(tuple, i, elem);
-         }
-         
-         if (is_tuple_list)
-         {
-            if (list == NULL)
-               list = list_new_tuple(tuple);
-            else
-               list_add_tuple(list, tuple);
+            if (is_tuple_list)
+               list = process_tuple_stream(self, list, rdef, line,
+                  fields, field, param_type[0]);
+            else 
+               list = process_entry_stream(self, list, rdef, line,
+                  fields, field, param_type[0]);
          }
          else
          {
-            if (!is_streaming)
-            {
-               if (param_field[i] >= fields)
-               {
-                  fprintf(stderr, "*** Error 157: Not enough fields in data (value)\n");
-                  fprintf(stderr, "***            File: %s line %d\n",
-                     rdef_get_filename(rdef), line);
-                  code_errmsg(self);
-                  zpl_exit(EXIT_FAILURE);
-               }
-               t = field[param_field[i]];
-
-               if (param_type[i] == 'n')
-               {
-                  if (!numb_is_number(t))
-                  {
-                     fprintf(stderr, "*** Error 174: Numeric field %d", param_field[i] + 1);
-                     fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
-                     fprintf(stderr, "***            File: %s line %d\n",
-                        rdef_get_filename(rdef), line);
-                     code_errmsg(self);
-                     zpl_exit(EXIT_FAILURE);
-                  }
-                  numb = numb_new_ascii(t);
-                  entry = entry_new_numb(tuple, numb);
-                  numb_free(numb);
-               }
-               else
-               {
-                  entry = entry_new_strg(tuple, str_new(t));
-               }
-               if (list == NULL)
-                  list = list_new_entry(entry);
-               else
-                  list_add_entry(list, entry);
-               
-               entry_free(entry);
-            }
-            else
-            {
-               for(i = 0; i < fields; i++)
-               {
-                  t = field[i];
-
-                  if (param_type[0] == 'n')
-                  {
-                     if (!numb_is_number(t))
-                     {
-                        fprintf(stderr, "*** Error 174: Numeric field");
-                        fprintf(stderr, " read as \"%s\". This is not a number.\n", t);
-                        fprintf(stderr, "***            File: %s line %d\n",
-                           rdef_get_filename(rdef), line);
-                        code_errmsg(self);
-                        zpl_exit(EXIT_FAILURE);
-                     }
-                     numb = numb_new_ascii(t);
-                     entry = entry_new_numb(tuple, numb);
-                     numb_free(numb);
-                  }
-                  else
-                  {
-                     entry = entry_new_strg(tuple, str_new(t));
-                  }
-                  if (list == NULL)
-                     list = list_new_entry(entry);
-                  else
-                     list_add_entry(list, entry);
-                  
-                  entry_free(entry);
-               }
-            }
+            list = process_line(self, list, rdef, line, is_tuple_list, dim,
+               fields, field, param_field, param_type);
          }
-         tuple_free(tuple);
-
          free(buf);
          
          if (--use == 0)

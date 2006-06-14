@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.18 2006/06/08 10:26:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.19 2006/06/14 12:29:59 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -36,7 +36,7 @@
 #include "ratlptypes.h"
 #include "mme.h"
 
-#define ELEM_STORE_SIZE  100
+#define ELEM_STORE_SIZE  1000
 #define ELEM_SID         0x456c656d
 
 typedef union element_value    ElemValue;
@@ -134,7 +134,7 @@ void elem_exit()
    
    for(store = store_anchor; store != NULL; store = next)
    {
-#if 0
+#if 0 /* only for debugging */
       int i;
       
       for(i = 0; i < ELEM_STORE_SIZE - 1; i++)

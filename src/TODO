@@ -1,4 +1,8 @@
-Bugs beim lesen langer zeilen!
+checks für lange zeilen, viele Felder
+Fehlt warning wenn bei streaming mehr felder kommen asl 65535.
+
+tests und doku für if lexpr then lexpr else lexpr end
+tests und doku für defbool 
 
 Regel bei Container sollte doch sein:
 Liefern wenn moeglich const

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.73 2006/06/08 10:26:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.74 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -51,7 +51,7 @@ enum set_check_type
 
 enum symbol_type     { SYM_ERR = 0, SYM_NUMB, SYM_STRG, SYM_SET, SYM_VAR };
 enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH_NUMB };
-enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_SET };
+enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_BOOL, DEF_SET };
 
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 enum statement_type

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.45 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.46 2006/06/14 12:30:00 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -86,6 +86,7 @@ static int        yydecl    = 0;
 "sos"                     { yycolumn += yyleng; yydecl = DECLSOS; return DECLSOS; }
 "defnumb"                 { yycolumn += yyleng; yydecl = DEFNUMB; return DEFNUMB; }
 "defstrg"                 { yycolumn += yyleng; yydecl = DEFSTRG; return DEFSTRG; }
+"defbool"                 { yycolumn += yyleng; yydecl = DEFBOOL; return DEFBOOL; }
 "defset"                  { yycolumn += yyleng; yydecl = DEFSET;  return DEFSET; }
 "in"                      { yycolumn += yyleng; return IN; }
 "with"|"|"                { yycolumn += yyleng; return WITH; }
@@ -183,7 +184,8 @@ static int        yydecl    = 0;
        * an appropriate error message.
        */
       else if (yydecl == DECLSET || yydecl == DECLPAR || yydecl == DECLVAR 
-	    || yydecl == DEFNUMB || yydecl == DEFSTRG || yydecl == DEFSET)
+	    || yydecl == DEFNUMB || yydecl == DEFSTRG || yydecl == DEFBOOL 
+            || yydecl == DEFSET)
       {
          if (NULL != symbol_lookup(yytext) || NULL != define_lookup(yytext))
          {
@@ -203,6 +205,9 @@ static int        yydecl    = 0;
             return DEFNAME;
          case DEFSTRG :
             lval->def = define_new(str_new(yytext), DEF_STRG);
+            return DEFNAME;
+         case DEFBOOL :
+            lval->def = define_new(str_new(yytext), DEF_BOOL);
             return DEFNAME;
          case DEFSET :
             lval->def = define_new(str_new(yytext), DEF_SET);
@@ -246,6 +251,8 @@ static int        yydecl    = 0;
                return NUMBDEF;
             case DEF_STRG :
                return STRGDEF;
+            case DEF_BOOL :
+               return BOOLDEF;
             case DEF_SET :
                return SETDEF;
             case DEF_ERR : /* should not happen */

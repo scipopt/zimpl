@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.101 2006/05/27 18:37:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.102 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1459,6 +1459,19 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    assert(code_is_valid(self));
 
    list  = code_eval_child_list(self, 0);
+
+   if (!list_is_tuplelist(list))
+   {
+      /* This errors occurs, if a stream "n+" instead of "<n+>" is used in the template
+       * for a "read" statement.
+       */
+      assert(list_is_entrylist(list));
+
+      fprintf(stderr, "*** Error ???: Wrong type of set elements -- wrong read templet?\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+
    tuple = list_get_tuple(list, &le);
 
    assert(tuple != NULL);

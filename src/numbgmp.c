@@ -1,14 +1,14 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.22 2006/01/27 19:57:32 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.23 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: numbgmt.c                                                     */
-/*   Name....: Number Functions using gmt                                    */
+/*   File....: numbgmp.c                                                     */
+/*   Name....: Number Functions using gmp                                    */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

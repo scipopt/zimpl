@@ -48,7 +48,7 @@
 -strong(AzJzX,StmtType,Stmt,Prog,CodeType,CodeNode)
 -strong(AzJzX,RDef,RPar,MFP,RParType,RParVal)
 -strong(AzJzX,Bound,BoundType)
--strong(AzJzX,Heap,HeapType,HeapData,heapCmp)
+x-strong(AzJzX,Heap,HeapType,HeapData,heapCmp)
 -strong(AzJzX,SetIter,SetCheckType,DefineType,Define)
 -strong(AzJzX,Var,VarType,VarState,VarClass,Con,ConType,ConState,LpDirect,LpType,LpFormat)
 -strong(AzJzX,LpsHElem,LpsHashType)

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.72 2006/05/19 10:45:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.73 2006/06/14 12:30:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -69,7 +69,7 @@ extern void yyerror(const char* s);
 };
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB DECLSOS
-%token DEFNUMB DEFSTRG DEFSET PRINT CHECK
+%token DEFNUMB DEFSTRG DEFBOOL DEFSET PRINT CHECK
 %token BINARY INTEGER REAL
 %token ASGN DO WITH IN TO UNTIL BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
@@ -85,7 +85,7 @@ extern void yyerror(const char* s);
 %token VIF VABS
 %token TYPE1 TYPE2
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
-%token <def> NUMBDEF STRGDEF SETDEF DEFNAME
+%token <def> NUMBDEF STRGDEF BOOLDEF SETDEF DEFNAME
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
@@ -93,7 +93,7 @@ extern void yyerror(const char* s);
 %token <bits> SEPARATE
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
-%type <code> def_numb def_strg def_set
+%type <code> def_numb def_strg def_bool def_set
 %type <code> exec_do command
 %type <code> constraint vbool
 %type <code> cexpr cexpr_list cfactor cproduct
@@ -134,6 +134,7 @@ stmt
    | decl_sos   { code_set_root($1); }
    | def_numb   { code_set_root($1); }
    | def_strg   { code_set_root($1); }
+   | def_bool   { code_set_root($1); }
    | def_set    { code_set_root($1); }
    | exec_do    { code_set_root($1); }
    ;
@@ -204,6 +205,15 @@ def_numb
 
 def_strg
    : DEFSTRG DEFNAME '(' name_list ')' ASGN cexpr ';' {
+         $$ = code_new_inst(i_newdef, 3,
+            code_new_define($2),
+            code_new_inst(i_tuple_new, 1, $4),
+            $7);
+      }
+   ;
+
+def_bool
+   : DEFBOOL DEFNAME '(' name_list ')' ASGN lexpr ';' {
          $$ = code_new_inst(i_newdef, 3,
             code_new_define($2),
             code_new_inst(i_tuple_new, 1, $4),
@@ -750,7 +760,7 @@ sexpr
    | sexpr '-' sexpr %prec WITHOUT {
          $$ = code_new_inst(i_set_minus, 2, $1, $3);
       }
-   | sexpr CROSS   sexpr  { $$ = code_new_inst(i_set_cross, 2, $1, $3); }
+   | sexpr CROSS sexpr  { $$ = code_new_inst(i_set_cross, 2, $1, $3); }
    | sexpr '*' sexpr {
          $$ = code_new_inst(i_set_cross, 2, $1, $3);
       }
@@ -786,46 +796,54 @@ sexpr
    ;
 
  read
-    : READ cexpr AS cexpr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
-    | read read_par       { $$ = code_new_inst(i_read_param, 2, $1, $2); }
-    ;
+   : READ cexpr AS cexpr { $$ = code_new_inst(i_read_new, 2, $2, $4); }
+   | read read_par       { $$ = code_new_inst(i_read_param, 2, $1, $2); }
+   ;
 
  read_par
-    : SKIP cexpr    { $$ = code_new_inst(i_read_skip, 1, $2); }
-    | USE cexpr     { $$ = code_new_inst(i_read_use, 1, $2); }
-    | COMMENT cexpr { $$ = code_new_inst(i_read_comment, 1, $2); }
-    ;
+   : SKIP cexpr    { $$ = code_new_inst(i_read_skip, 1, $2); }
+   | USE cexpr     { $$ = code_new_inst(i_read_use, 1, $2); }
+   | COMMENT cexpr { $$ = code_new_inst(i_read_comment, 1, $2); }
+   ;
 
  tuple_list
-    : tuple {
-          $$ = code_new_inst(i_tuple_list_new, 1, $1);
-       }
-    | tuple_list ',' tuple  {
-          $$ = code_new_inst(i_tuple_list_add, 2, $1, $3);
-       }
-    | read { $$ = code_new_inst(i_read, 1, $1); }
-    ;
+   : tuple {
+         $$ = code_new_inst(i_tuple_list_new, 1, $1);
+      }
+   | tuple_list ',' tuple  {
+         $$ = code_new_inst(i_tuple_list_add, 2, $1, $3);
+      }
+   | read { $$ = code_new_inst(i_read, 1, $1); }
+   ;
 
  lexpr
-    : cexpr CMP_EQ cexpr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
-    | cexpr CMP_NE cexpr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
-    | cexpr CMP_GT cexpr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
-    | cexpr CMP_GE cexpr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
-    | cexpr CMP_LT cexpr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
-    | cexpr CMP_LE cexpr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
-    | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
-    | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
-    | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
-    | sexpr CMP_GE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $3, $1); }
-    | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
-    | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
-    | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
-    | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or,  2, $1, $3); }
-    | lexpr XOR lexpr    { $$ = code_new_inst(i_bool_xor, 2, $1, $3); }
-    | NOT lexpr          { $$ = code_new_inst(i_bool_not, 1, $2); }
-    | '(' lexpr ')'      { $$ = $2; }
-    | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
-    | EXISTS '(' idxset ')' %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $3); } 
+   : cexpr CMP_EQ cexpr   { $$ = code_new_inst(i_bool_eq, 2, $1, $3); }
+   | cexpr CMP_NE cexpr   { $$ = code_new_inst(i_bool_ne, 2, $1, $3); }
+   | cexpr CMP_GT cexpr   { $$ = code_new_inst(i_bool_gt, 2, $1, $3); }
+   | cexpr CMP_GE cexpr   { $$ = code_new_inst(i_bool_ge, 2, $1, $3); }
+   | cexpr CMP_LT cexpr   { $$ = code_new_inst(i_bool_lt, 2, $1, $3); }
+   | cexpr CMP_LE cexpr   { $$ = code_new_inst(i_bool_le, 2, $1, $3); }
+   | sexpr CMP_EQ sexpr { $$ = code_new_inst(i_bool_seq, 2, $1, $3); }
+   | sexpr CMP_NE sexpr { $$ = code_new_inst(i_bool_sneq, 2, $1, $3); }
+   | sexpr CMP_GT sexpr { $$ = code_new_inst(i_bool_subs, 2, $3, $1); }
+   | sexpr CMP_GE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $3, $1); }
+   | sexpr CMP_LT sexpr { $$ = code_new_inst(i_bool_subs, 2, $1, $3); }
+   | sexpr CMP_LE sexpr { $$ = code_new_inst(i_bool_sseq, 2, $1, $3); }
+   | lexpr AND lexpr    { $$ = code_new_inst(i_bool_and, 2, $1, $3); }
+   | lexpr OR lexpr     { $$ = code_new_inst(i_bool_or,  2, $1, $3); }
+   | lexpr XOR lexpr    { $$ = code_new_inst(i_bool_xor, 2, $1, $3); }
+   | NOT lexpr          { $$ = code_new_inst(i_bool_not, 1, $2); }
+   | '(' lexpr ')'      { $$ = $2; }
+   | tuple IN sexpr     { $$ = code_new_inst(i_bool_is_elem, 2, $1, $3); } 
+   | EXISTS '(' idxset ')' %prec EXISTS { $$ = code_new_inst(i_bool_exists, 1, $3); } 
+   | BOOLDEF '(' cexpr_list ')' {
+         $$ = code_new_inst(i_define_deref, 2,
+            code_new_define($1),
+            code_new_inst(i_tuple_new, 1, $3));
+      }
+   | IF lexpr THEN lexpr ELSE lexpr END {
+        $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+     }
    ;
  
 tuple
