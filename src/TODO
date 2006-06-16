@@ -1,3 +1,5 @@
+numbdbl.c  for linking without gmp
+
 checks für lange zeilen, viele Felder
 Fehlt warning wenn bei streaming mehr felder kommen asl 65535.
 

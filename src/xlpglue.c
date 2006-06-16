@@ -1,14 +1,14 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.20 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.21 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: numb2lp.c                                                     */
-/*   Name....: Term Functions                                                */
+/*   File....: xlpglue.c                                                     */
+/*   Name....: LP Storage Interface                                          */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

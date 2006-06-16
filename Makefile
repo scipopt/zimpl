@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.43 2006/06/03 08:23:02 bzfkocht Exp $
+# $Id: Makefile,v 1.44 2006/06/16 08:24:56 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 #
-.PHONY:		depend clean lint doc check valgrind
+.PHONY:		depend clean lint doc check valgrind libdbl
 
 ARCH            :=      $(shell uname -m | \
                         sed \
@@ -77,7 +77,8 @@ BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
 TARGET		=	$(NAME)-$(VERSION).$(BASE)
-LIBRARY		=	$(LIBDIR)/lib$(TARGET).a
+LIBRARYGMP	=	$(LIBDIR)/lib$(TARGET).gmp.a
+LIBRARYDBL	=	$(LIBDIR)/lib$(TARGET).dbl.a
 BINARY		=	$(BINDIR)/$(TARGET)
 DEPEND		=	$(SRCDIR)/depend
 
@@ -93,10 +94,14 @@ LIBOBJ		=	bound.o code.o conname.o define.o elem.o entry.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
 			tuple.o vinst.o mshell.o zimpllib.o
+LIBGMPOBJ	=	$(LIBOBJ) gmpmisc.o numbgmp.o
+LIBDBLOBJ	=	$(LIBOBJ) numbdbl.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
-LIBXXX		=	$(addprefix $(OBJDIR)/,$(LIBOBJ))
+LIBGMPXXX	=	$(addprefix $(OBJDIR)/,$(LIBGMPOBJ))
+LIBDBLXXX	=	$(addprefix $(OBJDIR)/,$(LIBDBLOBJ))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
-LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c))
+LIBGMPSRC	=	$(addprefix $(SRCDIR)/,$(LIBGMPOBJ:.o=.c))
+LIBDBLSRC	=	$(addprefix $(SRCDIR)/,$(LIBDBLOBJ:.o=.c))
 
 #-----------------------------------------------------------------------------
 include make/make.$(BASE)
@@ -105,12 +110,19 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
-		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET) $(LDFLAGS) -o $@
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYGMP) 
+		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET).gmp $(LDFLAGS) -o $@
 
-$(LIBRARY):	$(LIBDIR) $(LIBXXX) 
-		-rm -f $(LIBRARY)
-		$(AR) $(ARFLAGS) $@ $(LIBXXX)
+$(LIBRARYGMP):	$(LIBDIR) $(LIBGMPXXX) 
+		-rm -f $(LIBRARYGMP)
+		$(AR) $(ARFLAGS) $@ $(LIBGMPXXX)
+		$(RANLIB) $@
+
+libdbl:		$(LIBRARYDBL)
+
+$(LIBRARYDBL):	$(LIBDIR) $(LIBDBLXXX) 
+		-rm -f $(LIBRARYDBL)
+		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
 		$(RANLIB) $@
 
 $(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h

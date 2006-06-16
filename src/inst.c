@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.102 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.103 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1662,10 +1662,6 @@ CodeNode* i_set_union2(CodeNode* self)
 
    warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
    
-   /* This routine is not efficient.
-    * It would be better to make pairs and then unite the pairs, etc.
-    * Now it is O(n) and it could be O(log n)
-    */
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -1703,7 +1699,6 @@ CodeNode* i_set_union2(CodeNode* self)
 
    return self;
 }
-
 
 CodeNode* i_set_minus(CodeNode* self)
 {

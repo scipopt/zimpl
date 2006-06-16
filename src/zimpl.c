@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.68 2006/06/03 08:23:02 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.69 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -34,15 +34,12 @@
 #include <string.h>
 #include <errno.h>
 
-#include <gmp.h>
-
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
 #include "xlpglue.h"
-#include "gmpmisc.h"
 
 #define FORM_LP  0
 #define FORM_MPS 1
@@ -331,7 +328,6 @@ int main(int argc, char* const* argv)
 
    assert(cmdpipe != NULL);
 
-   gmp_init(verbose >= VERB_VERBOSE);
    str_init();
    numb_init(seed);
    elem_init();
@@ -506,7 +502,6 @@ int main(int argc, char* const* argv)
    elem_exit();
    numb_exit();
    str_exit();
-   gmp_exit();
 
    free(sosfile);
    free(mstfile);

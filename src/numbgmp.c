@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.23 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.24 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -115,6 +115,8 @@ void numb_init(unsigned long seed)
    store_anchor = NULL;
    store_free   = NULL;
 
+   gmp_init(verbose >= VERB_VERBOSE);
+
    numb_const_zero     = numb_new();
    numb_const_one      = numb_new_integer(1);
    numb_const_minusone = numb_new_integer(-1);
@@ -151,6 +153,8 @@ void numb_exit()
    store_anchor = NULL;
    store_free   = NULL;
    store_count  = 0;
+
+   gmp_exit();
 }
 
 /* value is zero */

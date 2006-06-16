@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.c,v 1.4 2005/09/06 00:25:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.c,v 1.5 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -31,6 +31,7 @@
 #include <assert.h>
 
 #include <gmp.h>
+
 #include "bool.h"
 #include "mshell.h"
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.8 2006/06/03 08:23:02 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.9 2006/06/16 08:24:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -35,15 +35,12 @@
 #include <errno.h>
 #include <setjmp.h>
 
-#include <gmp.h>
-
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
 #include "xlpglue.h"
-#include "gmpmisc.h"
 #include "zimpllib.h"
 
 extern int yydebug;
@@ -151,7 +148,6 @@ Bool zpl_read(const char* filename)
 
    printf(banner, VERSION);
 
-   gmp_init(verbose >= VERB_VERBOSE);
    str_init();
    numb_init(13021967UL);
    elem_init();
@@ -198,7 +194,6 @@ Bool zpl_read(const char* filename)
    elem_exit();
    numb_exit();
    str_exit();
-   gmp_exit();
 
    return ret;
 }
@@ -251,7 +246,6 @@ Bool zpl_read_with_args(int argc, char** argv)
       return FALSE;
    }
 
-   gmp_init(verbose >= VERB_VERBOSE);
    str_init();
    numb_init(seed);
    elem_init();
@@ -312,7 +306,6 @@ Bool zpl_read_with_args(int argc, char** argv)
    elem_exit();
    numb_exit();
    str_exit();
-   gmp_exit();
 
    return ret;
 }
