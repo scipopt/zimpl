@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.44 2006/06/16 08:24:56 bzfkocht Exp $
+# $Id: Makefile,v 1.45 2006/06/16 08:52:29 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -77,7 +77,7 @@ BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
 TARGET		=	$(NAME)-$(VERSION).$(BASE)
-LIBRARYGMP	=	$(LIBDIR)/lib$(TARGET).gmp.a
+LIBRARY		=	$(LIBDIR)/lib$(TARGET).a
 LIBRARYDBL	=	$(LIBDIR)/lib$(TARGET).dbl.a
 BINARY		=	$(BINDIR)/$(TARGET)
 DEPEND		=	$(SRCDIR)/depend
@@ -87,21 +87,20 @@ DEPEND		=	$(SRCDIR)/depend
 OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
 			ratordwrite.o ratpresolve.o ratsoswrite.o rathumwrite.o 
-LIBOBJ		=	bound.o code.o conname.o define.o elem.o entry.o \
+LIBBASE		=	bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse.o mmlscan.o numbgmp.o \
 			prog.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
 			tuple.o vinst.o mshell.o zimpllib.o
-LIBGMPOBJ	=	$(LIBOBJ) gmpmisc.o numbgmp.o
-LIBDBLOBJ	=	$(LIBOBJ) numbdbl.o
+LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
+LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
-LIBGMPXXX	=	$(addprefix $(OBJDIR)/,$(LIBGMPOBJ))
+LIBXXX		=	$(addprefix $(OBJDIR)/,$(LIBOBJ))
 LIBDBLXXX	=	$(addprefix $(OBJDIR)/,$(LIBDBLOBJ))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
-LIBGMPSRC	=	$(addprefix $(SRCDIR)/,$(LIBGMPOBJ:.o=.c))
-LIBDBLSRC	=	$(addprefix $(SRCDIR)/,$(LIBDBLOBJ:.o=.c))
+LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c)) $(SRCDIR)/numbdbl.c
 
 #-----------------------------------------------------------------------------
 include make/make.$(BASE)
@@ -110,12 +109,12 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYGMP) 
-		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET).gmp $(LDFLAGS) -o $@
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
+		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET) $(LDFLAGS) -o $@
 
-$(LIBRARYGMP):	$(LIBDIR) $(LIBGMPXXX) 
-		-rm -f $(LIBRARYGMP)
-		$(AR) $(ARFLAGS) $@ $(LIBGMPXXX)
+$(LIBRARY):	$(LIBDIR) $(LIBXXX) 
+		-rm -f $(LIBRARY)
+		$(AR) $(ARFLAGS) $@ $(LIBXXX)
 		$(RANLIB) $@
 
 libdbl:		$(LIBRARYDBL)

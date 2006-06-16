@@ -18,3 +18,68 @@ $(OBJDIR)/ratsoswrite.o: src/ratsoswrite.c src/mshell.h src/bool.h src/ratlp.h \
   src/ratlptypes.h src/ratlpstore.h src/mme.h
 $(OBJDIR)/rathumwrite.o: src/rathumwrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
   src/ratlptypes.h src/ratlpstore.h
+$(OBJDIR)/bound.o: src/bound.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/code.o: src/code.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/code.h src/inst.h
+$(OBJDIR)/conname.o: src/conname.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/xlpglue.h
+$(OBJDIR)/define.o: src/define.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/elem.o: src/elem.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h
+$(OBJDIR)/entry.o: src/entry.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/gmpmisc.o: src/gmpmisc.c src/bool.h src/mshell.h src/gmpmisc.h
+$(OBJDIR)/hash.o: src/hash.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/heap.o: src/heap.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/idxset.o: src/idxset.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/inst.o: src/inst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/code.h src/inst.h src/xlpglue.h
+$(OBJDIR)/iread.o: src/iread.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/code.h src/inst.h
+$(OBJDIR)/list.o: src/list.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/load.o: src/load.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h
+$(OBJDIR)/local.o: src/local.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/metaio.o: src/metaio.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/mmlparse.o: src/mmlparse.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/code.h src/inst.h
+$(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/mmlparse.h
+$(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h src/gmpmisc.h \
+  src/ratlptypes.h src/mme.h
+$(OBJDIR)/prog.o: src/prog.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/code.h
+$(OBJDIR)/rdefpar.o: src/rdefpar.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h
+$(OBJDIR)/source.o: src/source.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/setempty.o: src/setempty.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/setpseudo.o: src/setpseudo.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/setlist.o: src/setlist.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/setrange.o: src/setrange.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/setprod.o: src/setprod.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/setmulti.o: src/setmulti.c src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/set4.h
+$(OBJDIR)/set4.o: src/set4.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/set4.h
+$(OBJDIR)/stmt.o: src/stmt.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
+  src/mme.h src/code.h src/inst.h
+$(OBJDIR)/strstore.o: src/strstore.c src/lint.h src/bool.h src/mshell.h \
+  src/ratlptypes.h src/mme.h
+$(OBJDIR)/symbol.o: src/symbol.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/term.o: src/term.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/xlpglue.h
+$(OBJDIR)/tuple.o: src/tuple.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
+$(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/code.h src/inst.h src/xlpglue.h
+$(OBJDIR)/mshell.o: src/mshell.c src/lint.h src/mshell.h
+$(OBJDIR)/zimpllib.o: src/zimpllib.c src/lint.h src/bool.h src/mshell.h \
+  src/ratlptypes.h src/mme.h src/xlpglue.h src/zimpllib.h
+$(OBJDIR)/gmpmisc.o: src/gmpmisc.c src/bool.h src/mshell.h src/gmpmisc.h
+$(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h src/gmpmisc.h \
+  src/ratlptypes.h src/mme.h
+$(OBJDIR)/numbdbl.o: src/numbdbl.c src/bool.h src/lint.h src/mshell.h \
+  src/ratlptypes.h src/mme.h
