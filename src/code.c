@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.27 2005/09/27 09:17:06 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.28 2006/07/13 11:13:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -423,6 +423,11 @@ CodeNode* code_get_root(void)
 unsigned int code_get_inst_count()
 {
    return inst_count;
+}
+     
+void code_clear_inst_count()
+{
+   inst_count = 0;
 }
      
 static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)

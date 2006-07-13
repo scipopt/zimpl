@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.18 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.19 2006/07/13 11:13:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -94,6 +94,7 @@ extern const char*  code_get_strg(CodeNode* node);
 extern const char*  code_get_name(CodeNode* node);
 extern unsigned int code_get_inst_count(void);
 /*lint -sem(        code_get_tuple, 1p == 1, @p == 1) */
+extern void         code_clear_inst_count(void);
 extern const Tuple* code_get_tuple(CodeNode* node);
 /*lint -sem(        code_get_set, 1p == 1, @p == 1) */
 extern const Set*   code_get_set(CodeNode* node);

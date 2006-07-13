@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.13 2006/07/13 11:13:27 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -133,6 +133,8 @@ void prog_execute(const Prog* prog)
    int i;
 
    assert(prog_is_valid(prog));
+
+   code_clear_inst_count();
 
    for(i = 0; i < prog->used; i++)
    {
