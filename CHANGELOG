@@ -1,3 +1,9 @@
+ - Using the Zimpl library without gmp is now possible.
+   make libdbl will generate a Zimpl library that uses
+   numbdbl.c instead of numbgmp.c. Be aware that the code
+   is not testet and that using doubles has a lot of nasty
+   problems, like what happens when you compare two numbers.
+
  - It is now possible to define function that have a 
    boolen value, like 
    defbool(a,b) := a != b and (a > 5 or c <= 7);

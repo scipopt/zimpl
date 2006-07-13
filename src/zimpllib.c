@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.9 2006/06/16 08:24:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.10 2006/07/13 09:18:50 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -225,6 +225,10 @@ Bool zpl_read_with_args(int argc, char** argv)
          param_table =
             realloc(param_table, ((unsigned int)param_count + 1) * sizeof(*param_table));
          param_table[param_count] = strdup(optarg);
+
+         if (verbose >= VERB_DEBUG)
+            printf("Parameter %d [%s]\n", param_count, param_table[param_count]);
+
          param_count++;
          break;
       case 's' :
