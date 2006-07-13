@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.10 2006/07/13 09:18:50 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.11 2006/07/13 09:47:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -217,6 +217,10 @@ Bool zpl_read_with_args(int argc, char** argv)
 
    printf(banner, VERSION);
 
+   /* getopt might be called more than once
+    */
+   optind = 1;
+   
    while((c = getopt(argc, argv, options)) != -1)
    {
       switch(c)
