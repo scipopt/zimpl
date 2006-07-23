@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<!-- $Id: zimpl.php,v 1.37 2006/07/23 19:49:49 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.38 2006/07/23 19:51:27 bzfkocht Exp $ -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta name="author" content="Thorsten Koch" />
 <meta name="description" content="Zimpl Homepage" />
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language" />
-<meta name="date" content="$Date: 2006/07/23 19:49:49 $" />
+<meta name="date" content="$Date: 2006/07/23 19:51:27 $" />
 <meta name="robots" content="index|follow" />
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 <link rel="stylesheet" href="zimpl.css" type="text/css" />
@@ -61,7 +61,7 @@ and
 <a href="download/zimpl.pdf">documentation</a>.
 There is also a <a
 href="http://packages.debian.org/cgi-bin/search_packages.pl?keywords=zimpl&searchon=names&version=all&release=all">Debian
-package</a> thanks to Joachim Reichel.
+package</a> maintained by Joachim Reichel.
 <br />
 Differences to the older versions are described in the 
 <a href="download/CHANGELOG.txt">Changelog</a>.
@@ -160,7 +160,7 @@ Optimization at Work</a></dt>
  class="logobar" width="100" height="36" /></a>
 </div>
 <hr /><address>
-Last Update $Date: 2006/07/23 19:49:49 $ by
+Last Update $Date: 2006/07/23 19:51:27 $ by
 <a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br />&copy; 2005 by Thorsten Koch,
 <a href="/impressum/index.en.html">Imprint</a>
