@@ -1,3 +1,9 @@
+Checks vorrang operatoren Insbesondere -2^3 
+
+BUG: heap->data cast nach entry geht nicht auf sun.
+
+alles statics durchsehen ob am ende reset
+
 numbdbl.c  for linking without gmp
 
 checks für lange zeilen, viele Felder

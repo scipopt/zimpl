@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.73 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.74 2006/08/10 08:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -55,7 +55,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
-%expect 2
+%expect 3
 
 %union
 {
@@ -122,7 +122,8 @@ extern void yyerror(const char* s);
 %left  '+' '-' 
 %left  SUM MIN MAX
 %left  '*' '/' MOD DIV
-%left  POW
+%right POW
+%left  UNARY
 %left  FAC
 %%
 stmt
@@ -881,7 +882,6 @@ cproduct
    | cproduct '/' cfactor  { $$ = code_new_inst(i_expr_div, 2, $1, $3); }
    | cproduct MOD cfactor  { $$ = code_new_inst(i_expr_mod, 2, $1, $3); }
    | cproduct DIV cfactor  { $$ = code_new_inst(i_expr_intdiv, 2, $1, $3); }
-   | cproduct POW cfactor  { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
    ;
 
 cfactor
@@ -907,6 +907,8 @@ cfactor
             code_new_inst(i_tuple_new, 1, $3));
       }
    | cfactor FAC            { $$ = code_new_inst(i_expr_fac, 1, $1); } 
+   | cfactor POW cfactor    { $$ = code_new_inst(i_expr_pow, 2, $1, $3); }
+
    | CARD '(' sexpr ')'     { $$ = code_new_inst(i_expr_card, 1, $3); }
    | ABS '(' cexpr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
    | SGN '(' cexpr ')'      { $$ = code_new_inst(i_expr_sgn, 1, $3); }
@@ -917,8 +919,8 @@ cfactor
    | EXP '(' cexpr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
    | SQRT '(' cexpr ')'     { $$ = code_new_inst(i_expr_sqrt, 1, $3); }
 
-   | '+' cfactor   { $$ = $2; }
-   | '-' cfactor   { $$ = code_new_inst(i_expr_neg, 1, $2); }
+   | '+' cfactor %prec UNARY  { $$ = $2; }
+   | '-' cfactor %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' cexpr ')'          { $$ = $2; }
    | RANDOM '(' cexpr ',' cexpr ')' {
          $$ = code_new_inst(i_expr_rand, 2, $3, $5);

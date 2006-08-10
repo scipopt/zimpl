@@ -1,3 +1,5 @@
+ - Fixed wrong precedence of ^ operator.
+ 
  - Using the Zimpl library without gmp is now possible.
    make libdbl will generate a Zimpl library that uses
    numbdbl.c instead of numbgmp.c. Be aware that the code
