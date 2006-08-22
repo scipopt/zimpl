@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.11 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.12 2006/08/22 10:05:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -175,7 +175,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
       {
          if (check == SET_CHECK_WARN)
          {
-            if (verbose > VERB_QUIET)
+            if (stmt_trigger_warning(164))
             {
                fprintf(stderr, "--- Warning 164: Duplicate element ");
                tuple_print(stderr, tuple);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.17 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.18 2006/08/22 10:05:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -282,7 +282,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
     */
    if (term_get_elements(term) == 0)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(176))
       {
          fprintf(stderr, "--- Warning 176: Empty LHS, in Boolean constraint\n");
          code_errmsg(code_get_child(self, 0));
@@ -305,15 +305,12 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
 
          entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_zero);
       }
-      if (verbose == VERB_NORMAL)
+      if (stmt_trigger_warning(178))
       {
-         if (verbose > VERB_QUIET)
-         {
-            fprintf(stderr,
-               "--- Warning 178: Conditional always true or false due to bounds\n");
-            code_errmsg(code_get_child(self, 0)); /* pos of warning message */
-         }
-      }  
+         fprintf(stderr,
+            "--- Warning 178: Conditional always true or false due to bounds\n");
+         code_errmsg(code_get_child(self, 0)); /* pos of warning message */
+      }
       term_free(term);
    }
    else
@@ -809,7 +806,7 @@ static void generate_conditional_constraint(
    if (  (con_type == CON_RHS && numb_cmp(bound_val, rhs) <= 0)
       || (con_type == CON_LHS && numb_cmp(bound_val, rhs) >= 0))
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(180))
       {
          fprintf(stderr, "--- Warning 180: Conditional constraint always true due to bounds\n");
          code_errmsg(self);

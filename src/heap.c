@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: heap.c,v 1.1 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: heap.c,v 1.2 2006/08/22 10:05:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: heap.c                                                        */
@@ -42,14 +42,7 @@ enum heap_type
    HEAP_ERR = 0, HEAP_ENTRY = 1
 };
 
-union heap_data
-{
-   Entry* entry;
-};
-
-typedef enum heap_type  HeapType;
-typedef union heap_data HeapData;
-typedef int (*HeapCmp)(HeapData, HeapData);
+typedef enum heap_type HeapType;
 
 struct heap
 {
@@ -139,13 +132,13 @@ static Heap* heap_new(
 }
 
 Heap* heap_new_entry(
-   int   size,
-   int (*heap_entry_cmp)(const Entry* a, const Entry* b))
+   int     size,
+   HeapCmp heap_entry_cmp)
 {
    assert(size           >  0);
    assert(heap_entry_cmp != NULL);
    
-   return heap_new(HEAP_ENTRY, size, (HeapCmp)heap_entry_cmp);
+   return heap_new(HEAP_ENTRY, size, heap_entry_cmp);
 }
 
 void heap_free(Heap* heap)

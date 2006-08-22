@@ -1,3 +1,6 @@
+ - If verbose is set to Normal (1) or Verbose (2)
+   warnings are only given once per statement.
+
  - Fixed wrong precedence of ^ operator.
  
  - Using the Zimpl library without gmp is now possible.

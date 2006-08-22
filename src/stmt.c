@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.17 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.18 2006/08/22 10:05:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -40,6 +40,7 @@
 
 #define STMT_SID 0x53746d74
 
+
 struct statement
 {
    SID
@@ -50,6 +51,38 @@ struct statement
    CodeNode*   node;
 };
 
+#define MAX_WARNINGS 1000
+
+static Bool warning_is_active[MAX_WARNINGS];
+
+static void activate_warnings()
+{
+   int i;
+
+   for(i = 0; i < MAX_WARNINGS; i++)
+      warning_is_active[i] = TRUE;
+}
+
+Bool stmt_trigger_warning(int no)
+{
+   Bool ret;
+   
+   assert(no >= 0);
+   assert(no < MAX_WARNINGS);
+
+   ret = warning_is_active[no];
+
+   warning_is_active[no] = FALSE;
+
+   if (verbose >= VERB_CHATTER)
+      ret = TRUE;
+
+   if (verbose <= VERB_QUIET)
+      ret = FALSE;
+   
+   return ret;
+}
+   
 Stmt* stmt_new(
    StmtType    type,
    const char* filename,
@@ -142,6 +175,8 @@ void stmt_execute(const Stmt* stmt)
    if (verbose >= VERB_VERBOSE)
       printf("Executing %s %d\n", stmt->filename, stmt->lineno);
 
+   activate_warnings();
+   
    /* ??? I don't think this can happen without a parse error first.
     */
    if (code_get_type(code_eval(stmt->node)) != CODE_VOID)

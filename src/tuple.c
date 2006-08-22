@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.20 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.21 2006/08/22 10:05:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -130,7 +130,7 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
        */
       if ((tuple_a->dim != 0) && (tuple_b->dim != 0))
       {
-         if (verbose > VERB_QUIET)
+         if (stmt_trigger_warning(167))
          {
             fprintf(stderr,
                "--- Warning 167: Comparison of different dimension tuples ");

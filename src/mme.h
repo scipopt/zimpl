@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.74 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.75 2006/08/22 10:05:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -111,6 +111,14 @@ typedef enum statement_type      StmtType;
 typedef struct statement         Stmt;
 typedef struct program           Prog;
 typedef struct meta_file_ptr     MFP;
+
+union heap_data
+{
+   Entry* entry;
+};
+
+typedef union heap_data          HeapData;
+typedef int                    (*HeapCmp)(HeapData, HeapData);
 
 #define VERB_QUIET    0
 #define VERB_NORMAL   1
@@ -326,7 +334,7 @@ extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
 /* heap.c
  */
 /*lint -sem(        heap_new_entry, 1n > 0 && 2p == 1, @p == 1) */
-extern Heap*        heap_new_entry(int size, int (*entry_cmp)(const Entry* a, const Entry* b));
+extern Heap*        heap_new_entry(int size, HeapCmp entry_cmp);
 /*lint -sem(        heap_free, 1p == 1) */
 extern void         heap_free(Heap* heap);
 /*lint -sem(        heap_is_valid, 1p == 1) */
@@ -709,6 +717,8 @@ extern void         stmt_parse(Stmt* stmt);
 extern void         stmt_execute(const Stmt* stmt);
 /*lint -sem(        stmt_print, 1p == 1 && 2p == 1) */
 extern void         stmt_print(FILE* fp, const Stmt* stmt);
+/*lint -sem(        stmt_trigger_warning, 1n >= 0) */
+extern Bool         stmt_trigger_warning(int no);
 
 /* prog.c
  */

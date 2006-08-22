@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.12 2006/01/19 20:53:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.13 2006/08/22 10:05:42 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set.c                                                         */
@@ -566,7 +566,7 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
    
    if (set_a->head.dim != set_b->head.dim)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(165))
       {
          fprintf(stderr, "--- Warning 165: Comparison of different dimension sets.\n");
          set_print(stderr, set_a);

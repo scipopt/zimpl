@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.103 2006/06/16 08:24:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.104 2006/08/22 10:05:41 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -283,7 +283,7 @@ CodeNode* i_soset(CodeNode* self)
 
    if (term_to_sos(term, sos))
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(200))
          fprintf(stderr,
             "--- Warning 200: Weights are not unique for SOS %s\n", conname_get());
       code_errmsg(self);
@@ -312,7 +312,7 @@ static void warn_if_pattern_has_no_name(
    const CodeNode* self,
    const Tuple*    pattern)
 {
-   if (verbose > VERB_QUIET)
+   if (stmt_trigger_warning(203))
    {
       if (tuple_get_dim(pattern) > 0 && !has_pattern_name(pattern))
       {
@@ -764,7 +764,7 @@ CodeNode* i_expr_min(CodeNode* self)
    
    if (first)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(186))
       {
          fprintf(stderr, "--- Warning 186: Minimizing over empty set -- zero assumed\n");
          code_errmsg(code_get_child(self, 0));
@@ -821,7 +821,7 @@ CodeNode* i_expr_max(CodeNode* self)
    
    if (first)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(187))
       {
          fprintf(stderr, "--- Warning 187: Maximizing over empty set -- zero assumed\n");
          code_errmsg(code_get_child(self, 0));
@@ -1913,7 +1913,7 @@ static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
    
    if (heap_is_empty(heap))
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(206))
       {
          fprintf(stderr, "--- Warning 206: argmin/argmax over empty set\n");
          code_errmsg(code_get_child(self, 0));
@@ -1939,24 +1939,24 @@ static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
    return set;
 }
 
-static int argmin_entry_cmp_descending(const Entry* a, const Entry* b)
+static int argmin_entry_cmp_descending(HeapData a, HeapData b)
 {
-   assert(entry_is_valid(a));
-   assert(entry_is_valid(b));
-   assert(entry_get_type(a) == SYM_NUMB);  
-   assert(entry_get_type(b) == SYM_NUMB);
+   assert(entry_is_valid(a.entry));
+   assert(entry_is_valid(b.entry));
+   assert(entry_get_type(a.entry) == SYM_NUMB);  
+   assert(entry_get_type(b.entry) == SYM_NUMB);
    
-   return numb_cmp(entry_get_numb(b), entry_get_numb(a));
+   return numb_cmp(entry_get_numb(b.entry), entry_get_numb(a.entry));
 }
 
-static int argmax_entry_cmp_ascending(const Entry* a, const Entry* b)
+static int argmax_entry_cmp_ascending(HeapData a, HeapData b)
 {
-   assert(entry_is_valid(a));
-   assert(entry_is_valid(b));
-   assert(entry_get_type(a) == SYM_NUMB); 
-   assert(entry_get_type(b) == SYM_NUMB);
+   assert(entry_is_valid(a.entry));
+   assert(entry_is_valid(b.entry));
+   assert(entry_get_type(a.entry) == SYM_NUMB); 
+   assert(entry_get_type(b.entry) == SYM_NUMB);
    
-   return numb_cmp(entry_get_numb(a), entry_get_numb(b));
+   return numb_cmp(entry_get_numb(a.entry), entry_get_numb(b.entry));
 }
 
 static CodeNode* do_set_argminmax(CodeNode* self, Bool is_min)
@@ -2243,7 +2243,7 @@ CodeNode* i_set_expr(CodeNode* self)
    
    if (list == NULL)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(202))
       {
          fprintf(stderr, "--- Warning 202: Indexing over empty set\n");
          code_errmsg(code_get_child(self, 0));
@@ -2559,7 +2559,7 @@ static void insert_param_list_by_index(
 
    if (count < list_entries)
    {
-      if (verbose > VERB_QUIET)
+      if (stmt_trigger_warning(205))
          fprintf(stderr,
             "--- Warning 205: %d excess entries for symbol %s ignored\n",
             list_entries - count,
@@ -2859,7 +2859,7 @@ CodeNode* i_newsym_var(CodeNode* self)
          bound_free(lower);
          lower = bound_new(BOUND_VALUE, numb_zero());
 
-         if (verbose > VERB_QUIET)
+         if (stmt_trigger_warning(136))
             fprintf(stderr,
                "--- Warning 136: Lower bound for var %s set to infinity -- ignored\n",
                name);
@@ -2869,7 +2869,7 @@ CodeNode* i_newsym_var(CodeNode* self)
          bound_free(upper);
          upper = bound_new(BOUND_INFTY, NULL);
 
-         if (verbose > VERB_QUIET)
+         if (stmt_trigger_warning(137))
             fprintf(stderr,
                "--- Warning 137: Upper bound for var %s set to -infinity -- ignored\n",
                name);
@@ -2877,7 +2877,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       if ((varclass == VAR_CON)
          && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
-         if (verbose > VERB_QUIET)
+         if (stmt_trigger_warning(138))
             fprintf(stderr,
                "--- Warning 138: Priority/Startval for continous var %s ignored\n",
                name);
@@ -2896,7 +2896,7 @@ CodeNode* i_newsym_var(CodeNode* self)
                bound_free(lower);
                lower = bound_new(BOUND_VALUE, temp);
                
-               if (verbose > VERB_QUIET)
+               if (stmt_trigger_warning(139))
                {
                   fprintf(stderr,
                      "--- Warning 139: Lower bound for integral var %s truncated to ",
@@ -2917,7 +2917,7 @@ CodeNode* i_newsym_var(CodeNode* self)
                bound_free(upper);
                upper = bound_new(BOUND_VALUE, temp);
                
-               if (verbose > VERB_QUIET)
+               if (stmt_trigger_warning(140))
                {
                   fprintf(stderr,
                      "--- Warning 140: Upper bound for integral var %s truncated to ",
