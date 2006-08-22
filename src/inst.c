@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.105 2006/08/22 15:55:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.106 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -2198,6 +2198,7 @@ CodeNode* i_set_expr(CodeNode* self)
             break;
          case CODE_NUMB :
             assert(!is_tuple_list);
+
             elem = elem_new_numb(code_get_numb(cexpr_or_tuple));
             break;
          case CODE_STRG :
@@ -2215,6 +2216,8 @@ CodeNode* i_set_expr(CodeNode* self)
          default :
             abort();
          }
+         assert(is_tuple_list || elem != NULL);
+
          if (list == NULL)
          {
             list  = is_tuple_list
@@ -2229,11 +2232,7 @@ CodeNode* i_set_expr(CodeNode* self)
                list_add_elem(list, elem);
          }
          if (!is_tuple_list)
-         {
-            assert(elem != NULL);
-
             elem_free(elem);
-         }
       }
       local_drop_frame();
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmstwrite.c,v 1.1 2004/04/27 09:58:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmstwrite.c,v 1.2 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmstwrite.c                                                 */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,18 +49,18 @@ void lps_mstfile(
    const char* text)
 {
    const Var*  var;
+   int         name_size;
    char*       vtmp;
-   int         namelen;
    
    assert(lp     != NULL);
    assert(fp     != NULL);
    assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
-   
-   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
-   vtmp    = malloc((size_t)namelen + 1);
+
+   name_size = lps_getnamesize(lp, format);
+   vtmp      = malloc((size_t)name_size);
 
    assert(vtmp != NULL);
-
+   
    if (text != NULL)
       fprintf(fp, "* %s\n", text);
    
@@ -74,7 +74,7 @@ void lps_mstfile(
       if (var->size == 0)
           continue;
 
-      lps_makename(vtmp, namelen + 1, var->name, var->number);
+      lps_makename(vtmp, name_size, var->name, var->number);
 
       fprintf(fp, "    %s  %.10e", vtmp, mpq_get_d(var->startval));
          

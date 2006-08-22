@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.69 2006/06/16 08:24:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.70 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,9 +41,6 @@
 #include "mme.h"
 #include "xlpglue.h"
 
-#define FORM_LP  0
-#define FORM_MPS 1
-
 extern int yydebug;
 extern int yy_flex_debug;
 
@@ -57,7 +54,7 @@ static const char* banner =
 "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
 "****************************************************\n\n";
 
-static const char* options = "bD:fF:hmn:o:Ors:t:v:V";
+static const char* options = "bD:fF:hl:mn:o:Ors:t:v:V";
 static const char* usage =
 "usage: %s [options] file ...\n";
 
@@ -68,6 +65,7 @@ static const char* help =
 "  -f             enable flex debugging output.\n" \
 "  -F filter      filter output, for example \"gzip -c >%%s.gz\"\n" \
 "  -h             show this help.\n" \
+"  -l length      Maximum length of names in output file.\n" \
 "  -m             write CPLEX MIP start value file.\n"
 "  -n cm|cn|cf    name constraint make/name/full\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
@@ -180,6 +178,7 @@ int main(int argc, char* const* argv)
    Bool          write_order = FALSE;
    Bool          write_mst   = FALSE;
    Bool          presolve    = FALSE;
+   int           name_length = 0;
    unsigned long seed = 13021967UL;
    char**        param_table;
    int           param_count = 0;
@@ -220,6 +219,9 @@ int main(int argc, char* const* argv)
          filter    = strdup(optarg);
          openfile  = popen;
          closefile = pclose;
+         break;
+      case 'l' :
+         name_length = atoi(optarg);
          break;
       case 'm' :
          write_mst = TRUE;
@@ -361,7 +363,8 @@ int main(int argc, char* const* argv)
       prog_print(stderr, prog);
    
    xlp_alloc(argv[optind]);
-
+   xlp_setnamelen(name_length);
+   
    prog_execute(prog);
 
    /* Presolve

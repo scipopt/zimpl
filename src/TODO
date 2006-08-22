@@ -1,3 +1,5 @@
+Ausgabe bei sos/ord/mst %-*s einbauen.
+
 check für filesystem/out of memory fehler (ulimit)
 
 Checks vorrang operatoren Insbesondere -2^3 
@@ -13,8 +15,6 @@ tests und doku für if lexpr then lexpr else lexpr end
 tests und doku für defbool 
 
 Hinweis in doku -s `date +%N` 
-
-länge der variablennamen vor abschneiden einstellbar.
 
 
 Regel bei Container sollte doch sein:

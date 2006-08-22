@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.14 2005/09/27 09:17:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.15 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -81,7 +81,7 @@ extern void     xlp_addtonzo(Var* var, Con* von, const Numb* numb);
 extern void     xlp_addtocost(Var* var, const Numb* cost);
 extern Bool     xlp_presolve(void);
 extern Bool     xlp_hassos(void);
-
+extern void     xlp_setnamelen(int name_len);
 #endif /* _XLPGLUE_H */
 
 

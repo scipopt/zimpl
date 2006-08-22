@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratsoswrite.c,v 1.1 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratsoswrite.c,v 1.2 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratsoswrite.c                                                 */
@@ -51,15 +51,15 @@ void lps_sosfile(
 {
    const Sos*  sos;
    const Sse*  sse;
+   int         name_size;
    char*       vtmp;
-   int         namelen;
 
    assert(lp     != NULL);
    assert(fp     != NULL);
    assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
 
-   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
-   vtmp    = malloc((size_t)namelen + 1);
+   name_size = lps_getnamesize(lp, format);
+   vtmp      = malloc((size_t)name_size);
 
    assert(vtmp != NULL);
 
@@ -78,9 +78,9 @@ void lps_sosfile(
       
       for (sse = sos->first; sse != NULL; sse = sse->next)
       {
-         lps_makename(vtmp, namelen + 1, sse->var->name, sse->var->number);
+         lps_makename(vtmp, name_size, sse->var->name, sse->var->number);
          fprintf(fp, "    %-*s  %.10g\n",
-            namelen + 1, vtmp, mpq_get_d(sse->weight));
+            name_size - 1, vtmp, mpq_get_d(sse->weight));
       }
    }
    fprintf(fp, "ENDATA\n");

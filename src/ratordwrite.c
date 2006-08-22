@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.7 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.8 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratordwrite.c                                                 */
@@ -49,18 +49,18 @@ void lps_orderfile(
    const char* text)
 {
    const Var*  var;
+   int         name_size;
    char*       vtmp;
-   int         namelen;
    
    assert(lp     != NULL);
    assert(fp     != NULL);
    assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
-   
-   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
-   vtmp    = malloc((size_t)namelen + 1);
+
+   name_size = lps_getnamesize(lp, format);
+   vtmp      = malloc((size_t)name_size);
 
    assert(vtmp != NULL);
-
+   
    if (text != NULL)
       fprintf(fp, "* %s\n", text);
    
@@ -77,20 +77,10 @@ void lps_orderfile(
       if (var->type == VAR_FIXED)
          continue;
       
-      lps_makename(vtmp, namelen + 1, var->name, var->number);
+      lps_makename(vtmp, name_size, var->name, var->number);
 
-      /* if it is within the allowed MPS name length, we try to conform
-       * to the MPS specification. This is not really important, since
-       * CPLEX does not care.
-       */
-      if (namelen <= MPS_NAME_LEN)
-         fprintf(fp, "    %-8.8s  %8d", vtmp, var->priority);
-      else
-         fprintf(fp, "    %s  %8d", vtmp, var->priority);
-         
-      fprintf(fp, "  %.10e", mpq_get_d(var->startval));
-
-      fputc('\n', fp);
+      fprintf(fp, "    %-8s  %8d", vtmp, var->priority);
+      fprintf(fp, "  %.10e\n", mpq_get_d(var->startval));
    }
    fprintf(fp, "ENDATA\n");
 

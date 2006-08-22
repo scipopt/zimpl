@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.24 2006/04/23 14:50:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.25 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,10 @@
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
+
+#define LPF_NAME_LEN  16
+#define MPS_NAME_LEN  8
+#define MIN_NAME_LEN  8
 
 struct storage
 {
@@ -661,7 +665,8 @@ Lps* lps_alloc(
    lp->var_last = NULL;
    lp->con_last = NULL;
    lp->sos_last = NULL;
-
+   lp->name_len = 0;
+   
    assert(lps_valid(lp));
 
    return lp;
@@ -1160,18 +1165,16 @@ Sos* lps_addsos(
 }
 
 void lps_addsse(
-   Lps* lp,
    Sos* sos,
    Var* var,
    const mpq_t weight)
 {
    Sse* sse;
 
-   assert(lps_valid(lp));
-   assert(sos         != NULL);
-   assert(sos->sid    == SOS_SID);
-   assert(var         != NULL);   
-   assert(var->sid    == VAR_SID);
+   assert(sos      != NULL);
+   assert(sos->sid == SOS_SID);
+   assert(var      != NULL);   
+   assert(var->sid == VAR_SID);
 
    sse = malloc(sizeof(*sse));
    
@@ -1693,12 +1696,44 @@ void lps_setstartval(
    mpq_set(var->startval, startval);
 }
 
+void lps_setnamelen(
+   Lps* lp,
+   int  name_len)
+{
+   lp->name_len = name_len;
+}
+
 void lps_stat(const Lps* lp)
 {
    assert(lps_valid(lp));
 
    printf("Name: %s   Variables: %d   Constraints: %d   Non Zeros: %d\n",
       lp->name, lp->vars, lp->cons, lp->nonzeros);
+}
+
+int lps_getnamesize(const Lps* lp, LpFormat format)
+{
+   int name_size = 0;
+   
+   assert(lp != NULL);
+   
+   switch(format)
+   {
+   case LP_FORM_LPF :
+      name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? LPF_NAME_LEN : lp->name_len);
+      break;
+   case LP_FORM_HUM :
+      name_size = 4096;
+      break;
+   case LP_FORM_MPS :
+      name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? MPS_NAME_LEN : lp->name_len);
+      break;
+   default :
+      abort();
+   }
+   assert(name_size > MIN_NAME_LEN);
+   
+   return name_size;
 }
 
 void lps_write(
@@ -1711,7 +1746,7 @@ void lps_write(
    assert(fp   != NULL);
    
    lps_number(lp);
-
+   
    switch(format)
    {
    case LP_FORM_LPF :
@@ -1767,7 +1802,7 @@ void lps_makename(
    int   nlen;
 
    assert(target != NULL);
-   assert(size   >= 9);         /* so we have at least '@' + 7 digits + '\0' */
+   assert(size   >  MIN_NAME_LEN);   /* 8+1, so we have at least '@' + 7 digits + '\0' */
    assert(name   != NULL);
    assert(no     >= 0);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */

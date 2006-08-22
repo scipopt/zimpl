@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.9 2006/01/19 20:53:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.10 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,21 +65,28 @@ static void write_data(
 static void write_vars(
    const Lps* lp,
    FILE*      fp,
-   VarClass   varclass)
+   VarClass   varclass,
+   int        name_size)
 {
    static Bool first = TRUE;
 
    const Var*  var;
    const Nzo*  nzo;
-   char  vtmp  [MPS_NAME_LEN + 1];
-   char  ctmp  [MPS_NAME_LEN + 1];
+   char* vtmp;
+   char* ctmp;
    mpq_t temp;
    
-   assert(lp != NULL);
-   assert(fp != NULL);
+   assert(lp        != NULL);
+   assert(fp        != NULL);
+
+   vtmp = malloc((size_t)name_size);
+   ctmp = malloc((size_t)name_size);
+      
+   assert(vtmp      != NULL);
+   assert(ctmp      != NULL);
 
    mpq_init(temp);
-   
+
    for(var = lp->var_root; var != NULL; var = var->next)
    {
       if (var->class != varclass)
@@ -90,7 +97,7 @@ static void write_vars(
        */
       if (!mpq_equal(var->cost, const_zero))
       {
-         lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
+         lps_makename(vtmp, name_size, var->name, var->number);
 
          if (lp->direct == LP_MIN)
             mpq_set(temp, var->cost);
@@ -113,13 +120,16 @@ static void write_vars(
          assert(nzo->var == var);
          assert(!mpq_equal(nzo->value, const_zero));
 
-         lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
-         lps_makename(ctmp, MPS_NAME_LEN + 1, nzo->con->name, nzo->con->number);
+         lps_makename(vtmp, name_size, var->name, var->number);
+         lps_makename(ctmp, name_size, nzo->con->name, nzo->con->number);
 
          write_data(fp, TRUE, ' ', ' ', vtmp, ctmp, nzo->value);
       }
    }   
    mpq_clear(temp);
+
+   free(vtmp);
+   free(ctmp);
 }
 
 void mps_write(
@@ -129,15 +139,23 @@ void mps_write(
 {
    const Var*  var;
    const Con*  con;
-   char  vtmp  [MPS_NAME_LEN + 1];
-   char  ctmp  [MPS_NAME_LEN + 1];
    int   indicator;
    Bool  has_ranges = FALSE;
+   int   name_size;
+   char* vtmp;
+   char* ctmp;
    mpq_t temp;
    
    assert(lp != NULL);
    assert(fp != NULL);
 
+   name_size = lps_getnamesize(lp, LP_FORM_MPS);
+   vtmp      = malloc((size_t)name_size);
+   ctmp      = malloc((size_t)name_size);
+
+   assert(vtmp != NULL);
+   assert(ctmp != NULL);
+   
    mpq_init(temp);
 
    if (text != NULL)
@@ -152,7 +170,7 @@ void mps_write(
    {
       if (con->size > 0)
       {
-         lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
+         lps_makename(ctmp, name_size, con->name, con->number);
 
          switch(lps_contype(con))
          {
@@ -185,18 +203,18 @@ void mps_write(
    {
       fprintf(fp, "    MARK0000  'MARKER'                 'INTORG'\n");
 
-      write_vars(lp, fp, VAR_INT);
-      write_vars(lp, fp, VAR_BIN);
+      write_vars(lp, fp, VAR_INT, name_size);
+      write_vars(lp, fp, VAR_BIN, name_size);
 
       fprintf(fp, "    MARK0001  'MARKER'                 'INTEND'\n");
    }
-   write_vars(lp, fp, VAR_CON);
+   write_vars(lp, fp, VAR_CON, name_size);
 
    fprintf(fp, "RHS\n");
    
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
+      lps_makename(ctmp, name_size, con->name, con->number);
 
       switch(lps_contype(con))
       {
@@ -228,7 +246,7 @@ void mps_write(
       {
          if (lps_contype(con) == CON_RANGE)
          {
-            lps_makename(ctmp, MPS_NAME_LEN + 1, con->name, con->number);
+            lps_makename(ctmp, name_size, con->name, con->number);
 
             /* lhs > rhs => temp is positive
              * range is lhs <= x <= lhs + temp = rhs
@@ -263,7 +281,7 @@ void mps_write(
        * -oo      -> MI
        *  oo      -> PL
        */
-      lps_makename(vtmp, MPS_NAME_LEN + 1, var->name, var->number);
+      lps_makename(vtmp, name_size, var->name, var->number);
 
       if (var->type == VAR_FIXED)
          write_data(fp, TRUE, 'F', 'X', "BOUND", vtmp, var->lower);
@@ -283,6 +301,9 @@ void mps_write(
    fprintf(fp, "ENDATA\n");
 
    mpq_clear(temp);
+
+   free(vtmp);
+   free(ctmp);
 }   
 
 

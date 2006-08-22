@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.10 2003/09/04 13:09:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.11 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -62,18 +62,19 @@ static void write_rhs(FILE* fp, const Con* con, ConType type)
 static void write_row(
    FILE* fp,
    const Con* con,
-   char* name)
+   char* name,
+   int   name_size)
 {
    const Nzo* nzo;
    int        cnt = 0;
 
-   assert(fp   != NULL);
-   assert(con  != NULL);
-   assert(name != NULL);
+   assert(fp        != NULL);
+   assert(con       != NULL);
+   assert(name      != NULL);
    
    for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
    {
-      lps_makename(name, LPF_NAME_LEN + 1, nzo->var->name, nzo->var->number);
+      lps_makename(name, name_size, nzo->var->name, nzo->var->number);
 
       if (mpq_equal(nzo->value, const_one))
          fprintf(fp, " + %s", name);
@@ -104,12 +105,17 @@ void lpf_write(
    Bool  have_separate = FALSE;
    int   cnt;
    int   i;
-   char* name = malloc(LPF_NAME_LEN + 1);
+   int   name_size;
+   char* name;
    
-   assert(lp       != NULL);
-   assert(fp       != NULL);
-   assert(name     != NULL);
+   assert(lp != NULL);
+   assert(fp != NULL);
 
+   name_size = lps_getnamesize(lp, LP_FORM_LPF);
+   name      = malloc((size_t)name_size);
+
+   assert(name != NULL);
+   
    if (text != NULL)
       fprintf(fp, "\\%s\n", text);   
       
@@ -124,7 +130,7 @@ void lpf_write(
       if (mpq_equal(var->cost, const_zero))
          continue;
 
-      lps_makename(name, LPF_NAME_LEN + 1, var->name, var->number);
+      lps_makename(name, name_size, var->name, var->number);
       
       if (mpq_equal(var->cost, const_one))
          fprintf(fp, " + %s", name);
@@ -164,24 +170,24 @@ void lpf_write(
          {
             /* Split ranges, because LP format can't handle them.
              */
-            lps_makename(name, LPF_NAME_LEN + 1, con->name, con->number);
+            lps_makename(name, name_size, con->name, con->number);
             fprintf(fp, " %sR:\n ", name);
 
-            write_row(fp, con, name); /* changes name */
+            write_row(fp, con, name, name_size); /* changes name */
             write_rhs(fp, con, CON_RHS);
 
-            lps_makename(name, LPF_NAME_LEN + 1, con->name, con->number);
+            lps_makename(name, name_size, con->name, con->number);
             fprintf(fp, " %sL:\n ", name);
 
-            write_row(fp, con, name); /* changes name */
+            write_row(fp, con, name, name_size); /* changes name */
             write_rhs(fp, con, CON_LHS);
          }
          else
          {
-            lps_makename(name, LPF_NAME_LEN + 1, con->name, con->number);
+            lps_makename(name, name_size, con->name, con->number);
             fprintf(fp, " %s:\n ", name);
 
-            write_row(fp, con, name);
+            write_row(fp, con, name, name_size);
             write_rhs(fp, con, con->type);
          }
       }
@@ -203,7 +209,7 @@ void lpf_write(
       if (var->size == 0 && mpq_equal(var->cost, const_zero))
          continue;
 
-      lps_makename(name, LPF_NAME_LEN + 1, var->name, var->number);
+      lps_makename(name, name_size, var->name, var->number);
 
       if (var->type == VAR_FIXED)
          fprintf(fp, " %s = %.15g\n", name, mpq_get_d(var->lower));
@@ -245,7 +251,7 @@ void lpf_write(
          if (var->size == 0 && mpq_equal(var->cost, const_zero))
             continue;
 
-         lps_makename(name, LPF_NAME_LEN + 1, var->name, var->number);
+         lps_makename(name, name_size, var->name, var->number);
 
          fprintf(fp, " %s\n", name);
       }
@@ -262,7 +268,7 @@ void lpf_write(
          if (var->size == 0 && mpq_equal(var->cost, const_zero))
             continue;
          
-         lps_makename(name, LPF_NAME_LEN + 1, var->name, var->number);
+         lps_makename(name, name_size, var->name, var->number);
 
          fprintf(fp, " %s\n", name);
       }

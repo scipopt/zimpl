@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.21 2006/06/16 08:24:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.22 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -47,6 +47,11 @@ void xlp_alloc(const char* name)
    assert(name != NULL);
    
    lp = lps_alloc(name);
+}
+
+void xlp_setnamelen(int name_len)
+{
+   lps_setnamelen(lp, name_len);
 }
 
 void xlp_scale()
@@ -255,7 +260,7 @@ void xlp_addtosos(Sos* sos, Var* var, const Numb* weight)
 
    numb_get_mpq(weight, temp);
    
-   lps_addsse(lp, sos, var, temp);
+   lps_addsse(sos, var, temp);
 
    mpq_clear(temp);
 }

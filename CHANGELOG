@@ -1,5 +1,5 @@
- - Changes maximum length for variable names in
-   LP files to 255.
+ - The maximum length for variable names can now be set with the
+   "-l length" command line option.
 
  - If verbose is set to Normal (1) or Verbose (2)
    warnings are only given once per statement.

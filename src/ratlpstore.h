@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.11 2006/08/22 15:55:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.12 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -116,6 +116,7 @@ struct lpstorage
    Var*     var_last;
    Con*     con_last;
    Sos*     sos_last;
+   int      name_len;
 }; 
 
 struct soselement
@@ -138,11 +139,10 @@ struct soset
 
 #define SOS_SID 0x5e534f53
 
-#define LPF_NAME_LEN  255
-#define MPS_NAME_LEN  8
-
 /* Internal functions
  */
+/*lint -sem(        lps_getnamesize, 1p, @n > 8) */
+int                 lps_getnamesize(const Lps* lp, LpFormat format);
 /*lint -sem(        lps_makename, nulterm(3), 1p && 2n > 0 && 3p && 4n >= 0) */
 void                lps_makename(char* target, int size, const char* name, int no);
 

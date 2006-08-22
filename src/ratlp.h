@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.13 2006/08/22 20:11:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -56,8 +56,8 @@ extern Con*         lps_getcon(const Lps* lp, const char* name);
 extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
 /*lint -sem(        lps_addsos, nulterm(2), 1p == 1 && 2p && 4n >= 0, @p == 1) */
 extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority); 
-/*lint -sem(        lps_addsosvar, 1p == 1 && 2p == 1 && 3p == 1 && 4p == 1) */
-extern void         lps_addsse(Lps* lp, Sos* sos, Var* var, const mpq_t weight); 
+/*lint -sem(        lps_addsse, 1p == 1 && 2p == 1 && 3p == 1) */
+extern void         lps_addsse(Sos* sos, Var* var, const mpq_t weight); 
 /*lint -sem(        lps_addvar, nulterm(2), 1p == 1 && 2p, @p == 1) */
 extern Var*         lps_addvar(Lps* lp, const char* name); 
 /*lint -sem(        lps_delvar, 1p == 1 && 2p == 1) */
@@ -144,6 +144,8 @@ extern void         lps_setpriority(Var* var, int priority);
 extern void         lps_setvalue(Var* var, const mpq_t value);
 /*lint -sem(        lps_setstartval, 1p == 1) */
 extern void         lps_setstartval(Var* var, const mpq_t startval);
+/*lint -sem(        lps_setnamelen, 1p == 1) */
+extern void         lps_setnamelen(Lps* lp, int name_len);
 /*lint -sem(        lps_write, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, nulterm(4), 1p == 1 && 2p == 1 && 4p) */

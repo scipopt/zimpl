@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.46 2006/08/22 10:05:41 bzfkocht Exp $
+# $Id: Makefile,v 1.47 2006/08/22 20:11:08 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -100,7 +100,7 @@ OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
 LIBXXX		=	$(addprefix $(OBJDIR)/,$(LIBOBJ))
 LIBDBLXXX	=	$(addprefix $(OBJDIR)/,$(LIBDBLOBJ))
 OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
-LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c)) $(SRCDIR)/numbdbl.c
+LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c)) #(SRCDIR)/numbdbl.c
 
 #-----------------------------------------------------------------------------
 include make/make.$(BASE)
