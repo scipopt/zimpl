@@ -1,3 +1,5 @@
+check für filesystem/out of memory fehler (ulimit)
+
 Checks vorrang operatoren Insbesondere -2^3 
 
 BUG: heap->data cast nach entry geht nicht auf sun.
@@ -11,6 +13,11 @@ Fehlt warning wenn bei streaming mehr felder kommen asl 65535.
 
 tests und doku für if lexpr then lexpr else lexpr end
 tests und doku für defbool 
+
+Hinweis in doku -s `date +%N` 
+
+länge der variablennamen vor abschneiden einstellbar.
+
 
 Regel bei Container sollte doch sein:
 Liefern wenn moeglich const
