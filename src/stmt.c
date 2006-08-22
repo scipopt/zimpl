@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.18 2006/08/22 10:05:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.19 2006/08/22 15:55:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -53,14 +53,25 @@ struct statement
 
 #define MAX_WARNINGS 1000
 
-static Bool warning_is_active[MAX_WARNINGS];
+static int warning_count[MAX_WARNINGS];
 
 static void activate_warnings()
 {
    int i;
 
    for(i = 0; i < MAX_WARNINGS; i++)
-      warning_is_active[i] = TRUE;
+      warning_count[i] = 0;
+}
+
+static void show_suppressed_warnings()
+{
+   int i;
+
+   if (verbose > VERB_QUIET && verbose < VERB_CHATTER)
+      for(i = 0; i < MAX_WARNINGS; i++)
+         if (warning_count[i] > 1)
+            fprintf(stderr, "--- Warning %3d: suppressed %d further message(s)\n",
+               i, warning_count[i] - 1);
 }
 
 Bool stmt_trigger_warning(int no)
@@ -70,9 +81,9 @@ Bool stmt_trigger_warning(int no)
    assert(no >= 0);
    assert(no < MAX_WARNINGS);
 
-   ret = warning_is_active[no];
+   ret = (warning_count[no] == 0);
 
-   warning_is_active[no] = FALSE;
+   warning_count[no]++;
 
    if (verbose >= VERB_CHATTER)
       ret = TRUE;
@@ -184,6 +195,7 @@ void stmt_execute(const Stmt* stmt)
       fprintf(stderr, "*** Error 169: Execute must return void element\n");
       zpl_exit(EXIT_FAILURE);
    }
+   show_suppressed_warnings();
 }
 
 void stmt_print(FILE* fp, const Stmt* stmt)

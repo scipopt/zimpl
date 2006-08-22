@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.104 2006/08/22 10:05:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.105 2006/08/22 15:55:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -312,9 +312,9 @@ static void warn_if_pattern_has_no_name(
    const CodeNode* self,
    const Tuple*    pattern)
 {
-   if (stmt_trigger_warning(203))
+   if (tuple_get_dim(pattern) > 0 && !has_pattern_name(pattern))
    {
-      if (tuple_get_dim(pattern) > 0 && !has_pattern_name(pattern))
+      if (stmt_trigger_warning(203))
       {
          fprintf(stderr, "--- Warning 203: Indexing tuple is fixed\n");
          code_errmsg(self);

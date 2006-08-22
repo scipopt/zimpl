@@ -1,3 +1,6 @@
+ - Changes maximum length for variable names in
+   LP files to 255.
+
  - If verbose is set to Normal (1) or Verbose (2)
    warnings are only given once per statement.
 

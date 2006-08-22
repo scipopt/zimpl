@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.10 2006/03/26 10:23:26 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.11 2006/08/22 15:55:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -138,7 +138,7 @@ struct soset
 
 #define SOS_SID 0x5e534f53
 
-#define LPF_NAME_LEN  16
+#define LPF_NAME_LEN  255
 #define MPS_NAME_LEN  8
 
 /* Internal functions
