@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: local.c,v 1.12 2005/07/09 18:51:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.13 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -45,6 +45,21 @@ struct local
 };
 
 static Local anchor  = { "", NULL, NULL };
+
+void local_init()
+{
+   assert(strlen(anchor.name) == 0);
+   assert(anchor.element      == NULL);
+   assert(anchor.next         == NULL);
+}
+
+void local_exit()
+{
+   assert(strlen(anchor.name) == 0);
+   assert(anchor.element == NULL);
+   
+   anchor.next = NULL;
+}
 
 static void local_new(const char* name, const Elem* elem)
 {

@@ -1,4 +1,4 @@
-# $Id: bool.zpl,v 1.2 2003/09/19 08:30:14 bzfkocht Exp $
+# $Id: bool.zpl,v 1.3 2006/09/09 10:00:20 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: bool.zpl                                                      */
@@ -8,7 +8,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -31,10 +31,11 @@ param a1 := if A == B or A <= B then 1 else 2 end;
 param a2 := if A != B and A < B then 1 else 2 end;
 param a3 := if not A > B and not A < B then 1 else 2 end;
 param a4 := if a1 < a2 or a2 != a3 then 1 else 2 end;
+param a5 := if if a1 != a2 then a3 < a4 else a3 > a4 end then 1 else 2 end;
 
 var x[A];
 
-maximize c1: a1 * x[1] + a2 * x[2] + a3 * x[3] + a4 * x[4];
+maximize c1: a1 * x[1] + a2 * x[2] + a3 * x[3] + a4 * x[4] + a5 * x[5];
  
 
 

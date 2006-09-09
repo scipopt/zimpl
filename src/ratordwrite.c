@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.8 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.9 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratordwrite.c                                                 */
@@ -79,8 +79,8 @@ void lps_orderfile(
       
       lps_makename(vtmp, name_size, var->name, var->number);
 
-      fprintf(fp, "    %-8s  %8d", vtmp, var->priority);
-      fprintf(fp, "  %.10e\n", mpq_get_d(var->startval));
+      fprintf(fp, "    %-*s  %8d  %.10e\n",
+         name_size - 1, vtmp, var->priority, mpq_get_d(var->startval));
    }
    fprintf(fp, "ENDATA\n");
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.70 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.71 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -335,6 +335,8 @@ int main(int argc, char* const* argv)
    elem_init();
    set_init();
    mio_init();
+   interns_init();
+   local_init();
    
    /* Make symbol to hold entries of internal variables
     */
@@ -497,6 +499,8 @@ int main(int argc, char* const* argv)
    
    prog_free(prog);
 
+   local_exit();
+   interns_exit();
    xlp_free();
    mio_exit();
    symbol_exit();

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.106 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.107 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -775,6 +775,81 @@ CodeNode* i_expr_min(CodeNode* self)
    return self;
 }
 
+CodeNode* i_expr_sglmin(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   Tuple*        tuple;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   const Numb*   value;
+   Numb*         min   = numb_new();
+   Bool          first = TRUE;
+   
+   Trace("i_expr_sglmin");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+
+   if (set_get_dim(set) != 1)
+   {
+      fprintf(stderr, "*** Error 209: MIN of set with more than one dimension\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+
+   if (set_get_members(set) > 0)
+   {
+      tuple = set_get_tuple(set, 0);
+
+      if (elem_get_type(tuple_get_elem(tuple, 0)) != ELEM_NUMB)
+      {
+         fprintf(stderr, "*** Error 211: MIN of set containing non number elements\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      tuple_free(tuple);
+   
+      while((tuple = set_iter_next(iter, set)) != NULL)
+      {
+         local_install_tuple(pattern, tuple);
+         
+         if (code_get_bool(code_eval(lexpr)))
+         {
+            value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            
+            if (first || numb_cmp(value, min) < 0)
+            {
+               numb_set(min, value);
+               first = FALSE;
+            }
+         }
+         local_drop_frame();
+         
+         tuple_free(tuple);
+      }
+      set_iter_exit(iter, set);
+   }
+   if (first)
+   {
+      if (stmt_trigger_warning(186))
+      {
+         fprintf(stderr,
+            "--- Warning 186: Minimizing over empty set -- zero assumed\n");
+         code_errmsg(code_get_child(self, 0));
+      }
+   }
+   code_value_numb(self, min);
+
+   return self;
+}
+
 CodeNode* i_expr_max(CodeNode* self)
 {
    const IdxSet* idxset;
@@ -819,6 +894,79 @@ CodeNode* i_expr_max(CodeNode* self)
    }
    set_iter_exit(iter, set);
    
+   if (first)
+   {
+      if (stmt_trigger_warning(187))
+      {
+         fprintf(stderr, "--- Warning 187: Maximizing over empty set -- zero assumed\n");
+         code_errmsg(code_get_child(self, 0));
+      }
+   }
+   code_value_numb(self, max);
+
+   return self;
+}
+
+CodeNode* i_expr_sglmax(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   Tuple*        tuple;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   const Numb*   value;
+   Numb*         max   = numb_new();
+   Bool          first = TRUE;
+
+   Trace("i_expr_max");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+
+   if (set_get_dim(set) != 1)
+   {
+      fprintf(stderr, "*** Error 210: MAX of set with more than one dimension\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   if (set_get_members(set) > 0)
+   {
+      tuple = set_get_tuple(set, 0);
+
+      if (elem_get_type(tuple_get_elem(tuple, 0)) != ELEM_NUMB)
+      {
+         fprintf(stderr, "*** Error 212: MAX of set containing non number elements\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      tuple_free(tuple);
+
+      while((tuple = set_iter_next(iter, set)) != NULL)
+      {
+         local_install_tuple(pattern, tuple);
+         
+         if (code_get_bool(code_eval(lexpr)))
+         {
+            value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            
+            if (first || numb_cmp(value, max) > 0)
+            {
+               numb_set(max, value);
+               first = FALSE;
+            }
+         }
+         local_drop_frame();
+         
+         tuple_free(tuple);
+      }
+      set_iter_exit(iter, set);
+   }
    if (first)
    {
       if (stmt_trigger_warning(187))
@@ -1467,7 +1615,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
        */
       assert(list_is_entrylist(list));
 
-      fprintf(stderr, "*** Error ???: Wrong type of set elements -- wrong read templet?\n");
+      fprintf(stderr, "*** Error 214: Wrong type of set elements -- wrong read template?\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
@@ -2169,7 +2317,7 @@ CodeNode* i_set_expr(CodeNode* self)
    List*         list          = NULL;
    Bool          is_tuple_list = FALSE;
    
-   Trace("i_expr_max");
+   Trace("i_set_expr");
 
    assert(code_is_valid(self));
 
@@ -2232,7 +2380,10 @@ CodeNode* i_set_expr(CodeNode* self)
                list_add_elem(list, elem);
          }
          if (!is_tuple_list)
+         {
+            assert(elem != NULL);
             elem_free(elem);
+         }
       }
       local_drop_frame();
 

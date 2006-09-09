@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.19 2006/08/22 15:55:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.20 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,7 +55,7 @@ struct statement
 
 static int warning_count[MAX_WARNINGS];
 
-static void activate_warnings()
+static void activate_warnings(void)
 {
    int i;
 
@@ -63,7 +63,7 @@ static void activate_warnings()
       warning_count[i] = 0;
 }
 
-static void show_suppressed_warnings()
+static void show_suppressed_warnings(void)
 {
    int i;
 

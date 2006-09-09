@@ -169,7 +169,8 @@ is to assume maximization.
                   \code{cf} will use the name given with the \code{subto},
                   then a $1\ldots n$ number like in \code{cm} and then 
                   append all the local variables from the forall statements.\\
--s \emph{seed}   & Positive \code{seed} number for the random number generator.\\
+-s \emph{seed}   & Positive \code{seed} number for the random number generator.
+                 For example \code{-s `date +\%N`} will produce changing random numbers.\\
 -v \emph{0..5}   & Set the verbosity level. 0 is quiet, 1 is default,
                   2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
 -D \emph{name=val} & Sets the parameter \emph{name} to the specified
@@ -253,8 +254,10 @@ $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
-\code{min(S)}                    &minimum of a set          &$\min_{s\in S} e(s)$\\
-\code{max(S)}                    &maximum of a set          &$\max_{s\in S} e(s)$\\
+\code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
+\code{min(s$\in$S) e(s)}         &minimum of a set          &$\min_{s\in S} e(s)$\\
+\code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
+\code{max(s$\in$S) e(s)}         &maximum of a set          &$\max_{s\in S} e(s)$\\
 \code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
 \code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\max (a,b,c,\ldots,n)$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
@@ -298,8 +301,8 @@ A string is delimited by double quotation marks \code{"},
 \eg \code{"Hallo Keiken"}. 
 
 \subsubsection{Variant expressions}
-The following is either a numeric or a string expression, depending on
-whether \emph{expression} is a string or a numeric expression:
+The following is either a numeric, string or boolean expression, depending on
+whether \emph{expression} is a string, boolean, or numeric expression:
 
 \smallskip
 \code{if} \emph{boolean-expression} \code{then}
@@ -322,6 +325,9 @@ Combinations of Boolean expressions with \code{and},
 and negation with \code{not} are possible.
 The expression \emph{tuple} \code{in} \emph{set-expression} (explained
 in the next section) can be used to test set membership of a tuple. 
+Boolean expresseion can also be in the \emph{then} or \emph{else} part of an 
+\emph{if} expression.
+
 
 \subsection{Sets}
 Sets consist of tuples. Each tuple can only
@@ -535,8 +541,9 @@ the parameter for this index.
 set A := { 12 .. 30 };
 set C := { <1,2,"x">, <6,5,"y">, <3,7,"z"> };
 param q := 5;
-param u[A] := <13> 17, <17> 29, <23> 12 default 99;
-param umin := min <a> in A : u[a]; 
+param u[A] := <13> 17, <17> 29, <23> 14 default 99;
+param amin := min A;               # = 12
+param umin := min <a> in A : u[a]; # = 14 
 param mmax := max <i> in { 1 .. 10 } : i mod 5;
 param w[C] := <1,2,"x"> 1/2, <6,5,"y"> 2/3;
 param x[<i> in { 1 .. 8 } with i mod 2 == 0] := 3 * i;
@@ -882,25 +889,26 @@ param n := read "huhu.dat" as "4n" skip 4 use 1
 \subsection{Function definitions}
 %------------------------------------------------------------------------------
 It is possible to define functions within \zimpl. The value a
-function returns has to be either a number, a string or a set.
+function returns has to be either a number, a string, a boolean, or a set.
 The arguments of a function can only be numbers or strings, but within
 the function definition it is possible to access all otherwise
 declared sets, parameters and variables.
 
 The definition of a function has to start with 
-\code{defnumb}, \code{defstrg} or \code{defset}, depending on the
+\code{defnumb}, \code{defstrg}, \code{defbool}, or \code{defset}, depending on the
 return value.
-Then follows the name
+Next is the name
 of the function and a list of argument names put in parentheses.
-Next is an assignment operator \code{:=} and a valid
+An assignment operator \code{:=} has to follow and a valid
 expression or set expression.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-defnumb dist(a,b)  := sqrt(a*a + b*b);
-defstrg huehott(a) := if a < 0 then "hue" else "hott" end;
-defset  bigger(i)  := { <j> in K with j > i };
+defnumb dist(a,b)     := sqrt(a*a + b*b);
+defstrg huehott(a)    := if a < 0 then "hue" else "hott" end;
+defbool wirklich(a,b) := a < b and a >= 10 or b < 5; 
+defset  bigger(i)     := { <j> in K with j > i };
 \end{verbatim}
 }
 

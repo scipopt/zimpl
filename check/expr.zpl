@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.11 2006/01/30 11:19:42 bzfkocht Exp $
+# $Id: expr.zpl,v 1.12 2006/09/09 10:00:21 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -46,3 +46,4 @@ subto c13: x[3] <= max(6, 2/7, a[1], a[3]);
 subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;
 subto c15: sum <i> in I do sgn(5 - i) * x[i] >= 3;
 subto c16: sum <i> in I do random(10,20) * x[i] >= random(50,1000);
+subto c17: x[min I] <= x[max I];

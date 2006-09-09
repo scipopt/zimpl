@@ -1,3 +1,7 @@
+ - it is now possible to write just 
+   min A   or    max B   for a one dimensional set of numbers 
+   to get the minimum/maximum number of the set.
+
  - The maximum length for variable names can now be set with the
    "-l length" command line option.
 

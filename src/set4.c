@@ -1,14 +1,14 @@
-#pragma ident "@(#) $Id: set4.c,v 1.13 2006/08/22 10:05:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.14 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: set.c                                                         */
+/*   File....: set4.c                                                        */
 /*   Name....: Set Functions                                                 */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

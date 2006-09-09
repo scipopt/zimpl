@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.18 2006/08/22 10:05:42 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.19 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,6 +48,18 @@ typedef enum vbool_fixed_result VBFixed;
 static int internal_vars = 0;
 static int internal_cons = 0;
 
+void interns_init()
+{
+   assert(internal_vars == 0);
+   assert(internal_cons == 0);
+}
+
+void interns_exit()
+{
+   internal_vars = 0;
+   internal_cons = 0;
+}
+     
 static void create_new_constraint(
    const char*  basename,
    const char*  extension,

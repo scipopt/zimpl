@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.75 2006/08/22 10:05:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.76 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -592,6 +592,8 @@ extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 
 /* local.c
  */
+extern void         local_init(void);
+extern void         local_exit(void);
 extern void         local_drop_frame(void);
 /*lint -sem(        local_lookup, nulterm(1), 1p, r_null) */
 extern const Elem*  local_lookup(const char* name);
@@ -768,6 +770,11 @@ extern int          mio_getc(const MFP* mfp);
 extern char*        mio_gets(const MFP* mfp, char* buf, int len);
 /*lint -sem(        mio_get_line, 1p) */
 extern char*        mio_get_line(const MFP* mfp);
+
+/* vinst.c
+ */
+extern void interns_init(void);
+extern void interns_exit(void);
 
 /* mmlparse.y
  */

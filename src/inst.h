@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.36 2006/05/18 19:41:07 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.37 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -128,10 +128,14 @@ extern CodeNode* i_expr_sum(CodeNode* self);
 extern CodeNode* i_expr_max(CodeNode* self);
 /*lint -sem(     i_expr_max2, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_max2(CodeNode* self);
+/*lint -sem(     i_expr_sglmax, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_sglmax(CodeNode* self);
 /*lint -sem(     i_expr_min, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_min(CodeNode* self);
 /*lint -sem(     i_expr_min2, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_min2(CodeNode* self);
+/*lint -sem(     i_expr_sglmin, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_sglmin(CodeNode* self);
 /*lint -sem(     i_expr_mul, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_mul(CodeNode* self);
 /*lint -sem(     i_expr_mod, 1p == 1, type(1), @p == 1p) */

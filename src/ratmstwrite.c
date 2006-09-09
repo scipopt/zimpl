@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmstwrite.c,v 1.2 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmstwrite.c,v 1.3 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmstwrite.c                                                 */
@@ -76,7 +76,8 @@ void lps_mstfile(
 
       lps_makename(vtmp, name_size, var->name, var->number);
 
-      fprintf(fp, "    %s  %.10e", vtmp, mpq_get_d(var->startval));
+      fprintf(fp, "    %-*s  %.10e",
+         name_size - 1, vtmp, mpq_get_d(var->startval));
          
       fputc('\n', fp);
    }

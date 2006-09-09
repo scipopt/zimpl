@@ -386,7 +386,26 @@
    The size argument for an \code{argmin} or \code{argmax} function
    must be at least one, since it represents the maximum cardinality
    of the resulting set.
-%
+\item[209 MIN of set with more than one dimension]\ \\
+   The expressions \code{min(A)} is only allowed if the elements of 
+   set A consist of 1-tuples containing numbers.  
+\item[210 MAX of set with more than one dimension]\ \\
+   The expressions \code{max(A)} is only allowed if the elements of 
+   set A consist of 1-tuples containing numbers.  
+\item[211 MIN of set containing non number elements]\ \\
+   The expressions \code{min(A)} is only allowed if the elements of 
+   set A consist of 1-tuples containing numbers.  
+\item[212 MAX of set containing non number elements]\ \\
+   The expressions \code{max(A)} is only allowed if the elements of 
+   set A consist of 1-tuples containing numbers.  
+\item[213 More than 65535 input fields in line \code{xxx} of
+   \code{yyy} (warning)]\ \\
+   Input data beyond field number 65535 in line \code{xxx} of file
+   \code{yyy} are ignored. Insert some newlines into your data!
+\item[214 Wrong type of set elements -- wrong read template?]\ \\
+   Most likely you have tried read in a set from a stream using
+   \code{"n+"} instead of \code{"<n+>"} in the template. 
+% 
 % numbgmp.c
 %
 \item[700 log(): \code{OS specific domain or range error message}]\ \\

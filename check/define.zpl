@@ -1,4 +1,4 @@
-# $Id: define.zpl,v 1.2 2003/09/19 08:30:14 bzfkocht Exp $
+# $Id: define.zpl,v 1.3 2006/09/09 10:00:21 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: define.zpl                                                    */
@@ -8,7 +8,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -43,7 +43,8 @@ subto c2: ack(3,3) * x[ack(1,3),ack(2,2)] >= 0;
 set K := { 1..10 };
 var y[K];
 
-defset bigger(i) := { <j> in K with j > i };
+defbool goodone(a,b) := a > b; 
+defset  bigger(i) := { <j> in K with goodone(j,i) };
 
 subto c3: sum <i> in bigger(5) : y[i] >= 0;
 

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.11 2006/07/13 09:47:20 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.12 2006/09/09 10:00:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -153,6 +153,8 @@ Bool zpl_read(const char* filename)
    elem_init();
    set_init();
    mio_init();
+   interns_init();
+   local_init();
    
    if (0 == setjmp(zpl_read_env))
    {
@@ -187,6 +189,8 @@ Bool zpl_read(const char* filename)
    if (prog != NULL)
       prog_free(prog);
 
+   local_exit();
+   interns_exit();
    mio_exit();
    symbol_exit();
    define_exit();
@@ -259,6 +263,8 @@ Bool zpl_read_with_args(int argc, char** argv)
    elem_init();
    set_init();
    mio_init();
+   interns_init();
+   local_init();
    
    if (0 == setjmp( zpl_read_env))
    {
@@ -307,6 +313,8 @@ Bool zpl_read_with_args(int argc, char** argv)
    if (prog != NULL)
       prog_free(prog);
 
+   local_exit();
+   interns_exit();
    mio_exit();
    symbol_exit();
    define_exit();

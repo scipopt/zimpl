@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.74 2006/08/10 08:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.75 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -927,6 +927,12 @@ cfactor
       }
    | IF lexpr THEN cexpr ELSE cexpr END {
          $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+      }
+   | MIN idxset %prec '+'  {
+         $$ = code_new_inst(i_expr_sglmin, 1, $2);
+      }
+   | MAX idxset %prec '+' {
+         $$ = code_new_inst(i_expr_sglmax, 1, $2);
       }
    | MIN idxset DO cproduct %prec '+' {
          $$ = code_new_inst(i_expr_min, 2, $2, $4);

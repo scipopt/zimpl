@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.24 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.25 2006/09/09 10:00:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001,2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -392,13 +392,13 @@ static int split_fields(char* s, int hi_field_no, char* field[])
 
 
 static List* process_entry_stream(
-   CodeNode*   self,
-   List*       list,
-   const RDef* rdef,
-   int         line,
-   int         fields,
-   char**      field,
-   int         param_type) /* param_type[0] */
+   const CodeNode* self,
+   List*          list,
+   const RDef*    rdef,
+   int            line,
+   int            fields,
+   char**         field,
+   int            param_type) /* param_type[0] */
 {
    Tuple*      tuple;
    Entry*      entry;
@@ -447,13 +447,13 @@ static List* process_entry_stream(
 }
 
 static List* process_tuple_stream(
-   CodeNode*   self,
-   List*       list,
-   const RDef* rdef,
-   int         line,
-   int         fields,
-   char**      field,
-   int         param_type) /* param_type[0] */
+   const CodeNode*   self,
+   List*             list,
+   const RDef*       rdef,
+   int               line,
+   int               fields,
+   char**            field,
+   int               param_type) /* param_type[0] */
 {
    Tuple*      tuple;
    Elem*       elem;
@@ -503,16 +503,16 @@ static List* process_tuple_stream(
 }
 
 static List* process_line(
-   CodeNode*   self,
-   List*       list,
-   const RDef* rdef,
-   int         line,
-   Bool        is_tuple_list,
-   int         dim,
-   int         fields,
-   char**      field,
-   int*        param_field,
-   int*        param_type) 
+   const CodeNode* self,
+   List*           list,
+   const RDef*     rdef,
+   int             line,
+   Bool            is_tuple_list,
+   int             dim,
+   int             fields,
+   char**          field,
+   const int*      param_field,
+   const int*      param_type) 
 {
    Tuple*      tuple;
    Entry*      entry;
@@ -617,7 +617,7 @@ static List* process_line(
 
 /* The result of this function is either a tuple_list "<1n,2s>" or
  * an entry_list "<2n,3s> 1s" or an elem_list "n+".
- * The single value "1s"generates an entry_list. 
+ * The single value "1s" generates an entry_list. 
  */
 CodeNode* i_read(CodeNode* self)
 {
@@ -720,6 +720,12 @@ CodeNode* i_read(CodeNode* self)
 
          if (is_streaming)
          {
+            if (fields == MAX_FIELDS)
+            {
+               fprintf(stderr, "*** Warning 213: More than %d input fields in line %d of %s\n",
+                  fields, line, filename);
+               code_errmsg(self);
+            }
             if (is_tuple_list)
                list = process_tuple_stream(self, list, rdef, line,
                   fields, field, param_type[0]);
