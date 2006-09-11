@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.25 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.26 2006/09/11 15:43:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -668,7 +668,6 @@ CodeNode* i_read(CodeNode* self)
 
    if (NULL == (fp = mio_open(filename, ".gz")))
    {
-      perror(filename);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
