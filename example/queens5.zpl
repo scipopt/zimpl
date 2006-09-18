@@ -1,4 +1,4 @@
-# $Id: queens5.zpl,v 1.2 2005/01/24 20:49:16 bzfkocht Exp $
+# $Id: queens5.zpl,v 1.3 2006/09/18 13:30:35 bzfkocht Exp $
 #
 # This is a formulation of the n queens problem using binary variables.
 # variables. Since the number of queens is maximized, the size of the
@@ -6,7 +6,7 @@
 #
 # set packing formulation
 #
-param columns := 128;
+param columns := 8;
 
 set I   := { 1 .. columns };
 set IxI := I * I;

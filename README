@@ -87,7 +87,7 @@ See the file LICENSE for details.
 
 LATEST VERSION
 --------------
-Can be found at http://www.zib.de/koch/zimpl
+Can be found at http://zimpl.zib.de
 
 
 BUGS
@@ -111,10 +111,11 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fügenschuh, Marc Pfetsch, Daniel Junglas, Jörg Rambau, Tobias Achterberg,
-Andreas Bley, Sebastian Orlowski, Bejamin Hiller, Ralf Borndörfer, Martin Assmann, 
-Nicolas Weber, Marc Mörig, Jens Hillmann, Dimitri Sverdlov, and all I forgot 
-for there comments and bug reports.
+To Armin Fügenschuh, Marc Pfetsch, Daniel Junglas, Jörg Rambau, Tobias
+Achterberg, Andreas Bley, Sebastian Orlowski, Bejamin Hiller, Ralf
+Borndörfer, Martin Assmann, Nicolas Weber, Marc Mörig, Jens Hillmann,
+Dimitri Sverdlov, Joachim Reichel, and all I forgot for their comments
+and bug reports.
 
 
 COMPLAINS

@@ -1,3 +1,5 @@
+2.05 18. Sep 2006 Release
+
  - it is now possible to write just 
    min A   or    max B   for a one dimensional set of numbers 
    to get the minimum/maximum number of the set.

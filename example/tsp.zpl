@@ -1,10 +1,10 @@
-# $Id: tsp.zpl,v 1.6 2006/05/18 19:41:07 bzfkocht Exp $
+# $Id: tsp.zpl,v 1.7 2006/09/18 13:30:35 bzfkocht Exp $
 #
 # Generic formulation of the Travelling Salesmen Problem
 #
 set V   := { read "tsp.dat" as "<1s>" comment "#" };
 set E   := { <i,j> in V * V with i < j };
-set P[] := powerset(V \ { 1 });
+set P[] := powerset(V \ { ord(V,1,1) });
 set K   := indexset(P) \ { 0 };
 
 param px[V] := read "tsp.dat" as "<1s> 2n" comment "#";

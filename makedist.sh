@@ -1,4 +1,4 @@
-tar -cvzhf zimpl-2.04.tgz \
+tar -cvzhf zimpl-2.05.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
