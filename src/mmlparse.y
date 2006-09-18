@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.75 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.76 2006/09/18 09:22:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -55,7 +55,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure_parser
-%expect 3
+%expect 29
 
 %union
 {

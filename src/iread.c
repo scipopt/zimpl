@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.26 2006/09/11 15:43:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.27 2006/09/18 09:22:16 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -712,9 +712,12 @@ CodeNode* i_read(CodeNode* self)
           */
          fields = split_fields(s, hi_field_no, field);
 #if 0
-         fprintf(stderr, "Fields=%d\n", fields);
+ {
+    int i;
+         fprintf(stdout, "Fields=%d\n", fields);
          for(i = 0; i < fields; i++)
-            fprintf(stderr, "Field[%d]=[%s]\n", i, field[i]);    
+            fprintf(stdout, "Field[%d]=[%s]\n", i, field[i]);
+ }
 #endif
 
          if (is_streaming)
