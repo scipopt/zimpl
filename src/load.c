@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.30 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.31 2006/09/18 13:11:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -200,7 +200,6 @@ void prog_load(Prog* prog, const char* filename)
 
    if (verbose)
       printf("Reading %s\n", filename);
-
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
@@ -224,7 +223,6 @@ void prog_load(Prog* prog, const char* filename)
    }
    mio_close(fp);
    free(buf);
-   //   free(myfilename);
 }
 
 
