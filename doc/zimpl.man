@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.1
 .\"
-.TH ZIMPL 1 "30 January 2006" Linux "User Manuals"
+.TH ZIMPL 1 "21 September 2006" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -9,7 +9,9 @@ zimpl \- Zuse Institute Mathematical Programming Language
 .I name=value
 .B ] [ -f ] [ -F
 .I filter
-.B ] [ -h ] [ -m ] [ -n
+.B ] [ -h ] [ -m ] [ -l
+.I length
+.B [ -n
 .I cm|cn|cf
 .B ] [ -o
 .I outfile
@@ -75,6 +77,8 @@ string is replaced by the output filename. For example:
 output files.
 .IP -h
 Show program help.
+.IP "-l length"
+Sets the maximum length for variable names in LPF output files.
 .IP -m
 Write a CPLEX .mst Mip STart file.
 .IP "-n cm|cn|cf"
@@ -139,9 +143,9 @@ Please report any bug to the author.
 .SH AUTHOR
 Thorsten Koch <koch@zib.de>
 .SH "WEBSITE"
-The lastest version of Zimpl is always available at <http://www.zib.de/koch/zimpl>.
+The lastest version of Zimpl is always available at <http://zimpl.zib.de>.
 .SH "SEE ALSO"
-The Zimpl User Guide at <http://www.zib.de/koch/download/zimpl.pdf>.
+The Zimpl User Guide at <http://zimpl.zib.de/download/zimpl.pdf>.
 .\".BR zpl (5),
 .\".BR lpf (5),
 .\".BR mps (5)

@@ -7,6 +7,10 @@ bool.h einchecken
 - doku index expressens in set.
 - warning / tests "
 
+namen von contrainst duerfen keine schlüsselworte sein. Unnötig.
+
+
+warum kann man nicht  x[i,j] (binary) == (w[i] - w[j] == 0) schreiben?
 ------------------
 
 Index funtion die jedem set element eine eindeutige Zahl zuordnet.
