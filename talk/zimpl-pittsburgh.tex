@@ -1,0 +1,260 @@
+% xdvi -paper 8x6in -xoffset 2in -yoffset 0in informs2006.dvi 
+% dvips -O 1in,-1in informs2006.dvi 
+% ps2pdf -DAutoRotatePages=/None informs2006.ps
+% $Id: zimpl-pittsburgh.tex,v 1.1 2006/10/30 19:03:33 bzfkocht Exp $
+\documentclass[semcolor,landscaspe,slidsonly]{seminar}
+\renewcommand{\rmdefault}{pmnj}
+\renewcommand{\ttdefault}{pcr}
+%\renewcommand{\sfdefault}{phv}
+\renewcommand{\sfdefault}{pmy}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[small,euler-digits]{eulervm}
+\usepackage[latin1]{inputenc}
+\usepackage{latexsym}
+\usepackage{keyval}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{dcolumn}
+\usepackage{stmaryrd}%\lightning
+\usepackage[dvips,%
+bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{pstricks,pst-node,pst-tree,pst-grad,pst-char,pstcol}
+%
+%\usepackage{verbatim}
+%
+%\usepackage{euler}
+%\hoffset0.0in
+%\voffset0.0in
+%\vsize297mm
+%\hsize210mm
+\special{papersize=8in,6in}
+%\special{! TeXDict begin /landplus90{true}store end }
+\renewcommand{\paperwidth}{8in}
+\renewcommand{\paperheight}{6in}
+\setlength{\slidewidth}{7.6in}
+\setlength{\slideheight}{5.6in}
+%\setlength{\slideframewidth}{5mm}
+%\setlength{\slideframesep}{5mm}
+\slidesmag{4}
+\extraslideheight{10in}
+%\psset{xunit=\semcm,yunit=\semcm}
+%\renewcommand{\slidetopmargin}{12mm}
+%\renewcommand{\slidebottommargin}{100mm}
+%\renewcommand{\slideleftmargin}{5mm}
+%\renewcommand{\sliderightmargin}{5mm}
+%
+\newrgbcolor{lightbluegreen}{.5 .75 .9}
+\newrgbcolor{orange}{1 .65 0}
+%
+\graphicspath{{slides/}}
+%
+\newslideframe{vortrag}{%
+%{\boxput{\rput{30}{\Huge DRAFT}}
+%
+\psframe[linestyle=none,fillstyle=gradient,gradangle=90,%
+ gradbegin=white,gradend=lightbluegreen,gradmidpoint=1]%
+ (0,0)(7,5){#1}
+% (-11.2,-8)(18.5,9.2)
+% \rput[lb](-9.2,8.58){\includegraphics[height=11mm]{ziblogo2.eps}}
+% %\rput[lb](-7.2,9.26){\includegraphics[height=7.5mm]{athene.eps}}
+% %\rput[lb](-5.4,9.6){\includegraphics[height=5mm]{atesio.eps}}
+% \rput[lb](6,9.25){\includegraphics[height=7.9mm]{istlogo2.eps}}
+% %\psset{fillstyle=solid,shadow=true,shadowangle=0,shadowsize=1pt,shadowcolor=lila}%\pscharpath[fillcolor=lila]{Momentum}
+% \rput[lb](8.5,9.7){\sc\Large\bfseries\color{lila}Momentum}
+% %\pswedge[fillstyle=solid,fillcolor=lightblue](17,7){1.6}{75}{130}
+% \rput[lb](15.5,7.5){\includegraphics[height=15mm]{kreisel3.eps}}
+% %\psframe[fillstyle=none,fillcolor=black,linestyle=solid](-11.1,-9)(18.4,9)%
+% \psframe[linestyle=none,fillstyle=solid,fillcolor=white](-11.2,7)(18.5,7.2)
+% \rput[lb](-9.2,-7.5){#1}
+}
+%
+%\slideframe{vortrag}
+\slideframe{none}
+\renewcommand{\labelitemi}{$\blacktriangleright$}
+%
+%\graphicspath{{../figure/}}
+%
+\input{def}
+\newpsobject{showgrid}{psgrid}{subgriddiv=1,griddots=10,gridlabels=1pt}
+\newcommand{\slidesubtitlea}{Subtitlea}
+\newcommand{\slidesubtitleb}{Subtitleb}
+\newcommand{\slidetitle}[1]{%
+\centerslidesfalse%
+\sffamily%
+\psset{xunit=1\semin,yunit=1\semin}
+\begin{pspicture}(0,0)(8,0.5)%\showgrid
+\rput[bl](7.3,-0.08){\includegraphics[width=0.4\semin]{zib-logo}}%
+\rput[bl](6.8,0.15){\includegraphics[width=0.45\semin]{matheon-logo}}%
+\rput[bl](0,0.2){\color{blue}#1}%
+\rput[bl](4,0.4){\tiny\sc\slidesubtitlea}%
+\rput[bl](4,0.2){\tiny\sc\slidesubtitleb}%
+\psline[linewidth=0.5pt](0,0.1)(7.7,0.1)%
+\end{pspicture}%
+}
+%
+\onlyslides{}
+\pagestyle{empty}
+\begin{document}
+%
+\setlength{\arraycolsep}{2pt}
+\renewcommand{\slidesubtitlea}{INFORMS 2006}%
+\renewcommand{\slidesubtitleb}{Pittsburgh, 7. Nov 2006}%
+%
+\begin{slide}
+\slidetitle{}
+\Large
+\begin{center}
+{{\LARGE\bfseries\textsc{Zimpl}}\\
+\color{red}A Solver Independend Open Source Modelling Language}\\
+
+\large\vspace{0.8\semin}
+{\bfseries Thorsten Koch, ZIB}
+\end{center}
+\end{slide}
+%-------------------------------------------------------------------------
+% What is a MPL 
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{What is a MPL?}
+\small
+Mathematical (algebraic) modeling languages allow to formulate a
+linear/nonlinear/integer mathematical programming problem in 
+a way similar to the original mathematical formulation and 
+automatically generate data for a corresponding solver.
+
+\normalsize Uses for MPL's
+
+\small
+\begin{itemize}
+\item Teaching modeling
+\item Rapid prototyping
+\item Projects with industry
+\end{itemize}
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% What is a MPL 
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Other MPLs?}
+\tiny
+\begin{tabular}{llll}
+%------------------------------------------------------------------------------
+Name&Author&Models\\
+\hline\\
+%------------------------------------------------------------------------------
+AIMMS&
+Johannes J. Bisschop&
+LP, MIP, NLP, NWP\\
+&Roobert Entriken\\
+&Paragon Decision\\
+&Technology\\
+\\\hline\\
+%------------------------------------------------------------------------------
+AMPL&
+Robert Fourer&
+LP, MIP, QP, NLP, NWP\\
+&David M. Gay\\
+&Brian W. Kernighan\\
+&AT\&T Bell Laboratories\\
+\\\hline\\
+%------------------------------------------------------------------------------
+GAMS&
+Anthony Brooke&
+LP, MIP, QP, NLP, NWP\\
+&David Kendrick\\
+&Alexander Meeraus\\
+&Ramesh Raman\\
+&GAMS Development\\
+&Corporation\\
+\\\hline\\
+%------------------------------------------------------------------------------
+LINGO&
+LINDO Systems&
+LP, MIP, QP, NLP\\
+\\\hline\\
+%------------------------------------------------------------------------------
+MINOPT&
+C. A. Schweiger&
+LP, MIP, NLP, MINLP\\
+&C. A. Floudas\\
+&Princeton University\\
+\\\hline\\
+%------------------------------------------------------------------------------
+OPL&
+Pascal van Hentenryck&
+LP, MIP, NLP\\
+&Irvin Lustig\\
+&Larent Michael\\
+&Jean-Fran\c{c}is Puget\\
+&ILOG\\
+\\\hline\\
+%------------------------------------------------------------------------------
+Model&
+Dash Associates&
+LP, MIP, NLP\\
+
+\end{tabular}
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Differences 1
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{What is different in Zimpl?}
+
+Not integrated with the solver (comming)
+No integrated windows environment
+(possible if somebody has time for it)
+Not the boss, but just a reader/translator
+Not procedural
+Only a subset of the possibilities of, e.g. AMPL.
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Differences 2
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{What is different in Zimpl?}
+
+Freely available (including source code, GNU license)
+- can use in class 
+- can use at home
+
+Library
+- can integrate in solver
+
+Rational arithmetic
+- can count correctly ;-)
+
+A few sophisticated features
+
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Differences 2
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Other features}
+
+Fast enough for real work
+
+Powerful enough for real work
+
+
+\end{slide}
+
+\end{document}

@@ -1,0 +1,333 @@
+\definecolor{seagreen}{rgb}{0.18,0.74,0.56}
+\definecolor{darkgreen}{rgb}{0.0,0.35,0.00}
+\definecolor{navyblue}{rgb}{0.0,0.0,0.5}
+\definecolor{steelblue}{rgb}{0.27,0.51,0.71}
+\definecolor{siennabrown}{rgb}{0.63,0.32,0.18}
+\definecolor{firebrickred}{rgb}{0.69,0.13,0.13}
+\definecolor{gray60}{rgb}{0.6, 0.6, 0.6}
+%
+%
+\lstloadlanguages{C}
+\lstdefinelanguage{mps}{%
+   keywords={NAME,ROWS,COLUMNS,RHS,BOUNDS,ENDATA},%
+   sensitive,%
+   keywordstyle=\color{navyblue},%
+}[keywords]%
+%
+\lstdefinelanguage{YACC}{%
+   keywords={\%token,\%type,\%left,\%right,\%union},%
+   sensitive,%
+   singlecomment={/*}{*/},%
+   stringizer=[b]',%
+   keywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue}%
+}[keywords,comments,strings]%
+%
+\lstdefinelanguage{zimpl}{%
+   keywords={set,var,param,minimize,maximize,subto,defnumb},%
+   ndkeywords={read,as,comment,binary,integer,real,sum,forall,do,in,proj,vif,vabs,and,or,then,else,end},%
+   sensitive,%
+   showstringspaces=false,%
+   morecomment=[l]\#,
+   morestring=[b]",%
+   keywordstyle=\color{red},%
+   ndkeywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue}%
+}[keywords,comments,strings]%
+%
+\lstdefinestyle{myc}{%
+   basicstyle=\sffamily\footnotesize,%
+   numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=1,%
+   keywordstyle=\color{navyblue},%
+   commentstyle=\color{darkgreen},%
+   stringstyle=\color{steelblue},%
+   directivestyle=\color{firebrickred}%
+}
+%
+\newcommand{\ie}{{i.\,e.,}\xspace}%
+\newcommand{\eg}{{e.\,g.}\xspace}%
+\newcommand{\BB}{\ensuremath{\{0,1\}}}%
+\newcommand{\RR}{\ensuremath{\mathbb{R}}}%
+\newcommand{\NN}{\ensuremath{\mathbb{N}}}%
+\newcommand{\NNZ}{\ensuremath{\mathbb{N}_0}}%
+\newcommand{\ZZ}{\ensuremath{\mathbb{Z}}\xspace}
+\newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
+\newcommand{\RRP}{\ensuremath{\mathbb{R}_+}}%
+\newcommand{\NP}{{\ensuremath{\cal NP}}}
+\newcommand{\LP}{LP\xspace}
+\newcommand{\IP}{IP\xspace}
+\newcommand{\MIP}{MIP\xspace}
+\newcommand{\miplib}{miplib\xspace}
+\newcommand{\coin}{{\sc coin}\xspace}
+\newcommand{\xpress}{XPress\xspace}
+\newcommand{\osl}{{\sc osl}\xspace}
+\newcommand{\abacus}{{abacus}\xspace}
+\newcommand{\concert}{{\sc concert}\xspace}
+\newcommand{\mathematica}{{\sc mathematica}\xspace}
+\newcommand{\matlab}{{\sc matlab}\xspace}
+\newcommand{\zimpl}{{\sc Zimpl}\xspace}
+\newcommand{\soplex}{{\sc SoPlex}\xspace}
+\newcommand{\perplex}{{\sc perPlex}\xspace}
+\newcommand{\porta}{{\sc porta}\xspace}
+\newcommand{\sip}{{\sc sip}\xspace}
+\newcommand{\gmp}{{\sc gmp}\xspace}
+\newcommand{\lp}{{\sc lp}\xspace}
+\newcommand{\ip}{{\sc ip}\xspace}
+\newcommand{\gnu}{{\sc gnu}\xspace}
+\newcommand{\mip}{{\sc mip}\xspace}
+\newcommand{\mps}{{\sc mps}\xspace}
+\newcommand{\lpf}{{\sc lp}\xspace}
+\newcommand{\ibm}{{\sc ibm}\xspace}
+\newcommand{\aircom}{{\sc Aircom}\xspace}
+\newcommand{\tornado}{{\sc Tornado}\xspace}
+\newcommand{\atoll}{{\sc Atoll}\xspace}
+\newcommand{\zpl}{{\sc zpl}\xspace}
+\newcommand{\hum}{{\sc hum}\xspace}
+\newcommand{\ampl}{{\sc ampl}\xspace}
+\newcommand{\gams}{{\sc gams}\xspace}
+\newcommand{\ilog}{{\sc Ilog}\xspace}
+\newcommand{\cplex}{{\sc cplex}\xspace}
+\newcommand{\zib}{{\sc zib}\xspace}
+\newcommand{\atesio}{{\sf Atesio}\xspace}
+\newcommand{\excel}{{\sc excel}\xspace}
+\newcommand{\netview}{{\sc NetView}\xspace}
+\newcommand{\gmt}{{\sc gmt}\xspace}
+\newcommand{\ieee}{{\sc ieee}\xspace}
+\newcommand{\code}[1]{{\tt #1}\xspace}
+\newcommand{\Order}[1]{\ensuremath{{\cal O}(#1)}}
+%
+\newcommand{\eplus}{{e$\cdot$plus}\xspace}
+\newcommand{\dfn}{{\sc dfn}\xspace}
+\newcommand{\tkat}{{\sc Telekom Austria}\xspace}
+\newcommand{\bts}{{\sc bts}\xspace}
+\newcommand{\bsc}{{\sc bsc}\xspace}
+\newcommand{\msc}{{\sc msc}\xspace}
+\newcommand{\vlr}{{\sc vlr}\xspace}
+\newcommand{\gsm}{{\sc gsm}\xspace}
+\newcommand{\poi}{{\sc poi}\xspace}
+%
+\newcommand{\pentium}{{\sc pentium}\xspace}
+\newcommand{\umts}{{\sc umts}\xspace}
+\newcommand{\fdd}{{\sc fdd}\xspace}
+\newcommand{\www}{{\sc www}\xspace}
+\newcommand{\momentum}{{\sc Momentum}\xspace}
+\newcommand{\kantenna}{{\sc k742212}\xspace}
+\newcommand{\unit}[1]{\,{#1}\xspace} % \sf\small 
+\newcommand{\unitx}[1]{#1} % \sf\small 
+\newcommand{\smallunit}[1]{\,{\sf\scriptsize #1}\xspace}
+\newcommand{\db}{\unit{dB}}
+\newcommand{\dbm}{\unit{dBm}}
+\newcommand{\degree}{\ensuremath{^\circ}\xspace}%
+\newcommand{\wcdma}{{\sc wcdma}\xspace}
+\newcommand{\cir}{{\sc cir}\xspace}%
+\newcommand{\sites}{\ensuremath{\mathcal{S}}}%
+\newcommand{\siteOfInstallation}[1]{\ensuremath{\sigma({#1})}}%
+\newcommand{\maxInstallations}[1]{\ensuremath{\Upsilon^{\max}_{#1}}}%
+\newcommand{\minInstallations}[1]{\ensuremath{\Upsilon^{\min}_{#1}}}%
+\newcommand{\site}[1]{\ensuremath{s_{#1}}}%
+\newcommand{\installations}{\ensuremath{\mathcal{I}}}%
+\newcommand{\attenuationU}[2]{\ensuremath{\gamma^\uparrow_{#1#2}}}%
+\newcommand{\attenuationD}[2]{\ensuremath{\gamma^\downarrow_{#1#2}}}%
+%\newcommand{\attenuation}[2]{\ensuremath{\gamma_{{#1},{#2}}}}%
+\newcommand{\mobiles}[1]{\ensuremath{\mathcal{M}_{#1}}}%
+\newcommand{\mobilesU}[1]{\ensuremath{\mathcal{M}^\uparrow_{#1}}}%
+\newcommand{\mobilesD}[1]{\ensuremath{\mathcal{M}^\downarrow_{#1}}}%
+\newcommand{\snapshots}{\ensuremath{\mathcal{D}}}%
+\newcommand{\totalPowerD}[1]{\ensuremath{\bar{p}^{\downarrow}_{#1}}}%
+\newcommand{\totalPowerU}[1]{\ensuremath{\bar{p}^{\uparrow}_{#1}}}%
+\newcommand{\powerU}[1]{\ensuremath{p^{\uparrow}_{#1}}}%
+\newcommand{\powerD}[2]{\ensuremath{p^{\downarrow}_{#1#2}}}%
+\newcommand{\powerP}[1]{\ensuremath{\hat p^{\downarrow}_{#1}}}%
+\newcommand{\powerC}[1]{\ensuremath{\check p^{\downarrow}_{#1}}}%
+\newcommand{\noise}[1]{\ensuremath{\eta_{#1}}}%
+\newcommand{\activityU}[1]{\ensuremath{\alpha^{\uparrow}_{#1}}}%
+\newcommand{\activityD}[1]{\ensuremath{\alpha^{\downarrow}_{#1}}}%
+\newcommand{\CIRtargetU}[1]{\ensuremath{\mu^{\uparrow}_{#1}}}%
+\newcommand{\CIRtargetD}[1]{\ensuremath{\mu^{\downarrow}_{#1}}}%
+\newcommand{\CIRtargetP}[1]{\ensuremath{\hat\mu^{\downarrow}_{#1}}}%
+\newcommand{\orthogo}[2]{\ensuremath{\omega_{#2}}}%
+\newcommand{\invorthogo}[2]{\ensuremath{\bar{\omega}_{#1#2}}}%
+\newcommand{\interferenceD}[2]{\ensuremath{\phi({#1},{#2})}}%
+\newcommand{\interferenceP}[2]{\ensuremath{\hat\phi({#1},{#2})}}%
+\newcommand{\interferenceC}[2]{\ensuremath{\check\phi({#1},{#2})}}%
+\newcommand{\loadU}[1]{{l^\uparrow_{#1}}}
+\newcommand{\loadD}[1]{{l^\downarrow_{#1}}}
+\newcommand{\served}[2]{\ensuremath{x_{#1#2}}}%
+\newcommand{\powerLimitUmax}[1]{\ensuremath{\Pi^{\max \uparrow}_{#1}}}%
+\newcommand{\powerLimitUmin}[1]{\ensuremath{\Pi^{\min \uparrow}_{#1}}}%
+\newcommand{\powerLimitDmaxTotal}[1]{\ensuremath{\Pi^{\max\downarrow}_{#1}}}%
+\newcommand{\powerLimitDminLink}[1]{%
+   \ensuremath{\dot\Pi^{\min\downarrow}_{#1}}}%
+\newcommand{\powerLimitDmaxLink}[1]{%
+   \ensuremath{\dot\Pi^{\max\downarrow}_{#1}}}%
+\newcommand{\powerLimitDminPilot}[1]{%
+   \ensuremath{\hat\Pi^{\min\downarrow}_{#1}}}%
+\newcommand{\powerLimitDmaxPilot}[1]{%
+   \ensuremath{\hat\Pi^{\max\downarrow}_{#1}}}%
+\newcommand{\pilotRscpMin}[1]{\ensuremath{\hat{\pi}^{\min\downarrow}_{#1}}}%
+\newcommand{\snapshotOfMobile}[1]{\ensuremath{\rho({#1})}}%
+\newcommand{\commonPilotPower}{\ensuremath{\hat{p}^{\downarrow\mbox{c}}}}%
+\newcommand{\installation}[1]{\ensuremath{z_{#1}}}%
+\newcommand{\rscp}{{\sc RSCP}\xspace}
+\newcommand{\CCHfactor}[1]{\ensuremath{\nu_{#1}}}
+\newcommand{\pcpich}{pilot\xspace}
+\newcommand{\rrm}{{\sc rrm}\xspace}%
+\newcommand{\hata}{{\sc cost231-hata}\xspace}
+%
+\newcommand{\TreeParBox}[2]{\Tr{\psframebox{\parbox{#1}{#2}}}}
+\newcommand{\psorgabox}[3]{%
+\psframebox[linecolor=blue,linewidth=.1]{\begin{minipage}[t][#1][t]{#2}{\begin{center}\sffamily\scriptsize\vfill%
+{#3}\\\vfill\end{center}}\end{minipage}}}
+%
+\newcommand{\psorgaboxred}[3]{%
+\psframebox[linecolor=red,linewidth=.1]{\begin{minipage}[t][#1][t]{#2}{\begin{center}\sffamily\scriptsize\vfill%
+{#3}\\\vfill\end{center}}\end{minipage}}}
+%
+\newcommand{\psorgaboxgray}[3]{%
+\psframebox[linecolor=gray,linewidth=.1]{\begin{minipage}[t][#1][t]{#2}{\begin{center}\sffamily\scriptsize\vfill%
+{#3}\\\vfill\end{center}}\end{minipage}}}
+%
+\newcommand{\psorgaboxyel}[3]{%
+\psframebox[linecolor=orange,linewidth=.1]{\begin{minipage}[t][#1][t]{#2}{\begin{center}\sffamily\scriptsize\vfill%
+{#3}\\\vfill\end{center}}\end{minipage}}}
+%
+\newcommand{\psorgaboxblue}[3]{%
+\psframebox[linecolor=navyblue,linewidth=.1]{\begin{minipage}[t][#1][t]{#2}{\begin{center}\sffamily\scriptsize\vfill%
+{#3}\\\vfill\end{center}}\end{minipage}}}
+%
+\newcommand{\ram}{\textsc{ram}\xspace}
+\newcommand{\HVSten}{\textsc{hv}\xspace}
+\newcommand{\POI}{\textsc{poi}\xspace}
+\newcommand{\VVSten}{\textsc{vv}\xspace}
+\newcommand{\UVSten}{\textsc{uv}\xspace}
+\newcommand{\OVSten}{\textsc{ov}\xspace}
+\newcommand{\NVSten}{\textsc{nv}\xspace}
+\newcommand{\HV}{\ensuremath{H}}
+\newcommand{\PV}{\ensuremath{P}}
+\newcommand{\VV}{\ensuremath{V}}
+\newcommand{\UV}{\ensuremath{U}}
+\newcommand{\AVH}{\ensuremath{A_{V\!H}}}
+\newcommand{\AVP}{\ensuremath{A_{V\!P}}}
+\newcommand{\AUV}{\ensuremath{A_{UV}}}
+\newcommand{\AAA}{\ensuremath{A}}
+% !!!!! ???
+\newcommand{\xuv}{\ensuremath{x}}
+\newcommand{\xvh}{\ensuremath{x}}
+\newcommand{\xvp}{\ensuremath{x}}
+%\newcommand{\yvp}{\ensuremath{\bar{y}}}
+%\newcommand{\yLvh}{\ensuremath{\bar{y}}}
+%\newcommand{\yUvh}{\ensuremath{\dot{y}}}
+%\newcommand{\zv}{\ensuremath{z}}
+%\newcommand{\zh}{\ensuremath{\dot{z}}}
+%\newcommand{\zp}{\ensuremath{\ddot{z}}}
+\newcommand{\yvp}{\ensuremath{f}}
+\newcommand{\yLvh}{\ensuremath{f^d}}
+\newcommand{\yUvh}{\ensuremath{f}}
+\newcommand{\zv}{\ensuremath{y}}
+\newcommand{\zh}{\ensuremath{y}}
+\newcommand{\zp}{\ensuremath{y}}
+%
+\newcommand{\cxuv}{\ensuremath{c}}
+\newcommand{\cxvh}{\ensuremath{c}}
+\newcommand{\cxvp}{\ensuremath{c}}
+\newcommand{\cyvh}{\ensuremath{\bar{c}}}
+\newcommand{\cyvp}{\ensuremath{\bar{c}}}
+\newcommand{\czv}{\ensuremath{c}}
+\newcommand{\czh}{\ensuremath{c}}
+\newcommand{\czp}{\ensuremath{c}}
+%\newcommand{\dline}{\ensuremath{\bar{\delta}}}
+%\newcommand{\duser}{\ensuremath{\dot{\delta}}}
+\newcommand{\dline}{\ensuremath{\delta^d}}
+\newcommand{\duser}{\ensuremath{\dot{\delta}}}
+%\newcommand{\maxvvline}{\ensuremath{\bar{\mu}}}
+%\newcommand{\maxvvuser}{\ensuremath{\dot{\mu}}}
+%\newcommand{\maxhvline}{\ensuremath{\bar{\nu}}}
+%\newcommand{\maxhvuser}{\ensuremath{\dot{\nu}}}
+\newcommand{\maxvvline}{\ensuremath{\rho^d_v}}
+\newcommand{\maxvvuser}{\ensuremath{\dot{\mu}}}
+\newcommand{\maxhvline}{\ensuremath{\rho^d_h}}
+\newcommand{\maxhvuser}{\ensuremath{\dot{\nu}}}
+%
+\newcommand{\poitrans}{\ensuremath{\tau}}
+%
+\newcommand{\Code}[1]{\texttt{#1}\xspace}
+\newcommand{\pots}{\textsc{pots}\xspace}
+\newcommand{\isdn}{\textsc{isdn}\xspace}
+%
+% dfn -----
+%
+\newcommand{\gwin}{\textsf{\small G-WiN}\xspace}
+\newcommand{\bwin}{\textsf{\small B-WiN}\xspace}
+%
+\newcommand{\setR}{\ensuremath{R}\xspace}
+\newcommand{\setU}{\ensuremath{U}\xspace}
+\newcommand{\setV}{\ensuremath{W}\xspace}
+\newcommand{\setW}{\ensuremath{V}\xspace}
+\newcommand{\setA}[1]{\ensuremath{A_{#1}}\xspace}
+\newcommand{\setS}[1]{\ensuremath{S_{#1}}\xspace}
+\newcommand{\Auv}{\ensuremath{\setA{\setU\setV}}\xspace}
+\newcommand{\Avw}{\ensuremath{\setA{\setV\setW}}\xspace}
+\newcommand{\Sv}{\ensuremath{S_{\vv}}\xspace}
+\newcommand{\Sw}{\ensuremath{S_{\ww}}\xspace}
+\newcommand{\uu}{\ensuremath{u}\space}
+\newcommand{\vv}{\ensuremath{w}\space}
+\newcommand{\ww}{\ensuremath{v}\space}
+\newcommand{\rr}{\ensuremath{r}\space}
+\newcommand{\si}{\ensuremath{s}\space}
+%
+%\newcommand{\x}[1]{\ensuremath{x_{#1}}\xspace}
+%\newcommand{\y}[1]{\ensuremath{f^{\rr}_{#1}}\xspace}
+%\newcommand{\z}[1]{\ensuremath{z^{\si}_{#1}}\xspace}
+%\newcommand{\xuv}{\ensuremath{x_{\uu\vv}}\xspace}
+\newcommand{\xvw}{\ensuremath{x_{\vv\ww}}\xspace}
+\newcommand{\yrvw}{\ensuremath{f^{\rr}_{\vv\ww}}\xspace}
+\newcommand{\yrw}{\ensuremath{f^{\rr}_{\ww}}\xspace}
+\newcommand{\zs}[1]{\ensuremath{z^{\si}_{#1}}\xspace}
+\newcommand{\zsv}{\ensuremath{z^{\si}_{\vv}}\xspace}
+\newcommand{\zsw}{\ensuremath{z^{\si}_{\ww}}\xspace}
+%
+\newcommand{\dru}{\ensuremath{\delta^{\rr}_{\uu}}\xspace}
+\newcommand{\crs}[1]{\ensuremath{\kappa^{\rr\si}_{#1}}\xspace}
+\newcommand{\crsv}{\ensuremath{\kappa^{\rr\si}_{\vv}}\xspace}
+\newcommand{\crsw}{\ensuremath{\kappa^{\rr\si}_{\ww}}\xspace}
+\newcommand{\rvmax}{\ensuremath{\lambda^{\rr}_{\vv}}\xspace}
+%
+\newcommand{\obj}{\ensuremath{\tau}\xspace}
+%
+\newcommand{\stp}{{\sc stp}\xspace}
+\newcommand{\stpp}{{\sc stpp}\xspace}
+\newcommand{\tsp}{{\sc tsp}\xspace}
+\newcommand{\vlsi}{{\sc vlsi}\xspace}
+\newcommand{\nets}{{\cal N}\xspace}
+\newcommand{\fa}{\ensuremath{\text{for all }}}
+\newcommand{\with}{\ensuremath{\text{\ with\ }}}
+\newcommand{\tal}{{\sc tal}\xspace}
+\newcommand{\mol}{{\sc mol}\xspace}
+%
+% implementation
+%
+\newcommand{\discnet}{{\sc discnet}\xspace}
+\newcommand{\lex}{{\sc lex}\xspace}
+\newcommand{\flex}{{\sc flex}\xspace}
+\newcommand{\bison}{{\sc bison}\xspace}
+\newcommand{\yacc}{{\sc yacc}\xspace}
+\newcommand{\unix}{{\sc unix}\xspace}
+\newcommand{\LALR}{{\sc lalr}\xspace}
+\newcommand{\posix}{{\sc posix}\xspace}
+\newcommand{\netlib}{{\sc netlib}\xspace}
+%\newcommand{\}{{\sc }\xspace}
+%
+\newcommand{\cpu}{{\sc cpu}\xspace}
+\newcommand{\zsets}{\ensuremath{{\cal\check{S}}_n}\xspace}
+\newcommand{\zset} [1]{\ensuremath{\check{#1}_n}\xspace}
+\newcommand{\ntuple}{\ensuremath{{\cal T}_n}\xspace}
+\newcommand{\abs}{\ensuremath{\operatorname{abs}}}
+\newcommand{\sgn}{\ensuremath{\operatorname{sgn}}}
+\newcommand{\loc}{{\sc loc}\xspace}
+\newcommand{\lint}{{\sc lint}\xspace}
+\newcommand{\flexelint}{{\sc flexelint}\xspace}
+\newcommand{\valgrind}{{\sc valgrind}\xspace}
+%
+\newcommand{\PO}{\ensuremath{P}\xspace} %{\textsl{P}\xspace}
