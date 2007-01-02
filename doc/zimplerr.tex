@@ -405,6 +405,10 @@
 \item[214 Wrong type of set elements -- wrong read template?]\ \\
    Most likely you have tried read in a set from a stream using
    \code{"n+"} instead of \code{"<n+>"} in the template. 
+\item[251 Startvals violate constraint, \ldots]\ \\
+   If the given startvals are summed up, they violate the
+   constraint. details about the sum of the LHS and the RHS are given
+   in the warning message.
 % 
 % numbgmp.c
 %

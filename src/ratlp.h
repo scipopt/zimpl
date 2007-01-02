@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.13 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.14 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -154,6 +154,8 @@ extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, con
 extern void         lps_scale(const Lps* lp);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern Bool         lps_has_sos(const Lps* lp);
+/*lint -sem(        lps_con_sumup, 1p == 1) */
+extern Bool         lps_con_sumup(const Con* con, mpq_t sum);
 
 /* ratmpsread.c
  */

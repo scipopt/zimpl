@@ -1,3 +1,7 @@
+prod: test, docu
+
+WITH_ZLIB=1 im Makefile
+
 Checks vorrang operatoren Insbesondere -2^3 
 
 Fehler abgefangen wenn default anderer typ als werte in param? read!

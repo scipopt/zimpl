@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.107 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.108 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -149,6 +149,10 @@ CodeNode* i_constraint(CodeNode* self)
 
       term_add_constant(term, rhs);
       term_to_nzo(term, con);
+
+      if (!xlp_concheck(con))
+         code_errmsg(self);
+
       conname_next();
    }
    code_value_void(self);
@@ -214,6 +218,10 @@ CodeNode* i_rangeconst(CodeNode* self)
          
       term_sub_constant(term, term_get_constant(term));
       term_to_nzo(term, con);
+
+      if (!xlp_concheck(con))
+         code_errmsg(self);
+
       conname_next();
    }
    code_value_void(self);
@@ -1016,6 +1024,46 @@ CodeNode* i_expr_sum(CodeNode* self)
    set_iter_exit(iter, set);
 
    code_value_numb(self, sum);
+
+   return self;
+}
+
+CodeNode* i_expr_prod(CodeNode* self)
+{
+   const IdxSet* idxset;
+   const Set*    set;
+   const Tuple*  pattern;
+   Tuple*        tuple;
+   CodeNode*     lexpr;
+   SetIter*      iter;
+   Numb*         prod = numb_new_integer(1);
+
+   Trace("i_expr_prod");
+   
+   assert(code_is_valid(self));
+
+   idxset  = code_eval_child_idxset(self, 0);
+   set     = idxset_get_set(idxset);
+   pattern = idxset_get_tuple(idxset);
+   lexpr   = idxset_get_lexpr(idxset);
+   iter    = set_iter_init(set, pattern);
+   
+   warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
+
+   while((tuple = set_iter_next(iter, set)) != NULL)
+   {
+      local_install_tuple(pattern, tuple);
+
+      if (code_get_bool(code_eval(lexpr)))
+         numb_mul(prod, code_eval_child_numb(self, 1));      
+
+      local_drop_frame();
+
+      tuple_free(tuple);
+   }
+   set_iter_exit(iter, set);
+
+   code_value_numb(self, prod);
 
    return self;
 }

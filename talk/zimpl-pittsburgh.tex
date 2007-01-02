@@ -1,7 +1,7 @@
-% xdvi -paper 8x6in -xoffset 2in -yoffset 0in informs2006.dvi 
-% dvips -O 1in,-1in informs2006.dvi 
-% ps2pdf -DAutoRotatePages=/None informs2006.ps
-% $Id: zimpl-pittsburgh.tex,v 1.1 2006/10/30 19:03:33 bzfkocht Exp $
+% xdvi -paper 8x6in -xoffset 2in -yoffset 0in zimpl-pittsburgh.dvi 
+% dvips -O 1in,-1in zimpl-pittsburgh.dvi 
+% ps2pdf -DAutoRotatePages=/None zimpl-pittsburgh.ps
+% $Id: zimpl-pittsburgh.tex,v 1.2 2007/01/02 10:54:31 bzfkocht Exp $
 \documentclass[semcolor,landscaspe,slidsonly]{seminar}
 \renewcommand{\rmdefault}{pmnj}
 \renewcommand{\ttdefault}{pcr}
@@ -106,155 +106,866 @@ bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
 \begin{document}
 %
 \setlength{\arraycolsep}{2pt}
-\renewcommand{\slidesubtitlea}{INFORMS 2006}%
-\renewcommand{\slidesubtitleb}{Pittsburgh, 7. Nov 2006}%
+\renewcommand{\slidesubtitlea}{INFORMS 2006, Pittsburgh, 7. Nov 2006}%
+\renewcommand{\slidesubtitleb}{Thorsten Koch, Zuse Institute Berlin}%
 %
 \begin{slide}
-\slidetitle{}
+\slidetitle{{\small Open Source Modeling Tools}}
+
+\medskip
 \Large
 \begin{center}
-{{\LARGE\bfseries\textsc{Zimpl}}\\
-\color{red}A Solver Independend Open Source Modelling Language}\\
+{{\LARGE\bfseries\textsc{Zimpl}}
 
-\large\vspace{0.8\semin}
-{\bfseries Thorsten Koch, ZIB}
+\large\vspace{0.4\semin}
+{\color{red}A Solver Independend Open Source\\Modeling Language}}
+
+\large\vspace{0.7\semin}
+{Thorsten Koch, ZIB, \textsc{Matheon}}
 \end{center}
 \end{slide}
+
+\begin{slide}
+{\it %Try to find the real tense of the talk you are hearing: Was it done,
+ %is it being done, or is something to be done? \ldots 
+
+ CONGRAM (CONtractor GRAMmer):
+
+\begin{center}
+ defined by the {\color{blue}imperfect past},\\ 
+ the {\color{blue}insufficient present}, and the\\
+ {\color{blue}absolutely perfect future}.
+\end{center}
+}
+\begin{flushright}
+--- fortune(6)
+\end{flushright}
+\end{slide}
+\begin{slide}
+\slidetitle{}
+\vskip2cm
+\begin{center}
+\LARGE Imperfect Past
+\end{center}
+\end{slide}
+
+
 %-------------------------------------------------------------------------
 % What is a MPL 
 %-------------------------------------------------------------------------
 \begin{slide}
-\slidetitle{What is a MPL?}
+\slidetitle{Algebraic modeling language}
 \small
-Mathematical (algebraic) modeling languages allow to formulate a
-linear/nonlinear/integer mathematical programming problem in 
+\zimpl is an algebraic modeling language 
+for mixed integer programming problems.
+
+Modeling languages allow to formulate a
+mathematical programming problem in 
 a way similar to the original mathematical formulation and 
-automatically generate data for a corresponding solver.
+automatically generate input for a corresponding solver.
 
-\normalsize Uses for MPL's
-
-\small
 \begin{itemize}
-\item Teaching modeling
-\item Rapid prototyping
-\item Projects with industry
+\item Problems are represented in a declarative way
+\item Separation between problem definition and solution process
+\item Separation between problem structure and data.
 \end{itemize}
 
+Algebraic modeling languages typically operate on
+contraints consisting of variables indexed by sets connected to
+parameters by algebraic expressions.
+%% \normalsize Uses for MPL's
+
+%% \small
+%% \begin{itemize}
+%% \item Teaching modeling\\
+%%       easy to learn and use
+%% \item Practical use\\
+%%       rapid prototyping
+%% \item Research\\
+%%       results are easier to reproduce
+%% \end{itemize}
+
 \end{slide}
 
+\begin{slide}
+%\slidetitle{Modeling language}
+\lstset{language=zimpl,%
+basicstyle=\sffamily\scriptsize,%
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=0}
+\begin{lstlisting}{}
+# This model solves Sudoku puzzels.
+param p := 3;
+
+set L := { 1 .. p*p };
+set M := { 1 .. p};
+
+var x[L*L*L] binary;
+
+# file: row col value
+set F := { read "sudoku.dat" as "<1n,2n,3n>" comment "#" };
+
+subto dots: forall <i,j> in L*L do sum <k> in L : x[i,j,k] == 1;
+subto rows: forall <j,k> in L*L do sum <i> in L : x[i,j,k] == 1;
+subto cols: forall <i,k> in L*L do sum <j> in L : x[i,j,k] == 1;
+subto sqrs: forall <m,n,k> in M*M*L do 
+   sum <i,j> in M*M : x[(m-1)*p+i,(n-1)*p+j,k] == 1;
+
+# Fix the fixed values
+subto fixed: forall <i,j,k> in F do x[i,j,k] == 1;
+
+\end{lstlisting}
+\end{slide}
+%-------------------------------------------------------------------------
+% Beispiel 1
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Modeling language}
+\small
+For $a,b,c\in\ZZ$, 
+$a\in [-15,15], b\in [-10,20], c\in [-20,10]$,
+
+maximize $5 a + 3 b + c$
+subject to:
+\begin{equation*}
+\begin{array}{rl}
+\text{If}&(a \neq b \text{ and }(|a - b| = 3 c \text{ or } c - a \geq 0))\\
+ \text{then}&a + b + c \geq 7\\
+ \text{else}& a + b\leq 1
+\end{array}
+\end{equation*}
+
+\bigskip
+{\color{blue}can be modeled as an IP, but this very laborious\ldots}
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Beispiel 2 
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Modeling language}
+\small
+%\frqq{}Erweiterte\flqq{} Funktionen:
+For $a,b,c\in\ZZ$, 
+$a\in [-15,15], b\in [-10,20], c\in [-20,10]$,
+
+maximize $5 a + 3 b + c$ 
+subject to:
+\begin{equation*}
+\begin{array}{rl}
+\text{If}&(a \neq b \text{ and }(|a - b| = 3 c \text{ or } c - a \geq 0))\\
+ \text{then}&a + b + c \geq 7\\
+ \text{else}& a + b\leq 1
+\end{array}
+\end{equation*}
+
+\smallskip
+\lstset{language=zimpl,%
+basicstyle=\sffamily\footnotesize,%
+numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=0}
+\begin{lstlisting}[frame=t]{}
+var a integer >= -15 <= 15;
+var b integer >= -10 <= 20;
+var c integer >= -20 <= 10;
+maximize obj: 5 * a + 3 * b + c;
+subto c1: 
+   vif (a!=b and (vabs(a-b) == 3*c or c-a >= 0)) 
+      then a + b + c >= 7 
+      else a + b <= 1 end;
+\end{lstlisting}
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Ergebnis 
+%-------------------------------------------------------------------------
+%\centerslidestrue
+\begin{slide}
+\begin{minipage}{0.5\textwidth}
+\tiny
+\begin{verbatim}
+- xp0  + bp2                      <= 0
+- b    + a       - xp0  + bm3     <= 0
+- xp0  + 25 bp2                   >= 0
+- b    + a       - xp0  + 35 bm3  >= 0
+- bp2  - bm3     + re4             = 0
+- b    + a       + xm6  - xp5      = 0
+- xp5  + 25 bp7                   >= 0
++ xm6  + 35 bp7                   <= 35
+- xm6  - xp5     + re8             = 0
+- xp9  + bp11                     <= 0
+- 3 c  + re8     - xp9  + bm12    <= 0
+- xp9  + 95 bp11                  >= 0
+- 3 c  + re8     - xp9  + 30 bm12 >= 0
++ bp11 + bm12    + re13            = 1
+- xp14 + bp16                     <= 0
++ c    - a       - xp14 + bm17    <= 0
+- xp14 + 25 bp16                  >= 0
++ c    - a       - xp14 + 35 bm17 >= 0
++ bp16 + bm17                     <= 1
++ re13 - re19                     <= 0
+- bm17 - re19                     <= -1
++ re13 - bm17    - re19           >= -1
++ re4  - re20                     >= 0
++ re19 - re20                     >= 0
++ re4  + re19    - re20           <= 1
++ c    + b       + a    - 52 re20 >= -45
++ b    + a              - 34 re20 <= 1
+\end{verbatim}
+\end{minipage}\hfill
+\begin{minipage}{0.4\textwidth}
+\sffamily
+\scriptsize
+IP after presolve: 
+
+27 rows, 20 columns, 77 non-zeros.
+
+\medskip
+{\color{blue}Optimal solution:}
+
+\begin{tabular}{lr}
+%\toprule
+{\color{red}c}      &             {\color{red} 2}\\
+{\color{red}b}      &             {\color{red}20}\\
+{\color{red}a}      &             {\color{red}14}\\
+xm1   &              6\\
+bm3   &              1\\
+re4   &              1\\
+xm6   &              6\\
+re8   &              6\\
+re13  &             1\\
+xm15  &            12\\
+bm17  &             1\\
+re19  &             1\\
+re20  &             1\\
+%\bottomrule
+\end{tabular}
+
+\end{minipage}
+\end{slide}
+
+
+\begin{slide}
+\slidetitle{Why another MPL}
+
+Modeling languages have been developed since the 80's.
+
+Examples: AIMMS, AMPL, GAMS, LINGO, LPL, MOSEL, MPL, \ldots
+
+Why yet another modeling language?
+\end{slide}
+
+\begin{slide}
+\slidetitle{Why another MPL}
+
+Modeling languages have been developed since the 80's.
+
+Examples: AIMMS, AMPL, GAMS, LINGO, LPL, MOSEL, MPL, \ldots
+
+Why yet another modeling language?
+
+\bigskip
+{\it\color{blue} Software is like sex. It's better when it's free.$^*$}
+\begin{flushright}
+--- Linux Torwalds
+\end{flushright}
+\end{slide}
+
+\begin{slide}
+\slidetitle{Why another MPL}
+
+Modeling languages have been developed since the 80's.
+
+Examples: AIMMS, AMPL, GAMS, LINGO, LPL, MOSEL, MPL, \ldots
+
+Why yet another modeling language?
+
+\bigskip
+{\it\color{blue} Software is like sex. It's better when it's free.$^*$}
+\begin{flushright}
+--- Linux Torwalds
+\end{flushright}
+
+\vfill
+{\scriptsize $^*$ Maybe it is not so sophisticated, 
+but there is more love and dedication involved.}
+\end{slide}
 %-------------------------------------------------------------------------
 % What is a MPL 
 %-------------------------------------------------------------------------
 \begin{slide}
-\slidetitle{Other MPLs?}
-\tiny
-\begin{tabular}{llll}
-%------------------------------------------------------------------------------
-Name&Author&Models\\
-\hline\\
-%------------------------------------------------------------------------------
-AIMMS&
-Johannes J. Bisschop&
-LP, MIP, NLP, NWP\\
-&Roobert Entriken\\
-&Paragon Decision\\
-&Technology\\
-\\\hline\\
-%------------------------------------------------------------------------------
-AMPL&
-Robert Fourer&
-LP, MIP, QP, NLP, NWP\\
-&David M. Gay\\
-&Brian W. Kernighan\\
-&AT\&T Bell Laboratories\\
-\\\hline\\
-%------------------------------------------------------------------------------
-GAMS&
-Anthony Brooke&
-LP, MIP, QP, NLP, NWP\\
-&David Kendrick\\
-&Alexander Meeraus\\
-&Ramesh Raman\\
-&GAMS Development\\
-&Corporation\\
-\\\hline\\
-%------------------------------------------------------------------------------
-LINGO&
-LINDO Systems&
-LP, MIP, QP, NLP\\
-\\\hline\\
-%------------------------------------------------------------------------------
-MINOPT&
-C. A. Schweiger&
-LP, MIP, NLP, MINLP\\
-&C. A. Floudas\\
-&Princeton University\\
-\\\hline\\
-%------------------------------------------------------------------------------
-OPL&
-Pascal van Hentenryck&
-LP, MIP, NLP\\
-&Irvin Lustig\\
-&Larent Michael\\
-&Jean-Fran\c{c}is Puget\\
-&ILOG\\
-\\\hline\\
-%------------------------------------------------------------------------------
-Model&
-Dash Associates&
-LP, MIP, NLP\\
+\slidetitle{}
+\vskip2cm
+\begin{center}
+\LARGE Insufficent Present
+\end{center}
+\end{slide}
 
-\end{tabular}
+\begin{slide}
+\slidetitle{{\large\zimpl}}
+%{\large\zimpl} is
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item is freely available with C source code under the GPL.
+\item is highly portable (*NIX, Windows, MacOS-X).
+\item is solver independend.
+\item is available as a library.
+\item can be used standalone or linked to a solver.
+\item is pretty stable. 
+\item has been used in several lectures and industry projects.
+\item can count correctly.
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\slidetitle{Freely available}
+
+In contrast to most other modeling languages, {\color{blue}\zimpl is 
+freely available in source code under GPL.}
+
+This is very convienent for teaching, as all students can use Zimpl
+on their laptops and at home. 
+
+\zimpl is highly portable and {\color{blue}compiles under Linux, Windows, MacOS-X,
+Solaris, Tru64, IRIX, HP-UX, \ldots}
+
+Only dependend on the GMP (GNU Multi Precision Library).
+
+Download at {\color{red}http://zimpl.zib.de}, binaries and a user
+guide are available.
 
 \end{slide}
 
+%-------------------------------------------------------------------------
+% Solver independend
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Solver independend}
+
+\zimpl used standalone generates either MPS or LP files, which can be
+processed by most solvers.
+
+\zimpl can write SOS and ORD files for CPLEX.
+
+It is strait forward and easy to add further formats\\
+(as far as \zimpl is concerned ;-)
+
+%If \zimpl is used as a library and linked to a solver 
+%Currently, all features are supported by all solvers, but this might
+%change. 
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Zimpl Statistik
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{Stable}
+\centering
+{\sffamily\scriptsize
+\begin{tabular}{>{\raggedleft}p{2cm}rrrrrr}\toprule
+\multicolumn{1}{l}{\emph{Zimpl statistics}}&\color{blue}LOC&\color{blue}Stmt.&\color{blue}Calls&\color{blue}CC&\color{blue}Ass.&\color{blue}Cover\\
+\midrule
+684 functions, total & 11369 & 7520 & 4398 & 1972 & 1255 & 86\%\\
+$\varnothing$ per function& 16.6 & 11.0 & 6.4 & 2.9 & 1.8 &\\
+$\varnothing$ statements per& 0.7 && 1.7 & 3.8 & 6 &\\
+%\midrule
+%\multicolumn{7}{l}{\emph{PerPlex statistics for comparison}}\\
+%\midrule
+%%163 functions, total & 3847 & 2617 & 1292 & 836 & 315\\
+%$\varnothing$ per function  & 23.6 & 16.1 & 7.9 & 5.1 & 1.9 &\\
+%$\varnothing$ statements per& 0.7  && 2.0 & 3.1 & 8 &\\
+\bottomrule
+\end{tabular}
+}
+
+\vfill
+\includegraphics[width=\textwidth]{coverage}
+
+\end{slide}
+
+
+\begin{slide}
+\slidetitle{Use as a library}
+
+\lstset{language=C,style=myc}%
+%basicstyle=\sffamily\footnotesize,%
+%numberstyle=\sffamily\tiny\color{siennabrown},stepnumber=0}
+\begin{lstlisting}{}
+Bool zpl_read_with_args(int argc, char** argv);
+
+Con* xlp_addcon(const char* name, ConType type,
+   const Numb* lhs, const Numb* rhs, unsigned int flags);
+Var* xlp_addvar(const char* name, VarClass varclass,
+   const Bound* lower, const Bound* upper, 
+   const Numb* priority, const Numb* startval);
+void xlp_addtonzo(Var* var, Con* von, const Numb* numb);
+
+Sos*   xlp_addsos(const char* name, 
+   SosType type, const Numb* priority);
+void   xlp_addtocost(Var* var, const Numb* cost);
+Bound* xlp_getlower(const Var* var);
+Bound* xlp_getupper(const Var* var);
+void   xlp_setdir(Bool minimize);
+\end{lstlisting}
+
+\end{slide}
+
+\begin{slide}
+\tiny
+\begin{verbatim}
+SCIP version 0.90a [precision: 8 byte] [mode: optimized] [LP solver: SOPLEX 1.3.0]
+Copyright (c) 2002-2006 Konrad-Zuse-Zentrum fuer Informationstechnik Berlin (ZIB)
+
+SCIP> r decide2.zpl
+
+****************************************************
+* Zuse Institute Mathematical Programming Language *
+* Release 2.05  Copyright (C)2006 by Thorsten Koch *
+****************************************************
+
+original problem has 105 variables (105 bin, 0 int, 0 impl, 0 cont) and 28 constraints
+SCIP> opt
+
+presolving: ...
+
+ time | node  | left  |LP iter| mem |frac |strbr|  dualbound   | primalbound  |  gap   
+r 0.0s|     1 |     0 |    40 | 285k|  21 |   0 | 1.965773e+02 | 1.226000e+03 | 523.67%
+R 0.0s|     1 |     0 |    40 | 286k|  21 |   0 | 1.965773e+02 | 1.208000e+03 | 514.52%
+...
+* 0.0s|     1 |     0 |   109 | 294k|   - |  13 | 2.010000e+02 | 2.010000e+02 |   0.00%
+
+SCIP Status        : problem is solved [optimal solution found]
+Solving Time (sec) : 0.04
+Solving Nodes      : 1
+Primal Bound       : +2.01000000000000e+02 (9 solutions)
+Dual Bound         : +2.01000000000000e+02
+Gap                : 0.00 %
+\end{verbatim}
+\end{slide}
+\begin{slide}
+\tiny
+\begin{verbatim}
+> bin/cbc-generic decide2.zpl
+Default solver is clp
+****************************************************
+* Zuse Institute Mathematical Programming Language *
+* Release 2.05  Copyright (C)2006 by Thorsten Koch *
+****************************************************
+
+Cgl0004I processed model has 28 rows, 100 columns (100 integer) and 618 elements
+processed model has 28 rows and 100 columns
+Cbc0012I Integer solution of 201 found by heuristic after 8 iterations
+and 0 nodes (0.02 seconds)
+Cbc0031I 3 added rows had average density of 93
+Cbc0013I At root node, 3 cuts changed objective from 196.577 to 201 in 2 passes
+Cbc0014I Cut generator 0 (Probing) - 0 row cuts (0 active), 0 column
+cuts  in 0.008001 seconds - new frequency is 10
+Cbc0014I Cut generator 1 (Gomory) - 15 row cuts (3 active), 0 column
+cuts  in 1.00289e-18 seconds - new frequency is 1
+Cbc0014I Cut generator 2 (Knapsack) - 0 row cuts (0 active), 0 column
+cuts  in 1.00289e-18 seconds - new frequency is 100
+Cbc0014I Cut generator 3 (Clique) - 0 row cuts (0 active), 0 column
+cuts  in 1.00289e-18 seconds - new frequency is 100
+Cbc0014I Cut generator 4 (MixedintegerRounding) - 0 row cuts (0 active),
+0 column cuts  in 0.004 seconds - new frequency is 100
+Cbc0014I Cut generator 5 (FlowCover) - 0 row cuts (0 active), 0 column
+cuts  in -2.73083e-18 seconds - new frequency is 100
+Cbc0001I Search completed - best objective 201, took 8 iterations and 0
+nodes (0.02 seconds)
+Result 201 iterations 8 nodes 0 took 0.024001 seconds - total 0.056003
+\end{verbatim}
+\end{slide}
+
+\begin{slide}
+\slidetitle{Uses}
+{\large\color{red}Zimpl has (and is) being used for:}
+\begin{itemize}
+\setlength{\itemsep}{0pt}%
+\item {\color{blue}Location planning for DFN, e-plus and Telekom Austria,}
+\item {\color{blue}UMTS location planning}
+\item {\color{blue}Generating 3D-Steiner tree packing problem,}
+\item Track auctioning,
+\item Protein folding,
+\item \ldots,
+\item {\color{blue}several lectures, e.g. at TU Berlin, Uni Bayreuth,
+  courses in Berlin and Beijing,} and
+\item works for Models with more than a million variables.
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\slidetitle{}
+\vskip2cm
+\begin{center}
+\LARGE Absolutly Perfect Future
+\end{center}
+\end{slide}
 %-------------------------------------------------------------------------
 % Differences 1
 %-------------------------------------------------------------------------
 \begin{slide}
-\slidetitle{What is different in Zimpl?}
+\slidetitle{What is not on the list?}
 
-Not integrated with the solver (comming)
-No integrated windows environment
+\begin{itemize}
+\item Integrated windows environment\\ 
 (possible if somebody has time for it)
-Not the boss, but just a reader/translator
-Not procedural
-Only a subset of the possibilities of, e.g. AMPL.
 
+\item Not the boss, but just a reader/translator
+
+\item Not procedural
+
+\item Trying to beat GAMS or AMPL on features.
+%Only a subset of the possibilities of, e.g. AMPL.
+\end{itemize}
 \end{slide}
 
 %-------------------------------------------------------------------------
 % Differences 2
 %-------------------------------------------------------------------------
 \begin{slide}
-\slidetitle{What is different in Zimpl?}
+\slidetitle{Next on the list}
 
-Freely available (including source code, GNU license)
-- can use in class 
-- can use at home
+\begin{itemize}
+\setlength{\itemsep}{0pt}%
+\item Integrating with more solvers:
+COIN CBC (works), lp\_solve (experimental), 
+SQopt\_ex (most interesting: compete rational environment)
+\item Reduce memory requirements for large models.
+\item More extended functions
+\item more attributes, e.g. semi continous variables,
+      implicit integer variables
+\item support quadratic objective functions
+\item specific constraints
+\item general constraint interface (passthrough to solver)
+\item complete rational preprocessing
+\end{itemize}  
 
-Library
-- can integrate in solver
+\end{slide}
 
-Rational arithmetic
-- can count correctly ;-)
-
-A few sophisticated features
-
-
+\begin{slide}
+\slidetitle{}
+\vskip2cm
+\begin{center}
+\LARGE Do not wait for it!
+\end{center}
 \end{slide}
 
 %-------------------------------------------------------------------------
 % Differences 2
 %-------------------------------------------------------------------------
 \begin{slide}
-\slidetitle{Other features}
+\slidetitle{Summary}
+\vskip1cm
+\begin{center}
+\bfseries{{\Large\zimpl} 
 
-Fast enough for real work
+is a small
 
-Powerful enough for real work
+\color{blue}free} and {\color{blue}usable} 
 
+modeling language for MIP 
+
+{\color{red}you can use today.}
+\end{center}
+\end{slide}
+%-------------------------------------------------------------------------
+% Thank you
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{}
+
+\vfill
+\Huge\bfseries\centering Thank you!
+
+\vfill
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Thank you
+%-------------------------------------------------------------------------
+\begin{slide}
+\slidetitle{}
+\Huge\bfseries
+
+\vfill
+\centering Questions?
+
+\vfill
+\centering Comments?
+
+\vfill
+\end{slide}
+\end{document}
+%-------------------------------------------------------------------------
+% Modellierungssprachen machen alles leichter
+%-------------------------------------------------------------------------
+\centerslidesfalse
+\begin{slide}
+\sffamily
+%{\color{red}Die Verwendung einer Modellierungssprache erleichtert die 
+%Veröffentlichung und erhöht die Reproduzierbarkeit:}
+%
+\bfseries
+{\color{blue}Vorteile durch Verwendung von Modellierungssprachen}
+
+\smallskip
+\hrule
+
+\bigskip
+\begin{itemize}
+
+\item {\color{red}Modellierungssprachen erleichtern das (schnelle) Experimentieren
+      mit Ideen und Modellen.}% Das ist Hilfreich bei Industrieprojekten.
+
+\item Die Reproduzierbarkeit der Ergebnisse wird erhöht.
+
+\item Die Übersetzung eines Modells von einer Modellierungssprache in eine andere ist
+      meist einfach.
+
+\item Größere Unabhängigkeit vom verwendeten Löser.
+
+%\item Erweiterte Funktionen sind problematisch.
+
+\item {\color{blue}Es ist möglich, die Umsetzung erweiterter Funktionen
+      löserabhängig zu machen.}
+\end{itemize}
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Modellierungssprachen erleichtern das Experimentieren
+%-------------------------------------------------------------------------
+\centerslidestrue
+\begin{slide}
+\sffamily
+%Mathematik/Anwendung/Lehre\\
+%
+%\vfill
+\Large
+\begin{center}
+{\color{blue}Vorteile durch Verwendung von Modellierungssprachen:}
+
+Modellierungssprachen erleichtern das Experimentieren
+mit Ideen und Modellen.
+\end{center}
+%\vfill
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Zimpl im Einsatz
+%-------------------------------------------------------------------------
+\begin{slide}
+\sffamily\bfseries
+{\large\color{red}Zimpl wurde und wird verwendet für:}
+\begin{itemize}
+\setlength{\itemsep}{0pt}%
+\item {\color{blue}Standortplanungsprobleme beim DFN, e-plus\\ und der Telekom Austria,}
+\item {\color{blue}UMTS Planung,}
+\item {\color{blue}3D-Steinerbaumpackungsprobleme,}
+\item Trassenbörse,
+\item Proteinfaltung,
+\item \ldots,
+\item verschiedene Vorlesungen,
+\item und Modelle mit mehr als 10 Millionen Variablen.
+\end{itemize}
+
+{\small\color{firebrickred}Website {\tt\color{darkgreen} http://www.zib.de/koch/zimpl}}
 
 \end{slide}
+
 
 \end{document}
+
+%-------------------------------------------------------------------------
+% Einfach zu lernen und zu benutzen
+%-------------------------------------------------------------------------
+\begin{slide}
+\sffamily
+%Mathematik/Anwendung/Lehre\\
+%
+%\vfill
+\Large
+\begin{center}
+Wie sind die\\ erweiterten Funktionen modelliert?
+\end{center}
+%\vfill
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Implementierung der erweiterten Funktionen
+%-------------------------------------------------------------------------
+\centerslidesfalse
+\begin{slide}
+\sffamily
+{\color{blue}Modellierung der erweiterten Funktionen}
+
+\medskip
+\hrule
+
+\bigskip
+Gegeben eine beschränkte ganzzahlige Variable 
+
+\begin{center}
+{\color{red}$l_x\leq x\leq u_x$} mit $l_x,x,u_x\in\ZZ$
+\end{center}
+\begin{equation*}
+\begin{array}{rcccl}
+&&\color{blue}x^+ - x^-&=&x\\
+b^+&\le&x^+&\le&\max(0,u_x) b^+\\
+b^-&\le&x^-&\le&|\min(0,l_x)|b^-\\
+&&\color{blue}b^+ + b^- & \le & 1\\
+&&b^+,b^-&\in&\BB
+\end{array}\label{eqn:conditionals}
+\end{equation*}
+
+\hrule
+\smallskip
+\small
+\begin{minipage}{0.45\textwidth}
+\begin{tabular}{ll}
+\color{blue}$x^+$&positiver Anteil von $x$\\
+\color{blue}$x^-$&negativer Anteil von $x$\\
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{tabular}{ll}
+\color{blue}$b^+$&Indikator für $x>0$\\
+\color{blue}$b^-$&Indikator für $x<0$\\
+\end{tabular}
+\end{minipage}
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Implementierung 2 
+%-------------------------------------------------------------------------
+\begin{slide}
+\sffamily
+{\color{blue}Modellierung der erweiterten Funktionen}
+
+\medskip
+\hrule
+
+\smallskip
+%Die folgenden Funktionen und Relationen können wie folgt modelliert werden:
+
+\begin{minipage}{0.4\textwidth}
+$$
+\begin{array}{lcl}
+\abs(x)   & = & x^+ + x^-\\
+\sgn(x)   & = & b^+ - b^-\\
+\min(v,w) & = & w - x^-\\
+\max(v,w) & = & x^+ + w\\
+\end{array}
+$$
+\end{minipage}\hfill
+\begin{minipage}{0.5\textwidth}
+$$
+\begin{array}{lcl}
+v\neq w   & \Leftrightarrow & b^+ + b^- = 1\\
+v =   w   & \Leftrightarrow & b^+ + b^- = 0\\
+v \leq  w & \Leftrightarrow & b^+ = 0\\
+v <     w & \Leftrightarrow & b^- = 1\\
+v \geq  w & \Leftrightarrow & b^- = 0\\
+v >     w & \Leftrightarrow & b^+ = 1 
+\end{array}
+$$
+\end{minipage}
+
+\medskip
+wobei 
+$x=v-w$ für $v,w\in\ZZ$ mit $l_x=l_v-u_w$ und $u_x=u_v-l_w$ gilt, falls
+zwei Operanden beteiligt sind.
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% vif
+%-------------------------------------------------------------------------
+\begin{slide}
+\sffamily
+{\color{blue}Modellierung von vif mittels big-M}
+
+\medskip
+\hrule
+
+\bigskip
+Gegeben eine Variable $r\in\{0,1\}$ und eine Bedingung 
+$$\sum a_i x_i\leq b$$ 
+mit $-\infty\leq l_i \leq x_i \leq u_i\leq\infty$ und
+$$U=\sum_{a_i<0} a_i l_{i} + \sum_{a_i>0} a_i u_{i}<\infty$$
+
+Die Bedingung braucht nur dann erfüllt sein, wenn $r=1$:
+
+\begin{equation*}
+\sum a_i x_i + (U-b)r\le U\label{eqn:cond-exec}
+\end{equation*}
+
+\end{slide}
+
+%-------------------------------------------------------------------------
+% Boolesche Operatoren
+%-------------------------------------------------------------------------
+\begin{slide}
+\sffamily
+{\color{blue}Modellierung von booleschen Operatoren}
+
+\medskip
+\hrule
+
+\bigskip
+\begin{minipage}{0.48\textwidth}
+{\color{red}$a$ = $b$ and $c$}
+\begin{equation*}
+\begin{array}{rcl}
+a - b&\le&0\\
+a - c&\le&0\\
+a - b - c&\ge&-1%\\
+%a&=&b \mbox{ and } c\\
+\end{array}
+\label{eqn:modell-and}
+\end{equation*}
+
+{\color{red}$a$ = $b$ or $c$}
+\begin{equation*}
+\begin{array}{rcl}
+a - b&\ge&0\\
+a - c&\ge&0\\
+a - b - c&\le&0%\\
+%a&=&b \mbox{ or } c\\
+\end{array}
+\end{equation*}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+{\color{red}$a$ = not $b$}
+\begin{equation*}
+\begin{array}{rcl}
+a + b&=&1%\\
+%a&=&\neg b\\
+\end{array}
+\end{equation*}
+
+{\color{red}$a$ = $b$ xor $c$}
+\begin{equation*}
+\begin{array}{rcl}
+a - b - c&\le&0\\
+a - b + c&\ge&0\\
+a + b - c&\ge&0\\
+a + b + c&\le&2%\\
+%a&=&b \mbox{ xor } c\\
+\end{array}
+\end{equation*}
+% {\footnotesize Alternative 1}
+% \begin{equation*}
+% a+b+c=2d
+% \end{equation*}
+% {\footnotesize Alternative 2}
+% \begin{equation*}
+% \begin{array}{rcl}
+% x-b+c&=&0\\
+% x-m+n&=&0\\
+% a-m-n&=&0
+% \end{array}
+% \end{equation*}
+%Note, that the polyhedron of the linear relaxation of this alternative
+%formulation has non integral vertices, \eg, $a=b=0$, $c=1$, and $d=0.5$.
+
+\end{minipage}
+\end{slide}

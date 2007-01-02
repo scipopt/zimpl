@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.76 2006/09/18 09:22:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.77 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -75,7 +75,7 @@ extern void yyerror(const char* s);
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
 %token AND OR XOR NOT
-%token SUM MIN MAX ARGMIN ARGMAX
+%token SUM MIN MAX ARGMIN ARGMAX PROD
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
@@ -942,6 +942,9 @@ cfactor
       }
    | SUM idxset DO cproduct %prec '+' {
          $$ = code_new_inst(i_expr_sum, 2, $2, $4);
+      }
+   | PROD idxset DO cproduct %prec '*' {
+         $$ = code_new_inst(i_expr_prod, 2, $2, $4);
       }
    | MIN '(' cexpr_list ')' {
          $$ = code_new_inst(i_expr_min2, 1, $3);

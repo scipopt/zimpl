@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.71 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.72 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -364,7 +364,7 @@ int main(int argc, char* const* argv)
    if (verbose >= VERB_DEBUG)
       prog_print(stderr, prog);
    
-   xlp_alloc(argv[optind]);
+   xlp_alloc(argv[optind], write_mst || write_order);
    xlp_setnamelen(name_length);
    
    prog_execute(prog);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.15 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.16 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -40,7 +40,7 @@
 #endif
 
 /*lint -sem(    xlp_alloc, nulterm(1), 1p) */
-extern void     xlp_alloc(const char* name);
+extern void     xlp_alloc(const char* name, Bool need_startval);
 extern void     xlp_free(void);
 extern void     xlp_stat(void);
 extern void     xlp_scale(void);
@@ -81,6 +81,8 @@ extern void     xlp_addtonzo(Var* var, Con* von, const Numb* numb);
 extern void     xlp_addtocost(Var* var, const Numb* cost);
 extern Bool     xlp_presolve(void);
 extern Bool     xlp_hassos(void);
+/*lint -sem(    xlp_concheck, 1p == 1) */
+extern Bool     xlp_concheck(const Con* con);
 extern void     xlp_setnamelen(int name_len);
 #endif /* _XLPGLUE_H */
 

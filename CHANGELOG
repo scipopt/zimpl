@@ -1,3 +1,11 @@
+ - If a .mst or .ord file is written, the constraints are tested
+   against the given start values and a warning 215 is issued
+   if a constraint is violated.
+
+ - New product operator:
+   prod <i> in I : p[i] 
+   computes the product of all p[i].
+
 2.05 18. Sep 2006 Release
 
  - it is now possible to write just 

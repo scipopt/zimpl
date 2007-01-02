@@ -5,7 +5,7 @@
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
-.B zimp  [ -b ] [ -D
+.B zimpl  [ -b ] [ -D
 .I name=value
 .B ] [ -f ] [ -F
 .I filter

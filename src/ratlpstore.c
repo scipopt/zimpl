@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.25 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.26 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1941,6 +1941,30 @@ Bool lps_has_sos(const Lps* lp)
    assert(lps_valid(lp));
    
    return lp->soss > 0;
+}
+
+Bool lps_con_sumup(const Con* con, mpq_t sum)
+{
+   Bool  usable = TRUE;
+   Nzo*  nzo;
+   mpq_t val;
+
+   mpq_set_si(sum, 0, 1); 
+   mpq_init(val);
+   
+   for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+   {
+      if (nzo->var->class != VAR_BIN && nzo->var->class != VAR_INT)
+      {
+         usable = FALSE;
+         break;
+      }
+      mpq_mul(val, nzo->value, nzo->var->startval);
+      mpq_add(sum, sum, val);
+   }
+   mpq_clear(val);
+
+   return usable;
 }
 
 /* ------------------------------------------------------------------------- */

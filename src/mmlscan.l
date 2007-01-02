@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.46 2006/06/14 12:30:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.47 2007/01/02 10:54:31 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -97,6 +97,7 @@ static int        yydecl    = 0;
 "<>"                      { yycolumn += yyleng; return EMPTY_TUPLE; }
 "{}"                      { yycolumn += yyleng; return EMPTY_SET; }
 "sum"                     { yycolumn += yyleng; return SUM; }
+"prod"                    { yycolumn += yyleng; return PROD; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
 "exists"                  { yycolumn += yyleng; return EXISTS; }
 "vif"                     { yycolumn += yyleng; return VIF; }

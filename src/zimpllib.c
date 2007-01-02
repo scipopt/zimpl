@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.12 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.13 2007/01/02 10:54:31 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -175,7 +175,7 @@ Bool zpl_read(const char* filename)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         xlp_alloc(filename);
+         xlp_alloc(filename, FALSE);
 
          prog_execute(prog);
 
@@ -293,7 +293,7 @@ Bool zpl_read_with_args(int argc, char** argv)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         xlp_alloc(argv[optind]);
+         xlp_alloc(argv[optind], FALSE);
 
          prog_execute(prog);
 
