@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.6 2006/06/08 10:26:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.7 2007/01/24 15:57:37 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -34,7 +34,9 @@
 #include <fcntl.h>
 
 #ifndef _lint
+#ifndef WITHOUT_ZLIB
 #include <zlib.h>
+#endif
 #else
 #include "lint.h"
 #endif /* _lint */
@@ -47,7 +49,14 @@
 typedef struct strg_file     StrgFile;
 typedef enum file_type       FileType;
 
-enum file_type { MFP_ERR, MFP_STRG, MFP_FILE, MFP_ZLIB };
+enum file_type { 
+  MFP_ERR, 
+  MFP_STRG, 
+  MFP_FILE
+#ifndef WITHOUT_ZLIB
+  , MFP_ZLIB
+#endif /* ! WITHOUT_ZLIB */
+ };
 
 #define STRGFILE_SID  0x53544649
 #define MFP_SID       0x4d46505f
@@ -72,7 +81,9 @@ struct meta_file_ptr
    {
       StrgFile* strg;
       FILE*     file;
+#ifndef WITHOUT_ZLIB
       gzFile    zlib;
+#endif /* ! WITHOUT_ZLIB */
    } fp;
 };
 
@@ -263,9 +274,11 @@ void mio_close(MFP* mfp)
    case MFP_FILE :
       fclose(mfp->fp.file);
       break;
+#ifndef WITHOUT_ZLIB
    case MFP_ZLIB :
       gzclose(mfp->fp.zlib);
       break;
+#endif /* ! WITHOUT_ZLIB */
    default :
       abort();
    }
@@ -288,9 +301,11 @@ int mio_getc(const MFP* mfp)
    case MFP_FILE :
       c = fgetc(mfp->fp.file);
       break;
+#ifndef WITHOUT_ZLIB
    case MFP_ZLIB :
       c = gzgetc(mfp->fp.zlib);
       break;
+#endif /* ! WITHOUT_ZLIB */
    default :
       abort();
    }
@@ -311,9 +326,11 @@ char* mio_gets(const MFP* mfp, char* buf, int len)
    case MFP_FILE :
       s = fgets(buf, len, mfp->fp.file);
       break;
+#ifndef WITHOUT_ZLIB
    case MFP_ZLIB :
       s = gzgets(mfp->fp.zlib, buf, len);
       break;
+#endif /* ! WITHOUT_ZLIB */
    default :
       abort();
    }
@@ -357,7 +374,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.6 2006/06/08 10:26:53 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.7 2007/01/24 15:57:37 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"
