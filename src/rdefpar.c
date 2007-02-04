@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rdefpar.c,v 1.7 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rdefpar.c,v 1.8 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -60,23 +60,23 @@ struct read_definition
 {
    SID
    const char* filename;
-   const char* template;
-   const char* comment;
+   const char* pattern;  /* this was named "template", but template */   
+   const char* comment;  /* is a C++ reserved word */
    int         use;
    int         skip;
    int         refc;
 };
 
-RDef* rdef_new(const char* filename, const char* template)
+RDef* rdef_new(const char* filename, const char* pattern)
 {
    RDef* rdef = calloc(1, sizeof(*rdef));
 
    assert(filename != NULL);
-   assert(template != NULL);
+   assert(pattern  != NULL);
    assert(rdef     != NULL);
    
    rdef->filename = filename;
-   rdef->template = template;
+   rdef->pattern  = pattern;
    rdef->comment  = str_new("");
    rdef->skip     = 0;
    rdef->use      = -1;
@@ -108,7 +108,7 @@ Bool rdef_is_valid(const RDef* rdef)
    return ((rdef != NULL)
       && SID_ok(rdef, RDEF_SID)
       && (rdef->filename != NULL)
-      && (rdef->template != NULL)
+      && (rdef->pattern  != NULL)
       && (rdef->comment  != NULL));
 }
 
@@ -152,11 +152,11 @@ const char* rdef_get_filename(const RDef* rdef)
    return rdef->filename;
 }
 
-const char* rdef_get_template(const RDef* rdef)
+const char* rdef_get_pattern(const RDef* rdef)
 {
    assert(rdef_is_valid(rdef));
    
-   return rdef->template;
+   return rdef->pattern;
 }
 
 const char* rdef_get_comment(const RDef* rdef)

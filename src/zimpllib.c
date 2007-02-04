@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.13 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.14 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -166,7 +166,7 @@ Bool zpl_read(const char* filename)
    
       prog = prog_new();
 
-      prog_load(prog, filename);
+      prog_load(prog, NULL, filename);
 
       if (prog_is_empty(prog))
          fprintf(stderr, "*** Error 168: No program statements to execute\n");
@@ -204,7 +204,7 @@ Bool zpl_read(const char* filename)
 
 Bool zpl_read_with_args(int argc, char** argv)
 {
-   const char* options = "D:sv:";
+   const char* options = "D:mP:sv:";
 
    unsigned long seed = 13021967UL;
    char**        param_table;
@@ -214,6 +214,8 @@ Bool zpl_read_with_args(int argc, char** argv)
    Prog*         prog = NULL;
    Set*          set;
    Bool          ret = FALSE;
+   char*         inppipe = NULL;
+   Bool          use_startval = FALSE;
    
    yydebug       = 0;
    yy_flex_debug = 0;
@@ -238,6 +240,12 @@ Bool zpl_read_with_args(int argc, char** argv)
             printf("Parameter %d [%s]\n", param_count, param_table[param_count]);
 
          param_count++;
+         break;
+      case 'm' :
+         use_startval = TRUE;
+         break;
+      case 'P' :
+         inppipe = strdup(optarg);
          break;
       case 's' :
          seed = (unsigned long)atol(optarg);
@@ -284,7 +292,7 @@ Bool zpl_read_with_args(int argc, char** argv)
       prog = prog_new();
 
       for(i = optind; i < argc; i++)
-         prog_load(prog, argv[i]);
+         prog_load(prog, inppipe, argv[i]);
 
       if (prog_is_empty(prog))
          fprintf(stderr, "*** Error 168: No program statements to execute\n");
@@ -293,7 +301,7 @@ Bool zpl_read_with_args(int argc, char** argv)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         xlp_alloc(argv[optind], FALSE);
+         xlp_alloc(argv[optind], use_startval);
 
          prog_execute(prog);
 
@@ -306,6 +314,9 @@ Bool zpl_read_with_args(int argc, char** argv)
 
    /* Now clean up. 
     */
+   if (inppipe != NULL)
+      free(inppipe);
+   
    for(i = 0; i < param_count; i++)
       free(param_table[i]);
    free(param_table);
@@ -322,6 +333,7 @@ Bool zpl_read_with_args(int argc, char** argv)
    elem_exit();
    numb_exit();
    str_exit();
+
 
    return ret;
 }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.7 2007/01/24 15:57:37 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.8 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -52,7 +52,8 @@ typedef enum file_type       FileType;
 enum file_type { 
   MFP_ERR, 
   MFP_STRG, 
-  MFP_FILE
+  MFP_FILE,
+  MFP_PIPE
 #ifndef WITHOUT_ZLIB
   , MFP_ZLIB
 #endif /* ! WITHOUT_ZLIB */
@@ -207,28 +208,13 @@ MFP* mio_open(const char* name, const char* ext)
    }
    else
    {
-#ifndef WITHOUT_ZLIB
-      int len;
-      
-      /* This seems to be a real file, is it available ?
+      /* Do we have a pipe?
        */
-      if (access(filename, R_OK) != 0)
+      if (*filename == '#')
       {
-         strcat(filename, ext);
+         mfp->type = MFP_PIPE;
 
-         /* If .gz/.zpl also does not work, revert to the old name
-          * to get a better error message.
-          */
-         if (access(filename, R_OK) != 0)
-            strcpy(filename, name);
-      }
-      len = (int)strlen(filename);
-      
-      if (len > 3 && !strcmp(&filename[len - 3], ".gz"))
-      {
-         mfp->type = MFP_ZLIB;
-         
-         if (NULL == (mfp->fp.zlib = gzopen(filename, "r")))
+         if (NULL == (mfp->fp.file = popen(&filename[1], "r")))
          {
             perror(filename);
             free(mfp);
@@ -241,20 +227,56 @@ MFP* mio_open(const char* name, const char* ext)
          }
       }
       else
-#endif /* !WITHOUT_ZLIB */
       {
-         mfp->type = MFP_FILE;
-
-         if (NULL == (mfp->fp.file = fopen(filename, "r")))
+#ifndef WITHOUT_ZLIB
+         int len;
+      
+         /* This seems to be a real file, is it available ?
+          */
+         if (access(filename, R_OK) != 0)
          {
-            perror(filename);
-            free(mfp);
-            mfp = NULL;
+            strcat(filename, ext);
+
+            /* If .gz/.zpl also does not work, revert to the old name
+             * to get a better error message.
+             */
+            if (access(filename, R_OK) != 0)
+               strcpy(filename, name);
+         }
+         len = (int)strlen(filename);
+      
+         if (len > 3 && !strcmp(&filename[len - 3], ".gz"))
+         {
+            mfp->type = MFP_ZLIB;
+         
+            if (NULL == (mfp->fp.zlib = gzopen(filename, "r")))
+            {
+               perror(filename);
+               free(mfp);
+               mfp = NULL;
+            }
+            else
+            {
+               SID_set(mfp, MFP_SID);
+               assert(mfp_is_valid(mfp));
+            }
          }
          else
+#endif /* !WITHOUT_ZLIB */
          {
-            SID_set(mfp, MFP_SID);
-            assert(mfp_is_valid(mfp));
+            mfp->type = MFP_FILE;
+
+            if (NULL == (mfp->fp.file = fopen(filename, "r")))
+            {
+               perror(filename);
+               free(mfp);
+               mfp = NULL;
+            }
+            else
+            {
+               SID_set(mfp, MFP_SID);
+               assert(mfp_is_valid(mfp));
+            }
          }
       }
    }
@@ -273,6 +295,9 @@ void mio_close(MFP* mfp)
       break;
    case MFP_FILE :
       fclose(mfp->fp.file);
+      break;
+   case MFP_PIPE :
+      pclose(mfp->fp.file);
       break;
 #ifndef WITHOUT_ZLIB
    case MFP_ZLIB :
@@ -299,6 +324,7 @@ int mio_getc(const MFP* mfp)
       c = strgfile_getc(mfp->fp.strg);
       break;
    case MFP_FILE :
+   case MFP_PIPE :
       c = fgetc(mfp->fp.file);
       break;
 #ifndef WITHOUT_ZLIB
@@ -309,6 +335,7 @@ int mio_getc(const MFP* mfp)
    default :
       abort();
    }
+   fputc(c, stderr);
    return c;
 }
 
@@ -324,6 +351,7 @@ char* mio_gets(const MFP* mfp, char* buf, int len)
       s = strgfile_gets(mfp->fp.strg, buf, len);
       break;
    case MFP_FILE :
+   case MFP_PIPE :
       s = fgets(buf, len, mfp->fp.file);
       break;
 #ifndef WITHOUT_ZLIB
@@ -374,7 +402,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* progstrg = 
-      "# $Id: metaio.c,v 1.7 2007/01/24 15:57:37 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.8 2007/02/04 20:22:03 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.3 2003/10/08 08:03:05 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.4 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -250,10 +250,10 @@ void hum_write(
       {
          /* Check if we have binaries and/or integers variable
           */
-         if (var->class == VAR_BIN)
+         if (var->vclass == VAR_BIN)
             have_binary = TRUE;
 
-         if (var->class == VAR_INT)
+         if (var->vclass == VAR_INT)
             have_integer = TRUE;
          
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
@@ -281,7 +281,7 @@ void hum_write(
       
       for(var = lp->var_root; var != NULL; var = var->next)
       {
-         if (var->class != VAR_BIN)
+         if (var->vclass != VAR_BIN)
             continue;
 
          if (var->size == 0 && mpq_equal(var->cost, const_zero))
@@ -297,7 +297,7 @@ void hum_write(
       
       for(var = lp->var_root; var != NULL; var = var->next)
       {
-         if (var->class != VAR_INT)
+         if (var->vclass != VAR_INT)
             continue;
 
          if (var->size == 0 && mpq_equal(var->cost, const_zero))

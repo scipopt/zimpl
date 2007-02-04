@@ -1,6 +1,20 @@
+Testen ob empty set/tuple geht, dann
+EMPTY_SET EMPTY_TUPLE aus mmlparse.y mmlscan.l entfernen.
+{} ist die leere Menge. { } nicht.
+
+-P dokumentieren
+
+Vielleicht 195 doch durch eine Warnung ersetzten.
+
+Kommandozeilendefinies überschreiben Defaultwerte für Parameter
+
+Scramble flag das Variablen und Bedingungen permutieren
+
 cplex anbidung.
 
 prod: test, docu
+
+Warning 215 test - Warnung wenn startlösung verletzt.
 
 WITH_ZLIB=1 im Makefile
 

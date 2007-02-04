@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.31 2006/09/18 13:11:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.32 2007/02/04 20:22:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -38,6 +38,47 @@
 #include "mme.h"
 
 #define BUF_EXT 65536
+
+/* cpp leaves comments like
+
+   # 1 "test1.zpl"
+   # 1 "<built-in>"
+   # 1 "<command line>"
+   # 1 "test1.zpl"
+
+   the routine tries to grap the linenumber.
+*/
+static void skip_comment(const MFP* fp, int* lineno)
+{
+   int k = 0;
+   int c;
+   
+   (*lineno)++;
+   
+   do { c = mio_getc(fp); } while(!isdigit(c) && c != EOF && c != '\n');
+
+   while(isdigit(c))
+   {
+      k = 10 * k + c - '0';
+      c = mio_getc(fp);
+   }
+   if (c == ' ')
+   {
+      c = mio_getc(fp);
+
+      if (c == '\"')
+      {
+         c = mio_getc(fp);
+         
+         if (c == '<')
+         {
+            *lineno = k - 1;
+         }
+      }
+   }
+   while(c != EOF && c != '\n')
+      c = mio_getc(fp);
+}
 
 static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
 {
@@ -94,8 +135,9 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
        */
       if (!in_string && (c == '#'))
       {
-         do { c = mio_getc(fp); } while((c != EOF) && (c != '\n'));
-         (*lineno)++;
+         skip_comment(fp, lineno);
+         //do { c = mio_getc(fp); } while((c != EOF) && (c != '\n'));
+         //(*lineno)++;
          continue;
       }
       (*buf)[cnt++] = (char)c;
@@ -180,7 +222,7 @@ static void add_stmt(
    prog_add_stmt(prog, stmt_new(type, filename, lineno, text));
 }
 
-void prog_load(Prog* prog, const char* filename)
+void prog_load(Prog* prog, const char* cmdpipe, const char* filename)
 {
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);
@@ -189,17 +231,27 @@ void prog_load(Prog* prog, const char* filename)
    int   lineno  = 1;
    char  newname [1024];
    char* temp;
+   char* myfilename;
    
    assert(prog     != NULL);
    assert(filename != NULL);
    assert(buf      != NULL);
    assert(filename != NULL);
 
-   if (NULL == (fp = mio_open(filename, ".zpl")))
+   if (cmdpipe == NULL)
+      myfilename = strdup(filename);
+   else
+   {
+      myfilename = malloc(strlen(filename) + strlen(cmdpipe) + 1024);
+      
+      sprintf(&myfilename[1], cmdpipe, filename);
+      myfilename[0] = '#';
+   }
+   if (NULL == (fp = mio_open(myfilename, ".zpl")))
       zpl_exit(EXIT_FAILURE);
 
    if (verbose)
-      printf("Reading %s\n", filename);
+      printf("Reading %s\n", myfilename);
    
    while((s = get_line(&buf, &bufsize, fp, &lineno)) != NULL)
    {
@@ -213,7 +265,7 @@ void prog_load(Prog* prog, const char* filename)
       if (1 == sscanf(s, "include \"%1023[^\"]\"", newname))
       {
          temp = malloc(strlen(filename) + strlen(newname) + 2);
-         prog_load(prog, make_pathname(temp, filename, newname));
+         prog_load(prog, cmdpipe, make_pathname(temp, filename, newname));
          free(temp);
       }
       else
@@ -222,6 +274,7 @@ void prog_load(Prog* prog, const char* filename)
       }
    }
    mio_close(fp);
+   free(myfilename);
    free(buf);
 }
 

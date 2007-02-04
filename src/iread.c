@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.27 2006/09/18 09:22:16 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.28 2007/02/04 20:22:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -50,16 +50,16 @@
 CodeNode* i_read_new(CodeNode* self)
 {
    const char* filename;
-   const char* template;
+   const char* pattern;
    
    Trace("i_read_new");
    
    assert(code_is_valid(self));
 
    filename = code_eval_child_strg(self, 0);
-   template = code_eval_child_strg(self, 1);   
+   pattern  = code_eval_child_strg(self, 1);   
 
-   code_value_rdef(self, rdef_new(filename, template));
+   code_value_rdef(self, rdef_new(filename, pattern));
 
    return self;
 }
@@ -162,9 +162,9 @@ CodeNode* i_read_skip(CodeNode* self)
    return self;
 }
 
-static int parse_template(
+static int parse_pattern(
    const CodeNode* self,
-   const char*     template,
+   const char*     pattern,
    int*            param_field,
    int*            param_type,
    Bool*           is_tuple_list,
@@ -173,7 +173,7 @@ static int parse_template(
 {
    const char* sep = " ,<>";
    
-   char* temp = strdup(template);
+   char* temp = strdup(pattern);
    char* s;
    char* t;
    int   field;
@@ -182,7 +182,7 @@ static int parse_template(
    Bool  is_single_value = FALSE;
    
    assert(self          != NULL);
-   assert(template      != NULL);
+   assert(pattern       != NULL);
    assert(param_field   != NULL);
    assert(param_type    != NULL);
    assert(is_tuple_list != NULL);
@@ -193,7 +193,7 @@ static int parse_template(
    *hi_field_no   = 0;
    
    /* Is this a tuple_list "<1n,2s>" or
-    * an entry_list "<1n,2n> 3s" template
+    * an entry_list "<1n,2n> 3s" pattern
     * or a single value "2n"
     * or a stream "s+" or "n+"
     * or a stream tuple list "<n+>" or "<s+>"
@@ -647,8 +647,8 @@ CodeNode* i_read(CodeNode* self)
    rdef     = code_eval_child_rdef(self, 0);
    use      = rdef_get_use(rdef);
    skip     = rdef_get_skip(rdef);
-   dim      = parse_template(self,
-      rdef_get_template(rdef), param_field, param_type,
+   dim      = parse_pattern(self,
+      rdef_get_pattern(rdef), param_field, param_type,
       &is_tuple_list, &is_streaming, &hi_field_no);
 
    filename = malloc(strlen(rdef_get_filename(rdef)) + 4);

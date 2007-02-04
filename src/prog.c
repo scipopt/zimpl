@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.13 2006/07/13 11:13:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.14 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -161,4 +161,33 @@ void prog_execute(const Prog* prog)
       printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
 
+char* prog_tostr(const Prog* prog, const char* prefix, const char* title)
+{
+   int   len;
+   char* text;
+   int   pos = 0;
+   int   i;
 
+   assert(prog_is_valid(prog));
+   assert(prefix != NULL);
+
+   /* prefix + title + \n
+    * prog->used * (prefix + stmt + \n
+    * \0
+    */
+   len = (prog->used + 1) * (strlen(prefix) + 1) + strlen(title) + 1;
+
+   for(i = 0; i < prog->used; i++)
+      len += strlen(stmt_get_text(prog->stmt[i]));
+
+   text = calloc(len, sizeof(*text));
+
+   pos = sprintf(&text[pos], "%s%s\n", prefix, title);
+   
+   for(i = 0; i < prog->used; i++)
+      pos += sprintf(&text[pos], "%s%s\n", prefix, stmt_get_text(prog->stmt[i]));
+
+   assert(pos + 1 == len);
+   
+   return text;
+}

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.26 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.27 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -923,7 +923,7 @@ Var* lps_addvar(
    v->sid       = VAR_SID;
    v->name      = strdup(name);
    v->number    = lp->vars;
-   v->class     = VAR_CON;
+   v->vclass    = VAR_CON;
    v->type      = VAR_FREE;
    v->state     = VAR_ERR;
    v->priority  = 0;
@@ -1561,15 +1561,15 @@ VarClass lps_getclass(const Var *var)
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
 
-   return var->class;
+   return var->vclass;
 }
 
-void lps_setclass(Var *var, VarClass class)
+void lps_setclass(Var *var, VarClass vclass)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
 
-   var->class = class;
+   var->vclass = vclass;
 }
 
 void lps_getlhs(
@@ -1954,7 +1954,7 @@ Bool lps_con_sumup(const Con* con, mpq_t sum)
    
    for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
    {
-      if (nzo->var->class != VAR_BIN && nzo->var->class != VAR_INT)
+      if (nzo->var->vclass != VAR_BIN && nzo->var->vclass != VAR_INT)
       {
          usable = FALSE;
          break;

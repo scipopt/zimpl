@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.16 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.17 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -44,8 +44,8 @@ extern void     xlp_alloc(const char* name, Bool need_startval);
 extern void     xlp_free(void);
 extern void     xlp_stat(void);
 extern void     xlp_scale(void);
-/*lint -sem(    xlp_write, 1p == 1) */
-extern void     xlp_write(FILE* fp, LpFormat format);
+/*lint -sem(    xlp_write, 1p == 1 && nulterm(3)) */
+extern void     xlp_write(FILE* fp, LpFormat format, const char* title);
 /*lint -sem(    xlp_transtable, 1p == 1) */
 extern void     xlp_transtable(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_orderfile, 1p == 1) */

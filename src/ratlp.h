@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.14 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.15 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -107,7 +107,7 @@ extern void         lps_setupper(Var* var, const mpq_t upper);
 /*lint -sem(        lps_getclass, 1p == 1) */
 extern VarClass     lps_getclass(const Var* var);
 /*lint -sem(        lps_setclass, 1p == 1) */
-extern void         lps_setclass(Var* var, VarClass class);
+extern void         lps_setclass(Var* var, VarClass vclass);
 /*lint -sem(        lps_setlhs, 1p == 1) */
 extern void         lps_setlhs(Con* con, const mpq_t lhs);
 /*lint -sem(        lps_setrhs, 1p == 1) */

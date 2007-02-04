@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.9 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.10 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratordwrite.c                                                 */
@@ -68,7 +68,7 @@ void lps_orderfile(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->class == VAR_CON)
+      if (var->vclass == VAR_CON)
          continue;
 
       if (var->size == 0)

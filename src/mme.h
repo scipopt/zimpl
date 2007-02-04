@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.76 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.77 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -654,7 +654,7 @@ extern Bool         term_is_all_integer(const Term* term);
 /* rdefpar.c
  */
 /*lint -sem(       rdef_new, nulterm(1), nulterm(2), 1p && 2p, @p == 1) */
-extern RDef*       rdef_new(const char* filename, const char* template);
+extern RDef*       rdef_new(const char* filename, const char* pattern);
 /*lint -sem(       rdef_free, custodial(1), 1p == 1) */
 extern void        rdef_free(RDef* rdef);
 /*lint -sem(       rdef_is_valid, 1p == 1) */
@@ -665,8 +665,8 @@ extern RDef*       rdef_copy(const RDef* rdef);
 extern void        rdef_set_param(RDef* rdef, const RPar* rpar);
 /*lint -sem(       rdef_get_filename, 1p == 1, @p && nulterm(@)) */
 extern const char* rdef_get_filename(const RDef* rdef);
-/*lint -sem(       rdef_get_template, 1p == 1, @p && nulterm(@)) */
-extern const char* rdef_get_template(const RDef* rdef);
+/*lint -sem(       rdef_get_pattern, 1p == 1, @p && nulterm(@)) */
+extern const char* rdef_get_pattern(const RDef* rdef);
 /*lint -sem(       rdef_get_comment, 1p == 1, @p && nulterm(@)) */
 extern const char* rdef_get_comment(const RDef* rdef);
 /*lint -sem(       rdef_get_use, 1p == 1) */
@@ -738,11 +738,13 @@ extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 extern void         prog_print(FILE* fp, const Prog* prog);
 /*lint -sem(        prog_execute, 1p == 1) */
 extern void         prog_execute(const Prog* prog);
+/*lint -sem(        prog_tostr, 1p == 1 && nulterm(2), nulterm(@)) */
+extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title);
 
 /* load.c
  */
-/*lint -sem(        prog_load, nulterm(2), 1p == 1 && 2p) */
-extern void         prog_load(Prog* prog, const char* filename);
+/*lint -sem(        prog_load, nulterm(3), 1p == 1) */
+extern void         prog_load(Prog* prog, const char* cmd, const char* filename);
 
 /* source.c
  */

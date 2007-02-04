@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.10 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.11 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -89,7 +89,7 @@ static void write_vars(
 
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      if (var->class != varclass)
+      if (var->vclass != varclass)
          continue;
 
       /* Only variables with a cost not equal zero, need to be included
@@ -159,7 +159,7 @@ void mps_write(
    mpq_init(temp);
 
    if (text != NULL)
-      fprintf(fp, "* %s\n", text);
+      fprintf(fp, "%s", text);
    
    fprintf(fp, "NAME        %8.8s\n", lp->name);
    fprintf(fp, "ROWS\n");

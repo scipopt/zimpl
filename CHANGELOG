@@ -1,3 +1,17 @@
+ - "{ }", "{  }", etc are now recognised as empty sets,
+   not only "{}". Same for "<>".
+
+ - The Zimpl-model is writte to the LP files as a comment.
+
+ - It is now possible to have the output of a command as
+   input to Zimpl.
+      zimpl -P "cpp -DXXX=7 %s" test1.zpl
+   will run test1.zpl through cpp with option -DXXX=7 and
+   give the output to Zimpl. 
+
+ - A warning 215 is issued if the given start values violate a 
+   constraint.
+
  - If a .mst or .ord file is written, the constraints are tested
    against the given start values and a warning 215 is issued
    if a constraint is violated.

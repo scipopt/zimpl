@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.11 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.12 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -117,7 +117,7 @@ void lpf_write(
    assert(name != NULL);
    
    if (text != NULL)
-      fprintf(fp, "\\%s\n", text);   
+      fprintf(fp, "%s", text);   
       
    fprintf(fp, "\\Problem name: %s\n", lp->name);   
    fprintf(fp, "%s\n", (lp->direct == LP_MIN) ? "Minimize" : "Maximize");
@@ -217,10 +217,10 @@ void lpf_write(
       {
          /* Check if we have binaries and/or integers variable
           */
-         if (var->class == VAR_BIN)
+         if (var->vclass == VAR_BIN)
             have_binary = TRUE;
 
-         if (var->class == VAR_INT)
+         if (var->vclass == VAR_INT)
             have_integer = TRUE;
          
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
@@ -245,7 +245,7 @@ void lpf_write(
       
       for(var = lp->var_root; var != NULL; var = var->next)
       {
-         if (var->class != VAR_BIN)
+         if (var->vclass != VAR_BIN)
             continue;
 
          if (var->size == 0 && mpq_equal(var->cost, const_zero))
@@ -262,7 +262,7 @@ void lpf_write(
       
       for(var = lp->var_root; var != NULL; var = var->next)
       {
-         if (var->class != VAR_INT)
+         if (var->vclass != VAR_INT)
             continue;
 
          if (var->size == 0 && mpq_equal(var->cost, const_zero))

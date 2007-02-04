@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.12 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.13 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -55,7 +55,7 @@ struct variable
    unsigned int sid;
    char*        name;
    int          number;
-   VarClass     class;
+   VarClass     vclass;
    VarType      type;
    VarState     state;
    int          size;

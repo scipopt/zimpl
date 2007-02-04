@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.24 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.25 2007/02/04 20:22:03 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -61,11 +61,11 @@ void xlp_scale()
    lps_scale(lp);
 }
 
-void xlp_write(FILE* fp, LpFormat format)
+void xlp_write(FILE* fp, LpFormat format, const char* text)
 {
    assert(fp != NULL);
    
-   lps_write(lp, fp, format, title);
+   lps_write(lp, fp, format, text);
 }
 
 void xlp_transtable(FILE* fp, LpFormat format)
