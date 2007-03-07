@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: strstore.c,v 1.8 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore.c,v 1.9 2007/03/07 09:41:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore.c                                                    */
@@ -82,6 +82,9 @@ void str_exit(void)
 
 unsigned int str_hash(const char* s)
 {
+#if 0
+   return (unsigned int)s;
+#else
    unsigned int sum;
    int          i;
    
@@ -89,5 +92,6 @@ unsigned int str_hash(const char* s)
       sum = sum * 31 + s[i];
 
    return sum;
+#endif
 }
 

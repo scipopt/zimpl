@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.24 2006/06/16 08:24:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.25 2007/03/07 09:41:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -749,9 +749,6 @@ Bool numb_is_number(const char *s)
    if (*s != '+' && *s != '-' && *s != '.')
       return FALSE;
 
-   if (*s == '\0')
-      return FALSE;
-
    s++;
 
    /* -5 or .6 ! */
@@ -762,9 +759,6 @@ Bool numb_is_number(const char *s)
    if (*s != '.')
       return FALSE;
    
-   if (*s == '\0')
-      return FALSE;
-
    s++;
    
    return isdigit(*s);

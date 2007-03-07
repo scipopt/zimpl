@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setpseudo.c,v 1.1 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setpseudo.c,v 1.2 2007/03/07 09:41:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setpseudo.c                                                    */
@@ -126,10 +126,7 @@ static int set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    assert(offset == 0);
    assert(tuple_get_dim(tuple) == 0);
 
-   if (tuple_get_dim(tuple) == 0)
-      return 0;
-   
-   return -1;
+   return 0;
 }
 
 /* ------------------------------------------------------------------------- 

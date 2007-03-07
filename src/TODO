@@ -1,3 +1,8 @@
+set J := { 1 to max(I)+1 };
+Man muss statt dessen schreiben
+set J := { 1 to (max(I))+1 };
+
+
 Testen ob empty set/tuple geht, dann
 EMPTY_SET EMPTY_TUPLE aus mmlparse.y mmlscan.l entfernen.
 {} ist die leere Menge. { } nicht.

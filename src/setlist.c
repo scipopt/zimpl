@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.11 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.12 2007/03/07 09:41:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -49,17 +49,20 @@ static Bool set_list_is_valid(const Set* set)
 {
    int i;
 
+   if (set == NULL
+      || !SID_ok2(set->list, SET_LIST_SID)
+      || set->head.refc    <= 0
+      || set->head.dim     != 1
+      || set->head.members <  0
+      || set->list.size    <  set->head.members
+      || set->list.member  == NULL)
+      return FALSE;
+   
    for(i = 0; i < set->head.members; i++)
       if (!elem_is_valid(set->list.member[i]))
          return FALSE;
 
-   return set != NULL
-      && SID_ok2(set->list, SET_LIST_SID)
-      && set->head.refc    >  0
-      && set->head.dim     == 1
-      && set->head.members >= 0
-      && set->list.size    >= set->head.members
-      && set->list.member  != NULL;
+   return TRUE;
 }
 
 static Bool set_list_iter_is_valid(const SetIter*iter)

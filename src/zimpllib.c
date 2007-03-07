@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.14 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.15 2007/03/07 09:41:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -263,6 +263,8 @@ Bool zpl_read_with_args(int argc, char** argv)
    if ((argc - optind) < 1)
    {
       fprintf(stderr, "Filename missing\n");
+      free(param_table);
+
       return FALSE;
    }
 
