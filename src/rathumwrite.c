@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.4 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.5 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -171,7 +171,6 @@ void hum_write(
 {
    const Var* var;
    const Con* con;
-   Bool  have_binary   = FALSE;
    Bool  have_integer  = FALSE;
    int   cnt;
    
@@ -248,11 +247,8 @@ void hum_write(
       }
       else
       {
-         /* Check if we have binaries and/or integers variable
+         /* Check if we have integer variables
           */
-         if (var->vclass == VAR_BIN)
-            have_binary = TRUE;
-
          if (var->vclass == VAR_INT)
             have_integer = TRUE;
          
@@ -275,22 +271,6 @@ void hum_write(
 
    /* ---------------------------------------------------------------------- */
 
-   if (have_binary)
-   {
-      fprintf(fp, "Binary\n");
-      
-      for(var = lp->var_root; var != NULL; var = var->next)
-      {
-         if (var->vclass != VAR_BIN)
-            continue;
-
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
-            continue;
-
-         write_name(fp, var->name);
-         fputc('\n', fp);
-      }
-   }
    if (have_integer)
    {
       fprintf(fp, "General\n");

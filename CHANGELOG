@@ -1,3 +1,5 @@
+ - Implemented "implicit" for binary and integer variables.
+
  - "{ }", "{  }", etc are now recognised as empty sets,
    not only "{}". Same for "<>".
 

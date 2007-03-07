@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.27 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.28 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1954,7 +1954,7 @@ Bool lps_con_sumup(const Con* con, mpq_t sum)
    
    for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
    {
-      if (nzo->var->vclass != VAR_BIN && nzo->var->vclass != VAR_INT)
+      if (nzo->var->vclass != VAR_INT)
       {
          usable = FALSE;
          break;

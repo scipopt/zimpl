@@ -1,4 +1,4 @@
-/* $Id: zcplex.c,v 1.1 2007/02/04 20:22:02 bzfkocht Exp $ */
+/* $Id: zcplex.c,v 1.2 2007/03/07 12:26:29 bzfkocht Exp $ */
 /*
    gcc -g -O -Wall -Wno-unknown-pragmas -I../src -I /opt/ilog/cplex100/include/ilcplex/ zcplex.c -L ../lib -lzimpl-2.06b.linux.x86.gnu.dbg -L /opt/ilog/cplex100/lib/x86_RHEL3.0_3.2/static_pic -lcplex -lpthread -lgmp -lm -lz
 */
@@ -20,6 +20,10 @@
 static CPXENVptr env          = NULL;
 static CPXLPptr  lp           = NULL;
 static Bool      use_startval = FALSE;
+static int       cols   = 0;
+static char**    cname  = NULL;
+static char*     cstore = NULL;
+static int       solno  = 0;
 
 static char*     rownam = NULL;
 static double    rowrhs = 0.0;
@@ -121,6 +125,13 @@ void xlp_alloc(const char* name, Bool need_startval)
    conname_format(CON_FORM_FULL);
 
    use_startval = need_startval;
+
+   rowmax = 1000;
+   rowidx = malloc(rowmax * sizeof(*rowidx));
+   rowval = malloc(rowmax * sizeof(*rowval));
+
+   assert(rowidx != NULL);
+   assert(rowval != NULL);
 }
 
 void xlp_free()
@@ -566,30 +577,68 @@ Bool xlp_concheck(const Con* con)
    return TRUE;
 }
 
+static void write_solution(FILE* fp, double objval, int columns, double* x, char** colname)
+{
+   int i;
+   
+   fprintf(fp, "Objective: %f\n", objval);
+
+   for(i = 0; i < columns; i++)
+   {
+      /* Only show variables unequal zero
+       */
+      if (fabs(x[i]) > 1e-12)
+      {
+         /* Only show non-internal variables
+          */
+         if (*cname[i] != '@')
+            fprintf(fp, "%s %f\n", colname[i], x[i]);
+      }
+   }   
+}
+
+int my_incumbent_cb(
+   CPXCENVptr p_env,
+   void*      cbdata,
+   int        wherefrom,
+   void*      cbhandle,
+   double     objval,
+   double*    x,
+   int*       isfeas_p,
+   int*       useraction_p)
+{
+   char  filename[1024];
+   FILE* fp;
+   
+   assert(p_env        != NULL);
+   assert(x            != NULL);
+   assert(isfeas_p     != NULL);
+   assert(useraction_p != NULL);
+
+   sprintf(filename, "solution.%05d.txt", ++solno);
+   
+   if (NULL == (fp = fopen(filename, "w")))
+      perror(filename);
+   else
+   {
+      write_solution(fp, objval, cols, x, cname);
+      
+      fclose(fp);
+   }
+   *isfeas_p     = 1;
+   *useraction_p =  CPX_CALLBACK_SET;
+
+   return 0;
+}
+
 void cplex_optimize()
 {
    char    statstrg[1024];
-   int     cols;
-   int     i;
    double* x;
-   char**  cname;
-   char*   cstore;
    int     cspace;
    int     surplus;
    int     statind;
-   
-   check_status(CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON));
-
-   if (use_startval)
-      check_status(CPXsetintparam(env, CPX_PARAM_ADVIND, 1));
-
-   check_status(CPXwriteprob(env, lp, "zcplex.lp", NULL));
-
-   check_status(CPXmipopt(env, lp));
-
-   statind = CPXgetstat (env, lp);
-   
-   printf("# Status: %d %s\n", statind, CPXgetstatstring(env, statind, statstrg));
+   double  objval;
    
    cols   = CPXgetnumcols(env, lp);
    x      = calloc(cols, sizeof(*x));
@@ -602,21 +651,27 @@ void cplex_optimize()
    assert(cstore != NULL);
    
    check_status(CPXgetcolname(env, lp, cname, cstore, cspace, &surplus, 0, cols - 1));
+   check_status(CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON));
+   check_status(CPXsetintparam(env, CPX_PARAM_MIPCBREDLP, CPX_OFF));
+   check_status(CPXsetincumbentcallbackfunc(env, my_incumbent_cb, NULL));
 
-   check_status(CPXgetx(env, lp, x, 0, cols - 1));
+   if (use_startval)
+      check_status(CPXsetintparam(env, CPX_PARAM_ADVIND, 1));
 
-   for(i = 0; i < cols; i++)
-   {
-      /* Only show variables unequal zero
-       */
-      if (fabs(x[i]) > 1e-14)
-      {
-         /* Only show non-internal variables
-          */
-         if (*cname[i] != '@')
-            printf("%s %f\n", cname[i], x[i]);
-      }
-   }   
+   check_status(CPXwriteprob(env, lp, "zcplex.lp", NULL));
+
+   check_status(CPXmipopt(env, lp));
+
+   statind = CPXgetstat(env, lp);
+
+   printf("# Status: %d %s\n", statind, CPXgetstatstring(env, statind, statstrg));
+   
+   (void)CPXgetobjval(env, lp, &objval);
+   
+   (void)CPXgetx(env, lp, x, 0, cols - 1);
+
+   write_solution(stdout, objval, cols, x, cname);
+
    free(cstore);
    free(cname);
    free(x);
@@ -638,4 +693,6 @@ int main(
    
    return 0;
 }
+
+
 

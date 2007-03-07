@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.11 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.12 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -204,11 +204,11 @@ void mps_write(
       fprintf(fp, "    MARK0000  'MARKER'                 'INTORG'\n");
 
       write_vars(lp, fp, VAR_INT, name_size);
-      write_vars(lp, fp, VAR_BIN, name_size);
 
       fprintf(fp, "    MARK0001  'MARKER'                 'INTEND'\n");
    }
    write_vars(lp, fp, VAR_CON, name_size);
+   write_vars(lp, fp, VAR_IMP, name_size);
 
    fprintf(fp, "RHS\n");
    

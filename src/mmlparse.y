@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.78 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.79 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -70,7 +70,7 @@ extern void yyerror(const char* s);
 
 %token DECLSET DECLPAR DECLVAR DECLMIN DECLMAX DECLSUB DECLSOS
 %token DEFNUMB DEFSTRG DEFBOOL DEFSET PRINT CHECK
-%token BINARY INTEGER REAL
+%token BINARY INTEGER REAL IMPLICIT
 %token ASGN DO WITH IN TO UNTIL BY FORALL EMPTY_TUPLE EMPTY_SET EXISTS
 %token PRIORITY STARTVAL DEFAULT
 %token CMP_LE CMP_GE CMP_EQ CMP_LT CMP_GT CMP_NE INFTY
@@ -277,43 +277,79 @@ par_default
  * ----------------------------------------------------------------------------
  */
 decl_var
-   : DECLVAR NAME '[' idxset ']' var_type lower upper priority startval ';' {
+   : DECLVAR NAME '[' idxset ']' var_type lower upper ';' {
          $$ = code_new_inst(i_newsym_var, 7,
-            code_new_name($2), $4, $6, $7, $8, $9, $10);
+            code_new_name($2),
+            $4, $6, $7, $8,
+            code_new_numb(numb_new_integer(0)),
+            code_new_numb(numb_new_integer(0)));
+      }
+   | DECLVAR NAME var_type lower upper ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
+            $3, $4, $5,
+            code_new_numb(numb_new_integer(0)),
+            code_new_numb(numb_new_integer(0)));
+      }
+   | DECLVAR NAME '[' idxset ']' IMPLICIT BINARY ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            $4,
+            code_new_varclass(VAR_IMP),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
+            code_new_numb(numb_new_integer(0)),
+            code_new_numb(numb_new_integer(0)));
+      }
+   | DECLVAR NAME IMPLICIT BINARY ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
+            code_new_varclass(VAR_IMP),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
+            code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
+            code_new_numb(numb_new_integer(0)),
+            code_new_numb(numb_new_integer(0)));
       }
    | DECLVAR NAME '[' idxset ']' BINARY priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
             $4,
-            code_new_varclass(VAR_BIN),
+            code_new_varclass(VAR_INT),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
             $7, $8);
-      }
-   | DECLVAR NAME var_type lower upper priority startval ';' {
-         $$ = code_new_inst(i_newsym_var, 7,
-            code_new_name($2),
-            code_new_inst(i_idxset_pseudo_new, 1,
-               code_new_inst(i_bool_true, 0)),              
-            $3, $4, $5, $6, $7);
       }
    | DECLVAR NAME BINARY priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
             code_new_inst(i_idxset_pseudo_new, 1,
                code_new_inst(i_bool_true, 0)),              
-            code_new_varclass(VAR_BIN),
+            code_new_varclass(VAR_INT),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
             $4, $5);
+      }
+   | DECLVAR NAME '[' idxset ']' INTEGER lower upper priority startval ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2), $4, code_new_varclass(VAR_INT), $7, $8, $9, $10);
+      }
+   | DECLVAR NAME INTEGER lower upper priority startval ';' {
+         $$ = code_new_inst(i_newsym_var, 7,
+            code_new_name($2),
+            code_new_inst(i_idxset_pseudo_new, 1,
+               code_new_inst(i_bool_true, 0)),              
+            code_new_varclass(VAR_INT), $4, $5, $6, $7);
       }
    ;
 
 var_type
    : /* empty */      { $$ = code_new_varclass(VAR_CON); }
    | REAL             { $$ = code_new_varclass(VAR_CON); }
-   | INTEGER          { $$ = code_new_varclass(VAR_INT); }
-/* | BINARY  not needed due to different syntax because no bounds are allowed. */
+   | IMPLICIT INTEGER { $$ = code_new_varclass(VAR_IMP); }
    ;
 
 lower

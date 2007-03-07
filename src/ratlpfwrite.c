@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.12 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.13 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -215,11 +215,8 @@ void lpf_write(
          fprintf(fp, " %s = %.15g\n", name, mpq_get_d(var->lower));
       else
       {
-         /* Check if we have binaries and/or integers variable
+         /* Check if we have integer variables
           */
-         if (var->vclass == VAR_BIN)
-            have_binary = TRUE;
-
          if (var->vclass == VAR_INT)
             have_integer = TRUE;
          
@@ -239,6 +236,10 @@ void lpf_write(
 
    /* ---------------------------------------------------------------------- */
 
+#ifdef NOT_NEEDED_ANYMORE
+   /* Binary section makes only sense if we then omit the variables from the
+    * bounds section to decrease file size
+    */
    if (have_binary)
    {
       fprintf(fp, "Binary\n");
@@ -256,6 +257,7 @@ void lpf_write(
          fprintf(fp, " %s\n", name);
       }
    }
+#endif
    if (have_integer)
    {
       fprintf(fp, "General\n");

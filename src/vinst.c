@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.19 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.20 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -310,12 +310,12 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    if (fixed != VBOOL_OPEN)
    {
       if (fixed == VBOOL_TRUE)
-         entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_one, bound_one);
+         entry_result = create_new_var_entry(cname, "_re", VAR_INT, bound_one, bound_one);
       else
       {
          assert(fixed == VBOOL_FALSE);
 
-         entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_zero);
+         entry_result = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_zero);
       }
       if (stmt_trigger_warning(178))
       {
@@ -354,9 +354,9 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
        */
       entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
       entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
-      entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
-      entry_bminus = create_new_var_entry(cname, "_bm", VAR_BIN, bound_zero, bound_one);
-      entry_result = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+      entry_bplus  = create_new_var_entry(cname, "_bp", VAR_INT, bound_zero, bound_one);
+      entry_bminus = create_new_var_entry(cname, "_bm", VAR_INT, bound_zero, bound_one);
+      entry_result = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_one);
 
       /* add term = x^+ + x^-
        */
@@ -558,7 +558,7 @@ CodeNode* i_vbool_and(CodeNode* self)
    assert(term_get_elements(term_a) == 1);
    assert(term_get_elements(term_b) == 1);
 
-   entry_result  = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+   entry_result  = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_one);
 
    /* ------------------------------------- */
 
@@ -621,7 +621,7 @@ CodeNode* i_vbool_or(CodeNode* self)
    assert(term_get_elements(term_a) == 1);
    assert(term_get_elements(term_b) == 1);
 
-   entry_result  = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+   entry_result  = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_one);
 
    /* ------------------------------------- */
 
@@ -685,7 +685,7 @@ CodeNode* i_vbool_xor(CodeNode* self)
    assert(term_get_elements(term_a) == 1);
    assert(term_get_elements(term_b) == 1);
 
-   entry_result  = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+   entry_result  = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_one);
 
    /* ------------------------------------- */
 
@@ -752,7 +752,7 @@ CodeNode* i_vbool_not(CodeNode* self)
 
    assert(term_get_elements(term_a) == 1);
 
-   entry_result  = create_new_var_entry(cname, "_re", VAR_BIN, bound_zero, bound_one);
+   entry_result  = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bound_one);
 
    /* ------------------------------------- */
 
@@ -1038,7 +1038,7 @@ CodeNode* i_vabs(CodeNode* self)
     */
    entry_xplus  = create_new_var_entry(cname, "_xp", VAR_INT, bound_zero, upper);
    entry_xminus = create_new_var_entry(cname, "_xm", VAR_INT, bound_zero, lower);
-   entry_bplus  = create_new_var_entry(cname, "_bp", VAR_BIN, bound_zero, bound_one);
+   entry_bplus  = create_new_var_entry(cname, "_bp", VAR_INT, bound_zero, bound_one);
    entry_result = create_new_var_entry(cname, "_re", VAR_INT, bound_zero, bigger);
 
    /* add term = x^+ + x^-

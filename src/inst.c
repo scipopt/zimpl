@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.108 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.109 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3010,7 +3010,6 @@ CodeNode* i_newsym_var(CodeNode* self)
    Tuple*        tuple;
    const Tuple*  pattern;
    VarClass      varclass;
-   VarClass      usevarclass;
    Var*          var;
    SetIter*      iter;
    Bound*        lower;
@@ -3043,14 +3042,6 @@ CodeNode* i_newsym_var(CodeNode* self)
       upper       = bound_copy(code_eval_child_bound(self, 4));
       priority    = code_eval_child_numb(self, 5);
       startval    = code_eval_child_numb(self, 6);
-      usevarclass = varclass;
-
-      /* If it is a binary variable the bounds have to be 0 and 1.
-       */
-      assert(varclass != VAR_BIN || bound_get_type(lower) == BOUND_VALUE);
-      assert(varclass != VAR_BIN || bound_get_type(upper) == BOUND_VALUE);
-      assert(varclass != VAR_BIN || numb_equal(bound_get_value(lower), numb_zero()));
-      assert(varclass != VAR_BIN || numb_equal(bound_get_value(upper), numb_one()));
 
       if (bound_get_type(lower) == BOUND_INFTY)
       {
@@ -3072,14 +3063,14 @@ CodeNode* i_newsym_var(CodeNode* self)
                "--- Warning 137: Upper bound for var %s set to -infinity -- ignored\n",
                name);
       }
-
-      if ((varclass == VAR_CON)
+#ifdef NOT_POSSIBLE_ANYMORE
+      if ((varclass == VAR_CON || varclass == VAR_IMP_BIN || varclass == VAR_IMP_INT)
          && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
          if (stmt_trigger_warning(138))
             fprintf(stderr,
-               "--- Warning 138: Priority/Startval for continous var %s ignored\n",
+               "--- Warning 138: Priority/Startval for continous or implicit integer var %s ignored\n",
                name);
-      
+#endif
       /* Integral bounds for integral variables ?
        */
       if (varclass != VAR_CON)
@@ -3127,15 +3118,6 @@ CodeNode* i_newsym_var(CodeNode* self)
             numb_free(temp);
          }
       }
-      if (varclass == VAR_INT
-         && bound_get_type(lower) == BOUND_VALUE
-         && bound_get_type(upper) == BOUND_VALUE
-         && numb_equal(bound_get_value(lower), numb_zero())
-         && numb_equal(bound_get_value(upper), numb_one()))
-      {
-         usevarclass = VAR_BIN;
-      }
-
       if (  bound_get_type(lower) == BOUND_VALUE
          && bound_get_type(upper) == BOUND_VALUE
          && numb_cmp(bound_get_value(lower), bound_get_value(upper)) > 0)
@@ -3160,7 +3142,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = xlp_addvar(varname, usevarclass, lower, upper, priority, startval);
+      var = xlp_addvar(varname, varclass, lower, upper, priority, startval);
 
       symbol_add_entry(sym, entry_new_var(tuple, var));
 

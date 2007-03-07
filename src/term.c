@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.26 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.27 2007/03/07 12:26:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -500,7 +500,7 @@ Bool term_is_all_integer(const Term* term)
    {
       vc = xlp_getclass(entry_get_var(term->elem[i].entry));
 
-      if (vc != VAR_BIN && vc != VAR_INT)
+      if (vc != VAR_INT && vc != VAR_IMP)
          return FALSE;
    }
    return TRUE;
