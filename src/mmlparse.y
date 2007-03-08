@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.79 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.80 2007/03/08 20:32:15 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -358,12 +358,32 @@ lower
       }
    | CMP_GE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_GE '-' INFTY  { $$ = code_new_bound(BOUND_MINUS_INFTY); }
+   | CMP_GE IF lexpr THEN cexpr ELSE '-' INFTY END {
+         $$ = code_new_inst(i_expr_if, 3, $3,
+            code_new_inst(i_bound_new, 1, $5),
+            code_new_bound(BOUND_MINUS_INFTY));
+      }
+   | CMP_GE IF lexpr THEN '-' INFTY ELSE cexpr END {
+         $$ = code_new_inst(i_expr_if, 3, $3,
+            code_new_bound(BOUND_MINUS_INFTY),
+            code_new_inst(i_bound_new, 1, $8));
+      }
    ;
 
 upper
    : /* empty */       { $$ = code_new_bound(BOUND_INFTY); }
    | CMP_LE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_LE INFTY      { $$ = code_new_bound(BOUND_INFTY); }
+   | CMP_LE IF lexpr THEN cexpr ELSE INFTY END {
+         $$ = code_new_inst(i_expr_if, 3, $3,
+            code_new_inst(i_bound_new, 1, $5),
+            code_new_bound(BOUND_INFTY));
+      }
+   | CMP_LE IF lexpr THEN INFTY ELSE cexpr END {
+         $$ = code_new_inst(i_expr_if, 3, $3,
+            code_new_bound(BOUND_INFTY),
+            code_new_inst(i_bound_new, 1, $7));
+      }
    ;
 
 priority
