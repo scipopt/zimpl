@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.h,v 1.6 2003/09/25 19:35:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.h,v 1.7 2007/04/21 10:34:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.h                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,21 +57,25 @@ extern void   mem_free(void*, const char*, const int);
 
 #ifndef NO_MSHELL 
 
-#define mem_hide(a)     mem_xhide(a, __FILE__, __LINE__)
-
 extern size_t mem_used(void);
-extern void   mem_maximum(FILE*);
-extern void   mem_display(FILE*);
-extern void   mem_check(const char*, const int);
-extern void   mem_xhide(void*, const char*, const int);
+extern void   mem_maximum(FILE* fp);
+extern void   mem_display(FILE* fp);
+extern void   mem_check_x(const void* p, const char* file, const int line);
+extern void   mem_check_all_x(const char* file, const int line);
+extern void   mem_hide_x(void* p, const char* file, const int line);
+
+#define mem_check(a)    mem_check_x(a, __FILE__, __LINE__)
+#define mem_check_all() mem_check_all_x(__FILE__, __LINE__)
+#define mem_hide(a)     mem_hide_x(a, __FILE__, __LINE__)
 
 #else /* NO_MSHELL */
 
-#define mem_used()      /**/
-#define mem_maximum(a)  /**/
-#define mem_display(a)  /**/
-#define mem_check(a, b) /**/
-#define mem_hide(a)     /**/
+#define mem_used()          /**/
+#define mem_maximum(a)      /**/
+#define mem_display(a)      /**/
+#define mem_check(a)        /**/
+#define mem_check_all()     /**/
+#define mem_hide(a)         /**/
 
 #endif /* !NO_MSHELL */
 

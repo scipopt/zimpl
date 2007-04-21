@@ -34,6 +34,11 @@ zimpl	v      32	z#_4@20         	"z#-4"
 zimpl	v      33	z#_3@21         	"z#-3"
 zimpl	v      34	z#_2@22         	"z#-2"
 zimpl	v      35	z#_1@23         	"z#-1"
+zimpl	v      36	w#1             	"w#1"
+zimpl	v      37	w#2             	"w#2"
+zimpl	v      38	w#3             	"w#3"
+zimpl	v      39	w#4             	"w#4"
+zimpl	v      40	w#5             	"w#5"
 zimpl	c       0	ca1_1           	"ca1_1"	0.0000000000000000e+00
 zimpl	c       1	cb1_1           	"cb1_1"	0.0000000000000000e+00
 zimpl	c       2	cc1_1           	"cc1_1"	0.0000000000000000e+00
@@ -41,3 +46,4 @@ zimpl	c       3	cd1_1           	"cd1_1"	0.0000000000000000e+00
 zimpl	c       4	ce1_1           	"ce1_1"	0.0000000000000000e+00
 zimpl	c       5	cy_1            	"cy_1"	0.0000000000000000e+00
 zimpl	c       6	cd_1            	"cd_1"	0.0000000000000000e+00
+zimpl	c       7	cf_1            	"cf_1"	0.0000000000000000e+00

@@ -25,6 +25,7 @@
 \ var x[I];
 \ var y[<i> in I] integer >= -5 * i <= 6 * i priority 3 startval i;
 \ var z[K];
+\ var w[<i> in I] <= if (i <= 3) then i else infinity end;
 \ subto ca1: a1 + sum <i> in I : x[i] >= 17;
 \ subto cb1: b1 + b2 + b3 + b4 <= 99;
 \ subto cc1: c1 + c2 + c3 + c4 + c5 <= 77;
@@ -32,6 +33,7 @@
 \ subto ce1: e1 + e2 + e3 + e4 + e5 + e6 + e7 <= 18;
 \ subto cy: sum <i> in I : y[i] == -6;
 \ subto cd: sum <k> in K : k * z[k] <= -8;
+\ subto cf: sum <i> in I : w[i] <= 17;
 \Problem name: var.zpl
 Minimize
  Objective: 
@@ -52,6 +54,8 @@ Subject to
   + y#5 + y#4 + y#3 + y#2 + y#1 = -6
  cd_1:
   - z#_1@23 -2 z#_2@22 -3 z#_3@21 -4 z#_4@20 -5 z#_5@1f <= -8
+ cf_1:
+  + w#5 + w#4 + w#3 + w#2 + w#1 <= 17
 Bounds
  0 <= a1 <= +Inf
  0 <= b1 <= +Inf
@@ -89,6 +93,11 @@ Bounds
  0 <= z#_3@21 <= +Inf
  0 <= z#_2@22 <= +Inf
  0 <= z#_1@23 <= +Inf
+ 0 <= w#1 <= 1
+ 0 <= w#2 <= 2
+ 0 <= w#3 <= 3
+ 0 <= w#4 <= +Inf
+ 0 <= w#5 <= +Inf
 General
  d1
  d2

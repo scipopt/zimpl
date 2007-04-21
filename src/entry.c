@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.10 2003/07/16 21:04:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.11 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -70,6 +70,8 @@ Entry* entry_new_numb(const Tuple* tuple, const Numb* numb)
 
    SID_set(entry, ENTRY_SID);
    assert(entry_is_valid(entry));
+
+   mem_check(entry);
    
    return entry;
 }
@@ -162,10 +164,17 @@ void entry_free(Entry* entry)
    }
 }
 
+#ifndef NDEBUG
 Bool entry_is_valid(const Entry* entry)
 {
-   return ((entry != NULL) && SID_ok(entry, ENTRY_SID));
+   if (entry == NULL || !SID_ok(entry, ENTRY_SID))
+      return FALSE;
+
+   mem_check(entry);
+
+   return TRUE;
 }
+#endif /* !NDEBUG */
 
 Entry* entry_copy(const Entry* source)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.109 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.110 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3698,7 +3698,7 @@ CodeNode* i_elem_list_new(CodeNode* self)
 
    return self;
 }
-
+#if 0
 CodeNode* i_elem_list_add(CodeNode* self)
 {
    CodeNode* child;
@@ -3733,6 +3733,80 @@ CodeNode* i_elem_list_add(CodeNode* self)
 
    return self;
 }
+#else
+static Elem* make_elem(CodeNode* node)
+{
+   Elem* elem;
+
+   assert(code_is_valid(node));
+
+   switch(code_get_type(node))
+   {
+   case CODE_NUMB :
+      elem = elem_new_numb(code_get_numb(node));
+      break;
+   case CODE_STRG :
+      elem = elem_new_strg(code_get_strg(node));
+      break;
+   case CODE_NAME :
+      elem = elem_new_name(code_get_name(node));
+      break;
+   default :
+      abort();
+   }
+   return elem;
+}
+
+CodeNode* i_elem_list_add(CodeNode* self)
+{
+   CodeNode* node;
+   Elem*     elem;
+   List*     list;
+      
+   Trace("i_elem_list_add2");
+
+   assert(code_is_valid(self));
+
+   elem = make_elem(code_eval_child(self, 1));   
+   list = list_new_elem(elem);
+   elem_free(elem);
+   
+   node  = code_get_child(self, 0);
+
+   /* If true, process directly without using a lot of recursion
+    */
+   while(code_get_inst(node) == (Inst)i_elem_list_add)
+   {      
+      elem = make_elem(code_eval_child(node, 1));
+      list_insert_elem(list, elem);
+      elem_free(elem);
+      
+      node = code_get_child(node, 0);
+   }
+   /* This is likely, so make it the fast way
+    */
+   if (code_get_inst(node) == (Inst)i_elem_list_new)
+   {
+      elem = make_elem(code_eval_child(node, 0));
+      list_insert_elem(list, elem);
+      elem_free(elem);
+   }
+   else
+   {
+      ListElem*   l = NULL;
+      const List* head_list;
+      const Elem* celem;
+      
+      head_list = code_get_list(code_eval(node));
+      
+      while(NULL != (celem = list_get_elem(head_list, &l)))
+         list_insert_elem(list, celem);
+   }
+   code_value_list(self, list);
+
+   return self;
+}
+#endif
 
 CodeNode* i_tuple_list_new(CodeNode* self)
 {
@@ -3747,6 +3821,7 @@ CodeNode* i_tuple_list_new(CodeNode* self)
    return self;
 }
 
+#if 0
 CodeNode* i_tuple_list_add(CodeNode* self)
 {
    const Tuple* tuple;
@@ -3765,6 +3840,48 @@ CodeNode* i_tuple_list_add(CodeNode* self)
 
    return self;
 }
+#else
+CodeNode* i_tuple_list_add(CodeNode* self)
+{
+   CodeNode*    node;
+   const Tuple* tuple;
+   List*        list;
+   
+   Trace("i_tuple_list_add2");
+
+   assert(code_is_valid(self));
+
+   node  = code_get_child(self, 0);
+   tuple = code_eval_child_tuple(self, 1);
+   list  = list_new_tuple(tuple);
+
+   /* If true, process directly without using a lot of recursion
+    */
+   while(code_get_inst(node) == (Inst)i_tuple_list_add)
+   {      
+      list_insert_tuple(list, code_eval_child_tuple(node, 1));
+      
+      node = code_get_child(node, 0);
+   }
+   /* This is likely, so make it the fast way
+    */
+   if (code_get_inst(node) == (Inst)i_tuple_list_new)
+      list_insert_tuple(list, code_eval_child_tuple(node, 0));
+   else
+   {
+      ListElem*   l = NULL;
+      const List* head_list;
+      
+      head_list = code_get_list(code_eval(node));
+      
+      while(NULL != (tuple = list_get_tuple(head_list, &l)))
+         list_insert_tuple(list, tuple);
+   }
+   code_value_list(self, list);
+
+   return self;
+}
+#endif
 
 CodeNode* i_entry_list_new(CodeNode* self)
 {
@@ -3779,6 +3896,7 @@ CodeNode* i_entry_list_new(CodeNode* self)
    return self;
 }
 
+#if 0
 CodeNode* i_entry_list_add(CodeNode* self)
 {
    const Entry* entry;
@@ -3793,9 +3911,100 @@ CodeNode* i_entry_list_add(CodeNode* self)
 
    list_add_entry(list, entry);   
    code_value_list(self, list);
+
+   return self;
+}
+#elif 0
+#warning "Check this!"
+CodeNode* i_entry_list_add(CodeNode* self)
+{
+   const Entry* entry;
+   List*        list;
+   CodeNode*    node;
+   
+   Trace("i_entry_list_add2");
+
+   assert(code_is_valid(self));
+
+   /* Check if this is just a long list of i_entry_list_add nodes
+    */
+   for(node = code_get_child(self, 0);
+       code_get_inst(node) == (Inst)i_entry_list_add;
+       node = code_get_child(node, 0))
+      ;
+
+   /* If true, process directly without using a lot of recursion
+    */
+   if (code_get_inst(node) == (Inst)i_entry_list_new)
+   {
+      list = list_new_entry(code_eval_child_entry(self, 1));
+      
+      for(node = code_get_child(self, 0);
+          code_get_inst(node) == (Inst)i_entry_list_add;
+          node = code_get_child(node, 0))
+         list_insert_entry(list, code_eval_child_entry(node, 1));
+
+      assert(code_get_inst(node) == (Inst)i_entry_list_new);
+
+      /* ??? Vielleicht gehts ohne den Test. Hier gucken was
+       * es ist, und wenn es das andere ist, aufrufen und die
+       * Liste hinten dran packen.
+       */
+      list_insert_entry(list, code_eval_child_entry(node, 0));
+   }
+   else
+   {
+      list  = list_copy(code_eval_child_list(self, 0));
+      entry = code_eval_child_entry(self, 1);
+
+      list_add_entry(list, entry);
+   }
+   code_value_list(self, list);
    
    return self;
 }
+#else
+CodeNode* i_entry_list_add(CodeNode* self)
+{
+   const Entry* entry;
+   List*        list;
+   CodeNode*    node;
+   
+   Trace("i_entry_list_add3");
+
+   assert(code_is_valid(self));
+
+   node  = code_get_child(self, 0);
+   entry = code_eval_child_entry(self, 1);
+   list  = list_new_entry(entry);
+
+   /* If true, process directly without using a lot of recursion
+    */
+   while(code_get_inst(node) == (Inst)i_entry_list_add)
+   {      
+      list_insert_entry(list, code_eval_child_entry(node, 1));
+      
+      node = code_get_child(node, 0);
+   }
+   /* This is likely, so make it the fast way
+    */
+   if (code_get_inst(node) == (Inst)i_entry_list_new)
+      list_insert_entry(list, code_eval_child_entry(node, 0));
+   else
+   {
+      ListElem*   l = NULL;
+      const List* head_list;
+      
+      head_list = code_get_list(code_eval(node));
+      
+      while(NULL != (entry = list_get_entry(head_list, &l)))
+         list_insert_entry(list, entry);
+   }
+   code_value_list(self, list);
+   
+   return self;
+}
+#endif
 
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {

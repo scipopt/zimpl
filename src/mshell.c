@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mshell.c,v 1.10 2004/11/08 09:01:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mshell.c,v 1.11 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -342,7 +342,7 @@ void mem_free(
    free(p);
 }
 
-void mem_xhide(
+void mem_hide_x(
    void*       ptr,
    const char* file,
    const int   line)
@@ -399,7 +399,17 @@ void mem_display(
    mem_maximum(fp);
 }      
 
-void mem_check(
+void mem_check_x(
+   const void* ptr,
+   const char* file,
+   const int   line)
+{
+   MHDR* p = CLIENT_2_HDR(ptr);
+   
+   mem_valid(p, file, line);
+}      
+
+void mem_check_all_x(
    const char* file,
    const int   line)
 {

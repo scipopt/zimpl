@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.19 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.20 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -83,6 +83,24 @@ static void list_add_data(List* list, const ListData* data)
    elem->prev              = list->anchor.prev;
    list->anchor.prev->next = elem;
    list->anchor.prev       = elem;
+   list->elems++;
+}
+
+static void list_insert_data(List* list, const ListData* data)
+{
+   ListElem* elem = calloc(1, sizeof(*elem));
+
+   assert(list_is_valid(list));
+   assert(elem != NULL);
+   assert(data != NULL);
+   
+   elem->data = *data;
+
+   elem->next              = list->anchor.next;
+   elem->prev              = &list->anchor;
+   list->anchor.next->prev = elem;
+   list->anchor.next       = elem;
+
    list->elems++;
 }
 
@@ -243,6 +261,19 @@ void list_add_elem(List* list, const Elem* elem)
    list_add_data(list, &data);
 }
 
+void list_insert_elem(List* list, const Elem* elem)
+{
+   ListData data;
+
+   assert(list_is_valid(list));
+   assert(elem_is_valid(elem));
+   assert(list->type == LIST_ELEM);
+   
+   data.elem = elem_copy(elem);
+
+   list_insert_data(list, &data);
+}
+
 void list_add_tuple(List* list, const Tuple* tuple)
 {
    ListData data;
@@ -256,6 +287,19 @@ void list_add_tuple(List* list, const Tuple* tuple)
    list_add_data(list, &data);
 }
 
+void list_insert_tuple(List* list, const Tuple* tuple)
+{
+   ListData data;
+
+   assert(list_is_valid(list));
+   assert(tuple_is_valid(tuple));
+   assert(list->type == LIST_TUPLE);
+   
+   data.tuple = tuple_copy(tuple);
+
+   list_insert_data(list, &data);
+}
+
 void list_add_entry(List* list, const Entry* entry)
 {
    ListData data;
@@ -267,6 +311,19 @@ void list_add_entry(List* list, const Entry* entry)
    data.entry = entry_copy(entry);
 
    list_add_data(list, &data);
+}
+
+void list_insert_entry(List* list, const Entry* entry)
+{
+   ListData data;
+
+   assert(list_is_valid(list));
+   assert(entry_is_valid(entry));
+   assert(list->type == LIST_ENTRY);
+
+   data.entry = entry_copy(entry);
+
+   list_insert_data(list, &data);
 }
 
 void list_add_list(List* list, const List* ll)

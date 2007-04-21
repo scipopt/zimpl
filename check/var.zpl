@@ -1,4 +1,4 @@
-# $Id: var.zpl,v 1.4 2003/09/19 08:30:15 bzfkocht Exp $
+# $Id: var.zpl,v 1.5 2007/04/21 10:34:28 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: var.zpl                                                       */
@@ -48,9 +48,11 @@ var e4 integer >= -2 <= 6;
 var e5 integer >= 5 priority 10;
 var e6 integer <= 10 startval 5;
 var e7 integer >= 2 <= 6 priority 15 startval 4;
+
 var x[I];
 var y[<i> in I] integer >= -5 * i <= 6 * i priority 3 startval i;
 var z[K];
+var w[<i> in I] <= if (i <= 3) then i else infinity end;
 
 subto ca1: a1 + sum <i> in I : x[i] >= 17;
 subto cb1: b1 + b2 + b3 + b4 <= 99;
@@ -59,4 +61,4 @@ subto cd1: d1 + d2 + d3 + d4>= 2;
 subto ce1: e1 + e2 + e3 + e4 + e5 + e6 + e7 <= 18;
 subto cy: sum <i> in I : y[i] == -6;
 subto cd: sum <k> in K : k * z[k] <= -8; 
-
+subto cf: sum <i> in I : w[i] <= 17;

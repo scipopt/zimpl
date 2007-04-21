@@ -1,3 +1,9 @@
+ - It is now possible to override a parameter value
+   given in the Zimpl file with a command line -Dname=value.
+
+ - Improved processing of initializer list for parameters and sets.
+   Removed stack overflow for very long lists.
+
  - It is now possible to write
    var x <= if (test == 7) then 8 else infinity end;
    and similar.

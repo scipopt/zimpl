@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.28 2006/07/13 11:13:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.29 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -675,14 +675,14 @@ void code_value_term(CodeNode* node, Term* term)
    node->value.term = term;
 }
 
-void code_value_bool(CodeNode* node, Bool bool)
+void code_value_bool(CodeNode* node, Bool bval)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
 
    node->type       = CODE_BOOL;
-   node->value.bool = bool;
+   node->value.bool = bval;
 }
 
 void code_value_size(CodeNode* node, int size)

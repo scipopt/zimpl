@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: define.c,v 1.1 2003/09/18 11:55:49 bzfkocht Exp $"
+#pragma ident "@(#) $Id: define.c,v 1.2 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: define.c                                                      */
@@ -120,10 +120,17 @@ void define_exit(void)
    anchor.next = NULL;
 }
 
+#ifndef NDEBUG
 Bool define_is_valid(const Define* def)
 {
-   return (def != NULL) && SID_ok(def, DEFINE_SID);
+   if (def == NULL || !SID_ok(def, DEFINE_SID))
+      return FALSE;
+
+   mem_check(def);
+
+   return TRUE;
 }
+#endif /* !NDEBUG */
 
 Define* define_lookup(const char* name)
 {

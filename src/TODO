@@ -1,23 +1,18 @@
-tests und doku für 
-   var x <= if (test == 7) then 8 else infinity end;
+#ifdef 0 aus inst.c rausnehmen
 
+alles valids in NDEBUG und mem_check für allozierte dazu
 
 set J := { 1 to max(I)+1 };
 Man muss statt dessen schreiben
 set J := { 1 to (max(I))+1 };
 
-
-Testen ob empty set/tuple geht, dann
-EMPTY_SET EMPTY_TUPLE aus mmlparse.y mmlscan.l entfernen.
-{} ist die leere Menge. { } nicht.
-
--P dokumentieren
-
 Vielleicht 195 doch durch eine Warnung ersetzten.
 
-Kommandozeilendefinies überschreiben Defaultwerte für Parameter
-
 Scramble flag das Variablen und Bedingungen permutieren
+
+Alles statics durchsehen ob am ende reset: gemacht
+Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
+Selbes Problem wie Kjell?
 
 cplex anbidung.
 
@@ -30,8 +25,6 @@ WITH_ZLIB=1 im Makefile
 Checks vorrang operatoren Insbesondere -2^3 
 
 Fehler abgefangen wenn default anderer typ als werte in param? read!
-
-bool.h einchecken
 
 - doku index expressens in set.
 - warning / tests "
@@ -52,8 +45,6 @@ Fehlt warning wenn bei streaming mehr felder kommen asl 65535.
 
 priority startval sos nicht gut documentiert.
 
-Alles statics durchsehen ob am ende reset: gemacht
-Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
 
 Dies erzeugt keinerleit Ausgabe. Warum?
 set I := { 1 .. 10 };

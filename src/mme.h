@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.77 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.78 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -283,14 +283,20 @@ extern Bool         list_is_entrylist(const List* list);
 extern Bool         list_is_tuplelist(const List* list);
 /*lint -sem(        list_copy, 1p == 1, @p == 1) */
 extern List*        list_copy(const List* list);
+/*lint -sem(        list_add_list, 1p == 1 && 2p == 1) */
+extern void         list_add_list(List* list, const List* ll);
 /*lint -sem(        list_add_elem, 1p == 1 && 2p == 1) */
 extern void         list_add_elem(List* list, const Elem* elem);
 /*lint -sem(        list_add_tuple, 1p == 1 && 2p == 1) */
 extern void         list_add_tuple(List* list, const Tuple* tuple);
 /*lint -sem(        list_add_entry, 1p == 1 && 2p == 1) */
 extern void         list_add_entry(List* list, const Entry* entry);
-/*lint -sem(        list_add_list, 1p == 1 && 2p == 1) */
-extern void         list_add_list(List* list, const List* ll);
+/*lint -sem(        list_insert_elem, 1p == 1 && 2p == 1) */
+extern void         list_insert_elem(List* list, const Elem* elem);
+/*lint -sem(        list_insert_tuple, 1p == 1 && 2p == 1) */
+extern void         list_insert_tuple(List* list, const Tuple* tuple);
+/*lint -sem(        list_insert_entry, 1p == 1 && 2p == 1) */
+extern void         list_insert_entry(List* list, const Entry* entry);
 /*lint -sem(        list_get_elems, 1p == 1, @n >= 0) */
 extern int          list_get_elems(const List* list);
 /*lint -sem(        list_get_elem,  1p == 1, @p == 1) */

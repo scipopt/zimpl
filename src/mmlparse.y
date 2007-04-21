@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.80 2007/03/08 20:32:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.81 2007/04/21 10:34:29 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -258,6 +258,7 @@ decl_par
             $4,
             code_new_inst(i_nop, 0));
       }
+   | DECLPAR { $$ = code_new_inst(i_nop, 0); } /* Happens when a parameter is redeclared */
    ;
 par_singleton
    : cexpr_entry_list { $$ = $1; }

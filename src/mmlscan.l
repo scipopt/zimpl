@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.48 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.49 2007/04/21 10:34:29 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -94,8 +94,6 @@ static int        yydecl    = 0;
 "binary"                  { yycolumn += yyleng; return BINARY; }
 "integer"                 { yycolumn += yyleng; return INTEGER; }
 "real"                    { yycolumn += yyleng; return REAL; }
-"<>"                      { yycolumn += yyleng; return EMPTY_TUPLE; }
-"{}"                      { yycolumn += yyleng; return EMPTY_SET; }
 "sum"                     { yycolumn += yyleng; return SUM; }
 "prod"                    { yycolumn += yyleng; return PROD; }
 "forall"                  { yycolumn += yyleng; return FORALL; }
@@ -191,6 +189,17 @@ static int        yydecl    = 0;
       {
          if (NULL != symbol_lookup(yytext) || NULL != define_lookup(yytext))
          {
+            /* Allow to declare parameter on the command line and ignore the
+             * redeclarations in the zimpl code later on 
+             */
+            if (yydecl == DECLPAR)
+            {
+               extern void yywarning(int no, const char* s);
+
+               sprintf(errmsg, "Redefinition of parameter %s ignored\n", yytext);
+               yywarning(252, errmsg);
+               return EOF;
+            }
             sprintf(errmsg, "Name \"%s\" already in use\n", yytext);
             yyerror(errmsg);
          }
@@ -298,6 +307,14 @@ void yyerror(const char* s)
       stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);
    show_source(stderr, stmt_get_text(yystmt), yycolumn);
    zpl_exit(EXIT_FAILURE);
+}
+
+void yywarning(int no, const char* s)
+{
+   if (stmt_trigger_warning(no))
+      fprintf(stderr, 
+         "*** Warning %d: File %s Line %d : %s\n", 
+         no, stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);
 }
 
 const Stmt* scan_get_stmt(void)
