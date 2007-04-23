@@ -405,14 +405,29 @@
 \item[214 Wrong type of set elements -- wrong read template?]\ \\
    Most likely you have tried read in a set from a stream using
    \code{"n+"} instead of \code{"<n+>"} in the template. 
-\item[251 Startvals violate constraint, \ldots]\ \\
-   If the given startvals are summed up, they violate the
-   constraint. details about the sum of the LHS and the RHS are given
-   in the warning message.
-\item[252 Redefinition of parameter \code{xxx} ignored]\ \\
+%
+% space here
+%
+\item[216 Redefinition of parameter \code{xxx} ignored]\ \\
    A parameter was declared a second time with the same name. The
    typical use would be to declare default values for a parameter in
    the \zimpl file and override them by command-line defined.
+\item[217 begin value \code{xxx} in substr too big or not an integer]\ \\
+   The begin argument for an \code{substr} function
+   must be an integer with an absolute value of less than two billion.
+\item[218 length value \code{xxx} in substr too big or not an integer]\ \\
+   The length argument for an \code{substr} function
+   must be an integer with an absolute value of less than two billion.
+\item[219 length value \code{xxx} in substr is negative]\ \\
+   The length argument for an \code{substr} function
+   must be greater or equal to zero.
+%
+% space here
+%
+\item[252 Startvals violate constraint, \ldots]\ \\
+   If the given startvals are summed up, they violate the
+   constraint. details about the sum of the LHS and the RHS are given
+   in the warning message.
 % 
 % numbgmp.c
 %
@@ -438,6 +453,9 @@ the argument was too small to be represented as a \code{double}.
 \item[801 Parser failed]\ \\
   The parsing routine failed. This should not happen. If you encounter
   this error please email the \code{.zpl} file to \url{mailto:koch@zib.de}.
+\item[802 Regular expression error]\ \\
+  A regular expression given to the \code{match} parameter of a
+  \code{read} statement, was not valid. See error messages for details.
 %
 % inst.c
 %

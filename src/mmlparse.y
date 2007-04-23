@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.81 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.82 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -80,10 +80,11 @@ extern void yyerror(const char* s);
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
 %token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM ORD
-%token READ AS SKIP USE COMMENT
+%token READ AS SKIP USE COMMENT MATCH
 %token SUBSETS INDEXSET POWERSET
 %token VIF VABS
 %token TYPE1 TYPE2
+%token LENGTH SUBSTR
 %token <sym> NUMBSYM STRGSYM VARSYM SETSYM
 %token <def> NUMBDEF STRGDEF BOOLDEF SETDEF DEFNAME
 %token <name> NAME
@@ -862,6 +863,7 @@ sexpr
    : SKIP cexpr    { $$ = code_new_inst(i_read_skip, 1, $2); }
    | USE cexpr     { $$ = code_new_inst(i_read_use, 1, $2); }
    | COMMENT cexpr { $$ = code_new_inst(i_read_comment, 1, $2); }
+   | MATCH cexpr   { $$ = code_new_inst(i_read_match, 1, $2); }
    ;
 
  tuple_list
@@ -979,6 +981,10 @@ cfactor
    | '+' cfactor %prec UNARY  { $$ = $2; }
    | '-' cfactor %prec UNARY  { $$ = code_new_inst(i_expr_neg, 1, $2); }
    | '(' cexpr ')'          { $$ = $2; }
+   | LENGTH '(' cexpr ')'   { $$ = code_new_inst(i_expr_length, 1, $3); }
+   | SUBSTR '(' cexpr ',' cexpr ',' cexpr ')' {
+         $$ = code_new_inst(i_expr_substr, 3, $3, $5, $7);
+      }
    | RANDOM '(' cexpr ',' cexpr ')' {
          $$ = code_new_inst(i_expr_rand, 2, $3, $5);
       }
@@ -1013,10 +1019,3 @@ cfactor
          $$ = code_new_inst(i_expr_ord, 3, $3, $5, $7);
       }
    ;
-
-
-
-
-
-
-

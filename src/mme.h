@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.78 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.79 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -675,6 +675,8 @@ extern const char* rdef_get_filename(const RDef* rdef);
 extern const char* rdef_get_pattern(const RDef* rdef);
 /*lint -sem(       rdef_get_comment, 1p == 1, @p && nulterm(@)) */
 extern const char* rdef_get_comment(const RDef* rdef);
+/*lint -sem(       rdef_get_match, 1p == 1) */
+extern const char* rdef_get_match(const RDef* rdef);
 /*lint -sem(       rdef_get_use, 1p == 1) */
 extern int         rdef_get_use(const RDef* rdef);
 /*lint -sem(       rdef_get_skip, 1p == 1) */
@@ -686,6 +688,8 @@ extern RPar*       rpar_new_skip(int skip);
 extern RPar*       rpar_new_use(int use);
 /*lint -sem(       rpar_new_comment, 1p && nulterm(1), @p == 1) */
 extern RPar*       rpar_new_comment(const char* comment);
+/*lint -sem(       rpar_new_match, 1p && nulterm(1), @p == 1) */
+extern RPar*       rpar_new_match(const char* match);
 /*lint -sem(       rpar_free, custodial(1), 1p == 1) */
 extern void        rpar_free(RPar* rpar);
 /*lint -sem(       rpar_is_valid, 1p == 1) */

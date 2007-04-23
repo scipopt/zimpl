@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rdefpar.c,v 1.8 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rdefpar.c,v 1.9 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -38,7 +38,7 @@
 #define RDEF_SID     0x52446566
 #define RPAR_SID     0x52506172
 
-enum read_param_type { RPAR_ERR = 0, RPAR_SKIP, RPAR_USE, RPAR_CMNT };
+enum read_param_type { RPAR_ERR = 0, RPAR_SKIP, RPAR_USE, RPAR_CMNT, RPAR_MTCH };
 
 typedef enum read_param_type   RParType;
 typedef union read_param_value RParVal;
@@ -62,6 +62,7 @@ struct read_definition
    const char* filename;
    const char* pattern;  /* this was named "template", but template */   
    const char* comment;  /* is a C++ reserved word */
+   const char* match;
    int         use;
    int         skip;
    int         refc;
@@ -78,6 +79,7 @@ RDef* rdef_new(const char* filename, const char* pattern)
    rdef->filename = filename;
    rdef->pattern  = pattern;
    rdef->comment  = str_new("");
+   rdef->match    = NULL;
    rdef->skip     = 0;
    rdef->use      = -1;
    rdef->refc     = 1;
@@ -139,6 +141,9 @@ void rdef_set_param(RDef* rdef, const RPar* rpar)
    case RPAR_CMNT :
       rdef->comment = rpar->val.s;
       break;
+   case RPAR_MTCH :
+      rdef->match = rpar->val.s;
+      break;
    case RPAR_ERR :
    default :
       abort();
@@ -164,6 +169,13 @@ const char* rdef_get_comment(const RDef* rdef)
    assert(rdef_is_valid(rdef));
    
    return rdef->comment;
+}
+
+const char* rdef_get_match(const RDef* rdef)
+{
+   assert(rdef_is_valid(rdef));
+   
+   return rdef->match;
 }
 
 int rdef_get_use(const RDef* rdef)
@@ -220,10 +232,28 @@ RPar* rpar_new_comment(const char* comment)
 {
    RPar* rpar = calloc(1, sizeof(*rpar));
 
-   assert(rpar != NULL);
+   assert(rpar    != NULL);
+   assert(comment != NULL);
    
    rpar->type  = RPAR_CMNT;
    rpar->val.s = comment;
+   
+   SID_set(rpar, RPAR_SID);
+
+   assert(rpar_is_valid(rpar));
+
+   return rpar;
+}
+
+RPar* rpar_new_match(const char* match)
+{
+   RPar* rpar = calloc(1, sizeof(*rpar));
+
+   assert(rpar  != NULL);
+   assert(match != NULL);
+   
+   rpar->type  = RPAR_MTCH;
+   rpar->val.s = match;
    
    SID_set(rpar, RPAR_SID);
 

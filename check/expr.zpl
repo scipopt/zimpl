@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.12 2006/09/09 10:00:21 bzfkocht Exp $
+# $Id: expr.zpl,v 1.13 2007/04/23 08:40:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -25,6 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 set I := { 1 .. 10 };
+set S := { "moin", "hello", "ho" };
 
 param a[<i> in I] := i + 3;
 
@@ -47,3 +48,8 @@ subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;
 subto c15: sum <i> in I do sgn(5 - i) * x[i] >= 3;
 subto c16: sum <i> in I do random(10,20) * x[i] >= random(50,1000);
 subto c17: x[min I] <= x[max I];
+subto c18: (prod <i> in I with i < 4 : a[i]) * x[1] <= 800;
+subto c19: sum <s> in S with substr(s, 1, 1) == "o" : x[length(s)] >= 2;
+subto c20: sum <s> in S with substr(s, -1, 1) == "o" : x[length(s)] >= 2;
+subto c21: sum <s> in S with substr(s, 2, 2) == "ll" : x[length(s)] <= 2;
+

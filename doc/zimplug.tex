@@ -259,15 +259,18 @@ $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
-\code{min(s$\in$S) e(s)}         &minimum of a set          &$\min_{s\in S} e(s)$\\
+\code{min(s$\in$S) e(s)}         &minimum over a set        &$\min_{s\in S} e(s)$\\
 \code{max(S)}                    &maximum of a set          &$\max_{s\in S}$\\
-\code{max(s$\in$S) e(s)}         &maximum of a set          &$\max_{s\in S} e(s)$\\
+\code{max(s$\in$S) e(s)}         &maximum over a set        &$\max_{s\in S} e(s)$\\
 \code{min(a,b,c,\ldots,n)}       &minimum of a list         &$\min (a,b,c,\ldots,n)$\\
 \code{max(a,b,c,\ldots,n)}       &maximum of a list         &$\max (a,b,c,\ldots,n)$\\
+\code{sum(s$\in$S) e(s)}         &sum over a set            &$\sum_{s\in S} e(s)$\\
+\code{prod(s$\in$S) e(s)}        &product over a set        &$\prod_{s\in S} e(s)$\\
 \code{card(S)}                   &cardinality of a set      &$|S|$\\
 \code{random(m,n)}               &pseudo random number      &$\in[m,n]$\\
 \code{ord(A,n,c)}                &ordinal                   &c-th component of the n-th\\ 
                                  &                          & element of set $A$.\\
+\code{length(s)}                 &length of a string        &number of chracters in $s$\\
 \code{if a then b}               &                          &\\
 \code{else c end}        &\raisebox{1ex}[0cm][0cm]{conditional}
    &\raisebox{1ex}[0cm][0cm]{$\left\{\begin{array}{rl}b,&\text{if }
@@ -302,7 +305,12 @@ $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 
 \subsubsection{String expressions}
 A string is delimited by double quotation marks \code{"},
-\eg \code{"Hallo Keiken"}. 
+\eg \code{"Hallo Keiken"}. the function \code{substr(string, begin, length)} 
+can be used to extract parts of a string. \code{begin} is the first character 
+to be used, counting starts with zero at first character. 
+If \code[begin} is negative, counting starts
+at the end of the string. \code{length} is the number of chacaters to extract 
+starting at \code{begin}. 
 
 \subsubsection{Variant expressions}
 The following is either a numeric, string or boolean expression, depending on

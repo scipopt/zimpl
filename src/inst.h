@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.38 2007/01/02 10:54:31 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.39 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -114,6 +114,8 @@ extern CodeNode* i_expr_floor(CodeNode* self);
 extern CodeNode* i_expr_if(CodeNode* self);
 /*lint -sem(     i_expr_intdiv, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_intdiv(CodeNode* self);
+/*lint -sem(     i_expr_length, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_length(CodeNode* self);
 /*lint -sem(     i_expr_ln, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_ln(CodeNode* self);
 /*lint -sem(     i_expr_log, 1p == 1, type(1), @p == 1p) */
@@ -148,6 +150,8 @@ extern CodeNode* i_expr_neg(CodeNode* self);
 extern CodeNode* i_expr_pow(CodeNode* self);
 /*lint -sem(     i_expr_sub, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_sub(CodeNode* self);
+/*lint -sem(     i_expr_substr, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_substr(CodeNode* self);
 /*lint -sem(     i_forall, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_forall(CodeNode* self);
 /*lint -sem(     i_idxset_new, 1p == 1, type(1), @p == 1p) */
@@ -260,6 +264,8 @@ extern CodeNode* i_read_new(CodeNode* self);
 extern CodeNode* i_read_param(CodeNode* self);
 /*lint -sem(     i_read_comment, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_read_comment(CodeNode* self);
+/*lint -sem(     i_read_match, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_read_match(CodeNode* self);
 /*lint -sem(     i_read_use, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_read_use(CodeNode* self);
 /*lint -sem(     i_read_skip, 1p == 1, type(1), @p == 1p) */

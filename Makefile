@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.52 2007/04/21 10:34:28 bzfkocht Exp $
+# $Id: Makefile,v 1.53 2007/04/23 08:40:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 #
-.PHONY:		depend clean lint doc check valgrind libdbl
+.PHONY:		depend clean lint doc check valgrind libdbl coverage
 
 ARCH            :=      $(shell uname -m | \
                         sed \
@@ -144,6 +144,14 @@ check:
 valgrind:
 		cd check; \
 		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)" 
+
+coverage:
+		lcov -d $(OBJDIR) -z
+		make OPT=gcov check
+		lcov -d $(OBJDIR) -c >z.capture
+		lcov -d $(OBJDIR) -r z.capture "*mmlscan.c" "*mmlparse.c" >zimpl.capture
+		genhtml zimpl.capture
+		-rm z.capture
 
 $(OBJDIR):	
 		-mkdir -p $(OBJDIR)

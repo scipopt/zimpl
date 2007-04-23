@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.13 2005/07/10 10:19:17 bzfkocht Exp $
+# $Id: check.sh,v 1.14 2007/04/23 08:40:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -9,7 +9,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 # $1 = Binary
 PASS=0
 COUNT=0
-for i in expr param set subto var bool define vinst
+for i in expr param set subto var bool define vinst read
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl
@@ -45,7 +45,7 @@ do
     1) echo Test $i "(tbl)" FAIL ;;
     *) echo Test $i "(tbl)" ERROR ;;
    esac
-   rm $i.tbl $i.lp
+   #rm $i.tbl $i.lp
 done 
 for i in presol
 do
@@ -130,6 +130,25 @@ do
    esac
    rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.sos
 done 2>/dev/null
+# 
+# Special w215 test
+COUNT=`expr $COUNT + 2` 
+NAME=w215
+../$1 -m $NAME 2>$NAME.warn >/dev/null
+diff $NAME.warn $NAME-m.warn.ref >/dev/null
+case $? in
+ 0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
+ 1) echo Test $i "(warn)" FAIL ;;
+ *) echo Test $i "(warn)" ERROR ;;
+esac
+diff $NAME.mst $NAME.mst.ref >/dev/null
+case $? in
+ 0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
+ 1) echo Test $i "(warn)" FAIL ;;
+ *) echo Test $i "(warn)" ERROR ;;
+esac
+#rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.mst
+#
 cd ..
 cd errors
 #

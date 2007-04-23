@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.28 2007/02/04 20:22:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.29 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -29,6 +29,8 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <regex.h>
 
 #ifndef _lint
 #include <zlib.h>
@@ -94,6 +96,21 @@ CodeNode* i_read_comment(CodeNode* self)
    comment = code_eval_child_strg(self, 0);
 
    code_value_rpar(self, rpar_new_comment(comment));
+
+   return self;
+}
+
+CodeNode* i_read_match(CodeNode* self)
+{
+   const char* match;
+   
+   Trace("i_read_match");
+   
+   assert(code_is_valid(self));
+
+   match = code_eval_child_strg(self, 0);
+
+   code_value_rpar(self, rpar_new_match(match));
 
    return self;
 }
@@ -636,9 +653,11 @@ CodeNode* i_read(CodeNode* self)
    List*       list = NULL;
    char*       filename;
    char*       comment;
+   const char* match;
    int         skip;
    int         use;
    int         line = 0;
+   regex_t     regex;
    
    Trace("i_read");
    
@@ -661,6 +680,21 @@ CodeNode* i_read(CodeNode* self)
    comment[1] = '\r';
    strcpy(&comment[2], rdef_get_comment(rdef));
 
+   if (NULL != (match = rdef_get_match(rdef)))
+   {
+      int err = regcomp(&regex, match, REG_EXTENDED | REG_NOSUB);
+   
+      if (err != 0)
+      {
+         char errmsg[1024];
+      
+         regerror(err, &regex, errmsg, sizeof(errmsg));
+         fprintf(stderr, "Error 802: %s\n", errmsg);
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+   }
+   
    /* The last template parameter is the value for the entry_list.
     */
    if (!is_tuple_list)
@@ -682,14 +716,6 @@ CodeNode* i_read(CodeNode* self)
           */
          line++;
 
-         /* Should we skip this line ?
-          */
-         if (skip-- > 0)
-         {
-            free(buf);
-            continue;
-         }
-
          /* Is this a comment line or is there a comment on the line,
           * then remove it.
           */
@@ -708,16 +734,32 @@ CodeNode* i_read(CodeNode* self)
             free(buf);
             continue;
          }
+         /* do we have regex and if yes it is matched ?
+          * if not, skip the line.
+          */
+         if (match != NULL && regexec(&regex, s, 0, NULL, 0))
+         {
+            free(buf);
+            continue;
+         }
+         /* Should we skip this line ?
+          */
+         if (skip-- > 0)
+         {
+            free(buf);
+            continue;
+         }
+
          /* Now we break the line in fields.
           */
          fields = split_fields(s, hi_field_no, field);
 #if 0
- {
-    int i;
-         fprintf(stdout, "Fields=%d\n", fields);
-         for(i = 0; i < fields; i++)
-            fprintf(stdout, "Field[%d]=[%s]\n", i, field[i]);
- }
+         {
+            int i;
+            fprintf(stdout, "Fields=%d\n", fields);
+            for(i = 0; i < fields; i++)
+               fprintf(stdout, "Field[%d]=[%s]\n", i, field[i]);
+         }
 #endif
 
          if (is_streaming)
@@ -756,6 +798,9 @@ CodeNode* i_read(CodeNode* self)
    }
    code_value_list(self, list);
 
+   if (match != NULL)
+      regfree(&regex);
+   
    free(comment);
    free(filename);
    

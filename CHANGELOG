@@ -1,3 +1,15 @@
+ - New parameter match "regular_expression" to the read
+   function. If given, only those lines are read, which
+   match the given expression.
+
+ - New function substr(string_expression, start, length)
+   returns the substring starting at start with the 
+   given length. In case start is negative, it is counted
+   from the end of the string.
+
+ - New function length(string_expression) returns the
+   length of the string.
+
  - It is now possible to override a parameter value
    given in the Zimpl file with a command line -Dname=value.
 

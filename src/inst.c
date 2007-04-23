@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.110 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.111 2007/04/23 08:40:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1207,6 +1207,91 @@ CodeNode* i_expr_ord(CodeNode* self)
       abort();
    }
    tuple_free(tuple);
+
+   return self;
+}
+
+CodeNode* i_expr_length(CodeNode* self)
+{
+   Trace("i_expr_length");
+
+   assert(code_is_valid(self));
+
+   code_value_numb(self,
+      numb_new_integer(strlen(code_eval_child_strg(self, 0))));
+
+   return self;
+}
+
+CodeNode* i_expr_substr(CodeNode* self)
+{
+   const char* strg;
+   const Numb* numb_beg;
+   const Numb* numb_len;
+   int         beg;
+   int         len;
+   int         maxlen;
+   char*       tmp;
+
+   Trace("i_expr_substr");
+
+   assert(code_is_valid(self));
+
+   strg     = code_eval_child_strg(self, 0);
+   numb_beg = code_eval_child_numb(self, 1);
+   numb_len = code_eval_child_numb(self, 2);
+
+   if (!numb_is_int(numb_beg))
+   {
+      fprintf(stderr, "*** Error 217: Begin value ");
+      numb_print(stderr, numb_beg);
+      fprintf(stderr, " in substr too big or not an integer\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   if (!numb_is_int(numb_len))
+   {
+      fprintf(stderr, "*** Error 218: Length value ");
+      numb_print(stderr, numb_len);
+      fprintf(stderr, " in substr too big or not an integer\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   beg = numb_toint(numb_beg);
+   len = numb_toint(numb_len);
+
+   if (len < 0)
+   {
+      fprintf(stderr, "*** Error 219: Length value %d in substr is negative\n", len);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   tmp = malloc(len + 1); 
+
+   if (beg < 0)
+   {
+      beg = strlen(strg) + beg;
+
+      if (beg < 0)
+         beg = 0;
+   }
+   assert(beg >= 0);
+   
+   maxlen = strlen(strg) - beg;
+
+   if (maxlen < len)
+      len = maxlen;
+
+   if (len < 0)
+      len = 0;
+   else
+      strncpy(tmp, &strg[beg], len);
+
+   tmp[len] = '\0';
+
+   code_value_strg(self, str_new(tmp));
+
+   free(tmp);
 
    return self;
 }

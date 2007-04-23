@@ -1,3 +1,16 @@
+document/test/errors match
+
+error checks for substr
+
+In check/param.zpl fehlen noch die read tests.
+Warning 213 testen \  siehe
+Error 214 testen   /  test6.zpl
+checks für lange zeilen, viele Felder
+Fehlt warning wenn bei streaming mehr felder kommen als 65535.
+streaming documentieren
+
+priority startval sos nicht gut documentiert.
+
 #ifdef 0 aus inst.c rausnehmen
 
 alles valids in NDEBUG und mem_check für allozierte dazu
@@ -16,10 +29,6 @@ Selbes Problem wie Kjell?
 
 cplex anbidung.
 
-prod: test, docu
-
-Warning 215 test - Warnung wenn startlösung verletzt.
-
 WITH_ZLIB=1 im Makefile
 
 Checks vorrang operatoren Insbesondere -2^3 
@@ -37,13 +46,6 @@ warum kann man nicht  x[i,j] (binary) == (w[i] - w[j] == 0) schreiben?
 
 Index funtion die jedem set element eine eindeutige Zahl zuordnet.
 
-In check/param.zpl fehlen noch die read tests.
-Warning 213 testen \  siehe
-Error 214 testen   /  test6.zpl
-checks für lange zeilen, viele Felder
-Fehlt warning wenn bei streaming mehr felder kommen asl 65535.
-
-priority startval sos nicht gut documentiert.
 
 
 Dies erzeugt keinerleit Ausgabe. Warum?
