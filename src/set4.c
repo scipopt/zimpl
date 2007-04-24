@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.c,v 1.15 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.c,v 1.16 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.c                                                        */
@@ -117,12 +117,10 @@ void set_free(Set* set)
    set_vtab_global[set->head.type].set_free(set);
 }
 
-#ifndef NDEBUG
 Bool set_is_valid(const Set* set)
 {
    return set != NULL && set_vtab_global[set->head.type].set_is_valid(set);
 }
-#endif
 
 Set* set_copy(const Set* set)
 {

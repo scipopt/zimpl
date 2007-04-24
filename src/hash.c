@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.24 2007/04/24 06:02:18 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.25 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -130,7 +130,6 @@ void hash_free(Hash* hash)
    free(hash);
 }
 
-#ifndef NDEBUG
 Bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
@@ -138,7 +137,6 @@ Bool hash_is_valid(const Hash* hash)
        || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB)
       && SID_ok(hash, HASH_SID));
 }
-#endif
 
 void hash_add_tuple(Hash* hash, const Tuple* tuple)
 {

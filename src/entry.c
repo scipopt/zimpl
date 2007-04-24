@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.11 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.12 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -164,7 +164,6 @@ void entry_free(Entry* entry)
    }
 }
 
-#ifndef NDEBUG
 Bool entry_is_valid(const Entry* entry)
 {
    if (entry == NULL || !SID_ok(entry, ENTRY_SID))
@@ -174,7 +173,6 @@ Bool entry_is_valid(const Entry* entry)
 
    return TRUE;
 }
-#endif /* !NDEBUG */
 
 Entry* entry_copy(const Entry* source)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.26 2007/04/21 10:34:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.27 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -124,7 +124,6 @@ void symbol_exit(void)
    anchor = NULL;
 }
 
-#ifndef NDEBUG
 Bool symbol_is_valid(const Symbol* sym)
 {
    if (sym == NULL || !SID_ok(sym, SYMBOL_SID))
@@ -135,7 +134,6 @@ Bool symbol_is_valid(const Symbol* sym)
       
    return TRUE;
 }
-#endif /* !NDEBUG */
 
 Symbol* symbol_lookup(const char* name)
 {

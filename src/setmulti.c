@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.13 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.14 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -50,7 +50,6 @@ static int        cmp_dim = 0;
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-#ifndef NDEBUG
 static Bool set_multi_is_valid(const Set* set)
 {
    return set != NULL
@@ -70,7 +69,7 @@ static Bool set_multi_iter_is_valid(const SetIter* iter)
       && (  (iter->multi.members == 0 && iter->multi.dim == 0 && iter->multi.subset == NULL)
          || (iter->multi.members >= 0 && iter->multi.dim >  0 && iter->multi.subset != NULL));
 }
-#endif /* !NDEBUG */
+
 /* ------------------------------------------------------------------------- 
  * --- internal                 
  * -------------------------------------------------------------------------
@@ -671,9 +670,7 @@ void set_multi_init(SetVTab* vtab)
    vtab[SET_MULTI].iter_next      = set_multi_iter_next;
    vtab[SET_MULTI].iter_exit      = set_multi_iter_exit;
    vtab[SET_MULTI].iter_reset     = set_multi_iter_reset;
-#ifndef NDEBUG
    vtab[SET_MULTI].set_is_valid   = set_multi_is_valid;
-#endif
 }
 
 

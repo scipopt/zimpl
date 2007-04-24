@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: bound.c,v 1.2 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: bound.c,v 1.3 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bound.c                                                       */
@@ -77,7 +77,6 @@ void bound_free(Bound* bound)
    free(bound);
 }
 
-#ifndef NDEBUG
 Bool bound_is_valid(const Bound* bound)
 {
    if (bound == NULL || !SID_ok(bound, BOUND_SID)
@@ -89,7 +88,6 @@ Bool bound_is_valid(const Bound* bound)
 
    return TRUE;
 }
-#endif /* !NDEBUG */
 
 Bound* bound_copy(const Bound* source)
 {

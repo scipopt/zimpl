@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.112 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.113 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -421,7 +421,7 @@ CodeNode* i_expr_div(CodeNode* self)
 
    if (numb_equal(divisor, numb_zero()))
    {
-      fprintf(stderr, "*** Error: 110 Division by zero\n");
+      fprintf(stderr, "*** Error 110: Division by zero\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }      

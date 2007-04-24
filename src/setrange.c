@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setrange.c,v 1.8 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setrange.c,v 1.9 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -43,7 +43,6 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-#ifndef NDEBUG
 static Bool set_range_is_valid(const Set* set)
 {
    return set != NULL
@@ -59,7 +58,6 @@ static Bool set_range_iter_is_valid(const SetIter* iter)
       && iter->range.last  >= 0
       && iter->range.now   >= iter->range.first;
 }
-#endif /* !NDEBUG */
 
 /* ------------------------------------------------------------------------- 
  * --- set_new                 
@@ -357,9 +355,7 @@ void set_range_init(SetVTab* vtab)
    vtab[SET_RANGE].iter_next      = set_range_iter_next;
    vtab[SET_RANGE].iter_exit      = set_range_iter_exit;
    vtab[SET_RANGE].iter_reset     = set_range_iter_reset;
-#ifndef NDEBUG
    vtab[SET_RANGE].set_is_valid   = set_range_is_valid;
-#endif
 }
 
 

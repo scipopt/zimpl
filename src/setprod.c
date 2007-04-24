@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.9 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.10 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -43,7 +43,6 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-#ifndef NDEBUG
 static Bool set_prod_is_valid(const Set* set)
 {
    return set != NULL
@@ -61,7 +60,6 @@ static Bool set_prod_iter_is_valid(const SetIter* iter)
       && iter->prod.iter_a != NULL
       && iter->prod.iter_b != NULL;
 }
-#endif /* !NDEBUG */
 
 /* ------------------------------------------------------------------------- 
  * --- set_new                 
@@ -392,8 +390,6 @@ void set_prod_init(SetVTab* vtab)
    vtab[SET_PROD].iter_next      = set_prod_iter_next;
    vtab[SET_PROD].iter_exit      = set_prod_iter_exit;
    vtab[SET_PROD].iter_reset     = set_prod_iter_reset;
-#ifndef NDEBUG
    vtab[SET_PROD].set_is_valid   = set_prod_is_valid;
-#endif
 }
 

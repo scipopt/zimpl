@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.27 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.28 2007/04/24 07:36:34 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -123,12 +123,10 @@ void term_free(Term* term)
    free(term);
 }
 
-#ifndef NDEBUG
 Bool term_is_valid(const Term* term)
 {
    return term != NULL && SID_ok(term, TERM_SID) && (term->used <= term->size);
 }
-#endif /* !NDEBUG */
 
 Term* term_copy(const Term* term)
 {
