@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.15 2007/03/07 09:41:24 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.16 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -62,7 +62,7 @@ void zpl_exit(int retval)
    if (is_longjmp_ok)
       longjmp(zpl_read_env, retval);
 
-#ifdef NDEBUG
+#if defined(NDEBUG) || defined(COVERAGE)
    exit(retval);
 #else
    abort(); /* to get a stack trace */

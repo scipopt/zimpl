@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.19 2006/06/14 12:29:59 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.20 2007/04/24 06:02:18 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -204,10 +204,12 @@ void elem_free(Elem* elem)
    store_count--;
 }
 
+#ifndef NDEBUG
 Bool elem_is_valid(const Elem* elem)
 {
    return elem != NULL && SID_ok(elem, ELEM_SID);
 }
+#endif
 
 Elem* elem_copy(const Elem* source)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setempty.c,v 1.1 2004/04/27 09:56:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setempty.c,v 1.2 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setempty.c                                                    */
@@ -43,6 +43,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+#ifndef NDEBUG
 static Bool set_empty_is_valid(const Set* set)
 {
    return set != NULL
@@ -55,6 +56,7 @@ static Bool set_empty_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->empty, SET_EMPTY_ITER_SID);
 }
+#endif /* !NDEBUG */
 
 /* ------------------------------------------------------------------------- 
  * --- set_new                 
@@ -229,13 +231,15 @@ void set_empty_init(SetVTab* vtab)
 {
    vtab[SET_EMPTY].set_copy       = set_empty_copy;
    vtab[SET_EMPTY].set_free       = set_empty_free;
-   vtab[SET_EMPTY].set_is_valid   = set_empty_is_valid;
    vtab[SET_EMPTY].set_lookup_idx = set_empty_lookup_idx;
    vtab[SET_EMPTY].set_get_tuple  = set_empty_get_tuple;
    vtab[SET_EMPTY].iter_init      = iter_init;
    vtab[SET_EMPTY].iter_next      = iter_next;
    vtab[SET_EMPTY].iter_exit      = iter_exit;
    vtab[SET_EMPTY].iter_reset     = iter_reset;
+#ifndef NDEBUG
+   vtab[SET_EMPTY].set_is_valid   = set_empty_is_valid;
+#endif
 }
 
 

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.53 2007/04/23 08:40:37 bzfkocht Exp $
+# $Id: Makefile,v 1.54 2007/04/24 06:02:18 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -146,12 +146,14 @@ valgrind:
 		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)" 
 
 coverage:
+		-ln -s ../../src $(OBJDIR)
+		-mkdir -p gcov
 		lcov -d $(OBJDIR) -z
 		make OPT=gcov check
-		lcov -d $(OBJDIR) -c >z.capture
-		lcov -d $(OBJDIR) -r z.capture "*mmlscan.c" "*mmlparse.c" >zimpl.capture
-		genhtml zimpl.capture
-		-rm z.capture
+		lcov -d $(OBJDIR) -c >gcov/z.capture
+		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse.c" >gcov/zimpl.capture
+		genhtml -o gcov gcov/zimpl.capture
+		-rm gcov/z.capture
 
 $(OBJDIR):	
 		-mkdir -p $(OBJDIR)

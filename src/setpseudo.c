@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setpseudo.c,v 1.2 2007/03/07 09:41:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setpseudo.c,v 1.3 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setpseudo.c                                                    */
@@ -43,6 +43,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+#ifndef NDEBUG
 static Bool set_pseudo_is_valid(const Set* set)
 {
    return set != NULL
@@ -56,7 +57,7 @@ static Bool set_pseudo_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->pseudo, SET_PSEUDO_ITER_SID);
 }
-
+#endif /* !NDEBUG */
 /* ------------------------------------------------------------------------- 
  * --- set_new                 
  * -------------------------------------------------------------------------
@@ -237,13 +238,15 @@ void set_pseudo_init(SetVTab* vtab)
 {
    vtab[SET_PSEUDO].set_copy       = set_pseudo_copy;
    vtab[SET_PSEUDO].set_free       = set_pseudo_free;
-   vtab[SET_PSEUDO].set_is_valid   = set_pseudo_is_valid;
    vtab[SET_PSEUDO].set_lookup_idx = set_pseudo_lookup_idx;
    vtab[SET_PSEUDO].set_get_tuple  = set_pseudo_get_tuple;
    vtab[SET_PSEUDO].iter_init      = iter_init;
    vtab[SET_PSEUDO].iter_next      = iter_next;
    vtab[SET_PSEUDO].iter_exit      = iter_exit;
    vtab[SET_PSEUDO].iter_reset     = iter_reset;
+#ifndef NDEBUG
+   vtab[SET_PSEUDO].set_is_valid   = set_pseudo_is_valid;
+#endif
 }
 
 

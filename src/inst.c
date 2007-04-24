@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.111 2007/04/23 08:40:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.112 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1226,8 +1226,6 @@ CodeNode* i_expr_length(CodeNode* self)
 CodeNode* i_expr_substr(CodeNode* self)
 {
    const char* strg;
-   const Numb* numb_beg;
-   const Numb* numb_len;
    int         beg;
    int         len;
    int         maxlen;
@@ -1237,28 +1235,9 @@ CodeNode* i_expr_substr(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   strg     = code_eval_child_strg(self, 0);
-   numb_beg = code_eval_child_numb(self, 1);
-   numb_len = code_eval_child_numb(self, 2);
-
-   if (!numb_is_int(numb_beg))
-   {
-      fprintf(stderr, "*** Error 217: Begin value ");
-      numb_print(stderr, numb_beg);
-      fprintf(stderr, " in substr too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   if (!numb_is_int(numb_len))
-   {
-      fprintf(stderr, "*** Error 218: Length value ");
-      numb_print(stderr, numb_len);
-      fprintf(stderr, " in substr too big or not an integer\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   beg = numb_toint(numb_beg);
-   len = numb_toint(numb_len);
+   strg = code_eval_child_strg(self, 0);
+   beg  = checked_eval_numb_toint(self, 1, "217: Begin value");
+   len  = checked_eval_numb_toint(self, 2, "218: Length value");
 
    if (len < 0)
    {

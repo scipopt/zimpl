@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: heap.c,v 1.2 2006/08/22 10:05:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: heap.c,v 1.3 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: heap.c                                                        */
@@ -73,6 +73,7 @@ static void heap_print(FILE* fp, const Heap* heap)
    }
 }
 
+#ifndef NDEBUG
 Bool heap_is_valid(const Heap* heap)
 {
    HeapData* data;
@@ -106,6 +107,7 @@ Bool heap_is_valid(const Heap* heap)
    }
    return TRUE;
 }
+#endif /* !NDEBUG */
 
 static Heap* heap_new(
    HeapType type,

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.12 2007/03/07 09:41:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.13 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -45,6 +45,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+#ifndef NDEBUG
 static Bool set_list_is_valid(const Set* set)
 {
    int i;
@@ -74,6 +75,7 @@ static Bool set_list_iter_is_valid(const SetIter*iter)
       && iter->list.now   >=  0
       && iter->list.now   >=  iter->list.first;
 }
+#endif /* !NDEBUG */
 
 /* ------------------------------------------------------------------------- 
  * --- internal                 
@@ -445,13 +447,15 @@ void set_list_init(SetVTab* vtab)
 {
    vtab[SET_LIST].set_copy       = set_list_copy;
    vtab[SET_LIST].set_free       = set_list_free;
-   vtab[SET_LIST].set_is_valid   = set_list_is_valid;
    vtab[SET_LIST].set_lookup_idx = set_list_lookup_idx;
    vtab[SET_LIST].set_get_tuple  = set_list_get_tuple;
    vtab[SET_LIST].iter_init      = set_list_iter_init;
    vtab[SET_LIST].iter_next      = set_list_iter_next;
    vtab[SET_LIST].iter_exit      = set_list_iter_exit;
    vtab[SET_LIST].iter_reset     = set_list_iter_reset;
+#ifndef NDEBUG
+   vtab[SET_LIST].set_is_valid   = set_list_is_valid;
+#endif
 }
 
 /* ------------------------------------------------------------------------- 

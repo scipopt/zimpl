@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.9 2004/05/09 08:36:25 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.10 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -187,18 +187,19 @@ struct set_vtab
 {
    void     (*set_free)      (Set* set);
    Set*     (*set_copy)      (const Set* set);
-   Bool     (*set_is_valid)  (const Set* set);
    int      (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
    void     (*set_get_tuple) (const Set* set, int idx, Tuple* tuple, int offset);
    SetIter* (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
    Bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
    void     (*iter_exit)     (SetIter* iter, const Set* set);
    void     (*iter_reset)    (SetIter* iter, const Set* set);
+#ifndef NDEBUG
+   Bool     (*set_is_valid)  (const Set* set);
+#endif
 };
 
 #define SET_DEFAULT 0x0
 #define SET_NO_HASH 0x1
-
 
 
 #ifdef NDEBUG

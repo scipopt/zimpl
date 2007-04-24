@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: idxset.c,v 1.10 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: idxset.c,v 1.11 2007/04/24 06:02:19 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -81,10 +81,12 @@ void idxset_free(IdxSet* idxset)
    free(idxset);
 }
 
+#ifndef NDEBUG
 Bool idxset_is_valid(const IdxSet* idxset)
 {
    return ((idxset != NULL) && SID_ok(idxset, IDXSET_SID));
 }
+#endif
 
 IdxSet* idxset_copy(const IdxSet* source)
 {
