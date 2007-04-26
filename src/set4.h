@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set4.h,v 1.10 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set4.h,v 1.11 2007/04/26 09:22:20 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -193,9 +193,7 @@ struct set_vtab
    Bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
    void     (*iter_exit)     (SetIter* iter, const Set* set);
    void     (*iter_reset)    (SetIter* iter, const Set* set);
-#ifndef NDEBUG
    Bool     (*set_is_valid)  (const Set* set);
-#endif
 };
 
 #define SET_DEFAULT 0x0
