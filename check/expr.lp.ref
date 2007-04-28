@@ -24,6 +24,8 @@
 \ subto c19: sum <s> in S with substr(s, 1, 1) == "o" : x[length(s)] >= 2;
 \ subto c20: sum <s> in S with substr(s, -1, 1) == "o" : x[length(s)] >= 2;
 \ subto c21: sum <s> in S with substr(s, 2, 2) == "ll" : x[length(s)] <= 2;
+\ subto c22: sum <s> in S with substr(s, -6, 5) != "" : x[length(s)] <= 2;
+\ subto c23: sum <i> in { 4, 9, 16 }: x[sqrt(i)] >= 5;
 \Problem name: expr.zpl
 Minimize
  Objective: 
@@ -73,6 +75,10 @@ Subject to
   + x#2 + x#5 >= 2
  c21_1:
   + x#5 <= 2
+ c22_1:
+  + x#2 + x#5 + x#4 <= 2
+ c23_1:
+  + x#4 + x#3 + x#2 >= 5
 Bounds
  0 <= x#1 <= +Inf
  0 <= x#2 <= +Inf

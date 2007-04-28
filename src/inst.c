@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.113 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.114 2007/04/28 06:17:40 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3107,34 +3107,11 @@ CodeNode* i_newsym_var(CodeNode* self)
       priority    = code_eval_child_numb(self, 5);
       startval    = code_eval_child_numb(self, 6);
 
-      if (bound_get_type(lower) == BOUND_INFTY)
-      {
-         bound_free(lower);
-         lower = bound_new(BOUND_VALUE, numb_zero());
+      /* Parser makes sure, cannot happen
+       */
+      assert(bound_get_type(lower) != BOUND_INFTY);
+      assert(bound_get_type(upper) != BOUND_MINUS_INFTY);
 
-         if (stmt_trigger_warning(136))
-            fprintf(stderr,
-               "--- Warning 136: Lower bound for var %s set to infinity -- ignored\n",
-               name);
-      }
-      if (bound_get_type(upper) == BOUND_MINUS_INFTY)
-      {
-         bound_free(upper);
-         upper = bound_new(BOUND_INFTY, NULL);
-
-         if (stmt_trigger_warning(137))
-            fprintf(stderr,
-               "--- Warning 137: Upper bound for var %s set to -infinity -- ignored\n",
-               name);
-      }
-#ifdef NOT_POSSIBLE_ANYMORE
-      if ((varclass == VAR_CON || varclass == VAR_IMP_BIN || varclass == VAR_IMP_INT)
-         && (!numb_equal(priority, numb_zero()) || !numb_equal(startval, numb_zero())))
-         if (stmt_trigger_warning(138))
-            fprintf(stderr,
-               "--- Warning 138: Priority/Startval for continous or implicit integer var %s ignored\n",
-               name);
-#endif
       /* Integral bounds for integral variables ?
        */
       if (varclass != VAR_CON)
@@ -4288,21 +4265,12 @@ static void objective(CodeNode* self, Bool minimize)
    assert(code_is_valid(self));
 
    name = code_eval_child_name(self, 0);
-
-   if (!conname_set(name))
-   {
-      fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
    term = code_eval_child_term(self, 1);
 
    xlp_objname(name);
    xlp_setdir(minimize);
    term_to_objective(term);
 
-   conname_free();
-   
    code_value_void(self);
 }
 

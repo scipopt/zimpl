@@ -31,6 +31,8 @@
 \ set Y   := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
 \ set Y2  := { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
 \ set Z   := C * (A * B);
+\ set AA  := { <b> in B : 2 * b };
+\ set BB  := { <a,b> in A*B : <a,b+2> };
 \ var a[L2I];
 \ var b[B];
 \ var c[C];
@@ -52,6 +54,8 @@
 \ var y[Y];
 \ var y2[Y2];
 \ var z[Z];
+\ var aa[AA];
+\ var bb[BB];
 \ subto a1: sum <i> in L2I : a[i] >= 0;
 \ subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
 \ subto c1: sum <i> in C : c[i] >= ord(C2,1,1);
@@ -75,6 +79,8 @@
 \ subto y2: sum <i> in Y2 : y2[i] >= 2;
 \ subto z1: sum <i> in {1..card(E)} do e[ord(E,i,1),ord(E,i,2)] >= 5;
 \ subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
+\ subto aa1: sum <i> in AA : aa[i] >= 5;
+\ subto bb1: sum <i1,i2> in BB : bb[i1,i2] <= 3;
 \Problem name: set.zpl
 Minimize
  Objective: 
@@ -193,6 +199,11 @@ Subject to
   + z#4$c#3 + z#4$c#2 + z#4$c#1 + z#3$c#3 + z#3$c#2 + z#3$c#1
   + z#2$c#3 + z#2$c#2 + z#2$c#1 + z#1$c#3 + z#1$c#2 + z#1$c#1
   <= 8
+ aa1_1:
+  + aa#6 + aa#4 + aa#2 >= 5
+ bb1_1:
+  + bb$c#5 + bb$c#4 + bb$c#3 + bb$b#5 + bb$b#4 + bb$b#3
+  + bb$a#5 + bb$a#4 + bb$a#3 <= 3
 Bounds
  0 <= a$a <= +Inf
  0 <= a$b <= +Inf
@@ -294,4 +305,16 @@ Bounds
  0 <= z#4$c#1 <= +Inf
  0 <= z#4$c#2 <= +Inf
  0 <= z#4$c#3 <= +Inf
+ 0 <= aa#2 <= +Inf
+ 0 <= aa#4 <= +Inf
+ 0 <= aa#6 <= +Inf
+ 0 <= bb$a#3 <= +Inf
+ 0 <= bb$a#4 <= +Inf
+ 0 <= bb$a#5 <= +Inf
+ 0 <= bb$b#3 <= +Inf
+ 0 <= bb$b#4 <= +Inf
+ 0 <= bb$b#5 <= +Inf
+ 0 <= bb$c#3 <= +Inf
+ 0 <= bb$c#4 <= +Inf
+ 0 <= bb$c#5 <= +Inf
 End

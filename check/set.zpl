@@ -1,4 +1,4 @@
-# $Id: set.zpl,v 1.11 2006/05/19 10:45:16 bzfkocht Exp $
+# $Id: set.zpl,v 1.12 2007/04/28 06:17:38 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: set.zpl                                                       */
@@ -60,6 +60,8 @@ set X   := { <i> in { <k> in C with k > 2 } with i mod 2 == 0 }; # { 4 }
 set Y   := { -2 .. -2 } + { -4 .. -8 by 2 } + { -16 .. -10 by -2 } + { 7 .. 1 } ;
 set Y2  := { -2 to -2 } + { -4 to -8 by 2 } + { -16 to -10 by -2 } + { 7 to 1 } ;
 set Z   := C * (A * B);
+set AA  := { <b> in B : 2 * b };
+set BB  := { <a,b> in A*B : <a,b+2> };
 
 var a[L2I];
 var b[B];
@@ -82,6 +84,8 @@ var xabcdefghijklmno[X];
 var y[Y];
 var y2[Y2];
 var z[Z];
+var aa[AA];
+var bb[BB];
 
 subto a1: sum <i> in L2I : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
@@ -111,7 +115,8 @@ subto y1: sum <i> in Y : y[i] >= 0;
 subto y2: sum <i> in Y2 : y2[i] >= 2;
 subto z1: sum <i> in {1..card(E)} do e[ord(E,i,1),ord(E,i,2)] >= 5;
 subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
-
+subto aa1: sum <i> in AA : aa[i] >= 5;
+subto bb1: sum <i1,i2> in BB : bb[i1,i2] <= 3;
 
 
 

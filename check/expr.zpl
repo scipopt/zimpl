@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.13 2007/04/23 08:40:37 bzfkocht Exp $
+# $Id: expr.zpl,v 1.14 2007/04/28 06:17:38 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -52,4 +52,5 @@ subto c18: (prod <i> in I with i < 4 : a[i]) * x[1] <= 800;
 subto c19: sum <s> in S with substr(s, 1, 1) == "o" : x[length(s)] >= 2;
 subto c20: sum <s> in S with substr(s, -1, 1) == "o" : x[length(s)] >= 2;
 subto c21: sum <s> in S with substr(s, 2, 2) == "ll" : x[length(s)] <= 2;
-
+subto c22: sum <s> in S with substr(s, -6, 5) != "" : x[length(s)] <= 2;
+subto c23: sum <i> in { 4, 9, 16 }: x[sqrt(i)] >= 5;
