@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.14 2007/04/23 08:40:37 bzfkocht Exp $
+# $Id: check.sh,v 1.15 2007/04/30 07:01:12 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -45,7 +45,7 @@ do
     1) echo Test $i "(tbl)" FAIL ;;
     *) echo Test $i "(tbl)" ERROR ;;
    esac
-   #rm $i.tbl $i.lp
+   rm $i.tbl $i.lp
 done 
 for i in presol
 do
