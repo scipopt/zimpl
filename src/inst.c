@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.114 2007/04/28 06:17:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.115 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -4322,13 +4322,11 @@ CodeNode* i_print(CodeNode* self)
    case CODE_SET :
       set_print(stdout, code_get_set(child));
       break;
+   case CODE_SYM :
+      symbol_print(stdout, code_get_symbol(child));
+      break;
    case CODE_NAME :
-      name = code_get_name(child);
-
-      if (NULL != (sym = symbol_lookup(name)))
-         symbol_print(stdout, sym);
-      else
-         printf("%s", name);
+      printf("Unknown name: %s", code_get_name(child));
       break;
    default :
       abort();

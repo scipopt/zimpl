@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.82 2007/04/23 08:40:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.83 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -762,6 +762,7 @@ command
    : PRINT cexpr    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT tuple    { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT sexpr    { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT VARSYM   { $$ = code_new_inst(i_print, 1, code_new_symbol($2)); }
    | CHECK lexpr    { $$ = code_new_inst(i_check, 1, $2); }
    | FORALL idxset DO command {
         $$ = code_new_inst(i_forall, 2, $2, $4);

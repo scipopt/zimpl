@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.54 2007/04/24 06:02:18 bzfkocht Exp $
+# $Id: Makefile,v 1.55 2007/05/20 09:25:53 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.06d
+VERSION		=	2.06e
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -86,7 +86,8 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratordwrite.o ratpresolve.o ratsoswrite.o rathumwrite.o 
+			ratrlpwrite.o ratordwrite.o ratpresolve.o ratsoswrite.o \
+			rathumwrite.o 
 LIBBASE		=	bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse.o mmlscan.o numbgmp.o \

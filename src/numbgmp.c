@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.25 2007/03/07 09:41:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.26 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -762,6 +762,17 @@ Bool numb_is_number(const char *s)
    s++;
    
    return isdigit(*s);
+}
+
+/* Should give a random number between min and max
+ */
+int numb_get_intrand(int mini, int maxi)
+{
+   double r = (double)genrand_int32() / 4294967295.0;
+
+   assert(mini < maxi);
+   
+   return (int)(r * (maxi - mini) + 0.5) + mini;
 }
 
 /* 

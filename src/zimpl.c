@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.73 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.74 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -74,8 +74,8 @@ static const char* help =
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
-"  -t lp|mps|hum  select output format. Either LP (default), MPS format\n" \
-"                 or human readable HUM.\n" \
+"  -t lp|mps|hum|rlp  select output format. Either LP (default), MPS format,\n" \
+"                 human readable HUM, ridiculous permuted LP.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
@@ -278,6 +278,9 @@ int main(int argc, char* const* argv)
          case 'l' :
             format = LP_FORM_LPF;
             break;
+         case 'r' :
+            format = LP_FORM_RLP;
+            break;
          default :
             fprintf(stderr,
                "--- Warning 103: Output format \"%s\" not supported, using LP format\n",
@@ -322,6 +325,9 @@ int main(int argc, char* const* argv)
       break;
    case LP_FORM_HUM :
       extension = ".hum";
+      break;
+   case LP_FORM_RLP :
+      extension = ".rlp";
       break;
    default :
       abort();
@@ -486,7 +492,16 @@ int main(int argc, char* const* argv)
       perror(outfile);
       exit(EXIT_FAILURE);
    }
-   prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title);
+   if (format != LP_FORM_RLP)
+      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title);
+   else
+   {
+      prog_text = malloc(strlen(title) + 4);
+      
+      assert(prog_text != NULL);
+
+      sprintf(prog_text, "%c%s\n", format == LP_FORM_MPS ? '*' : '\\', title);
+   }
 
    xlp_write(fp, format, prog_text);
 

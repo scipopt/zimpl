@@ -1,4 +1,4 @@
-# $Id: presol.zpl,v 1.1 2004/05/29 11:29:35 bzfkocht Exp $
+# $Id: presol.zpl,v 1.2 2007/05/20 09:25:53 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: presol.zpl                                                    *
@@ -29,6 +29,7 @@ set I := { 1..5 };
 var x[<i> in I] binary startval i mod 2;
 var y[<i> in I] integer <= 2 * i priority i * 10 startval istart;
 var z[<i> in I] <= 4 * i;
+var w[<i> in I] integer >= 1 <= if i mod 2 == 1 then 1 else 2 end;
 
 minimize cost: sum <i> in I : -(x[i] + y[i]);
  
@@ -39,3 +40,6 @@ subto c4: sum <i> in I: y[i] == 15;
 subto c5: forall <i> in I: y[i] >= z[i];
 subto c6: forall <i> in I with i < 3: x[i] <= z[i];
 subto c7: forall <i> in I with i >= 3: 1 <= x[i] + y[i] <= 100;
+subto c8: forall <i> in I with i mod 2 == 1: -3 * w[i] == -3;
+subto c9: w[2] >= 2;
+subto c10: w[4] <= 2;

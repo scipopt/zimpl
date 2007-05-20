@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.28 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.29 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1728,6 +1728,9 @@ int lps_getnamesize(const Lps* lp, LpFormat format)
    case LP_FORM_MPS :
       name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? MPS_NAME_LEN : lp->name_len);
       break;
+   case LP_FORM_RLP :
+      name_size = 1 + MIN_NAME_LEN;
+      break;
    default :
       abort();
    }
@@ -1757,6 +1760,9 @@ void lps_write(
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);
+      break;
+   case LP_FORM_RLP :
+      rlp_write(lp, fp, text);
       break;
    default :
       abort();
@@ -1862,7 +1868,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    assert(lps_valid(lp));
    assert(fp      != NULL);
    assert(head    != NULL);
-   assert(format == LP_FORM_LPF || format == LP_FORM_MPS);
+   assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP);
    
    namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
    temp    = malloc((size_t)namelen + 1);

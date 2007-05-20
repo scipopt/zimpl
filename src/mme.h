@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.79 2007/04/23 08:40:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.80 2007/05/20 09:25:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -235,6 +235,8 @@ extern Bool         numb_is_int(const Numb* numb);
 extern int          numb_toint(const Numb* numb);
 /*lint -sem(        numb_is_number, nulterm(1), 1p) */
 extern Bool         numb_is_number(const char *s);
+/*lint -sem(        numb_get_intrand, 1n < 2n) */
+extern int          numb_get_intrand(int mini, int maxi);
 
 #ifdef __GMP_H__
 /*lint -sem(        numb_new_mpq, @p == 1) */

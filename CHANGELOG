@@ -1,3 +1,6 @@
+ - Implemented new file format RLP which permutes the
+   order of the constraint and variables.
+
  - New parameter match "regular_expression" to the read
    function. If given, only those lines are read, which
    match the given expression.
