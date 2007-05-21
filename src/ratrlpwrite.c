@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.1 2007/05/20 09:28:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.2 2007/05/21 08:22:51 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rlpwrite.c                                                    */
@@ -35,11 +35,7 @@
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
-
-
-/* ??? random generator rausziehen */
-/*lint -sem(numb_get_intrand, 1n < 2n) */
-extern int numb_get_intrand(int mini, int maxi);
+#include "random.h"
 
 static void permute(int size, void** tab)
 {
@@ -51,8 +47,8 @@ static void permute(int size, void** tab)
    for(i = 0; i < size; i++)
    {
       void* t;
-      int   a = numb_get_intrand(0, size - 1);
-      int   b = numb_get_intrand(0, size - 1);
+      int   a = rand_get_range(0, size - 1);
+      int   b = rand_get_range(0, size - 1);
 
       assert(a >= 0);
       assert(a <  size);

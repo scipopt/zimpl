@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.80 2007/05/20 09:25:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.81 2007/05/21 08:22:50 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -143,7 +143,7 @@ extern unsigned int str_hash(const char* s);
 
 /* numbgmp.c
  */
-extern void         numb_init(unsigned long);
+extern void         numb_init(void);
 extern void         numb_exit(void);
 /*lint -sem(        numb_new, @p == 1) */
 extern Numb*        numb_new(void);
@@ -235,8 +235,6 @@ extern Bool         numb_is_int(const Numb* numb);
 extern int          numb_toint(const Numb* numb);
 /*lint -sem(        numb_is_number, nulterm(1), 1p) */
 extern Bool         numb_is_number(const char *s);
-/*lint -sem(        numb_get_intrand, 1n < 2n) */
-extern int          numb_get_intrand(int mini, int maxi);
 
 #ifdef __GMP_H__
 /*lint -sem(        numb_new_mpq, @p == 1) */

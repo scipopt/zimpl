@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbdbl.c,v 1.1 2006/06/16 08:25:36 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbdbl.c,v 1.2 2007/05/21 08:22:51 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -108,7 +108,7 @@ static void extend_storage(void)
    assert(store_free   != NULL);
 }
 
-void numb_init(unsigned long seed)
+void numb_init()
 {
    store_anchor = NULL;
    store_free   = NULL;
@@ -116,8 +116,6 @@ void numb_init(unsigned long seed)
    numb_const_zero     = numb_new();
    numb_const_one      = numb_new_integer(1);
    numb_const_minusone = numb_new_integer(-1);
-
-   genrand_init(seed);
 }
 
 void numb_exit()

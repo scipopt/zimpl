@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.16 2007/04/24 06:02:19 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.17 2007/05/21 08:22:51 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -40,6 +40,7 @@
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
+#include "random.h"
 #include "xlpglue.h"
 #include "zimpllib.h"
 
@@ -149,7 +150,8 @@ Bool zpl_read(const char* filename)
    printf(banner, VERSION);
 
    str_init();
-   numb_init(13021967UL);
+   rand_init(13021967UL);
+   numb_init();
    elem_init();
    set_init();
    mio_init();
@@ -269,7 +271,7 @@ Bool zpl_read_with_args(int argc, char** argv)
    }
 
    str_init();
-   numb_init(seed);
+   rand_init(seed);
    elem_init();
    set_init();
    mio_init();

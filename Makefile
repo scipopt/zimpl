@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.55 2007/05/20 09:25:53 bzfkocht Exp $
+# $Id: Makefile,v 1.56 2007/05/21 08:22:50 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -91,7 +91,7 @@ OBJECT  	=       zimpl.o xlpglue.o \
 LIBBASE		=	bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse.o mmlscan.o numbgmp.o \
-			prog.o rdefpar.o source.o \
+			prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
 			tuple.o vinst.o mshell.o zimpllib.o
