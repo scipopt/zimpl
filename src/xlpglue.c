@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.25 2007/02/04 20:22:03 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.26 2007/05/23 18:40:30 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -154,7 +154,7 @@ Con* xlp_addcon(
       break;
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(mpq_equal(tlhs, trhs));
-      /*FALLTHROUGH*/
+      /*lint -fallthrough*/
    case CON_RANGE :
       lps_setlhs(con, tlhs);
       lps_setrhs(con, trhs);
