@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.25 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.26 2007/05/23 14:35:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -32,6 +32,7 @@
 
 #include "bool.h"
 #include "mshell.h"
+#include "blkmem.h"
 #include "ratlptypes.h"
 #include "mme.h"
 
@@ -123,7 +124,7 @@ void hash_free(Hash* hash)
       for(he = hash->bucket[i]; he != NULL; he = hq)
       {
          hq = he->next;
-         free(he);
+         blk_free(he, sizeof(*he));
       }
    }
    free(hash->bucket);
@@ -140,7 +141,7 @@ Bool hash_is_valid(const Hash* hash)
 
 void hash_add_tuple(Hash* hash, const Tuple* tuple)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
@@ -158,7 +159,7 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
 
 void hash_add_entry(Hash* hash, const Entry* entry)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   HElem*       he = blk_alloc(sizeof(*he));
    const Tuple* tuple;
    unsigned int hcode;
 
@@ -177,7 +178,7 @@ void hash_add_entry(Hash* hash, const Entry* entry)
 
 void hash_add_numb(Hash* hash, const Numb* numb)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
@@ -263,7 +264,7 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
 
 void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
 {
-   HElem*       he = calloc(1, sizeof(*he));
+   HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
 
    assert(hash_is_valid(hash));

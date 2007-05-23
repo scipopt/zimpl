@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.20 2007/04/21 10:34:29 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.21 2007/05/23 14:35:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -32,6 +32,7 @@
 
 #include "bool.h"
 #include "mshell.h"
+#include "blkmem.h"
 #include "ratlptypes.h"
 #include "mme.h"
 
@@ -71,7 +72,7 @@ struct list
 
 static void list_add_data(List* list, const ListData* data)
 {
-   ListElem* elem = calloc(1, sizeof(*elem));
+   ListElem* elem = blk_alloc(sizeof(*elem));
 
    assert(list_is_valid(list));
    assert(elem != NULL);
@@ -88,7 +89,7 @@ static void list_add_data(List* list, const ListData* data)
 
 static void list_insert_data(List* list, const ListData* data)
 {
-   ListElem* elem = calloc(1, sizeof(*elem));
+   ListElem* elem = blk_alloc(sizeof(*elem));
 
    assert(list_is_valid(list));
    assert(elem != NULL);
@@ -205,7 +206,7 @@ void list_free(List* list)
          default :
             abort();
          }
-         free(p);
+         blk_free(p, sizeof(*p));
       }
       free(list);
    }

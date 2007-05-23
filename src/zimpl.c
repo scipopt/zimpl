@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.75 2007/05/21 08:22:51 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.76 2007/05/23 14:35:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -38,6 +38,7 @@
 #include "bool.h"
 #include "mshell.h"
 #include "random.h"
+#include "blkmem.h"
 #include "ratlptypes.h"
 #include "mme.h"
 #include "xlpglue.h"
@@ -343,6 +344,7 @@ int main(int argc, char* const* argv)
 
    assert(outpipe != NULL);
 
+   blk_init();
    str_init();
    rand_init(seed);
    numb_init();
@@ -539,7 +541,8 @@ int main(int argc, char* const* argv)
    elem_exit();
    numb_exit();
    str_exit();
-
+   blk_exit();
+   
    free(sosfile);
    free(mstfile);
    free(ordfile);

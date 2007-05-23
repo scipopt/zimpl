@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.56 2007/05/21 08:22:50 bzfkocht Exp $
+# $Id: Makefile,v 1.57 2007/05/23 14:35:44 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.06e
+VERSION		=	2.06f
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -88,12 +88,12 @@ OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
 			ratrlpwrite.o ratordwrite.o ratpresolve.o ratsoswrite.o \
 			rathumwrite.o 
-LIBBASE		=	bound.o code.o conname.o define.o elem.o entry.o \
+LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse.o mmlscan.o numbgmp.o \
 			prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o stmt.o strstore.o symbol.o term.o \
+			setmulti.o set4.o stmt.o strstore2.o symbol.o term.o \
 			tuple.o vinst.o mshell.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o

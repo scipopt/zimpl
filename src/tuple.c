@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.22 2006/09/09 10:00:22 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.23 2007/05/23 14:35:44 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -32,6 +32,7 @@
 
 #include "bool.h"
 #include "mshell.h"
+#include "blkmem.h"
 #include "ratlptypes.h"
 #include "mme.h"
 
@@ -50,10 +51,11 @@ Tuple* tuple_new(int dim)
 {
    Tuple* tuple;
    int    count;
+   int    i;
    
    assert(dim >= 0);
    
-   tuple = malloc(sizeof(*tuple));
+   tuple = blk_alloc(sizeof(*tuple));
 
    assert(tuple != NULL);
 
@@ -63,9 +65,12 @@ Tuple* tuple_new(int dim)
    count          = dim < 1 ? 1 : dim;
    tuple->dim     = dim;
    tuple->refc    = 1;
-   tuple->element = calloc((size_t)count, sizeof(*tuple->element));
+   tuple->element = blk_alloc(count * sizeof(*tuple->element));
 
    assert(tuple->element != NULL);
+
+   for(i = 0; i < dim; i++)
+      tuple->element[i] = NULL;
 
    SID_set(tuple, TUPLE_SID);
    assert(tuple_is_valid(tuple));
@@ -76,6 +81,7 @@ Tuple* tuple_new(int dim)
 void tuple_free(Tuple* tuple)
 {
    int i;
+   int count;
    
    assert(tuple_is_valid(tuple));
    assert(tuple->element != NULL);
@@ -90,8 +96,9 @@ void tuple_free(Tuple* tuple)
 
       SID_del(tuple);
 
-      free(tuple->element);   
-      free(tuple);
+      count = tuple->dim < 1 ? 1 : tuple->dim;
+      blk_free(tuple->element, count * sizeof(*tuple->element));   
+      blk_free(tuple, sizeof(*tuple));
    }
 }
 
