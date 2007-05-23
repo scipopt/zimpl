@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.13 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.14 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -100,7 +100,6 @@ void lpf_write(
 {
    const Var* var;
    const Con* con;
-   Bool  have_binary   = FALSE;
    Bool  have_integer  = FALSE;
    Bool  have_separate = FALSE;
    int   cnt;
@@ -236,28 +235,6 @@ void lpf_write(
 
    /* ---------------------------------------------------------------------- */
 
-#ifdef NOT_NEEDED_ANYMORE
-   /* Binary section makes only sense if we then omit the variables from the
-    * bounds section to decrease file size
-    */
-   if (have_binary)
-   {
-      fprintf(fp, "Binary\n");
-      
-      for(var = lp->var_root; var != NULL; var = var->next)
-      {
-         if (var->vclass != VAR_BIN)
-            continue;
-
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
-            continue;
-
-         lps_makename(name, name_size, var->name, var->number);
-
-         fprintf(fp, " %s\n", name);
-      }
-   }
-#endif
    if (have_integer)
    {
       fprintf(fp, "General\n");

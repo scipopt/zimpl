@@ -14,7 +14,7 @@
 -esym(534,close,creat,fclose,fprintf,fputc,fflush,fsync)
 -esym(534,fputs,fscanf,fseek,fwrite,lseek,memcpy,memmove,memset)
 -esym(534,printf,puts,scanf,sprintf,sscanf,strcat,strcpy)
--esym(534,strncat,strncpy,unlink,write)
+-esym(534,strncat,strncpy,unlink,write,regerror)
 //
 -e749 // local enumeration constant not referenced
 -e758 // Operator followed by operator is confusing

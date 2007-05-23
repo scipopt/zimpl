@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: strstore2.c,v 1.1 2007/05/23 14:41:15 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore2.c,v 1.2 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: strstore2.c                                                   */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -93,8 +93,10 @@ const char* str_new(const char* s)
 
    if (len > MAX_STR_STORE_SIZE)
    {
-      /* error */
-      abort();
+      fprintf(stderr, "*** Error 803: String too long %d > %d\n",
+         len + 1, MAX_STR_STORE_SIZE); 
+
+      zpl_exit(EXIT_FAILURE);
    }
    if (store_anchor->size - store_anchor->used < len)
    {

@@ -1,4 +1,8 @@
-random generator rausziehen aus numb! wg. ratrlpwrite.
+
+check blkmem. gucken ob auch woanders noch zu benutzen
+
+check strstore2.c, strstore.c weg.
+
 
 Bug doublicate SOS names. (Crash)
 

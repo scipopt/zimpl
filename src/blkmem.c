@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: blkmem.c,v 1.1 2007/05/23 14:35:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: blkmem.c,v 1.2 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.c                                                      */
@@ -61,17 +61,17 @@ static void extend_memory(int chain_no)
 {
    BlkMem* block      = calloc(1, sizeof(*block));
    int     elem_size  = (chain_no + 1) * 8;
-   int     offset     = elem_size / sizeof(BlkMemElem);
+   int     offset     = elem_size / (int)sizeof(BlkMemElem);
    int     i;
    
-   assert(elem_size % sizeof(BlkMemElem) == 0);
+   assert(elem_size % (int)sizeof(BlkMemElem) == 0);
    assert(block    != NULL);
    assert(chain_no >= 0);
    assert(chain_no <  MAX_CHAINS);
    
    block->elem_count    = (blk_anchor[chain_no] == NULL)
                         ? MIN_BLK_ELEM_COUNT : (blk_anchor[chain_no]->elem_count * 2);
-   block->elem          = malloc(block->elem_count * elem_size);
+   block->elem          = malloc((size_t)(block->elem_count * elem_size));
    block->next          = blk_anchor[chain_no];   
    blk_anchor[chain_no] = block;
    
@@ -140,7 +140,7 @@ void* blk_alloc(int size)
    if (chain_no >= MAX_CHAINS)
    {
       blk_fails++;
-      return malloc(size);
+      return malloc((size_t)size);
    }
    if (first_free[chain_no] == NULL)
       extend_memory(chain_no);
@@ -176,7 +176,7 @@ void blk_free(void* p, int size)
    {
       BlkMem* anchor    = blk_anchor[chain_no];
       int     elem_size = (chain_no + 1) * 8;
-      int     offset    = elem_size / sizeof(BlkMemElem);
+      int     offset    = elem_size / (int)sizeof(BlkMemElem);
 
       while(anchor != NULL)
       {      

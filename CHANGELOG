@@ -1,3 +1,5 @@
+ - Improved memory handling for strings, tuples, and lists.
+
  - Implemented new file format RLP which permutes the
    order of the constraint and variables.
 

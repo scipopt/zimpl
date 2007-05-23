@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.115 2007/05/20 09:25:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.116 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1218,7 +1218,7 @@ CodeNode* i_expr_length(CodeNode* self)
    assert(code_is_valid(self));
 
    code_value_numb(self,
-      numb_new_integer(strlen(code_eval_child_strg(self, 0))));
+      numb_new_integer((int)strlen(code_eval_child_strg(self, 0))));
 
    return self;
 }
@@ -1245,18 +1245,18 @@ CodeNode* i_expr_substr(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   tmp = malloc(len + 1); 
+   tmp = malloc((size_t)len + 1); 
 
    if (beg < 0)
    {
-      beg = strlen(strg) + beg;
+      beg = (int)strlen(strg) + beg;
 
       if (beg < 0)
          beg = 0;
    }
    assert(beg >= 0);
    
-   maxlen = strlen(strg) - beg;
+   maxlen = (int)strlen(strg) - beg;
 
    if (maxlen < len)
       len = maxlen;
@@ -1264,7 +1264,7 @@ CodeNode* i_expr_substr(CodeNode* self)
    if (len < 0)
       len = 0;
    else
-      strncpy(tmp, &strg[beg], len);
+      strncpy(tmp, &strg[beg], (size_t)len);
 
    tmp[len] = '\0';
 
@@ -4298,9 +4298,7 @@ CodeNode* i_object_max(CodeNode* self)
 
 CodeNode* i_print(CodeNode* self)
 {
-   CodeNode*     child;
-   const Symbol* sym;
-   const char*   name;
+   CodeNode* child;
 
    Trace("i_print");
 

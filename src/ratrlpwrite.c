@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.2 2007/05/21 08:22:51 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.3 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rlpwrite.c                                                    */
@@ -143,7 +143,6 @@ void rlp_write(
    Con*        con;
    Con**       contab;
    
-   Bool  have_binary   = FALSE;
    Bool  have_integer  = FALSE;
    Bool  have_separate = FALSE;
    int   cnt;
@@ -299,28 +298,6 @@ void rlp_write(
 
    /* ---------------------------------------------------------------------- */
 
-#ifdef NOT_NEEDED_ANYMORE
-   /* Binary section makes only sense if we then omit the variables from the
-    * bounds section to decrease file size
-    */
-   if (have_binary)
-   {
-      fprintf(fp, "Binary\n");
-      
-      for(var = lp->var_root; var != NULL; var = var->next)
-      {
-         if (var->vclass != VAR_BIN)
-            continue;
-
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
-            continue;
-
-         lps_makename(name, name_size, var->name, var->number);
-
-         fprintf(fp, " %s\n", name);
-      }
-   }
-#endif
    if (have_integer)
    {
       fprintf(fp, "General\n");

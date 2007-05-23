@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.81 2007/05/21 08:22:50 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.82 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -161,7 +161,7 @@ extern Bool         numb_is_valid(const Numb* numb);
 extern Numb*        numb_copy(const Numb* source);
 /*lint -sem(        numb_equal, 1p == 1 && 2p == 1) */
 extern Bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_cmp,p, 1p == 1 && 2p == 1) */
+/*lint -sem(        numb_cmp, 1p == 1 && 2p == 1) */
 extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_set, 1p == 1 && 2p == 1) */
 extern void         numb_set(Numb* numb_a, const Numb* numb_b);

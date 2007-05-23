@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.83 2007/05/20 09:25:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.84 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,8 +25,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e525 -e527 -e537 -e574 -e661 -e662 -e676 */
-/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 */
+/*lint -e428 -e514 -e525 -e527 -e537 -e568 -e574 -e659 -e661 -e662 -e676 -e685 */
+/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 -e778 */
 /*lint -e810 -e818 -e830 */
 /*lint -esym(530,yylen) */
 /*lint -esym(563,yyerrorlab) */   

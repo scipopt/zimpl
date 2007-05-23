@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.17 2007/05/21 08:22:51 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.18 2007/05/23 19:08:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -38,6 +38,7 @@
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
+#include "blkmem.h"
 #include "ratlptypes.h"
 #include "mme.h"
 #include "random.h"
@@ -149,6 +150,7 @@ Bool zpl_read(const char* filename)
 
    printf(banner, VERSION);
 
+   blk_init();
    str_init();
    rand_init(13021967UL);
    numb_init();
@@ -200,7 +202,8 @@ Bool zpl_read(const char* filename)
    elem_exit();
    numb_exit();
    str_exit();
-
+   blk_exit();
+   
    return ret;
 }
 
@@ -270,6 +273,7 @@ Bool zpl_read_with_args(int argc, char** argv)
       return FALSE;
    }
 
+   blk_init();
    str_init();
    rand_init(seed);
    elem_init();
@@ -337,7 +341,7 @@ Bool zpl_read_with_args(int argc, char** argv)
    elem_exit();
    numb_exit();
    str_exit();
-
+   blk_exit();
 
    return ret;
 }
