@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.21 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.22 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -139,7 +139,7 @@ void elem_exit()
       
       for(i = 0; i < ELEM_STORE_SIZE - 1; i++)
       {
-         elem_print(stderr, &store->begin[i]);
+         elem_print(stderr, &store->begin[i], TRUE);
          fprintf(stderr, "\n");
       }
 #endif
@@ -252,9 +252,9 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    {
       fprintf(stderr,
          "*** Error 160: Comparison of elements with different types ");
-      elem_print(stderr, elem_a);
+      elem_print(stderr, elem_a, TRUE);
       fprintf(stderr, " / ");
-      elem_print(stderr, elem_b);
+      elem_print(stderr, elem_b, TRUE);
       fputc('\n', stderr);
       zpl_exit(EXIT_FAILURE);
    }
@@ -301,7 +301,7 @@ const char* elem_get_name(const Elem* elem)
    return elem->value.name;
 }
 
-void elem_print(FILE* fp, const Elem* elem)
+void elem_print(FILE* fp, const Elem* elem, Bool use_quotes)
 {
    assert(elem_is_valid(elem));
 
@@ -311,7 +311,7 @@ void elem_print(FILE* fp, const Elem* elem)
       fprintf(fp, "%.16g", numb_todbl(elem->value.numb));
       break;
    case ELEM_STRG :
-      fprintf(fp, "\"%s\"", elem->value.strg);
+      fprintf(fp, use_quotes ? "\"%s\"" : "%s", elem->value.strg);
       break;
    case ELEM_NAME :
       fprintf(fp, "%s", elem->value.name);

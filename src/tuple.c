@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.23 2007/05/23 14:35:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.24 2007/07/25 12:52:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -220,7 +220,7 @@ void tuple_print(FILE* fp, const Tuple* tuple)
       
    for(i = 0; i < tuple->dim; i++)
    {
-      elem_print(fp, tuple->element[i]);
+      elem_print(fp, tuple->element[i], TRUE);
       
       fprintf(fp, "%s", (i < tuple->dim - 1) ? "," : "");
    }

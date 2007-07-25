@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.82 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.83 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -385,7 +385,7 @@ extern const char*  elem_get_strg(const Elem* elem);
 /*lint -sem(        elem_get_name, 1p == 1, @p && nulterm(@)) */
 extern const char*  elem_get_name(const Elem* elem);
 /*lint -sem(        elem_print, 1p == 1 && 2p == 1) */
-extern void         elem_print(FILE* fp, const Elem* elem);
+extern void         elem_print(FILE* fp, const Elem* elem, Bool use_quotes);
 /*lint -sem(        elem_hash, 1p == 1) */
 extern unsigned int elem_hash(const Elem* elem);
 /*lint -sem(        elem_tostr, 1p == 1, @p && nulterm(@)) */

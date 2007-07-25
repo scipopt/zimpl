@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.14 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.15 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -147,7 +147,7 @@ int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
          if (stmt_trigger_warning(164))
          {
             fprintf(stderr, "--- Warning 164: Duplicate element ");
-            elem_print(stderr, elem);
+            elem_print(stderr, elem, TRUE);
             fprintf(stderr, " for set rejected\n");
          }
       }

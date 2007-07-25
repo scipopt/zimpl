@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.21 2007/05/23 14:35:44 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.22 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -424,7 +424,7 @@ void list_print(FILE* fp, const List* list)
       switch(list->type)
       {
       case LIST_ELEM :
-         elem_print(fp, le->data.elem);
+         elem_print(fp, le->data.elem, TRUE);
          break;
       case LIST_TUPLE :
          tuple_print(fp, le->data.tuple);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.116 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.117 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1097,7 +1097,7 @@ CodeNode* i_expr_min2(CodeNode* self)
       if (ELEM_NUMB != elem_get_type(elem))
       {
          fprintf(stderr, "*** Error 116: Illegal value type in min: ");
-         elem_print(stderr, elem);
+         elem_print(stderr, elem, TRUE);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
@@ -1144,7 +1144,7 @@ CodeNode* i_expr_max2(CodeNode* self)
       if (ELEM_NUMB != elem_get_type(elem))
       {
          fprintf(stderr, "*** Error 117: Illegal value type in max: ");
-         elem_print(stderr, elem);
+         elem_print(stderr, elem, TRUE);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
@@ -4299,7 +4299,7 @@ CodeNode* i_object_max(CodeNode* self)
 CodeNode* i_print(CodeNode* self)
 {
    CodeNode* child;
-
+   
    Trace("i_print");
 
    assert(code_is_valid(self));
@@ -4308,12 +4308,18 @@ CodeNode* i_print(CodeNode* self)
 
    switch(code_get_type(child))
    {
-   case CODE_NUMB :
-      printf("%.16g", numb_todbl(code_get_numb(child)));
-      break;
-   case CODE_STRG :
-      printf("\"%s\"", code_get_strg(child));
-      break;
+   case CODE_LIST :
+      {
+         const List* list = code_get_list(child);
+         ListElem*   le = NULL;
+         const Elem* elem;
+
+         assert(list_is_elemlist(list));
+         
+         while(NULL != (elem = list_get_elem(list, &le)))
+            elem_print(stdout, elem, FALSE);
+      }
+      break;      
    case CODE_TUPLE :
       tuple_print(stdout, code_get_tuple(child));
       break;

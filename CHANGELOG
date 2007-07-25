@@ -1,3 +1,6 @@
+ - It is now possible to write out several strings and numbers
+   with one PRINT statement. E.g.: do print "x= ", x, " m/s"
+
  - Improved memory handling for strings, tuples, and lists.
 
  - Implemented new file format RLP which permutes the

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.14 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.15 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -222,14 +222,14 @@ void lpf_write(
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             fprintf(fp, " %.15g", mpq_get_d(var->lower));
          else
-            fprintf(fp, " -Inf");
+            fprintf(fp, " -inf");
          
          fprintf(fp, " <= %s <= ", name);
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
             fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
          else
-            fprintf(fp, "+Inf\n");
+            fprintf(fp, "+inf\n");
       }
    }
 

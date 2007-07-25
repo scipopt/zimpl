@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: local.c,v 1.13 2006/09/09 10:00:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.14 2007/07/25 12:52:21 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -155,7 +155,7 @@ void local_print_all(FILE* fp)
       else
       {
          fprintf(fp, "%s = ", local->name);
-         elem_print(fp, local->element);
+         elem_print(fp, local->element, TRUE);
       }
       fprintf(fp, "\n");
    }
