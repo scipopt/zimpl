@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.76 2007/05/23 14:35:44 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.77 2007/07/27 08:30:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -397,7 +397,7 @@ int main(int argc, char* const* argv)
    xlp_scale();
    
    /* We do not need the translation table for human readable format
-    * In any case we write it first to allow for a inline retranslation
+    * In any case we write it first to allow for an inline retranslation
     */
    if (format != LP_FORM_HUM)
    {
@@ -506,7 +506,6 @@ int main(int argc, char* const* argv)
 
       sprintf(prog_text, "%c%s\n", format == LP_FORM_MPS ? '*' : '\\', title);
    }
-
    xlp_write(fp, format, prog_text);
 
    check_write_ok(fp, outfile);

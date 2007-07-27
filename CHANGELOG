@@ -1,3 +1,6 @@
+ - Removed a small bug which lead to incorrect variable names
+   in the .tbl file if -l was used.
+
  - It is now possible to write out several strings and numbers
    with one PRINT statement. E.g.: do print "x= ", x, " m/s"
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.29 2007/05/20 09:25:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.30 2007/07/27 08:30:10 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -1735,7 +1735,7 @@ int lps_getnamesize(const Lps* lp, LpFormat format)
       abort();
    }
    assert(name_size > MIN_NAME_LEN);
-   
+
    return name_size;
 }
 
@@ -1749,7 +1749,7 @@ void lps_write(
    assert(fp   != NULL);
    
    lps_number(lp);
-   
+
    switch(format)
    {
    case LP_FORM_LPF :
@@ -1870,8 +1870,8 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    assert(head    != NULL);
    assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP);
    
-   namelen = (format == LP_FORM_MPS) ? MPS_NAME_LEN : LPF_NAME_LEN;
-   temp    = malloc((size_t)namelen + 1);
+   namelen = lps_getnamesize(lp, format);
+   temp    = malloc((size_t)namelen);
 
    assert(temp != NULL);
 
@@ -1879,24 +1879,24 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {
-      lps_makename(temp, namelen + 1, var->name, var->number);
+      lps_makename(temp, namelen, var->name, var->number);
 
       if (var->type == VAR_FIXED)
          fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\t%.16e\n",
-            head, var->number, namelen, temp, var->name, mpq_get_d(var->lower));
+            head, var->number, namelen - 1, temp, var->name, mpq_get_d(var->lower));
       else
       {
          if (var->size > 0 || !mpq_equal(var->cost, const_zero))
             fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
-               head, var->number, namelen, temp, var->name);
+               head, var->number, namelen - 1, temp, var->name);
       }
    }
    for(con = lp->con_root; con != NULL; con = con->next)
    {
-      lps_makename(temp, namelen + 1, con->name, con->number);
+      lps_makename(temp, namelen, con->name, con->number);
       
       fprintf(fp, "%s\tc %7d\t%-*s\t\"%s\"\t%.16e\n",
-         head, con->number, namelen, temp, con->name, mpq_get_d(con->scale));
+         head, con->number, namelen - 1, temp, con->name, mpq_get_d(con->scale));
    }
    free(temp);
 }
