@@ -1,3 +1,9 @@
+ - If a variable is printed with "do print" the type and bounds
+   of the variable are also given.
+
+ - Implemented concatenating strings with the "+" operator.
+   "hallo " + "wie" -> "hallo wie".
+
  - Removed a small bug which lead to incorrect variable names
    in the .tbl file if -l was used.
 

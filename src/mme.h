@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.83 2007/07/25 12:52:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.84 2007/08/01 10:17:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -131,6 +131,9 @@ extern int          verbose;
 extern void         zpl_exit(int retval);
 /*lint -sem(        zpl_add_parameter, 1p && nulterm(1)) */
 extern void         zpl_add_parameter(const char* def);
+/*lint -sem(        zpl_var_print, 1p == 1 && 2p == 1) */
+extern void         zpl_var_print(FILE* fp, const Var* var);
+
 
 /* strstore.c
  */
@@ -257,6 +260,8 @@ extern Bound*       bound_copy(const Bound* source);
 extern BoundType    bound_get_type(const Bound* bound);
 /*lint -sem(        bound_get_value, 1p == 1) */
 extern const Numb*  bound_get_value(const Bound* bound);
+/*lint -sem(        bound_print, 1p == 1 && 2p == 1) */
+extern void         bound_print(FILE* fp, const Bound* bound);
 
 
 /* list.c

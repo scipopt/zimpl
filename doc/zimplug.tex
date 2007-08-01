@@ -184,9 +184,9 @@ is to assume maximization.
 -b & Enables bison debug output.\\
 -f & Enables flex debug output.\\
 -h & Prints a help message.\\
--m & Writes a CPLEX \code{mst} (Mip STart) file.\\
+-m & Writes a \cplex \code{mst} (Mip STart) file.\\
 -O & Try to reduce the generated LP by doing some presolve analysis.\\
--r & Writes a CPLEX \code{ord} branching order file.\\
+-r & Writes a \cplex \code{ord} branching order file.\\
 -V & Prints the version number.\\
 \bottomrule
 \end{tabular}
@@ -305,12 +305,15 @@ $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 
 \subsubsection{String expressions}
 A string is delimited by double quotation marks \code{"},
-\eg \code{"Hallo Keiken"}. the function \code{substr(string, begin, length)} 
+\eg \code{"Hallo Keiken"}. Two strings can be concatenated using the
+\code{+} operator, \ie \code{"Hallo " + "Keiken"} gives \code{"Hallo
+  Keiken"}. The function \code{substr(string, begin, length)} 
 can be used to extract parts of a string. \code{begin} is the first character 
 to be used, counting starts with zero at first character. 
-If \code[begin} is negative, counting starts
+If \code{begin} is negative, counting starts
 at the end of the string. \code{length} is the number of chacaters to extract 
-starting at \code{begin}. 
+starting at \code{begin}. The length of a string can be determined
+using the \code{length} function.
 
 \subsubsection{Variant expressions}
 The following is either a numeric, string or boolean expression, depending on
@@ -615,13 +618,25 @@ param k[I*I] := <4,7> 89, <4,8> 67, <4,9> 44, <5,7> 12,
 %------------------------------------------------------------------------------
 Like parameters, variables can be indexed. 
 A variable has to be one out of three possible types: 
-Continuous (called \emph{real}), binary or integer. The default type is real. 
+Continuous (called \code{real}), \code{binary} or \code{integer}. The default type is real. 
 Variables may have lower and upper bounds. Defaults are
 zero as lower and infinity as upper bound. Binary variables are
 always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
 depending on the index of the variable (see the last declaration in the
 example). Bounds can also be set to \code{infinity} and \code{-infinity}.
+Binary and integer variables can be declared \code{implicit}, \ie the
+variable can be assumed to have an integral value in any optimal
+solution to the integer program, even if it is declared continuous. 
+Use of \emph{implicit} is only useful if used together with a solver
+that take advantage of this information. As of this writing only \scip
+(\url{http://scip.zib.de}) with linked in \zimpl is able to do so.
+In all other cases the variable is treated as a continous variable. 
+It is possible to specify initial values for integer variables by use
+of the \code{startval} keyword. Furthermore, the branching  priority
+can be given using the \code{priority} keyword. Currently, these
+values are written to a \cplex \code{ord} branching order file if the
+\code{-r} command line switch is given.
 
 \subsubsection{Examples}
 {\small 
@@ -631,6 +646,8 @@ var x2 binary;
 var y[A] real >= 2 <= 18;
 var z[<a,b> in C] integer 
       >= a * 10 <= if b <= 3 then p[b] else infinity end; 
+var w implicit binary;
+var t[k in K] integer >= 1 <= 3 * k startval 2 * k priority 50;
 \end{verbatim}
 }
 
@@ -793,7 +810,7 @@ file. The syntax is:
 \smallskip
 \code{read} \emph{filename} \code{as} \emph{template} 
 [\code{skip} \emph{n}] [\code{use} \emph{n}] 
-[\code{fs} \emph{s}] [\code{comment} \emph{s}]
+[\code{fs} \emph{s}] [\code{match} \emph{s}] [\code{comment} \emph{s}]
 
 \smallskip
 \noindent\emph{filename} is the name of the file to read.
@@ -823,15 +840,19 @@ to use for the value is given, followed by either \code{n} if the
 field should be interpreted as a number or \code{s} for a string. 
 After the template some optional modifiers can be given. The order
 does not matter. 
+\code{match} \emph{s} compares the regular expression \emph{s} against
+the line read from the file. Only if the expression matches the 
+line it is processed further. POSIX extended regular expression syntax
+can be used.
+\code{comment} \emph{s} sets a list of characters that start
+comments in the file. Each line is ended when any of the comment
+characters is found.
 \code{skip} \emph{n} instructs to skip the first
 \emph{n} lines of the file. 
 \code{use} \emph{n} limits the number of
 lines to use to \emph{n}. 
-\code{comment} \emph{s} sets a list of characters that start
-comments in the file. Each line is ended when any of the comment
-characters is found.
-When a file is read, empty lines are skipped and not counted for the
-\code{use} clause. They are counted for the \code{skip} clause.
+When a file is read, empty lines, comment lines, and unmatched lines
+are skipped and not counted for the \code{use} and \code{skip} clauses.
  
 \subsubsection{Examples}
 {\small
@@ -896,6 +917,30 @@ only to read a single line.
 param n := read "huhu.dat" as "4n" skip 4 use 1
 \end{verbatim}
 }  
+
+If all values in a file should be read into a set, this is possible by
+use of the \code{"<s+>"} template for string values, and \code{"<n+>"}
+for numerical values. Note, that currently at most 65536 values are allowed in a
+single line. 
+
+
+\subsubsection{Examples}
+{\small 
+\begin{verbatim}
+# Read all values into a set
+set X := { read "stream.txt" as "<n+>" };
+
+\smallskip
+stream.txt:
+1 2 3 7 9 5 6 23 
+63 37 88 
+4
+87 27  
+
+# X := { 1, 2, 3, 7, 9, 5, 6, 23, 63, 37, 88, 4, 87, 27 };
+\end{verbatim}
+}  
+
 
 %------------------------------------------------------------------------------
 \subsection{Function definitions}

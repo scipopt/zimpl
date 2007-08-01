@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.13 2007/05/20 09:25:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.14 2007/08/01 10:17:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -259,8 +259,7 @@ void entry_print(FILE* fp, const Entry* entry)
       set_print(fp, entry->value.set);
       break;
    case SYM_VAR :
-      /* ??? get lower upper bounds and type of variable.*/
-      /* var_print(fp, entry->value.var); */
+      zpl_var_print(fp, entry->value.var);
       break;
    default :
       fprintf(fp, "Entry-ERR");

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.57 2007/05/23 14:35:44 bzfkocht Exp $
+# $Id: Makefile,v 1.58 2007/08/01 10:17:12 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -53,7 +53,7 @@ DCC		=	gcc
 LINT		=	flexelint
 AR		=	ar
 RANLIB		=	ranlib
-VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
+VALGRIND	=	valgrind -v --tool=memcheck --leak-check=full \
 			--leak-resolution=high --show-reachable=yes 
 
 SRCDIR		=	src

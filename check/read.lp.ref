@@ -29,5 +29,5 @@ Subject to
  c4_1:
   +2 x = 28
 Bounds
- -Inf <= x <= +Inf
+ -inf <= x <= +inf
 End

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.3 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.4 2007/08/01 10:17:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rlpwrite.c                                                    */
@@ -43,6 +43,8 @@ static void permute(int size, void** tab)
 
    if (size < 3)
       return;
+
+   assert(size >= 3);
    
    for(i = 0; i < size; i++)
    {
@@ -99,7 +101,7 @@ static void write_row(
    assert(con       != NULL);
    assert(name      != NULL);
 
-   nzotab = calloc(con->size, sizeof(*con));
+   nzotab = calloc((size_t)con->size, sizeof(*con));
 
    assert(nzotab != NULL);
 
@@ -108,7 +110,7 @@ static void write_row(
 
    assert(cnt == con->size);
    
-   permute(con->size, nzotab);
+   permute(con->size, (void**)nzotab);
 
    for(i = 0; i < con->size; i++)
    {
@@ -156,7 +158,7 @@ void rlp_write(
 
    /* Store constraint pointers and permute them
     */
-   contab = calloc(lp->cons, sizeof(*contab));
+   contab = calloc((size_t)lp->cons, sizeof(*contab));
 
    assert(contab != NULL);
 
@@ -166,7 +168,7 @@ void rlp_write(
 
    assert(k == lp->cons);
 
-   permute(lp->cons, contab);
+   permute(lp->cons, (void**)contab);
 
    /* Now do as usual
     */

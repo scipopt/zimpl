@@ -1,29 +1,22 @@
+Bug doublicate SOS names. (Crash)
 
 check blkmem. gucken ob auch woanders noch zu benutzen
 
-check strstore2.c, strstore.c weg.
-
-
-Bug doublicate SOS names. (Crash)
-
-entry print var print upper and lower bounds.
-
-document/test/errors match
-
-error checks for substr
-
-In check/param.zpl fehlen noch die read tests.
-Warning 213 testen \  siehe
-Error 214 testen   /  test6.zpl
-checks für lange zeilen, viele Felder
-Fehlt warning wenn bei streaming mehr felder kommen als 65535.
-streaming documentieren
-
-priority startval sos nicht gut documentiert.
-
-#ifdef 0 aus inst.c rausnehmen
-
 alles valids in NDEBUG und mem_check für allozierte dazu
+
+checks für lange zeilen, viele Felder
+set A := { read "ff" as "<65535n,65536n>" };
+
+
+rlp documentieren
+CHANGELOG durchgehen
+valgrind check.
+
+
+
+
+CPP documentiert ?
+
 
 set J := { 1 to max(I)+1 };
 Man muss statt dessen schreiben
@@ -31,11 +24,11 @@ set J := { 1 to (max(I))+1 };
 
 Vielleicht 195 doch durch eine Warnung ersetzten.
 
-Scramble flag das Variablen und Bedingungen permutieren
 
 Alles statics durchsehen ob am ende reset: gemacht
 Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
 Selbes Problem wie Kjell?
+
 
 cplex anbidung.
 
@@ -57,18 +50,15 @@ warum kann man nicht  x[i,j] (binary) == (w[i] - w[j] == 0) schreiben?
 Index funtion die jedem set element eine eindeutige Zahl zuordnet.
 
 
-
 Dies erzeugt keinerleit Ausgabe. Warum?
 set I := { 1 .. 10 };
 param a[<i> in I] := i + 3;
 subto c17: a[min I] <= a[max I];
 
 
-
 check für filesystem/out of memory fehler (ulimit)
 
 numbdbl.c  for linking without gmp
-
 
 Regel bei Container sollte doch sein:
 Liefern wenn moeglich const
@@ -78,8 +68,6 @@ Man könnte vorher mal gucken welche reads ingesamt vorkommen.
 Komt einer mehrfach vor, wird die ganze Datei eingelesen und ein
 strg read fdraus gemacht.
 
-
-flag use_only "K" für read Befehle (Ralf)
 
 Test fuer spezielle fehlersituationen.
 z,B. param x[E] : = ...

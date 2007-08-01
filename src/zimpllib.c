@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.18 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.19 2007/08/01 10:17:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -86,6 +86,35 @@ static Bool is_valid_identifier(const char* s)
       ;
 
    return *s == '\0';
+}
+
+void zpl_var_print(FILE* fp, const Var* var)
+{
+   VarClass class = xlp_getclass(var);
+   Bound*   lower = xlp_getlower(var);
+   Bound*   upper = xlp_getupper(var);
+
+   switch(class)
+   {
+   case VAR_CON :
+      fprintf(fp, "real [");
+      break;
+   case VAR_IMP :
+      fprintf(fp, "implicit integer [");
+      break;
+   case VAR_INT :
+      fprintf(fp, "integer [");
+      break;
+   default :
+      abort();
+   }
+   bound_print(fp, lower);
+   fprintf(fp, ",");
+   bound_print(fp, upper);
+   fprintf(fp, "]\n");
+         
+   bound_free(upper);
+   bound_free(lower);
 }
 
 void zpl_add_parameter(const char* def)

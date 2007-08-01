@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.117 2007/07/25 12:52:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.118 2007/08/01 10:17:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -375,13 +375,31 @@ CodeNode* i_forall(CodeNode* self)
  */
 CodeNode* i_expr_add(CodeNode* self)
 {
+   CodeNode* child;
+   
    Trace("i_expr_add");
 
    assert(code_is_valid(self));
 
-   code_value_numb(self,
-      numb_new_add(code_eval_child_numb(self, 0), code_eval_child_numb(self, 1)));
+   child = code_eval_child(self, 0);
 
+   if (code_get_type(child) == CODE_NUMB)
+      code_value_numb(self, numb_new_add(code_get_numb(child), code_eval_child_numb(self, 1)));
+   else
+   {
+      const char* s1 = code_get_strg(child);
+      const char* s2 = code_eval_child_strg(self, 1);
+      char* t        = malloc(strlen(s1) + strlen(s2) + 1);
+
+      assert(t != NULL);
+
+      strcpy(t, s1);
+      strcat(t, s2);
+
+      code_value_strg(self, str_new(t));
+
+      free(t);
+   }
    return self;
 }
 
@@ -3739,42 +3757,7 @@ CodeNode* i_elem_list_new(CodeNode* self)
 
    return self;
 }
-#if 0
-CodeNode* i_elem_list_add(CodeNode* self)
-{
-   CodeNode* child;
-   Elem*     elem;
-   List*     list;
-   
-   Trace("i_elem_list_add");
 
-   assert(code_is_valid(self));
-
-   list  = list_copy(code_eval_child_list(self, 0));
-   child = code_eval_child(self, 1);
-
-   switch(code_get_type(child))
-   {
-   case CODE_NUMB :
-      elem = elem_new_numb(code_get_numb(child));
-      break;
-   case CODE_STRG :
-      elem = elem_new_strg(code_get_strg(child));
-      break;
-   case CODE_NAME :
-      elem = elem_new_name(code_get_name(child));
-      break;
-   default :
-      abort();
-   }
-   list_add_elem(list, elem);   
-   code_value_list(self, list);
-
-   elem_free(elem);
-
-   return self;
-}
-#else
 static Elem* make_elem(CodeNode* node)
 {
    Elem* elem;
@@ -3847,7 +3830,6 @@ CodeNode* i_elem_list_add(CodeNode* self)
 
    return self;
 }
-#endif
 
 CodeNode* i_tuple_list_new(CodeNode* self)
 {
@@ -3862,26 +3844,6 @@ CodeNode* i_tuple_list_new(CodeNode* self)
    return self;
 }
 
-#if 0
-CodeNode* i_tuple_list_add(CodeNode* self)
-{
-   const Tuple* tuple;
-   List*        list;
-   
-   Trace("i_tuple_list_add");
-
-   assert(code_is_valid(self));
-
-   list  = list_copy(code_eval_child_list(self, 0));
-   tuple = code_eval_child_tuple(self, 1);
-   
-   list_add_tuple(list, tuple);   
-
-   code_value_list(self, list);
-
-   return self;
-}
-#else
 CodeNode* i_tuple_list_add(CodeNode* self)
 {
    CodeNode*    node;
@@ -3922,7 +3884,6 @@ CodeNode* i_tuple_list_add(CodeNode* self)
 
    return self;
 }
-#endif
 
 CodeNode* i_entry_list_new(CodeNode* self)
 {
@@ -3937,74 +3898,6 @@ CodeNode* i_entry_list_new(CodeNode* self)
    return self;
 }
 
-#if 0
-CodeNode* i_entry_list_add(CodeNode* self)
-{
-   const Entry* entry;
-   List*        list;
-   
-   Trace("i_entry_list_add");
-
-   assert(code_is_valid(self));
-
-   list  = list_copy(code_eval_child_list(self, 0));
-   entry = code_eval_child_entry(self, 1);
-
-   list_add_entry(list, entry);   
-   code_value_list(self, list);
-
-   return self;
-}
-#elif 0
-#warning "Check this!"
-CodeNode* i_entry_list_add(CodeNode* self)
-{
-   const Entry* entry;
-   List*        list;
-   CodeNode*    node;
-   
-   Trace("i_entry_list_add2");
-
-   assert(code_is_valid(self));
-
-   /* Check if this is just a long list of i_entry_list_add nodes
-    */
-   for(node = code_get_child(self, 0);
-       code_get_inst(node) == (Inst)i_entry_list_add;
-       node = code_get_child(node, 0))
-      ;
-
-   /* If true, process directly without using a lot of recursion
-    */
-   if (code_get_inst(node) == (Inst)i_entry_list_new)
-   {
-      list = list_new_entry(code_eval_child_entry(self, 1));
-      
-      for(node = code_get_child(self, 0);
-          code_get_inst(node) == (Inst)i_entry_list_add;
-          node = code_get_child(node, 0))
-         list_insert_entry(list, code_eval_child_entry(node, 1));
-
-      assert(code_get_inst(node) == (Inst)i_entry_list_new);
-
-      /* ??? Vielleicht gehts ohne den Test. Hier gucken was
-       * es ist, und wenn es das andere ist, aufrufen und die
-       * Liste hinten dran packen.
-       */
-      list_insert_entry(list, code_eval_child_entry(node, 0));
-   }
-   else
-   {
-      list  = list_copy(code_eval_child_list(self, 0));
-      entry = code_eval_child_entry(self, 1);
-
-      list_add_entry(list, entry);
-   }
-   code_value_list(self, list);
-   
-   return self;
-}
-#else
 CodeNode* i_entry_list_add(CodeNode* self)
 {
    const Entry* entry;
@@ -4045,7 +3938,6 @@ CodeNode* i_entry_list_add(CodeNode* self)
    
    return self;
 }
-#endif
 
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {

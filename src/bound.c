@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: bound.c,v 1.3 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: bound.c,v 1.4 2007/08/01 10:17:13 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bound.c                                                       */
@@ -109,4 +109,22 @@ const Numb* bound_get_value(const Bound* bound)
    assert(bound->type == BOUND_VALUE);
    
    return bound->value;
+}
+
+void bound_print(FILE* fp, const Bound* bound)
+{
+   switch(bound->type)
+   {
+   case BOUND_INFTY :
+      fprintf(fp, "oo");
+      break;
+   case BOUND_MINUS_INFTY :
+      fprintf(fp, "-oo");
+      break;
+   case BOUND_VALUE :
+      numb_print(fp, bound->value);
+      break;
+   default :
+      abort();
+   }
 }
