@@ -153,7 +153,9 @@ is to assume maximization.
 \toprule
 -t \emph{format} & Selects the output format. Can be either \code{lp},
                   which is default, or \code{mps}, or \code{hum}, which
-                  is only human readable.\\
+                  is only human readable, or \code{rlp}, which is the
+		  same as \code{lp} but with rows and columns randomly
+                  permuted. The permutation is depending on the \emph{seed}.\\
 -o \emph{name}   & Sets the base-name for the output files.\\ 
                 & Defaults to the name of the first input file with 
                   its path and extension stripped off.\\ 
@@ -171,7 +173,7 @@ is to assume maximization.
                   append all the local variables from the forall statements.\\
 -P \emph{filter} & The input is piped through a filter. A \%s in the
                   string is replaced by the input filename. For example 
-                  \code{-P "cpp -DWITH_C1 \%s"} would pass the input
+                  \code{-P "cpp -DWITH\_C1 \%s"} would pass the input
 		  file through the C-preprocessor.\\
 -s \emph{seed}   & Positive \code{seed} number for the random number generator.
                  For example \code{-s `date +\%N`} will produce changing random numbers.\\
@@ -179,7 +181,9 @@ is to assume maximization.
                   2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
 -D \emph{name=val} & Sets the parameter \emph{name} to the specified
                   value. This is equivalent with having this line in the
-                  \zimpl program: \code{param name:=val}.\\
+                  \zimpl program: \code{param name:=val}. If there is
+		  a declaration in the \zimpl file and a \code{-D}
+		  setting for the same name, the latter takes precedent.\\
 %\hline
 -b & Enables bison debug output.\\
 -f & Enables flex debug output.\\
@@ -484,7 +488,7 @@ set W := argmin(3) <i,j> in B*B : i+j;
 # will give: { <1,1>, <1,2>, <2,1> } 
 \end{verbatim}
 }
-\clearpage
+
 \subsubsection{Indexed sets}
 \label{sec:indexed-sets}
 It is possible to index one set with another set resulting in a set of sets.
@@ -1045,12 +1049,15 @@ with an appropriate error message. This can be used to assert that
 specific conditions are met.
 It is possible to use a \code{forall} clause before a \code{print}
 or \code{check} statement.
+For string and numeric values it is possible to give a comma separated
+list to the print statement.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
 set I := { 1..10 };
 do print I;
+do print "Cardinality of I:", card(I);
 do forall <i> in I with i > 5 do print sqrt(i);
 do forall <p> in P do check sum <p,i> in PI : 1 >= 1;
 \end{verbatim}
@@ -1324,7 +1331,7 @@ subto limit:
 \end{lstlisting}
 \clearpage
 
-\subsection{The $n$-queens problem}
+\subsection{The \emph{n}-queens problem}
 \label{ssec:example:n-queens-problem}
 The problem is to place $n$ queens on a $n\times n$ chessboard so that no
 two queens are on the same row, column or diagonal.

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: zimpllib.h,v 1.3 2006/06/03 08:23:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: zimpllib.h,v 1.4 2007/08/02 08:36:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005,2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

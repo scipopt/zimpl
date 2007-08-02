@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.h,v 1.1 2003/07/12 15:24:01 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.h,v 1.2 2007/08/02 08:36:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: gmpmisc.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

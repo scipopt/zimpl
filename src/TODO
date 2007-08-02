@@ -7,10 +7,10 @@ alles valids in NDEBUG und mem_check für allozierte dazu
 checks für lange zeilen, viele Felder
 set A := { read "ff" as "<65535n,65536n>" };
 
+alle ausgaben umlenkbar
 
-rlp documentieren
+
 CHANGELOG durchgehen
-valgrind check.
 
 
 

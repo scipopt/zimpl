@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: heap.c,v 1.4 2007/04/24 07:36:34 bzfkocht Exp $"
+#pragma ident "@(#) $Id: heap.c,v 1.5 2007/08/02 08:36:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: heap.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2006 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2006-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

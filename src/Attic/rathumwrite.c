@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.5 2007/03/07 12:26:30 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.6 2007/08/02 08:36:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratsoswrite.c,v 1.2 2006/08/22 20:11:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratsoswrite.c,v 1.3 2007/08/02 08:36:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratsoswrite.c                                                 */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2007 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

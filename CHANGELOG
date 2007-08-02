@@ -1,3 +1,5 @@
+2.06 02. Aug 2006 Release
+
  - If a variable is printed with "do print" the type and bounds
    of the variable are also given.
 

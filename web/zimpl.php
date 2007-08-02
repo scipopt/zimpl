@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<!-- $Id: zimpl.php,v 1.42 2007/08/02 08:30:52 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.43 2007/08/02 08:36:56 bzfkocht Exp $ -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta name="author" content="Thorsten Koch" />
 <meta name="description" content="Zimpl Homepage" />
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language" />
-<meta name="date" content="$Date: 2007/08/02 08:30:52 $" />
+<meta name="date" content="$Date: 2007/08/02 08:36:56 $" />
 <meta name="robots" content="index|follow" />
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 <link rel="stylesheet" href="zimpl.css" type="text/css" />
@@ -43,20 +43,19 @@ is available. Zimpl has even been successfully compiled for Windows using
 <a href="http://gcc.gnu.org">GCC</a> as a cross compiler.
 </p>
 <hr />
-<h3>What's new in 2.05</h3>
+<h3>What's new in 2.06</h3>
 <ul>
-<li>Some bug fixes</li>
-<li>Data, e.g. a matrix, can now be read from a stream of numbers</li>
-<li>argmin/argmax functions</li>
-<li>Length of identifiers in LP files can be set</li>
+<li>New functions and operators: prod, length, substr, match</li>
+<li>C Preprocessor can be used on Zimpl files</li>
 <li>Several smaller improvements</li>
+<li>Some bug fixes</li>
 </ul>
 <h3>Download</h3>
 <p>
-The latest Version is 2.05. 
+The latest Version is 2.06. 
 <a href="download">Download</a>
 complete
-<a href="download/zimpl-2.05.tgz">source code</a>
+<a href="download/zimpl-2.06.tgz">source code</a>
 and 
 <a href="download/zimpl.pdf">documentation</a>.
 <br />
@@ -160,7 +159,7 @@ Optimization at Work</a></dt>
  class="logobar" width="100" height="36" /></a>
 </div>
 <hr /><address>
-Last Update $Date: 2007/08/02 08:30:52 $ by
+Last Update $Date: 2007/08/02 08:36:56 $ by
 <a href="/mitarbeiter/mitarbeiter.pl?email=koch&amp;language=en">Thorsten Koch</a>
 <br />&copy; 2005 by Thorsten Koch,
 <a href="/impressum/index.en.html">Imprint</a>
