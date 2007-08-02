@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.25 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.26 2007/08/02 08:58:48 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -65,7 +65,7 @@ Tuple* tuple_new(int dim)
    count          = dim < 1 ? 1 : dim;
    tuple->dim     = dim;
    tuple->refc    = 1;
-   tuple->element = blk_alloc(count * sizeof(*tuple->element));
+   tuple->element = calloc((size_t)count, sizeof(*tuple->element));
 
    assert(tuple->element != NULL);
 
@@ -97,7 +97,8 @@ void tuple_free(Tuple* tuple)
       SID_del(tuple);
 
       count = tuple->dim < 1 ? 1 : tuple->dim;
-      blk_free(tuple->element, count * sizeof(*tuple->element));   
+      /* blk_free(tuple->element, count * sizeof(*tuple->element)); */
+      free(tuple->element); 
       blk_free(tuple, sizeof(*tuple));
    }
 }

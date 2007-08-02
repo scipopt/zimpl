@@ -1,6 +1,8 @@
 Bug doublicate SOS names. (Crash)
 
 check blkmem. gucken ob auch woanders noch zu benutzen
+bei tuple element vorher gucken ob kleingenug. Meistens ja
+aber nicht immer.
 
 alles valids in NDEBUG und mem_check für allozierte dazu
 
