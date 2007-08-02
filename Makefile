@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.58 2007/08/01 10:17:12 bzfkocht Exp $
+# $Id: Makefile,v 1.59 2007/08/02 10:01:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.06f
+VERSION		=	2.06
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -53,7 +53,7 @@ DCC		=	gcc
 LINT		=	flexelint
 AR		=	ar
 RANLIB		=	ranlib
-VALGRIND	=	valgrind -v --tool=memcheck --leak-check=full \
+VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
 			--leak-resolution=high --show-reachable=yes 
 
 SRCDIR		=	src
