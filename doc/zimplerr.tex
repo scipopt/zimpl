@@ -399,9 +399,10 @@
 \item[214 Wrong type of set elements -- wrong read template?]\ \\
    Most likely you have tried read in a set from a stream using
    \code{"n+"} instead of \code{"<n+>"} in the template. 
-%
-% space here
-%
+\item[215 Startvals violate constraint, \ldots (warning)]\ \\
+   If the given startvals are summed up, they violate the
+   constraint. details about the sum of the LHS and the RHS are given
+   in the message.
 \item[216 Redefinition of parameter \code{xxx} ignored]\ \\
    A parameter was declared a second time with the same name. The
    typical use would be to declare default values for a parameter in
@@ -418,10 +419,6 @@
 %
 % space here
 %
-\item[252 Startvals violate constraint, \ldots]\ \\
-   If the given startvals are summed up, they violate the
-   constraint. details about the sum of the LHS and the RHS are given
-   in the warning message.
 % 
 % numbgmp.c
 %
