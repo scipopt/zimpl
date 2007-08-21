@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.59 2007/08/02 10:01:37 bzfkocht Exp $
+# $Id: Makefile,v 1.60 2007/08/21 11:08:06 bzfpfend Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 #
-.PHONY:		depend clean lint doc check valgrind libdbl coverage
+.PHONY:		all depend clean lint doc check valgrind libdbl coverage
 
 ARCH            :=      $(shell uname -m | \
                         sed \
@@ -76,10 +76,17 @@ GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
-TARGET		=	$(NAME)-$(VERSION).$(BASE)
-LIBRARY		=	$(LIBDIR)/lib$(TARGET).a
-LIBRARYDBL	=	$(LIBDIR)/lib$(TARGET).dbl.a
-BINARY		=	$(BINDIR)/$(TARGET)
+BINNAME		=	$(NAME)-$(VERSION).$(BASE)
+LIBNAME		=	$(NAME)-$(VERSION).$(BASE)
+LIBFILENAME	=	lib$(LIBNAME).a
+LIBDBLFILENAME	=	lib$(LIBNAME).dbl.a
+LIBRARY		=	$(LIBDIR)/$(LIBFILENAME)
+LIBRARYDBL	=	$(LIBDIR)/$(LIBDBLFILENAME)
+BINARY		=	$(BINDIR)/$(BINNAME)
+LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
+LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
+BINLINK		=	$(BINDIR)/$(NAME).$(BASE)
+BINSHORTLINK	=	$(BINDIR)/$(NAME)
 DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
@@ -110,25 +117,44 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
-		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(TARGET) $(LDFLAGS) -o $@
+all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
-$(LIBRARY):	$(LIBDIR) $(LIBXXX) 
+$(LIBLINK):	$(LIBRARY)
+		@rm -f $@
+		@ln -s $(LIBFILENAME) $@
+
+$(LIBDBLLINK):	$(LIBRARYDBL)
+		@rm -f $@
+		@ln -s $(LIBDBLFILENAME) $@
+
+$(BINLINK) $(BINSHORTLINK):	$(BINARY)
+		@rm -f $@
+		@ln -s $(BINNAME) $@
+
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
+		@echo "-> linking $@"
+		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME) $(LDFLAGS) -o $@
+
+$(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX) 
+		@echo "-> generating library $@"
 		-rm -f $(LIBRARY)
 		$(AR) $(ARFLAGS) $@ $(LIBXXX)
 		$(RANLIB) $@
 
-libdbl:		$(LIBRARYDBL)
+libdbl:		$(LIBRARYDBL) $(LIBDBLLINK)
 
-$(LIBRARYDBL):	$(LIBDIR) $(LIBDBLXXX) 
+$(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX) 
+		@echo "-> generating library $@"
 		-rm -f $(LIBRARYDBL)
 		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
 		$(RANLIB) $@
 
 $(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
+		@echo "-> generating yacc parser $@"
 		$(YACC) $(YFLAGS) -o $@ $<
 
 $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
+		@echo "-> generating lex scanner $@"
 		$(LEX) $(LFLAGS) -o$@ $< 
 
 lint:		$(OBJSRC) $(LIBSRC)
@@ -157,16 +183,19 @@ coverage:
 		-rm gcov/z.capture
 
 $(OBJDIR):	
-		-mkdir -p $(OBJDIR)
+		@echo "** creating directory \"$@\""
+		@-mkdir -p $(OBJDIR)
 
 $(LIBDIR):
-		-mkdir -p $(LIBDIR)
+		@echo "** creating directory \"$@\""
+		@-mkdir -p $(LIBDIR)
 
 $(BINDIR):
-		-mkdir -p $(BINDIR)
+		@echo "** creating directory \"$@\""
+		@-mkdir -p $(BINDIR)
 
 clean:
-		-rm -rf $(OBJDIR)/* $(TARGET)
+		-rm -rf $(OBJDIR)/* $(BINARY) $(LIBRARY) $(LIBRARYDBL)
 
 depend:
 		$(SHELL) -ec '$(DCC) $(DFLAGS) $(CPPFLAGS) $(OBJSRC) $(LIBSRC) \
@@ -176,11 +205,7 @@ depend:
 -include	$(DEPEND)
 
 $(OBJDIR)/%.o:	$(SRCDIR)/%.c
+		@echo "-> compiling $@"
 		$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 # --- EOF ---------------------------------------------------------------------
-
-
-
-
-

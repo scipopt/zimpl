@@ -1,4 +1,10 @@
-tar -cvzhf zimpl-2.05.tgz \
+#!/bin/sh
+VERSION="2.06"
+NAME="zimpl-$VERSION"
+rm -f $NAME
+ln -s . $NAME
+rm -f $NAME.tgz
+tar -cvzhf $NAME.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
@@ -7,12 +13,15 @@ tar -cvzhf zimpl-2.05.tgz \
 --exclude="*TODO" \
 --exclude="lint.out" \
 --exclude=".\#*" \
---exclude="zimpl/make/local/*" \
+--exclude="$NAME/make/local/*" \
 --exclude="*.output" \
-zimpl/LICENSE zimpl/README zimpl/CHANGELOG \
-zimpl/Makefile zimpl/make zimpl/src zimpl/doc/*.pdf \
-zimpl/doc/zimpl.man zimpl/check \
-zimpl/example/chvatal_diet.zpl zimpl/example/facility_location.zpl \
-zimpl/example/queens[12345].zpl zimpl/example/steinerbaum.zpl \
-zimpl/example/tsp.zpl zimpl/example/tsp.dat
-
+$NAME/LICENSE $NAME/README $NAME/CHANGELOG \
+$NAME/Makefile $NAME/make $NAME/src $NAME/doc/*.pdf \
+$NAME/doc/zimpl.man $NAME/check \
+$NAME/example/chvatal_diet.zpl $NAME/example/facility_location.zpl \
+$NAME/example/queens[12345].zpl $NAME/example/steinerbaum.zpl \
+$NAME/example/tsp.zpl $NAME/example/tsp.dat
+rm -f $NAME
+echo ""
+echo "check version numbers in Makefile and makedist.sh ($VERSION):"
+grep "^VERSION" Makefile
