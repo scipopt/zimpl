@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.60 2007/08/21 11:08:06 bzfpfend Exp $
+# $Id: Makefile,v 1.61 2007/08/21 11:40:30 bzfpfend Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -44,6 +44,8 @@ OSTYPE          :=      $(shell uname -s | \
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
 VERSION		=	2.06
+
+VERBOSE		=	false
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -117,19 +119,23 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
 
+ifeq ($(VERBOSE),false)
+.SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) $(SRCDIR)/mmlparse.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
+endif
+
 all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
 $(LIBLINK):	$(LIBRARY)
 		@rm -f $@
-		@ln -s $(LIBFILENAME) $@
+		ln -s $(LIBFILENAME) $@
 
 $(LIBDBLLINK):	$(LIBRARYDBL)
 		@rm -f $@
-		@ln -s $(LIBDBLFILENAME) $@
+		ln -s $(LIBDBLFILENAME) $@
 
 $(BINLINK) $(BINSHORTLINK):	$(BINARY)
 		@rm -f $@
-		@ln -s $(BINNAME) $@
+		ln -s $(BINNAME) $@
 
 $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
 		@echo "-> linking $@"
