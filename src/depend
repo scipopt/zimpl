@@ -84,7 +84,8 @@ $(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.
   src/code.h src/inst.h src/xlpglue.h
 $(OBJDIR)/mshell.o: src/mshell.c src/lint.h src/mshell.h
 $(OBJDIR)/zimpllib.o: src/zimpllib.c src/lint.h src/bool.h src/mshell.h \
-  src/ratlptypes.h src/mme.h src/random.h src/xlpglue.h src/zimpllib.h
+  src/blkmem.h src/ratlptypes.h src/mme.h src/random.h src/xlpglue.h \
+  src/zimpllib.h
 $(OBJDIR)/gmpmisc.o: src/gmpmisc.c src/bool.h src/mshell.h src/gmpmisc.h
 $(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h src/random.h \
   src/gmpmisc.h src/ratlptypes.h src/mme.h
