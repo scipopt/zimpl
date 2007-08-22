@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: blkmem.c,v 1.2 2007/05/23 19:08:24 bzfkocht Exp $"
+#pragma ident "@(#) $Id: blkmem.c,v 1.3 2007/08/22 13:21:28 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.c                                                      */
@@ -43,7 +43,7 @@ struct memory_block_element
 
 struct memory_block
 {
-   int         elem_count;
+   size_t      elem_count;
    BlkMemElem* elem;
    BlkMem*     next;
 };
@@ -60,9 +60,9 @@ static int         blk_count = 0;
 static void extend_memory(int chain_no)
 {
    BlkMem* block      = calloc(1, sizeof(*block));
-   int     elem_size  = (chain_no + 1) * 8;
-   int     offset     = elem_size / (int)sizeof(BlkMemElem);
-   int     i;
+   size_t  elem_size  = ((size_t)chain_no + 1) * 8;
+   size_t  offset     = elem_size / sizeof(BlkMemElem);
+   size_t  i;
    
    assert(elem_size % (int)sizeof(BlkMemElem) == 0);
    assert(block    != NULL);
@@ -71,12 +71,12 @@ static void extend_memory(int chain_no)
    
    block->elem_count    = (blk_anchor[chain_no] == NULL)
                         ? MIN_BLK_ELEM_COUNT : (blk_anchor[chain_no]->elem_count * 2);
-   block->elem          = malloc((size_t)(block->elem_count * elem_size));
+   block->elem          = malloc(block->elem_count * elem_size);
    block->next          = blk_anchor[chain_no];   
    blk_anchor[chain_no] = block;
    
    assert(block->elem != NULL);
-   assert(elem_size == offset * (int)sizeof(*block->elem));
+   assert(elem_size == offset * sizeof(*block->elem));
    
    for(i = 0; i < block->elem_count - 1; i++)
       block->elem[i * offset].next = &block->elem[(i + 1) * offset];
