@@ -67,6 +67,8 @@ CHECKING
 Do a "make check" and look if it works. If not, compile again
 with an added "OPT=dbg" to the gmake invocation. 
 
+If a failure in the 'subto' test is reported, this is to a
+difference in the behaviour of printf() and not a problem.
 
 INSTALLATION
 ------------
@@ -111,15 +113,15 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fügenschuh, Marc Pfetsch, Daniel Junglas, Jörg Rambau, Tobias
+To Armin Fuegenschuh, Marc Pfetsch, Daniel Junglas, Joerg Rambau, Tobias
 Achterberg, Andreas Bley, Sebastian Orlowski, Bejamin Hiller, Ralf
-Borndörfer, Martin Assmann, Nicolas Weber, Marc Mörig, Jens Hillmann,
+Borndoerfer, Martin Assmann, Nicolas Weber, Marc Moerig, Jens Hillmann,
 Dimitri Sverdlov, Joachim Reichel, and all I forgot for their comments
 and bug reports.
 
 
-COMPLAINS
----------
+COMPLAINTS
+----------
 >/dev/null
 
 Have fun!

@@ -1,7 +1,7 @@
 .\" Process this file with
-.\" groff -man -Tascii zimpl.1
+.\" groff -man -Tascii zimpl.man
 .\"
-.TH ZIMPL 1 "21 September 2006" Linux "User Manuals"
+.TH ZIMPL 1 "2 August 2007" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -15,8 +15,10 @@ zimpl \- Zuse Institute Mathematical Programming Language
 .I cm|cn|cf
 .B ] [ -o
 .I outfile
-.B ] [ -O ] [ -r ] [ -t
-.I lp|mps|hum
+.B ] [ -O ] [ -P
+.I filter
+.B [ -r ] [ -t
+.I lp|mps|hum|rlp
 .B ] [ -s
 .I seed
 .B ] [ -v
@@ -45,17 +47,22 @@ option is to select the output format.
 .B mps 
 can be read by every
 solver. 
-.B LPF 
+.B lpf 
 is an CPLEX format, but can also read by several solvers.
 BE aware that for example Range-rows can not be expressed in 
-.B LPF . 
+.B lpf . 
 If you want to inspected the output yourself, 
 .B hum
 format is a variant of 
-.B LPF
+.B lpf
 with no name mangeling whatever, but unfortunately this violates
 several format restrictions, so no solver will read this in.
-
+If
+.B rlp
+is specified the output is in 
+.B lpf 
+format, but rows and columns are randomly permuted.
+ 
 .SH OPTIONS
 .IP -b
 Enable 
@@ -100,6 +107,11 @@ Sets the base-name for the output files. Default is the name of the
 input file without extension.
 .IP -O 
 Optimize the generated LP by doing some presolve analysis (experimental).
+.IP "-P filter" 
+The input is piped through a filter. A %s in the
+string is replaced by the input filename. For example: 
+-F "cpp -DWITH_C1 %s" would pass the input file through the
+C-preprocessor.
 .IP -r 
 Write a CPLEX .ord branching order file.
 .IP "-s seed"
