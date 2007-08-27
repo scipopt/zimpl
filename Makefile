@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.63 2007/08/24 12:52:16 bzfkocht Exp $
+# $Id: Makefile,v 1.64 2007/08/27 19:26:06 bzfpfets Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.08
+VERSION		=	2.07
 
 VERBOSE		=	false
 OPT		=	opt
@@ -85,10 +85,14 @@ LIBDBLFILENAME	=	lib$(LIBNAME).dbl.a
 LIBRARY		=	$(LIBDIR)/$(LIBFILENAME)
 LIBRARYDBL	=	$(LIBDIR)/$(LIBDBLFILENAME)
 BINARY		=	$(BINDIR)/$(BINNAME)
-LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
-LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
-BINLINK		=	$(BINDIR)/$(NAME).$(BASE)
-BINSHORTLINK	=	$(BINDIR)/$(NAME)
+LIBLINKNAME	=	lib$(NAME).$(BASE).a
+LIBLINK		=	$(LIBDIR)/$(LIBLINKNAME)
+LIBDBLLINKNAME	=	lib$(NAME).$(BASE).dbl.a
+LIBDBLLINK	=	$(LIBDIR)/$(LIBDBLLINKNAME)
+BINLINKNAME	=	$(NAME).$(BASE)
+BINLINK		=	$(BINDIR)/$(BINLINKNAME)
+BINSHORTLINKNAME=	$(NAME)
+BINSHORTLINK	=	$(BINDIR)/$(BINSHORTLINKNAME)
 DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
@@ -127,15 +131,19 @@ all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
 $(LIBLINK):	$(LIBRARY)
 		@rm -f $@
-		ln -s $(LIBFILENAME) $@
+		cd $(LIBDIR) && ln -s $(LIBFILENAME) $(LIBLINKNAME)
 
 $(LIBDBLLINK):	$(LIBRARYDBL)
 		@rm -f $@
-		ln -s $(LIBDBLFILENAME) $@
+		cd $(LIBDIR) && ln -s $(LIBDBLFILENAME) $(LIBDBLLINKNAME)
 
-$(BINLINK) $(BINSHORTLINK):	$(BINARY)
+$(BINLINK):	$(BINARY)
 		@rm -f $@
-		ln -s $(BINNAME) $@
+		cd $(BINDIR) && ln -s $(BINNAME) $(BINLINKNAME)
+
+$(BINSHORTLINK):	$(BINARY)
+		@rm -f $@
+		cd $(BINDIR) && ln -s $(BINNAME) $(BINSHORTLINKNAME)
 
 $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
 		@echo "-> linking $@"
