@@ -1,0 +1,4 @@
+#--- $Id: make.darwin.x86.gnu.dbg,v 1.1 2007/08/29 14:21:14 bzfpfets Exp $
+CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES -I/sw/include
+CFLAGS		=	-O -g $(GCCWARN)
+LDFLAGS		=	-L/sw/lib -lgmp -lz -lm 
