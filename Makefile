@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.65 2007/08/30 13:00:07 bzfpfend Exp $
+# $Id: Makefile,v 1.66 2007/08/30 13:19:19 bzfpfend Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -80,10 +80,8 @@ OBJDIR		=	obj/O.$(BASE)
 NAME		=	zimpl
 BINNAME		=	$(NAME)-$(VERSION).$(BASE)
 LIBNAME		=	$(NAME)-$(VERSION).$(BASE)
-LIBFILENAME	=	lib$(LIBNAME).a
-LIBDBLFILENAME	=	lib$(LIBNAME).dbl.a
-LIBRARY		=	$(LIBDIR)/$(LIBFILENAME)
-LIBRARYDBL	=	$(LIBDIR)/$(LIBDBLFILENAME)
+LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).a
+LIBRARYDBL	=	$(LIBDIR)/lib$(LIBNAME).dbl.a
 BINARY		=	$(BINDIR)/$(BINNAME)
 LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
 LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
@@ -127,15 +125,15 @@ all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
 $(LIBLINK):	$(LIBRARY)
 		@rm -f $@
-		cd $(dir $@) && ln -s $(LIBFILENAME) $(notdir $@)
+		cd $(dir $@) && ln -s $(notdir $(LIBRARY)) $(notdir $@)
 
 $(LIBDBLLINK):	$(LIBRARYDBL)
 		@rm -f $@
-		cd $(dir $@) && ln -s $(LIBDBLFILENAME) $(notdir $@)
+		cd $(dir $@) && ln -s $(notdir $(LIBRARYDBL)) $(notdir $@)
 
 $(BINLINK) $(BINSHORTLINK):	$(BINARY)
 		@rm -f $@
-		cd $(dir $@) && ln -s $(BINNAME) $(notdir $@)
+		cd $(dir $@) && ln -s $(notdir $(BINARY)) $(notdir $@)
 
 $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
 		@echo "-> linking $@"
@@ -201,7 +199,7 @@ $(BINDIR):
 		@-mkdir -p $(BINDIR)
 
 clean:
-		-rm -rf $(OBJDIR)/* $(BINARY) $(LIBRARY) $(LIBRARYDBL)
+		-rm -rf $(OBJDIR)/* $(BINARY) $(LIBRARY) $(LIBRARYDBL) $(LIBLINK) $(BINLINK) $(BINSHORTLINK)
 
 depend:
 		$(SHELL) -ec '$(DCC) $(DFLAGS) $(CPPFLAGS) $(OBJSRC) $(LIBSRC) \
