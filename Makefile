@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.64 2007/08/27 19:26:06 bzfpfets Exp $
+# $Id: Makefile,v 1.65 2007/08/30 13:00:07 bzfpfend Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -85,14 +85,10 @@ LIBDBLFILENAME	=	lib$(LIBNAME).dbl.a
 LIBRARY		=	$(LIBDIR)/$(LIBFILENAME)
 LIBRARYDBL	=	$(LIBDIR)/$(LIBDBLFILENAME)
 BINARY		=	$(BINDIR)/$(BINNAME)
-LIBLINKNAME	=	lib$(NAME).$(BASE).a
-LIBLINK		=	$(LIBDIR)/$(LIBLINKNAME)
-LIBDBLLINKNAME	=	lib$(NAME).$(BASE).dbl.a
-LIBDBLLINK	=	$(LIBDIR)/$(LIBDBLLINKNAME)
-BINLINKNAME	=	$(NAME).$(BASE)
-BINLINK		=	$(BINDIR)/$(BINLINKNAME)
-BINSHORTLINKNAME=	$(NAME)
-BINSHORTLINK	=	$(BINDIR)/$(BINSHORTLINKNAME)
+LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
+LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
+BINLINK		=	$(BINDIR)/$(NAME).$(BASE)
+BINSHORTLINK	=	$(BINDIR)/$(NAME)
 DEPEND		=	$(SRCDIR)/depend
 
 #-----------------------------------------------------------------------------
@@ -131,19 +127,15 @@ all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
 $(LIBLINK):	$(LIBRARY)
 		@rm -f $@
-		cd $(LIBDIR) && ln -s $(LIBFILENAME) $(LIBLINKNAME)
+		cd $(dir $@) && ln -s $(LIBFILENAME) $(notdir $@)
 
 $(LIBDBLLINK):	$(LIBRARYDBL)
 		@rm -f $@
-		cd $(LIBDIR) && ln -s $(LIBDBLFILENAME) $(LIBDBLLINKNAME)
+		cd $(dir $@) && ln -s $(LIBDBLFILENAME) $(notdir $@)
 
-$(BINLINK):	$(BINARY)
+$(BINLINK) $(BINSHORTLINK):	$(BINARY)
 		@rm -f $@
-		cd $(BINDIR) && ln -s $(BINNAME) $(BINLINKNAME)
-
-$(BINSHORTLINK):	$(BINARY)
-		@rm -f $@
-		cd $(BINDIR) && ln -s $(BINNAME) $(BINSHORTLINKNAME)
+		cd $(dir $@) && ln -s $(BINNAME) $(notdir $@)
 
 $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
 		@echo "-> linking $@"
