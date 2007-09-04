@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.18 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.19 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -59,6 +59,9 @@ extern Bool     xlp_conname_exists(const char* conname);
 /*lint -sem(    xlp_addcon, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
 extern Con*     xlp_addcon(const char* name, ConType type,
    const Numb* lhs, const Numb* rhs, unsigned int flags);
+/*lint -sem(    xlp_addcon_term, nulterm(1), 1p && 3p == 1 && 4p == 1 && 4p == 1, @p == 1) */
+extern Con*     xlp_addcon_term(const char* name, ConType type,
+   const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term);
 /*lint -sem(    xlp_addvar, nulterm(1), 1p && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);

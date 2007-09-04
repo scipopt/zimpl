@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.28 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.29 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -170,6 +170,17 @@ Con* xlp_addcon(
    return con;
 }
 
+Con* xlp_addcon_term(
+   const char*  name,
+   ConType      contype,
+   const Numb*  lhs,
+   const Numb*  rhs,
+   unsigned int flags,
+   const Term*  term)
+{
+   return 0; /* ??? */
+}
+     
 Var* xlp_addvar(
    const char*  name,
    VarClass     varclass,

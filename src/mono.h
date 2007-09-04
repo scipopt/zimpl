@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.h,v 1.1 2007/09/04 07:44:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.h,v 1.2 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -27,11 +27,9 @@
 #ifndef _MONO_H_
 #define _MONO_H_
 
-typedef struct mono_element MonoElem;
-typedef struct mono Mono;
-
 struct mono_element
 {
+   SID
    Entry*    entry;
    Numb*     power;
    MonoElem* next;

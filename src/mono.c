@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.c,v 1.1 2007/09/04 07:44:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.c,v 1.2 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -39,6 +39,7 @@
 #include "mono.h"
 
 #define MONO_SID         0x4d6f6e6f
+#define MOEL_SID         0x4d6f456c
 
 Mono* mono_new(const Numb* coeff, const Entry* entry, const Numb* power)
 {
@@ -57,6 +58,8 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, const Numb* power)
    mono->first.next  = NULL;
 
    SID_set(mono, MONO_SID);
+   SID_set2(mono->first, MOEL_SID);
+   
    assert(mono_is_valid(mono));
 
    return mono;
@@ -69,14 +72,21 @@ Bool mono_is_valid(const Mono* mono)
 
    if (mono == NULL
     || !SID_ok(mono, MONO_SID)
+    || !SID_ok2(mono->first, MOEL_SID)
     || mono->count < 0)
       return FALSE;
 
    mem_check(mono);
 
+   assert(entry_is_valid(mono->first.entry));
+   assert(numb_is_valid(mono->first.power));
+
    for(e = mono->first.next; e != NULL; e = e->next)
    {      
       mem_check(e);
+
+      if (!SID_ok(e, MOEL_SID))
+         return FALSE;
       
       assert(entry_is_valid(e->entry));
       assert(numb_is_valid(e->power));
@@ -92,16 +102,20 @@ void mono_free(Mono* mono)
 
    Trace("mono_free");
 
+   assert(mono_is_valid(mono));
+   
    for(e = mono->first.next; e != NULL; e = q)
    {
-      q = e;
+      q = e->next;
       entry_free(e->entry);
       numb_free(e->power);
+      SID_del(e);
       free(e);
    }   
    entry_free(mono->first.entry);
    numb_free(mono->first.power);
    numb_free(mono->coeff);
+   SID_del2(mono->first);
    SID_del(mono);
    free(mono);
 }
@@ -117,7 +131,6 @@ void mono_add_elem(
    
    Trace("mono_add_elem");
 
-   assert(e != NULL);
    assert(mono_is_valid(mono));
    assert(entry_is_valid(entry));
    assert(numb_is_valid(power));
@@ -127,6 +140,9 @@ void mono_add_elem(
    for(e = &mono->first; e != NULL; e = e->next)
    {
       last = e;
+
+      assert(entry_is_valid(e->entry));
+
       if (var == entry_get_var(e->entry))
          break;
    }
@@ -143,6 +159,7 @@ void mono_add_elem(
       e->entry   = entry_copy(entry);
       e->power   = numb_copy(power);
       e->next    = NULL;
+      SID_set(e, MOEL_SID);
       last->next = e;
       mono->count++;
    }
@@ -203,10 +220,14 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
    {
+      assert(entry_is_valid(ea->entry));
+
       var_a = entry_get_var(ea->entry);
       
       for(eb = &mb->first; eb != NULL; eb = eb->next)
       {
+         assert(entry_is_valid(eb->entry));
+
          if (var_a == entry_get_var(eb->entry) && numb_equal(ea->power, eb->power))
             break;
       }
@@ -232,21 +253,9 @@ Mono* mono_mul(const Mono* ma, const Mono* mb)
 
    for(eb = &mb->first; eb != NULL; eb = eb->next)
    {
-      mono_add_elem(mono, eb->entry, eb->power);
-#if 0
-      var_b = entry_get_var(eb->entry);
+      assert(entry_is_valid(eb->entry));
       
-      for(e = &mono->first; e != NULL; e = e->next)
-      {
-         if (var_b == entry_get_var(e->entry))
-         {
-            numb_add(e->power, eb->power);
-            break;
-         }
-      }
-      if (e == NULL)         
-         mono_add_elem(mono, eb->entry, eb->power);
-#endif
+      mono_add_elem(mono, eb->entry, eb->power);
    }
    assert(mono_is_valid(mono));
 
@@ -300,5 +309,7 @@ Var* mono_get_var(const Mono* mono, int idx)
 
       assert(e != NULL);
    }
+   assert(entry_is_valid(e->entry));
+
    return entry_get_var(e->entry);
 }

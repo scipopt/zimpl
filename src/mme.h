@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.86 2007/09/04 07:44:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.87 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -96,6 +96,8 @@ typedef struct symbol            Symbol;
 typedef enum define_type         DefineType;
 typedef struct define            Define;
 typedef struct index_set         IdxSet;
+typedef struct mono_element      MonoElem;
+typedef struct mono              Mono;
 typedef struct term              Term;
 typedef struct local             Local;
 typedef struct list_element      ListElem;
@@ -657,12 +659,16 @@ extern void         term_to_nzo(const Term* term, Con* con);
 extern Bool         term_to_sos(const Term* term, Sos* sos);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
+/*lint -sem(        term_get_element, 1p == 1, @p == 1) */
+extern Mono*        term_get_element(const Term* term, int i);
 /*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */
 extern Bound*       term_get_lower_bound(const Term* term);
 /*lint -sem(        term_get_upper_bound, 1p == 1, @p == 1) */
 extern Bound*       term_get_upper_bound(const Term* term);
 /*lint -sem(        term_is_all_integer, 1p == 1) */
 extern Bool         term_is_all_integer(const Term* term);
+/*lint -sem(        term_is_linear, 1p == 1) */
+extern Bool         term_is_linear(const Term* term);
 
 /* rdefpar.c
  */

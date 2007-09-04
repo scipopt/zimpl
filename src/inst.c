@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.120 2007/09/04 07:44:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.121 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -145,10 +145,9 @@ CodeNode* i_constraint(CodeNode* self)
    }
    else
    {
-      con = xlp_addcon(conname_get(), type, rhs, rhs, flags);
-
       term_add_constant(term, rhs);
-      term_to_nzo(term, con);
+
+      con = xlp_addcon_term(conname_get(), type, rhs, rhs, flags, term);
 
       if (!xlp_concheck(con))
          code_errmsg(self);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term2.c,v 1.4 2007/09/04 07:44:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term2.c,v 1.5 2007/09/04 16:19:00 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -468,6 +468,15 @@ int term_get_elements(const Term* term)
    return term->used;
 }
 
+Mono* term_get_element(const Term* term, int i)
+{
+   assert(term_is_valid(term));
+   assert(i >= 0);
+   assert(i <  term->used);
+   
+   return term->elem[i];
+}
+
 Bound* term_get_lower_bound(const Term* term)
 {
    Bound*      bound;
@@ -548,6 +557,17 @@ Bound* term_get_upper_bound(const Term* term)
    return bound;
 }
 
+Bool term_is_linear(const Term* term)
+{
+   int i;
+   
+   for(i = 0; i < term->used; i++)
+      if (!mono_is_linear(term->elem[i]))
+         return FALSE;
+
+   return TRUE;
+}
+     
 Bool term_is_all_integer(const Term* term)
 {
    VarClass vc;
