@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.66 2007/08/30 13:19:19 bzfpfend Exp $
+# $Id: Makefile,v 1.67 2007/09/04 07:44:08 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -43,8 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.07
-
+VERSION		=	2.08a
 VERBOSE		=	false
 OPT		=	opt
 COMP		=	gnu
@@ -97,10 +96,10 @@ OBJECT  	=       zimpl.o xlpglue.o \
 			rathumwrite.o 
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
-			load.o local.o metaio.o mmlparse.o mmlscan.o numbgmp.o \
-			prog.o random.o rdefpar.o source.o \
+			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
+			numbgmp.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o stmt.o strstore2.o symbol.o term.o \
+			setmulti.o set4.o stmt.o strstore2.o symbol.o term2.o \
 			tuple.o vinst.o mshell.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
@@ -118,7 +117,8 @@ include make/make.$(BASE)
 #-----------------------------------------------------------------------------
 
 ifeq ($(VERBOSE),false)
-.SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) $(SRCDIR)/mmlparse.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
+.SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) \
+		$(SRCDIR)/mmlparse2.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
 endif
 
 all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
@@ -153,7 +153,7 @@ $(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX)
 		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
 		$(RANLIB) $@
 
-$(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
+$(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
 		@echo "-> generating yacc parser $@"
 		$(YACC) $(YFLAGS) -o $@ $<
 
@@ -182,7 +182,7 @@ coverage:
 		lcov -d $(OBJDIR) -z
 		make OPT=gcov check
 		lcov -d $(OBJDIR) -c >gcov/z.capture
-		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse.c" >gcov/zimpl.capture
+		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse2.c" >gcov/zimpl.capture
 		genhtml -o gcov gcov/zimpl.capture
 		-rm gcov/z.capture
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term2.c,v 1.3 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term2.c,v 1.4 2007/09/04 07:44:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -24,6 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +37,7 @@
 #include "ratlptypes.h"
 #include "mme.h"
 #include "xlpglue.h"
+#include "mono.h"
 
 #define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d
@@ -43,17 +45,11 @@
 struct term
 {
    SID
-   Numb*     constant; // ???
-   int       entry_size;
-   int       monom_size:
-   int       entry_used;
-   int       monom_used;
-   int*      monom;  /* monoms */
-   int*      next;   /* entrys */
-   Numb*     coeff;  /* monoms */
-   Entry**   entry;  /* entrys */
+   Numb*  constant;
+   int    size;
+   int    used;
+   Mono** elem;
 };
-
 
 Term* term_new(int size)
 {
@@ -64,57 +60,17 @@ Term* term_new(int size)
    assert(term != NULL);
    assert(size >  0);
    
-   term->constant   = numb_new_integer(0);
-   term->entry_size = size;
-   term->monom_size = size;
-   term->entry_used = 0;
-   term->monom_used = 0;
-   term->monom      = calloc(term->monom_size, sizeof(*term->monom));
-   term->next       = calloc(term->entry_size, sizeof(*term->next));
-   term->coeff      = calloc(term->monom_size, sizeof(*term->coeff));
-   term->entry      = calloc(term->entry_size, sizeof(*term->entry));
+   term->constant = numb_new_integer(0);
+   term->size     = size;
+   term->used     = 0;
+   term->elem     = calloc(term->size, sizeof(*term->elem));
    
    SID_set(term, TERM_SID);
    assert(term_is_valid(term));
 
    return term;
 }
-
-static void term_resize(Term* term, new_monom_size, new_entry_size)
-{
-   assert(term_is_valid(term));
-   assert(new_monom_size >= term->monom_used);
-   assert(new_entry_size >= term->entry_used);
    
-   if (term->monom_size != new_monom_size)
-   {
-      term->monom_size  = new_monom_size;
-      term->monom       = realloc(
-         term->monom, (size_t)term->monom_size * sizeof(*term->monom));
-      term->coeff       = realloc(
-         term->coeff, (size_t)term->monom_size * sizeof(*term->coeff));
-
-      assert(term->monom != NULL);
-      assert(term->coeff != NULL);
-   }
-   assert(term->monom_used < term->monom_size);
-
-   if (term->entry_used != new_entry_size)
-   {
-      term->entry_size  = new_entry_size;
-      term->entry       = realloc(
-         term->entry, (size_t)term->entry_size * sizeof(*term->entry));
-      term->next        = realloc(
-         term->next, (size_t)term->entry_size * sizeof(*term->next));
-
-      assert(term->entry != NULL);
-      assert(term->coeff != NULL);
-   }
-   assert(term->entry_used < term->entry_size);
-
-   assert(term_is_valid(term));
-}
-
 void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
 {
    Trace("term_add_elem");
@@ -124,22 +80,18 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
    assert(!numb_equal(coeff, numb_zero()));
    assert(term->used <= term->size);
    
-   if (term->monom_used == term->monom_size)
-      term_resize(term, term->monom_size + TERM_EXTEND_SIZE, term->entry_size);
-   
-   assert(term->monom_used < term->monom_size);
+   if (term->used == term->size)
+   {
+      term->size   += TERM_EXTEND_SIZE;
+      term->elem    = realloc(
+         term->elem, (size_t)term->size * sizeof(*term->elem));
 
-   if (term->entry_used == term->entry_size)
-      term_resize(term, term->monom_size, term->entry_size + TERM_EXTEND_SIZE);
-      
-   assert(term->entry_used < term->entry_size);
-   
-   term->monom[term->monom_used] = term->entry_used;
-   term->coeff[term->monom_used] = numb_copy(coeff);
-   term->entry[term->entry_used] = entry;
-   term->next [term->entry_used] = -1;
-   term->monom_used++;
-   term->entry_used++;
+      assert(term->elem != NULL);
+   }
+   assert(term->used < term->size);
+
+   term->elem[term->used] = mono_new(coeff, entry, numb_one());
+   term->used++;
 
    assert(term_is_valid(term));
 }
@@ -154,56 +106,23 @@ void term_free(Term* term)
 
    SID_del(term);
 
-   for(i = 0; i < term->monom_used; i++)
-      numb_free(term->coeff[i]);
+   for(i = 0; i < term->used; i++)
+      mono_free(term->elem[i]);
 
    numb_free(term->constant);
    
-   free(term->monom);
-   free(term->next);
-   free(term->coeff);
-   free(term->entry);
+   free(term->elem);
    free(term);
 }
 
-#ifndef NDEBUG
 Bool term_is_valid(const Term* term)
 {
-   int i;
-   int count = 0;
-   
-   if (  term             == NULL
-      || !SID_ok(term, TERM_SID)
-      || term->monom_used > term->monom_size
-      || term->entry_used > term->entry_size
-      || term->entry_used > term->monom_used
-      || term->entry_size > term->monom_size
-      || term->monom      == NULL
-      || term->next       == NULL
-      || term->coeff      == NULL
-      || term->entry      == NULL)
-      return FALSE;
-
-   mem_check(term);
-   mem_check(term->monom);
-   mem_check(term->next);
-   mem_check(term->coeff);
-   mem_check(term->entry);
-   
-   for(i = 0; i < term->momon_used; i++)
-      for(k = term->monom[i]; k >= 0; k = term->next[k])
-         count++;
-
-   if (count != term->entry_used)
-      return FALSE;
-
-   return TRUE;
+   return term != NULL && SID_ok(term, TERM_SID) && term->used <= term->size;
 }
-#endif /* !NDEBUG */
 
 Term* term_copy(const Term* term)
 {
-   Term* tnew = term_new(term->entry_used + TERM_EXTEND_SIZE);
+   Term* tnew = term_new(term->used + TERM_EXTEND_SIZE);
    int   i;
    
    Trace("term_copy");
@@ -211,19 +130,10 @@ Term* term_copy(const Term* term)
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
 
-   for(i = 0; i < term->monom_used; i++)
-   {
-      tnew->monom[i] = term->monom[i];
-      tnew->coeff[i] = numb_copy(term->coeff[i]);
-   }
-   for(i = 0; i < term->entry_used; i++)
-   {
-      tnew->entry[i] = term->entry[i];
-      tnew->next [i] = term->next [i];
-   }
-   tnew->monom_used = term->monom_used;
-   tnew->entry_used = term->entry_used;
-   
+   for(i = 0; i < term->used; i++)
+      tnew->elem[i] = mono_copy(term->elem[i]);
+
+   tnew->used = term->used;
    numb_set(tnew->constant, term->constant);
 
    assert(term_is_valid(tnew));
@@ -232,52 +142,90 @@ Term* term_copy(const Term* term)
 }
 
 void term_append_term(
-   Term* term_a,
+   Term* term,
    const Term* term_b)
 {
    int i;
    
    Trace("term_append_term");
 
+   assert(term_is_valid(term));
+   assert(term_is_valid(term_b));
+
+   if (term->used + term_b->used >= term->size)
+   {
+      term->size  = term->used + term_b->used;
+      term->elem  = realloc(
+         term->elem, (size_t)term->size * sizeof(*term->elem));
+
+      assert(term->elem != NULL);
+   }
+   assert(term->used + term_b->used <= term->size);
+
+   numb_add(term->constant, term_b->constant);
+
+   for(i = 0; i < term_b->used; i++)
+   {
+      term->elem[term->used] = mono_copy(term_b->elem[i]);
+      term->used++;
+   }
+   assert(term_is_valid(term));
+}
+
+Term* term_mul_term(const Term* term_a, const Term* term_b)
+{
+   Term* term;
+   int   i;
+   int   k;
+
+   /* ??? test auf gleiche monome gehlt!!! */
+   
+   Trace("term_mul_term");
+
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   if (term_a->monom_used + term_b->monom_used > term_a->monom_size)
-      term_resize(term_a,
-         term_a->monom_used + term_b->monom_used + TERM_EXTEND_SIZE, term->entry_size);
+   term = term_new(term_a->used * term_b->used + term_a->used + term_b->used);
 
-   if (term_a->entry_used + term_b->entry_used > term_a->entry_size)
-      term_resize(term_a,
-         term_a->entry_used + term_b->entry_used + TERM_EXTEND_SIZE, term->entry_size);
-   
-   for(i = 0; i < term_b->monom_used; i++)
+   for(i = 0; i < term_a->used; i++)
    {
-      term_a->monom[term_a->monom_used] = term_a->entry_used;
-      term_a->coeff[term_a->monom_used] = numb_copy(term_b->coeff[i]);
-      
-      for(k = term_b->monom[i]; k > 0; k = term_b->next[k])
+      for(k = 0; k < term_b->used; k++)
       {
-         term_a->entry[term_a->entry_used] = term_b->entry[k];
-         term_a->next [term_a->entry_used] = 
+         assert(term->used < term->size);
+         
+         term->elem[term->used] = mono_mul(term_a->elem[i], term_b->elem[k]);
+         term->used++;
       }
    }
-      
-   assert(term->monom_used < term->monom_size);
-   assert(term->entry_used < term->entry_size);
+   if (!numb_equal(term_b->constant, numb_zero()))
+   {
+      for(i = 0; i < term_a->used; i++)
+      {
+         assert(term->used < term->size);
 
+         term->elem[term->used] = mono_copy(term_a->elem[i]);
+         mono_mul_coeff(term->elem[term->used], term_b->constant);
+         term->used++;
+      }         
+   }
+   if (!numb_equal(term_a->constant, numb_zero()))
+   {
+      for(i = 0; i < term_b->used; i++)
+      {
+         assert(term->used < term->size);
 
+         term->elem[term->used] = mono_copy(term_b->elem[i]);
+         mono_mul_coeff(term->elem[term->used], term_a->constant);
+         term->used++;
+      }         
+   }
+   numb_free(term->constant);
+   term->constant = numb_new_mul(term_a->constant, term_b->constant);
+
+   assert(term_is_valid(term));
    
-   numb_add(term_a->constant, term_b->constant);
-
-   for(i = 0; i < term_b->used; i++)
-      term_add_elem(term_a, term_b->elem[i].entry, term_b->elem[i].coeff);
-
-   assert(term_is_valid(term_a));
+   return term;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-
 
 Term* term_add_term(const Term* term_a, const Term* term_b)
 {
@@ -298,15 +246,11 @@ Term* term_add_term(const Term* term_a, const Term* term_b)
    assert(term->size >= term->used);
 
    for(i = 0; i < term_a->used; i++)
-   {
-      term->elem[i].entry = term_a->elem[i].entry;
-      term->elem[i].coeff = numb_copy(term_a->elem[i].coeff);
-   }
+      term->elem[i] = mono_copy(term_a->elem[i]);
+
    for(i = 0; i < term_b->used; i++)
-   {
-      term->elem[i + term_a->used].entry = term_b->elem[i].entry;
-      term->elem[i + term_a->used].coeff = numb_copy(term_b->elem[i].coeff);
-   }
+      term->elem[i + term_a->used] = mono_copy(term_b->elem[i]);
+
    assert(term_is_valid(term));
 
    return term;
@@ -331,15 +275,12 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
    assert(term->size >= term->used);
 
    for(i = 0; i < term_a->used; i++)
-   {
-      term->elem[i].entry = term_a->elem[i].entry;
-      term->elem[i].coeff = numb_copy(term_a->elem[i].coeff);
-   }
+      term->elem[i] = mono_copy(term_a->elem[i]);
+
    for(i = 0; i < term_b->used; i++)
    {
-      term->elem[i + term_a->used].entry = term_b->elem[i].entry;
-      term->elem[i + term_a->used].coeff = numb_copy(term_b->elem[i].coeff);
-      numb_neg(term->elem[i + term_a->used].coeff);
+      term->elem[i + term_a->used] = mono_copy(term_b->elem[i]);
+      mono_neg(term->elem[i + term_a->used]);
    }
    assert(term_is_valid(term));
 
@@ -385,14 +326,14 @@ void term_mul_coeff(Term* term, const Numb* value)
    if (numb_equal(value, numb_zero()))
    {
       for(i = 0; i < term->used; i++)
-         numb_free(term->elem[i].coeff);
+         mono_free(term->elem[i]);
       
       term->used = 0;
    }
    else
    {
       for(i = 0; i < term->used; i++)
-         numb_mul(term->elem[i].coeff, value);
+         mono_mul_coeff(term->elem[i], value);
    }
    assert(term_is_valid(term));
 }
@@ -426,11 +367,13 @@ void term_to_nzo(const Term* term, Con* con)
 
    for(i = 0; i < term->used; i++)
    {
-      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
+      assert(!numb_equal(mono_get_coeff(term->elem[i]), numb_zero()));
 
-      var = entry_get_var(term->elem[i].entry);
+      assert(mono_is_linear(term->elem[i]));
+      
+      var = mono_get_var(term->elem[i], 0);
 
-      xlp_addtonzo(var, con, term->elem[i].coeff);
+      xlp_addtonzo(var, con, mono_get_coeff(term->elem[i]));
    }
 }
 
@@ -453,17 +396,21 @@ Bool term_to_sos(const Term* term, Sos* sos)
    
    for(i = 0; i < term->used; i++)
    {
-      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
+      const Numb* coeff = mono_get_coeff(term->elem[i]);
+      
+      assert(!numb_equal(coeff, numb_zero()));
 
-      var = entry_get_var(term->elem[i].entry);
+      assert(mono_is_linear(term->elem[i]));
+      
+      var = mono_get_var(term->elem[i], 0);
 
       /* Each weight is allowed only once.
        */
-      if (hash_has_numb(hash, term->elem[i].coeff))
+      if (hash_has_numb(hash, coeff))
          has_duplicates = TRUE;
 
-      hash_add_numb(hash, term->elem[i].coeff);
-      xlp_addtosos(sos, var, term->elem[i].coeff);
+      hash_add_numb(hash, coeff);
+      xlp_addtosos(sos, var, coeff);
    }
    hash_free(hash);
    
@@ -503,11 +450,14 @@ void term_to_objective(const Term* term)
    
    for(i = 0; i < term->used; i++)
    {
-      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
-
-      var = entry_get_var(term->elem[i].entry);
+      const Numb* coeff = mono_get_coeff(term->elem[i]);
       
-      xlp_addtocost(var, term->elem[i].coeff);
+      assert(!numb_equal(coeff, numb_zero()));
+      assert(mono_is_linear(term->elem[i]));
+      
+      var = mono_get_var(term->elem[i], 0);
+      
+      xlp_addtocost(var, coeff);
    }
 }
 
@@ -524,24 +474,24 @@ Bound* term_get_lower_bound(const Term* term)
    Numb*       lower;
    Numb*       value;
    int         i;
-   int         sign;
    
    lower = numb_new_integer(0);
       
    for(i = 0; i < term->used; i++)
    {
-      sign = numb_get_sgn(term->elem[i].coeff);
+      const Numb* coeff = mono_get_coeff(term->elem[i]);
+      int         sign  = numb_get_sgn(coeff);
 
       assert(sign != 0);
 
       bound = (sign > 0)
-         ? xlp_getlower(entry_get_var(term->elem[i].entry))
-         : xlp_getupper(entry_get_var(term->elem[i].entry));
+         ? xlp_getlower(mono_get_var(term->elem[i], 0))
+         : xlp_getupper(mono_get_var(term->elem[i], 0));
       
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
 
-      value = numb_new_mul(bound_get_value(bound), term->elem[i].coeff);
+      value = numb_new_mul(bound_get_value(bound), coeff);
 
       numb_add(lower, value);
       
@@ -564,24 +514,24 @@ Bound* term_get_upper_bound(const Term* term)
    Numb*       upper;
    Numb*       value;
    int         i;
-   int         sign;
    
    upper = numb_new_integer(0);
       
    for(i = 0; i < term->used; i++)
    {
-      sign = numb_get_sgn(term->elem[i].coeff);
+      const Numb* coeff = mono_get_coeff(term->elem[i]);
+      int         sign  = numb_get_sgn(coeff);
 
       assert(sign != 0);
 
       bound = (sign > 0)
-         ? xlp_getupper(entry_get_var(term->elem[i].entry))
-         : xlp_getlower(entry_get_var(term->elem[i].entry));
+         ? xlp_getupper(mono_get_var(term->elem[i], 0))
+         : xlp_getlower(mono_get_var(term->elem[i], 0));
       
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
 
-      value = numb_new_mul(bound_get_value(bound), term->elem[i].coeff);
+      value = numb_new_mul(bound_get_value(bound), coeff);
 
       numb_add(upper, value);
       
@@ -605,7 +555,7 @@ Bool term_is_all_integer(const Term* term)
    
    for(i = 0; i < term->used; i++)
    {
-      vc = xlp_getclass(entry_get_var(term->elem[i].entry));
+      vc = xlp_getclass(mono_get_var(term->elem[i], 0));
 
       if (vc != VAR_INT && vc != VAR_IMP)
          return FALSE;
@@ -624,21 +574,22 @@ void term_print(FILE* fp, const Term* term, int flag)
 
    for(i = 0; i < term->used; i++)
    {
-      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
+      coeff = numb_copy(mono_get_coeff(term->elem[i]));
 
-      coeff = numb_copy(term->elem[i].coeff);
+      assert(!numb_equal(coeff, numb_zero()));
+
+      fprintf(fp, " %s ", (numb_cmp(coeff, numb_zero()) >= 0) ? "+" : "-");
+
       numb_abs(coeff);
-      
-      fprintf(fp, " %s ", (numb_cmp(term->elem[i].coeff, numb_zero()) >= 0) ? "+" : "-");
-      
+            
       if (!numb_equal(coeff, numb_one()))
          fprintf(fp, "%.16g ", numb_todbl(coeff));
-
+#if 0
       tuple = entry_get_tuple(term->elem[i].entry);
       
       if (flag & TERM_PRINT_SYMBOL)
          tuple_print(fp, tuple);
-
+#endif
       numb_free(coeff);
    }
    if (!numb_equal(term->constant, numb_zero()))
@@ -650,5 +601,9 @@ void term_print(FILE* fp, const Term* term, int flag)
    }
 }
 #endif /* !NDEBUG */
+
+
+
+
 
 

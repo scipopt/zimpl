@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.119 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.120 2007/09/04 07:44:08 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3288,6 +3288,76 @@ CodeNode* i_symbol_deref(CodeNode* self)
    default :
       abort();
    }
+   return self;
+}
+
+CodeNode* i_term_quadratic(CodeNode* self)
+{
+   const Symbol* sym[2];
+   const Tuple*  tuple[2];
+   const Entry*  entry;
+   const Elem*   elem;
+   Term*         term[2];
+   int           i;
+   int           k;
+   
+   Trace("i_term_quadratic");
+   
+   assert(code_is_valid(self));
+
+   sym  [0] = code_eval_child_symbol(self, 0);
+   tuple[0] = code_eval_child_tuple(self, 1);   
+   sym  [1] = code_eval_child_symbol(self, 2);
+   tuple[1] = code_eval_child_tuple(self, 3);   
+
+   /* wurde schon in mmlscan ueberprueft
+    */
+   assert(sym[0] != NULL);
+   assert(sym[1] != NULL);
+
+
+   for(k = 0; k < 2; k++)
+   {
+      for(i = 0; i < tuple_get_dim(tuple[k]); i++)
+      {
+         elem = tuple_get_elem(tuple[k], i);
+
+         /* Are there any unresolved names in the tuple?
+          */
+         if (ELEM_NAME == elem_get_type(elem))
+         {
+            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+               elem_get_name(elem));
+            code_errmsg(self);
+            zpl_exit(EXIT_FAILURE);
+         }
+      }
+      entry = symbol_lookup_entry(sym[k], tuple[k]);
+
+      if (NULL == entry)
+      {
+         fprintf(stderr, "*** Error 142: Unknown index ");
+         tuple_print(stderr, tuple[k]);
+         fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym[k]));
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+   
+      if (symbol_get_type(sym[k]) != SYM_VAR)
+      {
+         fprintf(stderr, "*** Error ???: Wrong type ");
+         fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym[k]));
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      term[k] = term_new(1);
+      term_add_elem(term[k], entry, numb_one());
+   }
+   code_value_term(self, term_mul_term(term[0], term[1]));
+
+   term_free(term[0]);
+   term_free(term[1]);
+
    return self;
 }
 

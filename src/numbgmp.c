@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.28 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.29 2007/09/04 07:44:09 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -142,6 +142,8 @@ void numb_exit()
 
       /* ??? mpq_clear() is not called for the used ones.
        * This would be faster then doing it in numb_free.
+       */
+      /* ??? SIDs are not cleared.
        */
       free(store->begin);
       free(store);
