@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.c,v 1.2 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.c,v 1.3 2007/09/06 07:07:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -69,20 +69,24 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, const Numb* power)
 Bool mono_is_valid(const Mono* mono)
 {
    const MonoElem* e;
-
+   int             count = 0;
+   
    if (mono == NULL
     || !SID_ok(mono, MONO_SID)
     || !SID_ok2(mono->first, MOEL_SID)
-    || mono->count < 0)
+    || mono->count < 1
+    || numb_equal(mono->coeff, numb_zero()))
       return FALSE;
 
    mem_check(mono);
 
    assert(entry_is_valid(mono->first.entry));
    assert(numb_is_valid(mono->first.power));
-
+   
    for(e = mono->first.next; e != NULL; e = e->next)
    {      
+      count++;
+      
       mem_check(e);
 
       if (!SID_ok(e, MOEL_SID))
@@ -91,6 +95,9 @@ Bool mono_is_valid(const Mono* mono)
       assert(entry_is_valid(e->entry));
       assert(numb_is_valid(e->power));
    }
+   if (count != mono->count)
+      return FALSE;
+   
    return TRUE;
 }
 #endif
@@ -313,3 +320,36 @@ Var* mono_get_var(const Mono* mono, int idx)
 
    return entry_get_var(e->entry);
 }
+
+#ifndef NDEBUG
+void mono_print(FILE* fp, const Mono* mono, Bool print_symbol_index)
+{
+   const MonoElem* e;
+
+   assert(mono_is_valid(mono));
+   
+   if (numb_equal(mono->coeff, numb_one()))
+      fputc('+', fp);
+   else
+   {
+      if (numb_cmp(mono->coeff, numb_zero()) >= 0)
+         printf("+ %g", numb_todbl(mono->coeff));
+      else
+         printf("- %g", -numb_todbl(mono->coeff));
+   }
+   fputc(' ', fp);
+   
+   for(e = &mono->first; e != NULL; e = e->next)
+   {      
+      entry_print(fp, e->entry);
+
+      if (!numb_equal(e->power, numb_one()))
+         fprintf(fp, "^%g", numb_todbl(mono->coeff));
+
+      if (print_symbol_index)
+         tuple_print(fp, entry_get_tuple(e->entry));
+
+      fputc(' ', fp);
+   }
+}
+#endif /* !NDEBUG */

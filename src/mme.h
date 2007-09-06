@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.87 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.88 2007/09/06 07:07:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -128,6 +128,8 @@ typedef int                    (*HeapCmp)(HeapData, HeapData);
 #define VERB_CHATTER  3
 #define VERB_DEBUG    5
 
+/* zimpllib.c
+ */
 extern int          verbose;
 /*lint -function(exit,zpl_exit) */
 extern void         zpl_exit(int retval);
@@ -135,7 +137,8 @@ extern void         zpl_exit(int retval);
 extern void         zpl_add_parameter(const char* def);
 /*lint -sem(        zpl_var_print, 1p == 1 && 2p == 1) */
 extern void         zpl_var_print(FILE* fp, const Var* var);
-
+/*lint -sem(        zpl_print_banner, 1p == 1) */
+extern void         zpl_print_banner(FILE* fp, Bool with_license);
 
 /* strstore.c
  */
@@ -619,8 +622,6 @@ extern char*        local_tostrall(void);
 
 /* term.c
  */
-#define TERM_PRINT_SYMBOL  1
-
 /*lint -sem(        term_new, 1n > 0, @p == 1) */
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1) */
@@ -631,8 +632,8 @@ extern void         term_free(Term* term);
 extern Bool         term_is_valid(const Term* term);
 /*lint -sem(        term_copy, 1p == 1, @p == 1) */
 extern Term*        term_copy(const Term* term);
-/*lint -sem(        term_print, 1p == 1 && 2p == 1 && 3n >= 1) */
-extern void         term_print(FILE* fp, const Term* term, int flag);
+/*lint -sem(        term_print, 1p == 1 && 2p == 1) */
+extern void         term_print(FILE* fp, const Term* term, Bool print_symbol_index);
 /*lint -sem(        term_append_term, 1p == 1 && 2p == 1) */
 extern void         term_append_term(Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */

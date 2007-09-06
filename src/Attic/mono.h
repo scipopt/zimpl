@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.h,v 1.2 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.h,v 1.3 2007/09/06 07:07:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -71,6 +71,8 @@ extern int          mono_get_count(const Mono* mono);
 extern const Numb*  mono_get_coeff(const Mono* mono);
 /*lint -sem(        mono_get_var, 1p == 1 && 2n >= 0, @p == 1) */
 extern Var*         mono_get_var(const Mono* mono, int idx);
+/*lint -sem(        mono_print(1p == 1) */
+extern void         mono_print(FILE* fp, const Mono* mono, Bool print_symbol_index);
 
 #endif /* _MONO_H_ */
 

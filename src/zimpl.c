@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.78 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.79 2007/09/06 07:07:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -45,16 +45,6 @@
 
 extern int yydebug;
 extern int yy_flex_debug;
-
-static const char* banner = 
-"****************************************************\n" \
-"* Zuse Institute Mathematical Programming Language *\n" \
-"* Release %-5s Copyright (C)2006 by Thorsten Koch *\n" \
-"****************************************************\n" \
-"*   This is free software and you are welcome to   *\n" \
-"*     redistribute it under certain conditions     *\n" \
-"*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
-"****************************************************\n\n";
 
 static const char* options = "bD:fF:hl:mn:o:OP:rs:t:v:V";
 static const char* usage   = "usage: %s [options] file ...\n";
@@ -211,7 +201,7 @@ int main(int argc, char* const* argv)
          param_count++;
          break;
       case 'h' :
-         printf(banner, VERSION);
+         zpl_print_banner(stdout, TRUE);
          printf(usage, argv[0]);
          puts(help);
          exit(0);
@@ -311,8 +301,7 @@ int main(int argc, char* const* argv)
       exit(0);
    }
 
-   if (verbose >= VERB_NORMAL)
-      printf(banner, VERSION);
+   zpl_print_banner(stdout, TRUE);
    
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));

@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.20 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.21 2007/09/06 07:07:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -50,14 +50,33 @@ extern int yy_flex_debug;
 
 int verbose = VERB_QUIET;
 
-static const char* banner = 
-"****************************************************\n" \
-"* Zuse Institute Mathematical Programming Language *\n" \
-"* Release %-5s Copyright (C)2006 by Thorsten Koch *\n" \
-"****************************************************\n\n";
-
 static jmp_buf zpl_read_env;
 static Bool    is_longjmp_ok = FALSE;
+
+void zpl_print_banner(FILE* fp, Bool with_license)
+{
+   const char* banner = 
+      "****************************************************\n" \
+      "* Zuse Institute Mathematical Programming Language *\n" \
+      "* Release %-5s Copyright (C)2007 by Thorsten Koch *\n" \
+      "****************************************************\n";
+
+   const char* license = 
+      "*   This is free software and you are welcome to   *\n" \
+      "*     redistribute it under certain conditions     *\n" \
+      "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
+      "****************************************************\n";
+
+   if (verbose >= VERB_NORMAL)
+   {
+      fprintf(fp, banner, VERSION);
+
+      if (with_license || verbose > VERB_NORMAL)
+         fprintf(fp, license);
+
+      fputc('\n', fp);
+   }
+}
 
 void zpl_exit(int retval)
 {
@@ -177,7 +196,7 @@ Bool zpl_read(const char* filename)
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   printf(banner, VERSION);
+   zpl_print_banner(stdout, FALSE);
 
    blk_init();
    str_init();
@@ -255,7 +274,7 @@ Bool zpl_read_with_args(int argc, char** argv)
    yy_flex_debug = 0;
    param_table   = malloc(sizeof(*param_table));
 
-   printf(banner, VERSION);
+   zpl_print_banner(stdout, FALSE);
 
    /* getopt might be called more than once
     */
