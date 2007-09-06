@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term2.c,v 1.5 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term2.c,v 1.6 2007/09/06 07:20:14 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -584,34 +584,15 @@ Bool term_is_all_integer(const Term* term)
 }
 
 #ifndef NDEBUG
-void term_print(FILE* fp, const Term* term, int flag)
+void term_print(FILE* fp, const Term* term, Bool print_symbol_index)
 {
-   const Tuple* tuple;
-   int          i;
-   Numb*        coeff;
+   int i;
    
    assert(term_is_valid(term));
 
    for(i = 0; i < term->used; i++)
-   {
-      coeff = numb_copy(mono_get_coeff(term->elem[i]));
+      mono_print(fp, term->elem[i], print_symbol_index);
 
-      assert(!numb_equal(coeff, numb_zero()));
-
-      fprintf(fp, " %s ", (numb_cmp(coeff, numb_zero()) >= 0) ? "+" : "-");
-
-      numb_abs(coeff);
-            
-      if (!numb_equal(coeff, numb_one()))
-         fprintf(fp, "%.16g ", numb_todbl(coeff));
-#if 0
-      tuple = entry_get_tuple(term->elem[i].entry);
-      
-      if (flag & TERM_PRINT_SYMBOL)
-         tuple_print(fp, tuple);
-#endif
-      numb_free(coeff);
-   }
    if (!numb_equal(term->constant, numb_zero()))
    {
       if (numb_cmp(term->constant, numb_zero()) >= 0)
@@ -621,6 +602,7 @@ void term_print(FILE* fp, const Term* term, int flag)
    }
 }
 #endif /* !NDEBUG */
+
 
 
 
