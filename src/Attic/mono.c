@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.c,v 1.3 2007/09/06 07:07:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.c,v 1.4 2007/09/06 07:16:51 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -69,7 +69,7 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, const Numb* power)
 Bool mono_is_valid(const Mono* mono)
 {
    const MonoElem* e;
-   int             count = 0;
+   int             count = 1;
    
    if (mono == NULL
     || !SID_ok(mono, MONO_SID)
