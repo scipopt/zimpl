@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.41 2007/09/04 07:44:08 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.42 2007/09/27 06:16:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -244,7 +244,9 @@ extern CodeNode* i_term_const(CodeNode* self);
 extern CodeNode* i_term_expr(CodeNode* self);
 /*lint -sem(     i_term_quadratic, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_quadratic(CodeNode* self);
-/*lint -sem(     i_term_sub, 1p == 1, type(1), @p == 1p) */
+/*lint -sem(     i_term_quadratic, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_term_power(CodeNode* self);
+/*lint -sem(     i_term_power, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_sub(CodeNode* self);
 /*lint -sem(     i_term_sum, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_sum(CodeNode* self);

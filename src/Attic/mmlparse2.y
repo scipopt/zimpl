@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.1 2007/09/04 07:44:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.2 2007/09/27 06:16:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -714,6 +714,10 @@ vfactor
    | VARSYM symidx VARSYM symidx  {
          $$ = code_new_inst(i_term_quadratic, 4,
             code_new_symbol($1), $2, code_new_symbol($3), $4);
+      } 
+   | VARSYM symidx POW cexpr  {
+         $$ = code_new_inst(i_term_power, 3,
+            code_new_symbol($1), $2, $4);
       } 
    | '+' vfactor              { $$ = $2; }
    | '-' vfactor              { 

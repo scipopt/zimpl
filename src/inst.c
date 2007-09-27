@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.121 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.122 2007/09/27 06:16:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3356,6 +3356,71 @@ CodeNode* i_term_quadratic(CodeNode* self)
 
    term_free(term[0]);
    term_free(term[1]);
+
+   return self;
+}
+
+CodeNode* i_term_power(CodeNode* self)
+{
+   const Symbol* sym;
+   const Tuple*  tuple;
+   const Entry*  entry;
+   const Elem*   elem;
+   const Numb*   power;
+   Term*         term;
+   int           i;
+   int           k;
+   
+   Trace("i_term_power");
+   
+   assert(code_is_valid(self));
+
+   sym   = code_eval_child_symbol(self, 0);
+   tuple = code_eval_child_tuple(self, 1);   
+   power = code_eval_child_numb(self, 2);
+
+   /* wurde schon in mmlscan ueberprueft
+    */
+   assert(sym != NULL);
+
+   for(i = 0; i < tuple_get_dim(tuple); i++)
+   {
+      elem = tuple_get_elem(tuple, i);
+
+      /* Are there any unresolved names in the tuple?
+       */
+      if (ELEM_NAME == elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+            elem_get_name(elem));
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+   }
+   entry = symbol_lookup_entry(sym, tuple);
+
+   if (NULL == entry)
+   {
+      fprintf(stderr, "*** Error 142: Unknown index ");
+      tuple_print(stderr, tuple);
+      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   
+   if (symbol_get_type(sym) != SYM_VAR)
+   {
+      fprintf(stderr, "*** Error ???: Wrong type ");
+      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   term = term_new(1);
+   term_add_elem(term, entry, power);
+   
+   code_value_term(self, term);
+
+   term_free(term);
 
    return self;
 }
