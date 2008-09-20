@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.67 2007/09/04 07:44:08 bzfkocht Exp $
+# $Id: Makefile,v 1.68 2008/09/20 20:55:20 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -92,14 +92,13 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratrlpwrite.o ratordwrite.o ratpresolve.o ratsoswrite.o \
-			rathumwrite.o 
+			ratrlpwrite.o ratordwrite.o ratpresolve.o rathumwrite.o 
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
-			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
+			load.o local.o metaio.o mmlparse.o mmlscan.o \
 			numbgmp.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o stmt.o strstore2.o symbol.o term2.o \
+			setmulti.o set4.o stmt.o strstore2.o symbol.o term.o \
 			tuple.o vinst.o mshell.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
@@ -153,7 +152,7 @@ $(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX)
 		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
 		$(RANLIB) $@
 
-$(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
+$(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
 		@echo "-> generating yacc parser $@"
 		$(YACC) $(YFLAGS) -o $@ $<
 
