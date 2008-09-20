@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: blkmem.c,v 1.3 2007/08/22 13:21:28 bzfkocht Exp $"
+#pragma ident "@(#) $Id: blkmem.c,v 1.5 2009/05/08 09:05:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -176,7 +176,7 @@ void blk_free(void* p, int size)
    {
       BlkMem* anchor    = blk_anchor[chain_no];
       int     elem_size = (chain_no + 1) * 8;
-      int     offset    = elem_size / (int)sizeof(BlkMemElem);
+      size_t  offset    = (size_t)elem_size / sizeof(BlkMemElem);
 
       while(anchor != NULL)
       {      

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.50 2007/04/23 08:40:38 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.51 2008/09/20 20:55:46 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */

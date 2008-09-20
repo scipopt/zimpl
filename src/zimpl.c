@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.79 2007/09/06 07:07:02 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.81 2009/05/08 09:05:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,7 +104,8 @@ static char* add_extention(const char* filename, const char* extension)
    assert(basename != NULL);
 
    strcpy(basename, filename);
-   
+
+   /*lint -e{429} suppress 'Custodial pointer 'basename' (line 96) has not been freed or returned' */
    return strcat(basename, extension);
 }
 
@@ -163,7 +164,6 @@ int main(int argc, char* const* argv)
    char*         tblfile  = NULL;
    char*         ordfile  = NULL;
    char*         mstfile  = NULL;
-   char*         sosfile  = NULL;
    char*         basefile = NULL;
    char*         inppipe  = NULL;
    char*         outpipe  = NULL;
@@ -327,7 +327,6 @@ int main(int argc, char* const* argv)
    tblfile = add_extention(basefile, ".tbl");
    ordfile = add_extention(basefile, ".ord");
    mstfile = add_extention(basefile, ".mst");
-   sosfile = add_extention(basefile, ".sos");
    
    outpipe = malloc(strlen(basefile) + strlen(filter) + 256);
 
@@ -451,27 +450,6 @@ int main(int argc, char* const* argv)
          
       (void)(*closefile)(fp);
    }
-   /* Write SOS file 
-    */
-   if (xlp_hassos())
-   {
-      sprintf(outpipe, filter, sosfile, "sos");
-
-      if (verbose >= VERB_NORMAL)
-         printf("Writing [%s]\n", outpipe);
-
-      if (NULL == (fp = (*openfile)(outpipe, "w")))
-      {
-         fprintf(stderr, "*** Error 104: File open failed ");
-         perror(sosfile);
-         exit(EXIT_FAILURE);
-      }
-      xlp_sosfile(fp, format);
-         
-      check_write_ok(fp, sosfile);
-         
-      (void)(*closefile)(fp);
-   }
    /* Write Output
     */
    sprintf(outpipe, filter, outfile, "lp");
@@ -486,7 +464,7 @@ int main(int argc, char* const* argv)
       exit(EXIT_FAILURE);
    }
    if (format != LP_FORM_RLP)
-      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title);
+      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title, 128);
    else
    {
       prog_text = malloc(strlen(title) + 4);
@@ -531,7 +509,6 @@ int main(int argc, char* const* argv)
    str_exit();
    blk_exit();
    
-   free(sosfile);
    free(mstfile);
    free(ordfile);
    free(outfile);

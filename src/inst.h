@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.42 2007/09/27 06:16:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.43 2008/09/20 20:55:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -234,22 +234,18 @@ extern CodeNode* i_subto(CodeNode* self);
 extern CodeNode* i_symbol_deref(CodeNode* self);
 /*lint -sem(     i_define_deref, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_define_deref(CodeNode* self);
-/*lint -sem(     i_term_add, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_term_add(CodeNode* self);
 /*lint -sem(     i_term_coeff, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_coeff(CodeNode* self);
 /*lint -sem(     i_term_const, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_const(CodeNode* self);
-/*lint -sem(     i_term_expr, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_term_expr(CodeNode* self);
-/*lint -sem(     i_term_quadratic, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_term_quadratic(CodeNode* self);
-/*lint -sem(     i_term_quadratic, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_term_power(CodeNode* self);
-/*lint -sem(     i_term_power, 1p == 1, type(1), @p == 1p) */
+/*lint -sem(     i_term_add, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_term_add(CodeNode* self);
+/*lint -sem(     i_term_sub, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_sub(CodeNode* self);
 /*lint -sem(     i_term_sum, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_term_sum(CodeNode* self);
+/*lint -sem(     i_term_expr, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_term_expr(CodeNode* self);
 /*lint -sem(     i_tuple_new, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_tuple_new(CodeNode* self);
 /*lint -sem(     i_tuple_empty, 1p == 1, type(1), @p == 1p) */

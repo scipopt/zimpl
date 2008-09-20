@@ -1,4 +1,4 @@
-# $Id: param.zpl,v 1.3 2003/09/27 11:57:00 bzfkocht Exp $
+# $Id: param.zpl,v 1.4 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: param.zpl                                                     */

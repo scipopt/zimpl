@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.85 2007/07/25 12:52:21 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.86 2008/09/20 20:55:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -180,7 +180,10 @@ set_entry_list
          $$ = code_new_inst(i_entry_list_add, 2, $1, $3);
       }
    | SUBSETS '(' sexpr ',' cexpr ')' {
-         $$ = code_new_inst(i_entry_list_subsets, 2, $3, $5);
+         $$ = code_new_inst(i_entry_list_subsets, 3, $3, $5, code_new_numb(numb_new_integer(-1)));
+      }
+   | SUBSETS '(' sexpr ',' cexpr ',' cexpr ')' {
+         $$ = code_new_inst(i_entry_list_subsets, 3, $3, $5, $7);
       }
    | POWERSET '(' sexpr ')' {
          $$ = code_new_inst(i_entry_list_powerset, 1, $3);

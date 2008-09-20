@@ -1,3 +1,6 @@
+SOS nicht extra implementieren sondern als sonderform von contraints.
+
+
 Bug doublicate SOS names. (Crash)
 
 check blkmem. gucken ob auch woanders noch zu benutzen

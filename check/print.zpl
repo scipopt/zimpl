@@ -1,4 +1,4 @@
-# $Id: print.zpl,v 1.3 2007/08/01 10:17:13 bzfkocht Exp $
+# $Id: print.zpl,v 1.7 2010/06/10 19:42:40 bzfkocht Exp $
 set A := { 1 .. 5 };
 set B := { "a", "b", "c" };
 #

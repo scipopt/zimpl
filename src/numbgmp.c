@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.29 2007/09/04 07:44:09 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.30 2008/09/20 20:55:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -142,8 +142,6 @@ void numb_exit()
 
       /* ??? mpq_clear() is not called for the used ones.
        * This would be faster then doing it in numb_free.
-       */
-      /* ??? SIDs are not cleared.
        */
       free(store->begin);
       free(store);

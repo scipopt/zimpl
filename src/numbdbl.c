@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbdbl.c,v 1.3 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbdbl.c,v 1.4 2008/09/20 20:55:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

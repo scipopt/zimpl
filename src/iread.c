@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.30 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.31 2008/09/20 20:55:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,12 @@
 #include <assert.h>
 #include <ctype.h>
 #include <sys/types.h>
+
+#ifdef WITH_PCRE
+#include <pcreposix.h>
+#else
 #include <regex.h>
+#endif
 
 #ifndef _lint
 #include <zlib.h>

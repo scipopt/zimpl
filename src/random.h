@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: random.h,v 1.1 2007/05/21 08:22:51 bzfkocht Exp $"
+#pragma ident "@(#) $Id: random.h,v 1.3 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: random.h                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

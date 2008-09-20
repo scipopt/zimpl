@@ -1,4 +1,4 @@
-# $Id: presol.zpl,v 1.2 2007/05/20 09:25:53 bzfkocht Exp $
+# $Id: presol.zpl,v 1.3 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: presol.zpl                                                    *

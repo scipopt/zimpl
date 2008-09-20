@@ -1,2 +1,2 @@
-# $Id: e133_5.zpl,v 1.1 2003/10/03 09:02:27 bzfkocht Exp $
+# $Id: e133_5.zpl,v 1.5 2010/06/10 19:42:41 bzfkocht Exp $
 param q := if x <= y then 1 else 2 end;

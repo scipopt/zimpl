@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.122 2007/09/27 06:16:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.123 2008/09/20 20:55:45 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -145,9 +145,10 @@ CodeNode* i_constraint(CodeNode* self)
    }
    else
    {
-      term_add_constant(term, rhs);
+      con = xlp_addcon(conname_get(), type, rhs, rhs, flags);
 
-      con = xlp_addcon_term(conname_get(), type, rhs, rhs, flags, term);
+      term_add_constant(term, rhs);
+      term_to_nzo(term, con);
 
       if (!xlp_concheck(con))
          code_errmsg(self);
@@ -3290,141 +3291,6 @@ CodeNode* i_symbol_deref(CodeNode* self)
    return self;
 }
 
-CodeNode* i_term_quadratic(CodeNode* self)
-{
-   const Symbol* sym[2];
-   const Tuple*  tuple[2];
-   const Entry*  entry;
-   const Elem*   elem;
-   Term*         term[2];
-   int           i;
-   int           k;
-   
-   Trace("i_term_quadratic");
-   
-   assert(code_is_valid(self));
-
-   sym  [0] = code_eval_child_symbol(self, 0);
-   tuple[0] = code_eval_child_tuple(self, 1);   
-   sym  [1] = code_eval_child_symbol(self, 2);
-   tuple[1] = code_eval_child_tuple(self, 3);   
-
-   /* wurde schon in mmlscan ueberprueft
-    */
-   assert(sym[0] != NULL);
-   assert(sym[1] != NULL);
-
-
-   for(k = 0; k < 2; k++)
-   {
-      for(i = 0; i < tuple_get_dim(tuple[k]); i++)
-      {
-         elem = tuple_get_elem(tuple[k], i);
-
-         /* Are there any unresolved names in the tuple?
-          */
-         if (ELEM_NAME == elem_get_type(elem))
-         {
-            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
-               elem_get_name(elem));
-            code_errmsg(self);
-            zpl_exit(EXIT_FAILURE);
-         }
-      }
-      entry = symbol_lookup_entry(sym[k], tuple[k]);
-
-      if (NULL == entry)
-      {
-         fprintf(stderr, "*** Error 142: Unknown index ");
-         tuple_print(stderr, tuple[k]);
-         fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym[k]));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-   
-      if (symbol_get_type(sym[k]) != SYM_VAR)
-      {
-         fprintf(stderr, "*** Error ???: Wrong type ");
-         fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym[k]));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-      term[k] = term_new(1);
-      term_add_elem(term[k], entry, numb_one());
-   }
-   code_value_term(self, term_mul_term(term[0], term[1]));
-
-   term_free(term[0]);
-   term_free(term[1]);
-
-   return self;
-}
-
-CodeNode* i_term_power(CodeNode* self)
-{
-   const Symbol* sym;
-   const Tuple*  tuple;
-   const Entry*  entry;
-   const Elem*   elem;
-   const Numb*   power;
-   Term*         term;
-   int           i;
-   int           k;
-   
-   Trace("i_term_power");
-   
-   assert(code_is_valid(self));
-
-   sym   = code_eval_child_symbol(self, 0);
-   tuple = code_eval_child_tuple(self, 1);   
-   power = code_eval_child_numb(self, 2);
-
-   /* wurde schon in mmlscan ueberprueft
-    */
-   assert(sym != NULL);
-
-   for(i = 0; i < tuple_get_dim(tuple); i++)
-   {
-      elem = tuple_get_elem(tuple, i);
-
-      /* Are there any unresolved names in the tuple?
-       */
-      if (ELEM_NAME == elem_get_type(elem))
-      {
-         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
-            elem_get_name(elem));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-   }
-   entry = symbol_lookup_entry(sym, tuple);
-
-   if (NULL == entry)
-   {
-      fprintf(stderr, "*** Error 142: Unknown index ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   
-   if (symbol_get_type(sym) != SYM_VAR)
-   {
-      fprintf(stderr, "*** Error ???: Wrong type ");
-      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   term = term_new(1);
-   term_add_elem(term, entry, power);
-   
-   code_value_term(self, term);
-
-   term_free(term);
-
-   return self;
-}
-
 CodeNode* i_newdef(CodeNode* self)
 {
    Define* def;
@@ -4076,17 +3942,24 @@ CodeNode* i_entry_list_add(CodeNode* self)
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {
    const Set* set;
-   int        subset_size;
+   List*      list = NULL;
+   int        subset_size_from;
+   int        subset_size_to;
    int        idx  = 0;
    int        used;
+   int        i;
    
    Trace("i_entry_list_subsets");
 
    assert(code_is_valid(self));
 
-   set         = code_eval_child_set(self, 0);
-   used        = set_get_members(set);
-   subset_size = checked_eval_numb_toint(self, 1, "143: Size for subsets");
+   set              = code_eval_child_set(self, 0);
+   used             = set_get_members(set);
+   subset_size_from = checked_eval_numb_toint(self, 1, "143: Size for subsets");
+   subset_size_to   = checked_eval_numb_toint(self, 2, "143: Size for subsets");
+
+   if (subset_size_to == -1)
+      subset_size_to = subset_size_from < used ? subset_size_from : used;
 
    if (used < 1)
    {
@@ -4096,17 +3969,27 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    }
    assert(set_get_dim(set) > 0);
    
-   if ((subset_size < 1) || (subset_size > used))
+   if ((subset_size_from < 1) || (subset_size_from > subset_size_to))
    {
-      fprintf(stderr, "*** Error 145: Illegal size for subsets %d,\n",
-         subset_size);
-      fprintf(stderr, "               should be between 1 and %d\n",
-         set_get_members(set));
+      fprintf(stderr, "*** Error 145: Illegal size for subsets %d,\n", subset_size_from);
+      fprintf(stderr, "               should be between 1 and %d\n", subset_size_to);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   code_value_list(self, set_subsets_list(set, subset_size, NULL, &idx));
-   
+   if ((subset_size_to < subset_size_from) || (subset_size_to > used))
+   {
+      fprintf(stderr, "*** Error 220: Illegal size for subsets %d,\n",subset_size_to);
+      fprintf(stderr, "               should be between %d and %d\n", subset_size_from, used);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   for(i = subset_size_from; i <= subset_size_to; i++)
+      list = set_subsets_list(set, i, list, &idx);
+
+   assert(list != NULL);
+
+   code_value_list(self, list);
+
    return self;
 }
 

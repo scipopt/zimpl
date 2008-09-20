@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.4 2007/08/01 10:17:14 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratrlpwrite.c,v 1.6 2009/05/08 09:05:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rlpwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -270,7 +270,7 @@ void rlp_write(
       /* A variable without any entries in the matrix
        * or the objective function can be ignored.
        */
-      if (var->size == 0 && mpq_equal(var->cost, const_zero))
+      if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
          continue;
 
       lps_makename(name, name_size, var->name, var->number);
@@ -309,7 +309,7 @@ void rlp_write(
          if (var->vclass != VAR_INT)
             continue;
 
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+         if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
             continue;
          
          lps_makename(name, name_size, var->name, var->number);
@@ -317,6 +317,31 @@ void rlp_write(
          fprintf(fp, " %s\n", name);
       }
    }
+
+   /* ---------------------------------------------------------------------- */
+
+   if (lps_has_sos(lp))
+   {
+      const Sos* sos;
+      const Sse* sse;
+
+      fprintf(fp, "SOS\n");
+
+      for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+      {
+         fprintf(fp, "%s:S%d:: ", 
+            sos->name,
+            sos->type == SOS_TYPE1 ? 1 : 2);
+   
+         for(sse = sos->first; sse != NULL; sse = sse->next)
+         {
+            lps_makename(name, name_size, sse->var->name, sse->var->number);
+
+            fprintf(fp, " %s:%.10g\n", name, mpq_get_d(sse->weight));
+         }
+      }
+   }
+
    fprintf(fp, "End\n");
 
    free(name);

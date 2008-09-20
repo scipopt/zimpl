@@ -30,10 +30,10 @@
 -efile(525,mmlparse.y,mmlparse.c)
 -esym(757,yylen)
 -DYYMAXDEPTH=0
--esym(526,__builtin_next_arg);
--esym(628,__builtin_next_arg);
--esym(718,__builtin_next_arg);
--esym(746,__builtin_next_arg);
+-esym(526,__builtin_next_arg)
+-esym(628,__builtin_next_arg)
+-esym(718,__builtin_next_arg)
+-esym(746,__builtin_next_arg)
 //-esym(749,list_type::LIST_ERR);
 -esym(773,BEGIN)
 -esym(760,FLEX_DEBUG)
@@ -64,8 +64,8 @@
 -strong(AcJX,Inst)
 -strong(AJXbl,Bool)
 -e793 //  ANSI limit of 1024 'macros in module' exceeded
-/* lpstore.c */
--esym(429,n)
+/* ratlpstore.c */
+-esym(528,hash_statist)
 /* rbt.c */
 -esym(429,nodes,t)
 /* iread.c */

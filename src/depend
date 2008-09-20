@@ -16,8 +16,6 @@ $(OBJDIR)/ratordwrite.o: src/ratordwrite.c src/mshell.h src/bool.h src/ratlp.h \
   src/ratlptypes.h src/ratlpstore.h src/mme.h
 $(OBJDIR)/ratpresolve.o: src/ratpresolve.c src/lint.h src/bool.h src/gmpmisc.h \
   src/ratlp.h src/ratlptypes.h src/ratlpstore.h
-$(OBJDIR)/ratsoswrite.o: src/ratsoswrite.c src/mshell.h src/bool.h src/ratlp.h \
-  src/ratlptypes.h src/ratlpstore.h src/mme.h
 $(OBJDIR)/rathumwrite.o: src/rathumwrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
   src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/blkmem.o: src/blkmem.c src/mshell.h src/blkmem.h
@@ -76,8 +74,8 @@ $(OBJDIR)/stmt.o: src/stmt.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h
 $(OBJDIR)/strstore2.o: src/strstore2.c src/lint.h src/bool.h src/mshell.h \
   src/ratlptypes.h src/mme.h
 $(OBJDIR)/symbol.o: src/symbol.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
-$(OBJDIR)/term2.o: src/term2.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
-  src/xlpglue.h src/mono.h
+$(OBJDIR)/term.o: src/term.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/xlpglue.h
 $(OBJDIR)/tuple.o: src/tuple.c src/bool.h src/mshell.h src/blkmem.h \
   src/ratlptypes.h src/mme.h
 $(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \

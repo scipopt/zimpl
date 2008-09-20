@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.c,v 1.30 2007/09/06 07:07:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.c,v 1.32 2009/05/08 09:05:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -505,15 +505,33 @@ Bool term_is_all_integer(const Term* term)
 }
 
 #ifndef NDEBUG
-void term_print(FILE* fp, const Term* term, Bool print_symbol_index)
+void term_print(FILE* fp, const Term* term, int flag)
 {
-   int i;
+   const Tuple* tuple;
+   int          i;
+   Numb*        coeff;
    
    assert(term_is_valid(term));
 
    for(i = 0; i < term->used; i++)
-      mono_print(fp, term->elem[i], print_symbol_index);
+   {
+      assert(!numb_equal(term->elem[i].coeff, numb_zero()));
 
+      coeff = numb_copy(term->elem[i].coeff);
+      numb_abs(coeff);
+      
+      fprintf(fp, " %s ", (numb_cmp(term->elem[i].coeff, numb_zero()) >= 0) ? "+" : "-");
+      
+      if (!numb_equal(coeff, numb_one()))
+         fprintf(fp, "%.16g ", numb_todbl(coeff));
+
+      tuple = entry_get_tuple(term->elem[i].entry);
+      
+      if (flag & TERM_PRINT_SYMBOL)
+         tuple_print(fp, tuple);
+
+      numb_free(coeff);
+   }
    if (!numb_equal(term->constant, numb_zero()))
    {
       if (numb_cmp(term->constant, numb_zero()) >= 0)

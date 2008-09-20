@@ -1,4 +1,4 @@
-# $Id: subto.zpl,v 1.6 2006/01/30 11:19:42 bzfkocht Exp $
+# $Id: subto.zpl,v 1.7 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: subto.zpl                                                     */

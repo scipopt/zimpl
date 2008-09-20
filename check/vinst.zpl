@@ -1,4 +1,4 @@
-# $Id: vinst.zpl,v 1.1 2003/10/16 08:20:30 bzfkocht Exp $
+# $Id: vinst.zpl,v 1.2 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: vinst.zpl                                                     */

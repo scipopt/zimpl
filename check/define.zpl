@@ -1,4 +1,4 @@
-# $Id: define.zpl,v 1.3 2006/09/09 10:00:21 bzfkocht Exp $
+# $Id: define.zpl,v 1.4 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: define.zpl                                                    */

@@ -8,7 +8,8 @@
 \ param e[<i> in I with i > 5] := i + 2;
 \ param f[<5,j> in I * { "a", "b" }] := j;
 \ param g[J] := <"a"> 1, <"b"> 2, <"c"> 3, <"x"> 4, <"y"> 5, <"z"> 9;
-\ param h[I*J] :=    | "a", "c", "x", "z"   | |1|  12,  17, 99,     23 | |3|   4,   3,-17, 66*5.5 | |5| 2/3, -.4,  3, abs(-4)| |9|   1,   2,  0,      3 | default -99;
+\ param h[I*J] :=    | "a", "c", "x", "z"   | |1|  12,  17, 99,     23 | |3|   4,   3,-17, 66*5.5 | |5| 2/3, -.4,  3, abs(-4)| |
+\ 9|   1,   2,  0,      3 | default -99;
 \ var x[I];
 \ subto a1: a * x[1] >= 0;
 \ subto b2: if b == "hallo" then 5 else 3 end * x[1] >= 0;

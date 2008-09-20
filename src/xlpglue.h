@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.19 2007/09/04 16:19:00 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.21 2009/05/08 09:05:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,16 +52,11 @@ extern void     xlp_transtable(FILE* fp, LpFormat format);
 extern void     xlp_orderfile(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_mstfile, 1p == 1) */
 extern void     xlp_mstfile(FILE* fp, LpFormat format);
-/*lint -sem(    xlp_sosfile, 1p == 1) */
-extern void     xlp_sosfile(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_conname, nulterm(1), 1p) */
 extern Bool     xlp_conname_exists(const char* conname);
 /*lint -sem(    xlp_addcon, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
 extern Con*     xlp_addcon(const char* name, ConType type,
    const Numb* lhs, const Numb* rhs, unsigned int flags);
-/*lint -sem(    xlp_addcon_term, nulterm(1), 1p && 3p == 1 && 4p == 1 && 4p == 1, @p == 1) */
-extern Con*     xlp_addcon_term(const char* name, ConType type,
-   const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term);
 /*lint -sem(    xlp_addvar, nulterm(1), 1p && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);

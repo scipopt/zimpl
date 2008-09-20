@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.13 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.14 2008/09/20 20:55:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -270,8 +270,9 @@ void mps_write(
    {
       /* A variable without any entries in the matrix
        * or the objective function can be ignored.
+       * If we have SOS we do not know and include it.
        */
-      if (var->size == 0 && mpq_equal(var->cost, const_zero))
+      if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
          continue;
 
       /*   0, oo  -> nix
@@ -297,6 +298,23 @@ void mps_write(
          else
             write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, const_zero);
       }
+   }
+   if (lps_has_sos(lp))
+   {
+      const Sos* sos;
+      const Sse* sse;
+
+      for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+      {
+         write_data(fp, FALSE, 'S', sos->type == SOS_TYPE1 ? '1' : '2', sos->name, "", const_zero);
+
+         for (sse = sos->first; sse != NULL; sse = sse->next)
+         {
+            lps_makename(vtmp, name_size, sse->var->name, sse->var->number);
+
+            write_data(fp, TRUE, ' ', ' ', "", vtmp, sse->weight);
+         }
+      }    
    }
    fprintf(fp, "ENDATA\n");
 

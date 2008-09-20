@@ -1,4 +1,4 @@
-# $Id: sos.zpl,v 1.2 2006/01/19 20:53:04 bzfkocht Exp $
+# $Id: sos.zpl,v 1.3 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: sos.zpl                                                     */
@@ -40,6 +40,6 @@ sos c05:  type2 : sum <i> in A do i * x[i];
 sos c06:  type1 : - x[5] - 2 * sum <i> in A with i > 3 do i * x[i] + x[3] * 2 
          + 90 * y[1] + 62 * y[2];
 sos c07:  type2 : sum <i> in A: a[i] * x[i];
-sos c08:  forall <i> in A do type2 priority 5 : sum <i> in B: a[i] * y[i];
+sos c08:  forall <i> in A do type2 priority 5 : sum <j> in B: (a[j] + i) * y[j];
 
 

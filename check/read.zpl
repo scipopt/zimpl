@@ -1,4 +1,4 @@
-# $Id: read.zpl,v 1.1 2007/04/23 08:40:37 bzfkocht Exp $
+# $Id: read.zpl,v 1.2 2008/09/20 20:55:37 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: read.zpl                                                      *

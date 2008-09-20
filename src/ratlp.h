@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.17 2007/08/02 08:36:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.19 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -196,11 +196,6 @@ extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const 
  */
 /*lint -sem(        lps_presolve, 1p == 1 && 2n >= 0) */
 extern PSResult     lps_presolve(Lps* lp, int verbose_level);
-
-/* ratsoswrite.c
- */
-/*lint -sem(        lps_soswrite, nulterm(4), 1p == 1 && 2p == 1) */
-extern void         lps_sosfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 
 #endif /* _RATLP_H_ */
 

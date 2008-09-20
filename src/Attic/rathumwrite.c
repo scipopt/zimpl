@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rathumwrite.c,v 1.6 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rathumwrite.c,v 1.8 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -236,7 +236,7 @@ void hum_write(
       /* A variable without any entries in the matrix
        * or the objective function can be ignored.
        */
-      if (var->size == 0 && mpq_equal(var->cost, const_zero))
+      if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
          continue;
 
       if (var->type == VAR_FIXED)
@@ -280,13 +280,38 @@ void hum_write(
          if (var->vclass != VAR_INT)
             continue;
 
-         if (var->size == 0 && mpq_equal(var->cost, const_zero))
+         if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
             continue;
          
          write_name(fp, var->name);
          fputc('\n', fp);
       }
    }
+
+   /* ---------------------------------------------------------------------- */
+
+   if (lps_has_sos(lp))
+   {
+      const Sos* sos;
+      const Sse* sse;
+
+      fprintf(fp, "SOS\n");
+
+      for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+      {
+         fprintf(fp, "%s S%d ", 
+            sos->name,
+            sos->type == SOS_TYPE1 ? 1 : 2);
+
+         for(sse = sos->first; sse != NULL; sse = sse->next)
+         {
+            write_name(fp, sse->var->name);
+            mpq_out_str(fp, 10, sse->weight);
+            fputc('\n', fp);
+         }
+      }
+   }
+
    fprintf(fp, "End\n");
 
 }   

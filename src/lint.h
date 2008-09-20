@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: lint.h,v 1.10 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: lint.h,v 1.12 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,10 +76,10 @@ extern int    gzwrite(gzFile file, const void* buf, unsigned len);
 /*lint -sem(  gzputs, 1p == 1 && 2p && nulterm(2)) */
 extern int    gzputs(gzFile file, const char *s);
 /*lintx -sem(  gzgets, 1p == 1 && 2p > 0 && 2P <= 3n && 3n > 0, @P == 2P || @P == 0) */
-/*lint -function(fgets(1), gzgets(2))) */
-/*lint -function(fgets(2), gzgets(3))) */
-/*lint -function(fgets(3), gzgets(1))) */
-/*lint -function(fgets(r), gzgets(r))) */
+/*lint -function(fgets(1), gzgets(2)) */
+/*lint -function(fgets(2), gzgets(3)) */
+/*lint -function(fgets(3), gzgets(1)) */
+/*lint -function(fgets(r), gzgets(r)) */
 extern char*  gzgets(gzFile file, char *buf, int len);
 /*lint -function(fgetc, gzgetc) */
 extern int    gzgetc(gzFile file);

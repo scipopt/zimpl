@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.15 2007/04/30 07:01:12 bzfkocht Exp $
+# $Id: check.sh,v 1.17 2009/05/08 09:05:47 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -28,7 +28,7 @@
 # $1 = Binary
 PASS=0
 COUNT=0
-for i in expr param set subto var bool define vinst read
+for i in expr param set subto var bool define vinst sos read
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl
@@ -102,19 +102,6 @@ done
    esac
    rm print.out print.tbl print.lp
 # 
-#
-for i in sos
-do
-   COUNT=`expr $COUNT + 1` 
-   $1 -v0 $i.zpl
-   diff $i.sos $i.sos.ref >/dev/null
-   case $? in
-    0) echo Test $i "(sos)" OK; PASS=`expr $PASS + 1` ;;
-    1) echo Test $i "(sos)" FAIL ;;
-    *) echo Test $i "(sos)" ERROR ;;
-   esac
-   rm $i.tbl $i.lp $i.sos
-done 
 #
 cd warnings
 for i in w*.zpl

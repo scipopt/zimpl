@@ -1,2 +1,2 @@
-# $Id: e212.zpl,v 1.1 2006/09/09 10:00:21 bzfkocht Exp $
+# $Id: e212.zpl,v 1.5 2010/06/10 19:42:42 bzfkocht Exp $
 param n := max({"a","b"});

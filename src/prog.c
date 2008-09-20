@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.15 2007/08/02 08:36:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.16 2008/09/20 20:55:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2007 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -161,7 +161,7 @@ void prog_execute(const Prog* prog)
       printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
 
-char* prog_tostr(const Prog* prog, const char* prefix, const char* title)
+char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int max_output_line_len)
 {
    int   len;
    char* text;
@@ -170,6 +170,7 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title)
 
    assert(prog_is_valid(prog));
    assert(prefix != NULL);
+   assert(max_output_line_len > (int)strlen(prefix));
 
    /* prefix + title + \n
     * prog->used * (prefix + stmt + \n
@@ -178,15 +179,39 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title)
    len = (prog->used + 1) * (strlen(prefix) + 1) + strlen(title) + 1;
 
    for(i = 0; i < prog->used; i++)
-      len += strlen(stmt_get_text(prog->stmt[i]));
-
+   {
+      int line_len = strlen(stmt_get_text(prog->stmt[i]));
+      len += line_len + (line_len / max_output_line_len) * (strlen(prefix) + 1);
+   }
    text = calloc(len, sizeof(*text));
+   pos  = sprintf(&text[pos], "%s%s", prefix, title);
 
-   pos = sprintf(&text[pos], "%s%s\n", prefix, title);
-   
    for(i = 0; i < prog->used; i++)
-      pos += sprintf(&text[pos], "%s%s\n", prefix, stmt_get_text(prog->stmt[i]));
+   {    
+      const char* s = stmt_get_text(prog->stmt[i]);
+      int         k = 0;
 
+      while(*s != '\0')
+      {
+         if (k % max_output_line_len == 0)
+         {
+            k = sprintf(&text[pos], "\n%s", prefix);            
+            pos += k;
+            k--;
+         }
+         text[pos] = *s;
+
+         pos++;
+         s++;
+         k++;
+      }
+   }
+   text[pos++] = '\n';     
+   text[pos]   = '\0';
+
+   /* for(i = 0; i < prog->used; i++)
+    *  pos += sprintf(&text[pos], "%s%s\n", prefix, stmt_get_text(prog->stmt[i]));
+    */
    assert(pos + 1 == len);
    
    return text;
