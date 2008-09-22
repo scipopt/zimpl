@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.14 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.16 2009/05/08 09:05:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -303,6 +303,8 @@ void mps_write(
    {
       const Sos* sos;
       const Sse* sse;
+
+      fprintf(fp, "SOS\n");
 
       for(sos = lp->sos_root; sos != NULL; sos = sos->next)
       {
