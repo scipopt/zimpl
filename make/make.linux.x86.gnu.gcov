@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.gcov,v 1.4 2007/04/24 06:02:18 bzfkocht Exp $
+#--- $Id: make.linux.x86.gnu.gcov,v 1.8 2010/06/10 19:42:42 bzfkocht Exp $
 CPPFLAGS	+=	-DCOVERAGE -DFREEMEM -D__NO_MATH_INLINES 
 CFLAGS		=	-O0 -g -fprofile-arcs -ftest-coverage 
 LDFLAGS		=	-lgmp -lz -lm -static

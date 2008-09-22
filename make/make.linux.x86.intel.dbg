@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.intel.dbg,v 1.7 2006/01/30 14:41:30 bzfkocht Exp $
+#--- $Id: make.linux.x86.intel.dbg,v 1.11 2010/06/10 19:42:42 bzfkocht Exp $
 CC		=	icc
 CPPFLAGS	+=	-DFREEMEM
 CFLAGS		=	-g -mp -w2 -fpstkchk -Wcheck \

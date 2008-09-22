@@ -1,4 +1,4 @@
-#--- $Id: make.aix.pwr4.ibm.opt,v 1.5 2005/01/24 20:49:17 bzfkocht Exp $
+#--- $Id: make.aix.pwr4.ibm.opt,v 1.9 2010/06/10 19:42:42 bzfkocht Exp $
 CC		=	xlc
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -Dinline="" \
 			-DLHT_BUCKETS=50000017U -DUSE_FSYNC

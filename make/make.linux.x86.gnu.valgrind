@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86.gnu.valgrind,v 1.5 2004/05/15 15:09:43 bzfkocht Exp $
+#--- $Id: make.linux.x86.gnu.valgrind,v 1.9 2010/06/10 19:42:42 bzfkocht Exp $
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -DFREEMEM -D__NO_MATH_INLINES 
 CFLAGS		=	-O6 -march=pentiumpro -g
 LDFLAGS		=	-lgmp -lz -lm

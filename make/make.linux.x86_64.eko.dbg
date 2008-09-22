@@ -1,4 +1,4 @@
-#--- $Id: make.linux.x86_64.eko.dbg,v 1.1 2006/01/20 20:35:13 bzfkocht Exp $
+#--- $Id: make.linux.x86_64.eko.dbg,v 1.5 2010/06/10 19:42:42 bzfkocht Exp $
 CC		=	pathcc
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES 
 CFLAGS		=	-std=c89 -Dinline= -D_POSIX_C_SOURCE=2 -march=em64t -m64 -O0 -g $(GCCWARN)
