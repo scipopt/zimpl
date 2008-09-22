@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.68 2008/09/20 20:55:20 bzfkocht Exp $
+# $Id: Makefile,v 1.69 2008/09/22 19:18:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2007 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2008 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.08a
+VERSION		=	2.08
 VERBOSE		=	false
 OPT		=	opt
 COMP		=	gnu
