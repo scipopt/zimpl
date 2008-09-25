@@ -44,7 +44,7 @@
 \ subto c41: x[1] == a[1] + 2 * sum <i> in A do 2*x[i]*a[i]*3 + 4;
 \ subto c42: 17 <= x[1] + x[2] <= 23;
 \ subto c43: 13 * a[1] / 2 >= sum <i> in A do a[i]*x[i] + 6 >= a[2];
-\ subto c44: sum <i> in A : 10^-i * x[i] >= 5, scale;
+\ subto c44: sum <i> in A with i < 5: 10^-i * x[i] >= 5, scale;
 \ subto c45: sum <i> in A : 0.0001 * x[i] >= 6, scale;
 \Problem name: subto.zpl
 Minimize
@@ -147,7 +147,7 @@ Subject to
  c43_1L:
   +5 x#5 +4 x#4 +3 x#3 +2 x#2 + x#1 >= -4
  c44_1:
-  +1e-04 x#5 +0.001 x#4 +0.01 x#3 +0.1 x#2 + x#1 >= 50
+  +0.001 x#4 +0.01 x#3 +0.1 x#2 + x#1 >= 50
  c45_1:
   + x#5 + x#4 + x#3 + x#2 + x#1 >= 60000
 Bounds

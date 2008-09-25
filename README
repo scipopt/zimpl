@@ -32,6 +32,11 @@ GMP Version 3.x will not work for sure.
 If zlib.h and gmp.h and libgmp.a and libz.a are not at the usual
 places you have to adapt the Makefile, see below.
 
+Especially under windows you need also 
+PCRE - Perl Compatible Regular Expressions from
+http://www.pcre.org/ and should use the following two
+defines -DWITH_PCRE -DPCRE_STATIC
+
 On a Linux system you might succeed with just saying: make
 
 Otherwise:
