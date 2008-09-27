@@ -1,4 +1,4 @@
-#--- $Id: make.sunos.sparc.gnu.dbg,v 1.1 2008/09/27 10:01:12 bzfkocht Exp $
+#--- $Id: make.sunos.sparc.gnu.dbg,v 1.5 2010/06/10 19:42:43 bzfkocht Exp $
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES 
 CFLAGS		=	-O0 -g -fident $(GCCWARN)
-LDFLAGS		=	-lgmp -lz -lm
+LDFLAGS		=	-Bstatic -lgmp -lz -lm
