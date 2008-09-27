@@ -1,4 +1,0 @@
-#--- $Id: make.htc015,v 1.2 2006/07/13 12:36:05 bzfkocht Exp $
-CPPFLAGS        +=      -I/sw/sun4_57/gmp-4.1.2/include -I/client/include
-LDFLAGS         =       -L/sw/sun4_57/gmp-4.1.2/lib -L/client/lib -lgmp -lz -lm
-
