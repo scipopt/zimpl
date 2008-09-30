@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.15 2008/09/20 20:55:37 bzfkocht Exp $
+# $Id: expr.zpl,v 1.16 2008/09/30 11:06:41 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2006 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2006-2008 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License

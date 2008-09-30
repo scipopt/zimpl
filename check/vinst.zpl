@@ -1,4 +1,5 @@
-# $Id: vinst.zpl,v 1.2 2008/09/20 20:55:37 bzfkocht Exp $
+
+# $Id: vinst.zpl,v 1.3 2008/09/30 11:06:41 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: vinst.zpl                                                     */
@@ -8,7 +9,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2003 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
