@@ -1,4 +1,21 @@
-2.06 02. Aug 2006 Release
+2.08 26. Sep 2008 Release
+
+ - Implemented subset(A, 3, 5) giving the all subsets with 
+   3, 4, and 5 elements.
+
+ - Line length of program output as comment limited to 128 chars.
+
+ - Updated SOS output. Now included into LPF and MPS output.
+   No explicit .sos file is written anymore.
+
+2.07 24. Aug 2007 Release
+
+ - Fixed a bug in the new memory handling code. 
+
+ - Some changes in Makefiles, etc. to make it compatible 
+   with the ZIB Optimization Suite 1.0 
+
+2.06 02. Aug 2007 Release
 
  - If a variable is printed with "do print" the type and bounds
    of the variable are also given.
