@@ -1,3 +1,68 @@
+2.06 02. Aug 2006 Release
+
+ - If a variable is printed with "do print" the type and bounds
+   of the variable are also given.
+
+ - Implemented concatenating strings with the "+" operator.
+   "hallo " + "wie" -> "hallo wie".
+
+ - Removed a small bug which lead to incorrect variable names
+   in the .tbl file if -l was used.
+
+ - It is now possible to write out several strings and numbers
+   with one PRINT statement. E.g.: do print "x= ", x, " m/s"
+
+ - Improved memory handling for strings, tuples, and lists.
+
+ - Implemented new file format RLP which permutes the
+   order of the constraint and variables.
+
+ - New parameter match "regular_expression" to the read
+   function. If given, only those lines are read, which
+   match the given expression.
+
+ - New function substr(string_expression, start, length)
+   returns the substring starting at start with the 
+   given length. In case start is negative, it is counted
+   from the end of the string.
+
+ - New function length(string_expression) returns the
+   length of the string.
+
+ - It is now possible to override a parameter value
+   given in the Zimpl file with a command line -Dname=value.
+
+ - Improved processing of initializer list for parameters and sets.
+   Removed stack overflow for very long lists.
+
+ - It is now possible to write
+   var x <= if (test == 7) then 8 else infinity end;
+   and similar.
+
+ - Implemented "implicit" for binary and integer variables.
+
+ - "{ }", "{  }", etc are now recognised as empty sets,
+   not only "{}". Same for "<>".
+
+ - The Zimpl-model is writte to the LP files as a comment.
+
+ - It is now possible to have the output of a command as
+   input to Zimpl.
+      zimpl -P "cpp -DXXX=7 %s" test1.zpl
+   will run test1.zpl through cpp with option -DXXX=7 and
+   give the output to Zimpl. 
+
+ - A warning 215 is issued if the given start values violate a 
+   constraint.
+
+ - If a .mst or .ord file is written, the constraints are tested
+   against the given start values and a warning 215 is issued
+   if a constraint is violated.
+
+ - New product operator:
+   prod <i> in I : p[i] 
+   computes the product of all p[i].
+
 2.05 18. Sep 2006 Release
 
  - it is now possible to write just 

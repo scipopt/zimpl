@@ -15,3 +15,5 @@ AddDescription "Use this for Windooze" *win*exe
 AddDescription "Zimpl User Guide" zimpl.pdf
 AddDescription "List of recent changes" CHANGELOG*
 AddDescription "Source code" zimpl*tgz
+AddDescription "Emacs syntax highlight." zimpl-mode.el
+AddDescription "Kate syntax highlight." zimpl-kate.xml
