@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<!-- $Id: zimpl.php,v 1.44 2008/10/06 20:42:33 bzfkocht Exp $ -->
+<!-- $Id: zimpl.php,v 1.45 2009/05/08 09:07:23 bzfkocht Exp $ -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta name="author" content="Thorsten Koch" />
 <meta name="description" content="Zimpl Homepage" />
 <meta name="keywords" content="ZIMPL, Mathematical Modelling Language, Mathematical Programming, Optimization, Algebraic Modelling Language" />
-<meta name="date" content="$Date: 2008/10/06 20:42:33 $" />
+<meta name="date" content="$Date: 2009/05/08 09:07:23 $" />
 <meta name="robots" content="index|follow" />
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 <link rel="stylesheet" href="zimpl.css" type="text/css" />
@@ -91,7 +91,7 @@ experimental integration of Zimpl.
 is a good simplex solver for pure linear programs (LP). 
 <br />
 For other available solvers, see the 
-<a href="http://plato.la.asu.edu/topics/problems/nlores.html#LP-problem">
+<a href="http://plato.asu.edu/sub/nlores.html#LP-problem">
 Decision Tree for Optimization Software / LP-Software</a>.
 </p>
 <hr />
@@ -162,7 +162,7 @@ Optimization at Work</a></dt>
  class="logobar" width="100" height="36" /></a>
 </div>
 <hr /><address>
-Last Update $Date: 2008/10/06 20:42:33 $ by
+Last Update $Date: 2009/05/08 09:07:23 $ by
 <a href="http://www.zib.de/mitarbeiter/mit.pl?email=koch&language=en">Thorsten Koch</a>
 <br />&copy; 2008 by Thorsten Koch,
 <a href="http://www.zib.de/impressum/index.en.html">Imprint</a>
