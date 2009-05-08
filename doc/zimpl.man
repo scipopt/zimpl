@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.man
 .\"
-.TH ZIMPL 1 "2 August 2007" Linux "User Manuals"
+.TH ZIMPL 1 "23 April 2009" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -33,7 +33,7 @@ into a linear or (mixed-)integer mathematical program expressed in LPF
 or MPS file format which can be read by a LP or MIP solver.
 
 None of the options is neccessary. All input files in 
-.Z zpl
+.I zpl
 format that are given are concatenated and processed as if they are
 one big file. This makes is possible to combine different parts of a
 model on the command line. In this case the first filename given will

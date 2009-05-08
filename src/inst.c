@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.123 2008/09/20 20:55:45 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.124 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -727,6 +727,22 @@ CodeNode* i_expr_rand(CodeNode* self)
    }
    code_value_numb(self, numb_new_rand(mini, maxi));
    
+   return self;
+}
+
+CodeNode* i_expr_round(CodeNode* self)
+{
+   Numb* numb;
+   
+   Trace("i_expr_round");
+
+   assert(code_is_valid(self));
+
+   numb = numb_copy(code_eval_child_numb(self, 0));
+   numb_round(numb);
+   
+   code_value_numb(self, numb);
+
    return self;
 }
 
@@ -1755,38 +1771,47 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    assert(tuple != NULL);
 
    dim   = tuple_get_dim(tuple);
-   le    = NULL; /* Start again */
-   
-   while(NULL != (tuple = list_get_tuple(list, &le)))
+
+   /* Is this a empty list with just a dummy argument? 
+    */
+   if (dim == 0 && list_get_elems(list) == 1)
    {
-      if (tuple_get_dim(tuple) != dim)
-      {
-         le = NULL;
-         fprintf(stderr, "*** Error 193: Different dimension tuples in set initialisation\n");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " vs. ");
-         tuple_print(stderr, list_get_tuple(list, &le));
-         fprintf(stderr, "\n");
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-      for(i = 0; i < dim; i++)
-      {
-         elem_type = elem_get_type(tuple_get_elem(tuple, i));
+      code_value_set(self, set_empty_new(1));
+   }
+   else
+   {   
+      le    = NULL; /* Start again */
       
-         if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
+      while(NULL != (tuple = list_get_tuple(list, &le)))
+      {
+         if (tuple_get_dim(tuple) != dim)
          {
-            assert(elem_type == ELEM_NAME);
-         
-            fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
-               elem_get_name(tuple_get_elem(tuple, i)));
+            le = NULL;
+            fprintf(stderr, "*** Error 193: Different dimension tuples in set initialisation\n");
+            tuple_print(stderr, tuple);
+            fprintf(stderr, " vs. ");
+            tuple_print(stderr, list_get_tuple(list, &le));
+            fprintf(stderr, "\n");
             code_errmsg(self);
             zpl_exit(EXIT_FAILURE);
          }
+         for(i = 0; i < dim; i++)
+         {
+            elem_type = elem_get_type(tuple_get_elem(tuple, i));
+         
+            if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
+            {
+               assert(elem_type == ELEM_NAME);
+            
+               fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+                  elem_get_name(tuple_get_elem(tuple, i)));
+               code_errmsg(self);
+               zpl_exit(EXIT_FAILURE);
+            }
+         }
       }
+      code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
    }
-   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
-
    return self;
 }
 
@@ -2927,13 +2952,6 @@ CodeNode* i_newsym_para1(CodeNode* self)
    if (code_get_type(child3) != CODE_VOID)
       deflt = code_get_entry(code_eval(child3));
 
-   if (set_get_members(iset) == 0)
-   {
-      fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-   
    if (!list_is_entrylist(list))
    {
       /* This errors occurs, if the parameter is missing in the template
@@ -2969,7 +2987,6 @@ CodeNode* i_newsym_para1(CodeNode* self)
       zpl_exit(EXIT_FAILURE);
    }
 #endif
-   sym    = symbol_new(name, SYM_ERR, iset, list_entries, deflt);
    le_idx = NULL;
 
    /* Now there is the question if we got an entry list with index tuples or without.
@@ -2978,13 +2995,31 @@ CodeNode* i_newsym_para1(CodeNode* self)
    entry  = list_get_entry(list, &le_idx);
    tuple  = entry_get_tuple(entry);
 
-   if (list_entries > 1 && tuple_get_dim(tuple) == 0 && set_get_dim(iset) > 0)
+   /* Check whether the file was empty
+    */
+   if (entry_get_type(entry) == SYM_SET)
    {
-      insert_param_list_by_index(self, sym, iset, idxset_get_tuple(idxset), list);
+      sym = symbol_new(name,  deflt == ENTRY_NULL ? SYM_ERR : entry_get_type(deflt), iset, 0, deflt);
    }
    else
    {
-      insert_param_list_by_list(self, sym, iset, list);
+      if (set_get_members(iset) == 0)
+      {
+         fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+
+      sym = symbol_new(name, SYM_ERR, iset, list_entries, deflt);
+
+      if (list_entries > 1 && tuple_get_dim(tuple) == 0 && set_get_dim(iset) > 0)
+      {
+         insert_param_list_by_index(self, sym, iset, idxset_get_tuple(idxset), list);
+      }
+      else
+      {
+         insert_param_list_by_list(self, sym, iset, list);
+      }
    }
    code_value_void(self);
 

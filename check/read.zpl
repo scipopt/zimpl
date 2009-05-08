@@ -1,4 +1,4 @@
-# $Id: read.zpl,v 1.3 2008/09/30 11:06:41 bzfkocht Exp $
+# $Id: read.zpl,v 1.6 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: read.zpl                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2007-2008 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2007 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License

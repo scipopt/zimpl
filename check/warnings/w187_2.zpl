@@ -1,2 +1,2 @@
-# $Id: w187_2.zpl,v 1.1 2007/04/30 07:01:12 bzfkocht Exp $
+# $Id: w187_2.zpl,v 1.3 2009/09/13 16:15:53 bzfkocht Exp $
 param x := max <i> in {1..2} with i > 3;

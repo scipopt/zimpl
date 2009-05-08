@@ -1,4 +1,4 @@
-# $Id: var.zpl,v 1.7 2008/09/30 11:06:41 bzfkocht Exp $
+# $Id: var.zpl,v 1.10 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: var.zpl                                                       */
@@ -8,7 +8,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2001 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License

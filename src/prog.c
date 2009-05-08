@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.16 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.18 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -173,15 +173,17 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
    assert(max_output_line_len > (int)strlen(prefix));
 
    /* prefix + title + \n
-    * prog->used * (prefix + stmt + \n
+    * prog->used * (\n + prefix + stmt)
     * \0
     */
-   len = (prog->used + 1) * (strlen(prefix) + 1) + strlen(title) + 1;
+   len = strlen(prefix) + strlen(title) + 2;
 
    for(i = 0; i < prog->used; i++)
    {
-      int line_len = strlen(stmt_get_text(prog->stmt[i]));
-      len += line_len + (line_len / max_output_line_len) * (strlen(prefix) + 1);
+      int line_len         = strlen(stmt_get_text(prog->stmt[i]));
+      int max_eff_line_len = max_output_line_len - strlen(prefix) - 1;
+
+      len += line_len + ((line_len + max_eff_line_len - 1) / max_eff_line_len) * (strlen(prefix) + 1);
    }
    text = calloc(len, sizeof(*text));
    pos  = sprintf(&text[pos], "%s%s", prefix, title);

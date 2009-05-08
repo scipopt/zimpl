@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.31 2008/09/20 20:55:45 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.32 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -794,12 +794,30 @@ CodeNode* i_read(CodeNode* self)
       }
       mio_close(fp);
    }
-   
+
+   /* If we found nothing to put into the list, we add a dummy entry
+    */
    if (list == NULL)
    {
-      fprintf(stderr, "*** Error 158: Read from file found no data\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
+      Tuple* tuple = tuple_new(0);
+
+      if (is_tuple_list)
+         list = list_new_tuple(tuple);           
+      else
+      {
+         Set* set     = set_pseudo_new();
+         Entry* entry = entry_new_set(tuple, set);
+               
+         list = list_new_entry(entry);
+         
+         entry_free(entry);
+         set_free(set);
+      }
+      tuple_free(tuple);
+
+      //fprintf(stderr, "*** Error 158: Read from file found no data\n");
+      //code_errmsg(self);
+      //zpl_exit(EXIT_FAILURE);
    }
    code_value_list(self, list);
 

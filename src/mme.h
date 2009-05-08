@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.89 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.90 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -204,6 +204,8 @@ extern void         numb_abs(Numb* numb);
 extern void         numb_sgn(Numb* numb);
 /*lint -sem(        numb_get_sgn, 1p == 1, @n >= -1 && @n <= 1) */
 extern int          numb_get_sgn(const Numb* numb);
+/*lint -sem(        numb_round, 1p == 1) */
+extern void         numb_round(Numb* numb);
 /*lint -sem(        numb_ceil, 1p == 1) */
 extern void         numb_ceil(Numb* numb);
 /*lint -sem(        numb_floor, 1p == 1) */

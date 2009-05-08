@@ -1,3 +1,12 @@
+2.09 23. April 2009 Release
+
+ - Fixed a bug leading to crashes at the end
+   of the program especially on x86-64.
+
+ - New round() function rounding towards zero.
+
+ - It is now possible to read empty files.
+
 2.08 26. Sep 2008 Release
 
  - Implemented subset(A, 3, 5) giving the all subsets with 

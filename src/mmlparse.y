@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse.y,v 1.86 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse.y,v 1.87 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -79,7 +79,7 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
-%token CARD ABS SGN FLOOR CEIL LOG LN EXP SQRT RANDOM ORD
+%token CARD ABS SGN ROUND FLOOR CEIL LOG LN EXP SQRT RANDOM ORD
 %token READ AS SKIP USE COMMENT MATCH
 %token SUBSETS INDEXSET POWERSET
 %token VIF VABS
@@ -975,6 +975,7 @@ cfactor
    | CARD '(' sexpr ')'     { $$ = code_new_inst(i_expr_card, 1, $3); }
    | ABS '(' cexpr ')'      { $$ = code_new_inst(i_expr_abs, 1, $3); }
    | SGN '(' cexpr ')'      { $$ = code_new_inst(i_expr_sgn, 1, $3); }
+   | ROUND '(' cexpr ')'    { $$ = code_new_inst(i_expr_round, 1, $3); }
    | FLOOR '(' cexpr ')'    { $$ = code_new_inst(i_expr_floor, 1, $3); }
    | CEIL '(' cexpr ')'     { $$ = code_new_inst(i_expr_ceil, 1, $3); }
    | LOG '(' cexpr ')'      { $$ = code_new_inst(i_expr_log, 1, $3); }

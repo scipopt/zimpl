@@ -1,4 +1,4 @@
-# $Id: queens1.zpl,v 1.3 2003/10/29 19:44:46 bzfkocht Exp $
+# $Id: queens1.zpl,v 1.5 2009/09/13 16:15:53 bzfkocht Exp $
 #
 # This is a formulation of the n queens problem using general integer
 # variables. Please note that this particular formulation only works,

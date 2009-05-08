@@ -1,4 +1,4 @@
-# $Id: sos.zpl,v 1.4 2008/09/30 11:06:41 bzfkocht Exp $
+# $Id: sos.zpl,v 1.7 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: sos.zpl                                                     */
@@ -8,7 +8,7 @@
 #*                                                                           */
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*
-#* Copyright (C) 2005-2008 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License

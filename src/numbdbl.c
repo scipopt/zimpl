@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbdbl.c,v 1.4 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbdbl.c,v 1.5 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -443,6 +443,13 @@ int numb_get_sgn(const Numb* numb)
       return  1;
 
    return 0;
+}
+
+void numb_round(Numb* numb)
+{
+   assert(numb_is_valid(numb));
+
+   numb->value.numb = (double)(int)(numb->value.numb + 0.5);
 }
 
 void numb_ceil(Numb* numb)

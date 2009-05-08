@@ -1,4 +1,4 @@
-# $Id: chvatal_diet.zpl,v 1.2 2003/10/02 08:20:12 bzfkocht Exp $
+# $Id: chvatal_diet.zpl,v 1.4 2009/09/13 16:15:53 bzfkocht Exp $
 #
 # From V. Chvatal: Linear Programming
 # Chapter 1, Page 3ff.

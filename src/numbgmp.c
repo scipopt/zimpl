@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.30 2008/09/20 20:55:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.31 2009/05/08 09:05:53 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -517,6 +517,25 @@ int numb_get_sgn(const Numb* numb)
 
    /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
    return mpq_sgn(numb->value.numb);
+}
+
+void numb_round(Numb* numb)
+{
+   mpz_t q;
+   mpq_t h;
+   
+   assert(numb_is_valid(numb));
+
+   mpz_init(q);
+   mpq_init(h);
+   mpq_set_d(h, 0.5);
+
+   mpq_add(numb->value.numb, numb->value.numb, h);
+   mpz_fdiv_q(q, mpq_numref(numb->value.numb), mpq_denref(numb->value.numb));
+   mpq_set_z(numb->value.numb, q);
+
+   mpz_clear(q);
+   mpq_clear(h);
 }
 
 void numb_ceil(Numb* numb)

@@ -1,4 +1,4 @@
-# $Id: queens3.zpl,v 1.1 2004/11/13 17:28:06 bzfkocht Exp $
+# $Id: queens3.zpl,v 1.3 2009/09/13 16:15:53 bzfkocht Exp $
 #
 # This is a formulation of the n queens problem using binary variables.
 # variables. Since the number of queens is maximized, the size of the

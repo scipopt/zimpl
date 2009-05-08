@@ -1,4 +1,4 @@
-# $Id: tsp.zpl,v 1.7 2006/09/18 13:30:35 bzfkocht Exp $
+# $Id: tsp.zpl,v 1.9 2009/09/13 16:15:54 bzfkocht Exp $
 #
 # Generic formulation of the Travelling Salesmen Problem
 #
