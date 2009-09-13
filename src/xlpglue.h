@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.h,v 1.21 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.h,v 1.22 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,16 +54,16 @@ extern void     xlp_orderfile(FILE* fp, LpFormat format);
 extern void     xlp_mstfile(FILE* fp, LpFormat format);
 /*lint -sem(    xlp_conname, nulterm(1), 1p) */
 extern Bool     xlp_conname_exists(const char* conname);
-/*lint -sem(    xlp_addcon, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
-extern Con*     xlp_addcon(const char* name, ConType type,
-   const Numb* lhs, const Numb* rhs, unsigned int flags);
+/*lint -sem(    xlp_addcon_term, nulterm(1), 1p && 3p == 1 && 4p == 1 && 4p == 1) */
+extern Bool     xlp_addcon_term(const char* name, ConType type,
+   const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term);
 /*lint -sem(    xlp_addvar, nulterm(1), 1p && 3p == 1 && 4p == 1 && 5p == 1 && 6p == 1, @p == 1) */
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
-/*lint -sem(    xlp_addsos, nulterm(1), 1p && 3p == 1, @p == 1) */
-extern Sos*     xlp_addsos(const char* name, SosType type, const Numb* priority);
-/*lint -sem(    xlp_addsse, nulterm(1), 1p && 3p == 1, @p == 1) */
-extern void     xlp_addtosos(Sos* sos, Var* var, const Numb* weight);
+/*lint -sem(    xlp_addsos, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
+extern Bool     xlp_addsos_term(const char* name, SosType type, const Numb* priority, const Term* term);
+/*lint -sem(    xlp_getvarname, 1p == 1, nulterm(@) */
+const char*     xlp_getvarname(const Var* var);
 /*lint -sem(    xlp_getclass, 1p == 1) */
 extern VarClass xlp_getclass(const Var* var);
 /*lint -sem(    xlp_getlower, 1p == 1, @p == 1) */
@@ -73,14 +73,11 @@ extern Bound*   xlp_getupper(const Var* var);
 /*lint -sem(    xlp_objname, nulterm(1), 1p) */
 extern void     xlp_objname(const char* name);
 extern void     xlp_setdir(Bool minimize);
-/*lint -sem(    xlp_addtonzo, 1p == 1 && 2p == 1 && 3p == 1) */
-extern void     xlp_addtonzo(Var* var, Con* von, const Numb* numb);
 /*lint -sem(    xlp_addtocost, 1p == 1 && 2p == 1) */
 extern void     xlp_addtocost(Var* var, const Numb* cost);
 extern Bool     xlp_presolve(void);
 extern Bool     xlp_hassos(void);
-/*lint -sem(    xlp_concheck, 1p == 1) */
-extern Bool     xlp_concheck(const Con* con);
+/*lint -sem(    xlp_setnamelen, 1n >= 0) */
 extern void     xlp_setnamelen(int name_len);
 #endif /* _XLPGLUE_H */
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: zimpllib.h,v 1.6 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: zimpllib.h,v 1.7 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,9 @@ extern "C" {
 #endif
 
 /*lint -sem(zpl_read, nulterm(1)) */
-extern Bool zpl_read(const char* filename);
+extern Bool zpl_read(const char* filename, Bool with_management);
 /*lint -sem(zpl_read_with_args, 1n > 0 && 2p) */
-extern Bool zpl_read_with_args(int argc, char** argv);
+extern Bool zpl_read_with_args(char** argv, int argc, Bool with_management);
 
 #ifdef __cplusplus
 }

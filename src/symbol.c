@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.30 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.31 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -299,7 +299,7 @@ Var* symbol_get_var(const Symbol* sym, int idx)
 
 void symbol_print(FILE* fp, const Symbol* sym)
 {
-   static const char* type_name[] = { "Error", "Numb", "Strg", "Set", "Var" };
+   static const char* const type_name[] = { "Error", "Numb", "Strg", "Set", "Var" };
    
    int i;
    

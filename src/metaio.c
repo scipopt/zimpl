@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.12 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.13 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2006-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2006-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -400,8 +400,8 @@ void mio_init()
 #ifndef NDEBUG
    /* Setup for internal test
     */
-   static const char* progstrg = 
-      "# $Id: metaio.c,v 1.12 2009/05/08 09:05:53 bzfkocht Exp $\n"
+   static const char* const progstrg = 
+      "# $Id: metaio.c,v 1.13 2009/09/13 16:15:55 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"
@@ -431,7 +431,7 @@ void mio_init()
       "      sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] \n"
       "      <= card(P[k]) - 1;\n";
 
-   static const char* datastrg =
+   static const char* const datastrg =
       "Berlin     5251 1340\n"
       "Frankfurt  5011  864\n"
       "Leipzig    5133 1237\n"

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.32 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.33 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +63,7 @@ union code_value
    Bound*       bound;
 };
 
-#define MAX_CHILDS 7
+#define MAX_CHILDS 8
 
 struct code_node
 {
@@ -93,8 +93,9 @@ CodeNode* code_new_inst(Inst inst, int childs, ...)
    int       i;
    CodeNode* child;
    
-   assert(inst != INST_NULL);
-   assert(node != NULL);
+   assert(inst   != INST_NULL);
+   assert(node   != NULL);
+   assert(childs <= MAX_CHILDS);
 
    node->type   = CODE_ERR; /* call to eval() will set this */
    node->eval   = inst;
@@ -432,7 +433,7 @@ void code_clear_inst_count()
      
 static inline CodeNode* code_check_type(CodeNode* node, CodeType expected)
 {
-   static const char* tname[] =
+   static const char* const tname[] =
    {
       "Error", "Number", "String", "Name", "Tuple", "Set", "Term", "Bool", "Size",
       "IndexSet", "List", "Nothing", "Entry", "VarClass", "ConType",
@@ -473,6 +474,62 @@ inline CodeNode* code_eval(CodeNode* node)
    
    return (*node->eval)(node);
 }
+
+
+Bool code_prune_tree(CodeNode* node)
+{
+   static Inst const prunable[] = 
+   { 
+      i_expr_abs, i_expr_sgn, i_expr_add, i_expr_card, i_expr_ceil, i_expr_div, i_expr_exp, 
+      i_expr_sqrt, i_expr_fac, i_expr_floor, i_expr_if, i_expr_intdiv, i_expr_length, i_expr_ln,
+      i_expr_log, i_expr_ord, i_expr_prod, i_expr_round, i_expr_sum, i_expr_max,
+      i_expr_max2, i_expr_sglmax, i_expr_min, i_expr_min2, i_expr_sglmin, i_expr_mul, 
+      i_expr_mod, i_expr_neg, i_expr_pow, i_expr_sub, i_expr_substr, NULL 
+   };
+
+   Bool is_all_const = TRUE;
+   int  i;
+
+   if (node->eval == (Inst)i_nop)
+      return TRUE;
+
+   for(i = 0; i < MAX_CHILDS; i++)
+   {
+      if (node->child[i] != NULL)
+      {
+         Bool is_const = code_prune_tree(node->child[i]);
+
+         /* Writing directly && code_prune_tree might not work
+          * due to shortcut evaluation.
+          */
+         is_all_const = is_all_const && is_const;
+      }
+   }
+
+   if (is_all_const)
+   {
+      for(i = 0; prunable[i] != INST_NULL; i++)
+         if (prunable[i] == node->eval)
+            break;
+
+      if (prunable[i] == INST_NULL)
+         return FALSE;
+
+      (void)code_eval(node);
+
+      for(i = 0; i < MAX_CHILDS; i++)
+      {
+         if (node->child[i] != NULL)
+         {
+            code_free(node->child[i]);
+            node->child[i] = NULL;
+         }
+      }
+      node->eval = i_nop;
+   }   
+   return is_all_const;
+}
+
 
 /* ----------------------------------------------------------------------------
  * Get Funktionen

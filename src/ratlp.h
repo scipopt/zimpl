@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.19 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.20 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,6 +70,8 @@ extern void         lps_delcon(Lps* lp, Con* con);
 extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value);
 /*lint -sem(        lps_delnzo, 1p == 1 && 2p == 2) */
 extern void         lps_delnzo(Lps* lp, Nzo* nzo);
+/*lint -sem(        lps_addqme, 1p == 1 && 2p == 1 && 3p == 1 && 4p == 1) */
+extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value);
 /*lint -sem(        lps_stat, 1p == 1) */
 extern void         lps_stat(const Lps* lp);
 /*lint -sem(        lps_setval, 1p == 1) */
@@ -122,16 +124,10 @@ extern VarType      lps_vartype(const Var* var);
 extern void         lps_getlhs(const Con* con, mpq_t lhs);
 /*lint -sem(        lps_getrhs, 1p == 1) */
 extern void         lps_getrhs(const Con* con, mpq_t rhs);
+/*lint -sem(        lps_varname, 1p == 1, nulterm(@) */
+extern const char*  lps_varname(const Var* var);
 /*lint -sem(        lps_setvartype, 1p == 1) */
 extern void         lps_setvartype(Var* con, VarType type);
-/*lint -sem(        lps_varstate, 1p == 1) */
-extern VarState     lps_varstate(const Var* var);
-/*lint -sem(        lps_setvarstate, 1p == 1) */
-extern void         lps_setvarstate(Var* con, VarState state);
-/*lint -sem(        lps_constate, 1p == 1) */
-extern ConState     lps_constate(const Con* var);
-/*lint -sem(        lps_setconstate, 1p == 1) */
-extern void         lps_setconstate(Con* con, ConState state);
 /*lint -sem(        lps_flags, 1p == 1) */
 extern unsigned int lps_flags(const Con* con);
 /*lint -sem(        lps_addflags, 1p == 1) */
@@ -146,6 +142,8 @@ extern void         lps_setvalue(Var* var, const mpq_t value);
 extern void         lps_setstartval(Var* var, const mpq_t startval);
 /*lint -sem(        lps_setnamelen, 1p == 1) */
 extern void         lps_setnamelen(Lps* lp, int name_len);
+/*lint -sem(        lps_setindictaor, 1p == 1 && 2p == 1) */
+extern void         lps_setindicator(Con* con, Var* var, Bool on_true);
 /*lint -sem(        lps_write, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, nulterm(4), 1p == 1 && 2p == 1 && 4p) */

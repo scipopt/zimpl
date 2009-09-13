@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.28 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.30 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,7 +81,6 @@ Tuple* tuple_new(int dim)
 void tuple_free(Tuple* tuple)
 {
    int i;
-   int count;
    
    assert(tuple_is_valid(tuple));
    assert(tuple->element != NULL);
@@ -96,8 +95,6 @@ void tuple_free(Tuple* tuple)
 
       SID_del(tuple);
 
-      count = tuple->dim < 1 ? 1 : tuple->dim;
-      /* blk_free(tuple->element, count * sizeof(*tuple->element)); */
       free(tuple->element); 
       blk_free(tuple, sizeof(*tuple));
    }

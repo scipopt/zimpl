@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpllib.c,v 1.23 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "$Id: zimpllib.c,v 1.24 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,13 +55,13 @@ static Bool    is_longjmp_ok = FALSE;
 
 void zpl_print_banner(FILE* fp, Bool with_license)
 {
-   const char* banner = 
+   const char* const banner = 
       "****************************************************\n" \
       "* Zuse Institute Mathematical Programming Language *\n" \
-      "* Release %-5s Copyright (C)2008 by Thorsten Koch *\n" \
+      "* Release %-5s Copyright (C)2009 by Thorsten Koch *\n" \
       "****************************************************\n";
 
-   const char* license = 
+   const char* const license = 
       "*   This is free software and you are welcome to   *\n" \
       "*     redistribute it under certain conditions     *\n" \
       "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
@@ -109,9 +109,12 @@ static Bool is_valid_identifier(const char* s)
 
 void zpl_var_print(FILE* fp, const Var* var)
 {
-   VarClass class = xlp_getclass(var);
-   Bound*   lower = xlp_getlower(var);
-   Bound*   upper = xlp_getupper(var);
+   const char* name  = xlp_getvarname(var);
+   VarClass    class = xlp_getclass(var);
+   Bound*      lower = xlp_getlower(var);
+   Bound*      upper = xlp_getupper(var);
+
+   fprintf(fp, "\"%s\" ", name);
 
    switch(class)
    {
@@ -130,7 +133,7 @@ void zpl_var_print(FILE* fp, const Var* var)
    bound_print(fp, lower);
    fprintf(fp, ",");
    bound_print(fp, upper);
-   fprintf(fp, "]\n");
+   fprintf(fp, "] ");
          
    bound_free(upper);
    bound_free(lower);
@@ -187,7 +190,7 @@ void zpl_add_parameter(const char* def)
    free(name); 
 }
 
-Bool zpl_read(const char* filename)
+Bool zpl_read(const char* filename, Bool with_management)
 {
    Prog*       prog = NULL;
    Set*        set;
@@ -201,7 +204,7 @@ Bool zpl_read(const char* filename)
    blk_init();
    str_init();
    rand_init(13021967UL);
-   numb_init();
+   numb_init(with_management);
    elem_init();
    set_init();
    mio_init();
@@ -255,7 +258,7 @@ Bool zpl_read(const char* filename)
    return ret;
 }
 
-Bool zpl_read_with_args(int argc, char** argv)
+Bool zpl_read_with_args(char** argv, int argc, Bool with_management)
 {
    const char* options = "D:mP:sv:";
 
@@ -324,6 +327,7 @@ Bool zpl_read_with_args(int argc, char** argv)
    blk_init();
    str_init();
    rand_init(seed);
+   numb_init(with_management);
    elem_init();
    set_init();
    mio_init();

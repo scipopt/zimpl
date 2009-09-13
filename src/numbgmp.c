@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.31 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.32 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,12 +108,12 @@ static void extend_storage(void)
    assert(store_free   != NULL);
 }
 
-void numb_init()
+void numb_init(Bool with_management)
 {
    store_anchor = NULL;
    store_free   = NULL;
 
-   gmp_init(verbose >= VERB_VERBOSE);
+   gmp_init(verbose >= VERB_VERBOSE, with_management);
 
    numb_const_zero     = numb_new();
    numb_const_one      = numb_new_integer(1);
@@ -142,6 +142,8 @@ void numb_exit()
 
       /* ??? mpq_clear() is not called for the used ones.
        * This would be faster then doing it in numb_free.
+       */
+      /* ??? SIDs are not cleared.
        */
       free(store->begin);
       free(store);

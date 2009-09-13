@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.52 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.54 2010/06/10 19:42:43 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -44,7 +44,7 @@
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "mme.h"
-#include "mmlparse.h"
+#include "mmlparse2.h"
 
 extern void yyerror(const char* s);
 
@@ -125,6 +125,8 @@ static int        yydecl    = 0;
 "comment"                 { yycolumn += yyleng; return COMMENT; }
 "scale"                   { yycolumn += yyleng; return SCALE; }
 "separate"                { yycolumn += yyleng; return SEPARATE; }
+"checkonly"               { yycolumn += yyleng; return CHECKONLY; }
+"indicator"               { yycolumn += yyleng; return INDICATOR; }
 "card"                    { yycolumn += yyleng; return CARD; }
 "abs"                     { yycolumn += yyleng; return ABS; }
 "vabs"                    { yycolumn += yyleng; return VABS; }

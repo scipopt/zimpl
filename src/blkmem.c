@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: blkmem.c,v 1.5 2009/05/08 09:05:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: blkmem.c,v 1.6 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

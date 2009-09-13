@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.17 2009/05/08 09:05:47 bzfkocht Exp $
+# $Id: check.sh,v 1.19 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -124,17 +124,17 @@ NAME=w215
 ../$1 -m $NAME 2>$NAME.warn >/dev/null
 diff $NAME.warn $NAME-m.warn.ref >/dev/null
 case $? in
- 0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
- 1) echo Test $i "(warn)" FAIL ;;
- *) echo Test $i "(warn)" ERROR ;;
+ 0) echo Test $NAME "-1 (warn)" OK; PASS=`expr $PASS + 1`  ;;
+ 1) echo Test $NAME "-1 (warn)" FAIL ;;
+ *) echo Test $NAME "-1 (warn)" ERROR ;;
 esac
 diff $NAME.mst $NAME.mst.ref >/dev/null
 case $? in
- 0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
- 1) echo Test $i "(warn)" FAIL ;;
- *) echo Test $i "(warn)" ERROR ;;
+ 0) echo Test $NAME "-2 (warn)" OK; PASS=`expr $PASS + 1`  ;;
+ 1) echo Test $NAME "-2 (warn)" FAIL ;;
+ *) echo Test $NAME "-2 (warn)" ERROR ;;
 esac
-#rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.mst
+rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.mst
 #
 cd ..
 cd errors

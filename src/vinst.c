@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.23 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.24 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +69,6 @@ static void create_new_constraint(
    unsigned int flags)
 {
    char* cname;
-   Con*  con;
    
    Trace("create_new_constraint");
 
@@ -81,8 +80,7 @@ static void create_new_constraint(
    
    cname = malloc(strlen(basename) + strlen(extension) + 10 + 1);
    sprintf(cname, "%s%s_%d", basename, extension, internal_cons++);
-   con = xlp_addcon(cname, con_type, lrhs, lrhs, flags);
-   term_to_nzo(term, con);
+   (void)xlp_addcon_term(cname, con_type, lrhs, lrhs, flags, term);
 
    term_free(term);
    free(cname);
@@ -795,7 +793,6 @@ static void generate_conditional_constraint(
    Bound*       bound;
    Numb*        big_m;
    Term*        big_term;
-   Con*         con;
    const Numb*  bound_val;
    const Numb*  new_rhs;
    const char*  basename;
@@ -840,9 +837,7 @@ static void generate_conditional_constraint(
          then_case           ? 't' : 'e',
          con_type == CON_RHS ? 'r' : 'l');
 
-      con = xlp_addcon(cname, con_type, new_rhs, new_rhs, flags);
-   
-      term_to_nzo(big_term, con);
+      (void)xlp_addcon_term(cname, con_type, new_rhs, new_rhs, flags, big_term);
 
       numb_free(big_m);
       term_free(big_term);
@@ -850,6 +845,46 @@ static void generate_conditional_constraint(
    }
    bound_free(bound);
 }
+
+static void generate_indicator_constraint(
+   const CodeNode* self,
+   const Term*     vif_term,
+   const Term*     lhs_term,
+   ConType         con_type,
+   const Numb*     rhs,
+   unsigned int    flags,
+   Bool            then_case)
+{
+   Numb*        lhs;
+   Term*        ind_term;
+   const char*  basename;
+   char*        cname;
+
+   assert(flags & LP_FLAG_CON_INDIC);
+
+   ind_term = term_make_conditional(vif_term, lhs_term, then_case);
+
+   basename = conname_get();
+   cname    = malloc(strlen(basename) + 5);
+   sprintf(cname, "%s_%c", basename, then_case ? 't' : 'f');
+
+   /* CON_EQUAL -> lhs == rhs
+    * CON_RHS   -> lhs does not matter
+    * CON_LHS   -> lhs == -rhs
+    * CON_RANGE -> not allowed
+    */
+   lhs = numb_copy(rhs);
+
+   if (con_type == CON_LHS)
+      numb_neg(lhs);
+
+   (void)xlp_addcon_term(cname, con_type, lhs, rhs, flags, ind_term);
+   
+   term_free(ind_term);
+   numb_free(lhs);
+   free(cname);
+}
+
 
 static void handle_vif_then_else(
    const CodeNode* self,
@@ -878,16 +913,21 @@ static void handle_vif_then_else(
       zpl_exit(EXIT_FAILURE);
    }
    assert(con_type == CON_RHS || con_type == CON_LHS || con_type == CON_EQUAL);
-   
-   /* <=, ==
-    */
-   if (con_type == CON_RHS || con_type == CON_EQUAL)
-      generate_conditional_constraint(self, vif_term, term, CON_RHS, rhs, flags, then_case);
 
-   /* >=, ==
-    */
-   if (con_type == CON_LHS || con_type == CON_EQUAL)
-      generate_conditional_constraint(self, vif_term, term, CON_LHS, rhs, flags, then_case);
+   if (flags & LP_FLAG_CON_INDIC)
+      generate_indicator_constraint(self, vif_term, term, con_type, rhs, flags, then_case);
+   else
+   {
+      /* <=, ==
+       */
+      if (con_type == CON_RHS || con_type == CON_EQUAL)
+         generate_conditional_constraint(self, vif_term, term, CON_RHS, rhs, flags, then_case);
+   
+      /* >=, ==
+       */
+      if (con_type == CON_LHS || con_type == CON_EQUAL)
+         generate_conditional_constraint(self, vif_term, term, CON_LHS, rhs, flags, then_case);
+   }
 
    numb_free(rhs);
    term_free(term);
@@ -899,13 +939,15 @@ CodeNode* i_vif_else(CodeNode* self)
    const Term*  lhs_term;
    const Term*  rhs_term;
    ConType      con_type;   
-   unsigned int flags = 0;
+   unsigned int flags;
    
    Trace("i_vif_else");
    
    assert(code_is_valid(self));
 
    vif_term   = code_eval_child_term(self, 0);
+   flags      = code_eval_child_bits(self, 7);
+
    lhs_term   = code_eval_child_term(self, 1);
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
@@ -933,7 +975,7 @@ CodeNode* i_vif(CodeNode* self)
    const Term*  lhs_term;
    const Term*  rhs_term;
    ConType      con_type;   
-   unsigned int flags = 0;
+   unsigned int flags;
    
    Trace("i_vif");
    
@@ -943,6 +985,7 @@ CodeNode* i_vif(CodeNode* self)
    lhs_term   = code_eval_child_term(self, 1);
    con_type   = code_eval_child_contype(self, 2);
    rhs_term   = code_eval_child_term(self, 3);
+   flags      = code_eval_child_bits(self, 4);
 
    handle_vif_then_else(code_get_child(self, 1), /* pos for error messages */
       vif_term, lhs_term, con_type, rhs_term, flags, TRUE);

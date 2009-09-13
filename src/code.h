@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.22 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.23 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,6 +84,8 @@ extern CodeNode*    code_check_type(CodeNode* node, CodeType expected);
 #endif
 /*lint -sem(        code_eval, 1p == 1, @p == 1p) */
 extern CodeNode*    code_eval(CodeNode* node);
+/*lint -sem(        code_prune_tree, 1p == 1) */
+extern Bool         code_prune_tree(CodeNode* node);
 /*lint -sem(        code_get_child, 1p == 1 && 2n >= 0, @p == 1) */
 extern CodeNode*    code_get_child(const CodeNode* node, int no);
 /*lint -sem(        code_get_numb, 1p == 1) */

@@ -1,3 +1,39 @@
+3.0.0 10. Sep 2009 Release
+
+ - New attribut for constraints: indicator
+   If vif is part of the constraint is is modelled as an 
+   indicator constraint and not by an big-M formulation.
+
+ - It is now possible to give attributes also to constraints
+   which use vif.
+
+ - New attribut for constraints: checkonly. Meaning as follows:
+   separate: do not include in initial LP, separate later on,
+             need not to be checked for feasibility 
+	     -> usercut in CPLEX
+	     -> init=False,separate=True,check=False in SCIP
+   checkonly: do not include in initial LP, separate only to
+              check for feasibility.
+	      -> Lazy cut in CPLEX
+	      -> init=False,separate=False,check=True in SCIP
+   It is possible to set both attributes. This will result 
+   in init=False,separate=True,check=True in SCIP and for
+   the constraint to appear both in the User Cut and the
+   Lazy Cut section in the LP file.
+   
+ - Fixed bug with extended functions in the objective 
+
+ - When using zpl_read* it is now possible to select whether 
+   Zimpl is doing GMP memory management.
+
+ - Fixed bug in zpl_read_with_args
+
+ - Constant computation are now pruned and not done repeatedly
+
+ - Changed version naming scheme
+ 
+ - Improved position of error pointer for some 133 errors
+
 2.09 23. April 2009 Release
 
  - Fixed a bug leading to crashes at the end

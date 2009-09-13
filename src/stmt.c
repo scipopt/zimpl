@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.23 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.24 2009/09/13 16:15:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -187,7 +187,9 @@ void stmt_execute(const Stmt* stmt)
       printf("Executing %s %d\n", stmt->filename, stmt->lineno);
 
    activate_warnings();
-   
+
+   (void)code_prune_tree(stmt->node);
+
    /* ??? I don't think this can happen without a parse error first.
     */
    if (code_get_type(code_eval(stmt->node)) != CODE_VOID)
@@ -200,7 +202,7 @@ void stmt_execute(const Stmt* stmt)
 
 void stmt_print(FILE* fp, const Stmt* stmt)
 {
-   static const char* type_name[] =
+   static const char* const type_name[] =
    {
       "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Define", "Print", "SOS"
    };

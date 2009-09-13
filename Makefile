@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.71 2009/09/13 16:10:59 bzfkocht Exp $
+# $Id: Makefile,v 1.72 2009/09/13 16:15:48 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2008 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2009 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ OSTYPE          :=      $(shell uname -s | \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	2.09
+VERSION		=	3.0.0
 VERBOSE		=	false
 OPT		=	opt
 COMP		=	gnu
@@ -95,10 +95,10 @@ OBJECT  	=       zimpl.o xlpglue.o \
 			ratrlpwrite.o ratordwrite.o ratpresolve.o rathumwrite.o 
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
-			load.o local.o metaio.o mmlparse.o mmlscan.o \
+			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
 			numbgmp.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o stmt.o strstore2.o symbol.o term.o \
+			setmulti.o set4.o stmt.o strstore2.o symbol.o term2.o \
 			tuple.o vinst.o mshell.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
@@ -117,7 +117,7 @@ include make/make.$(BASE)
 
 ifeq ($(VERBOSE),false)
 .SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) \
-		$(SRCDIR)/mmlparse.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
+		$(SRCDIR)/mmlparse2.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
 endif
 
 all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
@@ -152,7 +152,7 @@ $(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX)
 		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
 		$(RANLIB) $@
 
-$(SRCDIR)/mmlparse.c:	$(SRCDIR)/mmlparse.y $(SRCDIR)/mme.h
+$(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
 		@echo "-> generating yacc parser $@"
 		$(YACC) $(YFLAGS) -o $@ $<
 
@@ -161,7 +161,7 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
 lint:		$(OBJSRC) $(LIBSRC)
-		$(LINT) $(SRCDIR)/project.lnt -os\(lint.out\) \
+		$(LINT) $(SRCDIR)/project.lnt \
 		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
 
 doc:
@@ -181,7 +181,7 @@ coverage:
 		lcov -d $(OBJDIR) -z
 		make OPT=gcov check
 		lcov -d $(OBJDIR) -c >gcov/z.capture
-		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse.c" >gcov/zimpl.capture
+		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse2.c" >gcov/zimpl.capture
 		genhtml -o gcov gcov/zimpl.capture
 		-rm gcov/z.capture
 

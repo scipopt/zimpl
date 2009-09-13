@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.h,v 1.4 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.h,v 1.5 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: gmpmisc.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ extern mpq_t const_minus_one;
 extern void gmp_str2mpq(mpq_t value, const char* num);
 /*lint -sem(gmp_print, 1p == 1 && 2p ) */
 extern void gmp_print_mpq(FILE* fp, const mpq_t qval);
-extern void gmp_init(Bool verb);
+extern void gmp_init(Bool verb, Bool with_management);
 extern void gmp_exit(void);
 
 #endif /* _GMPMISC_H */

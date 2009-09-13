@@ -19,40 +19,32 @@ Name  : x
 Type  : Var
 Index : Range: |1|{<1>,<2>,<3>,<4>,<5>}
 Entries:
-	  0: <1> -> real [0,oo]
-
-	  1: <2> -> real [0,oo]
-
-	  2: <3> -> real [0,oo]
-
-	  3: <4> -> real [0,oo]
-
-	  4: <5> -> real [0,oo]
-
+	  0: <1> -> "x#1" real [0,oo] 
+	  1: <2> -> "x#2" real [0,oo] 
+	  2: <3> -> "x#3" real [0,oo] 
+	  3: <4> -> "x#4" real [0,oo] 
+	  4: <5> -> "x#5" real [0,oo] 
 
 
 Name  : y
 Type  : Var
 Index : Pseudo: |0|{<>}
 Entries:
-	  0: <> -> integer [0,1]
-
+	  0: <> -> "y" integer [0,1] 
 
 
 Name  : z
 Type  : Var
 Index : Pseudo: |0|{<>}
 Entries:
-	  0: <> -> integer [-5,7]
-
+	  0: <> -> "z" integer [-5,7] 
 
 
 Name  : w
 Type  : Var
 Index : Pseudo: |0|{<>}
 Entries:
-	  0: <> -> implicit integer [8,oo]
-
+	  0: <> -> "w" implicit integer [8,oo] 
 
 
 unknown

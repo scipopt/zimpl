@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.16 2009/05/08 09:05:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.17 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ struct variable
    int          number;
    VarClass     vclass;
    VarType      type;
-   VarState     state;
+   Bool         is_used;
    int          size;
    mpq_t        cost;
    mpq_t        lower;
@@ -79,14 +79,16 @@ struct constraint
    int          number;
    unsigned int flags;
    ConType      type;
-   ConState     state;
    int          size;
    mpq_t        lhs;
    mpq_t        rhs;
    mpq_t        scale;
+   Var*         ind_var;
+   Bool         ind_dir;
    Con*         prev;
    Con*         next;
    Nzo*         first;
+   Qme*         qme_first;
 };
 
 #define CON_SID 0x5e434f4e
@@ -138,6 +140,17 @@ struct soset
 };
 
 #define SOS_SID 0x5e534f53
+
+struct qmatentry
+{
+   unsigned int sid;
+   const Var*   var1;
+   const Var*   var2;
+   mpq_t        value;
+   Qme*         next;
+};
+
+#define QME_SID 0x514D656E
 
 /* Internal functions
  */

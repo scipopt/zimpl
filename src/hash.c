@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.29 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.30 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,7 +72,7 @@ static void hash_statist(FILE* fp, const Hash* hash);
 
 Hash* hash_new(HashType type, int size)
 {
-   static unsigned int bucket_size[] =
+   static const unsigned int bucket_size[] =
    {
       53U, 103U, 503U, 1009U, 5003U, 10007U, 50021U, 100003U, 500009U, 1000003U, 
       5000011U, 10000019U, 50000017U, 0U
@@ -196,7 +196,7 @@ void hash_add_numb(Hash* hash, const Numb* numb)
 Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   HElem*       he    = NULL;
+   HElem*       he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -211,7 +211,7 @@ Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   HElem*       he    = NULL;
+   HElem*       he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -226,7 +226,7 @@ Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 Bool hash_has_numb(const Hash* hash, const Numb* numb)
 {
    unsigned int hcode = numb_hash(numb) % hash->size;
-   HElem*       he    = NULL;
+   HElem*       he;
    
    assert(hash_is_valid(hash));
    assert(numb_is_valid(numb));
@@ -243,7 +243,7 @@ Bool hash_has_numb(const Hash* hash, const Numb* numb)
 const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   HElem*       he    = NULL;
+   HElem*       he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -284,7 +284,7 @@ void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
 int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
 {
    unsigned int hcode = elem_hash(elem) % hash->size;
-   HElem*       he    = NULL;
+   HElem*       he;
    
    assert(hash_is_valid(hash));
    assert(elem_is_valid(elem));

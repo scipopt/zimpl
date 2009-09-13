@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.32 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.33 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -805,7 +805,7 @@ CodeNode* i_read(CodeNode* self)
          list = list_new_tuple(tuple);           
       else
       {
-         Set* set     = set_pseudo_new();
+         Set*   set   = set_pseudo_new();
          Entry* entry = entry_new_set(tuple, set);
                
          list = list_new_entry(entry);

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: gmpmisc.c,v 1.8 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: gmpmisc.c,v 1.9 2009/09/13 16:15:54 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -243,9 +243,10 @@ static void gmp_free(void* ptr, size_t size)
       free(ptr);
 }
 
-void gmp_init(Bool verbose)
+void gmp_init(Bool verbose, Bool with_management)
 {
-   mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);
+   if (with_management)
+      mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);
 
    mpq_init(const_zero);
    mpq_init(const_one);
@@ -255,7 +256,8 @@ void gmp_init(Bool verbose)
    mpq_set_si(const_minus_one, -1, 1); /* = -1 */
 
    if (verbose)
-      printf("Using GMP Version %s\n", gmp_version);
+      printf("Using GMP Version %s %s\n", 
+         gmp_version, with_management ? "[memory management redirected]" : "[memory management unchanged]");
 }
 
 void gmp_exit()

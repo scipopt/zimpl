@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.33 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.34 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -152,7 +152,7 @@ static void lps_hash_free(LpsHash* hash)
 static Var* hash_lookup_var(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he     = NULL;
+   LpsHElem*    he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_VAR);
@@ -172,7 +172,7 @@ static Var* hash_lookup_var(const LpsHash* hash, const char* name)
 static Con* hash_lookup_con(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he     = NULL;
+   LpsHElem*    he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_CON);
@@ -192,7 +192,7 @@ static Con* hash_lookup_con(const LpsHash* hash, const char* name)
 static Sos* hash_lookup_sos(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he     = NULL;
+   LpsHElem*    he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_SOS);
@@ -718,9 +718,19 @@ void lps_free(Lps* lp)
    }
    for(con = lp->con_root; con != NULL; con = con_next)
    {
+      Qme* qme;
+      Qme* qme_next;
+
       con_next = con->next;
       con->sid = 0x0;
 
+      for(qme = con->qme_first; qme != NULL; qme = qme_next)
+      {
+         qme_next = qme->next;
+
+         mpq_clear(qme->value);
+         free(qme);
+      }
       mpq_clear(con->lhs);
       mpq_clear(con->rhs);
       mpq_clear(con->scale);
@@ -925,7 +935,7 @@ Var* lps_addvar(
    v->number    = lp->vars;
    v->vclass    = VAR_CON;
    v->type      = VAR_FREE;
-   v->state     = VAR_ERR;
+   v->is_used   = FALSE;
    v->priority  = 0;
    v->size      = 0;
    v->first     = NULL;
@@ -1037,9 +1047,11 @@ Con* lps_addcon(
    c->number    = lp->cons;   
    c->size      = 0;
    c->type      = CON_FREE;
-   c->state     = CON_ERR;
    c->flags     = 0;
+   c->ind_var   = NULL;
+   c->ind_dir   = TRUE;
    c->first     = NULL;
+   c->qme_first = NULL;
    c->next      = NULL;
    c->prev      = lp->con_last;
    lp->con_last = c;
@@ -1164,6 +1176,32 @@ Sos* lps_addsos(
    return sos;
 }
 
+/*ARGSUSED*/
+void lps_addqme(
+   Lps*        lp,
+   Con*        con,
+   Var*        var1,
+   Var*        var2,
+   const mpq_t value)
+{
+   Qme* qme = malloc(sizeof(*qme));
+
+   assert(qme != NULL);
+
+   qme->sid = QME_SID;
+   qme->var1 = var1;
+   qme->var2 = var2;
+
+   mpq_init(qme->value);
+   mpq_set(qme->value, value);
+
+   qme->next      = con->qme_first;
+   con->qme_first = qme;
+
+   var1->is_used = TRUE;
+   var2->is_used = TRUE;
+}
+
 void lps_addsse(
    Sos* sos,
    Var* var,
@@ -1188,6 +1226,8 @@ void lps_addsse(
    sos->first  = sse;
 
    sos->sses++;
+
+   sse->var->is_used = TRUE;
 }
 
 void lps_addnzo(
@@ -1592,6 +1632,14 @@ void lps_getrhs(
    mpq_set(rhs, con->rhs);
 }
 
+const char* lps_varname(const Var* var)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   return var->name;
+}
+
 void lps_setvartype(
    Var*    var,
    VarType type)
@@ -1600,42 +1648,6 @@ void lps_setvartype(
    assert(var->sid == VAR_SID);
    
    var->type = type;   
-}
-
-VarState lps_varstate(const Var* var)
-{
-   assert(var      != NULL);
-   assert(var->sid == VAR_SID);
-
-   return var->state;
-}
-
-void lps_setvarstate(
-   Var*     var,
-   VarState state)
-{
-   assert(var      != NULL);
-   assert(var->sid == VAR_SID);
-   
-   var->state = state;   
-}
-
-ConState lps_constate(const Con* con)
-{
-   assert(con      != NULL);
-   assert(con->sid == CON_SID);
-
-   return con->state;
-}
-
-void lps_setconstate(
-   Con*     con,
-   ConState state)
-{
-   assert(con      != NULL);
-   assert(con->sid == CON_SID);
-   
-   con->state = state;   
 }
 
 unsigned int lps_flags(const Con* con)
@@ -1701,6 +1713,21 @@ void lps_setnamelen(
    int  name_len)
 {
    lp->name_len = name_len;
+}
+
+
+void lps_setindicator(
+   Con* con, 
+   Var* var, 
+   Bool on_true)
+{
+   assert(con      != NULL);
+   assert(con->sid == CON_SID);
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   con->ind_var = var;
+   con->ind_dir = on_true;
 }
 
 void lps_stat(const Lps* lp)
@@ -1773,7 +1800,7 @@ static Bool lpfstrncpy(char* t, const char* s, int len)
 {
    /* '@' was excluded, to make sure the appendix is unique.
     */
-   static const char* allowed = "!#$%&()/,.;?_{}|~"; 
+   static const char* const allowed = "!#$%&()/,.;?_{}|~"; 
 
    Bool was_smashed = FALSE;
    

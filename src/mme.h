@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mme.h,v 1.90 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mme.h,v 1.91 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define ZIMPL_VERSION  300
 
 enum element_type
 {
@@ -96,6 +98,8 @@ typedef struct symbol            Symbol;
 typedef enum define_type         DefineType;
 typedef struct define            Define;
 typedef struct index_set         IdxSet;
+typedef struct mono_element      MonoElem;
+typedef struct mono              Mono;
 typedef struct term              Term;
 typedef struct local             Local;
 typedef struct list_element      ListElem;
@@ -126,6 +130,8 @@ typedef int                    (*HeapCmp)(HeapData, HeapData);
 #define VERB_CHATTER  3
 #define VERB_DEBUG    5
 
+/* zimpllib.c
+ */
 extern int          verbose;
 /*lint -function(exit,zpl_exit) */
 extern void         zpl_exit(int retval);
@@ -133,7 +139,8 @@ extern void         zpl_exit(int retval);
 extern void         zpl_add_parameter(const char* def);
 /*lint -sem(        zpl_var_print, 1p == 1 && 2p == 1) */
 extern void         zpl_var_print(FILE* fp, const Var* var);
-
+/*lint -sem(        zpl_print_banner, 1p == 1) */
+extern void         zpl_print_banner(FILE* fp, Bool with_license);
 
 /* strstore.c
  */
@@ -146,7 +153,7 @@ extern unsigned int str_hash(const char* s);
 
 /* numbgmp.c
  */
-extern void         numb_init(void);
+extern void         numb_init(Bool with_management);
 extern void         numb_exit(void);
 /*lint -sem(        numb_new, @p == 1) */
 extern Numb*        numb_new(void);
@@ -619,26 +626,30 @@ extern char*        local_tostrall(void);
 
 /* term.c
  */
-#define TERM_PRINT_SYMBOL  1
-
 /*lint -sem(        term_new, 1n > 0, @p == 1) */
 extern Term*        term_new(int size);
-/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1) */
+/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff);
+/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
+extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* coeff);
 /*lint -sem(        term_free, custodial(1), 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
 extern Bool         term_is_valid(const Term* term);
 /*lint -sem(        term_copy, 1p == 1, @p == 1) */
 extern Term*        term_copy(const Term* term);
-/*lint -sem(        term_print, 1p == 1 && 2p == 1 && 3n >= 1) */
-extern void         term_print(FILE* fp, const Term* term, int flag);
+/*lint -sem(        term_print, 1p == 1 && 2p == 1) */
+extern void         term_print(FILE* fp, const Term* term, Bool print_symbol_index);
 /*lint -sem(        term_append_term, 1p == 1 && 2p == 1) */
 extern void         term_append_term(Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
+/*lint -sem(        term_mul_term, 1p == 1 && 2p == 1, @p == 1) */
+extern Term*        term_mul_term(const Term* term_a, const Term* term_b);
+/*lint -sem(        term_simplify, 1p == 1, @p == 1) */
+extern Term*        term_simplify(const Term* term_org);
 /*lint -sem(        term_add_constant, 1p == 1 && 2p == 1) */
 extern void         term_add_constant(Term* term, const Numb* value);
 /*lint -sem(        term_sub_constant, 1p == 1 && 2p == 1) */
@@ -651,18 +662,23 @@ extern const Numb*  term_get_constant(const Term* term);
 extern void         term_negate(Term* term);
 /*lint -sem(        term_to_objective, 1p == 1) */
 extern void         term_to_objective(const Term* term);
-/*lint -sem(        term_to_nzo, 1p == 1 && 2p == 1) */
-extern void         term_to_nzo(const Term* term, Con* con);
-/*lint -sem(        term_to_sos, 1p == 1 && 2p == 1) */
-extern Bool         term_to_sos(const Term* term, Sos* sos);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
+/*lint -sem(        term_get_element, 1p == 1, @p == 1) */
+extern Mono*        term_get_element(const Term* term, int i);
 /*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */
 extern Bound*       term_get_lower_bound(const Term* term);
 /*lint -sem(        term_get_upper_bound, 1p == 1, @p == 1) */
 extern Bound*       term_get_upper_bound(const Term* term);
 /*lint -sem(        term_is_all_integer, 1p == 1) */
 extern Bool         term_is_all_integer(const Term* term);
+/*lint -sem(        term_is_linear, 1p == 1) */
+extern Bool         term_is_linear(const Term* term);
+/*lint -sem(        term_get_degree, 1p == 1) */
+extern int          term_get_degree(const Term* term);
+/*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @p == 1) */
+extern Term*        term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is_true);
+
 
 /* rdefpar.c
  */
@@ -789,11 +805,6 @@ extern int          mio_getc(const MFP* mfp);
 extern char*        mio_gets(const MFP* mfp, char* buf, int len);
 /*lint -sem(        mio_get_line, 1p) */
 extern char*        mio_get_line(const MFP* mfp);
-
-/* zimpllib.c
- */
-/*lint -sem(        zpl_print_banner, 1p == 1) */
-extern void         zpl_print_banner(FILE* fp, Bool with_license);
 
 /* vinst.c
  */

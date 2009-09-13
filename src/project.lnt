@@ -2,6 +2,9 @@
 +fsc // strings are const
 -ffc // Function takes Custody flag -> off
 -A(C90)
+-hFb^3
+-width(132,4)
+-"format=%f:%l: %t %n: %m"
 -Ilint
 -Ilint/posix
 //-I/usr/include
@@ -77,8 +80,10 @@
 -esym(424, yyss, yyvs) // klappt nicht
 -esym(613, yyss, yyvs)
 -esym(673, yyss, yyvs) // klappt nicht
+-esym(553,YYENABLE_NLS,YYLTYPE_IS_TRIVIAL)
 //--- GMP ---
 -esym(534,__gmpf_out_str,__gmpq_set_str,__gmpq_out_str)
+-esym(849,GMP_RAND_ALG_LC,GMP_RAND_ALG_DEFAULT)
 //--- ratlp
 -esym(757,lps_readmps) // global not referenced
 -efunc(662,code_new_inst)
@@ -86,6 +91,8 @@
 //--- set4.h ---
 -esym(768,set_empty::head,set_pseudo::head,set_range::head,set_prod::head,set_multi::head)
 -esym(768,set_empty_iter::dummy)
+//--- elem.c ---
+-esym(522,elem_init)
 //-------------- NOCH ZU TUN --------------------------------
 -e714 // Symbol not referenced
 -e765 // external could be made static

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.17 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.18 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,6 +86,37 @@ static void write_row(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");         
    }
+   if (con->qme_first != NULL)
+   {
+      Qme* qme;
+
+      if (cnt % 6 != 0)
+         fprintf(fp, "\n ");         
+
+      fprintf(fp, " + [");
+
+      for(qme = con->qme_first; qme != NULL; qme= qme->next)
+      {
+         lps_makename(name, name_size, qme->var1->name, qme->var1->number);
+
+         if (mpq_equal(qme->value, const_one))
+            fprintf(fp, " + %s", name);
+         else if (mpq_equal(qme->value, const_minus_one))
+            fprintf(fp, " - %s", name);
+         else
+            fprintf(fp, " %+.15g %s", mpq_get_d(qme->value), name);
+
+         if (qme->var1 == qme->var2)
+            fprintf(fp, "^2");
+         else
+         {
+            lps_makename(name, name_size, qme->var2->name, qme->var2->number);
+
+            fprintf(fp, " * %s", name);
+         }
+      }
+      fprintf(fp,  " ]\n");
+   }
 }
 
 /* A specification for the LP file format can be found in the
@@ -100,13 +131,14 @@ void lpf_write(
 {
    const Var* var;
    const Con* con;
-   Bool  have_integer  = FALSE;
-   Bool  have_separate = FALSE;
+   Bool  have_integer   = FALSE;
+   Bool  have_separate  = FALSE;
+   Bool  have_checkonly = FALSE;
    int   cnt;
    int   i;
    int   name_size;
    char* name;
-   
+
    assert(lp != NULL);
    assert(fp != NULL);
 
@@ -144,25 +176,45 @@ void lpf_write(
    /* ---------------------------------------------------------------------- */
 
    /* First loop run for normal constraints, second one for
-    * lazy constraints, if any.
+    * user cuts, thrid one for lazy constraints, if any.
     */
-   for(i = 0; i < 2; i++)
+   for(i = 0; i < 3; i++)
    {      
-      fprintf(fp, "\n%s\n", (i == 0) ? "Subject to" : "Lazy Constraints");
+      if (i == 0)
+         fprintf(fp, "\nSubject to\n");      
+      else if (i == 1)
+      {
+         if (!have_separate)
+            continue;
+         else
+            fprintf(fp, "\nUser Cuts\n");
+      }
+      else if (i == 2)
+      {
+         if (!have_checkonly)
+            continue;
+         else
+            fprintf(fp, "\nLazy Constraints\n"); 
+      }
 
       for(con = lp->con_root; con != NULL; con = con->next)
       {
-         if (con->size == 0)
+         if (con->size == 0 && con->qme_first == NULL)
             continue;
 
-         if ((con->flags & LP_FLAG_CON_SEPAR) == LP_FLAG_CON_SEPAR)
+         if (i == 0 && ((con->flags & (LP_FLAG_CON_SEPAR | LP_FLAG_CON_CHECK)) != 0))
          {
-            have_separate = TRUE;
+            if ((con->flags & LP_FLAG_CON_SEPAR) == LP_FLAG_CON_SEPAR)
+               have_separate = TRUE;
+            if ((con->flags & LP_FLAG_CON_CHECK) == LP_FLAG_CON_CHECK)
+               have_checkonly = TRUE;
 
-            if (i == 0)
-               continue;
-         }
-         else if (i == 1)
+            continue;
+         }        
+         if (i == 1 && (con->flags & LP_FLAG_CON_SEPAR) != LP_FLAG_CON_SEPAR)
+            continue;
+
+         if (i == 2 && (con->flags & LP_FLAG_CON_CHECK) != LP_FLAG_CON_CHECK)
             continue;
     
          if (con->type == CON_RANGE)
@@ -184,16 +236,23 @@ void lpf_write(
          else
          {
             lps_makename(name, name_size, con->name, con->number);
-            fprintf(fp, " %s:\n ", name);
 
+            if (i == 0)
+               fprintf(fp, " %s:\n ", name);
+            else if (i == 1)
+               fprintf(fp, " %sU:\n ", name);
+            else if (i == 2)
+               fprintf(fp, " %sZ:\n ", name);
+
+            if (con->ind_var != NULL)
+            {
+               lps_makename(name, name_size, con->ind_var->name, con->ind_var->number);
+               fprintf(fp, "%s = %d -> ", name, con->ind_dir ? 1 : 0);
+            }
             write_row(fp, con, name, name_size);
             write_rhs(fp, con, con->type);
          }
       }
-      /* Shortcut to break out of the loop if there are no lazy constraints.
-       */
-      if (!have_separate)
-         break;
    }
 
    /* ---------------------------------------------------------------------- */
@@ -204,9 +263,9 @@ void lpf_write(
    {
       /* A variable without any entries in the matrix
        * or the objective function can be ignored.
-       * If we have sos we do not know and include it
+       * (also not part of an SOS or quadratic constraint)
        */
-      if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
+      if (var->size == 0 && mpq_equal(var->cost, const_zero) && !var->is_used)
          continue;
 
       lps_makename(name, name_size, var->name, var->number);
@@ -245,7 +304,7 @@ void lpf_write(
          if (var->vclass != VAR_INT)
             continue;
 
-         if (var->size == 0 && mpq_equal(var->cost, const_zero) && !lps_has_sos(lp))
+         if (var->size == 0 && mpq_equal(var->cost, const_zero) && !var->is_used)
             continue;
          
          lps_makename(name, name_size, var->name, var->number);
@@ -284,7 +343,6 @@ void lpf_write(
             fputc('\n', fp);         
       }
    }
-
    fprintf(fp, "End\n");
 
    free(name);

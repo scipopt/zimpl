@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.124 2009/05/08 09:05:53 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.125 2009/09/13 16:15:55 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2008 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2009 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -106,7 +106,6 @@ CodeNode* i_constraint(CodeNode* self)
    const Term*  term_lhs;
    const Term*  term_rhs;
    ConType      type;
-   Con*         con;
    Numb*        rhs;
    unsigned int flags;
    int          res;
@@ -145,12 +144,9 @@ CodeNode* i_constraint(CodeNode* self)
    }
    else
    {
-      con = xlp_addcon(conname_get(), type, rhs, rhs, flags);
-
       term_add_constant(term, rhs);
-      term_to_nzo(term, con);
 
-      if (!xlp_concheck(con))
+      if (xlp_addcon_term(conname_get(), type, rhs, rhs, flags, term))
          code_errmsg(self);
 
       conname_next();
@@ -168,7 +164,6 @@ CodeNode* i_rangeconst(CodeNode* self)
    Term*        term;
    Numb*        lhs;
    Numb*        rhs;
-   Con*         con;
    unsigned int flags;
    
    Trace("i_rangeconst");
@@ -214,12 +209,9 @@ CodeNode* i_rangeconst(CodeNode* self)
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
-      con = xlp_addcon(conname_get(), CON_RANGE, lhs, rhs, flags);
-         
       term_sub_constant(term, term_get_constant(term));
-      term_to_nzo(term, con);
 
-      if (!xlp_concheck(con))
+      if (xlp_addcon_term(conname_get(), CON_RANGE, lhs, rhs, flags, term))
          code_errmsg(self);
 
       conname_next();
@@ -263,7 +255,6 @@ CodeNode* i_soset(CodeNode* self)
    const Term*  term;
    const Numb*  typenumb;
    const Numb*  priority;
-   Sos*         sos;
    SosType      type;
    
    Trace("i_constraint");
@@ -285,15 +276,10 @@ CodeNode* i_soset(CodeNode* self)
    else
       type = SOS_TYPE2;
    
-   sos = xlp_addsos(conname_get(), type, priority);
-
-   assert(sos != NULL);
-
-   if (term_to_sos(term, sos))
+   if (xlp_addsos_term(conname_get(), type, priority, term))
    {
-      if (stmt_trigger_warning(200))
-         fprintf(stderr,
-            "--- Warning 200: Weights are not unique for SOS %s\n", conname_get());
+      fprintf(stderr,
+         "--- Warning 200: Weights are not unique for SOS %s\n", conname_get());
       code_errmsg(self);
    }
    conname_next();
@@ -1423,7 +1409,7 @@ CodeNode* i_bool_eq(CodeNode* self)
    case CODE_NAME :
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
-      code_errmsg(self);
+      code_errmsg(code_get_child(self, 0));
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
@@ -1480,7 +1466,7 @@ CodeNode* i_bool_ge(CodeNode* self)
    case CODE_NAME :
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
-      code_errmsg(self);
+      code_errmsg(code_get_child(self, 0));
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
@@ -1526,7 +1512,7 @@ CodeNode* i_bool_gt(CodeNode* self)
    case CODE_NAME :
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(op1));
-      code_errmsg(self);
+      code_errmsg(code_get_child(self, 0));
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
@@ -2999,7 +2985,7 @@ CodeNode* i_newsym_para1(CodeNode* self)
     */
    if (entry_get_type(entry) == SYM_SET)
    {
-      sym = symbol_new(name,  deflt == ENTRY_NULL ? SYM_ERR : entry_get_type(deflt), iset, 0, deflt);
+      (void)symbol_new(name, deflt == ENTRY_NULL ? SYM_ERR : entry_get_type(deflt), iset, 0, deflt);
    }
    else
    {
@@ -3009,7 +2995,6 @@ CodeNode* i_newsym_para1(CodeNode* self)
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
-
       sym = symbol_new(name, SYM_ERR, iset, list_entries, deflt);
 
       if (list_entries > 1 && tuple_get_dim(tuple) == 0 && set_get_dim(iset) > 0)
@@ -3088,7 +3073,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
       case CODE_NAME :
          fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             code_get_name(child));
-         code_errmsg(self);
+         code_errmsg(code_get_child(self, 2));
          zpl_exit(EXIT_FAILURE);
       default :
          abort();
@@ -3288,7 +3273,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       {
          fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
             elem_get_name(elem));
-         code_errmsg(self);
+         code_errmsg(code_get_child(self, 1));
          zpl_exit(EXIT_FAILURE);
       }
    }
@@ -3300,7 +3285,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       fprintf(stderr, "*** Error 142: Unknown index ");
       tuple_print(stderr, tuple);
       fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
-      code_errmsg(self);
+      code_errmsg(code_get_child(self, 1));
       zpl_exit(EXIT_FAILURE);
    }
    
@@ -3323,6 +3308,81 @@ CodeNode* i_symbol_deref(CodeNode* self)
    default :
       abort();
    }
+   return self;
+}
+
+CodeNode* i_term_mul(CodeNode* self)
+{
+   const Term* term_a;
+   const Term* term_b;
+
+   assert(code_is_valid(self));
+
+   term_a = code_eval_child_term(self, 0);
+   term_b = code_eval_child_term(self, 1);
+
+   code_value_term(self, term_mul_term(term_a, term_b));
+
+   return self;
+}
+
+CodeNode* i_term_power(CodeNode* self)
+{
+   const Symbol* sym;
+   const Tuple*  tuple;
+   const Entry*  entry;
+   const Elem*   elem;
+   int           power;
+   Term*         term;
+   int           i;
+   
+   Trace("i_term_power");
+   
+   assert(code_is_valid(self));
+
+   sym   = code_eval_child_symbol(self, 0);
+   tuple = code_eval_child_tuple(self, 1);   
+   power = checked_eval_numb_toint(self, 2, "112: Exponent value");
+
+   /* wurde schon in mmlscan ueberprueft
+    */
+   assert(sym != NULL);
+
+   for(i = 0; i < tuple_get_dim(tuple); i++)
+   {
+      elem = tuple_get_elem(tuple, i);
+
+      /* Are there any unresolved names in the tuple?
+       */
+      if (ELEM_NAME == elem_get_type(elem))
+      {
+         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
+            elem_get_name(elem));
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+   }
+   entry = symbol_lookup_entry(sym, tuple);
+
+   if (NULL == entry)
+   {
+      fprintf(stderr, "*** Error 142: Unknown index ");
+      tuple_print(stderr, tuple);
+      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+
+   assert(symbol_get_type(sym) != SYM_VAR);
+
+   term = term_new(1);
+   term_add_elem(term, entry, numb_one());
+
+   for(i = 1; i < power; i++)
+      term_mul_elem(term, entry, numb_one());
+
+   code_value_term(self, term);
+
    return self;
 }
 
@@ -3749,7 +3809,7 @@ CodeNode* i_entry(CodeNode* self)
    case CODE_NAME :
       fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
          code_get_name(child));
-      code_errmsg(self);
+      code_errmsg(child);
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
@@ -4209,11 +4269,26 @@ static void objective(CodeNode* self, Bool minimize)
    assert(code_is_valid(self));
 
    name = code_eval_child_name(self, 0);
+
+   if (!conname_set(name))
+   {
+      fprintf(stderr, "*** Error 105: Duplicate constraint name \"%s\"\n", name);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
    term = code_eval_child_term(self, 1);
 
+   if (!term_is_linear(term))
+   {
+      fprintf(stderr, "*** Error 221: The objective function has to be linear\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);      
+   }
    xlp_objname(name);
    xlp_setdir(minimize);
    term_to_objective(term);
+
+   conname_free();
 
    code_value_void(self);
 }

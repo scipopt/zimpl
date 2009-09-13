@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.man
 .\"
-.TH ZIMPL 1 "23 April 2009" Linux "User Manuals"
+.TH ZIMPL 1 "10 September 2009" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS

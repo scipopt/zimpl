@@ -1,7 +1,7 @@
 $(OBJDIR)/zimpl.o: src/zimpl.c src/lint.h src/bool.h src/mshell.h src/random.h \
   src/blkmem.h src/ratlptypes.h src/mme.h src/xlpglue.h
 $(OBJDIR)/xlpglue.o: src/xlpglue.c src/bool.h src/mshell.h src/ratlp.h \
-  src/ratlptypes.h src/mme.h src/gmpmisc.h src/xlpglue.h
+  src/ratlptypes.h src/mme.h src/mono.h src/gmpmisc.h src/xlpglue.h
 $(OBJDIR)/ratlpstore.o: src/ratlpstore.c src/lint.h src/bool.h src/mshell.h \
   src/gmpmisc.h src/ratlp.h src/ratlptypes.h src/ratlpstore.h
 $(OBJDIR)/ratlpfwrite.o: src/ratlpfwrite.c src/bool.h src/gmpmisc.h src/ratlp.h \
@@ -43,10 +43,12 @@ $(OBJDIR)/load.o: src/load.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h
   src/mme.h
 $(OBJDIR)/local.o: src/local.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
 $(OBJDIR)/metaio.o: src/metaio.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
-$(OBJDIR)/mmlparse.o: src/mmlparse.c src/bool.h src/mshell.h src/ratlptypes.h \
+$(OBJDIR)/mmlparse2.o: src/mmlparse2.c src/bool.h src/mshell.h src/ratlptypes.h \
   src/mme.h src/code.h src/inst.h
 $(OBJDIR)/mmlscan.o: src/mmlscan.c src/bool.h src/mshell.h src/ratlptypes.h \
-  src/mme.h src/mmlparse.h
+  src/mme.h src/mmlparse2.h
+$(OBJDIR)/mono.o: src/mono.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/mono.h
 $(OBJDIR)/numbgmp.o: src/numbgmp.c src/bool.h src/lint.h src/mshell.h src/random.h \
   src/gmpmisc.h src/ratlptypes.h src/mme.h
 $(OBJDIR)/prog.o: src/prog.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h \
@@ -74,8 +76,8 @@ $(OBJDIR)/stmt.o: src/stmt.c src/lint.h src/bool.h src/mshell.h src/ratlptypes.h
 $(OBJDIR)/strstore2.o: src/strstore2.c src/lint.h src/bool.h src/mshell.h \
   src/ratlptypes.h src/mme.h
 $(OBJDIR)/symbol.o: src/symbol.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h
-$(OBJDIR)/term.o: src/term.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
-  src/xlpglue.h
+$(OBJDIR)/term2.o: src/term2.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
+  src/xlpglue.h src/mono.h
 $(OBJDIR)/tuple.o: src/tuple.c src/bool.h src/mshell.h src/blkmem.h \
   src/ratlptypes.h src/mme.h
 $(OBJDIR)/vinst.o: src/vinst.c src/bool.h src/mshell.h src/ratlptypes.h src/mme.h \
