@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.70 2009/05/08 09:05:44 bzfkocht Exp $
+# $Id: Makefile,v 1.71 2009/09/13 16:10:59 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -117,7 +117,7 @@ include make/make.$(BASE)
 
 ifeq ($(VERBOSE),false)
 .SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) \
-		$(SRCDIR)/mmlparse2.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
+		$(SRCDIR)/mmlparse.c $(SRCDIR)/mmlscan.c $(OBJXXX) $(LIBXXX) $(LIBDBLXXX)
 endif
 
 all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
@@ -181,7 +181,7 @@ coverage:
 		lcov -d $(OBJDIR) -z
 		make OPT=gcov check
 		lcov -d $(OBJDIR) -c >gcov/z.capture
-		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse2.c" >gcov/zimpl.capture
+		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse.c" >gcov/zimpl.capture
 		genhtml -o gcov gcov/zimpl.capture
 		-rm gcov/z.capture
 
