@@ -4,6 +4,11 @@
 %
 %       min/max expr beispiel
 %
+\noindent
+{\bfseries Some topics are not yet covered in this manual.
+Notably, the use of non-linear constraints and constraint attributes.
+Please have a look at the CHANGELOG file.}
+
 \section{Introduction}
 Consider the following linear program:
 $$
@@ -261,6 +266,7 @@ functions can be found in Section~\ref{ssec:parameters} on page~\pageref{ssec:pa
 $x>0\Rightarrow 1, x<0\Rightarrow -1,\text{else }0$\\
 \code{floor(a)}                  &round down                & $\lfloor a\rfloor$\\
 \code{ceil(a)}                   &round up                  & $\lceil a\rceil$\\
+\code{round(a)}                  &round towards zero        & $\lfloor a \rceil$\\
 \code{a!}                        &factorial                 & $a!$\\
 \code{min(S)}                    &minimum of a set          &$\min_{s\in S}$\\
 \code{min(s$\in$S) e(s)}         &minimum over a set        &$\min_{s\in S} e(s)$\\
@@ -515,6 +521,7 @@ set B[<i> in I] := { 3 * i };
 set P[]         := powerset(I);
 set J           := indexset(P);
 set S[]         := subsets(I, 2);
+set T[]         := subsets(I, 1, 2);
 set K[<i> in I] := if i mod 2 == 0 then { i } else { -i } end;
 set U           := union <i> in I : A[i];
 set IN          := inter <j> in J : P[j]; # empty! 
@@ -529,6 +536,9 @@ set IN          := inter <j> in J : P[j]; # empty!
 \code{powerset(A)}& generates all subsets of $A$&$\{X\mid X\subseteq A\}$\\
 \code{subsets(A,n)}& generates all subsets of $A$\\
                     & with $n$ elements&$\{X\mid X\subseteq A\wedge |X|=n\}$\\
+\code{subsets(A,n,m)}& generates all subsets of $A$\\
+                    & with between $n$ and $m$ elements
+                    &$\{X\mid X\subseteq A\wedge n\leq |X|\leq m\}$\\
 \code{indexset(A)}&the index set of $A$&$\{1\ldots |A|\}$\\
 \bottomrule
 \end{tabular}

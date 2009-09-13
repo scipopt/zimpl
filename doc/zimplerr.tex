@@ -416,9 +416,20 @@
 \item[219 length value \code{xxx} in substr is negative]\ \\
    The length argument for an \code{substr} function
    must be greater or equal to zero.
+\item[220 Illegal size for subsets \code{xxx}, should be between \code{yyy} 
+  and \code{zzz}]\ \\
+  The cardinality for the subsets to generate must be between the
+  given lower bound and the cardinality of the base set.
+\item[221 The objective function has to be linear]\ \\
+  Only objective functions with linear constraints are allowed.
 %
 % space here
 %
+xlpglue.c
+\item[600 Can only handle linear and quadratic constraints -- ignored
+  (Warning)]\ \\
+The file writing interface can currently only handle linear and
+  quadratic constraints. All other constraints are ignored.
 % 
 % numbgmp.c
 %
