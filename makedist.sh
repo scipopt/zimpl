@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION="2.08"
+VERSION="3.0.0"
 NAME="zimpl-$VERSION"
 rm -f $NAME
 ln -s . $NAME

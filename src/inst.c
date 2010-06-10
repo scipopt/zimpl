@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.125 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.126 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1761,8 +1761,8 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    /* Is this a empty list with just a dummy argument? 
     */
    if (dim == 0 && list_get_elems(list) == 1)
-   {
-      code_value_set(self, set_empty_new(1));
+   {      
+      code_value_set(self, set_empty_new(0));
    }
    else
    {   
@@ -3326,6 +3326,7 @@ CodeNode* i_term_mul(CodeNode* self)
    return self;
 }
 
+#if 0
 CodeNode* i_term_power(CodeNode* self)
 {
    const Symbol* sym;
@@ -3385,6 +3386,46 @@ CodeNode* i_term_power(CodeNode* self)
 
    return self;
 }
+#else
+CodeNode* i_term_power(CodeNode* self)
+{
+   int           power;
+   const Term*   term;
+   Term*         term_result;
+   Term*         term_temp;
+   int           i;
+   
+   Trace("i_term_power");
+   
+   assert(code_is_valid(self));
+
+   term  = code_eval_child_term(self, 0);
+   power = checked_eval_numb_toint(self, 1, "112: Exponent value");
+   
+   if (power == 0)
+   {
+      abort(); /* ??? */
+   } 
+   else if (power < 0)
+   {
+      abort(); /* ???? */
+   }
+   else
+   {
+      term_result = term_copy(term);
+
+      for(i = 1; i < power; i++)
+      {   
+         term_temp = term_mul_term(term_result, term);
+         term_free(term_result);
+         term_result = term_temp;
+      }
+   }
+   code_value_term(self, term_result);
+
+   return self;
+}
+#endif
 
 CodeNode* i_newdef(CodeNode* self)
 {
@@ -3508,7 +3549,7 @@ CodeNode* i_idxset_new(CodeNode* self)
     * of some other operation, but genuine empty.
     * This is an error.
     */
-   if (set_get_dim(set) == 0)
+   if (dim == 0)
    {
       assert(set_get_members(set) == 0);
 
@@ -3518,7 +3559,7 @@ CodeNode* i_idxset_new(CodeNode* self)
    }
    /* Attention: set_get_members(set) == 0 is possible!
     */
-   assert(set_get_dim(set) > 0);
+   assert(dim > 0);
    
    /* If no index tuple was given, we construct one.
     * This will always be ok.
@@ -3541,10 +3582,8 @@ CodeNode* i_idxset_new(CodeNode* self)
        * - the dimension is correct
        * - any not NAME type entries are compatible.
        * - the set is unrestricted, ie all NAMES, no WITH.
-       */
-      assert(dim > 0 || set_get_members(set) == 0);
-      
-      if (dim > 0 && tuple_get_dim(tuple) != dim)
+       */    
+      if (tuple_get_dim(tuple) != dim)
       {
          fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
          tuple_print(stderr, tuple);
@@ -3552,7 +3591,7 @@ CodeNode* i_idxset_new(CodeNode* self)
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
-      if (dim > 0 && set_get_members(set) > 0)
+      if (set_get_members(set) > 0)
       {
          t1 = set_get_tuple(set, 0);
 
@@ -3686,17 +3725,29 @@ CodeNode* i_term_const(CodeNode* self)
 
 CodeNode* i_term_add(CodeNode* self)
 {
-   const Term* term_a;
    const Term* term_b;
+   CodeNode*   child0;
 
    Trace("i_term_add");
    
    assert(code_is_valid(self));
 
-   term_a = code_eval_child_term(self, 0);
    term_b = code_eval_child_term(self, 1);
+   child0 = code_get_child(self, 0);
+
+   if (term_get_elements(term_b) == 1)
+   {
+      (void)code_eval(child0);
+
+      term_append_term(code_value_steal_term(self, 0), term_b);
+   }
+   else
+   {
+      code_value_term(self, term_add_term(code_eval_child_term(self, 0), term_b));
    
-   code_value_term(self, term_add_term(term_a, term_b));
+      code_free_value(child0);
+   }
+   code_free_value(code_get_child(self, 1));
 
    return self;
 }

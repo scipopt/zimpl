@@ -1,2 +1,2 @@
-# $Id: w186_2.zpl,v 1.3 2009/09/13 16:15:53 bzfkocht Exp $
-param x := min <i> in {1..2} with i > 3;
+# $Id: w186_2.zpl,v 1.4 2010/06/10 19:42:42 bzfkocht Exp $
+param x := min(<i> in {1..2} with i > 3);

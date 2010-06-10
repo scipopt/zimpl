@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term2.c,v 1.8 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term2.c,v 1.9 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -189,13 +189,14 @@ void term_append_term(
    {
       term->size  = term->used + term_b->used;
       term->elem  = realloc(
-         term->elem, (size_t)term->size * sizeof(*term->elem));
+         term->elem, (size_t)(term->size + TERM_EXTEND_SIZE)* sizeof(*term->elem));
 
       assert(term->elem != NULL);
    }
    assert(term->used + term_b->used <= term->size);
 
-   numb_add(term->constant, term_b->constant);
+   if (!numb_equal(term_b->constant, numb_zero()))
+       numb_add(term->constant, term_b->constant);
 
    for(i = 0; i < term_b->used; i++)
    {
@@ -208,17 +209,16 @@ void term_append_term(
 Term* term_mul_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
+   Term* term_simplyfied;
    int   i;
    int   k;
 
-   /* ??? test auf gleiche monome fehlt!!! */
-   
    Trace("term_mul_term");
 
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term = term_new(term_a->used * term_b->used + term_a->used + term_b->used);
+   term = term_new((term_a->used + 1) * (term_b->used + 1)); /* +1 for constant */
 
    for(i = 0; i < term_a->used; i++)
    {
@@ -257,7 +257,11 @@ Term* term_mul_term(const Term* term_a, const Term* term_b)
 
    assert(term_is_valid(term));
    
-   return term;
+   term_simplyfied = term_simplify(term);
+
+   term_free(term);
+
+   return term_simplyfied;
 }
 
 Term* term_add_term(const Term* term_a, const Term* term_b)
@@ -322,6 +326,7 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
 
 /** Combines monoms in the term where possible
  */  
+/* ??? TODO:reimplement with a hash list */
 Term* term_simplify(const Term* term_org)
 {
    Term* term;

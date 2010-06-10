@@ -1,4 +1,4 @@
-#--- $Id: make.se3,v 1.1 2006/07/13 12:36:05 bzfkocht Exp $
+#--- $Id: make.se3,v 1.2 2010/06/10 19:42:43 bzfkocht Exp $
 CPPFLAGS        +=      -I/sw/sun4_57/gmp-4.1.4/include -I/client/include
 LDFLAGS         =       -Bstatic -L/sw/sun4_57/gmp-4.1.4/lib -L/client/lib -lgmp -lz -lm
 

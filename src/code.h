@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.h,v 1.23 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.h,v 1.24 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -64,6 +64,8 @@ extern CodeNode*    code_new_define(Define* def);
 extern CodeNode*    code_new_bound(BoundType type);
 /*lint -sem(        code_free, custodial(1), 1p == 1) */
 extern void         code_free(CodeNode* node);
+/*lint -sem(        code_free_value, @p == 1) */
+extern void         code_free_value(CodeNode* node);
 /*lint -sem(        code_is_valid, 1p == 1) */
 extern Bool         code_is_valid(const CodeNode* node);
 /*lint -sem(        code_get_type, 1p == 1) */
@@ -144,6 +146,8 @@ extern void         code_value_idxset(CodeNode* node, IdxSet* idxset);
 extern void         code_value_entry(CodeNode* node, Entry* entry);
 /*lint -sem(        code_value_term, custodial(2), 1p == 1 && 2p == 1) */
 extern void         code_value_term(CodeNode* node, Term* term);
+/*lint -sem(        code_value_steal_child_term, 1p == 1 && 2n >= 0, @p == 1p) */
+extern Term*        code_value_steal_term(CodeNode* node, int no);
 /*lint -sem(        code_value_bool, 1p == 1) */
 extern void         code_value_bool(CodeNode* node, Bool bool);
 /*lint -sem(        code_value_size, 1p == 1) */

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.72 2009/09/13 16:15:48 bzfkocht Exp $
+# $Id: Makefile,v 1.73 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -38,12 +38,13 @@ ARCH            :=      $(shell uname -m | \
 			-e s/00........../pwr4/)
 OSTYPE          :=      $(shell uname -s | \
                         tr '[:upper:]' '[:lower:]' | \
+			tr -d '[:punct:]' | \
                         sed \
 			-e s/cygwin.*/cygwin/ \
                         -e s/irix../irix/ )
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	3.0.0
+VERSION		=	3.0.1
 VERBOSE		=	false
 OPT		=	opt
 COMP		=	gnu

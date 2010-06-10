@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.18 2009/09/13 16:15:50 bzfkocht Exp $
+# $Id: expr.zpl,v 1.19 2010/06/10 19:42:40 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -47,10 +47,19 @@ subto c13: x[3] <= max(6, 2/7, a[1], a[3]);
 subto c14: sum <i> in {1..10} do i mod 8 * x[i] >= 5;
 subto c15: sum <i> in I do sgn(5 - i) * x[i] >= 3;
 subto c16: sum <i> in I do random(10,20) * x[i] >= random(50,1000);
-subto c17: x[min I] <= x[max I];
+subto c17: x[min(I)] <= x[max(I)];
 subto c18: (prod <i> in I with i < 4 : a[i]) * x[1] <= 800;
 subto c19: sum <s> in S with substr(s, 1, 1) == "o" : x[length(s)] >= 2;
 subto c20: sum <s> in S with substr(s, -1, 1) == "o" : x[length(s)] >= 2;
 subto c21: sum <s> in S with substr(s, 2, 2) == "ll" : x[length(s)] <= 2;
 subto c22: sum <s> in S with substr(s, -6, 5) != "" : x[length(s)] <= 2;
 subto c23: sum <i> in { 4, 9, 16 }: x[sqrt(i)] >= 5;
+do check 2 + 3 * 4 == 2 + (3 * 4);
+do check -2^2 == -4;
+do check +10^-2 == 1/100;
+do check -3! == -1 * 2 * 3;
+do check 3 * 2! == 3 * 2;
+do check 2^3^4 == 2^(3^4);
+do check 3!^-2^4*5 == ((2 * 3)^(-2 * 2 * 2 * 2)) * 5;
+do check 4 + 1 / 3 * sum <i> in I : 3 * i == sum <i> in I : i + 4;
+do check 3 * min(I) == min <i> in I : i * 3;

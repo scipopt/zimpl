@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.33 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.34 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -311,7 +311,7 @@ CodeNode* code_new_bound(BoundType type)
    return node;
 }
 
-static inline void code_free_value(const CodeNode* node)
+void code_free_value(CodeNode* node)
 {
    assert(code_is_valid(node));
 
@@ -324,40 +324,65 @@ static inline void code_free_value(const CodeNode* node)
        */
       break;
    case CODE_NUMB :
+      assert(node->value.numb != NULL);
       numb_free(node->value.numb);
       break;
    case CODE_STRG :
    case CODE_NAME :
       break;
    case CODE_TUPLE :
+      assert(node->value.tuple != NULL);
       tuple_free(node->value.tuple);
+      node->value.tuple = NULL;
+      node->type        = CODE_ERR;
       break;
    case CODE_SET :
-      set_free(node->value.set);
+      assert(node->value.set != NULL);
+      set_free(node->value.set);      
+      node->value.set = NULL;
+      node->type      = CODE_ERR;
       break;
    case CODE_TERM :
+      assert(node->value.term != NULL);
       term_free(node->value.term);
+      node->value.term = NULL;
+      node->type       = CODE_ERR;      
       break;
    case CODE_ENTRY :
+      assert(node->value.entry != NULL);
       entry_free(node->value.entry);
+      node->value.entry = NULL;
+      node->type        = CODE_ERR;      
       break;
    case CODE_IDXSET :
+      assert(node->value.idxset != NULL);
       idxset_free(node->value.idxset);
+      node->value.entry = NULL;
+      node->type        = CODE_ERR;      
       break;
    case CODE_BOOL :
    case CODE_SIZE :
       break;
    case CODE_LIST :
+      assert(node->value.list != NULL);
       list_free(node->value.list);
+      node->value.list = NULL;
+      node->type       = CODE_ERR;      
       break;
    case CODE_VARCLASS :
    case CODE_CONTYPE :
       break;
    case CODE_RDEF :
+      assert(node->value.rdef != NULL);
       rdef_free(node->value.rdef);
+      node->value.rdef = NULL;
+      node->type       = CODE_ERR;      
       break;
    case CODE_RPAR :
+      assert(node->value.rpar != NULL);
       rpar_free(node->value.rpar);
+      node->value.rpar = NULL;
+      node->type       = CODE_ERR;      
       break;
    case CODE_BITS :
       break;
@@ -366,6 +391,7 @@ static inline void code_free_value(const CodeNode* node)
    case CODE_DEF :
       break;
    case CODE_BOUND :
+      assert(node->value.bound != NULL);
       bound_free(node->value.bound);
       break;
    default :
@@ -382,6 +408,7 @@ void code_free(CodeNode* node)
          code_free(node->child[i]);
 
    code_free_value(node);
+
    free(node);
 }
 
@@ -731,6 +758,25 @@ void code_value_term(CodeNode* node, Term* term)
    node->type       = CODE_TERM;
    node->value.term = term;
 }
+
+Term* code_value_steal_term(CodeNode* node, int no)
+{
+   CodeNode* child = code_get_child(node, no);
+
+   assert(code_is_valid(node));
+   assert(code_get_type(child) == CODE_TERM);
+
+   code_free_value(node);
+
+   node->type        = CODE_TERM;
+   node->value.term  = child->value.term;
+
+   child->type       = CODE_ERR;
+   child->value.term = NULL;
+
+   return node->value.term;
+}
+
 
 void code_value_bool(CodeNode* node, Bool bval)
 {

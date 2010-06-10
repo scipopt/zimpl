@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.c,v 1.6 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.c,v 1.7 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -49,7 +49,8 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 
    assert(mono != NULL);
    assert(entry_is_valid(entry));
-   
+   assert(entry_get_type(entry) == SYM_VAR);
+
    mono->count       = 1;
    mono->coeff       = numb_copy(coeff);
    mono->fun         = fun;
@@ -90,6 +91,7 @@ Bool mono_is_valid(const Mono* mono)
          abort();
       
       assert(entry_is_valid(e->entry));
+      assert(entry_get_type(e->entry) == SYM_VAR);
    }
    if (count != mono->count)
       abort();
@@ -133,6 +135,7 @@ void mono_mul_entry(
 
    assert(mono_is_valid(mono));
    assert(entry_is_valid(entry));
+   assert(entry_get_type(entry) == SYM_VAR);
 
    var = entry_get_var(entry);
 
@@ -214,6 +217,52 @@ unsigned int mono_hash(const Mono* mono)
 
 /** Checks whether two monoms cosist of the same variables.
  */  
+#if 1
+/* We assume (I think it is true that there is only one distinct entry per var
+ */
+Bool mono_equal(const Mono* ma, const Mono* mb)
+{
+   const MonoElem* ea;
+   const MonoElem* eb;
+   const Entry*    entry_a;
+   
+   assert(mono_is_valid(ma));   
+   assert(mono_is_valid(mb));   
+
+   if (ma->count != mb->count)
+      return FALSE;
+
+   if (ma->count == 1 && (ma->first.entry != mb->first.entry))
+      return FALSE;
+
+   for(ea = &ma->first; ea != NULL; ea = ea->next)
+   {
+      assert(entry_is_valid(ea->entry));
+      assert(entry_get_type(ea->entry) == SYM_VAR);
+           
+      entry_a = ea->entry;
+
+      for(eb = &mb->first; eb != NULL; eb = eb->next)
+         if (entry_a == eb->entry)
+            break;
+
+      if (eb == NULL)
+         return FALSE;
+      
+      /* Now all variables of a kind are consecutive 
+       */
+      while(ea->next != NULL && ea->next->entry == entry_a)
+      {
+         if (eb->next == NULL || eb->next->entry != entry_a)
+            return FALSE;
+               
+         ea = ea->next;
+         eb = eb->next;               
+      }
+   }
+   return TRUE;
+}
+#else /* old */
 Bool mono_equal(const Mono* ma, const Mono* mb)
 {
    const MonoElem* ea;
@@ -224,6 +273,9 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
    assert(mono_is_valid(mb));   
 
    if (ma->count != mb->count)
+      return FALSE;
+
+   if (ma->count == 1 && (entry_get_var(ma->first.entry) != entry_get_var(mb->first.entry)))
       return FALSE;
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
@@ -252,6 +304,7 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
    }
    return TRUE;
 }
+#endif
 
 Mono* mono_mul(const Mono* ma, const Mono* mb)
 {

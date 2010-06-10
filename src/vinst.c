@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.24 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.25 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -695,12 +695,12 @@ CodeNode* i_vbool_xor(CodeNode* self)
    /* a - b - re <= 0 */
    term = term_sub_term(term_a, term_b);
    term_add_elem(term, entry_result, numb_minusone());
-   create_new_constraint(cname, "_b", term, CON_LHS, numb_zero(), flags);
+   create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
    
    /* a - b + re >= 0 */
    term = term_sub_term(term_a, term_b);
    term_add_elem(term, entry_result, numb_one());
-   create_new_constraint(cname, "_c", term, CON_RHS, numb_zero(), flags);
+   create_new_constraint(cname, "_c", term, CON_LHS, numb_zero(), flags);
    
    /* a + b + re <= 2 */
    numb = numb_new_integer(2);

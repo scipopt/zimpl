@@ -9,8 +9,8 @@
 \ param c1 := sum <a,b,c,d,e,f,g,h,i,j,k,l,m> in C :    (length(a) + b + c + d + e + f + g + h + i + j / (k + l + length(m)));
 \ param d1 := sum <d> in D : d;
 \ param mat[E] := read "read1.dat" as "n+" comment "#";
-\ param e1     := (sum <1,i> in E : mat[1,i]) / (sum <5,i> in E : mat[5,i])                + (sum <i,j> in { 2, 3, 4, 6, 7, 8 }*
-\ {1..10000} : mat[i,j]);
+\ param e1     := (sum <1,i> in E : mat[1,i]) / (sum <5,i> in E : mat[5,i])                + (sum <i,j> in { 2, 3, 4, 6, 7, 8 }
+\ *{1..10000} : mat[i,j]);
 \ param fix    := read "read1.dat" as "2n" comment "#" use 1;
 \ var x real >= -infinity <= infinity;
 \ subto c1: x <= a1;

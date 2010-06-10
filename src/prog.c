@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.18 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.19 2010/06/10 19:42:43 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -199,7 +199,6 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
          {
             k = sprintf(&text[pos], "\n%s", prefix);            
             pos += k;
-            k--;
          }
          text[pos] = *s;
 

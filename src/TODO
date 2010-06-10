@@ -1,4 +1,11 @@
+Error 195 in Warning umwandeln
+Bei Read von leeren Daten die dimension des tuples aus
+dem read statement holen.
+
+
 SOS nicht extra implementieren sondern als sonderform von contraints.
+
+COnstraintname check selbt machen
 
 
 Bug doublicate SOS names. (Crash)
