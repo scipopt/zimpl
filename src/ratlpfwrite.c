@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.18 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.19 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -35,8 +35,57 @@
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
+#include "mme.h"
+#include "mono.h"
+#include "random.h"
 
-static void write_rhs(FILE* fp, const Con* con, ConType type)
+static void permute(int size, void** tab)
+{
+   int i;
+
+   if (size < 3)
+      return;
+
+   assert(size >= 3);
+   
+   for(i = 0; i < size; i++)
+   {
+      void* t;
+      int   a = rand_get_range(0, size - 1);
+      int   b = rand_get_range(0, size - 1);
+
+      assert(a >= 0);
+      assert(a <  size);
+      assert(b >= 0);
+      assert(b <  size);
+      
+      t      = tab[a];
+      tab[a] = tab[b];
+      tab[b] = t;
+   }
+}
+
+static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t val)
+{
+   switch(format)
+   {
+   case LP_FORM_LPF :
+   case LP_FORM_RLP :
+   case LP_FORM_PIP :
+      fprintf(fp, force_sign ? "%+.15g" : "%.15g", mpq_get_d(val));
+      break;
+   case LP_FORM_HUM :
+      if (force_sign && mpq_sgn(val) > 0)
+         fprintf(fp, "+");
+
+      mpq_out_str(fp, 10, val);
+      break;
+   default:
+      abort();
+   }
+}
+
+static void write_lhs(FILE* fp, LpFormat format, const Con* con, ConType type)
 {
    assert(fp  != NULL);
    assert(con != NULL);
@@ -44,45 +93,90 @@ static void write_rhs(FILE* fp, const Con* con, ConType type)
    switch(type)
    {
    case CON_RHS :
-      fprintf(fp, " <= %.15g\n", mpq_get_d(con->rhs));
-      break;
    case CON_LHS :
-      fprintf(fp, " >= %.15g\n", mpq_get_d(con->lhs));
-      break;
    case CON_EQUAL :
-      fprintf(fp, " = %.15g\n", mpq_get_d(con->rhs));
       break;
    case CON_RANGE :
-      abort();
+      write_val(fp, format, FALSE, con->lhs);
+      fprintf(fp, " <= ");
+      break;
    default :
       abort();
    }
 }
 
-static void write_row(
-   FILE* fp,
-   const Con* con,
-   char* name,
-   int   name_size)
+static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
 {
-   const Nzo* nzo;
-   int        cnt = 0;
+   assert(fp  != NULL);
+   assert(con != NULL);
+   
+   switch(type)
+   {
+   case CON_RHS :
+   case CON_RANGE :
+      fprintf(fp, " <= ");
+      write_val(fp, format, FALSE, con->rhs);
+      break;
+   case CON_LHS :
+      fprintf(fp, " >= ");
+      write_val(fp, format, FALSE, con->lhs);
+      break;
+   case CON_EQUAL :
+      fprintf(fp, " = ");
+      write_val(fp, format, FALSE, con->rhs);
+      break;
+   default :
+      abort();
+   }
+   fprintf(fp, "\n");
+}
+
+static void write_row(
+   FILE*      fp,
+   LpFormat   format,
+   const Con* con,
+   char*      name,
+   int        name_size)
+{
+   Nzo*  nzo;
+   Nzo** nzotab;
+   int   cnt;
+   int   i;
 
    assert(fp        != NULL);
    assert(con       != NULL);
    assert(name      != NULL);
-   
-   for(nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+
+   nzotab = calloc((size_t)con->size, sizeof(*con));
+
+   assert(nzotab != NULL);
+
+   for(cnt = 0, nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+      nzotab[cnt++] = nzo;
+
+   assert(cnt == con->size);
+
+   if (format == LP_FORM_RLP)
+      permute(con->size, (void**)nzotab);
+
+   cnt = 0;
+
+   for(i = 0; i < con->size; i++)
    {
-      lps_makename(name, name_size, nzo->var->name, nzo->var->number);
+      nzo = nzotab[i];
+
+      lps_makename(name, name_size, nzo->var->name, format == LP_FORM_HUM ? -1 : nzo->var->number);
 
       if (mpq_equal(nzo->value, const_one))
          fprintf(fp, " + %s", name);
       else if (mpq_equal(nzo->value, const_minus_one))
          fprintf(fp, " - %s", name);
       else
-         fprintf(fp, " %+.15g %s", mpq_get_d(nzo->value), name);
-      
+      {
+         fprintf(fp, " ");
+         write_val(fp, format, TRUE, nzo->value);      
+         fprintf(fp, " %s", name);
+      }
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");         
    }
@@ -93,30 +187,113 @@ static void write_row(
       if (cnt % 6 != 0)
          fprintf(fp, "\n ");         
 
-      fprintf(fp, " + [");
+      cnt = 0;
+
+      if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+         fprintf(fp, " + [");
 
       for(qme = con->qme_first; qme != NULL; qme= qme->next)
       {
-         lps_makename(name, name_size, qme->var1->name, qme->var1->number);
+         lps_makename(name, name_size, qme->var1->name, format == LP_FORM_HUM ? -1 : qme->var1->number);
 
          if (mpq_equal(qme->value, const_one))
             fprintf(fp, " + %s", name);
          else if (mpq_equal(qme->value, const_minus_one))
             fprintf(fp, " - %s", name);
          else
-            fprintf(fp, " %+.15g %s", mpq_get_d(qme->value), name);
+         {
+            fprintf(fp, " ");         
+            write_val(fp, format, TRUE, qme->value);      
+            fprintf(fp, " %s", name);
+         }
 
          if (qme->var1 == qme->var2)
             fprintf(fp, "^2");
          else
          {
-            lps_makename(name, name_size, qme->var2->name, qme->var2->number);
+            lps_makename(name, name_size, qme->var2->name, format == LP_FORM_HUM ? -1 : qme->var2->number);
 
             fprintf(fp, " * %s", name);
          }
+         if (++cnt % 6 == 0)
+            fprintf(fp, "\n ");         
       }
-      fprintf(fp,  " ]\n");
+      if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      {
+         fprintf(fp,  " ]/2\n");
+         cnt = 0;
+      }
    }
+   if (con->term != NULL)
+   {
+      const Term* term  = con->term;
+      Bool only_comment = FALSE;
+
+      assert(term_get_degree(term) > 2);
+
+      if (format != LP_FORM_PIP)
+      {
+         fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
+         fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
+            con->name, term_get_degree(term));
+         only_comment = TRUE;
+      }
+      assert(numb_equal(term_get_constant(term), numb_zero()));
+   
+      if (cnt % 6 != 0)
+         fprintf(fp, "\n ");         
+   
+      cnt = 0;
+   
+      if (only_comment)
+         fprintf(fp, "\\ ");
+
+      for(i = 0; i < term_get_elements(term); i++)
+      {
+         const Mono* mono  = term_get_element(term, i);
+         const Numb* coeff = mono_get_coeff(mono);
+         int         k;
+         
+         if (numb_equal(coeff, numb_one()))
+            fprintf(fp, " +");
+         else
+         {
+            mpq_t t;
+            mpq_init(t);
+            numb_get_mpq(coeff, t);
+            fprintf(fp, " ");         
+            write_val(fp, format, TRUE, t);      
+            mpq_clear(t);
+         }
+         fputc(' ', fp);
+         
+         for(k = 0; k < mono_get_degree(mono); k++)
+         {
+            Var* var = mono_get_var(mono, k);
+            int  j;
+            
+            if (k > 0)
+               fprintf(fp, " * ");
+            
+            for(j = 1; k + j < mono_get_degree(mono); j++)
+               if (var != mono_get_var(mono, k + j))
+                  break;
+               
+            lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
+               
+            if (j == 1)
+               fprintf(fp, "%s", name);
+            else
+            {
+               fprintf(fp, "%s^%d", name, j);
+               k += j - 1;
+            }
+         }
+         if (++cnt % 6 == 0)
+            fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
+      }
+   }
+   free(nzotab);
 }
 
 /* A specification for the LP file format can be found in the
@@ -127,20 +304,38 @@ static void write_row(
 void lpf_write(
    const Lps*  lp,
    FILE*       fp,
+   LpFormat    format,
    const char* text)
 {
    const Var* var;
-   const Con* con;
+   Con*       con;
+   Con**      contab;
    Bool  have_integer   = FALSE;
    Bool  have_separate  = FALSE;
    Bool  have_checkonly = FALSE;
    int   cnt;
    int   i;
+   int   k;
    int   name_size;
    char* name;
 
    assert(lp != NULL);
    assert(fp != NULL);
+
+  /* Store constraint pointers and permute them
+    */
+   contab = calloc((size_t)lp->cons, sizeof(*contab));
+
+   assert(contab != NULL);
+
+   k = 0;
+   for(con = lp->con_root; con != NULL; con = con->next)
+      contab[k++] = con;
+
+   assert(k == lp->cons);
+
+   if (format == LP_FORM_RLP)
+      permute(lp->cons, (void**)contab);
 
    name_size = lps_getnamesize(lp, LP_FORM_LPF);
    name      = malloc((size_t)name_size);
@@ -161,14 +356,18 @@ void lpf_write(
       if (mpq_equal(var->cost, const_zero))
          continue;
 
-      lps_makename(name, name_size, var->name, var->number);
+      lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
       
       if (mpq_equal(var->cost, const_one))
          fprintf(fp, " + %s", name);
       else if (mpq_equal(var->cost, const_minus_one))
          fprintf(fp, " - %s", name);
       else
-         fprintf(fp, " %+.15g %s", mpq_get_d(var->cost), name);
+      {
+         fprintf(fp, " ");         
+         write_val(fp, format, TRUE, var->cost);      
+         fprintf(fp, " %s", name);
+      }
 
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");
@@ -197,9 +396,11 @@ void lpf_write(
             fprintf(fp, "\nLazy Constraints\n"); 
       }
 
-      for(con = lp->con_root; con != NULL; con = con->next)
+      for(k = 0; k < lp->cons; k++)
       {
-         if (con->size == 0 && con->qme_first == NULL)
+         con = contab[k];
+
+         if (con->size == 0 && con->qme_first == NULL && con->term == NULL)
             continue;
 
          if (i == 0 && ((con->flags & (LP_FLAG_CON_SEPAR | LP_FLAG_CON_CHECK)) != 0))
@@ -219,23 +420,35 @@ void lpf_write(
     
          if (con->type == CON_RANGE)
          {
-            /* Split ranges, because LP format can't handle them.
-             */
-            lps_makename(name, name_size, con->name, con->number);
-            fprintf(fp, " %sR:\n ", name);
+            if (format == LP_FORM_HUM)
+            {
+               lps_makename(name, name_size, con->name, -1);
+               fprintf(fp, " %s:\n ", name);
 
-            write_row(fp, con, name, name_size); /* changes name */
-            write_rhs(fp, con, CON_RHS);
-
-            lps_makename(name, name_size, con->name, con->number);
-            fprintf(fp, " %sL:\n ", name);
-
-            write_row(fp, con, name, name_size); /* changes name */
-            write_rhs(fp, con, CON_LHS);
+               write_lhs(fp, format, con, CON_RANGE);
+               write_row(fp, format, con, name, name_size); 
+               write_rhs(fp, format, con, CON_RANGE);
+            }
+            else
+            {
+               /* Split ranges, because LP format can't handle them.
+                */
+               lps_makename(name, name_size, con->name, con->number);
+               fprintf(fp, " %sR:\n ", name);
+   
+               write_row(fp, format, con, name, name_size); /* changes name */
+               write_rhs(fp, format, con, CON_RHS);
+   
+               lps_makename(name, name_size, con->name, con->number);
+               fprintf(fp, " %sL:\n ", name);
+   
+               write_row(fp, format, con, name, name_size); /* changes name */
+               write_rhs(fp, format, con, CON_LHS);
+            }
          }
          else
          {
-            lps_makename(name, name_size, con->name, con->number);
+            lps_makename(name, name_size, con->name, format == LP_FORM_HUM ? -1 : con->number);
 
             if (i == 0)
                fprintf(fp, " %s:\n ", name);
@@ -246,11 +459,11 @@ void lpf_write(
 
             if (con->ind_var != NULL)
             {
-               lps_makename(name, name_size, con->ind_var->name, con->ind_var->number);
+               lps_makename(name, name_size, con->ind_var->name, format == LP_FORM_HUM ? -1 : con->ind_var->number);
                fprintf(fp, "%s = %d -> ", name, con->ind_dir ? 1 : 0);
             }
-            write_row(fp, con, name, name_size);
-            write_rhs(fp, con, con->type);
+            write_row(fp, format, con, name, name_size);
+            write_rhs(fp, format, con, con->type);
          }
       }
    }
@@ -268,10 +481,14 @@ void lpf_write(
       if (var->size == 0 && mpq_equal(var->cost, const_zero) && !var->is_used)
          continue;
 
-      lps_makename(name, name_size, var->name, var->number);
+      lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
 
       if (var->type == VAR_FIXED)
-         fprintf(fp, " %s = %.15g\n", name, mpq_get_d(var->lower));
+      {
+         fprintf(fp, " %s = ", name);
+         write_val(fp, format, FALSE, var->lower);      
+         fprintf(fp, "\n");
+      }
       else
       {
          /* Check if we have integer variables
@@ -279,15 +496,20 @@ void lpf_write(
          if (var->vclass == VAR_INT)
             have_integer = TRUE;
          
+         fprintf(fp, " ");
+
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
-            fprintf(fp, " %.15g", mpq_get_d(var->lower));
+            write_val(fp, format, FALSE, var->lower);      
          else
-            fprintf(fp, " -inf");
+            fprintf(fp, "-inf");
          
          fprintf(fp, " <= %s <= ", name);
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
-            fprintf(fp, "%.15g\n", mpq_get_d(var->upper));
+         {
+            write_val(fp, format, FALSE, var->upper);      
+            fprintf(fp, "\n");
+         }
          else
             fprintf(fp, "+inf\n");
       }
@@ -307,7 +529,7 @@ void lpf_write(
          if (var->size == 0 && mpq_equal(var->cost, const_zero) && !var->is_used)
             continue;
          
-         lps_makename(name, name_size, var->name, var->number);
+         lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
 
          fprintf(fp, " %s\n", name);
       }
@@ -332,9 +554,10 @@ void lpf_write(
     
          for(sse = sos->first; sse != NULL; sse = sse->next)
          {
-            lps_makename(name, name_size, sse->var->name, sse->var->number);
+            lps_makename(name, name_size, sse->var->name, format == LP_FORM_HUM ? -1 : sse->var->number);
 
-            fprintf(fp, " %s:%.10g", name, mpq_get_d(sse->weight));
+            fprintf(fp, " %s:", name);
+            write_val(fp, format, FALSE, sse->weight);      
 
             if (++cnt % 6 == 0)
                fputc('\n', fp);         
@@ -346,6 +569,7 @@ void lpf_write(
    fprintf(fp, "End\n");
 
    free(name);
+   free(contab);
 }   
 
 /* ------------------------------------------------------------------------- */

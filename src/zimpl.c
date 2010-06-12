@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.82 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.83 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -66,8 +66,8 @@ static const char* const help =
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
-"  -t lp|mps|hum|rlp  select output format. Either LP (default), MPS format,\n" \
-"                 human readable HUM, ridiculous permuted LP.\n" \
+"  -t lp|mps|hum|rlp|pip  select output format. Either LP (default), MPS format,\n" \
+"                 human readable HUM, ridiculous permuted LP, or PIP polynomial IP.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
@@ -270,6 +270,9 @@ int main(int argc, char* const* argv)
          case 'l' :
             format = LP_FORM_LPF;
             break;
+         case 'p' :
+            format = LP_FORM_PIP;
+            break;
          case 'r' :
             format = LP_FORM_RLP;
             break;
@@ -319,6 +322,9 @@ int main(int argc, char* const* argv)
       break;
    case LP_FORM_RLP :
       extension = ".rlp";
+      break;
+   case LP_FORM_PIP :
+      extension = ".pip";
       break;
    default :
       abort();
@@ -472,7 +478,7 @@ int main(int argc, char* const* argv)
       
       assert(prog_text != NULL);
 
-      sprintf(prog_text, "%c%s\n", format == LP_FORM_MPS ? '*' : '\\', title);
+      sprintf(prog_text, "\\%s\n", title);
    }
    xlp_write(fp, format, prog_text);
 

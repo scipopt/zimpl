@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlptypes.h,v 1.10 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlptypes.h,v 1.11 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlptypes.h                                                  */
@@ -37,7 +37,7 @@ enum sos_type        { SOS_ERR     = 0, SOS_TYPE1, SOS_TYPE2 };
 enum var_class       { VAR_CON     = 0, VAR_IMP,   VAR_INT };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
-enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP };
+enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP };
 enum presolve_result
 {
    PRESOLVE_ERROR = 0, PRESOLVE_OKAY, PRESOLVE_INFEASIBLE,
@@ -62,10 +62,10 @@ typedef enum   lp_format     LpFormat;
 
 typedef enum presolve_result PSResult;
 
-#define LP_FLAG_CON_SCALE    0x1
-#define LP_FLAG_CON_SEPAR    0x2
-#define LP_FLAG_CON_CHECK    0x4
-#define LP_FLAG_CON_INDIC    0x8
+#define LP_FLAG_CON_SCALE    0x01
+#define LP_FLAG_CON_SEPAR    0x02
+#define LP_FLAG_CON_CHECK    0x04
+#define LP_FLAG_CON_INDIC    0x08
 
 #define HAS_LOWER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_UPPER)
 #define HAS_UPPER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_LOWER)

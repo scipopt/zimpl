@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.h,v 1.17 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.h,v 1.18 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -29,10 +29,13 @@
 #define _RATLPSTORE_H_
 
 #ifndef __GMP_H__
-#error "Need to include gmp.h before gmpmisc.h"
+#error "Need to include gmp.h before ratlpstore.h"
 #endif
 #ifndef _BOOL_H_
-#error "Need to include bool.h before gmpmisc.h"
+#error "Need to include bool.h before ratlpstore.h"
+#endif
+#ifndef _RATLPTYPES_H_
+#error "Need to include ratlptypes.h before ratlpstore.h"
 #endif
 
 typedef struct storage Sto;
@@ -89,6 +92,7 @@ struct constraint
    Con*         next;
    Nzo*         first;
    Qme*         qme_first;
+   Term*        term;
 };
 
 #define CON_SID 0x5e434f4e
@@ -156,7 +160,7 @@ struct qmatentry
  */
 /*lint -sem(        lps_getnamesize, 1p, @n > 8) */
 int                 lps_getnamesize(const Lps* lp, LpFormat format);
-/*lint -sem(        lps_makename, nulterm(3), 1p && 2n > 0 && 3p && 4n >= 0) */
+/*lint -sem(        lps_makename, nulterm(3), 1p && 2n > 0 && 3p && 4n >= -1) */
 void                lps_makename(char* target, int size, const char* name, int no);
 
 #endif /* _RATLPSTORE_H_ */

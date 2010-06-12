@@ -1,3 +1,6 @@
+ - Reworked the file writing routines. Now supports
+   PIP format. HUM and RLP format updated.
+
  - Fixed a bug in certain vif-then-else constructs.
 
  - Fixed a bug in the implementation of the xor operator on

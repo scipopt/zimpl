@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.73 2010/06/10 19:42:40 bzfkocht Exp $
+# $Id: Makefile,v 1.74 2010/06/12 20:32:52 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -93,7 +93,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratrlpwrite.o ratordwrite.o ratpresolve.o rathumwrite.o 
+			ratordwrite.o ratpresolve.o  
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \

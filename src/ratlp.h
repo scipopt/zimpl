@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.20 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.21 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -37,6 +37,16 @@
 /* The reason for the extra types is that those do not need gmp.h
  */
 #include "ratlptypes.h"
+#include "mme.h"
+
+#if 0 // ???
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
+#include "set.h"
+#include "entry.h"
+#include "term.h"
+#endif
 
 /* lpstore.c
  */
@@ -72,6 +82,8 @@ extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value);
 extern void         lps_delnzo(Lps* lp, Nzo* nzo);
 /*lint -sem(        lps_addqme, 1p == 1 && 2p == 1 && 3p == 1 && 4p == 1) */
 extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value);
+/*lint -sem(        lps_addterm, 1p == 1 && 2p == 1 && 3p == 1) */
+extern void         lps_addterm(Lps* lp, Con* con, const Term* term);
 /*lint -sem(        lps_stat, 1p == 1) */
 extern void         lps_stat(const Lps* lp);
 /*lint -sem(        lps_setval, 1p == 1) */
@@ -163,22 +175,12 @@ extern Lps*         lps_readmps(const char* filename);
 /* ratlpfwrite.c
  */
 /*lint -sem(        lpf_write, nulterm(3), 1p == 1 && 2p == 1) */
-extern void         lpf_write(const Lps* lp, FILE* fp, const char* text);
+extern void         lpf_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 
 /* ratmpswrite.c
  */
 /*lint -sem(        lpf_write, nulterm(3), 1p == 1 && 2p == 1) */
 extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
-
-/* rathumwrite.c
- */
-/*lint -sem(        hum_write, nulterm(3), 1p == 1 && 2p == 1) */
-extern void         hum_write(const Lps* lp, FILE* fp, const char* text);
-
-/* ratrlpwrite.c
- */
-/*lint -sem(        rlp_write, nulterm(3), 1p == 1 && 2p == 1) */
-extern void         rlp_write(const Lps* lp, FILE* fp, const char* text);
 
 /* ratordwrite.c
  */

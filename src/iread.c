@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.33 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.34 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -771,7 +771,7 @@ CodeNode* i_read(CodeNode* self)
          {
             if (fields == MAX_FIELDS)
             {
-               fprintf(stderr, "*** Warning 213: More than %d input fields in line %d of %s\n",
+               fprintf(stderr, "--- Warning 213: More than %d input fields in line %d of %s\n",
                   fields, line, filename);
                code_errmsg(self);
             }

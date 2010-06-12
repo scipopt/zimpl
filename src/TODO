@@ -2,11 +2,9 @@ Error 195 in Warning umwandeln
 Bei Read von leeren Daten die dimension des tuples aus
 dem read statement holen.
 
-
 SOS nicht extra implementieren sondern als sonderform von contraints.
 
-COnstraintname check selbt machen
-
+Constraintname check selbt machen
 
 Bug doublicate SOS names. (Crash)
 
@@ -21,26 +19,17 @@ set A := { read "ff" as "<65535n,65536n>" };
 
 alle ausgaben umlenkbar
 
-
 CHANGELOG durchgehen
 
-
-
-
 CPP documentiert ?
-
 
 set J := { 1 to max(I)+1 };
 Man muss statt dessen schreiben
 set J := { 1 to (max(I))+1 };
 
-Vielleicht 195 doch durch eine Warnung ersetzten.
-
-
 Alles statics durchsehen ob am ende reset: gemacht
 Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
 Selbes Problem wie Kjell?
-
 
 cplex anbidung.
 
@@ -55,18 +44,15 @@ Fehler abgefangen wenn default anderer typ als werte in param? read!
 
 namen von contrainst duerfen keine schlüsselworte sein. Unnötig.
 
-
 warum kann man nicht  x[i,j] (binary) == (w[i] - w[j] == 0) schreiben?
 ------------------
 
 Index funtion die jedem set element eine eindeutige Zahl zuordnet.
 
-
 Dies erzeugt keinerleit Ausgabe. Warum?
 set I := { 1 .. 10 };
 param a[<i> in I] := i + 3;
 subto c17: a[min I] <= a[max I];
-
 
 check für filesystem/out of memory fehler (ulimit)
 
@@ -96,7 +82,6 @@ subto c1: forall <i,j> in E do
    vif (y[i] == 1) xor (y[j] == 1) then x[i,j] == 1 else x[i,j] == 0 end;
 nicht
 
-
 table sizes anpassen.
 
 static SetIter* set_multi_iter_init(
@@ -112,11 +97,9 @@ Und wenn nichtwarum nicht?
 
 TeX output?
 
-
 var/con macht einzeln mallocs
 sto_size ist fix 1000
 Hash size ist fix 1000003
-
 
 
 "read from file found no data" in warning bei sets umwandeln.

@@ -1,4 +1,4 @@
-*** Warning 213: More than 65536 input fields in line 1 of w213.dat
+--- Warning 213: More than 65536 input fields in line 1 of w213.dat
 *** File: w213.zpl Line 2
 *** set A:={read "w213.dat" as "<n+>"};
 ***                                  ^^^

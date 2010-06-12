@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.17 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.18 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -108,7 +108,7 @@ static void write_vars(
             if (first)
             {
                fprintf(stderr, "%s\n%s\n",
-                  "*** Warning: Objective function inverted to make",
+                  "--- Warning: Objective function inverted to make",
                   "             minimization problem for MPS output\n");
                first = FALSE;
             }

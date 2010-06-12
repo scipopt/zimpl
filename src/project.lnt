@@ -64,6 +64,7 @@
 -strong(AzJzX,Numb,NumbStore)
 -strong(AzJzX,StrgFile,FileType)
 -strong(AzJzX,HashType,Hash,HElem,SetElemIdx)
+-strong(AzJzX,HeapData,heap_data)
 -strong(AcJX,Inst)
 -strong(AJXbl,Bool)
 -e793 //  ANSI limit of 1024 'macros in module' exceeded

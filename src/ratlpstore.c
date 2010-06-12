@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.34 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.35 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -38,9 +38,12 @@
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
+#include "mme.h"
+#include "mono.h"
 
 #define LPF_NAME_LEN  16
 #define MPS_NAME_LEN  8
+#define PIP_NAME_LEN  255
 #define MIN_NAME_LEN  8
 
 struct storage
@@ -735,6 +738,9 @@ void lps_free(Lps* lp)
       mpq_clear(con->rhs);
       mpq_clear(con->scale);
       
+      if (con->term != NULL)
+         term_free(con->term);
+      
       free(con->name);
       free(con);
    }
@@ -1034,7 +1040,7 @@ Con* lps_addcon(
    assert(name                 != NULL);
    assert(lps_getcon(lp, name) == NULL);
 
-   c = malloc(sizeof(*c));
+   c = calloc(1, sizeof(*c));
    
    assert(c != NULL);
 
@@ -1052,6 +1058,7 @@ Con* lps_addcon(
    c->ind_dir   = TRUE;
    c->first     = NULL;
    c->qme_first = NULL;
+   c->term      = NULL;
    c->next      = NULL;
    c->prev      = lp->con_last;
    lp->con_last = c;
@@ -1132,6 +1139,8 @@ void lps_delcon(
 
    lp->cons--;
    
+   //??? qme_first  term ?
+
    assert(lps_valid(lp));
 }
 
@@ -1200,6 +1209,30 @@ void lps_addqme(
 
    var1->is_used = TRUE;
    var2->is_used = TRUE;
+}
+
+/*ARGSUSED*/
+void lps_addterm(
+   Lps*        lp,
+   Con*        con,
+   const Term* term)
+{
+   int i;
+   int k;
+
+   assert(con != NULL);
+/*   assert(term_valid(term));*/
+   assert(con->term == NULL);
+
+   con->term = term_copy(term);         
+
+   for(i = 0; i < term_get_elements(term); i++)
+   {
+      const Mono* mono  = term_get_element(term, i);
+
+      for(k = 0; k < mono_get_degree(mono); k++)
+         mono_get_var(mono, k)->is_used = TRUE;
+   }
 }
 
 void lps_addsse(
@@ -1756,7 +1789,10 @@ int lps_getnamesize(const Lps* lp, LpFormat format)
       name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? MPS_NAME_LEN : lp->name_len);
       break;
    case LP_FORM_RLP :
-      name_size = 1 + MIN_NAME_LEN;
+      name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? LPF_NAME_LEN : lp->name_len);
+      break;
+   case LP_FORM_PIP :
+      name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? PIP_NAME_LEN : lp->name_len);
       break;
    default :
       abort();
@@ -1780,16 +1816,13 @@ void lps_write(
    switch(format)
    {
    case LP_FORM_LPF :
-      lpf_write(lp, fp, text);
-      break;
+   case LP_FORM_RLP :
+   case LP_FORM_PIP :
    case LP_FORM_HUM :
-      hum_write(lp, fp, text);
+      lpf_write(lp, fp, format, text);
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);
-      break;
-   case LP_FORM_RLP :
-      rlp_write(lp, fp, text);
       break;
    default :
       abort();
@@ -1821,6 +1854,66 @@ static Bool lpfstrncpy(char* t, const char* s, int len)
    return was_smashed;
 }
 
+static void make_full_name(
+   char*       target,
+   int         size,
+   const char* name)
+{
+   const char* s         = name;
+   Bool        first     = TRUE;
+   Bool        in_string = FALSE;
+   int         i         = 0;
+
+   assert(target != NULL);
+   assert(size   >= MIN_NAME_LEN);
+   assert(name   != NULL);
+
+   /* We allways start with a space
+    */
+   while(*s != '\0' && size > i + 6)
+   {
+      if (*s != '#' && *s != '$')
+         target[i++] = *s;
+      else
+      {
+         if (first)
+         {
+            first = FALSE;
+            target[i++] = '[';
+         }
+         else
+         {
+            if (in_string)
+            {
+               target[i++] = '\"';
+               in_string = FALSE;
+            }
+            target[i++] = ',';
+         }
+         if (*s == '$')
+         {
+            assert(!in_string);
+
+            in_string = TRUE;
+            target[i++] = '\"';
+         }
+      }
+      assert(size >= i);
+
+      s++;
+   }
+   if (size > i + 2)
+   {
+      if (in_string)
+         target[i++] = '\"';
+      if (!first)
+         target[i++] = ']';
+   }
+   target[i++] = '\0'; 
+
+   assert(size >= i);
+}
+
 /* size has to be big enough to store a '@', a '\0'
  * and the var or row number.
  */
@@ -1837,7 +1930,7 @@ void lps_makename(
    assert(target != NULL);
    assert(size   >  MIN_NAME_LEN);   /* 8+1, so we have at least '@' + 7 digits + '\0' */
    assert(name   != NULL);
-   assert(no     >= 0);
+   assert(no     >= -1);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
    nlen = (int)strlen(name);
@@ -1850,8 +1943,12 @@ void lps_makename(
     *      -> copy it, transform the chars to '_' and append "@varnum".
     * iii) the name is longer than the size.
     *      -> do as in ii) but only copy as much chars as fit.
+    *  iv) no == -1
+    *      -> generate a full human readable name
     */      
-   if (nlen < size)
+   if (no == -1)
+      make_full_name(target, size, name);
+   else if (nlen < size)
    {
       if (lpfstrncpy(target, name, nlen))
       {
@@ -1895,7 +1992,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    assert(lps_valid(lp));
    assert(fp      != NULL);
    assert(head    != NULL);
-   assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP);
+   assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP || format == LP_FORM_PIP);
    
    namelen = lps_getnamesize(lp, format);
    temp    = malloc((size_t)namelen);

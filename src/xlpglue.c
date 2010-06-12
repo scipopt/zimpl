@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: xlpglue.c,v 1.32 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: xlpglue.c,v 1.33 2010/06/12 20:32:52 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -202,14 +202,6 @@ Bool xlp_addcon_term(
 
    term = term_simplify(term_org);
 
-   if (term_get_degree(term) > 2)
-   {
-      fprintf(stderr, "Warning 600 Can only handle linear and quadratic constraints -- ignored\n");
-      term_free(term);
-
-      return TRUE;
-   }
-  
    con = lps_addcon(lp, name);
 
    assert(con != NULL);
@@ -243,56 +235,61 @@ Bool xlp_addcon_term(
    mpq_clear(trhs);
    mpq_clear(tlhs);
 
-   for(i = 0; i < term_get_elements(term); i++)
+   if (term_get_degree(term) > 2)
+      lps_addterm(lp, con, term);
+   else
    {
-      const Mono* mono = term_get_element(term, i);
-      Var*        var  = mono_get_var(mono, 0);
-      MFun        mfun = mono_get_function(mono);
-      mpq_t       val1;
-
-      if (mfun == MFUN_TRUE || mfun == MFUN_FALSE)
+      for(i = 0; i < term_get_elements(term); i++)
       {
-         lps_setindicator(con, var, mfun == MFUN_TRUE);
-         continue;
-      }
-
-      assert(!numb_equal(mono_get_coeff(mono), numb_zero()));
-
-      mpq_init(val1);
-
-      numb_get_mpq(mono_get_coeff(mono), val1);
-
-      if (mono_is_linear(mono))
-      {
-         Nzo* nzo = lps_getnzo(lp, con, var);
-      
-         if (nzo == NULL)
-            lps_addnzo(lp, con, var, val1);
+         const Mono* mono = term_get_element(term, i);
+         Var*        var  = mono_get_var(mono, 0);
+         MFun        mfun = mono_get_function(mono);
+         mpq_t       val1;
+   
+         if (mfun == MFUN_TRUE || mfun == MFUN_FALSE)
+         {
+            lps_setindicator(con, var, mfun == MFUN_TRUE);
+            continue;
+         }
+   
+         assert(!numb_equal(mono_get_coeff(mono), numb_zero()));
+   
+         mpq_init(val1);
+   
+         numb_get_mpq(mono_get_coeff(mono), val1);
+   
+         if (mono_is_linear(mono))
+         {
+            Nzo* nzo = lps_getnzo(lp, con, var);
+         
+            if (nzo == NULL)
+               lps_addnzo(lp, con, var, val1);
+            else
+            {
+               mpq_t val2;
+               
+               mpq_init(val2);
+               
+               lps_getval(nzo, val2);
+               
+               mpq_add(val1, val1, val2);
+               
+               if (mpq_equal(val1, const_zero))
+                  lps_delnzo(lp, nzo);
+               else
+                  lps_setval(nzo, val1);
+               
+               mpq_clear(val2);
+            }
+         }
          else
          {
-            mpq_t val2;
-            
-            mpq_init(val2);
-            
-            lps_getval(nzo, val2);
-            
-            mpq_add(val1, val1, val2);
-            
-            if (mpq_equal(val1, const_zero))
-               lps_delnzo(lp, nzo);
-            else
-               lps_setval(nzo, val1);
-            
-            mpq_clear(val2);
-         }
-      }
-      else
-      {
-         assert(mono_get_degree(mono) == 2);
+            assert(term_get_degree(term) == 2);
 
-         lps_addqme(lp, con, var, mono_get_var(mono, 1), val1);
+            lps_addqme(lp, con, var, mono_get_var(mono, 1), val1);
+         }
+         mpq_clear(val1);
       }
-      mpq_clear(val1);
    }
    term_free(term);
 
@@ -341,7 +338,7 @@ Var* xlp_addvar(
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    if (mpz_get_si(mpq_denref(temp)) != 1)
       if (verbose > VERB_QUIET)
-         fprintf(stderr, "*** Warning variable priority has to be integral\n");
+         fprintf(stderr, "--- Warning variable priority has to be integral\n");
 
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    lps_setpriority(var, (int)mpz_get_si(mpq_numref(temp)));
@@ -378,7 +375,7 @@ Bool xlp_addsos_term(
    {
       if (verbose > VERB_QUIET)
       {
-         fprintf(stderr, "*** Warning SOS priority has to be integral\n");
+         fprintf(stderr, "--- Warning SOS priority has to be integral\n");
          has_nonintprio = TRUE;
       }
    }
