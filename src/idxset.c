@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: idxset.c,v 1.16 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: idxset.c,v 1.17 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.c                                                      */
@@ -32,8 +32,12 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "idxset.h"
 
 #define IDXSET_SID  0x49647853
 

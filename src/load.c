@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: load.c,v 1.36 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: load.c,v 1.37 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -34,8 +34,10 @@
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
 #include "mme.h"
+#include "stmt.h"
+#include "prog.h"
+#include "metaio.h"
 
 #define BUF_EXT 65536
 

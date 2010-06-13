@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.19 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpfwrite.c,v 1.20 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -31,12 +31,18 @@
 
 #include <gmp.h>
 
+#include "lint.h"
+#include "mshell.h"
 #include "bool.h"
 #include "gmpmisc.h"
-#include "ratlp.h"
-#include "ratlpstore.h"
+#include "ratlptypes.h"
+#include "numb.h"
+#include "bound.h"
 #include "mme.h"
 #include "mono.h"
+#include "term.h"
+#include "ratlp.h"
+#include "ratlpstore.h"
 #include "random.h"
 
 static void permute(int size, void** tab)
@@ -75,7 +81,7 @@ static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t va
       fprintf(fp, force_sign ? "%+.15g" : "%.15g", mpq_get_d(val));
       break;
    case LP_FORM_HUM :
-      if (force_sign && mpq_sgn(val) > 0)
+      if (force_sign && (mpq_sgn(val) > 0))
          fprintf(fp, "+");
 
       mpq_out_str(fp, 10, val);
@@ -147,7 +153,9 @@ static void write_row(
    assert(con       != NULL);
    assert(name      != NULL);
 
-   nzotab = calloc((size_t)con->size, sizeof(*con));
+   /* Add 1 in case con->size == 0
+    */
+   nzotab = calloc((size_t)con->size + 1, sizeof(*con));
 
    assert(nzotab != NULL);
 
@@ -322,9 +330,10 @@ void lpf_write(
    assert(lp != NULL);
    assert(fp != NULL);
 
-  /* Store constraint pointers and permute them
+   /* Store constraint pointers and permute them
+    * (add 1 in case lp->cons == 0)
     */
-   contab = calloc((size_t)lp->cons, sizeof(*contab));
+   contab = calloc((size_t)lp->cons + 1, sizeof(*contab));
 
    assert(contab != NULL);
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: code.c,v 1.34 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: code.c,v 1.35 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -34,7 +34,22 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "idxset.h"
+#include "rdefpar.h"
+#include "bound.h"
+#include "define.h"
+#include "mono.h"
+#include "term.h"
+#include "list.h"
+#include "stmt.h"
+#include "local.h"
 #include "code.h"
 #include "inst.h"
 

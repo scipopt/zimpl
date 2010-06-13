@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: prog.c,v 1.19 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: prog.c,v 1.20 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -36,8 +36,24 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "idxset.h"
+#include "rdefpar.h"
+#include "bound.h"
+#include "define.h"
+#include "mono.h"
+#include "term.h"
+#include "list.h"
+#include "local.h"
 #include "code.h"
+#include "stmt.h"
+#include "prog.h"
 
 #define PROG_SID         0x50726f67
 #define PROG_EXTEND_SIZE 100

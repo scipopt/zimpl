@@ -1,4 +1,4 @@
-#pragma ident "$Id: zimpl.c,v 1.83 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "$Id: zimpl.c,v 1.84 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -40,8 +40,26 @@
 #include "random.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "define.h"
+#include "bound.h"
+#include "mono.h"
+#include "term.h"
+#include "stmt.h"
+#include "local.h"
+#include "list.h"
+#include "entry.h"
+#include "conname.h"
 #include "xlpglue.h"
+#include "prog.h"
+#include "metaio.h"
+#include "strstore.h"
+#include "zimpllib.h"
 
 extern int yydebug;
 extern int yy_flex_debug;

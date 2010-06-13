@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term.h,v 1.1 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term.h,v 1.2 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.h                                                        */
@@ -31,8 +31,6 @@
 #error "Need to include bool.h before term.h"
 #endif
 
-typedef struct mono_element      MonoElem;
-typedef struct mono              Mono;
 typedef struct term              Term;
 
 /* term.c

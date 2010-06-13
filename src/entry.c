@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: entry.c,v 1.18 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: entry.c,v 1.19 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.c                                                       */
@@ -33,7 +33,14 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "zimpllib.h"
 
 #define ENTRY_SID  0x456e7472
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setmulti.c,v 1.18 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setmulti.c,v 1.19 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -34,8 +34,16 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "entry.h"
+#include "list.h"
+#include "hash.h"
+#include "stmt.h"
 #include "set4.h"
+#include "set.h"
 
 #define SET_MULTI_SID          0x5345544d
 #define SET_MULTI_ITER_SID     0x53454d49

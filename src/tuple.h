@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.h,v 1.1 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.h,v 1.2 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.h                                                       */
@@ -28,7 +28,10 @@
 #define _TUPLE_H_
 
 #ifndef _BOOL_H_
-#error "Need to include bool.h before term.h"
+#error "Need to include bool.h before tuple.h"
+#endif
+#ifndef _ELEM_H_
+#error "Need to include elem.h before tuple.h"
 #endif
 
 typedef struct tuple Tuple;

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: set.h,v 1.1 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: set.h,v 1.2 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.c                                                        */
@@ -28,7 +28,11 @@
 #define _SET_H_
 
 #ifndef _BOOL_H_
-#error "Need to include bool.h before term.h"
+#error "Need to include bool.h before set.h"
+#endif
+
+#ifndef _MME_H_
+#error "Need to include mme.h before set.h"
 #endif
 
 enum set_check_type
@@ -36,12 +40,6 @@ enum set_check_type
    SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
 };
 
-typedef union set                Set;
-typedef union set_iter           SetIter;
-typedef enum set_check_type      SetCheckType;
-
-/* set.c
- */
 extern void         set_init(void);
 extern void         set_exit(void);
 /*lint -sem(        set_free, custodial(1), 1p == 1) */

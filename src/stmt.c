@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: stmt.c,v 1.24 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: stmt.c,v 1.25 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -34,9 +34,24 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "idxset.h"
+#include "rdefpar.h"
+#include "bound.h"
+#include "define.h"
+#include "mono.h"
+#include "term.h"
+#include "list.h"
+#include "local.h"
 #include "code.h"
 #include "inst.h"
+#include "stmt.h"
 
 #define STMT_SID 0x53746d74
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratpresolve.c,v 1.11 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratpresolve.c,v 1.12 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -33,8 +33,15 @@
 #include <gmp.h>
 
 #include "lint.h"
+#include "mshell.h"
 #include "bool.h"
 #include "gmpmisc.h"
+#include "ratlptypes.h"
+#include "numb.h"
+#include "bound.h"
+#include "mme.h"
+#include "mono.h"
+#include "term.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
 

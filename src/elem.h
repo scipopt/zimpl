@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.h,v 1.1 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.h,v 1.2 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.h                                                        */
@@ -28,7 +28,10 @@
 #define _ELEM_H_
 
 #ifndef _BOOL_H_
-#error "Need to include bool.h before term.h"
+#error "Need to include bool.h before elem.h"
+#endif
+#ifndef _NUMB_H_
+#error "Need to include numb.h before elem.h"
 #endif
 
 enum element_type

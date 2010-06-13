@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: metaio.c,v 1.13 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: metaio.c,v 1.14 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -43,8 +43,8 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
 #include "mme.h"
+#include "metaio.h"
 
 typedef struct strg_file     StrgFile;
 typedef enum file_type       FileType;
@@ -401,7 +401,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* const progstrg = 
-      "# $Id: metaio.c,v 1.13 2009/09/13 16:15:55 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.14 2010/06/13 10:39:23 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

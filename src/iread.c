@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: iread.c,v 1.34 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: iread.c,v 1.35 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -46,9 +46,29 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "define.h"
+#include "bound.h"
+#include "idxset.h"
+#include "mono.h"
+#include "term.h"
+#include "rdefpar.h"
+#include "conname.h"
+#include "stmt.h"
+#include "local.h"
+#include "list.h"
+#include "entry.h"
+#include "heap.h"
 #include "code.h"
 #include "inst.h"
+#include "xlpglue.h"
+#include "metaio.h"
+#include "strstore.h"
 
 /* read "datei" as "<1n,3s,12s,4n> %6s" skip 17 use 2000 fs " ;"
  */

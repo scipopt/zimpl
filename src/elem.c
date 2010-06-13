@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: elem.c,v 1.26 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: elem.c,v 1.27 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -33,8 +33,10 @@
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
 #include "mme.h"
+#include "strstore.h"
 
 #define ELEM_STORE_SIZE  1000
 #define ELEM_SID         0x456c656d

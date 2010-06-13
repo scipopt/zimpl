@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: local.c,v 1.18 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.c,v 1.19 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.c                                                       */
@@ -32,10 +32,15 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "local.h"
 
 #define LOCAL_STR_SIZE 100
+
+typedef struct local Local;
 
 struct local
 {

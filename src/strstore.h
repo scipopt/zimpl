@@ -1,8 +1,8 @@
-#pragma ident "@(#) $Id: source.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
+#pragma ident "@(#) $Id: strstore.h,v 1.1 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: source.c                                                      */
-/*   Name....: Source Code Printing Function                                 */
+/*   File....: strstore2.c                                                   */
+/*   Name....: String Storage Functions                                      */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
@@ -24,58 +24,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _STRSTORE_H_
+#define _STRSTORE_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+extern void         str_init(void);
+extern void         str_exit(void);
+/*lint -sem(        str_new, 1p && nulterm(1), @p == 1p && nulterm(@)) */
+extern const char*  str_new(const char* s);
+/*lint -sem(        str_hash, 1p)           */
+extern unsigned int str_hash(const char* s);
 
-#include "bool.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-
-void show_source(FILE* fp, const char* text, int column)
-{
-   int len;
-   int beg;
-   int end;
-      
-   assert(fp     != NULL);
-   assert(text   != NULL);
-   assert(column >= 0);
-
-   if (column > 0)
-      column--;
-   
-   len = strlen(text);
-   beg = column - 30;
-   end = column + 30;
-
-   if (beg < 0)
-   {
-      end -= beg;
-      beg = 0;
-   }
-   if (end > len)
-   {
-      beg -= end - len;
-      end  = len;      
-   }
-   if (beg < 0)
-      beg = 0;
-
-   assert(beg >= 0);
-   assert(end <= len);
-   assert(beg <= end);
-
-   fprintf(fp, "*** %-*s\n", end - beg, &text[beg]);
-   fprintf(fp, "*** %*s^^^\n", column - beg, ""); 
-}
-
-
-
-
+#endif /* _STRSTORE_H_ */

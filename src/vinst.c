@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: vinst.c,v 1.25 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: vinst.c,v 1.26 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -31,13 +31,32 @@
 
 /* #define TRACE  1 */
 
+#include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "define.h"
+#include "bound.h"
+#include "idxset.h"
+#include "mono.h"
+#include "term.h"
+#include "rdefpar.h"
+#include "conname.h"
+#include "stmt.h"
+#include "local.h"
+#include "list.h"
+#include "entry.h"
+#include "heap.h"
 #include "code.h"
 #include "inst.h"
 #include "xlpglue.h"
+#include "strstore.h"
 
 enum vbool_cmp_operator { VBOOL_LT, VBOOL_LE, VBOOL_EQ, VBOOL_NE, VBOOL_GE, VBOOL_GT };
 enum vbool_fixed_result { VBOOL_TRUE, VBOOL_FALSE, VBOOL_OPEN };

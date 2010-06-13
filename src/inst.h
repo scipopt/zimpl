@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.h,v 1.45 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.h,v 1.46 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -278,7 +278,6 @@ extern CodeNode* i_read_use(CodeNode* self);
 extern CodeNode* i_read_skip(CodeNode* self);
 /*lint -sem(     i_read, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_read(CodeNode* self);
-
 
 /* vinst.c
  */

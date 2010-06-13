@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: inst.c,v 1.126 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: inst.c,v 1.127 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -34,10 +34,28 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "define.h"
+#include "bound.h"
+#include "idxset.h"
+#include "mono.h"
+#include "term.h"
+#include "rdefpar.h"
+#include "conname.h"
+#include "stmt.h"
+#include "local.h"
+#include "list.h"
+#include "entry.h"
+#include "heap.h"
 #include "code.h"
 #include "inst.h"
 #include "xlpglue.h"
+#include "strstore.h"
 
 static int checked_eval_numb_toint(const CodeNode* self, int no, const char* errmsg)
 {

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: numbgmp.c,v 1.32 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: numbgmp.c,v 1.33 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -41,8 +41,8 @@
 #include "mshell.h"
 #include "random.h"
 #include "gmpmisc.h"
-#include "ratlptypes.h"
 #include "mme.h"
+#include "numb.h"
 
 #define NUMB_STORE_SIZE  1000
 #define NUMB_SID         0x4e756d62

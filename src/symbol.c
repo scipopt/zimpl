@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: symbol.c,v 1.31 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: symbol.c,v 1.32 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.c                                                      */
@@ -33,7 +33,15 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "entry.h"
+#include "set.h"
+#include "hash.h"
+#include "stmt.h"
+#include "symbol.h"
 
 #define TEST_DUBLICATE   0
 

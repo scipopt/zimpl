@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: define.c,v 1.7 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: define.c,v 1.8 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: define.c                                                      */
@@ -32,8 +32,11 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "define.h"
 
 #define DEFINE_SID  0x44656669
 

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setempty.c,v 1.7 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setempty.c,v 1.8 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setempty.c                                                    */
@@ -32,9 +32,13 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "hash.h"
 #include "set4.h"
+#include "set.h"
 
 #define SET_EMPTY_SID          0x5345544f
 #define SET_EMPTY_ITER_SID     0x53454f49

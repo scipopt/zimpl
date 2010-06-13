@@ -1,8 +1,8 @@
-#pragma ident "@(#) $Id: source.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
+#pragma ident "@(#) $Id: conname.h,v 1.1 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: source.c                                                      */
-/*   Name....: Source Code Printing Function                                 */
+/*   File....: conname.h                                                     */
+/*   Name....: Constraint Names                                              */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
@@ -24,58 +24,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _CONNAME_H_
+#define _CONNAME_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#ifndef _BOOL_H_
+#error "Need to include bool.h before conname.h"
+#endif
 
-#include "bool.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
+enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 
-void show_source(FILE* fp, const char* text, int column)
-{
-   int len;
-   int beg;
-   int end;
-      
-   assert(fp     != NULL);
-   assert(text   != NULL);
-   assert(column >= 0);
+typedef enum con_name_format     ConNameForm;
 
-   if (column > 0)
-      column--;
-   
-   len = strlen(text);
-   beg = column - 30;
-   end = column + 30;
+extern void        conname_format(ConNameForm format);
+extern void        conname_free(void);
+/*lint -sem(       conname_set, nulterm(1), 1p) */
+extern Bool        conname_set(const char* prefix);
+/*lint -sem(       conname_set, @p && nulterm(@)) */
+extern const char* conname_get(void);
+extern void        conname_next(void);
 
-   if (beg < 0)
-   {
-      end -= beg;
-      beg = 0;
-   }
-   if (end > len)
-   {
-      beg -= end - len;
-      end  = len;      
-   }
-   if (beg < 0)
-      beg = 0;
-
-   assert(beg >= 0);
-   assert(end <= len);
-   assert(beg <= end);
-
-   fprintf(fp, "*** %-*s\n", end - beg, &text[beg]);
-   fprintf(fp, "*** %*s^^^\n", column - beg, ""); 
-}
-
-
-
-
+#endif /* _CONNAME_H_ */

@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.54 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.55 2010/06/13 10:39:23 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -43,7 +43,15 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "define.h"
+#include "stmt.h"
+#include "strstore.h"
 #include "mmlparse2.h"
 
 extern void yyerror(const char* s);

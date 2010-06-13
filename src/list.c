@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: list.c,v 1.26 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: list.c,v 1.27 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.c                                                        */
@@ -34,7 +34,12 @@
 #include "mshell.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "entry.h"
+#include "list.h"
 
 #define LIST_SID  0x4c697374
 

@@ -1,8 +1,8 @@
-#pragma ident "@(#) $Id: source.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
+#pragma ident "@(#) $Id: local.h,v 1.1 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: source.c                                                      */
-/*   Name....: Source Code Printing Function                                 */
+/*   File....: local.h                                                       */
+/*   Name....: Local Parameter Functions                                     */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
@@ -24,58 +24,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _LOCAL_H_
+#define _LOCAL_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#ifndef _ELEM_H_
+#error "Need to include elem.h before local.h"
+#endif
 
-#include "bool.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
+#ifndef _TUPLE_H_
+#error "Need to include tuple.h before local.h"
+#endif
 
-void show_source(FILE* fp, const char* text, int column)
-{
-   int len;
-   int beg;
-   int end;
-      
-   assert(fp     != NULL);
-   assert(text   != NULL);
-   assert(column >= 0);
+extern void         local_init(void);
+extern void         local_exit(void);
+extern void         local_drop_frame(void);
+/*lint -sem(        local_lookup, nulterm(1), 1p, r_null) */
+extern const Elem*  local_lookup(const char* name);
+/*lint -sem(        local_install_tuple, 1p == 1 && 2p == 1) */
+extern void         local_install_tuple(const Tuple* patt, const Tuple* vals);
+/*lint -sem(        local_print_all, 1p == 1) */
+extern void         local_print_all(FILE* fp);
+/*lint -sem(        local_tostrall, @p && nulterm(@)) */
+extern char*        local_tostrall(void);
 
-   if (column > 0)
-      column--;
-   
-   len = strlen(text);
-   beg = column - 30;
-   end = column + 30;
-
-   if (beg < 0)
-   {
-      end -= beg;
-      beg = 0;
-   }
-   if (end > len)
-   {
-      beg -= end - len;
-      end  = len;      
-   }
-   if (beg < 0)
-      beg = 0;
-
-   assert(beg >= 0);
-   assert(end <= len);
-   assert(beg <= end);
-
-   fprintf(fp, "*** %-*s\n", end - beg, &text[beg]);
-   fprintf(fp, "*** %*s^^^\n", column - beg, ""); 
-}
-
-
-
-
+#endif /* _LOCAL_H_ */

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratmpswrite.c,v 1.18 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratmpswrite.c,v 1.19 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -33,8 +33,16 @@
 
 #include <gmp.h>
 
+#include "lint.h"
+#include "mshell.h"
 #include "bool.h"
 #include "gmpmisc.h"
+#include "ratlptypes.h"
+#include "numb.h"
+#include "bound.h"
+#include "mme.h"
+#include "mono.h"
+#include "term.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
 

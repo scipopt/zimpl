@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: term2.c,v 1.9 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: term2.c,v 1.10 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -35,9 +35,15 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
-#include "xlpglue.h"
+#include "bound.h"
+#include "entry.h"
 #include "mono.h"
+#include "term.h"
+#include "xlpglue.h"
 
 #define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d

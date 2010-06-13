@@ -1,8 +1,8 @@
-#pragma ident "@(#) $Id: conname.c,v 1.15 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: conname.c,v 1.16 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
-/*   Name....: Instructions                                                  */
+/*   Name....: Constraint Names                                              */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
@@ -33,8 +33,16 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
 #include "mme.h"
+#include "bound.h"
+#include "mono.h"
+#include "term.h"
+#include "elem.h"
+#include "tuple.h"
+#include "local.h"
 #include "xlpglue.h"
+#include "conname.h"
 
 static char*        cpfix  = NULL;
 static int          count  = 1;

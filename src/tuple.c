@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: tuple.c,v 1.30 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: tuple.c,v 1.31 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -33,8 +33,11 @@
 #include "bool.h"
 #include "mshell.h"
 #include "blkmem.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
 #include "mme.h"
+#include "stmt.h"
+#include "tuple.h"
 
 #define TUPLE_SID      0x5475706c
 #define TUPLE_STR_SIZE 100

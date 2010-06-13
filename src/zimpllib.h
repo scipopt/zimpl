@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: zimpllib.h,v 1.7 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: zimpllib.h,v 1.8 2010/06/13 10:39:24 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -35,10 +35,17 @@
 extern "C" {
 #endif
 
+/*lint -sem(        zpl_add_parameter, 1p && nulterm(1)) */
+extern void         zpl_add_parameter(const char* def);
+/*lint -sem(        zpl_var_print, 1p == 1 && 2p == 1) */
+extern void         zpl_var_print(FILE* fp, const Var* var);
+/*lint -sem(        zpl_print_banner, 1p == 1) */
+extern void         zpl_print_banner(FILE* fp, Bool with_license);
+
 /*lint -sem(zpl_read, nulterm(1)) */
-extern Bool zpl_read(const char* filename, Bool with_management);
+extern Bool         zpl_read(const char* filename, Bool with_management);
 /*lint -sem(zpl_read_with_args, 1n > 0 && 2p) */
-extern Bool zpl_read_with_args(char** argv, int argc, Bool with_management);
+extern Bool         zpl_read_with_args(char** argv, int argc, Bool with_management);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: bound.c,v 1.8 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: bound.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bound.c                                                       */
@@ -32,8 +32,9 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
 #include "mme.h"
+#include "numb.h"
+#include "bound.h"
 
 #define BOUND_SID     0x426F756E
 

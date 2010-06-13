@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setpseudo.c,v 1.8 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setpseudo.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setpseudo.c                                                    */
@@ -32,8 +32,11 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "hash.h"
 #include "set4.h"
 
 #define SET_PSEUDO_SID          0x53455452

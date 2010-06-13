@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlp.h,v 1.21 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlp.h,v 1.22 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -33,19 +33,11 @@
 #ifndef _BOOL_H_
 #error "Need to include bool.h before ratlp.h"
 #endif
-
-/* The reason for the extra types is that those do not need gmp.h
- */
-#include "ratlptypes.h"
-#include "mme.h"
-
-#if 0 // ???
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "set.h"
-#include "entry.h"
-#include "term.h"
+#ifndef _RATLPTYPES_H_
+#error "Need to include ratlptypes.h before ratlp.h"
+#endif
+#ifndef _MME_H_
+#error "Need to include mme.h before ratlp.h"
 #endif
 
 /* lpstore.c

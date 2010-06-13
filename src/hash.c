@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: hash.c,v 1.30 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: hash.c,v 1.31 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -34,7 +34,14 @@
 #include "mshell.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "hash.h"
 
 #define HASH_SID      0x48617368
 

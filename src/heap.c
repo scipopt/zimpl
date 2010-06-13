@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: heap.c,v 1.8 2009/09/13 16:15:54 bzfkocht Exp $"
+#pragma ident "@(#) $Id: heap.c,v 1.9 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: heap.c                                                        */
@@ -33,7 +33,14 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "set.h"
+#include "symbol.h"
+#include "entry.h"
+#include "heap.h"
 
 #define HEAP_SID  0x48656170
 

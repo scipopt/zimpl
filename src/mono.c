@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.c,v 1.7 2010/06/10 19:42:43 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.c,v 1.8 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -35,7 +35,11 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "entry.h"
 #include "mono.h"
 
 #define MONO_SID         0x4d6f6e6f

@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratlpstore.c,v 1.35 2010/06/12 20:32:52 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratlpstore.c,v 1.36 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -36,10 +36,14 @@
 #include "bool.h"
 #include "mshell.h"
 #include "gmpmisc.h"
-#include "ratlp.h"
-#include "ratlpstore.h"
+#include "ratlptypes.h"
+#include "numb.h"
+#include "bound.h"
 #include "mme.h"
 #include "mono.h"
+#include "term.h"
+#include "ratlp.h"
+#include "ratlpstore.h"
 
 #define LPF_NAME_LEN  16
 #define MPS_NAME_LEN  8

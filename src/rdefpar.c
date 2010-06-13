@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: rdefpar.c,v 1.13 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: rdefpar.c,v 1.14 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -32,8 +32,9 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
 #include "mme.h"
+#include "strstore.h"
+#include "rdefpar.h"
 
 #define RDEF_SID     0x52446566
 #define RPAR_SID     0x52506172

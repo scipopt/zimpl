@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: ratordwrite.c,v 1.14 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: ratordwrite.c,v 1.15 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratordwrite.c                                                 */
@@ -33,11 +33,18 @@
 
 #include <gmp.h>
 
+#include "lint.h"
 #include "mshell.h"
 #include "bool.h"
+#include "gmpmisc.h"
+#include "ratlptypes.h"
+#include "numb.h"
+#include "bound.h"
+#include "mme.h"
+#include "mono.h"
+#include "term.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
-#include "mme.h"
 
 /* A specification for the ORD file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 545.

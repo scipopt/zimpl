@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setprod.c,v 1.14 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setprod.c,v 1.15 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setprod.c                                                     */
@@ -32,9 +32,13 @@
 
 #include "bool.h"
 #include "mshell.h"
-#include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "hash.h"
 #include "set4.h"
+#include "set.h"
 
 #define SET_PROD_SID          0x53455450
 #define SET_PROD_ITER_SID     0x53455049

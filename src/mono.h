@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: mono.h,v 1.5 2009/09/13 16:15:55 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mono.h,v 1.6 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -29,7 +29,9 @@
 
 enum mono_function { MFUN_SQRT = -2, MFUN_NONE = 0, MFUN_TRUE = 1, MFUN_FALSE = 2, MFUN_LOG = 3, MFUN_EXP = 4 };
 
-typedef enum mono_function MFun;
+typedef enum   mono_function MFun;
+typedef struct mono_element  MonoElem;
+typedef struct mono          Mono;
 
 struct mono_element
 {

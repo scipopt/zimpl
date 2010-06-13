@@ -1,4 +1,4 @@
-#pragma ident "@(#) $Id: setlist.c,v 1.19 2009/09/13 16:15:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: setlist.c,v 1.20 2010/06/13 10:39:23 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -33,8 +33,16 @@
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
+#include "elem.h"
+#include "tuple.h"
 #include "mme.h"
+#include "entry.h"
+#include "hash.h"
+#include "list.h"
+#include "stmt.h"
 #include "set4.h"
+#include "set.h"
 
 #define SET_LIST_SID          0x5345544c
 #define SET_LIST_ITER_SID     0x53454c49
