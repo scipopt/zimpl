@@ -1,3 +1,5 @@
+ - Changed License to LGPL Version 3
+
  - Reworked the file writing routines. Now supports
    PIP format. HUM and RLP format updated.
 
