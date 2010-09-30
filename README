@@ -88,7 +88,7 @@ Go to src and say "cc -O *.c -o zimpl".
 
 LICENSE
 -------
-ZIMPL is under the GNU Public License Version 2. 
+ZIMPL is under the GNU Lesser General Public License Version 3. 
 See the file LICENSE for details.
 
 
@@ -118,11 +118,11 @@ project, send me an email.
 
 THANKS 
 ------ 
-To Armin Fuegenschuh, Marc Pfetsch, Daniel Junglas, Joerg Rambau, Tobias
-Achterberg, Andreas Bley, Sebastian Orlowski, Bejamin Hiller, Ralf
-Borndoerfer, Martin Assmann, Nicolas Weber, Marc Moerig, Jens Hillmann,
-Dimitri Sverdlov, Joachim Reichel, and all I forgot for their comments
-and bug reports.
+To Tuomo Takkula, Armin Fuegenschuh, Marc Pfetsch, Daniel Junglas, 
+Joerg Rambau, Tobias Achterberg, Andreas Bley, Sebastian Orlowski, 
+Bejamin Hiller, Ralf Borndoerfer, Martin Assmann, Nicolas Weber, 
+Marc Moerig, Jens Hillmann, Dimitri Sverdlov, Joachim Reichel, 
+and all I forgot for their comments and bug reports.
 
 
 COMPLAINTS
