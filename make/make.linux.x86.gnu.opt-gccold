@@ -1,0 +1,4 @@
+#--- $Id: make.linux.x86.gnu.opt-gccold,v 1.1 2010/09/30 09:27:36 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
+CFLAGS		=	-O3
+LDFLAGS		=	-lgmp -lz -lm -static

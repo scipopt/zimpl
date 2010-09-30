@@ -1,4 +1,4 @@
-/* $Id: numbdbl.c,v 1.7 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: numbdbl.c,v 1.8 2010/09/30 09:27:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -39,6 +39,7 @@
 #include "lint.h"
 #include "mshell.h"
 #include "ratlptypes.h"
+#include "numb.h"
 #include "mme.h"
 
 #define NUMB_STORE_SIZE  1000

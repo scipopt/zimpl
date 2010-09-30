@@ -1,4 +1,2 @@
-Warning 600 Can only handle linear and quadratic constraints -- ignored
-*** File: w600.zpl Line 3
-*** subto c1: x[1] * x[2] * x[3] <= 17;
-***                                   ^^^
+--- Warning 600: File format can only handle linear and quadratic constraints
+                 Constraint c1_1 with degree 3 ignored
