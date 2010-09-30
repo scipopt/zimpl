@@ -1,4 +1,4 @@
-/* $Id: mme.h,v 1.95 2010/08/02 06:20:19 bzfkocht Exp $ */
+/* $Id: mme.h,v 1.96 2010/09/30 17:41:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  301
+#define ZIMPL_VERSION  310
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.
