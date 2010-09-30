@@ -1,4 +1,4 @@
-/* $Id: mono.c,v 1.9 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: mono.c,v 1.10 2010/09/30 11:13:27 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -260,7 +260,7 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
          if (eb->next == NULL || eb->next->entry != entry_a)
             return FALSE;
                
-         ea = ea->next;
+         ea = ea->next; 
          eb = eb->next;               
       }
    }
@@ -388,7 +388,7 @@ Var* mono_get_var(const Mono* mono, int idx)
 
    if (idx > 0)
    {
-      for(e = e->next; --idx > 0; e = e->next)
+      for(e = e->next; --idx > 0; e = e->next) /*lint !e441 loop variable 'e' not found in 2nd expression */
          assert(e != NULL);
 
       assert(e != NULL);

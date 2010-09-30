@@ -19,6 +19,7 @@
 -esym(534,printf,puts,scanf,sprintf,sscanf,strcat,strcpy)
 -esym(534,strncat,strncpy,unlink,write,regerror)
 //
+-e592 // Non-literal format specifier used without arguments
 -e749 // local enumeration constant not referenced
 -e758 // Operator followed by operator is confusing
 -e766 // Include of header file not used

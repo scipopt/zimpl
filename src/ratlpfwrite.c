@@ -1,4 +1,4 @@
-/* $Id: ratlpfwrite.c,v 1.21 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: ratlpfwrite.c,v 1.22 2010/09/30 11:13:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -81,7 +81,7 @@ static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t va
       fprintf(fp, force_sign ? "%+.15g" : "%.15g", mpq_get_d(val));
       break;
    case LP_FORM_HUM :
-      if (force_sign && mpq_sgn(val) > 0)
+      if (force_sign && (mpq_sgn(val) > 0))
          fprintf(fp, "+");
 
       mpq_out_str(fp, 10, val);

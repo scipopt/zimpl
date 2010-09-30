@@ -1,4 +1,4 @@
-/* $Id: random.c,v 1.5 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: random.c,v 1.6 2010/09/30 11:13:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: random.c                                                      */
@@ -126,10 +126,10 @@ unsigned int rand_get_int32(void)
       left = N;
       next = state;
     
-      for(j = N - M + 1; --j; p++) 
+      for(j = N - M + 1; --j; p++) /*lint !e441 !e443 */
          *p = p[M] ^ TWIST(p[0], p[1]);
 
-      for(j = M; --j; p++) 
+      for(j = M; --j; p++) /*lint !e441 !e443 */
          *p = p[M-N] ^ TWIST(p[0], p[1]);
 
       *p = p[M-N] ^ TWIST(p[0], state[0]);

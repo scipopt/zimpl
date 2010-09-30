@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.129 2010/09/30 10:39:10 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.130 2010/09/30 11:13:27 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -2980,12 +2980,12 @@ CodeNode* i_newsym_para1(CodeNode* self)
     * In this case the code below should be reactivated.
     */
    assert(list_entries > 0);
-#if 0
+#if 0 /* ??? */
    /* So if there is no first element, we are in trouble.
     */
    if (list_entries == 0)
    {
-      fprintf(stderr, "*** Error ???: Empty initialisation for parameter \"%s\n",
+      fprintf(stderr, "*** Error xxx: Empty initialisation for parameter \"%s\n",
          name);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
