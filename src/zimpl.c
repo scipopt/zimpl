@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.86 2010/07/04 12:54:14 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.87 2010/09/30 14:45:12 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -85,7 +85,7 @@ static const char* const help =
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
 "  -t lp|mps|hum|rlp|pip  select output format. Either LP (default), MPS format,\n" \
-"                 human readable HUM, ridiculous permuted LP, or PIP polynomial IP.\n" \
+"                 human readable HUM, randomly permuted LP, or PIP polynomial IP.\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \

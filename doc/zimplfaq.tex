@@ -1,0 +1,38 @@
+\begin{enumerate}
+\item Q: Cross products. In some of the examples you define the cross
+  product of two sets explicitly, while in other cases you don't (see
+  for instance the sets $C$ and $CxC$ in the two formulations of the
+  \emph{$n$ queens problen}, in
+  Subsection~\ref{ssec:example:n-queens-problem}). Is there any
+  difference in performance either way?\\
+  A: Basically not, as long as there is no \code{with} statement or
+  other expression that adds or removed elements.
+  If in doubt, the explicit formulation should never be slower.
+  
+%\item Q: Are indices scoped? If so, how?\\
+%  A: 
+%\item Q Are recursive function allowed, or, what is the output of
+%\begin{verbatim}
+%  set A := { 1 .. 2};
+%  defnumb f(i) := i  +  sum <j> in A | j > i: f(j);
+%  defnumb g(i) :=       sum <j> in A | j > i: f(j)  +  i;
+%  do print f(1);
+%  do print g(1);
+%\end{verbatim} %thanks, Uli Dorndorf
+%  and why isn't it what one would expect?\\
+%  A:\textcolor{red}{ *** THORSTEN *** }
+\item Q: Is the use of extended constraints (\code{vif}, \code{vabs},
+  Subsection~\ref{ssec:ug:constraints}) a good idea?  \\
+  A: The short answer is \emph{no}. The longer answer is still
+  \emph{no}, but perhaps more comprehensively so: Extended constraints
+  are linearized into the notorious \emph{big-$M$}\footnote{$M$ is a 
+    shorthand for \emph{mistake}} constraints together with some
+  additional binary variables which usually deteriorate the value of
+  your linear programming relaxation, and that's bad. To add insult to
+  injury, in the case that the \emph{boolean constraint} in the
+  definition of an extended constraint happens to be a binary variable
+  \zimpl happily generates another binary variable instead of
+  recycling the perfectly suitable existing one, with unfortunate
+  consequences for the efficiency of the model. Later versions of
+  \zimpl might fix this.
+\end{enumerate}

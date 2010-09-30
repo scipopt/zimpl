@@ -1,0 +1,14 @@
+digraph Example {
+# orientation=LR;
+# rotate=90;
+
+
+{ rank = same;
+  a,b;  
+}
+	s -> a [label="17"]; 	
+	s -> b [label="47"]; 	
+	a -> b [label="19"]; 	
+	a -> t [label="53"]; 	
+	b -> t [label="23"]; 	
+}

@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.man
 .\"
-.TH ZIMPL 1 "10 September 2009" Linux "User Manuals"
+.TH ZIMPL 1 "30 September 2010" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -18,7 +18,7 @@ zimpl \- Zuse Institute Mathematical Programming Language
 .B ] [ -O ] [ -P
 .I filter
 .B [ -r ] [ -t
-.I lp|mps|hum|rlp
+.I lp|mps|hum|rlp|pip
 .B ] [ -s
 .I seed
 .B ] [ -v
@@ -116,14 +116,18 @@ C-preprocessor.
 Write a CPLEX .ord branching order file.
 .IP "-s seed"
 Set the random number generator seed.
-.IP "-t lp|mps|hum"
+.IP "-t lp|mps|hum|rlp|pip"
 Selects the output format. Can be either 
 .I lp
 which is default, or 
 .I mps 
 , or
 .I hum 
-, which is (only) human readable.
+, which is (only) human readable, or 
+.I rlp
+, which is randomly permuted, or
+.I pip
+, which means polynimial IP.
 .IP "-v 0-5"
 Set the verbosity level. 0 is quiet, 1 is default,
 2 is verbose, 3 is chatter, and 5 is debug.

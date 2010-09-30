@@ -10,7 +10,8 @@
    the error follows on the next line. For the meaning 
    consult your OS documentation.
 \item[103 Output format not supported, using LP format]\ \\
-   You tried to select another format then \code{lp}, \code{mps}, or \code{hum}.
+   You tried to select another format than \code{lp}, \code{mps},
+   \code{hum}, \code{rlp}, or \code{pip}.
 \item[104 File open failed]\ \\
    Some error occurred when trying to open a file for writing. A description of 
    the error follows on the next line. For the meaning 
@@ -42,7 +43,7 @@
    It is only allowed to raise a number to the power of integers. Also trying to
    raise a number to the power of more than two billion is 
    prohibited.\footnote{The behavior of this operation could 
-   easily be implemented as \code{for(;;)} or more elaborate as 
+   easily be implemented as \code{for(;;)} or in a more elaborate way as 
    \code{void f()\{f();\}}.}
 \item[113 Factorial value \code{xxx} is too big or not an integer]\ \\
    You can only compute the factorial of integers.
@@ -63,7 +64,7 @@
    You tried to build the maximum of some strings.
 \item[118 Comparison of different types]\ \\
    You tried to compare apples with oranges, i.e, numbers with
-   strings. Note that the use of an undefined parameter could also
+   strings. Note that the use of an undefined parameter can also
    lead to this message.
 \item[119 \code{xxx} of sets with different dimension]\ \\
    To apply Operation \code{xxx} (union, minus, intersection, symmetric
@@ -119,7 +120,7 @@
   Probably the template of a read statement looks
   like \code{"$<$1n$>$"} only having a tuple, instead of \code{"$<$1n$>$ 2n"}.
 \item[133 Unknown symbol \code{xxx}]\ \\
-  A name was used, that is not defined anywhere in scope.
+  A name was used that is not defined anywhere in scope.
 \item[134 Illegal element \code{xxx} for symbol]\ \\
   The index tuple given in the initialization is not member of the
   index set of the parameter.
@@ -183,9 +184,8 @@
   The template specified a field number that is higher than the actual
   number of field found in the data. The error occurred after the 
   index tuple in the value field.
-\item[158 Read from file found no data]\ \\
-  Not a single record could be read out of the data file. Either the
-  file is empty, or all lines are comments.
+%\item[158 ]\ \\
+
 %
 % code.c
 %  
@@ -219,7 +219,7 @@
 \item[165 Comparison of different dimension sets] (warning)\ \\
    Two sets were compared, but have different dimension tuples.
    (This means they never had a chance to
-   be equal, other then being empty sets.)
+   be equal, other than being empty sets.)
 %
 % symbol.c
 %
@@ -333,7 +333,7 @@
            \code{yyy}, expected \code{zzz}]\ \\
   The index tuple of an entry in a parameter initialization list must
   have the same dimension as the indexing set of the parameter. This
-  is just another kind of error 134.
+  is just another kind of error~134.
 \item[195 Genuine empty set as index set]\ \\
   The set of an index set is always the empty set.
 \item[196 Indexing tuple \code{xxx} has wrong dimension
@@ -422,15 +422,15 @@
   The cardinality for the subsets to generate must be between the
   given lower bound and the cardinality of the base set.
 \item[221 The objective function has to be linear]\ \\
-  Only objective functions with linear constraints are allowed.
+   Only objective functions with linear constraints are allowed.
+%
+\item[600 File format can only handle linear and quadratic constraints
+         (warning)]\ \\
+The chosen file format can currently only handle linear and
+quadratic constraints. Higher degree constaints were ignored.
 %
 % space here
 %
-xlpglue.c
-\item[600 Can only handle linear and quadratic constraints -- ignored
-  (Warning)]\ \\
-The file writing interface can currently only handle linear and
-  quadratic constraints. All other constraints are ignored.
 % 
 % numbgmp.c
 %
@@ -460,7 +460,7 @@ the argument was too small to be represented as a \code{double}.
   A regular expression given to the \code{match} parameter of a
   \code{read} statement, was not valid. See error messages for details.
 \item[803 String too long \code{xxx} $>$ \code{yyy}]\ \\
-  The program encountered a string which is larger then 1 GB. 
+  The program encountered a string which is larger than 1 GB. 
 %
 % inst.c
 %

@@ -11,6 +11,9 @@
  - Reworked the file writing routines. Now supports
    PIP format. HUM and RLP format updated.
 
+ - Fixed a bug that would happen in certain cases if a param 
+   is overridden by the commandline.
+    
  - Fixed a bug in certain vif-then-else constructs.
 
  - Fixed a bug in the implementation of the xor operator on
@@ -28,7 +31,7 @@
 3.0.0 10. Sep 2009 Release
 
  - New attribut for constraints: indicator
-   If vif is part of the constraint is is modelled as an 
+   If vif is part of the constraint it is modelled as an 
    indicator constraint and not by an big-M formulation.
 
  - It is now possible to give attributes also to constraints
