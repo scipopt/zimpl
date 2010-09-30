@@ -1,4 +1,12 @@
+3.1.0 30. Sep 2010 Release
+
  - Changed License to LGPL Version 3
+ 
+ - Improved Documentation: Thanks Tuomo!
+
+ - Experimental support for non-linear constraints.
+   x*y*z and x^3 should work. Output either directly
+   through the interface or in PIP format.
 
  - Reworked the file writing routines. Now supports
    PIP format. HUM and RLP format updated.

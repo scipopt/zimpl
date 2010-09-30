@@ -1,4 +1,4 @@
-/* $Id: mono.h,v 1.7 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: mono.h,v 1.8 2010/09/30 10:39:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -43,7 +43,7 @@ struct mono_element
 struct mono
 {
    SID
-   int       count; // ??? not really needed
+   int       count; // Only needed to hopefully compare monoms faster.
    MFun      fun;
    Numb*     coeff;
    MonoElem  first;

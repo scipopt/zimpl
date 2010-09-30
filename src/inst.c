@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.128 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.129 2010/09/30 10:39:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3344,67 +3344,6 @@ CodeNode* i_term_mul(CodeNode* self)
    return self;
 }
 
-#if 0
-CodeNode* i_term_power(CodeNode* self)
-{
-   const Symbol* sym;
-   const Tuple*  tuple;
-   const Entry*  entry;
-   const Elem*   elem;
-   int           power;
-   Term*         term;
-   int           i;
-   
-   Trace("i_term_power");
-   
-   assert(code_is_valid(self));
-
-   sym   = code_eval_child_symbol(self, 0);
-   tuple = code_eval_child_tuple(self, 1);   
-   power = checked_eval_numb_toint(self, 2, "112: Exponent value");
-
-   /* wurde schon in mmlscan ueberprueft
-    */
-   assert(sym != NULL);
-
-   for(i = 0; i < tuple_get_dim(tuple); i++)
-   {
-      elem = tuple_get_elem(tuple, i);
-
-      /* Are there any unresolved names in the tuple?
-       */
-      if (ELEM_NAME == elem_get_type(elem))
-      {
-         fprintf(stderr, "*** Error 133: Unknown symbol \"%s\"\n",
-            elem_get_name(elem));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-   }
-   entry = symbol_lookup_entry(sym, tuple);
-
-   if (NULL == entry)
-   {
-      fprintf(stderr, "*** Error 142: Unknown index ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, " for symbol \"%s\"\n", symbol_get_name(sym));
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }
-
-   assert(symbol_get_type(sym) != SYM_VAR);
-
-   term = term_new(1);
-   term_add_elem(term, entry, numb_one());
-
-   for(i = 1; i < power; i++)
-      term_mul_elem(term, entry, numb_one());
-
-   code_value_term(self, term);
-
-   return self;
-}
-#else
 CodeNode* i_term_power(CodeNode* self)
 {
    int           power;
@@ -3422,11 +3361,14 @@ CodeNode* i_term_power(CodeNode* self)
    
    if (power == 0)
    {
-      abort(); /* ??? */
+      term_result = term_new(1);
+      term_add_constant(term_result, numb_one());
    } 
    else if (power < 0)
    {
-      abort(); /* ???? */
+      fprintf(stderr, "*** Error 121: Negative exponent on variable\n");
+      code_errmsg(code_get_child(self, 0));
+      zpl_exit(EXIT_FAILURE);
    }
    else
    {
@@ -3443,7 +3385,6 @@ CodeNode* i_term_power(CodeNode* self)
 
    return self;
 }
-#endif
 
 CodeNode* i_newdef(CodeNode* self)
 {

@@ -1,4 +1,4 @@
-/* $Id: elem.c,v 1.28 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: elem.c,v 1.29 2010/09/30 10:39:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -242,14 +242,6 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    if (elem_a == elem_b)
       return FALSE;
 
-#if 0  /*??? Schneint mit der neuen Set implementierung nicht mehr
-        *    gebraucht zu werden. Mit dem naechsten Release loeschen.
-        */
-   /* Wenn einer ein Name ist, sind sie gleich.
-    */
-   if ((elem_a->type == ELEM_NAME) || (elem_b->type == ELEM_NAME))
-      return FALSE;
-#endif
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr,

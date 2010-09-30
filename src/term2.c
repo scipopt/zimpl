@@ -1,4 +1,4 @@
-/* $Id: term2.c,v 1.11 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: term2.c,v 1.12 2010/09/30 10:39:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -95,8 +95,6 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
       assert(term->elem != NULL);
    }
    assert(term->used < term->size);
-
-   /* ??? test auf gleiche monome fehlt */
 
    term->elem[term->used] = mono_new(coeff, entry, MFUN_NONE);
    term->used++;

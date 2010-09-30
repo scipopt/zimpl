@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.74 2010/06/12 20:32:52 bzfkocht Exp $
+# $Id: Makefile,v 1.75 2010/09/30 10:39:10 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -115,6 +115,14 @@ include make/make.$(BASE)
 -include make/local/make.$(HOSTNAME).$(COMP)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
 #-----------------------------------------------------------------------------
+
+FLAGS           +=      $(USRFLAGS)
+OFLAGS          +=      $(USROFLAGS)
+CFLAGS          +=      $(USRCFLAGS) $(USROFLAGS)
+LDFLAGS         +=      $(USRLDFLAGS)
+ARFLAGS         +=      $(USRARFLAGS)
+DFLAGS          +=      $(USRDFLAGS)
+
 
 ifeq ($(VERBOSE),false)
 .SILENT:	$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK) \

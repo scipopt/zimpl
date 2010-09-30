@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 %{   
-#pragma ident "@(#) $Id: mmlscan.l,v 1.56 2010/06/13 12:37:41 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlscan.l,v 1.57 2010/09/30 10:39:10 bzfkocht Exp $"
 
 /*lint -e429 */
 /*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
@@ -199,7 +199,7 @@ static int        yydecl    = 0;
        */
       else if (yydecl == DECLSET || yydecl == DECLPAR || yydecl == DECLVAR 
 	    || yydecl == DEFNUMB || yydecl == DEFSTRG || yydecl == DEFBOOL 
-            || yydecl == DEFSET)
+       || yydecl == DEFSET)
       {
          if (NULL != symbol_lookup(yytext) || NULL != define_lookup(yytext))
          {
@@ -212,6 +212,7 @@ static int        yydecl    = 0;
 
                sprintf(errmsg, "Redefinition of parameter %s ignored\n", yytext);
                yywarning(252, errmsg);
+               yydecl = 0;
                return EOF;
             }
             sprintf(errmsg, "Name \"%s\" already in use\n", yytext);
