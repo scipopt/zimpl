@@ -1,4 +1,4 @@
-/* $Id: setrange.c,v 1.15 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: setrange.c,v 1.16 2010/10/02 10:57:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -38,8 +38,8 @@
 #include "mme.h"
 #include "hash.h"
 #include "stmt.h"
-#include "set4.h"
 #include "set.h"
+#include "set4.h"
 
 #define SET_RANGE_SID          0x53455452
 #define SET_RANGE_ITER_SID     0x53455249

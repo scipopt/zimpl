@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.76 2010/09/30 14:45:12 bzfkocht Exp $
+# $Id: Makefile,v 1.77 2010/10/02 10:57:09 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -32,6 +32,7 @@ ARCH            :=      $(shell uname -m | \
 			-e s/sun../sparc/ \
 			-e s/i.86/x86/ \
 			-e s/i86pc/x86/ \
+			-e s/amd64/x86_64/ \
 			-e s/IP../mips/ \
 			-e s/9000..../hppa/ \
 			-e s/Power\ Macintosh/ppc/ \

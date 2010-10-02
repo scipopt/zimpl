@@ -1,4 +1,4 @@
-/* $Id: setpseudo.c,v 1.10 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: setpseudo.c,v 1.11 2010/10/02 10:57:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setpseudo.c                                                    */
@@ -37,8 +37,8 @@
 #include "tuple.h"
 #include "mme.h"
 #include "hash.h"
-#include "set4.h"
 #include "set.h"
+#include "set4.h"
 
 #define SET_PSEUDO_SID          0x53455452
 #define SET_PSEUDO_ITER_SID     0x53455249

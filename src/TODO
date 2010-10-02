@@ -1,4 +1,4 @@
-numbdbl auf long double umstellen.
+numbdbl auf long double umstellen bzw. __float128 bei gnu
 
 Error 195 in Warning umwandeln
 Bei Read von leeren Daten die dimension des tuples aus

@@ -1,4 +1,4 @@
-/* $Id: setmulti.c,v 1.20 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: setmulti.c,v 1.21 2010/10/02 10:57:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -42,8 +42,8 @@
 #include "list.h"
 #include "hash.h"
 #include "stmt.h"
-#include "set4.h"
 #include "set.h"
+#include "set4.h"
 
 #define SET_MULTI_SID          0x5345544d
 #define SET_MULTI_ITER_SID     0x53454d49

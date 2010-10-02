@@ -1,4 +1,4 @@
-/* $Id: setlist.c,v 1.21 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: setlist.c,v 1.22 2010/10/02 10:57:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -41,8 +41,8 @@
 #include "hash.h"
 #include "list.h"
 #include "stmt.h"
-#include "set4.h"
 #include "set.h"
+#include "set4.h"
 
 #define SET_LIST_SID          0x5345544c
 #define SET_LIST_ITER_SID     0x53454c49

@@ -1133,7 +1133,7 @@ subto c40: x[1] == a[1] + 2 * sum <i> in A do 2*a[i]*x[i]*3+4;
 subto frown: forall <i,j> in X cross { 1 to 5 } without { <2,3> }       
                with i > 5 and j < 2 do                                 
                   sum <i,j,k> in X cross { 1 to 3 } cross Z do         
-                     p[i] * q[j] * w[j,k] >= if i == 2 then 17 else 53;
+                     p[i] * q[j] * w[j,k] >= if i == 2 then 17 else 53 end;
 subto nonlin: 3 * x * y * z + 6 <= x^3 + z * y^2 + 3;
 \end{verbatim}
 }

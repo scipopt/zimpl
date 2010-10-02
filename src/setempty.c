@@ -1,4 +1,4 @@
-/* $Id: setempty.c,v 1.9 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: setempty.c,v 1.10 2010/10/02 10:57:10 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setempty.c                                                    */
@@ -37,8 +37,8 @@
 #include "tuple.h"
 #include "mme.h"
 #include "hash.h"
-#include "set4.h"
 #include "set.h"
+#include "set4.h"
 
 #define SET_EMPTY_SID          0x5345544f
 #define SET_EMPTY_ITER_SID     0x53454f49

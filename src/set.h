@@ -1,4 +1,4 @@
-/* $Id: set.h,v 1.3 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: set.h,v 1.4 2010/10/02 10:57:09 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.c                                                        */
@@ -39,6 +39,8 @@ enum set_check_type
 {
    SET_CHECK_NONE, SET_CHECK_QUIET, SET_CHECK_WARN
 };
+
+typedef enum set_check_type      SetCheckType;
 
 extern void         set_init(void);
 extern void         set_exit(void);

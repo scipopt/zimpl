@@ -1,4 +1,4 @@
-/* $Id: mme.h,v 1.96 2010/09/30 17:41:46 bzfkocht Exp $ */
+/* $Id: mme.h,v 1.97 2010/10/02 10:57:09 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -56,7 +56,6 @@ typedef CodeNode*              (*Inst)(CodeNode* self);
 typedef struct entry             Entry;
 typedef union set                Set;
 typedef union set_iter           SetIter;
-typedef enum set_check_type      SetCheckType;
 
 typedef struct list_element      ListElem;
 typedef struct list              List;
