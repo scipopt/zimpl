@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.78 2010/10/02 11:10:41 bzfkocht Exp $
+# $Id: Makefile,v 1.79 2011/07/31 15:10:45 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -25,7 +25,7 @@
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #*
 #
-.PHONY:		all depend clean lint doc check valgrind libdbl coverage
+.PHONY:		all depend clean lint doc doxygen check valgrind libdbl coverage
 
 ARCH            :=      $(shell uname -m | \
                         sed \
@@ -56,6 +56,7 @@ DCC		=	gcc
 LINT		=	flexelint
 AR		=	ar
 RANLIB		=	ranlib
+DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
 			--leak-resolution=high --show-reachable=yes 
 
@@ -84,6 +85,7 @@ LIBNAME		=	$(NAME)-$(VERSION).$(BASE)
 LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).a
 LIBRARYDBL	=	$(LIBDIR)/lib$(LIBNAME).dbl.a
 BINARY		=	$(BINDIR)/$(BINNAME)
+BINARYDBL	=	$(BINDIR)/$(BINNAME).dbl
 LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
 LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
 BINLINK		=	$(BINDIR)/$(NAME).$(BASE)
@@ -98,10 +100,10 @@ OBJECT  	=       zimpl.o xlpglue.o \
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
-			numbgmp.o prog.o random.o rdefpar.o source.o \
+			mshell.o numbgmp.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
-			setmulti.o set4.o stmt.o strstore2.o symbol.o term2.o \
-			tuple.o vinst.o mshell.o zimpllib.o
+			setmulti.o set4.o stmt.o stkchk.o strstore2.o symbol.o \
+			term2.o tuple.o vinst.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))
@@ -148,6 +150,10 @@ $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY)
 		@echo "-> linking $@"
 		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME) $(LDFLAGS) -o $@
 
+$(BINARYDBL):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYDBL) 
+		@echo "-> linking $@"
+		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME).dbl $(LDFLAGS) -o $@
+
 $(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX) 
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARY)
@@ -176,6 +182,9 @@ lint:		$(OBJSRC) $(LIBSRC)
 
 doc:
 		cd doc; make -f Makefile
+
+doxygen:
+		cd doc; $(DOXY) $(NAME).dxy
 
 check:
 		cd check; \

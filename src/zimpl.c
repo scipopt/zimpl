@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.87 2010/09/30 14:45:12 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.88 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <sys/types.h>
@@ -37,6 +37,7 @@
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
+#include "stkchk.h"
 #include "random.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
@@ -200,6 +201,8 @@ int main(int argc, char* const* argv)
    FILE*         (*openfile)(const char*, const char*) = fopen;
    int           (*closefile)(FILE*)                   = fclose;
 
+   stkchk_init();
+   
    yydebug       = 0;
    yy_flex_debug = 0;
    verbose       = VERB_NORMAL;
@@ -545,6 +548,7 @@ int main(int argc, char* const* argv)
    if (verbose >= VERB_NORMAL)
    {
       mem_display(stdout);
+      stkchk_maximum(stdout);
    }
 #endif /* __INSURE__ || !NDEBUG || FREEMEM */
    return 0;

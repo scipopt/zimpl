@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.19 2010/06/10 19:42:40 bzfkocht Exp $
+# $Id: check.sh,v 1.20 2011/07/31 15:10:45 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -28,7 +28,7 @@
 # $1 = Binary
 PASS=0
 COUNT=0
-for i in expr param set subto var bool define vinst sos read
+for i in expr param set subto condit var bool define vinst sos read
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl
@@ -101,6 +101,17 @@ done
     *) echo Test print.zpl "(out)" ERROR ;;
    esac
    rm print.out print.tbl print.lp
+# 
+#
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 -t pip minlp.zpl 
+   diff minlp.pip minlp.pip.ref >/dev/null
+   case $? in
+    0) echo Test minlp.zpl "(pip)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test minlp.zpl "(pip)" FAIL ;;
+    *) echo Test minlp.zpl "(pip)" ERROR ;;
+   esac
+   rm minlp.pip minlp.tbl
 # 
 #
 cd warnings

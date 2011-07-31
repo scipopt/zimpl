@@ -1,4 +1,4 @@
-# $Id: expr.zpl,v 1.19 2010/06/10 19:42:40 bzfkocht Exp $
+# $Id: expr.zpl,v 1.20 2011/07/31 15:10:45 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: expr.zpl                                                      *
@@ -63,3 +63,14 @@ do check 2^3^4 == 2^(3^4);
 do check 3!^-2^4*5 == ((2 * 3)^(-2 * 2 * 2 * 2)) * 5;
 do check 4 + 1 / 3 * sum <i> in I : 3 * i == sum <i> in I : i + 4;
 do check 3 * min(I) == min <i> in I : i * 3;
+do check ord(S,1,1) + ord(S,2,1) + ord(S,3,1) == "moinhelloho";
+#
+do check round(3.5) == 4;
+do check round(3.499999999999) == 3;
+do check round(0.00000000001) == 0;
+do check round(0.5) == 1;
+#
+do check round(-3.5) == -4;
+do check round(-3.499999999999) == -3;
+do check round(-0.00000000001) == 0;
+do check round(-0.5) == -1;

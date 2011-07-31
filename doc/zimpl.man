@@ -5,25 +5,25 @@
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
-.B zimpl  [ -b ] [ -D
+.B zimpl  [ \-b ] [ \-D
 .I name=value
-.B ] [ -f ] [ -F
+.B ] [ \-f ] [ \-F
 .I filter
-.B ] [ -h ] [ -m ] [ -l
+.B ] [ \-h ] [ \-m ] [ \-l
 .I length
-.B [ -n
+.B [ \-n
 .I cm|cn|cf
-.B ] [ -o
+.B ] [ \-o
 .I outfile
-.B ] [ -O ] [ -P
+.B ] [ \-O ] [ \-P
 .I filter
-.B [ -r ] [ -t
+.B [ \-r ] [ \-t
 .I lp|mps|hum|rlp|pip
-.B ] [ -s
+.B ] [ \-s
 .I seed
-.B ] [ -v
+.B ] [ \-v
 .I 0-5
-.B ] [ -V ]
+.B ] [ \-V ]
 .I file
 .B ...
 .SH DESCRIPTION
@@ -32,17 +32,17 @@ is a little language to translate the mathematical model of a problem
 into a linear or (mixed-)integer mathematical program expressed in LPF
 or MPS file format which can be read by a LP or MIP solver.
 
-None of the options is neccessary. All input files in 
-.I zpl
+None of the options is necessary. All input files in 
+.B zpl
 format that are given are concatenated and processed as if they are
 one big file. This makes is possible to combine different parts of a
 model on the command line. In this case the first filename given will
 be used as basename for the output files in absence of an 
-.B -o
+.B \-o
 option.
 
 The 
-.B -t
+.B \-t
 option is to select the output format. 
 .B mps 
 can be read by every
@@ -64,11 +64,11 @@ is specified the output is in
 format, but rows and columns are randomly permuted.
  
 .SH OPTIONS
-.IP -b
+.IP \-b
 Enable 
 .BR bison (1)
 debugging output.
-.IP "-D name=value"
+.IP "\-D name=value"
 Sets the parameter
 .I name
 to the specified value. This is equivalent with having this line in the
@@ -77,18 +77,18 @@ Zimpl program: param name:=val .
 Enable
 .BR flex (1)
 debugging output.
-.IP "-F filter"
+.IP "\-F filter"
 The output is piped through a filter. A %s in the
 string is replaced by the output filename. For example: 
--F "gzip -c >%s.gz" would compress all the 
+-F "gzip \-c >%s.gz" would compress all the 
 output files.
 .IP -h
 Show program help.
-.IP "-l length"
+.IP "\-l length"
 Sets the maximum length for variable names in LPF output files.
 .IP -m
 Write a CPLEX .mst Mip STart file.
-.IP "-n cm|cn|cf"
+.IP "\-n cm|cn|cf"
 Select the format for the generation of constraint
 names. Can be either 
 .I cm 
@@ -105,18 +105,18 @@ and then append all the local variables from the forall statements.
 .IP "-o outfile"
 Sets the base-name for the output files. Default is the name of the
 input file without extension.
-.IP -O 
+.IP \-O 
 Optimize the generated LP by doing some presolve analysis (experimental).
-.IP "-P filter" 
+.IP "\-P filter" 
 The input is piped through a filter. A %s in the
 string is replaced by the input filename. For example: 
--F "cpp -DWITH_C1 %s" would pass the input file through the
+\-F "cpp -DWITH_C1 %s" would pass the input file through the
 C-preprocessor.
-.IP -r 
+.IP \-r 
 Write a CPLEX .ord branching order file.
-.IP "-s seed"
+.IP "\-s seed"
 Set the random number generator seed.
-.IP "-t lp|mps|hum|rlp|pip"
+.IP "\-t lp|mps|hum|rlp|pip"
 Selects the output format. Can be either 
 .I lp
 which is default, or 
@@ -128,10 +128,10 @@ which is default, or
 , which is randomly permuted, or
 .I pip
 , which means polynimial IP.
-.IP "-v 0-5"
+.IP "\-v 0-5"
 Set the verbosity level. 0 is quiet, 1 is default,
 2 is verbose, 3 is chatter, and 5 is debug.
-.IP -V
+.IP \-V
 Prints the version number.
 .\".SH FILES
 .\".SH ENVIRONMENT
@@ -141,13 +141,13 @@ The following diagnostics may be issued on stderr:
 101 Bad filename
 .RS
 The name given with the 
-.B -o option 
+.B \-o option 
 is either missing, a directory name, or starts with a dot.
 .RE
 175 Illegal syntax for command line define -- ignored
 .RS
 The parameter of a 
-.B -D 
+.B \-D 
 option was either not of the form 
 .I "name=value"
 or the name was not a legal identifier.

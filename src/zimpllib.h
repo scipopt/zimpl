@@ -1,4 +1,4 @@
-/* $Id: zimpllib.h,v 1.9 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: zimpllib.h,v 1.10 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #ifndef _ZIMPLLIB_H_
 #define _ZIMPLLIB_H_

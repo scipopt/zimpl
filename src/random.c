@@ -1,4 +1,4 @@
-/* $Id: random.c,v 1.6 2010/09/30 11:13:28 bzfkocht Exp $ */
+/* $Id: random.c,v 1.7 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: random.c                                                      */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <stdio.h>
@@ -146,7 +146,6 @@ unsigned int rand_get_int32(void)
 }
 
 /* ----------------------------------------------------------------------------- */
-
 /* Should give a random number between min and max
  */
 int rand_get_range(int mini, int maxi)

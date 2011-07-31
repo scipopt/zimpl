@@ -1,4 +1,4 @@
-/* $Id: term2.c,v 1.12 2010/09/30 10:39:10 bzfkocht Exp $ */
+/* $Id: term2.c,v 1.13 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <stdio.h>
@@ -30,7 +30,7 @@
 #include <string.h>
 #include <assert.h>
 
-//#define TRACE 1 
+/* #define TRACE 1 */
 
 #include "bool.h"
 #include "mshell.h"

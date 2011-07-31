@@ -1,4 +1,4 @@
-/* $Id: stmt.c,v 1.26 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: stmt.c,v 1.27 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.c                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <stdio.h>
@@ -33,6 +33,7 @@
 #include "lint.h"
 #include "bool.h"
 #include "mshell.h"
+#include "stkchk.h"
 #include "ratlptypes.h"
 #include "numb.h"
 #include "elem.h"
@@ -194,6 +195,8 @@ void stmt_parse(Stmt* stmt)
 
 void stmt_execute(const Stmt* stmt)
 {
+   int inst_count = code_get_inst_count();
+   
    Trace("stmt_execute");
    
    assert(stmt_is_valid(stmt));
@@ -213,6 +216,12 @@ void stmt_execute(const Stmt* stmt)
       zpl_exit(EXIT_FAILURE);
    }
    show_suppressed_warnings();
+
+   if (verbose >= VERB_CHATTER)
+   {
+      printf("Instructions evaluated: %u\n", code_get_inst_count() - inst_count);
+      stkchk_maximum(stdout);
+   }
 }
 
 void stmt_print(FILE* fp, const Stmt* stmt)

@@ -1,3 +1,17 @@
+ - round() was working wrong with negative numbers.
+   It shoud be now rounding to nearest integer by 
+   rounding half away from zero.
+
+ - Implemented grouping of constraints. If two or more
+   constraints are connected by "and" they can be used 
+   together within a forall or if.
+
+ - It is now possible to conditional constraints without
+   an else part.
+
+ - Fixed bug in lp-file writer. Quadratic constraints are 
+   not to be divided by 2. Only objective functions. 
+
 3.1.0 30. Sep 2010 Release
 
  - Changed License to LGPL Version 3

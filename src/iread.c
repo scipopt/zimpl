@@ -1,4 +1,4 @@
-/* $Id: iread.c,v 1.36 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: iread.c,v 1.37 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -666,10 +666,10 @@ CodeNode* i_read(CodeNode* self)
    MFP*        fp;
    char*       s;
    char*       buf;
-   char*       field[MAX_FIELDS];
+   char**      field;
    int         fields;
-   int         param_field[MAX_FIELDS];  /* template parameter field number */
-   int         param_type [MAX_FIELDS];  /* template parameter field type */
+   int*        param_field;  /* template parameter field number */
+   int*        param_type;  /* template parameter field type */
    Bool        is_tuple_list;
    Bool        is_streaming;
    int         hi_field_no;
@@ -687,6 +687,14 @@ CodeNode* i_read(CodeNode* self)
    Trace("i_read");
    
    assert(code_is_valid(self));
+
+   field       = malloc(MAX_FIELDS * sizeof(*field));
+   param_field = malloc(MAX_FIELDS * sizeof(*param_field));
+   param_type  = malloc(MAX_FIELDS * sizeof(*param_type));
+
+   assert(field       != NULL);
+   assert(param_field != NULL);
+   assert(param_type  != NULL);
    
    rdef     = code_eval_child_rdef(self, 0);
    use      = rdef_get_use(rdef);
@@ -835,9 +843,11 @@ CodeNode* i_read(CodeNode* self)
       }
       tuple_free(tuple);
 
-      //fprintf(stderr, "*** Error 158: Read from file found no data\n");
-      //code_errmsg(self);
-      //zpl_exit(EXIT_FAILURE);
+      /*
+        fprintf(stderr, "*** Error 158: Read from file found no data\n");
+        code_errmsg(self);
+        zpl_exit(EXIT_FAILURE);
+      */
    }
    code_value_list(self, list);
 
@@ -846,6 +856,9 @@ CodeNode* i_read(CodeNode* self)
    
    free(comment);
    free(filename);
+   free(param_type);
+   free(param_field);
+   free(field);
    
    return self;
 }

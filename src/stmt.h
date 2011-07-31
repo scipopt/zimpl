@@ -1,4 +1,4 @@
-/* $Id: stmt.h,v 1.2 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: stmt.h,v 1.3 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.h                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #ifndef _STMT_H_
 #define _STMT_H_

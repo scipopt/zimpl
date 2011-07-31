@@ -1,4 +1,4 @@
-/* $Id: xlpglue.c,v 1.35 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: xlpglue.c,v 1.36 2011/07/31 15:10:47 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,9 +22,12 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
+/**@file   xlpglue.c 
+ * @brief  Mathematical Program Storage Interface 
+ * @author Thotrsten Koch 
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,8 +93,13 @@ void xlp_scale()
    lps_scale(lp);
 }
 
-void xlp_write(FILE* fp, LpFormat format, const char* text)
-{
+/** Write mathematical program to file
+ */
+void xlp_write(
+   FILE* fp,         /**< File pointer to write to */
+   LpFormat format,  /**< File format */
+   const char* text) /**< Comment to be written into the file */
+{  
    assert(fp != NULL);
 
    lps_write(lp, fp, format, text);

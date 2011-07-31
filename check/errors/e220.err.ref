@@ -1,5 +1,5 @@
-*** Error 145: Illegal size for subsets 3,
-               should be between 1 and 2
+*** Error 220: Illegal size for subsets 6,
+               should be between 3 and 5
 *** File: e220.zpl Line 2
-*** set S[]:=subsets({1..5}, 3, 2);
+*** set S[]:=subsets({1..5}, 3, 6);
 ***                              ^^^

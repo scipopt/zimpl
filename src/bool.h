@@ -1,4 +1,4 @@
-/* $Id: bool.h,v 1.6 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: bool.h,v 1.7 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bool.h                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #ifndef _BOOL_H_
 #define _BOOL_H_

@@ -1,4 +1,4 @@
-/* $Id: inst.h,v 1.47 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: inst.h,v 1.48 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef _INST_H_
@@ -72,6 +72,8 @@ extern CodeNode* i_bool_xor(CodeNode* self);
 extern CodeNode* i_bound_new(CodeNode* self);
 /*lint -sem(     i_check, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_check(CodeNode* self);
+/*lint -sem(     i_constraint_list, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_constraint_list(CodeNode* self);
 /*lint -sem(     i_constraint, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_constraint(CodeNode* self);
 /*lint -sem(     i_rangeconst, 1p == 1, type(1), @p == 1p) */
@@ -110,8 +112,8 @@ extern CodeNode* i_expr_sqrt(CodeNode* self);
 extern CodeNode* i_expr_fac(CodeNode* self);
 /*lint -sem(     i_expr_floor, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_floor(CodeNode* self);
-/*lint -sem(     i_expr_if, 1p == 1, type(1), @p == 1p) */
-extern CodeNode* i_expr_if(CodeNode* self);
+/*lint -sem(     i_expr_if_else, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_expr_if_else(CodeNode* self);
 /*lint -sem(     i_expr_intdiv, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_expr_intdiv(CodeNode* self);
 /*lint -sem(     i_expr_length, 1p == 1, type(1), @p == 1p) */

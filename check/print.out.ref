@@ -19,11 +19,11 @@ Name  : x
 Type  : Var
 Index : Range: |1|{<1>,<2>,<3>,<4>,<5>}
 Entries:
-	  0: <1> -> "x#1" real [0,oo] 
-	  1: <2> -> "x#2" real [0,oo] 
-	  2: <3> -> "x#3" real [0,oo] 
-	  3: <4> -> "x#4" real [0,oo] 
-	  4: <5> -> "x#5" real [0,oo] 
+	  0: <1> -> "x#1" real [-oo,oo] 
+	  1: <2> -> "x#2" real [-oo,20] 
+	  2: <3> -> "x#3" real [6,oo] 
+	  3: <4> -> "x#4" real [6,20] 
+	  4: <5> -> "x#5" real [6,oo] 
 
 
 Name  : y

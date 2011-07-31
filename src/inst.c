@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.130 2010/09/30 11:13:27 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.131 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,6 +113,20 @@ CodeNode* i_subto(CodeNode* self)
 
    conname_free();
    
+   code_value_void(self);
+
+   return self;
+}
+
+CodeNode* i_constraint_list(CodeNode* self)
+{
+   Trace("i_constraint_list");
+   
+   assert(code_is_valid(self));
+
+   (void)code_eval_child(self, 0); /* constraint */
+   (void)code_eval_child(self, 1); /* constraint */
+
    code_value_void(self);
 
    return self;
@@ -750,7 +764,7 @@ CodeNode* i_expr_round(CodeNode* self)
    return self;
 }
 
-CodeNode* i_expr_if(CodeNode* self)
+CodeNode* i_expr_if_else(CodeNode* self)
 {
    Trace("i_if");
 
@@ -4074,16 +4088,16 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    }
    assert(set_get_dim(set) > 0);
    
-   if ((subset_size_from < 1) || (subset_size_from > subset_size_to))
+   if (subset_size_from < 1 || subset_size_from > subset_size_to)
    {
       fprintf(stderr, "*** Error 145: Illegal size for subsets %d,\n", subset_size_from);
       fprintf(stderr, "               should be between 1 and %d\n", subset_size_to);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   if ((subset_size_to < subset_size_from) || (subset_size_to > used))
+   if (subset_size_to > used)
    {
-      fprintf(stderr, "*** Error 220: Illegal size for subsets %d,\n",subset_size_to);
+      fprintf(stderr, "*** Error 220: Illegal size for subsets %d,\n", subset_size_to);
       fprintf(stderr, "               should be between %d and %d\n", subset_size_from, used);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -4357,9 +4371,6 @@ CodeNode* i_print(CodeNode* self)
       break;
    case CODE_SYM :
       symbol_print(stdout, code_get_symbol(child));
-      break;
-   case CODE_NAME :
-      printf("Unknown name: %s", code_get_name(child));
       break;
    default :
       abort();

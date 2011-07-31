@@ -1,4 +1,4 @@
-/* $Id: code.c,v 1.36 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: code.c,v 1.37 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <stdio.h>
@@ -33,6 +33,7 @@
 
 #include "bool.h"
 #include "mshell.h"
+#include "stkchk.h"
 #include "ratlptypes.h"
 #include "numb.h"
 #include "elem.h"
@@ -513,6 +514,8 @@ inline CodeNode* code_eval(CodeNode* node)
    assert(code_is_valid(node));
 
    inst_count++;
+
+   stkchk_used();
    
    return (*node->eval)(node);
 }
@@ -523,7 +526,7 @@ Bool code_prune_tree(CodeNode* node)
    static Inst const prunable[] = 
    { 
       i_expr_abs, i_expr_sgn, i_expr_add, i_expr_card, i_expr_ceil, i_expr_div, i_expr_exp, 
-      i_expr_sqrt, i_expr_fac, i_expr_floor, i_expr_if, i_expr_intdiv, i_expr_length, i_expr_ln,
+      i_expr_sqrt, i_expr_fac, i_expr_floor, i_expr_if_else, i_expr_intdiv, i_expr_length, i_expr_ln,
       i_expr_log, i_expr_ord, i_expr_prod, i_expr_round, i_expr_sum, i_expr_max,
       i_expr_max2, i_expr_sglmax, i_expr_min, i_expr_min2, i_expr_sglmin, i_expr_mul, 
       i_expr_mod, i_expr_neg, i_expr_pow, i_expr_sub, i_expr_substr, NULL 

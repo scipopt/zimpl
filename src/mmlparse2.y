@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.7 2010/06/13 12:37:40 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.8 2011/07/31 15:10:46 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -70,7 +70,7 @@ extern void yyerror(const char* s);
  
 %}
 %pure-parser
-%expect 11
+%expect 12
 
 %union
 {
@@ -110,7 +110,7 @@ extern void yyerror(const char* s);
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
 %type <code> def_numb def_strg def_bool def_set
 %type <code> exec_do command
-%type <code> constraint vbool
+%type <code> constraint_list constraint vbool
 %type <code> cexpr cexpr_list cfactor cproduct cexpo cval
 %type <code> symidx tuple tuple_list sexpr sunion sproduct sval lexpr read read_par
 %type <code> idxset pure_idxset vval vproduct vfactor vexpo vexpr name_list
@@ -377,12 +377,12 @@ lower
    | CMP_GE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_GE '-' INFTY  { $$ = code_new_bound(BOUND_MINUS_INFTY); }
    | CMP_GE IF lexpr THEN cexpr ELSE '-' INFTY END {
-         $$ = code_new_inst(i_expr_if, 3, $3,
+         $$ = code_new_inst(i_expr_if_else, 3, $3,
             code_new_inst(i_bound_new, 1, $5),
             code_new_bound(BOUND_MINUS_INFTY));
       }
    | CMP_GE IF lexpr THEN '-' INFTY ELSE cexpr END {
-         $$ = code_new_inst(i_expr_if, 3, $3,
+         $$ = code_new_inst(i_expr_if_else, 3, $3,
             code_new_bound(BOUND_MINUS_INFTY),
             code_new_inst(i_bound_new, 1, $8));
       }
@@ -393,12 +393,12 @@ upper
    | CMP_LE cexpr      { $$ = code_new_inst(i_bound_new, 1, $2); }
    | CMP_LE INFTY      { $$ = code_new_bound(BOUND_INFTY); }
    | CMP_LE IF lexpr THEN cexpr ELSE INFTY END {
-         $$ = code_new_inst(i_expr_if, 3, $3,
+         $$ = code_new_inst(i_expr_if_else, 3, $3,
             code_new_inst(i_bound_new, 1, $5),
             code_new_bound(BOUND_INFTY));
       }
    | CMP_LE IF lexpr THEN INFTY ELSE cexpr END {
-         $$ = code_new_inst(i_expr_if, 3, $3,
+         $$ = code_new_inst(i_expr_if_else, 3, $3,
             code_new_bound(BOUND_INFTY),
             code_new_inst(i_bound_new, 1, $7));
       }
@@ -464,9 +464,33 @@ decl_obj
  * ----------------------------------------------------------------------------
  */
 decl_sub
-   : DECLSUB NAME DO constraint ';' {
+   : DECLSUB NAME DO constraint_list ';' {
         $$ = code_new_inst(i_subto, 2, code_new_name($2), $4);
      }
+   ;
+
+constraint_list
+   : constraint {
+        $$ = code_new_inst(i_constraint_list, 2, $1, code_new_inst(i_nop, 0));
+     }
+   | constraint_list AND constraint {
+        $$ = code_new_inst(i_constraint_list, 2, $1, $3);
+     }
+   | FORALL idxset DO constraint_list {
+        $$ = code_new_inst(i_constraint_list, 2, 
+           code_new_inst(i_forall, 2, $2, $4),
+           code_new_inst(i_nop, 0));
+     }
+   | IF lexpr THEN constraint_list END {
+        $$ = code_new_inst(i_constraint_list, 2, 
+           code_new_inst(i_expr_if_else, 3, $2, $4, code_new_inst(i_nop, 0)),
+           code_new_inst(i_nop, 0));
+      }
+   | IF lexpr THEN constraint_list ELSE constraint_list END {
+        $$ = code_new_inst(i_constraint_list, 2, 
+           code_new_inst(i_expr_if_else, 3, $2, $4, $6),
+           code_new_inst(i_nop, 0));
+      }
    ;
 
 constraint
@@ -509,12 +533,6 @@ constraint
            $1, $2,
            code_new_contype(CON_LHS), code_new_bits($6)); 
      }
-   | FORALL idxset DO constraint {
-        $$ = code_new_inst(i_forall, 2, $2, $4);
-     }
-   | IF lexpr THEN constraint ELSE constraint END {
-         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
-      }
    | VIF vbool THEN vexpr con_type vexpr ELSE vexpr con_type vexpr END con_attr_list {
          $$ = code_new_inst(i_vif_else, 8, $2, $4, $5, $6, $8, $9, $10, code_new_bits($12));
       }
@@ -762,7 +780,7 @@ vval
 */
    | VABS '(' vexpr ')' { $$ = code_new_inst(i_vabs, 1, $3); }
    | IF lexpr THEN vexpr ELSE vexpr END {
-         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+         $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);
       }
    | '(' vexpr ')'      { $$ = $2; }
    ;   
@@ -906,7 +924,7 @@ sval
           $$ = code_new_inst(i_set_indexset, 1, code_new_symbol($3));
        }
    | IF lexpr THEN sexpr ELSE sexpr END {
-         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+         $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);
       }
    ;
 
@@ -958,7 +976,7 @@ lexpr
             code_new_inst(i_tuple_new, 1, $3));
       }
    | IF lexpr THEN lexpr ELSE lexpr END {
-        $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+        $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);
      }
    ;
  
@@ -1071,7 +1089,7 @@ cval
          $$ = code_new_inst(i_expr_rand, 2, $3, $5);
       }
    | IF lexpr THEN cexpr ELSE cexpr END {
-         $$ = code_new_inst(i_expr_if, 3, $2, $4, $6);
+         $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);
       }
    | ORD '(' sexpr ',' cexpr ',' cexpr ')' {
          $$ = code_new_inst(i_expr_ord, 3, $3, $5, $7);

@@ -1,4 +1,4 @@
-/* $Id: load.c,v 1.38 2010/06/13 12:37:40 bzfkocht Exp $ */
+/* $Id: load.c,v 1.39 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <stdio.h>
@@ -138,8 +138,9 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
       if (!in_string && (c == '#'))
       {
          skip_comment(fp, lineno);
-         //do { c = mio_getc(fp); } while((c != EOF) && (c != '\n'));
-         //(*lineno)++;
+         /* do { c = mio_getc(fp); } while((c != EOF) && (c != '\n'));
+           (*lineno)++;
+         */
          continue;
       }
       (*buf)[cnt++] = (char)c;

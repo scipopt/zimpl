@@ -1,4 +1,4 @@
-/* $Id: ratlpstore.c,v 1.37 2010/06/13 12:37:41 bzfkocht Exp $ */
+/* $Id: ratlpstore.c,v 1.38 2011/07/31 15:10:46 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -22,7 +22,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1143,7 +1143,7 @@ void lps_delcon(
 
    lp->cons--;
    
-   //??? qme_first  term ?
+   /* ??? qme_first  term ? */
 
    assert(lps_valid(lp));
 }
