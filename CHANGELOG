@@ -1,3 +1,11 @@
+ - Made sure all warnings get silenced by  -v0
+
+ - Error 195 Genuine empty index set has been changed
+   to Warning 195.
+
+ - Zimpl now needs about 780 KB less stack space
+   when using a read statement.
+
  - round() was working wrong with negative numbers.
    It shoud be now rounding to nearest integer by 
    rounding half away from zero.

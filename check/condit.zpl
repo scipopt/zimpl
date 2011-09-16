@@ -1,4 +1,4 @@
-# $Id: condit.zpl,v 1.1 2011/07/31 15:10:45 bzfkocht Exp $
+# $Id: condit.zpl,v 1.2 2011/09/16 09:11:49 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: condit.zpl                                                    */
@@ -47,3 +47,23 @@ subto c2: forall <i> in I do
    else
        i * z[i] <= 7 
    end;
+
+
+subto c3: forall <i> in I:
+  if (i > 3)
+  then 
+     if (i == 4) 
+        then z[1] + z[2] == i
+        else z[2] + z[3] == i
+     end and
+     z[3] + z[4] == i and
+     z[4] + z[5] == i
+  else
+     if (i == 2) 
+        then z[1] + z[2] == i + 10
+        else z[2] + z[3] == i + 10
+     end and
+     z[3] + z[4] == i + 10 and
+     z[4] + z[5] == i + 10
+  end;
+

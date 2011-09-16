@@ -334,7 +334,7 @@
   The index tuple of an entry in a parameter initialization list must
   have the same dimension as the indexing set of the parameter. This
   is just another kind of error~134.
-\item[195 Genuine empty set as index set]\ \\
+\item[195 Genuine empty set as index set] (warning)\ \\
   The set of an index set is always the empty set.
 \item[196 Indexing tuple \code{xxx} has wrong dimension
            \code{yyy}, expected \code{zzz}]\ \\
@@ -423,6 +423,12 @@
   given lower bound and the cardinality of the base set.
 \item[221 The objective function has to be linear]\ \\
    Only objective functions with linear constraints are allowed.
+%
+% xlpglue.c
+\item[301 variable priority has to be integral] (warning)\ \\
+   If branching priorities for variables are given, these have to be integral.
+\item[302 SOS priority has to be integral] (warning)\ \\
+   If SOS priorities are given, these have to be integral.
 %
 \item[600 File format can only handle linear and quadratic constraints
          (warning)]\ \\

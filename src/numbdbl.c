@@ -1,4 +1,4 @@
-/* $Id: numbdbl.c,v 1.9 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: numbdbl.c,v 1.10 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -38,6 +38,7 @@
 #include "bool.h"
 #include "lint.h"
 #include "mshell.h"
+#include "random.h"
 #include "ratlptypes.h"
 #include "numb.h"
 #include "mme.h"
@@ -221,6 +222,7 @@ Numb* numb_copy(const Numb* source)
 
 /* TRUE wenn gleich, sonst FALSE
  */
+/* ??? This not the same as with gmp :-) */
 Bool numb_equal(const Numb* numb_a, const Numb* numb_b)
 {
    assert(numb_is_valid(numb_a));
@@ -411,7 +413,7 @@ void numb_neg(Numb* numb)
 {
    assert(numb_is_valid(numb));
 
-   numb->value.numb *= -1;
+   numb->value.numb *= -1.0;
 }
 
 void numb_abs(Numb* numb)
@@ -425,22 +427,22 @@ void numb_sgn(Numb* numb)
 {
    assert(numb_is_valid(numb));
 
-   if (numb->value.numb < 0)
-      numb->value.numb = -1;
-   else if (numb->value.numb > 0)
-      numb->value.numb =  1;
+   if (numb->value.numb < 0.0)
+      numb->value.numb = -1.0;
+   else if (numb->value.numb > 0.0)
+      numb->value.numb =  1.0;
    else
-      numb->value.numb =  0;
+      numb->value.numb =  0.0;
 }
 
 int numb_get_sgn(const Numb* numb)
 {
    assert(numb_is_valid(numb));
 
-   if (numb->value.numb < 0)
+   if (numb->value.numb < 0.0)
       return -1;
 
-   if (numb->value.numb > 0)
+   if (numb->value.numb > 0.0)
       return  1;
 
    return 0;
@@ -450,7 +452,10 @@ void numb_round(Numb* numb)
 {
    assert(numb_is_valid(numb));
 
-   numb->value.numb = (double)(int)(numb->value.numb + 0.5);
+   if (numb->value.numb > 0.0)
+      numb->value.numb = trunc(numb->value.numb + 0.5);
+   else
+      numb->value.numb = trunc(numb->value.numb - 0.5);      
 }
 
 void numb_ceil(Numb* numb)
@@ -476,7 +481,8 @@ Numb* numb_new_log(const Numb* numb_a)
 
    numb->value.numb = log10(numb_a->value.numb);
 
-   if (!finite(numb->value.numb))
+   /* !finite == !isfinite == isnan || isinf */
+   if (numb->value.numb != numb->value.numb) 
    {
       char temp[256];
 
@@ -496,7 +502,8 @@ Numb* numb_new_sqrt(const Numb* numb_a)
 
    numb->value.numb = sqrt(numb_a->value.numb);
 
-   if (!finite(numb->value.numb))
+   /* !finite == !isfinite == isnan || isinf */
+   if (numb->value.numb != numb->value.numb) 
    {
       char temp[256];
 
@@ -529,7 +536,8 @@ Numb* numb_new_ln(const Numb* numb_a)
 
    numb->value.numb = log(numb_a->value.numb);
 
-   if (!finite(numb->value.numb))
+   /* !finite == !isfinite == isnan || isinf */
+   if (numb->value.numb != numb->value.numb) 
    {
       char temp[256];
       
@@ -549,7 +557,7 @@ Numb* numb_new_rand(const Numb* mini, const Numb* maxi)
    assert(numb_is_valid(maxi));
    assert(numb_cmp(mini, maxi) <= 0);
    
-   numb->value.numb  = genrand_int32();
+   numb->value.numb  = rand_get_int32();
    numb->value.numb /= 4294967295.0; /* MAXINT */
    numb->value.numb *= maxi->value.numb - mini->value.numb;
    numb->value.numb += mini->value.numb;
@@ -664,118 +672,6 @@ Bool numb_is_number(const char *s)
    
    return isdigit(*s);
 }
-
-/* 
-   A C-program for MT19937, with initialization improved 2002/2/10.
-   Coded by Takuji Nishimura and Makoto Matsumoto.
-   This is a faster version by taking Shawn Cokus's optimization,
-   Matthe Bellew's simplification, Isaku Wada's real version.
-
-   Before using, initialize the state by using init_genrand(seed) .
-
-   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-   All rights reserved.                          
-
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-     1. Redistributions of source code must retain the above copyright
-        notice, this list of conditions and the following disclaimer.
-
-     2. Redistributions in binary form must reproduce the above copyright
-        notice, this list of conditions and the following disclaimer in the
-        documentation and/or other materials provided with the distribution.
-
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
-        permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-   Any feedback is very welcome.
-   http://www.math.keio.ac.jp/matumoto/emt.html
-   email: matumoto@math.keio.ac.jp
-*/
-
-/* Period parameters */  
-#define N            624
-#define M            397
-#define MATRIX_A     0x9908b0dfUL   /* constant vector a */
-#define UMASK        0x80000000UL /* most significant w-r bits */
-#define LMASK        0x7fffffffUL /* least significant r bits */
-#define MIXBITS(u,v) (((u) & UMASK) | ((v) & LMASK))
-#define TWIST(u,v)   ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
-
-static unsigned long  state[N]; /* the array for the state vector  */
-static int            left  = 1;
-static unsigned long* next;
-
-/* initializes state[N] with a seed */
-static void genrand_init(unsigned long s)
-{
-   int j;
-    
-   state[0] = s & 0xffffffffUL;
-
-   for(j = 1; j < N; j++)
-   {
-      state[j] = (1812433253UL * (state[j-1] ^ (state[j-1] >> 30)) + j); 
-
-      /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-      /* In the previous versions, MSBs of the seed affect   */
-      /* only MSBs of the array state[].                     */
-      /* 2002/01/09 modified by Makoto Matsumoto             */
-      state[j] &= 0xffffffffUL;  /* for >32 bit machines */
-   }
-   left = 1;
-}
-
-/* generates a random number on [0,0xffffffff]-interval */
-static unsigned long genrand_int32(void)
-{
-   unsigned long y;
-
-   if (--left == 0)
-   {
-      unsigned long* p = state;
-      int            j;
-
-      left = N;
-      next = state;
-    
-      for(j = N - M + 1; --j; p++) 
-         *p = p[M] ^ TWIST(p[0], p[1]);
-
-      for(j = M; --j; p++) 
-         *p = p[M-N] ^ TWIST(p[0], p[1]);
-
-      *p = p[M-N] ^ TWIST(p[0], state[0]);
-   }
-   y = *next++;
-
-   /* Tempering */
-   y ^= (y >> 11);
-   y ^= (y << 7) & 0x9d2c5680UL;
-   y ^= (y << 15) & 0xefc60000UL;
-   y ^= (y >> 18);
-
-   return y;
-}
-
-/* ----------------------------------------------------------------------------- */
-
 
 
 

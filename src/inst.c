@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.131 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.132 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -288,7 +288,8 @@ CodeNode* i_soset(CodeNode* self)
    const Numb*  typenumb;
    const Numb*  priority;
    SosType      type;
-   
+   int          ret;
+
    Trace("i_constraint");
    
    assert(code_is_valid(self));
@@ -308,12 +309,20 @@ CodeNode* i_soset(CodeNode* self)
    else
       type = SOS_TYPE2;
    
-   if (xlp_addsos_term(conname_get(), type, priority, term))
+   ret = xlp_addsos_term(conname_get(), type, priority, term);
+
+   if ((ret & 1) && stmt_trigger_warning(200))
    {
       fprintf(stderr,
          "--- Warning 200: Weights are not unique for SOS %s\n", conname_get());
       code_errmsg(self);
    }
+   if ((ret & 2) && stmt_trigger_warning(302))
+   {
+      fprintf(stderr,
+         "--- Warning 302: Priority has to be integral for SOS %s\n", conname_get());
+      code_errmsg(self);
+   }  
    conname_next();
 
    code_value_void(self);
@@ -2883,11 +2892,13 @@ static void insert_param_list_by_index(
    if (count < list_entries)
    {
       if (stmt_trigger_warning(205))
+      {
          fprintf(stderr,
             "--- Warning 205: %d excess entries for symbol %s ignored\n",
             list_entries - count,
-            symbol_get_name(sym));
-      code_errmsg(self);
+            symbol_get_name(sym));      
+         code_errmsg(self);
+      }
    }
 }
 
@@ -3520,19 +3531,20 @@ CodeNode* i_idxset_new(CodeNode* self)
 
    /* If we get any empty set with dimension 0, it is not the result
     * of some other operation, but genuine empty.
-    * This is an error.
+    * This is gives a warning.
     */
    if (dim == 0)
    {
       assert(set_get_members(set) == 0);
 
-      fprintf(stderr, "*** Error 195: Genuine empty index as index set\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
+      if (stmt_trigger_warning(195))
+      {
+         fprintf(stderr, "--- Warning 195: Genuine empty index as index set\n");
+         code_errmsg(self);
+      }
    }
    /* Attention: set_get_members(set) == 0 is possible!
     */
-   assert(dim > 0);
    
    /* If no index tuple was given, we construct one.
     * This will always be ok.
@@ -3552,11 +3564,11 @@ CodeNode* i_idxset_new(CodeNode* self)
    else
    {
       /* If a index tuple was given, check if
-       * - the dimension is correct
+       * - the dimension is correct, sets of dim 0 fit any tuple
        * - any not NAME type entries are compatible.
        * - the set is unrestricted, ie all NAMES, no WITH.
        */    
-      if (tuple_get_dim(tuple) != dim)
+      if (dim > 0 && tuple_get_dim(tuple) != dim)
       {
          fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
          tuple_print(stderr, tuple);

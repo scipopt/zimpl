@@ -1,4 +1,4 @@
-/* $Id: iread.c,v 1.37 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: iread.c,v 1.38 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: iread.c                                                       */
@@ -799,9 +799,12 @@ CodeNode* i_read(CodeNode* self)
          {
             if (fields == MAX_FIELDS)
             {
-               fprintf(stderr, "--- Warning 213: More than %d input fields in line %d of %s\n",
-                  fields, line, filename);
-               code_errmsg(self);
+               if (stmt_trigger_warning(213))
+               {
+                  fprintf(stderr, "--- Warning 213: More than %d input fields in line %d of %s\n",
+                     fields, line, filename);
+                  code_errmsg(self);
+               }
             }
             if (is_tuple_list)
                list = process_tuple_stream(self, list, rdef, line,

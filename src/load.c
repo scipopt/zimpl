@@ -1,4 +1,4 @@
-/* $Id: load.c,v 1.39 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: load.c,v 1.40 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: load.c                                                        */
@@ -111,7 +111,7 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
          if (cnt > 0)
          {
             (*buf)[cnt] = '\0';
-            if (verbose > VERB_QUIET)
+            if (stmt_trigger_warning(162))
                fprintf(stderr, "--- Warning 162: Line %d: Trailing \"%.20s\" ignored\n",
                   *lineno, *buf);
          }

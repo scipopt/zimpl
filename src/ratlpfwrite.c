@@ -1,4 +1,4 @@
-/* $Id: ratlpfwrite.c,v 1.23 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: ratlpfwrite.c,v 1.24 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -241,9 +241,12 @@ static void write_row(
 
       if (format != LP_FORM_PIP)
       {
-         fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
-         fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
-            con->name, term_get_degree(term));
+         if (verbose > 0)
+         {
+            fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
+            fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
+               con->name, term_get_degree(term));
+         }
          only_comment = TRUE;
       }
       assert(numb_equal(term_get_constant(term), numb_zero()));

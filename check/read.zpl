@@ -1,4 +1,4 @@
-# $Id: read.zpl,v 1.6 2010/06/10 19:42:40 bzfkocht Exp $
+# $Id: read.zpl,v 1.7 2011/09/16 09:11:49 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: read.zpl                                                      *
@@ -48,3 +48,33 @@ subto c1: x <= a1; # <= 20001
 subto c2: x >= b1 - sum <i> in { 21 .. 417 by 4 } : i; # >= 0
 subto c3: e1 * x <= c1;
 subto c4: fix * x == d1;
+
+set F := { read "read3.dat" as "<1n>" match "Z" }; # empty
+set I := {};
+set J := I * I;
+set K := I + { 1..6 };
+set L := I * { 7..9 };
+set M := I + { <"a","b">, <"c","d"> };
+set N := { <i> in {} : i };
+
+do check card(F) == 0;
+do check card(I) == 0;
+do check card(K) == 6;
+do check card(L) == 0;
+do check card(M) == 2;
+do check card(N) == 0;
+
+var z[I];
+
+subto c5: forall <i> in I do
+   z[i] == z[j];
+
+subto c6: forall <i> in F do
+   z[i] == z[j];
+
+subto c7: forall <i,j> in J with i > j do
+   z[i] == z[j];
+
+subto c8: forall <i> in L do
+   z[i] == z[j];
+

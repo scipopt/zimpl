@@ -1,4 +1,4 @@
-/* $Id: zimpllib.c,v 1.28 2011/07/31 15:10:47 bzfkocht Exp $ */
+/* $Id: zimpllib.c,v 1.29 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -184,7 +184,8 @@ void zpl_add_parameter(const char* def)
 
    if (strlen(name) == 0 || strlen(value) == 0 || !is_valid_identifier(name))
    {
-      fprintf(stderr, warning, def);
+      if (verbose > VERB_QUIET)
+         fprintf(stderr, warning, def);
       free(name);
       return;
    }

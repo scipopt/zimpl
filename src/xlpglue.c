@@ -1,4 +1,4 @@
-/* $Id: xlpglue.c,v 1.36 2011/07/31 15:10:47 bzfkocht Exp $ */
+/* $Id: xlpglue.c,v 1.37 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -26,7 +26,7 @@
  */
 /**@file   xlpglue.c 
  * @brief  Mathematical Program Storage Interface 
- * @author Thotrsten Koch 
+ * @author Thorsten Koch 
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -374,7 +374,7 @@ Var* xlp_addvar(
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    if (mpz_get_si(mpq_denref(temp)) != 1)
       if (verbose > VERB_QUIET)
-         fprintf(stderr, "--- Warning variable priority has to be integral\n");
+         fprintf(stderr, "--- Warning 301: variable priority has to be integral\n");
 
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    lps_setpriority(var, (int)mpz_get_si(mpq_numref(temp)));
@@ -408,19 +408,12 @@ Bool xlp_addsos_term(
    
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    if (mpz_get_si(mpq_denref(temp)) != 1)
-   {
-      if (verbose > VERB_QUIET)
-      {
-         fprintf(stderr, "--- Warning SOS priority has to be integral\n");
-         has_nonintprio = TRUE;
-      }
-   }
+      has_nonintprio = TRUE;
 
    /*lint -e{663} supress "Suspicious array to pointer conversion" */
    sos = lps_addsos(lp, name, type, (int)mpz_get_si(mpq_numref(temp)));
 
    assert(sos != NULL);
-
    
    hash = hash_new(HASH_NUMB, term_get_elements(term));
 
@@ -450,7 +443,7 @@ Bool xlp_addsos_term(
 
    mpq_clear(temp);
    
-   return has_duplicates || has_nonintprio;
+   return (has_duplicates ? 1 : 0) + (has_nonintprio ? 2 : 0);
 }
 
 const char* xlp_getvarname(const Var* var)

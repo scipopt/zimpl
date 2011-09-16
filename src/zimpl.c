@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.88 2011/07/31 15:10:47 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.89 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -298,9 +298,10 @@ int main(int argc, char* const* argv)
             format = LP_FORM_RLP;
             break;
          default :
-            fprintf(stderr,
-               "--- Warning 103: Output format \"%s\" not supported, using LP format\n",
-               optarg);
+            if (verbose > VERB_QUIET)
+               fprintf(stderr,
+                  "--- Warning 103: Output format \"%s\" not supported, using LP format\n",
+                  optarg);
             format = LP_FORM_LPF;
             break;
          }

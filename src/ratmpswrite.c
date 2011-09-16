@@ -1,4 +1,4 @@
-/* $Id: ratmpswrite.c,v 1.21 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: ratmpswrite.c,v 1.22 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -115,9 +115,12 @@ static void write_vars(
 
             if (first)
             {
-               fprintf(stderr, "%s\n%s\n",
-                  "--- Warning: Objective function inverted to make",
-                  "             minimization problem for MPS output\n");
+               if (verbose > 0)
+               {
+                  fprintf(stderr, "%s\n%s\n",
+                     "--- Warning: Objective function inverted to make",
+                     "             minimization problem for MPS output\n");
+               }
                first = FALSE;
             }
          }

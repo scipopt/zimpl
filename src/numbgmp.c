@@ -1,4 +1,4 @@
-/* $Id: numbgmp.c,v 1.35 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: numbgmp.c,v 1.36 2011/09/16 09:11:50 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -577,7 +577,8 @@ Numb* numb_new_log(const Numb* numb)
 
    d = log10(mpq_get_d(numb->value.numb));
 
-   if (!finite(d))
+   /* !finite == !isfinite == isnan || isinf */
+   if (d != d) /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 700: log(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
@@ -597,7 +598,8 @@ Numb* numb_new_sqrt(const Numb* numb)
 
    d = sqrt(mpq_get_d(numb->value.numb));
 
-   if (!finite(d))
+   /* !finite == !isfinite == isnan || isinf */
+   if (d != d) /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 701: sqrt(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
@@ -628,7 +630,8 @@ Numb* numb_new_ln(const Numb* numb)
 
    d = log(mpq_get_d(numb->value.numb));
 
-   if (!finite(d))
+   /* !finite == !isfinite == isnan || isinf */
+   if (d != d) /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 702: ln(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
