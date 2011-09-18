@@ -1,4 +1,4 @@
-/* $Id: conname.c,v 1.18 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: conname.c,v 1.19 2011/09/18 10:22:35 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -47,7 +47,7 @@
 static char*        cpfix  = NULL;
 static int          count  = 1;
 static char*        cname  = NULL;
-static unsigned int clen   = 0;
+static size_t       clen   = 0;
 static ConNameForm  cform  = CON_FORM_NAME;
 
 void conname_format(ConNameForm format)
@@ -103,8 +103,8 @@ Bool conname_set(const char* prefix)
 
 const char* conname_get()
 {
-   char*        localstr;
-   unsigned int newlen;
+   char*  localstr;
+   size_t newlen;
    
    assert(cpfix != NULL);
    assert(cname != NULL);

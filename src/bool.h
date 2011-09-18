@@ -1,4 +1,4 @@
-/* $Id: bool.h,v 1.7 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: bool.h,v 1.8 2011/09/18 10:22:35 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bool.h                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

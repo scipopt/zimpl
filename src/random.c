@@ -1,4 +1,4 @@
-/* $Id: random.c,v 1.7 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: random.c,v 1.8 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: random.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -89,9 +89,9 @@
 #define MIXBITS(u,v) (((u) & UMASK) | ((v) & LMASK))
 #define TWIST(u,v)   ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
 
-static unsigned int  state[N]; /* the array for the state vector  */
-static int           left  = 1;
-static unsigned int* next;
+static unsigned int        state[N]; /* the array for the state vector  */
+static int                 left  = 1;
+static const unsigned int* next;
 
 /* initializes state[N] with a seed */
 void rand_init(unsigned long s)

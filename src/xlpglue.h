@@ -1,4 +1,4 @@
-/* $Id: xlpglue.h,v 1.24 2011/07/31 15:10:47 bzfkocht Exp $ */
+/* $Id: xlpglue.h,v 1.25 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -61,7 +61,7 @@ extern Bool     xlp_addcon_term(const char* name, ConType type,
 extern Var*     xlp_addvar(const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
 /*lint -sem(    xlp_addsos, nulterm(1), 1p && 3p == 1 && 4p == 1, @p == 1) */
-extern Bool     xlp_addsos_term(const char* name, SosType type, const Numb* priority, const Term* term);
+extern int      xlp_addsos_term(const char* name, SosType type, const Numb* priority, const Term* term);
 /*lint -sem(    xlp_getvarname, 1p == 1, nulterm(@) */
 const char*     xlp_getvarname(const Var* var);
 /*lint -sem(    xlp_getclass, 1p == 1) */

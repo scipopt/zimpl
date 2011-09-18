@@ -1,4 +1,4 @@
-/* $Id: numbdbl.c,v 1.10 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: numbdbl.c,v 1.11 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbdbl.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

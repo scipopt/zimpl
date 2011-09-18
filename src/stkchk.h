@@ -1,4 +1,4 @@
-/* $Id: stkchk.h,v 1.1 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: stkchk.h,v 1.2 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stkchk.h                                                      */
@@ -28,8 +28,8 @@
 #define _STKCHK_H_
 
 #ifndef NDEBUG
-extern void*  stkchk_start;
-extern size_t stkchk_maxi;
+extern const void* stkchk_start;
+extern size_t      stkchk_maxi;
 
 extern void   stkchk_init_x(void);
 extern size_t stkchk_used_x(void);

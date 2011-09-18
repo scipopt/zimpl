@@ -1,11 +1,9 @@
-
+#ifndef __STRING_H
+#define __STRING_H
+#ifdef _lint
 /*  string.h  --  POSIX header
     Copyright 1992, Gimpel Software, All Rights Reserved
  */
-
-#if defined(_lint) && !defined(__STRING_H)
-#define __STRING_H
-
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
@@ -38,4 +36,5 @@ char * strstr(const char *, const char *);
 char * strtok(char *, const char *);
 size_t strxfrm(char *, const char *, size_t);
 
+#endif
 #endif

@@ -1,4 +1,4 @@
-/* $Id: numbgmp.c,v 1.36 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: numbgmp.c,v 1.37 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -532,6 +532,7 @@ void numb_round(Numb* numb)
    mpq_init(h);
    mpq_set_d(h, 0.5);
 
+   /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
    if (mpq_sgn(numb->value.numb) >= 0)
       mpq_add(numb->value.numb, numb->value.numb, h);
    else
@@ -578,7 +579,7 @@ Numb* numb_new_log(const Numb* numb)
    d = log10(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /* == isnan(d) || isinf(d) */
+   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 700: log(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
@@ -599,7 +600,7 @@ Numb* numb_new_sqrt(const Numb* numb)
    d = sqrt(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /* == isnan(d) || isinf(d) */
+   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 701: sqrt(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
@@ -631,7 +632,7 @@ Numb* numb_new_ln(const Numb* numb)
    d = log(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /* == isnan(d) || isinf(d) */
+   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 702: ln(%f)", mpq_get_d(numb->value.numb));
       perror(temp);

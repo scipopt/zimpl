@@ -1,4 +1,4 @@
-/* $Id: ratlpfwrite.c,v 1.24 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: ratlpfwrite.c,v 1.25 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -57,8 +57,8 @@ static void permute(int size, void** tab)
    for(i = 0; i < size; i++)
    {
       void* t;
-      int   a = rand_get_range(0, size - 1);
-      int   b = rand_get_range(0, size - 1);
+      int   a = rand_get_range(0, size - 1); /*lint !e426 Call to function violates semantic (1n<2n)*/
+      int   b = rand_get_range(0, size - 1); /*lint !e426 Call to function violates semantic (1n<2n)*/
 
       assert(a >= 0);
       assert(a <  size);
@@ -81,7 +81,7 @@ static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t va
       fprintf(fp, force_sign ? "%+.15g" : "%.15g", mpq_get_d(val));
       break;
    case LP_FORM_HUM :
-      if (force_sign && (mpq_sgn(val) > 0))
+      if (force_sign && (mpq_sgn(val) > 0)) /*lint !e634 Strong type mismatch (type 'Bool') */
          fprintf(fp, "+");
 
       mpq_out_str(fp, 10, val);

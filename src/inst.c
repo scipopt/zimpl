@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.132 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.133 2011/09/18 10:22:35 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -2548,22 +2548,22 @@ CodeNode* i_set_expr(CodeNode* self)
          }
          assert(is_tuple_list || elem != NULL);
 
-         if (list == NULL)
+         if (is_tuple_list)
          {
-            list  = is_tuple_list
-               ? list_new_tuple(code_get_tuple(cexpr_or_tuple))
-               : list_new_elem(elem);
+            if (list == NULL)
+               list = list_new_tuple(code_get_tuple(cexpr_or_tuple));
+            else
+               list_add_tuple(list, code_get_tuple(cexpr_or_tuple));
          }
          else
          {
-            if (is_tuple_list)
-               list_add_tuple(list, code_get_tuple(cexpr_or_tuple));
+            assert(elem != NULL);
+
+            if (list == NULL)
+               list = list_new_elem(elem);
             else
                list_add_elem(list, elem);
-         }
-         if (!is_tuple_list)
-         {
-            assert(elem != NULL);
+
             elem_free(elem);
          }
       }

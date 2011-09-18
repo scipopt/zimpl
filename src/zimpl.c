@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.90 2011/09/18 08:23:36 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.91 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -350,6 +350,8 @@ int main(int argc, char* const* argv)
    default :
       abort();
    }
+   assert(extension != NULL);
+
    outfile = add_extention(basefile, extension);
    tblfile = add_extention(basefile, ".tbl");
    ordfile = add_extention(basefile, ".ord");

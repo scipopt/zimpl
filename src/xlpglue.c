@@ -1,4 +1,4 @@
-/* $Id: xlpglue.c,v 1.37 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: xlpglue.c,v 1.38 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -384,7 +384,7 @@ Var* xlp_addvar(
    return var;
 }
 
-Bool xlp_addsos_term(
+int xlp_addsos_term(
    const char*  name,
    SosType      type,
    const Numb*  priority,

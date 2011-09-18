@@ -1,4 +1,4 @@
-/* $Id: metaio.c,v 1.16 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: metaio.c,v 1.17 2011/09/18 10:22:35 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2006-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2006-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -401,7 +401,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* const progstrg = 
-      "# $Id: metaio.c,v 1.16 2011/07/31 15:10:46 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.17 2011/09/18 10:22:35 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

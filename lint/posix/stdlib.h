@@ -1,10 +1,10 @@
+#ifndef __STDLIB_H
+#define __STDLIB_H
+#ifdef _lint
 
 /*  stdlib.h  --  POSIX header
     Copyright 1992, Gimpel Software, All Rights Reserved
  */
-
-#if defined(_lint) && !defined(__STDLIB_H)
-#define __STDLIB_H
 
 #ifndef __SIZE_T
 #define __SIZE_T
@@ -77,4 +77,5 @@ extern int wctomb(char *, wchar_t);
 extern size_t mbstowcs(wchar_t *, const char *, size_t);
 extern size_t wcstombs(char *, const wchar_t *, size_t);
 
+#endif
 #endif

@@ -1,4 +1,4 @@
-/* $Id: zimpllib.c,v 1.29 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: zimpllib.c,v 1.30 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -75,7 +75,7 @@ void zpl_print_banner(FILE* fp, Bool with_license)
    const char* const banner = 
       "****************************************************\n" \
       "* Zuse Institute Mathematical Programming Language *\n" \
-      "* Release %-5s Copyright (C)2009 by Thorsten Koch *\n" \
+      "* Release %-5s Copyright (C)2011 by Thorsten Koch *\n" \
       "****************************************************\n";
 
    const char* const license = 

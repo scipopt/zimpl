@@ -1,4 +1,4 @@
-/* $Id: stkchk.c,v 1.1 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: stkchk.c,v 1.2 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stkchk.c                                                      */
@@ -29,14 +29,14 @@
 #include <stdio.h>
 #include "stkchk.h"
 
-void*  stkchk_start = 0;
-size_t stkchk_maxi  = 0;
+const void*  stkchk_start = 0;
+size_t       stkchk_maxi  = 0;
 
 void stkchk_init_x()
 {
    int a;
 
-   stkchk_start = &a;
+   stkchk_start = &a; /*lint !e789 Assigning address of auto variable 'a' to static */
    stkchk_maxi  = 0;
 }
 

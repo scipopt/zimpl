@@ -1,4 +1,4 @@
-/* $Id: tuple.c,v 1.33 2011/07/31 15:10:47 bzfkocht Exp $ */
+/* $Id: tuple.c,v 1.34 2011/09/18 10:22:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -281,12 +281,12 @@ char* tuple_tostr(const Tuple* tuple)
 
 char* tuple_tostr(const Tuple* tuple)
 {
-   unsigned int   size = TUPLE_STR_SIZE;
-   unsigned int   len  = 1; /* one for the zero '\0' */
-   char*          str  = malloc(size);
-   char*          selem;
-   unsigned int   selemlen;
-   int            i;
+   size_t  size = TUPLE_STR_SIZE;
+   size_t  len  = 1; /* one for the zero '\0' */
+   char*   str  = malloc(size);
+   char*   selem;
+   size_t  selemlen;
+   int     i;
    
    assert(tuple_is_valid(tuple));
    assert(str != NULL);
