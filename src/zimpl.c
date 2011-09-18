@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.89 2011/09/16 09:11:50 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.90 2011/09/18 08:23:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -312,7 +312,6 @@ int main(int argc, char* const* argv)
       case 'V' :
          printf("%s\n", VERSION);
          exit(0);
-         break;
       case '?':
          fprintf(stderr, usage, argv[0]);
          exit(0);

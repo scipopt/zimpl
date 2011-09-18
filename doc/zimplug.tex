@@ -314,7 +314,9 @@ is to assume maximization.
 \begin{tabular}{lp{104mm}}
 \toprule
 -t \emph{format} & Selects the output format. Can be either \code{lp},
-                  which is default, or \code{mps}, or \code{hum}, which
+                  which is default, or \code{mps}, or \code{pip},
+                  which is polynomial IP,
+                  or \code{hum}, which
                   is only human readable, or \code{rlp}, which is the
 		  same as \code{lp} but with rows and columns randomly
                   permuted. The permutation is depending on the
@@ -327,6 +329,8 @@ is to assume maximization.
                   string is replaced by the output filename. For example 
                   \code{-F "gzip -c >\%s.gz"} would compress all the 
                   output files.\\
+-l \emph{length} & Sets maximal length of variables and
+                  constraints for \code{lp} format files to \emph{length}.\\
 -n \emph{cform}  & Select the format for the generation of constraint
                   names. Can be \code{cm} which will number them 
                   $1\ldots n$ with a `c' in front. \code{cn} will use 
@@ -793,7 +797,7 @@ file. The syntax is:
 \smallskip
 \code{read} \emph{filename} \code{as} \emph{template} 
 [\code{skip} \emph{n}] [\code{use} \emph{n}] 
-[\code{fs} \emph{s}] [\code{match} \emph{s}] [\code{comment} \emph{s}]
+[\code{match} \emph{s}] [\code{comment} \emph{s}]
 
 \smallskip
 \noindent\emph{filename} is the name of the file to read.
@@ -1061,6 +1065,7 @@ values are written to a \cplex \code{ord} branching order file if the
 \begin{verbatim}
 var x1;
 var x2 binary;
+var x3 integer >= -infinity      # free variable
 var y[A] real >= 2 <= 18;
 var z[<a,b> in C] integer 
       >= a * 10 <= if b <= 3 then p[b] else infinity end; 

@@ -1,4 +1,4 @@
-/* $Id: setmulti.c,v 1.22 2011/07/31 15:10:46 bzfkocht Exp $ */
+/* $Id: setmulti.c,v 1.23 2011/09/18 08:23:36 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -177,8 +177,9 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          ? entry_get_tuple(list_get_entry(list, &le))
          : list_get_tuple(list, &le);
 
+      assert(tuple != NULL);
       assert(hash != NULL || check == SET_CHECK_NONE);
-      
+
       if (hash != NULL && hash_has_tuple(hash, tuple))
       {
          if (check == SET_CHECK_WARN)
