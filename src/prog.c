@@ -1,4 +1,4 @@
-/* $Id: prog.c,v 1.23 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: prog.c,v 1.24 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -58,6 +58,8 @@
 #define PROG_SID         0x50726f67
 #define PROG_EXTEND_SIZE 100
 
+static void* lp_data = NULL;
+
 struct program
 {
    SID
@@ -66,6 +68,11 @@ struct program
    int         extend;
    Stmt**      stmt;
 };
+
+void* prog_get_lp()
+{
+   return lp_data;
+}
 
 Prog* prog_new()
 {
@@ -144,13 +151,15 @@ void prog_print(FILE* fp, const Prog* prog)
       stmt_print(fp, prog->stmt[i]);
 }
 
-void prog_execute(const Prog* prog)
+void prog_execute(const Prog* prog, void* lp)
 {
    int i;
 
    assert(prog_is_valid(prog));
 
    code_clear_inst_count();
+
+   lp_data = lp;
 
    for(i = 0; i < prog->used; i++)
    {

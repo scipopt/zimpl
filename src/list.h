@@ -1,4 +1,4 @@
-/* $Id: list.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: list.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: list.h                                                        */
@@ -33,6 +33,10 @@
 
 #ifndef _MME_H_
 #error "Need to include mme.h before list.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #define LIST_NULL ((List*)0)
@@ -84,4 +88,7 @@ extern const List*  list_get_list(const List* list, ListElem** idxp);
 /*lint -sem(        list_print, 1p == 1 && 2p == 1) */
 extern void         list_print(FILE* fp, const List* list);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _LIST_H_ */

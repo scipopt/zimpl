@@ -1,4 +1,4 @@
-/* $Id: stmt.h,v 1.4 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: stmt.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stmt.h                                                        */
@@ -29,6 +29,10 @@
 
 #ifndef _BOOL_H_
 #error "Need to include bool.h before stmt.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 enum statement_type
@@ -75,4 +79,7 @@ extern void         parse_stmt(const Stmt* stmt);
 extern const Stmt*  scan_get_stmt(void);
 extern int          scan_get_column(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _STMT_H_ */

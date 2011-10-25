@@ -1,4 +1,4 @@
-/* $Id: prog.h,v 1.4 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: prog.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.h                                                        */
@@ -34,10 +34,15 @@
 #error "Need to include stmt.h before prog.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct program           Prog;
 
 /* prog.c
  */
+extern void*        prog_get_lp(void);
 /*lint -sem(        prog_new, 1p) */
 extern Prog*        prog_new(void);
 /*lint -sem(        prog_free, custodial(1), 1p == 1) */
@@ -51,7 +56,7 @@ extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 /*lint -sem(        prog_print, 1p == 1 && 2p == 1) */
 extern void         prog_print(FILE* fp, const Prog* prog);
 /*lint -sem(        prog_execute, 1p == 1) */
-extern void         prog_execute(const Prog* prog);
+extern void         prog_execute(const Prog* prog, void* lp);
 /*lint -sem(        prog_tostr, 1p == 1 && nulterm(2) && 3n > 0, nulterm(@)) */
 extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, int max_output_line_len);
 
@@ -60,4 +65,7 @@ extern char*        prog_tostr(const Prog* prog, const char* prefix, const char*
 /*lint -sem(        prog_load, nulterm(3), 1p == 1) */
 extern void         prog_load(Prog* prog, const char* cmd, const char* filename);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _PROG_H_ */

@@ -1,3 +1,14 @@
+Braucht man hier den else part und wenn ja warum.
+subto c2: sum <i> in I :
+     if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
+subto c1: if (0 == 1) then x + y else x end <= 0; geht
+subto c1: if (0 == 1) then x + y else 2 end <= 0; geht nicht
+subto c1: if (0 == 1) then x + y end <= 0; geht nicht
+
+need_startval dient nur dazu festzustellen ob constraints 
+beim erzeugen gegen die werte gecheckt werden. Das sollte
+auch automatisch gehen.
+
 numbdbl auf long double umstellen bzw. __float128 bei gnu
 
 Bei Read von leeren Daten die dimension des tuples aus

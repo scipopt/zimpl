@@ -1,4 +1,4 @@
-/* $Id: hash.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: hash.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.h                                                        */
@@ -40,10 +40,14 @@
 #error "Need to include tuple.h before hash.h"
 #endif
 #ifndef _MME_H_
-#error "Need to include mme.h before hash.h (Entry)"
+#error "Need to include mme.h before hash.h (Entry,Mono)"
 #endif
 
-enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH_NUMB };
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH_NUMB, HASH_MONO };
 
 typedef enum hash_type           HashType;
 typedef struct hash              Hash;
@@ -58,6 +62,8 @@ extern Bool         hash_is_valid(const Hash* hash);
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */
 extern void         hash_add_entry(Hash* hash, const Entry* entry);
+/*lint -sem(        hash_add_mono, 1p == 1 && 2p == 1) */
+extern void         hash_add_mono(Hash* hash, const Mono* mono);
 /*lint -sem(        hash_add_elem_idx, 1p == 1 && 2p == 1 && 3n >= 0) */
 extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx);
 /*lint -sem(        hash_add_numb, 1p == 1 && 2p == 1) */
@@ -70,7 +76,12 @@ extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 extern Bool         hash_has_numb(const Hash* hash, const Numb* numb);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
+/*lint -sem(        hash_lookup_mono, 1p == 1 && 2p == 1) */
+extern const Mono*  hash_lookup_mono(const Hash* hash, const Mono* mono);
 /*lint -sem(        hash_lookup_elem_idx, 1p == 1 && 2p == 1) */
 extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _HASH_H_ */

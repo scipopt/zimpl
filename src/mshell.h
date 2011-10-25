@@ -1,4 +1,4 @@
-/* $Id: mshell.h,v 1.13 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: mshell.h,v 1.14 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.h                                                      */
@@ -27,6 +27,10 @@
 
 #ifndef _MSHELL_H_
 #define _MSHELL_H_  
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*lint -sem(  mem_malloc, nulterm(2), 1n > 0 && 2p, @P == malloc(1n)) */
 extern void*  mem_malloc(size_t, const char*, const int);
@@ -78,6 +82,10 @@ extern void   mem_hide_x(void* p, const char* file, const int line);
 #define mem_hide(a)         /**/
 
 #endif /* !NO_MSHELL */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _MSHELL_H_ */
 

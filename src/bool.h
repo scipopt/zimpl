@@ -1,4 +1,4 @@
-/* $Id: bool.h,v 1.8 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: bool.h,v 1.9 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bool.h                                                        */
@@ -27,6 +27,10 @@
 #ifndef _BOOL_H_
 #define _BOOL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int            Bool;
 
 #ifndef TRUE
@@ -36,4 +40,7 @@ typedef int            Bool;
 #define FALSE           ((Bool)0)
 #endif
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _BOOL_H_ */

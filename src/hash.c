@@ -1,4 +1,4 @@
-/* $Id: hash.c,v 1.34 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: hash.c,v 1.35 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -41,6 +41,7 @@
 #include "set.h"
 #include "symbol.h"
 #include "entry.h"
+#include "mono.h"
 #include "hash.h"
 
 #define HASH_SID      0x48617368
@@ -62,6 +63,7 @@ struct hash_element
       const Entry* entry;
       SetElemIdx   elem_idx;
       const Numb*  numb;
+      const Mono*  mono;
    } value;
    HElem* next;
 };
@@ -142,7 +144,8 @@ Bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
       && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
-       || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB)
+       || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB
+       || hash->type == HASH_MONO)
       && SID_ok(hash, HASH_SID));
 }
 
@@ -195,6 +198,23 @@ void hash_add_numb(Hash* hash, const Numb* numb)
    
    hcode               = numb_hash(numb) % hash->size;
    he->value.numb      = numb;
+   he->next            = hash->bucket[hcode];
+   hash->bucket[hcode] = he;
+   hash->elems++;
+}
+
+void hash_add_mono(Hash* hash, const Mono* mono)
+{
+   HElem*       he = blk_alloc(sizeof(*he));
+   unsigned int hcode;
+
+   assert(hash_is_valid(hash));
+   assert(mono_is_valid(mono));
+   assert(hash->type == HASH_MONO);
+   assert(he != NULL);
+   
+   hcode               = mono_hash(mono) % hash->size;
+   he->value.mono      = mono;
    he->next            = hash->bucket[hcode];
    hash->bucket[hcode] = he;
    hash->elems++;
@@ -267,6 +287,30 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
    assert(entry_is_valid(he->value.entry));
 
    return he->value.entry;
+}
+
+/* Liefert NULL wenn nicht gefunden.
+ */
+const Mono* hash_lookup_mono(const Hash* hash, const Mono* mono)
+{
+   unsigned int hcode = mono_hash(mono) % hash->size;
+   HElem*       he;
+   
+   assert(hash_is_valid(hash));
+   assert(mono_is_valid(mono));
+
+   for(he = hash->bucket[hcode]; he != NULL; he = he->next)
+      if (mono_equal(he->value.mono, mono))
+         break;
+
+   if (he == NULL)
+      return NULL;
+
+   assert(he != NULL);
+
+   assert(mono_is_valid(he->value.mono));
+
+   return he->value.mono;
 }
 
 void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)

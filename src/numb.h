@@ -1,4 +1,4 @@
-/* $Id: numb.h,v 1.4 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: numb.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numb.c                                                        */
@@ -119,6 +119,8 @@ extern const Numb*  numb_zero(void);
 extern const Numb*  numb_one(void);
 /*lint -sem(        numb_minusone, @p == 1) */
 extern const Numb*  numb_minusone(void);
+/*lint -sem(        numb_unkown, @p == 1) */
+extern const Numb*  numb_unknown(void);
 /*lint -sem(        numb_is_int, 1p == 1) */
 extern Bool         numb_is_int(const Numb* numb);
 /*lint -sem(        numb_toint, 1p == 1) */

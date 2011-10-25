@@ -1,4 +1,4 @@
-/* $Id: mme.h,v 1.99 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: mme.h,v 1.100 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  310
+#define ZIMPL_VERSION  320
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.
@@ -60,6 +60,10 @@ typedef union set_iter           SetIter;
 typedef struct list_element      ListElem;
 typedef struct list              List;
 
+typedef enum   var_type      VarType;  /* From ratlptypes.h */
+typedef struct mono          Mono;     /* From mono.h */
+
+   
 #define SYMBOL_NAME_INTERNAL  "@@"
 
 #define VERB_QUIET    0

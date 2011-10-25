@@ -1,4 +1,4 @@
-/* $Id: mono.c,v 1.12 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: mono.c,v 1.13 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -186,7 +186,7 @@ Mono* mono_copy(const Mono* mono)
    return mnew;
 }
      
-void mono_mul_coeff(Mono* mono, const Numb* value)
+void mono_mul_coeff(const Mono* mono, const Numb* value)
 {
    Trace("mono_mul_coeff");
 
@@ -196,7 +196,7 @@ void mono_mul_coeff(Mono* mono, const Numb* value)
    numb_mul(mono->coeff, value);
 }
 
-void mono_add_coeff(Mono* mono, const Numb* value)
+void mono_add_coeff(const Mono* mono, const Numb* value)
 {
    Trace("mono_add_coeff");
 

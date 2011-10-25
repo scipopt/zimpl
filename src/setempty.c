@@ -1,4 +1,4 @@
-/* $Id: setempty.c,v 1.12 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: setempty.c,v 1.13 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setempty.c                                                    */
@@ -39,6 +39,10 @@
 #include "hash.h"
 #include "set.h"
 #include "set4.h"
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) /* unreferenced formal parameter */
+#endif
 
 #define SET_EMPTY_SID          0x5345544f
 #define SET_EMPTY_ITER_SID     0x53454f49

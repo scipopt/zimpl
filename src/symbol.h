@@ -1,4 +1,4 @@
-/* $Id: symbol.h,v 1.4 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: symbol.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: symbol.h                                                      */
@@ -40,6 +40,10 @@
 #error "Need to include mme.h before symbol.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*lint -sem(        symbol_new, nulterm(1), 1p && 3p == 1 && 4n >= 0, @p == 1) */
 extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
@@ -75,4 +79,7 @@ extern void         symbol_print(FILE* fp, const Symbol* sym);
 /*lint -sem(        symbol_print_all, 1p == 1) */
 extern void         symbol_print_all(FILE* fp);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _SYMBOL_H_ */

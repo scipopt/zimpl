@@ -1,4 +1,4 @@
-/* $Id: term.h,v 1.5 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: term.h,v 1.6 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.h                                                        */
@@ -31,6 +31,14 @@
 #error "Need to include bool.h before term.h"
 #endif
 
+#ifndef _MONO_H_
+#error "Need to include mono.h before term.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct term              Term;
 
 /* term.c
@@ -39,8 +47,10 @@ typedef struct term              Term;
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff);
-/*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
+#if 0 /* ??? not used */
+/*lint -sem(        term_mul_elem, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* coeff);
+#endif
 /*lint -sem(        term_free, custodial(1), 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
@@ -67,8 +77,10 @@ extern void         term_sub_constant(Term* term, const Numb* value);
 extern void         term_mul_coeff(Term* term, const Numb* value);
 /*lint -sem(        term_get_constant, 1p == 1) */
 extern const Numb*  term_get_constant(const Term* term);
+#if 0 /* ??? not used */
 /*lint -sem(        term_negate, 1p == 1) */
 extern void         term_negate(Term* term);
+#endif
 /*lint -sem(        term_to_objective, 1p == 1) */
 extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
@@ -88,4 +100,7 @@ extern int          term_get_degree(const Term* term);
 /*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is_true);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _TERM_H_ */

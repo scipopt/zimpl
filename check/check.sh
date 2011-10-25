@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: check.sh,v 1.20 2011/07/31 15:10:45 bzfkocht Exp $
+# $Id: check.sh,v 1.21 2011/10/25 08:18:01 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: check.sh                                                      */
@@ -50,7 +50,7 @@ done
 for i in presol
 do
    COUNT=`expr $COUNT + 1` 
-   $1 -v0 -Distart=5 -O -t mps -r -m -n cm $i.zpl
+   $1 -v0 -Distart=5 -t mps -r -m -n cm $i.zpl
    diff $i.mps $i.mps.ref >/dev/null
    case $? in
     0) echo Test $i "(mps)" OK; PASS=`expr $PASS + 1` ;;
@@ -90,7 +90,6 @@ done
     *) echo Test presol.zpl "(hum)" ERROR ;;
    esac
    rm presol.hum
-# 
 #
    COUNT=`expr $COUNT + 1` 
    $1 -v0 print.zpl >print.out
@@ -112,6 +111,24 @@ done
     *) echo Test minlp.zpl "(pip)" ERROR ;;
    esac
    rm minlp.pip minlp.tbl
+# 
+#
+   $1 -v0 -Dcities=5 -o metaio @selftest_tspste.zpl >metaio.out
+   COUNT=`expr $COUNT + 1` 
+   diff metaio.lp metaio.lp.ref >/dev/null
+   case $? in
+    0) echo Test metaio "(lp)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test metaio "(lp)" FAIL ;;
+    *) echo Test metaio "(lp)" ERROR ;;
+   esac
+   COUNT=`expr $COUNT + 1` 
+   diff metaio.out metaio.out.ref >/dev/null
+   case $? in
+    0) echo Test metaio "(out)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test metaio "(out)" FAIL ;;
+    *) echo Test metaio "(out)" ERROR ;;
+   esac
+   rm metaio.lp metaio.tbl metaio.out
 # 
 #
 cd warnings

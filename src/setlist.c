@@ -1,4 +1,4 @@
-/* $Id: setlist.c,v 1.24 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: setlist.c,v 1.25 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setlist.c                                                     */
@@ -43,6 +43,10 @@
 #include "stmt.h"
 #include "set.h"
 #include "set4.h"
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) /* unreferenced formal parameter */
+#endif
 
 #define SET_LIST_SID          0x5345544c
 #define SET_LIST_ITER_SID     0x53454c49

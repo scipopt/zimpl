@@ -1,4 +1,4 @@
-/* $Id: conname.c,v 1.19 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: conname.c,v 1.20 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.c                                                     */
@@ -41,6 +41,8 @@
 #include "elem.h"
 #include "tuple.h"
 #include "local.h"
+#include "stmt.h"
+#include "prog.h"
 #include "xlpglue.h"
 #include "conname.h"
 
@@ -93,12 +95,12 @@ Bool conname_set(const char* prefix)
    strcpy(cname, cpfix);
    strcat(cname, "_1");
 
-   if (xlp_conname_exists(cname))
+   if (xlp_conname_exists(prog_get_lp(), cname))
       return FALSE;
 
    strcat(cname, "_a_0");
 
-   return !xlp_conname_exists(cname);
+   return !xlp_conname_exists(prog_get_lp(), cname);
 }
 
 const char* conname_get()

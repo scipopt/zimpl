@@ -1,4 +1,4 @@
-/* $Id: numbgmp.c,v 1.37 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: numbgmp.c,v 1.38 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: numbgmp.c                                                     */
@@ -76,6 +76,12 @@ static int        store_count  = 0;
 static Numb* numb_const_zero     = NULL;
 static Numb* numb_const_one      = NULL;
 static Numb* numb_const_minusone = NULL;
+static Numb* numb_const_unknown  = NULL;
+
+/* ??? numb_const_unkown is a hack. GMP has no way to indicate NaN or Infinity.
+ * But we need this for example to convey that the startvalue of a variable has
+ * not been set. 
+ */ 
 
 static void extend_storage(void)
 {
@@ -118,6 +124,7 @@ void numb_init(Bool with_management)
    numb_const_zero     = numb_new();
    numb_const_one      = numb_new_integer(1);
    numb_const_minusone = numb_new_integer(-1);
+   numb_const_unknown  = numb_new_ascii("7e21");
 }
 
 void numb_exit()
@@ -128,10 +135,12 @@ void numb_exit()
    numb_free(numb_const_zero);
    numb_free(numb_const_one);
    numb_free(numb_const_minusone);
+   numb_free(numb_const_unknown);
 
    numb_const_zero     = NULL;
    numb_const_one      = NULL;
    numb_const_minusone = NULL;
+   numb_const_unknown  = NULL;
 
    if (store_count != 0)
       printf("Numb store count %d\n", store_count);
@@ -740,6 +749,11 @@ const Numb* numb_one()
 const Numb* numb_minusone()
 {
    return numb_const_minusone;
+}
+
+const Numb* numb_unknown()
+{
+   return numb_const_unknown;
 }
 
 Bool numb_is_int(const Numb* numb)

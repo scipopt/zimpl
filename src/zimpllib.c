@@ -1,4 +1,4 @@
-/* $Id: zimpllib.c,v 1.30 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: zimpllib.c,v 1.31 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -126,10 +126,10 @@ static Bool is_valid_identifier(const char* s)
 
 void zpl_var_print(FILE* fp, const Var* var)
 {
-   const char* name  = xlp_getvarname(var);
-   VarClass    class = xlp_getclass(var);
-   Bound*      lower = xlp_getlower(var);
-   Bound*      upper = xlp_getupper(var);
+   const char* name  = xlp_getvarname(prog_get_lp(), var);
+   VarClass    class = xlp_getclass(prog_get_lp(), var);
+   Bound*      lower = xlp_getlower(prog_get_lp(), var);
+   Bound*      upper = xlp_getupper(prog_get_lp(), var);
 
    fprintf(fp, "\"%s\" ", name);
 
@@ -208,10 +208,11 @@ void zpl_add_parameter(const char* def)
    free(name); 
 }
 
-Bool zpl_read(const char* filename, Bool with_management)
+Bool zpl_read(const char* filename, Bool with_management, void* user_data)
 {
    Prog*       prog = NULL;
    Set*        set;
+   void*       lp  = NULL;
    Bool        ret = FALSE;
 
    stkchk_init();
@@ -250,16 +251,17 @@ Bool zpl_read(const char* filename, Bool with_management)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         xlp_alloc(filename, FALSE);
+         lp = xlp_alloc(filename, FALSE, user_data);
 
-         prog_execute(prog);
+         prog_execute(prog, lp);
 
          ret = TRUE;
       }
    }
    is_longjmp_ok = FALSE;
 
-   xlp_free();
+   if (lp != NULL)
+      xlp_free(lp);
 
    if (prog != NULL)
       prog_free(prog);
@@ -278,7 +280,7 @@ Bool zpl_read(const char* filename, Bool with_management)
    return ret;
 }
 
-Bool zpl_read_with_args(char** argv, int argc, Bool with_management)
+Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_data)
 {
    const char* options = "D:mP:sv:";
 
@@ -289,6 +291,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management)
    int           i;
    Prog*         prog = NULL;
    Set*          set;
+   void*         lp  = NULL;
    Bool          ret = FALSE;
    char*         inppipe = NULL;
    Bool          use_startval = FALSE;
@@ -383,16 +386,17 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         xlp_alloc(argv[optind], use_startval);
+         lp = xlp_alloc(argv[optind], use_startval, user_data);
 
-         prog_execute(prog);
+         prog_execute(prog, lp);
 
          ret = TRUE;
       }
    }
    is_longjmp_ok = FALSE;
 
-   xlp_free();
+   if (lp != NULL)
+      xlp_free(lp);
 
    /* Now clean up. 
     */

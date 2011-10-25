@@ -1,14 +1,14 @@
-/* $Id: strstore.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: zlpglue.h,v 1.1 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: strstore2.c                                                   */
-/*   Name....: String Storage Functions                                      */
+/*   File....: zlpglue.h                                                     */
+/*   Name....: Glue between Zimpl command line and ratlp                     */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,21 +24,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-#ifndef _STRSTORE_H_
-#define _STRSTORE_H_
+#ifndef _ZLPGLUE_H_
+#define _ZLPGLUE_H_
+
+#ifndef _BOOL_H_
+#error "Need to include bool.h before xlpglue.h"
+#endif
+
+#ifndef _RATLPTYPES_H_
+#error "Need to include ratlptypes.h before xlpglue.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void         str_init(void);
-extern void         str_exit(void);
-/*lint -sem(        str_new, 1p && nulterm(1), @p == 1p && nulterm(@)) */
-extern const char*  str_new(const char* s);
-/*lint -sem(        str_hash, 1p)           */
-extern unsigned int str_hash(const char* s);
+/*lint -sem(    zlp_stat, 1p == 1) */
+extern void     zlp_stat(Lps* lp);
+/*lint -sem(    zlp_setnamelen, 1p ==1 && 2n >= 0) */
+extern void     zlp_setnamelen(Lps* lp, int name_len);
+/*lint -sem(    zlp_write, 1p == 1 && 2p == 1 && nulterm(4)) */
+extern void     zlp_write(Lps* lp, FILE* fp, LpFormat format, const char* title);
+/*lint -sem(    zlp_transtable, 1p == 1 && 2p == 1) */
+extern void     zlp_transtable(Lps* lp, FILE* fp, LpFormat format);
+/*lint -sem(    zlp_orderfile, 1p == 1 && 2p == 1) */
+extern void     zlp_orderfile(Lps* lp, FILE* fp, LpFormat format);
+/*lint -sem(    zlp_mstfile, 1p == 1 && 2p == 1) */
+extern void     zlp_mstfile(Lps* lp, FILE* fp, LpFormat format);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _STRSTORE_H_ */
+#endif /* _ZLPGLUE_H */
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-/* $Id: elem.c,v 1.31 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: elem.c,v 1.32 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.c                                                        */
@@ -320,7 +320,7 @@ void elem_print(FILE* fp, const Elem* elem, Bool use_quotes)
 
 unsigned int elem_hash(const Elem* elem)
 {
-   unsigned int hcode;
+   unsigned int hcode = 0;
    
    switch(elem->type)
    {

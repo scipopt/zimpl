@@ -1,4 +1,4 @@
-/* $Id: gmpmisc.h,v 1.8 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: gmpmisc.h,v 1.9 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: gmpmisc.c                                                     */
@@ -34,6 +34,10 @@
 #error "Need to include bool.h before gmpmisc.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern mpq_t const_zero;
 extern mpq_t const_one;
 extern mpq_t const_minus_one;
@@ -45,4 +49,7 @@ extern void gmp_print_mpq(FILE* fp, const mpq_t qval);
 extern void gmp_init(Bool verb, Bool with_management);
 extern void gmp_exit(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _GMPMISC_H */

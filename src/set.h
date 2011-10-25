@@ -1,4 +1,4 @@
-/* $Id: set.h,v 1.6 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: set.h,v 1.7 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.c                                                        */
@@ -33,6 +33,10 @@
 
 #ifndef _MME_H_
 #error "Need to include mme.h before set.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 enum set_check_type
@@ -97,4 +101,7 @@ extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
 extern List*        set_subsets_list(
    const Set* set, int subset_size, List* list, int* idx);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _SET_H_ */

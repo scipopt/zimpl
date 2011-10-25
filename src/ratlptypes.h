@@ -1,4 +1,4 @@
-/* $Id: ratlptypes.h,v 1.14 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratlptypes.h,v 1.15 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlptypes.h                                                  */
@@ -31,6 +31,10 @@
 #error "Need to include bool.h before ratlp.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum con_type        { CON_FREE    = 0, CON_LHS,   CON_RHS,   CON_RANGE, CON_EQUAL };
 enum var_type        { VAR_FREE    = 0, VAR_LOWER, VAR_UPPER, VAR_BOXED, VAR_FIXED };
 enum sos_type        { SOS_ERR     = 0, SOS_TYPE1, SOS_TYPE2 };
@@ -38,12 +42,17 @@ enum var_class       { VAR_CON     = 0, VAR_IMP,   VAR_INT };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
 enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP };
+
+#if 0 /* not used anymore ??? */
 enum presolve_result
 {
    PRESOLVE_ERROR = 0, PRESOLVE_OKAY, PRESOLVE_INFEASIBLE,
    PRESOLVE_UNBOUNDED, PRESOLVE_VANISHED
 };
+typedef enum presolve_result PSResult;
 
+#endif
+   
 typedef struct nonzero       Nzo;
 typedef struct variable      Var;
 typedef struct constraint    Con;
@@ -52,15 +61,12 @@ typedef struct soselement    Sse;
 typedef struct qmatentry     Qme;
 typedef struct lpstorage     Lps;
 
-typedef enum   var_type      VarType;
 typedef enum   con_type      ConType;
 typedef enum   sos_type      SosType;
 typedef enum   var_class     VarClass;
 typedef enum   lp_direct     LpDirect;
 typedef enum   lp_type       LpType;
 typedef enum   lp_format     LpFormat;
-
-typedef enum presolve_result PSResult;
 
 #define LP_FLAG_CON_SCALE    0x01
 #define LP_FLAG_CON_SEPAR    0x02
@@ -72,4 +78,7 @@ typedef enum presolve_result PSResult;
 #define HAS_LHS(con)    ((con)->type != CON_FREE && (con)->type != CON_RHS)
 #define HAS_RHS(con)    ((con)->type != CON_FREE && (con)->type != CON_LHS)
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _RATLPTYPES_H_ */

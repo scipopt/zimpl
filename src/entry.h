@@ -1,4 +1,4 @@
-/* $Id: entry.h,v 1.5 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: entry.h,v 1.6 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.h                                                       */
@@ -29,6 +29,10 @@
 
 #ifndef _BOOL_H_
 #error "Need to include bool.h before entry.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #define ENTRY_NULL ((Entry*)0)
@@ -64,5 +68,8 @@ extern Var*         entry_get_var(const Entry* entry);
 /*lint -sem(        entry_print, 1p == 1 && 2p == 1) */
 extern void         entry_print(FILE* fp, const Entry* entry);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _ENTRY_H_ */
 

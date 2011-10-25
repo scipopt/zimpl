@@ -1,4 +1,4 @@
-/* $Id: stkchk.h,v 1.2 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: stkchk.h,v 1.3 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: stkchk.h                                                      */
@@ -27,6 +27,10 @@
 #ifndef _STKCHK_H_
 #define _STKCHK_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef NDEBUG
 extern const void* stkchk_start;
 extern size_t      stkchk_maxi;
@@ -52,4 +56,7 @@ extern void   stkchk_display_x(FILE* fp);
 
 #endif /* NDEBUG */
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _STKCHK_H_ */

@@ -1,4 +1,4 @@
-/* $Id: idxset.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: idxset.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: idxset.h                                                      */
@@ -37,6 +37,10 @@
 #error "Need to include set.h before idxset.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct index_set         IdxSet;
 
 /* idxset.c
@@ -61,4 +65,7 @@ extern Bool         idxset_is_unrestricted(const IdxSet* idxset);
 /*lint -sem(        idxset_print, 1p == 1 && 2p == 1) */
 extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _IDXSET_H_ */

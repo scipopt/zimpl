@@ -1,4 +1,4 @@
-/* $Id: setmulti.c,v 1.24 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: setmulti.c,v 1.25 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -44,6 +44,10 @@
 #include "stmt.h"
 #include "set.h"
 #include "set4.h"
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) /* unreferenced formal parameter */
+#endif
 
 #define SET_MULTI_SID          0x5345544d
 #define SET_MULTI_ITER_SID     0x53454d49

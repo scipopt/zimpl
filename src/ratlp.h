@@ -1,4 +1,4 @@
-/* $Id: ratlp.h,v 1.25 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratlp.h,v 1.26 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlp.h                                                       */
@@ -38,6 +38,10 @@
 #endif
 #ifndef _MME_H_
 #error "Need to include mme.h before ratlp.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /* lpstore.c
@@ -184,11 +188,16 @@ extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, cons
 /*lint -sem(        lps_mstwrite, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 
+#if 0 /* Not used anymore ??? */
 /* ratpresolve.c
  */
 /*lint -sem(        lps_presolve, 1p == 1 && 2n >= 0) */
 extern PSResult     lps_presolve(Lps* lp, int verbose_level);
-
+#endif
+   
+#ifdef __cplusplus
+}
+#endif
 #endif /* _RATLP_H_ */
 
 

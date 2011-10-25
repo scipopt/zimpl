@@ -1,4 +1,4 @@
-/* $Id: rdefpar.h,v 1.4 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: rdefpar.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -26,6 +26,10 @@
  */
 #ifndef _RDEFPAR_H_
 #define _RDEFPAR_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
@@ -68,5 +72,8 @@ extern Bool        rpar_is_valid(const RPar* rpar);
 /*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
 extern RPar*       rpar_copy(const RPar* rpar);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _RDEFPAR_H_ */
 

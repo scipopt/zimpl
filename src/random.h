@@ -1,4 +1,4 @@
-/* $Id: random.h,v 1.7 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: random.h,v 1.8 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: random.h                                                      */
@@ -28,9 +28,16 @@
 #ifndef _RANDOM_H_
 #define _RANDOM_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void         rand_init(unsigned long s);
 extern unsigned int rand_get_int32(void);
 /*lint -sem(        rand_get_range, 1n < 2n) */
 extern int          rand_get_range(int mini, int maxi);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* RANDOM */

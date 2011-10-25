@@ -1,4 +1,4 @@
-/* $Id: zimpl.c,v 1.91 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: zimpl.c,v 1.92 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpl.c                                                       */
@@ -57,6 +57,7 @@
 #include "entry.h"
 #include "conname.h"
 #include "xlpglue.h"
+#include "zlpglue.h"
 #include "prog.h"
 #include "metaio.h"
 #include "strstore.h"
@@ -81,7 +82,6 @@ static const char* const help =
 "  -n cm|cn|cf    name constraint make/name/full\n" \
 "  -o outfile     select name for the output file. Default is the name of\n" \
 "                 the input file without extension.\n" \
-"  -O             optimize LP by preprocessing.\n" \
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
@@ -92,6 +92,8 @@ static const char* const help =
 "  filename       is the name of the input ZPL file.\n" \
 "\n" ; 
 
+/* "  -O             optimize LP by preprocessing.\n" \
+ */
 #ifdef WITH_CALLTRACE /* Does only work with gcc */
 void __cyg_profile_func_enter(void *this_fn, void *call_site) __attribute__((no_instrument_function));
 void __cyg_profile_func_exit(void *this_fn, void *call_site) __attribute__((no_instrument_function));
@@ -177,8 +179,9 @@ int main(int argc, char* const* argv)
 {
    Prog*         prog;
    Set*          set;
-   const char*   extension;
-   char*         filter   = strdup("%s");
+   void*         lp;
+   const char*   extension = "";
+   char*         filter    = strdup("%s");
    char*         outfile;
    char*         tblfile;
    char*         ordfile;
@@ -397,47 +400,22 @@ int main(int argc, char* const* argv)
    if (verbose >= VERB_DEBUG)
       prog_print(stderr, prog);
    
-   xlp_alloc(argv[optind], write_mst || write_order);
-   xlp_setnamelen(name_length);
+   lp = xlp_alloc(argv[optind], write_mst || write_order, NULL);
+   zlp_setnamelen(lp, name_length);
    
-   prog_execute(prog);
+   prog_execute(prog, lp);
 
    /* Presolve
     */
    if (presolve)
-      if (!xlp_presolve())
+      fprintf(stderr, "--- Warning: Presolve no longer support. If you need it, send me an email\n");
+#if 0 
+      if (!zlp_presolve())
          exit(EXIT_SUCCESS);
-
+#endif
    if (verbose >= VERB_NORMAL)
-      xlp_stat();
+      zlp_stat(lp);
    
-   xlp_scale();
-   
-   /* We do not need the translation table for human readable format
-    * In any case we write it first to allow for an inline retranslation
-    */
-   if (format != LP_FORM_HUM)
-   {
-      /* Write translation table
-       */
-      sprintf(outpipe, filter, tblfile, "tbl");
-
-      if (verbose >= VERB_NORMAL)
-         printf("Writing [%s]\n", outpipe);
-
-      if (NULL == (fp = (*openfile)(outpipe, "w")))
-      {
-         fprintf(stderr, "*** Error 104: File open failed");
-         perror(tblfile);
-         exit(EXIT_FAILURE);
-      }
-      xlp_transtable(fp, format);
-
-      check_write_ok(fp, tblfile);
-
-      (void)(*closefile)(fp);
-   }
-
    /* Write order file 
     */
    if (write_order)
@@ -453,7 +431,7 @@ int main(int argc, char* const* argv)
          perror(ordfile);
          exit(EXIT_FAILURE);
       }
-      xlp_orderfile(fp, format);
+      zlp_orderfile(lp, fp, format);
          
       check_write_ok(fp, ordfile);
          
@@ -474,7 +452,7 @@ int main(int argc, char* const* argv)
          perror(mstfile);
          exit(EXIT_FAILURE);
       }
-      xlp_mstfile(fp, format);
+      zlp_mstfile(lp, fp, format);
          
       check_write_ok(fp, mstfile);
          
@@ -503,11 +481,39 @@ int main(int argc, char* const* argv)
 
       sprintf(prog_text, "\\%s\n", title);
    }
-   xlp_write(fp, format, prog_text);
+   zlp_write(lp, fp, format, prog_text);
 
    check_write_ok(fp, outfile);
 
    (void)(*closefile)(fp);
+
+   /* We do not need the translation table for human readable format
+    * Has to be written after the LP file, so the scaling has been done.
+    */
+   if (format != LP_FORM_HUM)
+   {
+      /* Write translation table
+       */
+      sprintf(outpipe, filter, tblfile, "tbl");
+
+      if (verbose >= VERB_NORMAL)
+         printf("Writing [%s]\n", outpipe);
+
+      if (NULL == (fp = (*openfile)(outpipe, "w")))
+      {
+         fprintf(stderr, "*** Error 104: File open failed");
+         perror(tblfile);
+         exit(EXIT_FAILURE);
+      }
+      zlp_transtable(lp, fp, format);
+
+      check_write_ok(fp, tblfile);
+
+      (void)(*closefile)(fp);
+   }
+
+
+
 
    free(prog_text);
    
@@ -529,7 +535,7 @@ int main(int argc, char* const* argv)
 
    local_exit();
    interns_exit();
-   xlp_free();
+   xlp_free(lp);
    mio_exit();
    symbol_exit();
    define_exit();

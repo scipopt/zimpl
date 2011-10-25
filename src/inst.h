@@ -1,4 +1,4 @@
-/* $Id: inst.h,v 1.49 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: inst.h,v 1.50 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -27,6 +27,10 @@
 
 #ifndef _INST_H_
 #define _INST_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define INST_NULL ((Inst)0)
 
@@ -310,4 +314,7 @@ extern CodeNode* i_vif(CodeNode* self);
 /*lint -sem(     i_vif_else, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vif_else(CodeNode* self);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _INST_H_ */

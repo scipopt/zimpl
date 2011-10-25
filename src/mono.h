@@ -1,4 +1,4 @@
-/* $Id: mono.h,v 1.10 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: mono.h,v 1.11 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -27,11 +27,18 @@
 #ifndef _MONO_H_
 #define _MONO_H_
 
+#ifndef _BOOL_H_
+#error "Need to include bool.h before mono.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum mono_function { MFUN_SQRT = -2, MFUN_NONE = 0, MFUN_TRUE = 1, MFUN_FALSE = 2, MFUN_LOG = 3, MFUN_EXP = 4 };
 
 typedef enum   mono_function MFun;
 typedef struct mono_element  MonoElem;
-typedef struct mono          Mono;
 
 struct mono_element
 {
@@ -60,9 +67,9 @@ extern void         mono_mul_entry(Mono* mono, const Entry* entry);
 /*lint -sem(        mono_copy, 1p == 1, @p == 1) */
 extern Mono*        mono_copy(const Mono* mono);
 /*lint -sem(        mono_mul_coeff, 1p == 1 && 2p == 1) */
-extern void         mono_mul_coeff(Mono* term, const Numb* value);
+extern void         mono_mul_coeff(const Mono* term, const Numb* value);
 /*lint -sem(        mono_add_coeff, 1p == 1 && 2p == 1) */
-extern void         mono_add_coeff(Mono* term, const Numb* value);
+extern void         mono_add_coeff(const Mono* term, const Numb* value);
 /*lint -sem(        mono_is_valid, 1p == 1) */
 extern unsigned int mono_hash(const Mono* mono);
 /*lint -sem(        mono_equal, 1p == 1 && 2p == 1) */
@@ -86,5 +93,8 @@ extern Var*         mono_get_var(const Mono* mono, int idx);
 /*lint -sem(        mono_print, 1p == 1) */
 extern void         mono_print(FILE* fp, const Mono* mono, Bool print_symbol_index);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _MONO_H_ */
 

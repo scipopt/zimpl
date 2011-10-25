@@ -1,4 +1,4 @@
-/* $Id: ratpresolve.c,v 1.15 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratpresolve.c,v 1.16 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -24,6 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+#if 0 /* Not used anymore ??? */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -640,11 +641,5 @@ PSResult lps_presolve(Lps* lp, int verbose_level)
    return ret;
 }
 
-/* ------------------------------------------------------------------------- */
-/* Emacs Local Variables:                                                    */
-/* Emacs mode:c                                                              */
-/* Emacs c-basic-offset:3                                                    */
-/* Emacs tab-width:8                                                         */
-/* Emacs indent-tabs-mode:nil                                                */
-/* Emacs End:                                                                */
-/* ------------------------------------------------------------------------- */
+#endif
+

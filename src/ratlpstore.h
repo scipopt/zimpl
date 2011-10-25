@@ -1,4 +1,4 @@
-/* $Id: ratlpstore.h,v 1.21 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratlpstore.h,v 1.22 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -36,6 +36,10 @@
 #endif
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before ratlpstore.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef struct storage Sto;
@@ -163,6 +167,9 @@ int                 lps_getnamesize(const Lps* lp, LpFormat format);
 /*lint -sem(        lps_makename, nulterm(3), 1p && 2n > 0 && 3p && 4n >= -1) */
 void                lps_makename(char* target, int size, const char* name, int no);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _RATLPSTORE_H_ */
 
 

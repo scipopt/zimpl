@@ -1,4 +1,4 @@
-/* $Id: local.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: local.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: local.h                                                       */
@@ -35,6 +35,10 @@
 #error "Need to include tuple.h before local.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void         local_init(void);
 extern void         local_exit(void);
 extern void         local_drop_frame(void);
@@ -47,4 +51,7 @@ extern void         local_print_all(FILE* fp);
 /*lint -sem(        local_tostrall, @p && nulterm(@)) */
 extern char*        local_tostrall(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _LOCAL_H_ */

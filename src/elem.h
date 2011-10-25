@@ -1,4 +1,4 @@
-/* $Id: elem.h,v 1.5 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: elem.h,v 1.6 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: elem.h                                                        */
@@ -32,6 +32,10 @@
 #endif
 #ifndef _NUMB_H_
 #error "Need to include numb.h before elem.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 enum element_type
@@ -75,4 +79,7 @@ extern unsigned int elem_hash(const Elem* elem);
 /*lint -sem(        elem_tostr, 1p == 1, @p && nulterm(@)) */
 extern char*        elem_tostr(const Elem* elem);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _ELEM_H_ */

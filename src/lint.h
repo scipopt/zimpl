@@ -1,4 +1,4 @@
-/* $Id: lint.h,v 1.16 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: lint.h,v 1.17 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -31,6 +31,10 @@
 
 #ifndef _LINT_H_
 #define _LINT_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Unfortunately strdup() is not a POSIX function.
  */
@@ -86,6 +90,9 @@ extern int    gzgetc(gzFile file);
 /*lint -sem(  gzclose, 1p == 1) */
 extern int    gzclose(gzFile file);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _LINT_H_ */
 #endif /* _lint */
 

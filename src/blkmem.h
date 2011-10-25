@@ -1,4 +1,4 @@
-/* $Id: blkmem.h,v 1.7 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: blkmem.h,v 1.8 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.h                                                      */
@@ -28,9 +28,16 @@
 #ifndef _BLKMEM_H_
 #define _BLKMEM_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void  blk_init(void);
 extern void  blk_exit(void);
 extern void* blk_alloc(int size);
 extern void  blk_free(void* p, int size);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _BLKMEM_H_ */

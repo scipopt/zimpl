@@ -1,4 +1,4 @@
-/* $Id: heap.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: heap.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: heap.h                                                        */
@@ -34,6 +34,10 @@
 #error "Need to include entry.h before heap.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 union heap_data
 {
    Entry* entry;
@@ -60,4 +64,7 @@ extern Bool         heap_is_full(const Heap* heap);
 /*lint -sem(        heap_is_empty, 1p == 1) */
 extern Bool         heap_is_empty(const Heap* heap);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _HEAP_H_ */

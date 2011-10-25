@@ -1,4 +1,4 @@
-/* $Id: metaio.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: metaio.h,v 1.5 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.h                                                      */
@@ -31,6 +31,10 @@
 #error "Need to include bool.h before metaio.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct meta_file_ptr     MFP;
 
 /* metaio.c
@@ -55,4 +59,7 @@ extern char*        mio_gets(const MFP* mfp, char* buf, int len);
 /*lint -sem(        mio_get_line, 1p) */
 extern char*        mio_get_line(const MFP* mfp);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _METAIO_H_ */

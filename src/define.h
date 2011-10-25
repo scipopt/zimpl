@@ -1,4 +1,4 @@
-/* $Id: define.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: define.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: define.h                                                      */
@@ -34,6 +34,10 @@
 #error "Need to include numb.h before define.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_BOOL, DEF_SET };
 
 typedef enum define_type         DefineType;
@@ -59,4 +63,7 @@ extern const Tuple* define_get_param(const Define* def);
 /*lint -sem(        define_get_code, 1p == 1) */
 extern CodeNode*    define_get_code(const Define* def);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _DEFINE_H_ */

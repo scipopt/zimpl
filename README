@@ -23,19 +23,14 @@ COMPILING
 To compile Zimpl you need two additional librarys:
 
  - GNU Multiple Precision Arithmetic Library 
-   Version 4.1.2 or newer at http://www.swox.com/gmp
- - zlib Version 1.1.4 or newer at http://www.gzip.org/zlib/
+   Version 4.2.2 or newer at http://www.swox.com/gmp
+ - zlib Version 1.2.5 or newer at http://www.gzip.org/zlib/
 
 Zimpl has not been tested with older versions of above librarys.
 GMP Version 3.x will not work for sure.
 
 If zlib.h and gmp.h and libgmp.a and libz.a are not at the usual
 places you have to adapt the Makefile, see below.
-
-Especially under windows you need also 
-PCRE - Perl Compatible Regular Expressions from
-http://www.pcre.org/ and should use the following two
-defines -DWITH_PCRE -DPCRE_STATIC
 
 On a Linux system you might succeed with just saying: make
 
@@ -66,6 +61,25 @@ LDFLAGS         +=      -L/tmp/gmp/lib
 
 Have a look at Makefile and make/make.* to
 get an idea. 
+
+
+WINDOWS
+-------
+
+You can just the through the source files into Visual Studio 2010.
+Please add the contents of the src/WIN directory to the files to be 
+compiled. Make sure to set the following defines: 
+WIN32 or WIN64 and INLINE=
+
+As for the libraries we recommend to replace gmp by 
+  MPIR - Multiple Precision Integers and Rationals
+         version 2.4.0 or newer from http://mpir.org
+Furthermore, you need 
+  PCRE - Perl Compatible Regular Expressions 
+         version 8.12 or newer from http://www.pcre.org 
+         which should be compiled using the following two
+         defines -DWITH_PCRE -DPCRE_STATIC
+
 
 CHECKING
 --------
@@ -122,7 +136,7 @@ To Tuomo Takkula, Armin Fuegenschuh, Marc Pfetsch, Daniel Junglas,
 Joerg Rambau, Tobias Achterberg, Andreas Bley, Sebastian Orlowski, 
 Bejamin Hiller, Ralf Borndoerfer, Martin Assmann, Nicolas Weber, 
 Marc Moerig, Jens Hillmann, Dimitri Sverdlov, Joachim Reichel, 
-and all I forgot for their comments and bug reports.
+Maciej Warszawski and all I forgot for their comments and bug reports.
 
 
 COMPLAINTS

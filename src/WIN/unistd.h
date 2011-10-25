@@ -10,6 +10,10 @@
 #include <io.h> 
 #include <getopt.h> /* getopt from: http://www.pwilson.net/sample.html. */ 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define srandom srand 
 #define random rand 
  
@@ -21,4 +25,7 @@
 
 #define ssize_t int 
  
+#ifdef __cplusplus
+}
+#endif
 #endif /* unistd.h  */ 

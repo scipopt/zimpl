@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.133 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.134 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -54,6 +54,7 @@
 #include "heap.h"
 #include "code.h"
 #include "inst.h"
+#include "prog.h"
 #include "xlpglue.h"
 #include "strstore.h"
 
@@ -178,7 +179,7 @@ CodeNode* i_constraint(CodeNode* self)
    {
       term_add_constant(term, rhs);
 
-      if (xlp_addcon_term(conname_get(), type, rhs, rhs, flags, term))
+      if (xlp_addcon_term(prog_get_lp(), conname_get(), type, rhs, rhs, flags, term))
          code_errmsg(self);
 
       conname_next();
@@ -243,7 +244,7 @@ CodeNode* i_rangeconst(CodeNode* self)
       }
       term_sub_constant(term, term_get_constant(term));
 
-      if (xlp_addcon_term(conname_get(), CON_RANGE, lhs, rhs, flags, term))
+      if (xlp_addcon_term(prog_get_lp(), conname_get(), CON_RANGE, lhs, rhs, flags, term))
          code_errmsg(self);
 
       conname_next();
@@ -309,7 +310,7 @@ CodeNode* i_soset(CodeNode* self)
    else
       type = SOS_TYPE2;
    
-   ret = xlp_addsos_term(conname_get(), type, priority, term);
+   ret = xlp_addsos_term(prog_get_lp(), conname_get(), type, priority, term);
 
    if ((ret & 1) && stmt_trigger_warning(200))
    {
@@ -3175,7 +3176,7 @@ CodeNode* i_newsym_var(CodeNode* self)
    iset     = set_from_idxset(idxset);
    pattern  = idxset_get_tuple(idxset);
    sym      = symbol_new(name, SYM_VAR, iset, set_get_members(iset), NULL);
-   iter    = set_iter_init(iset, pattern);
+   iter     = set_iter_init(iset, pattern);
 
    warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
    
@@ -3264,7 +3265,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = xlp_addvar(varname, varclass, lower, upper, priority, startval);
+      var = xlp_addvar(prog_get_lp(), varname, varclass, lower, upper, priority, startval);
 
       symbol_add_entry(sym, entry_new_var(tuple, var));
 
@@ -4320,8 +4321,8 @@ static void objective(CodeNode* self, Bool minimize)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);      
    }
-   xlp_objname(name);
-   xlp_setdir(minimize);
+   xlp_objname(prog_get_lp(), name);
+   xlp_setdir(prog_get_lp(), minimize);
    term_to_objective(term);
 
    conname_free();

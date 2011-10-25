@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.8 2011/07/31 15:10:46 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.9 2011/10/25 08:18:02 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -25,16 +25,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e514 -e525 -e527 -e537 -e568 -e574 -e659 -e661 -e662 -e676 -e685 */
-/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 -e778 */
-/*lint -e810 -e818 -e830 */
+/*lint -e428 -e433 -e506 -e514 -e525 -e527 -e537 -e568 -e574 */
+/*lint -e639 -e659 -e661 -e662 -e676 -e685 */
+/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 -e774 -e778 */
+/*lint -e810 -e818 -e825 -e830 */
 /*lint -esym(530,yylen) */
 /*lint -esym(563,yyerrorlab) */   
 /*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
 /*lint -esym(718,yylex) -esym(746,yylex) */
-/*lint -esym(644,yyval,yylval) -esym(550,yynerrs) */
+/*lint -esym(644,yyval,yylval) -esym(645,yylval) -esym(550,yynerrs) */
 /*lint -esym(553,__GNUC__)  -esym(578,yylen) */
-/*lint -esym(768,bits) -esym(553,YYSTACK_USE_ALLOCA) */ 
+/*lint -esym(768,bits) -esym(553,YYSTACK_USE_ALLOCA) */
+/*lint -esym(593,yymsg) Custodial pointer possibly not freed */
+/*lint -esym(426,mem_malloc) call violates semantics */
    
 #include <stdio.h>
 #include <stdlib.h>
@@ -299,8 +302,8 @@ decl_var
          $$ = code_new_inst(i_newsym_var, 7,
             code_new_name($2),
             $4, $6, $7, $8,
-            code_new_numb(numb_new_integer(0)),
-            code_new_numb(numb_new_integer(0)));
+            code_new_numb(numb_copy(numb_unknown())),
+            code_new_numb(numb_copy(numb_unknown())));
       }
    | DECLVAR NAME var_type lower upper ';' {
          $$ = code_new_inst(i_newsym_var, 7,
@@ -308,8 +311,8 @@ decl_var
             code_new_inst(i_idxset_pseudo_new, 1,
                code_new_inst(i_bool_true, 0)),              
             $3, $4, $5,
-            code_new_numb(numb_new_integer(0)),
-            code_new_numb(numb_new_integer(0)));
+            code_new_numb(numb_copy(numb_unknown())),
+            code_new_numb(numb_copy(numb_unknown())));
       }
    | DECLVAR NAME '[' idxset ']' IMPLICIT BINARY ';' {
          $$ = code_new_inst(i_newsym_var, 7,
@@ -318,8 +321,8 @@ decl_var
             code_new_varclass(VAR_IMP),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
-            code_new_numb(numb_new_integer(0)),
-            code_new_numb(numb_new_integer(0)));
+            code_new_numb(numb_copy(numb_unknown())),
+            code_new_numb(numb_copy(numb_unknown())));
       }
    | DECLVAR NAME IMPLICIT BINARY ';' {
          $$ = code_new_inst(i_newsym_var, 7,
@@ -329,8 +332,8 @@ decl_var
             code_new_varclass(VAR_IMP),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(0))),
             code_new_inst(i_bound_new, 1, code_new_numb(numb_new_integer(1))),
-            code_new_numb(numb_new_integer(0)),
-            code_new_numb(numb_new_integer(0)));
+            code_new_numb(numb_copy(numb_unknown())),
+            code_new_numb(numb_copy(numb_unknown())));
       }
    | DECLVAR NAME '[' idxset ']' BINARY priority startval ';' {
          $$ = code_new_inst(i_newsym_var, 7,
@@ -410,7 +413,7 @@ priority
    ;
 
 startval
-   : /* empty */       { $$ = code_new_numb(numb_new_integer(0)); }
+   : /* empty */       { $$ = code_new_numb(numb_copy(numb_unknown())); }
    | STARTVAL cexpr    { $$ = $2; }
    ;
 
@@ -773,11 +776,6 @@ vval
    : VARSYM symidx          {
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       } 
-/*
-| VARSYM symidx POW cexpo  {
-         $$ = code_new_inst(i_term_power, 3, code_new_symbol($1), $2, $4);
-      } 
-*/
    | VABS '(' vexpr ')' { $$ = code_new_inst(i_vabs, 1, $3); }
    | IF lexpr THEN vexpr ELSE vexpr END {
          $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);

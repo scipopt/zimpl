@@ -1,4 +1,4 @@
-# $Id: minlp.zpl,v 1.1 2011/07/31 15:10:45 bzfkocht Exp $
+# $Id: minlp.zpl,v 1.2 2011/10/25 08:18:01 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: minlp.zpl                                                     *
@@ -34,3 +34,5 @@ subto c1: x[1]^2 == x[1]^1 + x[1]^0;
 subto c2: 2 * x[1] * 3 * x[2] * 5 * x[3] <= 77;
 subto c3: y * z == y^2 * z^3 * 4;
 subto c4: sum <i> in I : i*x[i]^i == 8;
+subto c5: (y + 5) * (z + 2) == 3;
+subto c6: (4/2 * x[1] + 2/3 * x[2])^2 == 9;

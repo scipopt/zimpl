@@ -1,4 +1,4 @@
-/* $Id: tuple.h,v 1.5 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: tuple.h,v 1.6 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: tuple.h                                                       */
@@ -34,6 +34,10 @@
 #error "Need to include elem.h before tuple.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct tuple Tuple;
 
 #define TUPLE_NULL ((Tuple*)0)
@@ -63,5 +67,8 @@ extern unsigned int tuple_hash(const Tuple* tuple);
 /*lint -sem(        tuple_tostr, 1p == 1, @p && nulterm(@)) */
 extern char*        tuple_tostr(const Tuple* tuple);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _TUPLE_H_ */
 

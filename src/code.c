@@ -1,4 +1,4 @@
-/* $Id: code.c,v 1.38 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: code.c,v 1.39 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.c                                                        */
@@ -94,7 +94,7 @@ struct code_node
 
 #define CODE_SID  0x436f6465
 
-static CodeNode*    root;
+static CodeNode*    root       = NULL;
 static unsigned int inst_count = 0;
 
 inline Bool code_is_valid(const CodeNode* node)

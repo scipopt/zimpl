@@ -1,4 +1,4 @@
-/* $Id: conname.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: conname.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: conname.h                                                     */
@@ -31,6 +31,10 @@
 #error "Need to include bool.h before conname.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum con_name_format { CON_FORM_MAKE, CON_FORM_NAME, CON_FORM_FULL };
 
 typedef enum con_name_format     ConNameForm;
@@ -43,4 +47,7 @@ extern Bool        conname_set(const char* prefix);
 extern const char* conname_get(void);
 extern void        conname_next(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _CONNAME_H_ */

@@ -1,4 +1,4 @@
-/* $Id: set4.h,v 1.18 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: set4.h,v 1.19 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: set4.h                                                        */
@@ -24,9 +24,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 #ifndef _SET4_H_
 #define _SET4_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum set_type {
    SET_ERROR   =  0,
@@ -263,6 +266,9 @@ extern void         set_multi_init(SetVTab* vtab);
 /*lint -sem(        set_multi_new_from_list, 1p == 1, @p == 1) */
 extern Set*         set_multi_new_from_list(const List* list, SetCheckType check);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _SET4_H_ */
 
 

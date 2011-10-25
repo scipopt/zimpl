@@ -1,4 +1,4 @@
-/* $Id: ratlpstore.c,v 1.39 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratlpstore.c,v 1.40 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -44,6 +44,10 @@
 #include "term.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100)
+#endif
 
 #define LPF_NAME_LEN  16
 #define MPS_NAME_LEN  8

@@ -18,6 +18,7 @@
  * @author Thorsten Koch
 
 /**@mainpage ZIMPL (Zuse Institute Mathematical Programming Language)
+ * @author   Thorsten Koch 
  * @version  3.2.0
  *
  */

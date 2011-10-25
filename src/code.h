@@ -1,4 +1,4 @@
-/* $Id: code.h,v 1.27 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: code.h,v 1.28 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -38,6 +38,10 @@
 
 #ifndef _MME_H_
 #error "Need to include mme.h before code.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /*lint -sem(        code_new_inst, 1p == 1 && 2n >= 0, @p == 1) */
@@ -214,6 +218,9 @@ extern Define*      code_eval_child_define(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_bound, 1p == 1 && 2n >= 0) */
 extern const Bound* code_eval_child_bound(const CodeNode* node, int no);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _CODE_H_ */
 
 

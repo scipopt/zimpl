@@ -1,4 +1,4 @@
-/* $Id: zimpllib.h,v 1.11 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: zimpllib.h,v 1.12 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.h                                                    */
@@ -43,9 +43,9 @@ extern void         zpl_var_print(FILE* fp, const Var* var);
 extern void         zpl_print_banner(FILE* fp, Bool with_license);
 
 /*lint -sem(zpl_read, nulterm(1)) */
-extern Bool         zpl_read(const char* filename, Bool with_management);
+extern Bool         zpl_read(const char* filename, Bool with_management, void* user_data);
 /*lint -sem(zpl_read_with_args, 1n > 0 && 2p) */
-extern Bool         zpl_read_with_args(char** argv, int argc, Bool with_management);
+extern Bool         zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_data);
 
 #ifdef __cplusplus
 }

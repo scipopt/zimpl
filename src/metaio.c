@@ -1,4 +1,4 @@
-/* $Id: metaio.c,v 1.17 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: metaio.c,v 1.18 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -46,9 +46,6 @@
 #include "mme.h"
 #include "metaio.h"
 
-typedef struct strg_file     StrgFile;
-typedef enum file_type       FileType;
-
 enum file_type { 
   MFP_ERR, 
   MFP_STRG, 
@@ -58,6 +55,9 @@ enum file_type {
   , MFP_ZLIB
 #endif /* ! WITHOUT_ZLIB */
  };
+
+typedef struct strg_file     StrgFile;
+typedef enum file_type       FileType;
 
 #define STRGFILE_SID  0x53544649
 #define MFP_SID       0x4d46505f
@@ -397,15 +397,14 @@ char* mio_get_line(const MFP* mfp)
 
 void mio_init()
 {
-#ifndef NDEBUG
    /* Setup for internal test
     */
    static const char* const progstrg = 
-      "# $Id: metaio.c,v 1.17 2011/09/18 10:22:35 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.18 2011/10/25 08:18:02 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"
-      "set V   := { read \"@cities.dat\" as \"<1s>\" comment \"#\" use cities };\n"
+      "set V   := { read \"@selftest_cities.dat\" as \"<1s>\" comment \"#\" use cities };\n"
       "set E   := { <i,j> in V * V with i < j };\n"
       "set P[] := powerset(V);\n"
       "set K   := indexset(P) \\ { 0 };\n"
@@ -413,8 +412,8 @@ void mio_init()
       "do print cities;\n"
       "do print V;\n"
       "do print E;\n"
-      "param px[V] := read \"@cities.dat\" as \"<1s> 2n\" comment \"#\" use cities;\n"
-      "param py[V] := read \"@cities.dat\" as \"<1s> 3n\" comment \"#\" use cities;\n"
+      "param px[V] := read \"@selftest_cities.dat\" as \"<1s> 2n\" comment \"#\" use cities;\n"
+      "param py[V] := read \"@selftest_cities.dat\" as \"<1s> 3n\" comment \"#\" use cities;\n"
       "\n"
       "defnumb dist(a,b) := sqrt((px[a] - px[b])^2 + (py[a] - py[b])^2);\n"
       "\n"
@@ -447,9 +446,8 @@ void mio_init()
       "Koblenz    5033  759\n"
       "Dortmund   5148  741\n";
 
-   mio_add_strg_file("@tspste.zpl", progstrg, FALSE);
-   mio_add_strg_file("@cities.dat", datastrg, FALSE);
-#endif /* NDEBUG */
+   mio_add_strg_file("@selftest_tspste.zpl", progstrg, FALSE);
+   mio_add_strg_file("@selftest_cities.dat", datastrg, FALSE);
 }
 
 void mio_exit()

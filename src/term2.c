@@ -1,4 +1,4 @@
-/* $Id: term2.c,v 1.14 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: term2.c,v 1.15 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -42,7 +42,10 @@
 #include "bound.h"
 #include "entry.h"
 #include "mono.h"
+#include "hash.h"
 #include "term.h"
+#include "stmt.h"
+#include "prog.h"
 #include "xlpglue.h"
 
 #define TERM_EXTEND_SIZE 16
@@ -102,6 +105,7 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
    assert(term_is_valid(term));
 }
 
+#if 0 /* not used */
 void term_mul_elem(Term* term, const Entry* entry, const Numb* coeff)
 {
    int i;
@@ -120,7 +124,7 @@ void term_mul_elem(Term* term, const Entry* entry, const Numb* coeff)
    }
    assert(term_is_valid(term));
 }
-
+#endif
 
 void term_free(Term* term)
 {
@@ -213,7 +217,7 @@ void term_append_term(
 Term* term_mul_term(const Term* term_a, const Term* term_b)
 {
    Term* term;
-   Term* term_simplyfied;
+   Term* term_simplified;
    int   i;
    int   k;
 
@@ -261,11 +265,11 @@ Term* term_mul_term(const Term* term_a, const Term* term_b)
 
    assert(term_is_valid(term));
    
-   term_simplyfied = term_simplify(term);
+   term_simplified = term_simplify(term);
 
    term_free(term);
 
-   return term_simplyfied;
+   return term_simplified;
 }
 
 Term* term_add_term(const Term* term_a, const Term* term_b)
@@ -331,6 +335,61 @@ Term* term_sub_term(const Term* term_a, const Term* term_b)
 /** Combines monoms in the term where possible
  */  
 /* ??? TODO:reimplement with a hash list */
+#if 1
+Term* term_simplify(const Term* term_org)
+{
+   Term* term;
+   int   i;
+   Hash* hash;
+   
+   assert(term_is_valid(term_org));
+
+   term = term_new(term_org->used);
+   hash = hash_new(HASH_MONO, term_org->used);
+
+   numb_set(term->constant, term_org->constant);
+
+   for(i = 0; i < term_org->used; i++)
+   {
+      const Mono* mono = hash_lookup_mono(hash, term_org->elem[i]);
+
+      if (mono == NULL)
+      {     
+         term->elem[term->used] = mono_copy(term_org->elem[i]);
+
+         hash_add_mono(hash, term->elem[term->used]);
+
+         term->used++;
+      }
+      else
+      {
+         assert(mono_equal(mono, term_org->elem[i]));
+         
+         mono_add_coeff(mono, mono_get_coeff(term_org->elem[i]));
+      }
+   }
+   hash_free(hash);
+   
+   /* Check if there are any cancellations
+    */
+   for(i = 0; i < term->used; i++)
+   {
+      if (numb_equal(mono_get_coeff(term->elem[i]), numb_zero()))
+      {
+         mono_free(term->elem[i]);
+
+         if (term->used > 0)
+         {
+            term->used--;
+            term->elem[i] = term->elem[term->used];
+         }
+      }
+   }
+   assert(term_is_valid(term));
+
+   return term;
+}
+#else /* Old and quadratic */
 Term* term_simplify(const Term* term_org)
 {
    Term* term;
@@ -374,6 +433,7 @@ Term* term_simplify(const Term* term_org)
 
    return term;
 }
+#endif
 
 /*lint -e{818} supress "Pointer parameter 'term' could be declared as pointing to const" */
 void term_add_constant(
@@ -433,6 +493,7 @@ const Numb* term_get_constant(const Term* term)
    return term->constant;
 }
 
+#if 0 /* not used */
 void term_negate(Term* term)
 {
    Trace("term_negate");
@@ -441,6 +502,7 @@ void term_negate(Term* term)
 
    term_mul_coeff(term, numb_minusone());
 }
+#endif
 
 void term_to_objective(const Term* term)
 {
@@ -465,8 +527,8 @@ void term_to_objective(const Term* term)
       char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
 
       sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-      var = xlp_addvar(vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
-      xlp_addtocost(var, term->constant);
+      var = xlp_addvar(prog_get_lp(), vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+      xlp_addtocost(prog_get_lp(), var, term->constant);
 
       free(vname);
       bound_free(upper);
@@ -482,7 +544,7 @@ void term_to_objective(const Term* term)
       
       var = mono_get_var(term->elem[i], 0);
       
-      xlp_addtocost(var, coeff);
+      xlp_addtocost(prog_get_lp(), var, coeff);
    }
 }
 
@@ -519,8 +581,8 @@ Bound* term_get_lower_bound(const Term* term)
       assert(sign != 0);
 
       bound = (sign > 0)
-         ? xlp_getlower(mono_get_var(term->elem[i], 0))
-         : xlp_getupper(mono_get_var(term->elem[i], 0));
+         ? xlp_getlower(prog_get_lp(), mono_get_var(term->elem[i], 0))
+         : xlp_getupper(prog_get_lp(), mono_get_var(term->elem[i], 0));
       
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
@@ -559,8 +621,8 @@ Bound* term_get_upper_bound(const Term* term)
       assert(sign != 0);
 
       bound = (sign > 0)
-         ? xlp_getupper(mono_get_var(term->elem[i], 0))
-         : xlp_getlower(mono_get_var(term->elem[i], 0));
+         ? xlp_getupper(prog_get_lp(), mono_get_var(term->elem[i], 0))
+         : xlp_getlower(prog_get_lp(), mono_get_var(term->elem[i], 0));
       
       if (bound_get_type(bound) != BOUND_VALUE)
          goto finish;
@@ -632,7 +694,7 @@ Bool term_is_all_integer(const Term* term)
    
    for(i = 0; i < term->used; i++)
    {
-      vc = xlp_getclass(mono_get_var(term->elem[i], 0));
+      vc = xlp_getclass(prog_get_lp(), mono_get_var(term->elem[i], 0));
 
       if (vc != VAR_INT && vc != VAR_IMP)
          return FALSE;

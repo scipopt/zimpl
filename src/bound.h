@@ -1,4 +1,4 @@
-/* $Id: bound.h,v 1.4 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: bound.h,v 1.5 2011/10/25 08:18:01 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: bound.h                                                       */
@@ -31,6 +31,10 @@
 #error "Need to include numb.h before bound.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum bound_type
 {
    BOUND_ERROR = 0, BOUND_VALUE, BOUND_INFTY, BOUND_MINUS_INFTY
@@ -54,5 +58,8 @@ extern const Numb*  bound_get_value(const Bound* bound);
 /*lint -sem(        bound_print, 1p == 1 && 2p == 1) */
 extern void         bound_print(FILE* fp, const Bound* bound);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _BOUND_H_ */
 

@@ -1,4 +1,4 @@
-/* $Id: vinst.c,v 1.29 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: vinst.c,v 1.30 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -49,6 +49,7 @@
 #include "rdefpar.h"
 #include "conname.h"
 #include "stmt.h"
+#include "prog.h"
 #include "local.h"
 #include "list.h"
 #include "entry.h"
@@ -99,7 +100,7 @@ static void create_new_constraint(
    
    cname = malloc(strlen(basename) + strlen(extension) + 10 + 1);
    sprintf(cname, "%s%s_%d", basename, extension, internal_cons++);
-   (void)xlp_addcon_term(cname, con_type, lrhs, lrhs, flags, term);
+   (void)xlp_addcon_term(prog_get_lp(), cname, con_type, lrhs, lrhs, flags, term);
 
    term_free(term);
    free(cname);
@@ -127,7 +128,7 @@ static Entry* create_new_var_entry(
    
    vname = malloc(strlen(basename) + strlen(extension) + strlen(SYMBOL_NAME_INTERNAL) + 16);
    sprintf(vname, "%s%s%s_%d", SYMBOL_NAME_INTERNAL, basename, extension, internal_vars++);
-   var   = xlp_addvar(vname, var_class, lower, upper, numb_zero(), numb_zero());
+   var   = xlp_addvar(prog_get_lp(), vname, var_class, lower, upper, numb_zero(), numb_zero());
    tuple = tuple_new(1);
    tuple_set_elem(tuple, 0, elem_new_strg(str_new(vname + strlen(SYMBOL_NAME_INTERNAL))));
    entry = entry_new_var(tuple, var);
@@ -856,7 +857,7 @@ static void generate_conditional_constraint(
          then_case           ? 't' : 'e',
          con_type == CON_RHS ? 'r' : 'l');
 
-      (void)xlp_addcon_term(cname, con_type, new_rhs, new_rhs, flags, big_term);
+      (void)xlp_addcon_term(prog_get_lp(), cname, con_type, new_rhs, new_rhs, flags, big_term);
 
       numb_free(big_m);
       term_free(big_term);
@@ -897,7 +898,7 @@ static void generate_indicator_constraint(
    if (con_type == CON_LHS)
       numb_neg(lhs);
 
-   (void)xlp_addcon_term(cname, con_type, lhs, rhs, flags, ind_term);
+   (void)xlp_addcon_term(prog_get_lp(), cname, con_type, lhs, rhs, flags, ind_term);
    
    term_free(ind_term);
    numb_free(lhs);

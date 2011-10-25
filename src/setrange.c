@@ -1,4 +1,4 @@
-/* $Id: setrange.c,v 1.18 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: setrange.c,v 1.19 2011/10/25 08:18:02 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -40,6 +40,10 @@
 #include "stmt.h"
 #include "set.h"
 #include "set4.h"
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) /* unreferenced formal parameter */
+#endif
 
 #define SET_RANGE_SID          0x53455452
 #define SET_RANGE_ITER_SID     0x53455249
