@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.9 2011/10/25 08:18:02 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.10 2011/10/31 08:48:56 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse.y                                                    */
@@ -9,7 +9,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2010 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

@@ -1,4 +1,9 @@
-3.2.0 24. Oct 2011 Release
+3.2.0 29. Oct 2011 Release
+
+ - There are new Makefile variables SHARED and STATIC.
+   If set either of them to true Zimpl will in some case
+   be generated as a shared library or completly statically
+   linked. Works for the moment for most gcc based targets.
 
  - Replaced a quadratic routine that could lead
    to excessive running times when generating constraints

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.81 2011/10/25 08:18:01 bzfkocht Exp $
+# $Id: Makefile,v 1.82 2011/10/31 08:48:56 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -47,6 +47,9 @@ HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
 VERSION		=	3.2.0
 VERBOSE		=	false
+SHARED		=	false
+STATIC		=	false
+LINK		=	normal
 OPT		=	opt
 COMP		=	gnu
 CC		=	gcc
@@ -54,7 +57,7 @@ YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
 LINT		=	flexelint
-AR		=	ar
+AR		=	ar cr
 RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
@@ -69,7 +72,7 @@ CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lz -lm
 YFLAGS		=	-d -t -v  
 LFLAGS		=	-d
-ARFLAGS		=	cr
+ARFLAGS		=	
 DFLAGS		=	-MM
 
 GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
@@ -77,10 +80,17 @@ GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 			-Wmissing-declarations -Wshadow -Waggregate-return \
 			-Wno-unused -Wno-unknown-pragmas 
 
+ifeq ($(SHARED),true)
+LINK		=	shared
+endif
+ifeq ($(STATIC),true)
+LINK		=	static
+endif
+
 BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
-OBJDIR		=	obj/O.$(BASE)
+OBJDIR		=	obj/O.$(OSTYPE).$(ARCH).$(COMP).$(LINK).$(OPT)
 NAME		=	zimpl
-BINNAME		=	$(NAME)-$(VERSION).$(BASE)
+BINNAME		=	$(NAME)-$(VERSION).$(OSTYPE).$(ARCH).$(COMP).$(LINK).$(OPT)
 LIBNAME		=	$(NAME)-$(VERSION).$(BASE)
 LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).a
 LIBRARYDBL	=	$(LIBDIR)/lib$(LIBNAME).dbl.a
@@ -98,9 +108,9 @@ OBJECT  	=       zimpl.o xlpglue.o zlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
 			ratordwrite.o ratpresolve.o  
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
-			gmpmisc.o hash.o heap.o idxset.o inst.o iread.o list.o \
+			hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
-			mshell.o numbgmp.o prog.o random.o rdefpar.o source.o \
+			mshell.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o stkchk.o strstore2.o symbol.o \
 			term2.o tuple.o vinst.o zimpllib.o
@@ -113,7 +123,7 @@ OBJSRC		=	$(addprefix $(SRCDIR)/,$(OBJECT:.o=.c))
 LIBSRC		=	$(addprefix $(SRCDIR)/,$(LIBOBJ:.o=.c)) #(SRCDIR)/numbdbl.c
 
 #-----------------------------------------------------------------------------
-include make/make.$(BASE)
+include make/make.$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 -include make/local/make.$(HOSTNAME)
 -include make/local/make.$(HOSTNAME).$(COMP)
 -include make/local/make.$(HOSTNAME).$(COMP).$(OPT)
@@ -157,7 +167,7 @@ $(BINARYDBL):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYDBL)
 $(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX) 
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARY)
-		$(AR) $(ARFLAGS) $@ $(LIBXXX)
+		$(AR) $@ $(LIBXXX) $(ARFLAGS) 
 		$(RANLIB) $@
 
 libdbl:		$(LIBRARYDBL) $(LIBDBLLINK)
@@ -165,7 +175,7 @@ libdbl:		$(LIBRARYDBL) $(LIBDBLLINK)
 $(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX) 
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARYDBL)
-		$(AR) $(ARFLAGS) $@ $(LIBDBLXXX)
+		$(AR) $@ $(LIBDBLXXX) $(ARFLAGS) 
 		$(RANLIB) $@
 
 $(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
