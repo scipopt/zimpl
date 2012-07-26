@@ -1,4 +1,4 @@
-/* $Id: mono.h,v 1.12 2012/07/26 13:01:22 bzfkocht Exp $ */
+/* $Id: mono.h,v 1.13 2012/07/26 20:14:18 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -51,12 +51,16 @@ struct mono_element
    MonoElem* next;
 };
 
+/* if fun is != MFUN_NONE, the meaning of (fun, elem, coeff) is
+ * fun(elem). coeff is not used, unless fun is MFUN_POW oder MFUN_SGNPOW
+ * in which case coeff is the second argument, i.e. fun(elem, coeff).
+ */
 struct mono
 {
    SID
    int       count; /* Only needed to hopefully compare monoms faster. */
    MFun      fun;
-   Numb*     coeff;
+   Numb*     coeff; 
    MonoElem  first;
 };
 

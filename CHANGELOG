@@ -1,3 +1,9 @@
+ - Added support for functions sqrt, exp, pow, log,
+   ln, sgn, sgnpow, sin, cos, tan, abs
+   in non-linear case.
+
+ - Fixed bug with indicator constraints and >=
+
 3.2.0 29. Oct 2011 Release
 
  - There are new Makefile variables SHARED and STATIC.
