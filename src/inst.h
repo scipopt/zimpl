@@ -1,4 +1,4 @@
-/* $Id: inst.h,v 1.50 2011/10/25 08:18:01 bzfkocht Exp $ */
+/* $Id: inst.h,v 1.51 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -309,6 +309,8 @@ extern CodeNode* i_vbool_not(CodeNode* self);
 extern CodeNode* i_vbool_or(CodeNode* self);
 /*lint -sem(     i_vbool_xor, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vbool_xor(CodeNode* self);
+/*lint -sem(     i_vexpr_fun, 1p == 1, type(1), @p == 1p) */
+extern CodeNode* i_vexpr_fun(CodeNode* self);
 /*lint -sem(     i_vif, 1p == 1, type(1), @p == 1p) */
 extern CodeNode* i_vif(CodeNode* self);
 /*lint -sem(     i_vif_else, 1p == 1, type(1), @p == 1p) */

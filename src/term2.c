@@ -1,4 +1,4 @@
-/* $Id: term2.c,v 1.15 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: term2.c,v 1.16 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -80,7 +80,7 @@ Term* term_new(int size)
    return term;
 }
    
-void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
+void term_add_elem(Term* term, const Entry* entry, const Numb* coeff, MFun mfun)
 {
    Trace("term_add_elem");
 
@@ -99,7 +99,7 @@ void term_add_elem(Term* term, const Entry* entry, const Numb* coeff)
    }
    assert(term->used < term->size);
 
-   term->elem[term->used] = mono_new(coeff, entry, MFUN_NONE);
+   term->elem[term->used] = mono_new(coeff, entry, mfun);
    term->used++;
 
    assert(term_is_valid(term));
@@ -666,6 +666,18 @@ Bool term_is_linear(const Term* term)
 
    return TRUE;
 }
+
+Bool term_is_polynomial(const Term* term)
+{
+   int i;
+   
+   for(i = 0; i < term->used; i++)
+      if (!(mono_get_function(term->elem[i]) == MFUN_NONE))
+         return FALSE;
+
+   return TRUE;
+}
+
 
 Term* term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is_true)
 {

@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.134 2011/10/25 08:18:01 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.135 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3346,7 +3346,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
       break;
    case SYM_VAR :
       term = term_new(1);
-      term_add_elem(term, entry, numb_one());
+      term_add_elem(term, entry, numb_one(), MFUN_NONE);
       code_value_term(self, term);
       break;
    default :

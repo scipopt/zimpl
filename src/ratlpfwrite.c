@@ -1,4 +1,4 @@
-/* $Id: ratlpfwrite.c,v 1.25 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: ratlpfwrite.c,v 1.26 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -237,7 +237,7 @@ static void write_row(
       const Term* term  = con->term;
       Bool only_comment = FALSE;
 
-      assert(term_get_degree(term) > 2);
+      assert(term_get_degree(term) > 2 || !term_is_polynomial(term));
 
       if (format != LP_FORM_PIP)
       {
@@ -263,21 +263,68 @@ static void write_row(
       {
          const Mono* mono  = term_get_element(term, i);
          const Numb* coeff = mono_get_coeff(mono);
+         MFun        fun   = mono_get_function(mono);
          int         k;
-         
-         if (numb_equal(coeff, numb_one()))
-            fprintf(fp, " +");
+
+         if (fun == MFUN_NONE)
+         {
+            if (numb_equal(coeff, numb_one()))
+               fprintf(fp, " +");
+            else
+            {
+               mpq_t t;
+               mpq_init(t);
+               numb_get_mpq(coeff, t);
+               fprintf(fp, " ");         
+               write_val(fp, format, TRUE, t);      
+               mpq_clear(t);
+            }
+            fputc(' ', fp);
+         }
          else
          {
-            mpq_t t;
-            mpq_init(t);
-            numb_get_mpq(coeff, t);
-            fprintf(fp, " ");         
-            write_val(fp, format, TRUE, t);      
-            mpq_clear(t);
+            switch(fun)
+            {
+            case MFUN_SQRT :
+               fprintf(fp, " + sqrt(");
+               break;
+            case MFUN_LOG :
+               fprintf(fp, " + log(");
+               break;
+            case MFUN_EXP :
+               fprintf(fp, " + exp(");
+               break;
+            case MFUN_LN :
+               fprintf(fp, " + ln(");
+               break;
+            case MFUN_SIN :
+               fprintf(fp, " + sin(");
+               break;
+            case MFUN_COS :
+               fprintf(fp, " + cos(");
+               break;
+            case MFUN_TAN :
+               fprintf(fp, " + tan(");
+               break;
+            case MFUN_ABS :
+               fprintf(fp, " + abs(");
+               break;
+            case MFUN_SGN :
+               fprintf(fp, " + sgn(");
+               break;
+            case MFUN_POW :
+               fprintf(fp, " + pow(");
+               break;
+            case MFUN_SGNPOW :
+               fprintf(fp, " + sgnpow(");
+               break;
+            case MFUN_TRUE :
+            case MFUN_FALSE :
+            default :
+               abort();
+            } 
          }
-         fputc(' ', fp);
-         
+          
          for(k = 0; k < mono_get_degree(mono); k++)
          {
             Var* var = mono_get_var(mono, k);
@@ -299,6 +346,19 @@ static void write_row(
                fprintf(fp, "%s^%d", name, j);
                k += j - 1; /*lint !e850 loop index variable is modified in body of the loop */
             }
+         }
+         if (fun != MFUN_NONE)
+         {
+            if (fun == MFUN_POW || fun == MFUN_SGNPOW)
+            {
+               mpq_t t;
+               mpq_init(t);
+               numb_get_mpq(coeff, t);
+               fprintf(fp, " ,");         
+               write_val(fp, format, FALSE, t);      
+               mpq_clear(t);
+            }
+            fprintf(fp, ") ");
          }
          if (++cnt % 6 == 0)
             fprintf(fp, "\n%s ", only_comment ? "\\" : "");         

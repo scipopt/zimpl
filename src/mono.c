@@ -1,4 +1,4 @@
-/* $Id: mono.c,v 1.13 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: mono.c,v 1.14 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -255,15 +255,15 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
       
       /* Now all variables of a kind are consecutive 
        */
-      while(ea->next != NULL && ea->next->entry == entry_a)
+      while(ea->next != NULL && ea->next->entry == entry_a) 
       {
          if (eb->next == NULL || eb->next->entry != entry_a)
             return FALSE;
                
-         ea = ea->next; 
+         ea = ea->next; /*lint !e850 loop index variable is modified in body of the loop */
          eb = eb->next;               
       }
-   }
+   } 
    return TRUE;
 }
 #else /* old */

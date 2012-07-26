@@ -1,4 +1,4 @@
-/* $Id: term.h,v 1.6 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: term.h,v 1.7 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term.h                                                        */
@@ -46,7 +46,7 @@ typedef struct term              Term;
 /*lint -sem(        term_new, 1n > 0, @p == 1) */
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
-extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff);
+extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff, MFun mfun);
 #if 0 /* ??? not used */
 /*lint -sem(        term_mul_elem, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* coeff);
@@ -95,6 +95,8 @@ extern Bound*       term_get_upper_bound(const Term* term);
 extern Bool         term_is_all_integer(const Term* term);
 /*lint -sem(        term_is_linear, 1p == 1) */
 extern Bool         term_is_linear(const Term* term);
+/*lint -sem(        term_is_polynomial, 1p == 1) */
+extern Bool         term_is_polynomial(const Term* term);
 /*lint -sem(        term_get_degree, 1p == 1) */
 extern int          term_get_degree(const Term* term);
 /*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @p == 1) */

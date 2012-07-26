@@ -1,4 +1,4 @@
-/* $Id: mono.h,v 1.11 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: mono.h,v 1.12 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -35,7 +35,11 @@
 extern "C" {
 #endif
 
-enum mono_function { MFUN_SQRT = -2, MFUN_NONE = 0, MFUN_TRUE = 1, MFUN_FALSE = 2, MFUN_LOG = 3, MFUN_EXP = 4 };
+enum mono_function {
+   MFUN_SQRT = -2, MFUN_NONE = 0,  MFUN_TRUE = 1, MFUN_FALSE = 2, MFUN_LOG = 3,
+   MFUN_EXP  = 4,  MFUN_LN   = 5,  MFUN_SIN  = 6, MFUN_COS   = 7, MFUN_TAN = 8,
+   MFUN_ABS  = 9,  MFUN_SGN  = 10, MFUN_POW = 11, MFUN_SGNPOW = 12
+};
 
 typedef enum   mono_function MFun;
 typedef struct mono_element  MonoElem;

@@ -1,8 +1,8 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.10 2011/10/31 08:48:56 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.11 2012/07/26 13:01:22 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
-/*   File....: mmlparse.y                                                    */
+/*   File....: mmlparse2.y                                                   */
 /*   Name....: MML Parser                                                    */
 /*   Author..: Thorsten Koch                                                 */
 /*   Copyright by Author, All rights reserved                                */
@@ -97,7 +97,8 @@ extern void yyerror(const char* s);
 %token IF THEN ELSE END
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
-%token CARD ABS SGN ROUND FLOOR CEIL LOG LN EXP SQRT RANDOM ORD
+%token CARD ROUND FLOOR CEIL RANDOM ORD
+%token ABS SGN LOG LN EXP SQRT SIN COS TAN POWER SGNPOW
 %token READ AS SKIP USE COMMENT MATCH
 %token SUBSETS INDEXSET POWERSET
 %token VIF VABS
@@ -777,6 +778,21 @@ vval
          $$ = code_new_inst(i_symbol_deref, 2, code_new_symbol($1), $2);
       } 
    | VABS '(' vexpr ')' { $$ = code_new_inst(i_vabs, 1, $3); }
+   | SQRT '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(-2)), $3); }
+   | LOG  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(3)), $3); }
+   | EXP  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(4)), $3); }
+   | LN   '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(5)), $3); }
+   | SIN  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(6)), $3); }
+   | COS  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(7)), $3); }
+   | TAN  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(8)), $3); }
+   | ABS  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(9)), $3); }
+   | SGN  '(' vexpr ')' { $$ = code_new_inst(i_vexpr_fun, 2, code_new_numb(numb_new_integer(10)), $3); }
+   | POWER  '(' vexpr ',' cexpr ')' {
+         $$ = code_new_inst(i_vexpr_fun, 3, code_new_numb(numb_new_integer(11)), $3, $5);
+      }
+   | SGNPOW '(' vexpr ',' cexpr')' {
+         $$ = code_new_inst(i_vexpr_fun, 3, code_new_numb(numb_new_integer(12)), $3, $5);
+      }  
    | IF lexpr THEN vexpr ELSE vexpr END {
          $$ = code_new_inst(i_expr_if_else, 3, $2, $4, $6);
       }

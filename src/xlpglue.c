@@ -1,4 +1,4 @@
-/* $Id: xlpglue.c,v 1.39 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: xlpglue.c,v 1.40 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -267,7 +267,7 @@ Bool xlp_addcon_term(
    mpq_clear(trhs);
    mpq_clear(tlhs);
 
-   if (term_get_degree(term) > 2)
+   if ((term_get_degree(term) > 2) || !term_is_polynomial(term))
       lps_addterm(lp, con, term);
    else
    {

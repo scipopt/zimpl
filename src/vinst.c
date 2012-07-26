@@ -1,4 +1,4 @@
-/* $Id: vinst.c,v 1.30 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: vinst.c,v 1.31 2012/07/26 13:01:22 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -122,7 +122,7 @@ static Entry* create_new_var_entry(
 
    assert(basename  != NULL);
    assert(extension != NULL);
-   assert(var_class != VAR_CON);
+   /*   assert(var_class != VAR_CON);*/
    assert(bound_is_valid(lower));
    assert(bound_is_valid(upper));
    
@@ -378,35 +378,35 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
 
       /* add term = x^+ + x^-
        */
-      term_add_elem(term, entry_xplus, numb_minusone());
-      term_add_elem(term, entry_xminus, numb_one());
+      term_add_elem(term, entry_xplus, numb_minusone(), MFUN_NONE);
+      term_add_elem(term, entry_xminus, numb_one(), MFUN_NONE);
 
       create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
    
       /* bplus <= xplus */
       term = term_new(2);
-      term_add_elem(term, entry_bplus, numb_one());
-      term_add_elem(term, entry_xplus, numb_minusone());
+      term_add_elem(term, entry_bplus, numb_one(), MFUN_NONE);
+      term_add_elem(term, entry_xplus, numb_minusone(), MFUN_NONE);
       create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
 
       /* bminus <= xminus */
       term = term_new(2);
-      term_add_elem(term, entry_bminus, numb_one());
-      term_add_elem(term, entry_xminus, numb_minusone());
+      term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
+      term_add_elem(term, entry_xminus, numb_minusone(), MFUN_NONE);
       create_new_constraint(cname, "_c", term, CON_RHS, numb_zero(), flags);
 
       /* bplus * upper >= xplus */
       term = term_new(2);
       if (!numb_equal(bound_get_value(upper), numb_zero()))
-         term_add_elem(term, entry_bplus, bound_get_value(upper));
-      term_add_elem(term, entry_xplus, numb_minusone());
+         term_add_elem(term, entry_bplus, bound_get_value(upper), MFUN_NONE);
+      term_add_elem(term, entry_xplus, numb_minusone(), MFUN_NONE);
       create_new_constraint(cname, "_d", term, CON_LHS, numb_zero(), flags);
 
       /* bminus * lower >= xminus */
       term = term_new(2);
       if (!numb_equal(bound_get_value(lower), numb_zero()))
-         term_add_elem(term, entry_bminus, bound_get_value(lower));
-      term_add_elem(term, entry_xminus, numb_minusone());
+         term_add_elem(term, entry_bminus, bound_get_value(lower), MFUN_NONE);
+      term_add_elem(term, entry_xminus, numb_minusone(), MFUN_NONE);
       create_new_constraint(cname, "_e", term, CON_LHS, numb_zero(), flags);
 
       switch(cmp_op)
@@ -414,17 +414,17 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
       case VBOOL_EQ :
          /* 1 - result = bplus + bminus =>  result + bplus + bminus = 1 */
          term = term_new(3);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bplus,  numb_one());
-         term_add_elem(term, entry_bminus, numb_one());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_EQUAL, numb_one(), flags);
          break;
       case VBOOL_NE :
          /* result = bplus + bminus  =>  result - bplus - bminus = 0*/
          term = term_new(3);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bplus,  numb_minusone());
-         term_add_elem(term, entry_bminus, numb_minusone());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bplus,  numb_minusone(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_minusone(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_EQUAL, numb_zero(), flags);
          break;
       case VBOOL_LE :
@@ -432,13 +432,13 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
           * result = 1 - bplus => result + bplus = 1
           */
          term = term_new(2);
-         term_add_elem(term, entry_bplus,  numb_one());
-         term_add_elem(term, entry_bminus, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
 
          term = term_new(2);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bplus,  numb_one());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
          break;
       case VBOOL_GE :
@@ -446,13 +446,13 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
           * result = 1 - bminus => result + bminus = 1
           */
          term = term_new(2);
-         term_add_elem(term, entry_bplus,  numb_one());
-         term_add_elem(term, entry_bminus, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
 
          term = term_new(2);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bminus,  numb_one());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus,  numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_g", term, CON_EQUAL, numb_one(), flags);
          break;
       case VBOOL_LT :
@@ -460,15 +460,15 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
           * result = bminus => result - bminus = 0
           */
          term = term_new(2);
-         term_add_elem(term, entry_bplus,  numb_one());
-         term_add_elem(term, entry_bminus, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
 
          /* This is somewhat superflous
           */
          term = term_new(2);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bminus,  numb_minusone());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus,  numb_minusone(), MFUN_NONE);
          create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
          break;
       case VBOOL_GT :
@@ -476,15 +476,15 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
           * result = bplus => result - bplus = 0
           */
          term = term_new(2);
-         term_add_elem(term, entry_bplus,  numb_one());
-         term_add_elem(term, entry_bminus, numb_one());
+         term_add_elem(term, entry_bplus,  numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bminus, numb_one(), MFUN_NONE);
          create_new_constraint(cname, "_f", term, CON_RHS, numb_one(), flags);
 
          /* This is somewhat superflous
           */
          term = term_new(2);
-         term_add_elem(term, entry_result, numb_one());
-         term_add_elem(term, entry_bplus,  numb_minusone());
+         term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+         term_add_elem(term, entry_bplus,  numb_minusone(), MFUN_NONE);
          create_new_constraint(cname, "_g", term, CON_EQUAL, numb_zero(), flags);
          break;
       default :
@@ -496,7 +496,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
       symbol_add_entry(sym, entry_bminus);
    }
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
    
@@ -582,23 +582,23 @@ CodeNode* i_vbool_and(CodeNode* self)
 
    /* a - re >= 0 */
    term = term_copy(term_a);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_a", term, CON_LHS, numb_zero(), flags);
 
    /* b - re >= 0 */
    term = term_copy(term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_b", term, CON_LHS, numb_zero(), flags);
    
    /* a + b - re <= 1 */
    term = term_add_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_c", term, CON_RHS, numb_one(), flags);
    
    /* ------------------------------------- */
    
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
 
@@ -645,23 +645,23 @@ CodeNode* i_vbool_or(CodeNode* self)
 
    /* a - re <= 0 */
    term = term_copy(term_a);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_a", term, CON_RHS, numb_zero(), flags);
 
    /* b - re <= 0 */
    term = term_copy(term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
    
    /* a + b - re >= 0 */
    term = term_add_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_c", term, CON_LHS, numb_zero(), flags);
    
    /* ------------------------------------- */
    
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
 
@@ -709,30 +709,30 @@ CodeNode* i_vbool_xor(CodeNode* self)
 
    /* a + b - re >= 0 */
    term = term_add_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_a", term, CON_LHS, numb_zero(), flags);
 
    /* a - b - re <= 0 */
    term = term_sub_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_minusone());
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_b", term, CON_RHS, numb_zero(), flags);
    
    /* a - b + re >= 0 */
    term = term_sub_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
    create_new_constraint(cname, "_c", term, CON_LHS, numb_zero(), flags);
    
    /* a + b + re <= 2 */
    numb = numb_new_integer(2);
    term = term_add_term(term_a, term_b);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
    create_new_constraint(cname, "_d", term, CON_RHS, numb, flags);
    numb_free(numb);
    
    /* ------------------------------------- */
    
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
 
@@ -776,13 +776,13 @@ CodeNode* i_vbool_not(CodeNode* self)
 
    /* a + re == 1 */
    term = term_copy(term_a);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
    create_new_constraint(cname, "_a", term, CON_EQUAL, numb_one(), flags);
    
    /* ------------------------------------- */
    
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
 
@@ -818,6 +818,8 @@ static void generate_conditional_constraint(
    const char*  basename;
    char*        cname;
    
+   Trace("generate_conditional_constraint");
+
    assert(con_type == CON_RHS || con_type == CON_LHS);
 
    bound = (con_type == CON_RHS)
@@ -880,6 +882,8 @@ static void generate_indicator_constraint(
    const char*  basename;
    char*        cname;
 
+   Trace("generate_indicator_constraint");
+
    assert(flags & LP_FLAG_CON_INDIC);
 
    ind_term = term_make_conditional(vif_term, lhs_term, then_case);
@@ -889,15 +893,17 @@ static void generate_indicator_constraint(
    sprintf(cname, "%s_%c", basename, then_case ? 't' : 'f');
 
    /* CON_EQUAL -> lhs == rhs
-    * CON_RHS   -> lhs does not matter
-    * CON_LHS   -> lhs == -rhs
+    * CON_RHS   -> lhs == rhs, lhs does not matter
+    * CON_LHS   -> lhs == rhs, rhs does not matter
     * CON_RANGE -> not allowed
     */
    lhs = numb_copy(rhs);
 
+#if 0   
    if (con_type == CON_LHS)
       numb_neg(lhs);
-
+#endif
+   
    (void)xlp_addcon_term(prog_get_lp(), cname, con_type, lhs, rhs, flags, ind_term);
    
    term_free(ind_term);
@@ -1023,7 +1029,7 @@ CodeNode* i_vabs(CodeNode* self)
    Term*        term;
    const Term*  term_abs;
    Numb*        rhs;
-   unsigned int flags;
+   unsigned int flags = 0;
    const char*  cname;
    Bound*       lower;
    Bound*       upper;
@@ -1041,7 +1047,6 @@ CodeNode* i_vabs(CodeNode* self)
    assert(code_is_valid(self));
 
    term_abs = code_eval_child_term(self, 0);
-   flags    = 0;
    rhs      = numb_copy(term_get_constant(term_abs));
    term     = term_copy(term_abs);
 
@@ -1106,15 +1111,15 @@ CodeNode* i_vabs(CodeNode* self)
 
    /* add term = x^+ + x^-
     */
-   term_add_elem(term, entry_xplus, numb_minusone());
-   term_add_elem(term, entry_xminus, numb_one());
+   term_add_elem(term, entry_xplus, numb_minusone(), MFUN_NONE);
+   term_add_elem(term, entry_xminus, numb_one(), MFUN_NONE);
    create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
    
    /* bplus * upper >= xplus */
    term = term_new(2);
    if (!numb_equal(bound_get_value(upper), numb_zero()))
-      term_add_elem(term, entry_bplus, bound_get_value(upper));
-   term_add_elem(term, entry_xplus, numb_minusone());
+      term_add_elem(term, entry_bplus, bound_get_value(upper), MFUN_NONE);
+   term_add_elem(term, entry_xplus, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_b", term, CON_LHS, numb_zero(), flags);
 
    /* (1 - bplus) * lower >= xminus
@@ -1124,20 +1129,20 @@ CodeNode* i_vabs(CodeNode* self)
     */
    term = term_new(2);
    if (!numb_equal(bound_get_value(lower), numb_zero()))
-      term_add_elem(term, entry_bplus, bound_get_value(lower));
-   term_add_elem(term, entry_xminus, numb_one());
+      term_add_elem(term, entry_bplus, bound_get_value(lower), MFUN_NONE);
+   term_add_elem(term, entry_xminus, numb_one(), MFUN_NONE);
    create_new_constraint(cname, "_c", term, CON_RHS, bound_get_value(lower), flags);
 
    /* result - xplus - xminus == 0
     */
    term = term_new(3);
-   term_add_elem(term, entry_result, numb_one());
-   term_add_elem(term, entry_xplus,  numb_minusone());
-   term_add_elem(term, entry_xminus, numb_minusone());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+   term_add_elem(term, entry_xplus,  numb_minusone(), MFUN_NONE);
+   term_add_elem(term, entry_xminus, numb_minusone(), MFUN_NONE);
    create_new_constraint(cname, "_d", term, CON_EQUAL, numb_zero(), flags);
 
    term = term_new(1);
-   term_add_elem(term, entry_result, numb_one());
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
 
    code_value_term(self, term);
 
@@ -1161,6 +1166,129 @@ CodeNode* i_vabs(CodeNode* self)
    return self;
 }
 
+CodeNode* i_vexpr_fun(CodeNode* self)
+{
+   Symbol*      sym;
+   const Term*  term_fun;
+   const char*  cname;
+   const Numb*  expo;
+   const Numb*  funno;
+   unsigned int flags = 0;
+   Term*        term;
+   Entry*       entry_tmp;
+   Entry*       entry_result;
+   Bound*       t_lower;
+   Bound*       t_upper;
+   Bound*       r_lower;
+   Bound*       r_upper;
+   MFun         mfun;
+   
+   Trace("i_vexpr_fun");
+
+   /* r = result, t = temp
+    *
+    * r = f(vexpr)
+    * t = vexpr  => vexpr - t == 0
+    * r = f(t)   => f(t)  - r == 0
+    *
+    * WARNING: The coefficent of a monom that is a function
+    * is used as the exponent for functions that need a second
+    * number argument, e.g. pow(x*y, 3)
+    */
+   assert(code_is_valid(self));
+
+   funno = code_eval_child_numb(self, 0);
+
+   assert(numb_is_int(funno));
+   
+   mfun         = (MFun)numb_toint(funno);
+   term_fun     = code_eval_child_term(self, 1);
+   
+   switch(mfun)
+   {
+   case MFUN_SQRT : 
+      t_lower = bound_new(BOUND_VALUE, numb_zero());
+      t_upper = bound_new(BOUND_INFTY, NULL);
+      r_lower = bound_new(BOUND_VALUE, numb_zero());
+      r_upper = bound_new(BOUND_INFTY, NULL);
+      break;
+   case MFUN_LOG :
+   case MFUN_LN  :
+      t_lower = bound_new(BOUND_VALUE, numb_zero());
+      t_upper = bound_new(BOUND_INFTY, NULL);
+      r_lower = bound_new(BOUND_MINUS_INFTY, NULL);
+      r_upper = bound_new(BOUND_INFTY, NULL);
+      break;
+   case MFUN_EXP :
+   case MFUN_TAN :
+   case MFUN_POW :
+   case MFUN_SGNPOW :
+      t_lower = bound_new(BOUND_MINUS_INFTY, NULL);
+      t_upper = bound_new(BOUND_INFTY, NULL);
+      r_lower = bound_new(BOUND_MINUS_INFTY, NULL);
+      r_upper = bound_new(BOUND_INFTY, NULL);
+      break;
+   case MFUN_SIN :
+   case MFUN_COS :
+   case MFUN_SGN :
+      t_lower = bound_new(BOUND_MINUS_INFTY, NULL);
+      t_upper = bound_new(BOUND_INFTY, NULL);
+      r_lower = bound_new(BOUND_VALUE, numb_minusone());
+      r_upper = bound_new(BOUND_VALUE, numb_one());
+      break;
+   case MFUN_ABS :
+      t_lower = bound_new(BOUND_MINUS_INFTY, NULL);
+      t_upper = bound_new(BOUND_INFTY, NULL);
+      r_lower = bound_new(BOUND_VALUE, numb_zero());
+      r_upper = bound_new(BOUND_INFTY, NULL);
+      break;
+   default :
+      abort();
+   }
+
+   if (mfun == MFUN_POW || mfun == MFUN_SGNPOW)
+      expo = code_eval_child_numb(self, 2);
+   else
+      expo = numb_one();
+   
+   cname        = conname_get();
+   entry_tmp    = create_new_var_entry(cname, "_t", VAR_CON, t_lower, t_upper);
+   entry_result = create_new_var_entry(cname, "_r", mfun == MFUN_SGN ? VAR_INT : VAR_CON, r_lower, r_upper);
+
+   /* vexpr - t == 0
+    */
+   term         = term_copy(term_fun);
+   term_add_elem(term, entry_tmp, numb_minusone(), MFUN_NONE);
+
+   create_new_constraint(cname, "_a", term, CON_EQUAL, numb_zero(), flags);
+
+   /* fun(t) - r == 0
+    */
+   term = term_new(2);
+   term_add_elem(term, entry_result, numb_minusone(), MFUN_NONE);
+   term_add_elem(term, entry_tmp, expo, mfun);
+   
+   create_new_constraint(cname, "_b", term, CON_EQUAL, numb_zero(), flags);
+  
+   term = term_new(1);
+   term_add_elem(term, entry_result, numb_one(), MFUN_NONE);
+
+   code_value_term(self, term);
+
+   sym  = symbol_lookup(SYMBOL_NAME_INTERNAL);
+
+   assert(sym != NULL);
+   
+   symbol_add_entry(sym, entry_tmp);
+   symbol_add_entry(sym, entry_result);
+   
+   bound_free(t_lower);
+   bound_free(t_upper);
+   bound_free(r_lower);
+   bound_free(r_upper);
+   
+   return self;
+}
 
    
 
