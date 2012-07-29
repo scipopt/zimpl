@@ -1,4 +1,4 @@
-/* $Id: mme.h,v 1.101 2012/07/26 20:14:18 bzfkocht Exp $ */
+/* $Id: mme.h,v 1.102 2012/07/29 15:09:27 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

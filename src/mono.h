@@ -1,4 +1,4 @@
-/* $Id: mono.h,v 1.13 2012/07/26 20:14:18 bzfkocht Exp $ */
+/* $Id: mono.h,v 1.14 2012/07/29 15:09:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.h                                                        */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

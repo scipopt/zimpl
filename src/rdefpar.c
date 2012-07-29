@@ -1,4 +1,4 @@
-/* $Id: rdefpar.c,v 1.17 2011/09/18 10:22:36 bzfkocht Exp $ */
+/* $Id: rdefpar.c,v 1.18 2012/07/29 15:09:29 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: rdefpar.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

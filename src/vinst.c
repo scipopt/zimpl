@@ -1,4 +1,4 @@
-/* $Id: vinst.c,v 1.31 2012/07/26 13:01:22 bzfkocht Exp $ */
+/* $Id: vinst.c,v 1.32 2012/07/29 15:09:30 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

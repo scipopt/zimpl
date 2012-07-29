@@ -1,3 +1,5 @@
+3.3.0 29. Jul 2012 Release
+
  - Added support for functions sqrt, exp, pow, log,
    ln, sgn, sgnpow, sin, cos, tan, abs
    in non-linear case.

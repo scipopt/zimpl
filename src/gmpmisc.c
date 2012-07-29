@@ -1,4 +1,4 @@
-/* $Id: gmpmisc.c,v 1.12 2011/09/18 10:22:35 bzfkocht Exp $ */
+/* $Id: gmpmisc.c,v 1.13 2012/07/29 15:09:26 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratmisc.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

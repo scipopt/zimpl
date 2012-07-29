@@ -1,4 +1,4 @@
-/* $Id: xlpglue.h,v 1.26 2011/10/25 08:18:02 bzfkocht Exp $ */
+/* $Id: xlpglue.h,v 1.27 2012/07/29 15:09:31 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.h                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2011 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
