@@ -1,4 +1,4 @@
-# $Id: minlp.zpl,v 1.3 2012/07/26 20:14:18 bzfkocht Exp $
+# $Id: minlp.zpl,v 1.4 2012/11/23 13:03:43 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: minlp.zpl                                                     *
@@ -30,6 +30,7 @@ var x[I] binary;
 var y binary;
 var z binary;
 var a;
+var b;
 
 subto c1: x[1]^2 == x[1]^1 + x[1]^0;
 subto c2: 2 * x[1] * 3 * x[2] * 5 * x[3] <= 77;
@@ -49,4 +50,5 @@ subto c15: sgn(a) == z;
 subto c16: pow(a, 2/3) >= 7;
 subto c17: sgnpow(a, 12^2) <= 200;
 subto c18: 16 * log(sqrt(exp(ln(sin(cos(tan(abs(sgn(pow(sgnpow(a, -2), -3)))))))))) == 99;
+subto c19: (2-exp(3*a-5))^2 == b;
 

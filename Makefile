@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.83 2012/07/26 20:14:18 bzfkocht Exp $
+# $Id: Makefile,v 1.84 2012/11/23 13:03:38 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -42,10 +42,13 @@ OSTYPE          :=      $(shell uname -s | \
 			tr '/' '_' | \
                         sed \
 			-e s/cygwin.*/cygwin/ \
-                        -e s/irix../irix/ )
+                        -e s/irix../irix/ \
+                        -e s/windows.*/windows/ \
+                        -e s/mingw.*/mingw/)
+
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	3.3.0
+VERSION		=	3.3.1
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false

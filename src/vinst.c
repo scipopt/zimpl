@@ -1,4 +1,4 @@
-/* $Id: vinst.c,v 1.32 2012/07/29 15:09:30 bzfkocht Exp $ */
+/* $Id: vinst.c,v 1.33 2012/11/23 13:03:43 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -1182,6 +1182,7 @@ CodeNode* i_vexpr_fun(CodeNode* self)
    Bound*       r_lower;
    Bound*       r_upper;
    MFun         mfun;
+   Numb*        rhs;
    
    Trace("i_vexpr_fun");
 
@@ -1258,9 +1259,14 @@ CodeNode* i_vexpr_fun(CodeNode* self)
    /* vexpr - t == 0
     */
    term         = term_copy(term_fun);
-   term_add_elem(term, entry_tmp, numb_minusone(), MFUN_NONE);
+   term_add_elem(term, entry_tmp, numb_minusone(), MFUN_NONE); 
 
-   create_new_constraint(cname, "_a", term, CON_EQUAL, numb_zero(), flags);
+   rhs = numb_new_mul(term_get_constant(term), numb_minusone());
+   term_add_constant(term, rhs);
+
+   create_new_constraint(cname, "_a", term, CON_EQUAL, rhs, flags);
+
+   numb_free(rhs);
 
    /* fun(t) - r == 0
     */
