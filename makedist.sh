@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION="3.3.0"
+VERSION="3.3.1"
 NAME="zimpl-$VERSION"
 rm -f $NAME
 ln -s . $NAME
@@ -15,6 +15,7 @@ tar -cvzhf $NAME.tgz \
 --exclude=".\#*" \
 --exclude="$NAME/make/local/*" \
 --exclude="*.output" \
+--exclude="*OLD*" \
 $NAME/LICENSE $NAME/README $NAME/CHANGELOG \
 $NAME/Makefile $NAME/make $NAME/src $NAME/doc/zimpl.pdf \
 $NAME/doc/zimpl.man $NAME/check \

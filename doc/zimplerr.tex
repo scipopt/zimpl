@@ -317,6 +317,13 @@
 \item[188 Index tuple has wrong dimension]\ \\
    The number of elements in an index tuple is different from the
    dimension of the tuples in the set that is indexed.
+   This might occur, when the index tuple of an entry in a parameter initialization list has
+   not the same dimension as the indexing set of the parameter. 
+   This might occur, when the index tuple of an entry in a set
+   initialization list has
+   not the same dimension as the indexing set of the set. 
+   If you use a \code{powerset} or \code{subset} instruction, the index
+   set has to be one dimension.
 \item[189 Tuple number \code{xxx} is too big or not an integer]\ \\
   The tuple number must be given as an integer smaller than two
   billion.
@@ -329,19 +336,8 @@
   The component number must be between one and the dimension of the set.
 \item[193 Different dimension tuples in set initialization]\ \\
   The tuples that should be part of the list have different dimension.
-\item[194 Indexing tuple \code{xxx} has wrong dimension
-           \code{yyy}, expected \code{zzz}]\ \\
-  The index tuple of an entry in a parameter initialization list must
-  have the same dimension as the indexing set of the parameter. This
-  is just another kind of error~134.
 \item[195 Genuine empty set as index set] (warning)\ \\
   The set of an index set is always the empty set.
-\item[196 Indexing tuple \code{xxx} has wrong dimension
-           \code{yyy}, expected \code{zzz}]\ \\
-  The index tuple of an entry in a set initialization list must
-  have the same dimension as the indexing set of the set. 
-  If you use a \code{powerset} or \code{subset} instruction, the index
-  set has to be one dimension.
 \item[197 Empty index set for set]\ \\
   The index set for a set is empty.
 \item[198 Incompatible index tuple]\ \\

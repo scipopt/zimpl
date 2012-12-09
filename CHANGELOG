@@ -1,5 +1,7 @@
 3.3.1  9. Dec 2012 Release
 
+ - Fixed bug when reading wrong index type.
+
  - Fixed bug with constants in non-linear expresions.
 
 3.3.0 29. Jul 2012 Release

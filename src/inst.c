@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.136 2012/07/29 15:09:27 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.137 2012/12/09 17:38:20 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -1674,9 +1674,12 @@ static void check_tuple_set_compatible(
 
    if (tuple_get_dim(tuple_a) != dim)
    {
-      fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
+      fprintf(stderr, "*** Error 188: Index tuple ");
       tuple_print(stderr, tuple_a);
-      fprintf(stderr, " should have dimension %d\n", dim);
+      fprintf(stderr, " has wrong dimension %d, expected %d\n",
+         tuple_get_dim(tuple_a),
+         dim);
+
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
@@ -2806,7 +2809,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       entry  = list_get_entry(list, &lelem);
       tuple  = entry_get_tuple(entry);
-
+#if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
          fprintf(stderr, "*** Error 196: Indexing Tuple ");
@@ -2817,6 +2820,8 @@ CodeNode* i_newsym_set2(CodeNode* self)
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
+#endif
+      check_tuple_set_compatible(self, tuple, iset);
 
       if (set_lookup(iset, tuple))
          symbol_add_entry(sym, entry_copy(entry));
@@ -2921,7 +2926,7 @@ static void insert_param_list_by_list(
    {
       entry  = list_get_entry(list, &le_idx);
       tuple  = entry_get_tuple(entry);
-
+#if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
          fprintf(stderr, "*** Error 194: Indexing tuple ");
@@ -2932,6 +2937,9 @@ static void insert_param_list_by_list(
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
+#endif
+      check_tuple_set_compatible(self, tuple, iset);
+
       if (!set_lookup(iset, tuple))
       {
          fprintf(stderr, "*** Error 134: Illegal element ");
@@ -3571,9 +3579,12 @@ CodeNode* i_idxset_new(CodeNode* self)
        */    
       if (dim > 0 && tuple_get_dim(tuple) != dim)
       {
-         fprintf(stderr, "*** Error 188: Index tuple has wrong dimension\n");
+         fprintf(stderr, "*** Error 188: Index tuple ");
          tuple_print(stderr, tuple);
-         fprintf(stderr, " should have dimension %d\n", dim);
+         fprintf(stderr, " has wrong dimension %d, expected %d\n",
+            tuple_get_dim(tuple),
+            dim);
+
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
