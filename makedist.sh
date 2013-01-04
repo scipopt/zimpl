@@ -28,3 +28,4 @@ echo "check version numbers in Makefile, doc/zimpl.tex (2x) and makedist.sh ($VE
 grep "^VERSION" Makefile
 grep " Version" doc/zimpl.tex
 grep "@version" doc/docu.c
+grep "ZIMPL_VERSION" src/mme.h
