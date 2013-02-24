@@ -1,3 +1,6 @@
+ - Fixed bug that appeared when asking a param with a 
+   ranged index set and a default for a string entry.
+
 3.3.1  9. Dec 2012 Release
 
  - Fixed bug when reading wrong index type.

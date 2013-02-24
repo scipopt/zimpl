@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.84 2012/11/23 13:03:38 bzfkocht Exp $
+# $Id: Makefile,v 1.85 2013/02/24 16:01:57 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -48,7 +48,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	3.3.1
+VERSION		=	3.3.2
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false

@@ -1,4 +1,4 @@
-/* $Id: inst.c,v 1.137 2012/12/09 17:38:20 bzfkocht Exp $ */
+/* $Id: inst.c,v 1.138 2013/02/24 16:01:57 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -3329,7 +3329,9 @@ CodeNode* i_symbol_deref(CodeNode* self)
          zpl_exit(EXIT_FAILURE);
       }
    }
-   
+
+   /* Tuple might not fit to symbol
+    */
    entry = symbol_lookup_entry(sym, tuple);
 
    if (NULL == entry)

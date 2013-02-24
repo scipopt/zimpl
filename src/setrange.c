@@ -1,4 +1,4 @@
-/* $Id: setrange.c,v 1.20 2012/07/29 15:09:30 bzfkocht Exp $ */
+/* $Id: setrange.c,v 1.21 2013/02/24 16:01:58 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -164,10 +164,10 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    
    elem = tuple_get_elem(tuple, offset);
 
-   /* If this fails, this means we have a set with mixed number
-    * and integer types.
+   /* If this is true, we asked a number set for a string.
     */
-   assert(elem_get_type(elem) == ELEM_NUMB);
+   if (elem_get_type(elem) != ELEM_NUMB)
+      return -1;
 
    numb = elem_get_numb(elem);
 
