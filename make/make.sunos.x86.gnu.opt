@@ -1,7 +1,7 @@
-#--- $Id: make.sunos.x86.gnu.opt,v 1.6 2011/10/31 08:48:56 bzfkocht Exp $
+#--- $Id: make.sunos.x86.gnu.opt,v 1.7 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
 CFLAGS		=	-O6
-LDFLAGS		=	-lgmp -lz -lm
+LDFLAGS		=	-lgmp -lm
 
 ifeq ($(LINK),shared)
 LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
@@ -15,3 +15,8 @@ endif
 ifeq ($(LINK),static)
 LDFLAGS		+=	-Bstatic
 endif
+
+ifeq ($(ZLIB),true)
+LDFLAGS		+=	-lz
+endif
+

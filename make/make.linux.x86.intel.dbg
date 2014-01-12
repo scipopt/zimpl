@@ -1,11 +1,16 @@
-#--- $Id: make.linux.x86.intel.dbg,v 1.13 2011/10/31 08:48:56 bzfkocht Exp $
+#--- $Id: make.linux.x86.intel.dbg,v 1.14 2014/01/12 11:07:04 bzfkocht Exp $
 CC		=	icc
 CPPFLAGS	+=	-DFREEMEM
 CFLAGS		=	-g -fp-model precise -w2 -Wcheck \
 			-par_report0 -vec_report0 \
 			-wd111,171,279,981,1173,1419,1684
-LDFLAGS         =       -lgmp -lz -lm
+LDFLAGS         =       -lgmp -lm
 # -wd383,444,810 
+
+ifeq ($(ZLIB),true)
+LDFLAGS		+=	-lz
+endif
+
 ifeq ($(LINK),shared)
 LINK		=	normal
 endif

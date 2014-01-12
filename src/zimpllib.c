@@ -1,4 +1,4 @@
-/* $Id: zimpllib.c,v 1.32 2012/07/29 15:09:31 bzfkocht Exp $ */
+/* $Id: zimpllib.c,v 1.33 2014/01/12 11:07:04 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -89,7 +89,7 @@ void zpl_print_banner(FILE* fp, Bool with_license)
       fprintf(fp, banner, VERSION);
 
       if (with_license || verbose > VERB_NORMAL)
-         fprintf(fp, license); 
+         fprintf(fp, "%s", license); 
 
       fputc('\n', fp);
    }

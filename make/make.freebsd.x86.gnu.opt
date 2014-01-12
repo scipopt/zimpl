@@ -1,4 +1,9 @@
-#--- $Id: make.freebsd.x86.gnu.opt,v 1.2 2010/10/02 10:57:09 bzfkocht Exp $
+#--- $Id: make.freebsd.x86.gnu.opt,v 1.3 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-I/usr/local/include -DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
 CFLAGS		=	-O3
-LDFLAGS		=	-L/usr/local/lib -lgmp -lz -lm -static
+LDFLAGS		=	-L/usr/local/lib -lgmp -lm -static
+
+ifeq ($(ZLIB),true)
+LDFLAGS		+=	-lz
+endif
+

@@ -1,5 +1,7 @@
 TODO! test for ,indicator
 
+ - ZLIB=false works now.
+
  - Catching when vif then or else is used with an
    non-linear function.
 

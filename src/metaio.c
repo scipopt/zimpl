@@ -1,4 +1,4 @@
-/* $Id: metaio.c,v 1.19 2012/07/29 15:09:27 bzfkocht Exp $ */
+/* $Id: metaio.c,v 1.20 2014/01/12 11:07:04 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: metaio.c                                                      */
@@ -228,7 +228,6 @@ MFP* mio_open(const char* name, const char* ext)
       }
       else
       {
-#ifndef WITHOUT_ZLIB
          int len;
       
          /* This seems to be a real file, is it available ?
@@ -243,6 +242,7 @@ MFP* mio_open(const char* name, const char* ext)
             if (access(filename, R_OK) != 0)
                strcpy(filename, name);
          }
+#ifndef WITHOUT_ZLIB
          len = (int)strlen(filename);
       
          if (len > 3 && !strcmp(&filename[len - 3], ".gz"))
@@ -400,7 +400,7 @@ void mio_init()
    /* Setup for internal test
     */
    static const char* const progstrg = 
-      "# $Id: metaio.c,v 1.19 2012/07/29 15:09:27 bzfkocht Exp $\n"
+      "# $Id: metaio.c,v 1.20 2014/01/12 11:07:04 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
       "#\n"

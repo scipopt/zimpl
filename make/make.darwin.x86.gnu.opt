@@ -1,6 +1,6 @@
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
 CFLAGS		=	-O6
-LDFLAGS		=	-lgmp -lz -lm 
+LDFLAGS		=	-lgmp -lm 
 
 ifeq ($(LINK),shared)
 LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
@@ -12,6 +12,10 @@ RANLIB		=	true
 endif
 
 ifeq ($(LINK),static)
-LDFLAGS		=	-Bstatic -lgmp -lz -lm
+LDFLAGS		=	-Bstatic -lgmp -lm
+endif
+
+ifeq ($(ZLIB),true)
+LDFLAGS		+=	-lz
 endif
 

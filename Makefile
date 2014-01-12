@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.85 2013/02/24 16:01:57 bzfkocht Exp $
+# $Id: Makefile,v 1.86 2014/01/12 11:07:04 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*                                                                           *
 #*   File....: Makefile                                                      *
@@ -52,6 +52,7 @@ VERSION		=	3.3.2
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false
+ZLIB		=	true
 LINK		=	normal
 OPT		=	opt
 COMP		=	gnu
@@ -72,7 +73,7 @@ LIBDIR		=	lib
 
 CPPFLAGS	=	-I$(SRCDIR) -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
-LDFLAGS		=	-lgmp -lz -lm
+LDFLAGS		=	-lgmp -lm
 YFLAGS		=	-d -t -v  
 LFLAGS		=	-d
 ARFLAGS		=	
@@ -82,6 +83,12 @@ GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 			-Wstrict-prototypes -Wmissing-prototypes -Winline \
 			-Wmissing-declarations -Wshadow -Waggregate-return \
 			-Wno-unused -Wno-unknown-pragmas 
+
+ifeq ($(ZLIB),true)
+LDFLAGS		+=	-lz
+else
+CPPFLAGS	+=	-DWITHOUT_ZLIB
+endif
 
 ifeq ($(SHARED),true)
 LINK		=	shared
