@@ -1,8 +1,9 @@
-TODO! test for ,indicator
+3.3.2 ?. Feb 2014 Release
+
 
  - ZLIB=false works now.
 
- - Catching when vif then or else is used with an
+ - Fixed bug when vif then or else is used with an
    non-linear function.
 
  - Fixed bug when using indicators with vif

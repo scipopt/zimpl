@@ -1,4 +1,4 @@
-# $Id: vinst.zpl,v 1.6 2010/06/10 19:42:40 bzfkocht Exp $
+# $Id: vinst.zpl,v 1.7 2014/01/12 12:21:25 bzfkocht Exp $
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #*                                                                           */
 #*   File....: vinst.zpl                                                     */
@@ -46,3 +46,5 @@ subto c9: vif x[1] == 1 and x[2] > 5
            or x[1] == 2 and x[2] < 8 then x[3] == 7 end;
 
 subto c10: vif x[1] != 1 xor not x[2] == 5 then x[3] <= 2 end;
+
+subto c11: vif x[1] == 1  then x[2] == 0 else x[3] == 0 end, indicator;
