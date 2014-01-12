@@ -1,0 +1,17 @@
+#--- $Id: make.linux.x86_64.gnu.prf,v 1.1 2014/01/12 09:49:50 bzfkocht Exp $
+CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES 
+CFLAGS		=	-O -m64 -mtune=native -g -pg $(GCCWARN)
+LDFLAGS		=	-lgmp -lz -lm 
+
+ifeq ($(LINK),shared)
+LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
+LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
+CFLAGS		+=	-fPIC
+AR		=	gcc -m64 -shared -o # the trailing space is important
+ARFLAGS		=       $(LDFLAGS)
+RANLIB		=	true
+endif
+
+ifeq ($(LINK),static)
+LDFLAGS		+=	-static
+endif

@@ -1,4 +1,4 @@
-/* $Id: hash.c,v 1.36 2012/07/29 15:09:26 bzfkocht Exp $ */
+/* $Id: hash.c,v 1.37 2014/01/12 09:49:54 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: hash.c                                                        */
@@ -391,7 +391,7 @@ static void hash_statist(FILE* fp, const Hash* hash)
       avg = (double)sum / (double)filled;
    
    fprintf(fp,
-      "HashStat: size=%u sum=%d min=%d max=%d avg=%.1f zero=%d filled=%d\n",
+      "HashStat: size=%8u sum=%6d min=%3d max=%3d avg=%4.1f zero=%6d filled=%6d\n",
       hash->size, sum, min, max, avg, zeros, filled);
 }
 

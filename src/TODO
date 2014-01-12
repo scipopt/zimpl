@@ -1,3 +1,11 @@
+bei xlp_glue das lps_getnzo dient nur dafuer sicherzustellen
+dasnicht zwei gleiche variablen in den monomen kommen.
+besser term_simplify vorher aufrufen dann braucht man das
+nicht mehr.
+
+hash_lookup ggf. scheller machen durch weniger vergleiche.
+
+
 Braucht man hier den else part und wenn ja warum.
 subto c2: sum <i> in I :
      if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
