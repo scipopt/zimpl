@@ -1,4 +1,4 @@
-/* $Id: inst.h,v 1.52 2012/07/29 15:09:27 bzfkocht Exp $ */
+/* $Id: inst.h,v 1.53 2014/01/12 09:47:38 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.h                                                        */
@@ -34,6 +34,14 @@ extern "C" {
 
 #define INST_NULL ((Inst)0)
 
+/* ??? */
+extern CodeNode* i_expr_sin(CodeNode* self);
+extern CodeNode* i_expr_cos(CodeNode* self);
+extern CodeNode* i_expr_tan(CodeNode* self);
+extern CodeNode* i_expr_asin(CodeNode* self);
+extern CodeNode* i_expr_acos(CodeNode* self);
+extern CodeNode* i_expr_atan(CodeNode* self);
+   
 /* inst.c
  */
 /*lint -sem(     i_bool_and, 1p == 1, type(1), @p == 1p) */

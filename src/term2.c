@@ -1,4 +1,4 @@
-/* $Id: term2.c,v 1.17 2012/07/29 15:09:30 bzfkocht Exp $ */
+/* $Id: term2.c,v 1.18 2014/01/12 09:47:38 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: term2.c                                                        */
@@ -672,7 +672,9 @@ Bool term_is_polynomial(const Term* term)
    int i;
    
    for(i = 0; i < term->used; i++)
-      if (!(mono_get_function(term->elem[i]) == MFUN_NONE))
+      if ((mono_get_function(term->elem[i]) != MFUN_NONE)
+       && (mono_get_function(term->elem[i]) != MFUN_TRUE)   
+       && (mono_get_function(term->elem[i]) != MFUN_FALSE))
          return FALSE;
 
    return TRUE;

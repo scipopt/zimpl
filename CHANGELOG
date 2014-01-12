@@ -1,3 +1,10 @@
+TODO! test for ,indicator
+
+ - Catching when vif then or else is used with an
+   non-linear function.
+
+ - Fixed bug when using indicators with vif
+
  - Fixed bug that appeared when asking a param with a 
    ranged index set and a default for a string entry.
 

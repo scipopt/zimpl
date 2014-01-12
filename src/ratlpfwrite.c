@@ -1,4 +1,4 @@
-/* $Id: ratlpfwrite.c,v 1.27 2012/07/29 15:09:28 bzfkocht Exp $ */
+/* $Id: ratlpfwrite.c,v 1.28 2014/01/12 09:47:38 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpfwrite.c                                                    */
@@ -320,6 +320,7 @@ static void write_row(
                break;
             case MFUN_TRUE :
             case MFUN_FALSE :
+               break;
             default :
                abort();
             } 

@@ -1,5 +1,5 @@
 %{
-#pragma ident "@(#) $Id: mmlparse2.y,v 1.12 2012/07/29 15:09:27 bzfkocht Exp $"
+#pragma ident "@(#) $Id: mmlparse2.y,v 1.13 2014/01/12 09:47:38 bzfkocht Exp $"
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse2.y                                                   */
@@ -98,7 +98,7 @@ extern void yyerror(const char* s);
 %token INTER UNION CROSS SYMDIFF WITHOUT PROJ
 %token MOD DIV POW FAC
 %token CARD ROUND FLOOR CEIL RANDOM ORD
-%token ABS SGN LOG LN EXP SQRT SIN COS TAN POWER SGNPOW
+%token ABS SGN LOG LN EXP SQRT SIN COS TAN ASIN ACOS ATAN POWER SGNPOW
 %token READ AS SKIP USE COMMENT MATCH
 %token SUBSETS INDEXSET POWERSET
 %token VIF VABS
@@ -1093,6 +1093,12 @@ cval
    | LN '(' cexpr ')'       { $$ = code_new_inst(i_expr_ln, 1, $3); }
    | EXP '(' cexpr ')'      { $$ = code_new_inst(i_expr_exp, 1, $3); }
    | SQRT '(' cexpr ')'     { $$ = code_new_inst(i_expr_sqrt, 1, $3); }
+   | SIN '(' cexpr ')'      { $$ = code_new_inst(i_expr_sin, 1, $3); }
+   | COS '(' cexpr ')'      { $$ = code_new_inst(i_expr_cos, 1, $3); }
+   | TAN '(' cexpr ')'      { $$ = code_new_inst(i_expr_tan, 1, $3); }
+   | ASIN '(' cexpr ')'     { $$ = code_new_inst(i_expr_asin, 1, $3); }
+   | ACOS '(' cexpr ')'     { $$ = code_new_inst(i_expr_acos, 1, $3); }
+   | ATAN '(' cexpr ')'     { $$ = code_new_inst(i_expr_atan, 1, $3); }
 
    | '(' cexpr ')'          { $$ = $2; }
    | LENGTH '(' cexpr ')'   { $$ = code_new_inst(i_expr_length, 1, $3); }

@@ -1,4 +1,4 @@
-/* $Id: vinst.c,v 1.33 2012/11/23 13:03:43 bzfkocht Exp $ */
+/* $Id: vinst.c,v 1.34 2014/01/12 09:47:38 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-/* #define TRACE  1 */
+/* #define TRACE  1  */
 
 #include "lint.h"
 #include "bool.h"
@@ -837,9 +837,13 @@ static void generate_conditional_constraint(
    if (  (con_type == CON_RHS && numb_cmp(bound_val, rhs) <= 0)
       || (con_type == CON_LHS && numb_cmp(bound_val, rhs) >= 0))
    {
+      /* ??? This can be triggered for an eqiality constraint if after the
+       * split one part is always true.
+       */
       if (stmt_trigger_warning(180))
       {
          fprintf(stderr, "--- Warning 180: Conditional constraint always true due to bounds\n");
+
          code_errmsg(self);
       }  
    }
@@ -903,7 +907,7 @@ static void generate_indicator_constraint(
    if (con_type == CON_LHS)
       numb_neg(lhs);
 #endif
-   
+
    (void)xlp_addcon_term(prog_get_lp(), cname, con_type, lhs, rhs, flags, ind_term);
    
    term_free(ind_term);
@@ -940,6 +944,13 @@ static void handle_vif_then_else(
    }
    assert(con_type == CON_RHS || con_type == CON_LHS || con_type == CON_EQUAL);
 
+   if (!term_is_linear(term))
+   {
+      fprintf(stderr, "*** Error 222: Term inside a then or else constraint not linear\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+        
    if (flags & LP_FLAG_CON_INDIC)
       generate_indicator_constraint(self, vif_term, term, con_type, rhs, flags, then_case);
    else
