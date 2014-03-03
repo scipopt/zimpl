@@ -1,4 +1,4 @@
-/* $Id: mono.c,v 1.15 2012/07/29 15:09:27 bzfkocht Exp $ */
+/* $Id: mono.c,v 1.16 2014/03/03 08:36:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mono.c                                                        */
@@ -344,7 +344,8 @@ Bool mono_is_linear(const Mono* mono)
 {
    assert(mono_is_valid(mono));
 
-   return mono->count == 1 && mono->fun == MFUN_NONE;
+   /* ??? Effect not fully testet */
+   return mono->count == 1 && (mono->fun == MFUN_NONE || mono->fun == MFUN_TRUE || mono->fun == MFUN_FALSE);
 }
 
 int mono_get_degree(const Mono* mono)

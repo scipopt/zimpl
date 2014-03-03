@@ -62,6 +62,10 @@ LDFLAGS         +=      -L/tmp/gmp/lib
 Have a look at Makefile and make/make.* to
 get an idea. 
 
+On some MAC systems, GMP is installed under /sw/include and /sw/lib.
+If these are not contained in the library and include paths, you have
+to add them explicitly, as shown above.
+
 
 WINDOWS
 -------
