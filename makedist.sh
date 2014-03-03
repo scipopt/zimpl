@@ -24,7 +24,7 @@ $NAME/example/queens[12345].zpl $NAME/example/steinerbaum.zpl \
 $NAME/example/tsp.zpl $NAME/example/tsp.dat
 rm -f $NAME
 echo ""
-echo "check version numbers in Makefile, doc/zimpl.tex (2x) and makedist.sh ($VERSION):"
+echo "check version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c and makedist.sh ($VERSION):"
 grep "^VERSION" Makefile
 grep " Version" doc/zimpl.tex
 grep "@version" doc/docu.c

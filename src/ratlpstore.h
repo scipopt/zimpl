@@ -1,4 +1,4 @@
-/* $Id: ratlpstore.h,v 1.23 2012/07/29 15:09:29 bzfkocht Exp $ */
+/* $Id: ratlpstore.h,v 1.24 2014/03/03 16:44:20 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: ratlpstore.h                                                  */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2012 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

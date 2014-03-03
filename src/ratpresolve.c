@@ -1,4 +1,4 @@
-/* $Id: ratpresolve.c,v 1.17 2012/07/29 15:09:29 bzfkocht Exp $ */
+/* $Id: ratpresolve.c,v 1.18 2014/03/03 16:44:21 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lpstore.c                                                     */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2012 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

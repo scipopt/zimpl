@@ -1,4 +1,4 @@
-/* $Id: blkmem.h,v 1.9 2012/07/29 15:09:26 bzfkocht Exp $ */
+/* $Id: blkmem.h,v 1.10 2014/03/03 16:44:05 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: blkmem.h                                                      */
@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007-2012 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
