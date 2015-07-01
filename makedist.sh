@@ -17,7 +17,7 @@ tar -cvzhf $NAME.tgz \
 --exclude="*.output" \
 --exclude="*OLD*" \
 $NAME/LICENSE $NAME/README $NAME/CHANGELOG \
-$NAME/Makefile $NAME/make $NAME/src $NAME/doc/zimpl.pdf \
+$NAME/Makefile $NAME/Makefile.nmake $NAME/make $NAME/src $NAME/doc/zimpl.pdf \
 $NAME/doc/zimpl.man $NAME/check \
 $NAME/example/chvatal_diet.zpl $NAME/example/facility_location.zpl \
 $NAME/example/queens[12345].zpl $NAME/example/steinerbaum.zpl \
