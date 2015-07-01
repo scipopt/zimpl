@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION="3.3.2"
+VERSION="3.3.3"
 NAME="zimpl-$VERSION"
 rm -f $NAME
 ln -s . $NAME
@@ -24,7 +24,7 @@ $NAME/example/queens[12345].zpl $NAME/example/steinerbaum.zpl \
 $NAME/example/tsp.zpl $NAME/example/tsp.dat
 rm -f $NAME
 echo ""
-echo "check version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c and makedist.sh ($VERSION):"
+echo "check version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c, makedist.sh and ($VERSION):"
 grep "^VERSION" Makefile
 grep " Version" doc/zimpl.tex
 grep "@version" doc/docu.c

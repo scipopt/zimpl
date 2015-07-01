@@ -1,3 +1,7 @@
+3.3.3  1. Jul 2015 Release
+
+ - Added Windows Makefile.
+
 3.3.2 27. Feb 2014 Release
 
  - All -O6 changed to -O3 in submakefiles.

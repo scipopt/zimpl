@@ -1,4 +1,3 @@
-/* $Id: mme.h,v 1.105 2014/03/03 16:44:15 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mme.h                                                         */
@@ -8,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,7 +30,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  332
+#define ZIMPL_VERSION  333
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.
