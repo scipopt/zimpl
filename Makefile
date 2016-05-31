@@ -55,12 +55,17 @@ ZLIB		=	true
 LINK		=	normal
 OPT		=	opt
 COMP		=	gnu
-CC		=	gcc
+CC		   =	gcc
+CC_o	   = -o
+LINKCC   =	gcc
+LINKCC_o =	 -o #the white space is important
+LIBEXT	= .a
 YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
 LINT		=	flexelint
-AR		=	ar cr
+AR		   =	ar cr
+AR_o	   =
 RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
@@ -101,12 +106,14 @@ OBJDIR		=	obj/O.$(OSTYPE).$(ARCH).$(COMP).$(LINK).$(OPT)
 NAME		=	zimpl
 BINNAME		=	$(NAME)-$(VERSION).$(OSTYPE).$(ARCH).$(COMP).$(LINK).$(OPT)
 LIBNAME		=	$(NAME)-$(VERSION).$(BASE)
-LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).a
-LIBRARYDBL	=	$(LIBDIR)/lib$(LIBNAME).dbl.a
+
+LIBRARY		=	$(LIBDIR)/lib$(LIBNAME)$(LIBEXT)
+LIBRARYDBL	=	$(LIBDIR)/lib$(LIBNAME).dbl$(LIBEXT)
+LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE)$(LIBEXT)
+LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl$(LIBEXT)
+
 BINARY		=	$(BINDIR)/$(BINNAME)
 BINARYDBL	=	$(BINDIR)/$(BINNAME).dbl
-LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).a
-LIBDBLLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).dbl.a
 BINLINK		=	$(BINDIR)/$(NAME).$(BASE)
 BINSHORTLINK	=	$(BINDIR)/$(NAME)
 DEPEND		=	$(SRCDIR)/depend
@@ -167,17 +174,23 @@ $(BINLINK) $(BINSHORTLINK):	$(BINARY)
 
 $(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
 		@echo "-> linking $@"
-		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME) $(LDFLAGS) -o $@
+ifeq ($(COMP), msvc)
+		$(LINKCC) $(CFLAGS) $(OBJXXX) $(LIBRARY) $(LDFLAGS) $(LINKCC_o)$@
+else
+		$(LINKCC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME) $(LDFLAGS) $(LINKCC_o)$@
+endif
 
 $(BINARYDBL):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYDBL) 
 		@echo "-> linking $@"
-		$(CC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME).dbl $(LDFLAGS) -o $@
+		$(LINKCC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME).dbl $(LDFLAGS) $(CC_o)$@
 
 $(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX) 
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARY)
-		$(AR) $@ $(LIBXXX) $(ARFLAGS) 
+		$(AR) $(AR_o)$@ $(LIBXXX) $(ARFLAGS)
+ifneq ($(RANLIB),)
 		$(RANLIB) $@
+endif
 
 libdbl:		$(LIBRARYDBL) $(LIBDBLLINK)
 
@@ -247,6 +260,6 @@ depend:
 
 $(OBJDIR)/%.o:	$(SRCDIR)/%.c
 		@echo "-> compiling $@"
-		$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+		$(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(CC_o)$@
 
 # --- EOF ---------------------------------------------------------------------

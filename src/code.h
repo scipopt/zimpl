@@ -152,7 +152,7 @@ extern void         code_value_term(CodeNode* node, Term* term);
 /*lint -sem(        code_value_steal_child_term, 1p == 1 && 2n >= 0, @p == 1p) */
 extern Term*        code_value_steal_term(CodeNode* node, int no);
 /*lint -sem(        code_value_bool, 1p == 1) */
-extern void         code_value_bool(CodeNode* node, Bool bool);
+extern void         code_value_bool(CodeNode* node, Bool b);
 /*lint -sem(        code_value_size, 1p == 1) */
 extern void         code_value_size(CodeNode* node, int size);
 /*lint -sem(        code_value_list, custodial(2), 1p == 1 && 2p == 1) */
