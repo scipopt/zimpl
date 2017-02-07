@@ -1,0 +1,7 @@
+bin/
+lib/
+obj/
+src/mmlparse2.c
+src/mmlparse2.h
+src/mmlparse2.output
+src/mmlscan.c
