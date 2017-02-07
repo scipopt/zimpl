@@ -11,10 +11,10 @@ ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz
 endif
 
-ifeq ($(LINK),shared)
-LINK		=	normal
-endif
+#ifeq ($(LINK),shared)
+#LINK		=	normal
+#endif
 
-ifeq ($(LINK),static)
+#ifeq ($(LINK),static)
 LDFLAGS		+=	-static
-endif
+#endif

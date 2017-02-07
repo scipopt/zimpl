@@ -4,17 +4,17 @@ CFLAGS		=	-O3
 LDFLAGS		=	-lgmp -lm
 
 ifeq ($(LINK),shared)
-LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
-LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
+#LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
+#LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
 CFLAGS		+=	-fPIC
-AR		=	gcc -shared -o # the trailing space is important
-ARFLAGS		=       $(LDFLAGS)
-RANLIB		=	true
+#AR		=	gcc -shared -o # the trailing space is important
+#ARFLAGS		=       $(LDFLAGS)
+#RANLIB		=	true
 endif
 
-ifeq ($(LINK),static)
+#ifeq ($(LINK),static)
 LDFLAGS		+=	-Bstatic
-endif
+#endif
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

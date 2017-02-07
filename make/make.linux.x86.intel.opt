@@ -5,13 +5,13 @@ CFLAGS		=	-O3 -ip -fp-model precise -w1 -par_report0 -vec_report0 \
 			-wd1173
 LDFLAGS         =       -lgmp -lm -static
 
-ifeq ($(LINK),shared)
-LINK		=	normal
-endif
+#ifeq ($(LINK),shared)
+#LINK		=	normal
+#endif
 
-ifeq ($(LINK),static)
+#ifeq ($(LINK),static)
 LDFLAGS		+=	-static
-endif
+#endif
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

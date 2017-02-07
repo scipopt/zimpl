@@ -8,14 +8,14 @@ LDFLAGS		+=	-lz
 endif
 
 ifeq ($(LINK),shared)
-LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
-LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
+#LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
+#LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
 CFLAGS		+=	-fPIC
-AR		=	gcc -m32 -shared -o # the trailing space is important
-ARFLAGS		=       $(LDFLAGS)
-RANLIB		=	true
+#AR		=	gcc -m32 -shared -o # the trailing space is important
+#ARFLAGS		=       $(LDFLAGS)
+#RANLIB		=	true
 endif
 
-ifeq ($(LINK),static)
+#ifeq ($(LINK),static)
 LDFLAGS		+=	-static
-endif
+#endif

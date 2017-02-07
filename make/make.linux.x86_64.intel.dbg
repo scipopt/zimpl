@@ -12,10 +12,10 @@ endif
 
 # -wd383,444,810 
 
-ifeq ($(LINK),shared)
-LINK		=	normal
-endif
+#ifeq ($(LINK),shared)
+#LINK		=	normal
+#endif
 
-ifeq ($(LINK),static)
+#ifeq ($(LINK),static)
 LDFLAGS		+=	-static
-endif
+#endif
