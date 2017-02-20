@@ -64,6 +64,7 @@ YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
 LINT		=	flexelint
+CPPCHECK	=	cppcheck
 AR		   =	ar cr
 AR_o	   =
 RANLIB		=	ranlib
@@ -211,6 +212,9 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 lint:		$(OBJSRC) $(LIBSRC)
 		$(LINT) $(SRCDIR)/project.lnt \
 		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
+
+cppcheck:	$(OBJSRC) $(LIBSRC)
+		$(CPPCHECK) $(CPPFLAGS) --inline-suppr --enable=warning,style,performance,portability,information $^
 
 doc:
 		cd doc; make -f Makefile

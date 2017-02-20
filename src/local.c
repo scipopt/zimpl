@@ -122,7 +122,6 @@ const Elem* local_lookup(const char* name)
 
 void local_install_tuple(const Tuple* pattern, const Tuple* values)
 {
-   const Elem* elem;
    const char* name;
    int         i;
    
@@ -135,7 +134,7 @@ void local_install_tuple(const Tuple* pattern, const Tuple* values)
    
    for(i = 0; i < tuple_get_dim(pattern); i++)
    {
-      elem = tuple_get_elem(pattern, i);
+      const Elem* elem = tuple_get_elem(pattern, i);
 
       if (elem_get_type(elem) == ELEM_NAME)
       {

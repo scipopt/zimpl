@@ -283,7 +283,6 @@ static int parse_pattern(
       
       param_field[0] = 0;
       param_type [0] = t[0];
-      params         = 1;
       *hi_field_no   = MAX_FIELDS - 1;
       
       free(temp);
@@ -364,9 +363,7 @@ static int parse_pattern(
 static int split_fields(char* s, int hi_field_no, char* field[])
 {
    char* t = s;
-   char* u;
    int   fields = 0;
-   Bool  new_field;
 
    assert(s           != NULL);
    assert(hi_field_no >= 0);
@@ -375,7 +372,7 @@ static int split_fields(char* s, int hi_field_no, char* field[])
    
    for(;;)
    {
-      new_field = FALSE;
+      Bool new_field = FALSE;
       
       switch(*s)
       {
@@ -404,7 +401,7 @@ static int split_fields(char* s, int hi_field_no, char* field[])
          assert(fields <  MAX_FIELDS);
          
          /*xint --e{661}  Possible access of out-of-bounds pointer */
-         u = s;
+         char* u = s;
          field[fields] = t;
          fields++;
 
@@ -497,7 +494,6 @@ static List* process_tuple_stream(
    char**            field,
    int               param_type) /* param_type[0] */
 {
-   Tuple*      tuple;
    Elem*       elem;
    Numb*       numb;
    int         i;
@@ -511,7 +507,7 @@ static List* process_tuple_stream(
    
    for(i = 0; i < fields; i++)
    {
-      tuple = tuple_new(1);
+      Tuple* tuple = tuple_new(1);
       
       if (param_type == 'n')
       {
@@ -557,7 +553,6 @@ static List* process_line(
    const int*      param_type) 
 {
    Tuple*      tuple;
-   Entry*      entry;
    Elem*       elem;
    Numb*       numb;
    char*       t;
@@ -616,6 +611,8 @@ static List* process_line(
    }
    else
    {
+      Entry* entry;
+      
       if (param_field[i] >= fields)
       {
          fprintf(stderr, "*** Error 157: Not enough fields in data (value)\n");
@@ -664,7 +661,6 @@ static List* process_line(
 CodeNode* i_read(CodeNode* self)
 {
    MFP*        fp;
-   char*       s;
    char*       buf;
    char**      field;
    int         fields;
@@ -681,7 +677,6 @@ CodeNode* i_read(CodeNode* self)
    const char* match;
    int         skip;
    int         use;
-   int         line = 0;
    regex_t     regex;
    
    Trace("i_read");
@@ -740,11 +735,15 @@ CodeNode* i_read(CodeNode* self)
    }
    else
    {
+      int line = 0;
+      
       if (verbose >= VERB_NORMAL)
          printf("Reading %s\n", filename);
 
       while(NULL != (buf = mio_get_line(fp)))
       {
+         char* s;
+         
          /* Count the line
           */
          line++;

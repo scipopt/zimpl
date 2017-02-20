@@ -144,7 +144,6 @@ static int strgfile_getc(StrgFile* sf)
 static char* strgfile_gets(StrgFile* sf, char* buf, int size)
 {
    char* s = NULL;
-   int   i = 0;
    
    assert(strgfile_is_valid(sf));
    assert(buf  != NULL);
@@ -152,6 +151,8 @@ static char* strgfile_gets(StrgFile* sf, char* buf, int size)
    
    if (sf->offset < sf->length)
    {
+      int i = 0;
+      
       while(sf->offset < sf->length && i < size - 1)
       {
          assert(sf->content[sf->offset] != '\0');
@@ -367,16 +368,16 @@ char* mio_gets(const MFP* mfp, char* buf, int len)
 char* mio_get_line(const MFP* mfp)
 {
    int    size = 1;
-   int    pos;
    char*  buf = NULL;
    char*  s;
-   char*  t;
    
    assert(mfp_is_valid(mfp));
 
    do
    {
-      pos           = size - 1;
+      char* t;
+      int   pos     = size - 1;
+      
       size         += BUF_SIZE_INC - 1;
       buf           = (buf == NULL) ? malloc((size_t)size) : realloc(buf, (size_t)size);
       t             = &buf[pos];

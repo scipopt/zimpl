@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -588,7 +588,7 @@ Numb* numb_new_log(const Numb* numb)
    d = log10(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+   if ((d != d) || (d == -HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 700: log(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
@@ -641,12 +641,12 @@ Numb* numb_new_ln(const Numb* numb)
    d = log(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+   if ((d != d) || (d == -HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 702: ln(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
       return NULL;
-   }
+   }   
    sprintf(temp, "%.16e", d);
 
    return numb_new_ascii(temp);

@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -93,11 +93,10 @@ static int subset_cmp(const void* a, const void* b)
    const int* bb = (const int*)b;
 
    int i;
-   int d;
 
    for(i = 0; i < cmp_dim; i++)
    {
-      d = aa[i] - bb[i];
+      int d = aa[i] - bb[i];
 
       if (d != 0)
          return d;
@@ -319,7 +318,6 @@ static int subset_idx_cmp(const void* a, const void* b)
    const int* key    = (const int*)a;
    const int* subset = (const int*)b;
    int        i;
-   int        d;
    
    assert(key    != NULL);
    assert(subset != NULL);
@@ -328,7 +326,7 @@ static int subset_idx_cmp(const void* a, const void* b)
 
    for(i = 0; i < cmp_dim; i++)
    {
-      d = key[i] - subset[i];
+      int d = key[i] - subset[i];
 
       if (d != 0)
          return d;

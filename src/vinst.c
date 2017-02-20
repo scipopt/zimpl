@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -264,12 +264,7 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    Bound*       upper;
    Bound*       bound_zero;
    Bound*       bound_one;
-   Entry*       entry_xplus;
-   Entry*       entry_xminus;
-   Entry*       entry_bplus;
-   Entry*       entry_bminus;
    Entry*       entry_result;
-   Numb*        numb;
    VBFixed      fixed = VBOOL_OPEN;
    
    Trace("handle_vbool_cmp");
@@ -345,13 +340,18 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
    }
    else
    {
+      Entry*       entry_xplus;
+      Entry*       entry_xminus;
+      Entry*       entry_bplus;
+      Entry*       entry_bminus;
+      
       /* Remove constant from term
        */
       term_add_constant(term, rhs);
 
       if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
       {
-         numb = numb_copy(bound_get_value(lower));
+         Numb* numb = numb_copy(bound_get_value(lower));
          numb_abs(numb);
          bound_free(lower);
          lower = bound_new(BOUND_VALUE, numb);
@@ -811,13 +811,8 @@ static void generate_conditional_constraint(
    Bool            then_case)
 {
    Bound*       bound;
-   Numb*        big_m;
-   Term*        big_term;
    const Numb*  bound_val;
-   const Numb*  new_rhs;
-   const char*  basename;
-   char*        cname;
-   
+
    Trace("generate_conditional_constraint");
 
    assert(con_type == CON_RHS || con_type == CON_LHS);
@@ -849,16 +844,16 @@ static void generate_conditional_constraint(
    }
    else
    {
-      big_term  = term_copy(vif_term);
-      big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
-      new_rhs   = then_case ? bound_val : rhs;
+      const char*  basename  = conname_get();
+      char*        cname     = malloc(strlen(basename) + 5);
+      Term*        big_term  = term_copy(vif_term);
+      Numb*        big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
+      const Numb*  new_rhs   = then_case ? bound_val : rhs;
       
       term_mul_coeff(big_term, big_m);
 
       term_append_term(big_term, lhs_term);
 
-      basename = conname_get();
-      cname    = malloc(strlen(basename) + 5);
       sprintf(cname, "%s_%c_%c", basename,
          then_case           ? 't' : 'e',
          con_type == CON_RHS ? 'r' : 'l');
@@ -1052,7 +1047,6 @@ CodeNode* i_vabs(CodeNode* self)
    Entry*       entry_xminus;
    Entry*       entry_bplus;
    Entry*       entry_result;
-   Numb*        numb;
       
    Trace("i_vabs");
    
@@ -1093,7 +1087,7 @@ CodeNode* i_vabs(CodeNode* self)
 
    if (numb_cmp(bound_get_value(lower), numb_zero()) < 0)
    {
-      numb = numb_copy(bound_get_value(lower));
+      Numb* numb = numb_copy(bound_get_value(lower));
       numb_abs(numb);
       bound_free(lower);
       lower = bound_new(BOUND_VALUE, numb);

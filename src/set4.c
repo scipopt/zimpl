@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -659,7 +659,6 @@ List* set_subsets_list(
    Tuple* tuple;
    Entry* entry;
    Numb*  numb;
-   List*  subset_list;
    
    assert(set_is_valid(set));
    assert(subset_size >= 0);
@@ -693,7 +692,7 @@ List* set_subsets_list(
 
    do
    {
-      subset_list = NULL;
+      List* subset_list = NULL;
 
       for(i = 0; i < subset_size; i++)
       {

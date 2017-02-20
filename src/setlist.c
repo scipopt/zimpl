@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -280,14 +280,14 @@ static Set* set_list_copy(const Set* source)
  */
 static void set_list_free(Set* set)
 {
-   int i;
-   
    assert(set_list_is_valid(set));
 
    set->head.refc--;
 
    if (set->head.refc == 0)
    {
+      int i;
+   
       SID_del2(set->list);
 
       for(i = 0; i < set->head.members; i++)

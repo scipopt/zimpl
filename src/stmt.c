@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -81,13 +81,15 @@ static void activate_warnings(void)
 
 static void show_suppressed_warnings(void)
 {
-   int i;
-
    if (verbose > VERB_QUIET && verbose < VERB_CHATTER)
+   {
+      int i;
+      
       for(i = 0; i < MAX_WARNINGS; i++)
          if (warning_count[i] > 1)
             fprintf(stderr, "--- Warning %3d: suppressed %d further message(s)\n",
                i, warning_count[i] - 1);
+   }
 }
 
 Bool stmt_trigger_warning(int no)

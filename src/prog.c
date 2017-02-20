@@ -238,7 +238,7 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
    /* for(i = 0; i < prog->used; i++)
     *  pos += sprintf(&text[pos], "%s%s\n", prefix, stmt_get_text(prog->stmt[i]));
     */
-   assert(pos + 1 == len);
+   assert((size_t)pos + 1 == len);
    
    return text;
 }

@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -83,8 +83,6 @@ Tuple* tuple_new(int dim)
 
 void tuple_free(Tuple* tuple)
 {
-   int i;
-   
    assert(tuple_is_valid(tuple));
    assert(tuple->element != NULL);
 
@@ -92,6 +90,8 @@ void tuple_free(Tuple* tuple)
 
    if (tuple->refc == 0)
    {
+      int i;
+   
       for(i = 0; i < tuple->dim; i++)
          if (tuple->element[i] != NULL)
             elem_free(tuple->element[i]);
@@ -284,8 +284,6 @@ char* tuple_tostr(const Tuple* tuple)
    size_t  size = TUPLE_STR_SIZE;
    size_t  len  = 1; /* one for the zero '\0' */
    char*   str  = malloc(size);
-   char*   selem;
-   size_t  selemlen;
    int     i;
    
    assert(tuple_is_valid(tuple));
@@ -295,8 +293,8 @@ char* tuple_tostr(const Tuple* tuple)
    
    for(i = 0; i < tuple->dim; i++)
    {
-      selem    = elem_tostr(tuple->element[i]);
-      selemlen = strlen(selem) + 1;
+      char*  selem    = elem_tostr(tuple->element[i]);
+      size_t selemlen = strlen(selem) + 1;
 
       if (len + selemlen >= size)
       {

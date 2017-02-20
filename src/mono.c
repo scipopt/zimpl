@@ -228,7 +228,6 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
 {
    const MonoElem* ea;
    const MonoElem* eb;
-   const Entry*    entry_a;
    
    assert(mono_is_valid(ma));   
    assert(mono_is_valid(mb));   
@@ -241,11 +240,11 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
    {
-      assert(entry_is_valid(ea->entry));
-      assert(entry_get_type(ea->entry) == SYM_VAR);
-           
-      entry_a = ea->entry;
+      const Entry* entry_a = ea->entry;
 
+      assert(entry_is_valid(entry_a));
+      assert(entry_get_type(entry_a) == SYM_VAR);
+           
       for(eb = &mb->first; eb != NULL; eb = eb->next)
          if (entry_a == eb->entry)
             break;

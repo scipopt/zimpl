@@ -172,7 +172,7 @@ do
    COUNT=`expr $COUNT + 1` 
    NAME=`basename $i .zpl`
    ../$1 -v0 $i 2>$NAME.err
-   diff $NAME.err $NAME.err.ref >/dev/null
+   fgrep -v "Aborted (core dumped)" $NAME.err | diff - $NAME.err.ref >/dev/null
    case $? in
     0) echo Test $i "(err)" OK; PASS=`expr $PASS + 1`  ;;
     1) echo Test $i "(err)" FAIL ;;
@@ -189,7 +189,7 @@ do
    NAME=`basename $i .zpl`
    # DIFFOPT=`awk -f ../exdiffopt.awk $NAME.err.ref`
    ../$1 -v0 $i 2>$NAME.err
-   diff $NAME.err $NAME.err.ref >/dev/null
+   fgrep -v "Aborted (core dumped)" $NAME.err | diff - $NAME.err.ref >/dev/null
    case $? in
     0) echo Test $i "(err)" OK;; 
     1) echo Test $i "(err)" FAIL "(ignored)";;

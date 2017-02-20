@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -141,7 +141,6 @@ CodeNode* i_constraint(CodeNode* self)
    ConType      type;
    Numb*        rhs;
    unsigned int flags;
-   int          res;
    
    Trace("i_constraint");
    
@@ -161,7 +160,7 @@ CodeNode* i_constraint(CodeNode* self)
    {
       /* If zero, trival ok, otherwise ...
        */
-      res = numb_cmp(rhs, numb_zero());
+      int res = numb_cmp(rhs, numb_zero());
 
       assert(type != CON_RANGE);
       assert(type != CON_FREE);
@@ -982,10 +981,8 @@ CodeNode* i_expr_sglmin(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   const Numb*   value;
    Numb*         min   = numb_new();
    Bool          first = TRUE;
    
@@ -1008,7 +1005,7 @@ CodeNode* i_expr_sglmin(CodeNode* self)
 
    if (set_get_members(set) > 0)
    {
-      tuple = set_get_tuple(set, 0);
+      Tuple* tuple = set_get_tuple(set, 0);
 
       if (elem_get_type(tuple_get_elem(tuple, 0)) != ELEM_NUMB)
       {
@@ -1024,7 +1021,7 @@ CodeNode* i_expr_sglmin(CodeNode* self)
          
          if (code_get_bool(code_eval(lexpr)))
          {
-            value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            const Numb* value = elem_get_numb(tuple_get_elem(tuple, 0));      
             
             if (first || numb_cmp(value, min) < 0)
             {
@@ -1114,10 +1111,8 @@ CodeNode* i_expr_sglmax(CodeNode* self)
    const IdxSet* idxset;
    const Set*    set;
    const Tuple*  pattern;
-   Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   const Numb*   value;
    Numb*         max   = numb_new();
    Bool          first = TRUE;
 
@@ -1139,7 +1134,7 @@ CodeNode* i_expr_sglmax(CodeNode* self)
    }
    if (set_get_members(set) > 0)
    {
-      tuple = set_get_tuple(set, 0);
+      Tuple* tuple = set_get_tuple(set, 0);
 
       if (elem_get_type(tuple_get_elem(tuple, 0)) != ELEM_NUMB)
       {
@@ -1155,7 +1150,7 @@ CodeNode* i_expr_sglmax(CodeNode* self)
          
          if (code_get_bool(code_eval(lexpr)))
          {
-            value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            const Numb* value = elem_get_numb(tuple_get_elem(tuple, 0));      
             
             if (first || numb_cmp(value, max) > 0)
             {
@@ -1265,8 +1260,6 @@ CodeNode* i_expr_prod(CodeNode* self)
 CodeNode* i_expr_min2(CodeNode* self)
 {
    const List*   list;
-   const Numb*   numb;
-   const Elem*   elem;
    Numb*         min;
    ListElem*     le    = NULL;
    int           n;
@@ -1284,7 +1277,8 @@ CodeNode* i_expr_min2(CodeNode* self)
 
    while(n-- > 0)
    {
-      elem = list_get_elem(list, &le);
+      const Elem* elem = list_get_elem(list, &le);
+      const Numb* numb;
 
       /* Are there only number in the selection tuple ?
        */
@@ -1312,8 +1306,6 @@ CodeNode* i_expr_min2(CodeNode* self)
 CodeNode* i_expr_max2(CodeNode* self)
 {
    const List*   list;
-   const Numb*   numb;
-   const Elem*   elem;
    Numb*         max;
    ListElem*     le    = NULL;
    int           n;
@@ -1331,7 +1323,8 @@ CodeNode* i_expr_max2(CodeNode* self)
    
    while(n-- > 0)
    {
-      elem = list_get_elem(list, &le);
+      const Numb* numb;
+      const Elem* elem = list_get_elem(list, &le);
 
       /* Are there only number in the selection tuple ?
        */
@@ -1792,8 +1785,6 @@ static void check_tuple_set_compatible(
    const Set*      set_b)
 {
    Tuple*      tuple_b;
-   ElemType    elem_type_a;
-   ElemType    elem_type_b;
    int         i;
    int         dim;
    
@@ -1821,8 +1812,8 @@ static void check_tuple_set_compatible(
 
    for(i = 0; i < tuple_get_dim(tuple_a); i++)
    {
-      elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
-      elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
+      ElemType elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
+      ElemType elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
 
       assert(elem_type_b == ELEM_NUMB || elem_type_b == ELEM_STRG);
 
@@ -2529,10 +2520,7 @@ CodeNode* i_set_proj(CodeNode* self)
 {
    const Set*   set_a;
    const Tuple* tuple;
-   const Elem*  elem;
-   const Numb*  numb;
    int          dim;
-   int          idx;
    int          i;
    
    Trace("i_set_proj");
@@ -2545,7 +2533,9 @@ CodeNode* i_set_proj(CodeNode* self)
    
    for(i = 0; i < tuple_get_dim(tuple); i++)
    {
-      elem = tuple_get_elem(tuple, i);
+      const Elem* elem = tuple_get_elem(tuple, i);
+      const Numb* numb;
+      int         idx;
 
       /* Are there only number in the selection tuple ?
        */
@@ -2899,8 +2889,6 @@ CodeNode* i_newsym_set2(CodeNode* self)
    Symbol*       sym;
    const List*   list;
    ListElem*     lelem;
-   const Entry*  entry;
-   const Tuple*  tuple;
    int           count;
    int           i;
    
@@ -2939,8 +2927,8 @@ CodeNode* i_newsym_set2(CodeNode* self)
    
    for(i = 0; i < count; i++)
    {
-      entry  = list_get_entry(list, &lelem);
-      tuple  = entry_get_tuple(entry);
+      const Entry* entry  = list_get_entry(list, &lelem);
+      const Tuple* tuple  = entry_get_tuple(entry);
 #if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
@@ -2985,7 +2973,6 @@ static void insert_param_list_by_index(
    int           count  = 0;
    Tuple*        tuple;
    int           list_entries;
-   const Entry*  entry; 
    Entry*        new_entry;
 
    list_entries = list_get_elems(list); 
@@ -2995,7 +2982,7 @@ static void insert_param_list_by_index(
    {
       /* bool is not needed, because iset has only true elems
        */
-      entry = list_get_entry(list, &le_idx);
+      const Entry* entry = list_get_entry(list, &le_idx);
 
       switch(entry_get_type(entry))
       {
@@ -3047,8 +3034,6 @@ static void insert_param_list_by_list(
    const List*     list)
 {
    ListElem*     le_idx = NULL;
-   const Entry*  entry;
-   const Tuple*  tuple;
    int           list_entries;
    int           i;
 
@@ -3056,8 +3041,8 @@ static void insert_param_list_by_list(
    
    for(i = 0; i < list_entries; i++)
    {
-      entry  = list_get_entry(list, &le_idx);
-      tuple  = entry_get_tuple(entry);
+      const Entry* entry  = list_get_entry(list, &le_idx);
+      const Tuple* tuple  = entry_get_tuple(entry);
 #if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
@@ -3102,7 +3087,6 @@ CodeNode* i_newsym_para1(CodeNode* self)
    const List*   list;
    CodeNode*     child3;
    const Entry*  deflt = ENTRY_NULL;
-   Symbol*       sym;
    int           list_entries;
 
    ListElem*     le_idx;
@@ -3173,6 +3157,8 @@ CodeNode* i_newsym_para1(CodeNode* self)
    }
    else
    {
+      Symbol* sym;
+
       if (set_get_members(iset) == 0)
       {
          fprintf(stderr, "*** Error 135: Empty index set for parameter\n");
@@ -3298,10 +3284,6 @@ CodeNode* i_newsym_var(CodeNode* self)
    VarClass      varclass;
    Var*          var;
    SetIter*      iter;
-   Bound*        lower;
-   Bound*        upper;
-   const Numb*   priority;
-   const Numb*   startval;
    char*         tuplestr;
    char*         varname;
    Numb*         temp;
@@ -3321,14 +3303,19 @@ CodeNode* i_newsym_var(CodeNode* self)
    warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
    
    while((tuple = set_iter_next(iter, iset)) != NULL)
-   {
-      local_install_tuple(pattern, tuple);
+   {      
+      Bound* lower;
+      Bound* upper;
+      const Numb* priority;
+      const Numb* startval;
       
-      lower       = bound_copy(code_eval_child_bound(self, 3));
-      upper       = bound_copy(code_eval_child_bound(self, 4));
-      priority    = code_eval_child_numb(self, 5);
-      startval    = code_eval_child_numb(self, 6);
+      local_install_tuple(pattern, tuple);
 
+      lower         = bound_copy(code_eval_child_bound(self, 3));
+      upper         = bound_copy(code_eval_child_bound(self, 4));
+      priority = code_eval_child_numb(self, 5);
+      startval = code_eval_child_numb(self, 6);
+      
       /* Parser makes sure, cannot happen
        */
       assert(bound_get_type(lower) != BOUND_INFTY);

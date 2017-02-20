@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -162,7 +162,6 @@ void zpl_add_parameter(const char* def)
       "--- Warning 175: Illegal syntax for command line define \"%s\" -- ignored\n";
    Set*    set;
    Symbol* sym;
-   Numb*   numb;
    Tuple*  tuple;
    Entry*  entry;
    char*   name;
@@ -197,8 +196,9 @@ void zpl_add_parameter(const char* def)
       entry = entry_new_strg(tuple, str_new(value));
    else
    {
-      numb  = numb_new_ascii(value);
-      entry = entry_new_numb(tuple, numb);
+      Numb* numb  = numb_new_ascii(value);
+      entry       = entry_new_numb(tuple, numb);
+      
       numb_free(numb);
    }
    symbol_add_entry(sym, entry);
@@ -211,7 +211,6 @@ void zpl_add_parameter(const char* def)
 Bool zpl_read(const char* filename, Bool with_management, void* user_data)
 {
    Prog*       prog = NULL;
-   Set*        set;
    void*       lp  = NULL;
    Bool        ret = FALSE;
 
@@ -234,6 +233,8 @@ Bool zpl_read(const char* filename, Bool with_management, void* user_data)
    
    if (0 == setjmp(zpl_read_env))
    {
+      Set* set;
+
       is_longjmp_ok = TRUE;
       
       set = set_pseudo_new();
@@ -290,7 +291,6 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
    int           c;
    int           i;
    Prog*         prog = NULL;
-   Set*          set;
    void*         lp  = NULL;
    Bool          ret = FALSE;
    char*         inppipe = NULL;
@@ -361,6 +361,8 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
    
    if (0 == setjmp( zpl_read_env))
    {
+      Set* set;
+
       is_longjmp_ok = TRUE;
       
       /* Make symbol to hold entries of internal variables

@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -360,7 +360,6 @@ static void hash_statist(FILE* fp, const Hash* hash)
    int    sum    = 0;
    int    zeros  = 0;
    int    filled = 0;
-   int    count;
    double avg    = 0.0;
    unsigned int i;
 
@@ -369,7 +368,7 @@ static void hash_statist(FILE* fp, const Hash* hash)
 
    for(i = 0; i < hash->size; i++)
    {
-      count = 0;
+      int count = 0;
       
       for(he = hash->bucket[i]; he != NULL; he = he->next)
          count++;

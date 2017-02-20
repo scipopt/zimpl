@@ -86,10 +86,11 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
 {
    Bool in_string = FALSE;
    int  cnt = 0;
-   int  c;
 
    for(;;)
    {
+      int  c;
+      
       assert(cnt <= *size);
       
       if (cnt == *size - 1)
@@ -158,8 +159,6 @@ static const char* make_pathname(
    const char* pathname,
    const char* filename)
 {
-   char* s;
-
    assert(target   != NULL);
    assert(pathname != NULL);
    assert(filename != NULL);
@@ -169,6 +168,8 @@ static const char* make_pathname(
       strcpy(target, filename);
    else
    {
+      char* s;
+
       strcpy(target, pathname);
    
       if (NULL == (s = strrchr(target, DIRSEP)))

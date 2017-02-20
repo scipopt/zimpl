@@ -8,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -703,12 +703,11 @@ Term* term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is
 
 Bool term_is_all_integer(const Term* term)
 {
-   VarClass vc;
-   int      i;
+   int i;
    
    for(i = 0; i < term->used; i++)
    {
-      vc = xlp_getclass(prog_get_lp(), mono_get_var(term->elem[i], 0));
+      VarClass vc = xlp_getclass(prog_get_lp(), mono_get_var(term->elem[i], 0));
 
       if (vc != VAR_INT && vc != VAR_IMP)
          return FALSE;
