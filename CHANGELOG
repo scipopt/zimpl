@@ -1,5 +1,9 @@
 3.3.4  21. Feb 2017 Release
 
+ - added cppcheck target to makefile
+
+ - scan-build make OPT=dbg works
+
  - Corrected the spacing of the NAME field in MPS output.
 
  - Fixed bug in library call regarding setting
