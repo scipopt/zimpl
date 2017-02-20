@@ -134,7 +134,7 @@ void idxset_print(FILE* fp, const IdxSet* idxset)
    tuple_print(fp, idxset->tuple);
    fputc('\n', fp);
    set_print(fp, idxset->set);
-   fprintf(fp, "\nAddr-Lexpr: %ld\n", (long)idxset->lexpr);
+   fprintf(fp, "\nAddr-Lexpr: %p\n", (void*)idxset->lexpr);
 }
 
 
