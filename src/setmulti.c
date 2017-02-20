@@ -1,3 +1,4 @@
+/* $Id: setmulti.c,v 1.27 2014/03/03 16:44:23 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setmulti.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,6 +31,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -644,7 +646,7 @@ static Bool set_multi_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_exit(SetIter* iter, const Set* set)
+static void set_multi_iter_exit(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
 
@@ -661,7 +663,7 @@ static void set_multi_iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_reset(SetIter* iter, const Set* set)
+static void set_multi_iter_reset(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
    

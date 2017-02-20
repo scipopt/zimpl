@@ -1,3 +1,4 @@
+/* $Id: inst.c,v 1.140 2014/03/03 16:44:11 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: inst.c                                                        */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -3525,19 +3526,20 @@ CodeNode* i_term_power(CodeNode* self)
 
    term  = code_eval_child_term(self, 0);
    power = checked_eval_numb_toint(self, 1, "112: Exponent value");
+
+   if (power < 0)
+   {
+      fprintf(stderr, "*** Error 121: Negative exponent on variable\n");
+      code_errmsg(code_get_child(self, 0));
+      zpl_exit(EXIT_FAILURE);
+   }
    
    if (power == 0)
    {
       term_result = term_new(1);
       term_add_constant(term_result, numb_one());
    } 
-   else if (power < 0)
-   {
-      fprintf(stderr, "*** Error 121: Negative exponent on variable\n");
-      code_errmsg(code_get_child(self, 0));
-      zpl_exit(EXIT_FAILURE);
-   }
-   else
+   else 
    {
       term_result = term_copy(term);
 

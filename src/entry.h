@@ -1,3 +1,4 @@
+/* $Id: entry.h,v 1.8 2014/03/03 16:44:08 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: entry.h                                                       */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License

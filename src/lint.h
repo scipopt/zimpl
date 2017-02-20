@@ -1,3 +1,4 @@
+/* $Id: lint.h,v 1.19 2014/03/03 16:44:13 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: lint.h                                                        */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,12 +25,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#ifndef _LINT_H_
+#define _LINT_H_
+
 /* Use this file only if we are linting
  */
 #ifdef _lint
-
-#ifndef _LINT_H_
-#define _LINT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,8 +93,17 @@ extern int    gzclose(gzFile file);
 #ifdef __cplusplus
 }
 #endif
-#endif /* _LINT_H_ */
 #endif /* _lint */
+
+#if defined(__GNUC__) || defined(__CLANG__)
+#define UNUSED __attribute__ ((unused))
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define UNUSED
+#define NORETURN
+#endif /* __GNUC__ || __CLANG__ */
+
+#endif /* _LINT_H_ */
 
 
 

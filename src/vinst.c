@@ -1,3 +1,4 @@
+/* $Id: vinst.c,v 1.35 2014/03/03 16:44:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: vinst.c                                                       */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -871,14 +872,15 @@ static void generate_conditional_constraint(
    bound_free(bound);
 }
 
+/*ARGSUSED*/
 static void generate_indicator_constraint(
-   const CodeNode* self,
-   const Term*     vif_term,
-   const Term*     lhs_term,
-   ConType         con_type,
-   const Numb*     rhs,
-   unsigned int    flags,
-   Bool            then_case)
+   UNUSED const CodeNode* self,
+   const Term*            vif_term,
+   const Term*            lhs_term,
+   ConType                con_type,
+   const Numb*            rhs,
+   unsigned int           flags,
+   Bool                   then_case)
 {
    Numb*        lhs;
    Term*        ind_term;

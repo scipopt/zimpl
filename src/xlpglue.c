@@ -1,3 +1,4 @@
+/* $Id: xlpglue.c,v 1.42 2014/03/03 16:44:28 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: xlpglue.c                                                     */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -43,6 +44,7 @@
 
 #include <gmp.h>
 
+#include "lint.h"
 #include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -79,9 +81,9 @@ static Bool use_startval = FALSE;
  */
 /*ARGSUSED*/
 Lps* xlp_alloc(
-   const char* name,          /**< Instance name, will appear e.g. in MPS NAME section */
-   Bool        need_startval, /**< Will we supply starting values for the variables? */
-   void*       user_data)     /**< Pointer with arbitrary data. */
+   const char*  name,          /**< Instance name, will appear e.g. in MPS NAME section */
+   Bool         need_startval, /**< Will we supply starting values for the variables? */
+   UNUSED void* user_data)     /**< Pointer with arbitrary data. */
 {
    assert(name != NULL);
    
@@ -463,8 +465,8 @@ Var* xlp_addvar(
  */
 /*ARGSUSED*/
 const char* xlp_getvarname(
-   const Lps* lp,          /**< Pointer to storage */
-   const Var* var)         /**< Pointer to variable as returned by xlp_addvar() */
+   UNUSED const Lps* lp,          /**< Pointer to storage */
+   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
 
@@ -476,8 +478,8 @@ const char* xlp_getvarname(
  */
 /*ARGSUSED*/
 VarClass xlp_getclass(
-   const Lps* lp,          /**< Pointer to storage */
-   const Var* var)         /**< Pointer to variable as returned by xlp_addvar() */
+   UNUSED const Lps* lp,          /**< Pointer to storage */
+   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
 
@@ -489,8 +491,8 @@ VarClass xlp_getclass(
  */
 /*ARGSUSED*/
 Bound* xlp_getlower(
-   const Lps* lp,          /**< Pointer to storage */
-   const Var* var)         /**< Pointer to variable as returned by xlp_addvar() */
+   UNUSED const Lps* lp,          /**< Pointer to storage */
+   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    Bound* bound;
    Numb*  numb;
@@ -517,8 +519,8 @@ Bound* xlp_getlower(
  */
 /*ARGSUSED*/
 Bound* xlp_getupper(
-   const Lps* lp,          /**< Pointer to storage */
-   const Var* var)         /**< Pointer to variable as returned by xlp_addvar() */
+   UNUSED const Lps* lp,          /**< Pointer to storage */
+   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 
 {
    Bound* bound;
@@ -568,9 +570,9 @@ void xlp_setdir(
  */
 /*ARGSUSED*/
 void xlp_addtocost(
-   Lps*        lp,      /**< Pointer to storage */
-   Var*        var,     /**< Pointer to variable as returned by xlp_addvar() */
-   const Numb* cost)    /**< Value to be added to the objective coefficient of the variable */
+   UNUSED Lps*        lp,      /**< Pointer to storage */
+   Var*               var,     /**< Pointer to variable as returned by xlp_addvar() */
+   const Numb*        cost)    /**< Value to be added to the objective coefficient of the variable */
 {
    mpq_t val1;
    mpq_t val2;

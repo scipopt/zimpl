@@ -1,3 +1,4 @@
+/* $Id: mshell.c,v 1.20 2014/03/03 16:44:15 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mshell.c                                                      */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -131,7 +132,7 @@ static void mem_del_list(
       memlist = p->next;
 }
 
-static void mem_tag_err(
+static NORETURN void mem_tag_err(
    MHDR*       p,
    int         typ,
    const char* file1,
@@ -235,7 +236,6 @@ void* mem_calloc(
    if (item == 0 || size == 0)
    {
       fprintf(stderr, errmsg2, item, size, file, line);
-      abort();
       exit(EXIT_FAILURE);
    }
    if ((p = calloc(mem_alloc_size(size * item), sizeof(char))) == MHDR_NIL)

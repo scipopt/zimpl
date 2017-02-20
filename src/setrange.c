@@ -1,3 +1,4 @@
+/* $Id: setrange.c,v 1.22 2014/03/03 16:44:25 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setrange.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,6 +31,7 @@
 #include <assert.h>
 
 #include "bool.h"
+#include "lint.h"
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -328,7 +330,7 @@ static Bool set_range_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_range_iter_exit(SetIter* iter, const Set* set)
+static void set_range_iter_exit(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
 
@@ -342,7 +344,7 @@ static void set_range_iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_range_iter_reset(SetIter* iter, const Set* set)
+static void set_range_iter_reset(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
    

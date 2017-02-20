@@ -1,4 +1,5 @@
 %{
+/* $Id: mmlparse2.y,v 1.13 2014/01/12 09:47:38 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mmlparse2.y                                                   */
@@ -8,7 +9,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2012 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -37,7 +38,14 @@
 /*lint -esym(768,bits) -esym(553,YYSTACK_USE_ALLOCA) */
 /*lint -esym(593,yymsg) Custodial pointer possibly not freed */
 /*lint -esym(426,mem_malloc) call violates semantics */
-   
+
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+#pragma clang diagnostic ignored "-Wconversion"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wunused-macros"
+#pragma clang diagnostic ignored "-Wimplicit-function-declaration"
+#pragma clang diagnostic ignored "-Wunreachable-code"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

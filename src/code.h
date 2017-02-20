@@ -1,3 +1,4 @@
+/* $Id: code.h,v 1.30 2014/03/03 16:44:06 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: code.h                                                        */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -152,7 +153,7 @@ extern void         code_value_term(CodeNode* node, Term* term);
 /*lint -sem(        code_value_steal_child_term, 1p == 1 && 2n >= 0, @p == 1p) */
 extern Term*        code_value_steal_term(CodeNode* node, int no);
 /*lint -sem(        code_value_bool, 1p == 1) */
-extern void         code_value_bool(CodeNode* node, Bool b);
+extern void         code_value_bool(CodeNode* node, Bool bool);
 /*lint -sem(        code_value_size, 1p == 1) */
 extern void         code_value_size(CodeNode* node, int size);
 /*lint -sem(        code_value_list, custodial(2), 1p == 1 && 2p == 1) */

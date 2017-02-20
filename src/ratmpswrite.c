@@ -1,3 +1,4 @@
+/* $Id: ratmpswrite.c,v 1.25 2014/03/03 16:44:20 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: mpswrite.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -59,7 +60,14 @@ static void write_data(
    
    if (use_field5)
    {
-      fprintf(fp, " %c%c %-8.8s  %-8.8s  %12g\n",
+      /* Field:    1           2          3         4         5         6
+       * Columns:  2-3        5-12      15-22     25-36     40-47     50-61
+       *          1         2         3         4         5         6
+       * 1234567890123456789012345678901234567890123456789012345678901234567890
+       * -AB-NNNNNNNN--NNNNNNNN--FFFFFFFFFFFF
+       *     x$SE@5b2  c1_718          45.786
+       */
+       fprintf(fp, " %c%c %-8.8s  %-8.8s  %12g\n",
          toupper(indicator1), toupper(indicator2), name1, name2, mpq_get_d(value));
    }
    else
@@ -171,7 +179,7 @@ void mps_write(
    if (text != NULL)
       fprintf(fp, "%s", text);
    
-   fprintf(fp, "NAME        %8.8s\n", lp->name);
+   fprintf(fp, "NAME          %8.8s\n", lp->name);
    fprintf(fp, "ROWS\n");
    
    write_data(fp, FALSE, 'N', ' ', "OBJECTIV", "", const_zero);

@@ -1,3 +1,4 @@
+/* $Id: zimpllib.c,v 1.34 2014/03/03 16:44:29 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: zimpllib.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -281,7 +282,7 @@ Bool zpl_read(const char* filename, Bool with_management, void* user_data)
 
 Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_data)
 {
-   const char* options = "D:mP:sv:";
+   const char* options = "D:mP:s:v:";
 
    unsigned long seed = 13021967UL;
    char**        param_table;

@@ -1,3 +1,5 @@
+PROD sollte auch mit Variablen gehen.
+
 bei xlp_glue das lps_getnzo dient nur dafuer sicherzustellen
 dasnicht zwei gleiche variablen in den monomen kommen.
 besser term_simplify vorher aufrufen dann braucht man das

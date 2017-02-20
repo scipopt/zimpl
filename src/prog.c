@@ -1,3 +1,4 @@
+/* $Id: prog.c,v 1.26 2014/03/03 16:44:17 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: prog.c                                                        */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -82,7 +83,7 @@ Prog* prog_new()
    prog->size     = PROG_EXTEND_SIZE;
    prog->used     = 0;
    prog->extend   = PROG_EXTEND_SIZE;
-   prog->stmt     = calloc(prog->size, sizeof(*prog->stmt));
+   prog->stmt     = calloc((size_t)prog->size, sizeof(*prog->stmt));
 
    SID_set(prog, PROG_SID);
    assert(prog_is_valid(prog));
@@ -187,10 +188,10 @@ void prog_execute(const Prog* prog, void* lp)
 
 char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int max_output_line_len)
 {
-   int   len;
-   char* text;
-   int   pos = 0;
-   int   i;
+   size_t len;
+   char*  text;
+   int    pos = 0;
+   int    i;
 
    assert(prog_is_valid(prog));
    assert(prefix != NULL);

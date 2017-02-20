@@ -1,3 +1,4 @@
+/* $Id: setpseudo.c,v 1.15 2014/03/03 16:44:24 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setpseudo.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,6 +31,7 @@
 #include <assert.h>
 
 #include "bool.h"
+#include "lint.h"
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -190,10 +192,10 @@ static SetIter* iter_init(
  */
 /*ARGSUSED*/
 static Bool iter_next(
-   SetIter*   iter,
-   const Set* set,
-   Tuple*     tuple,
-   int        offset)
+   SetIter*          iter,
+   UNUSED const Set* set,
+   UNUSED Tuple*     tuple,
+   UNUSED int        offset)
 {
    assert(set_pseudo_iter_is_valid(iter));
    assert(set_pseudo_is_valid(set));
@@ -211,7 +213,7 @@ static Bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, const Set* set)
+static void iter_exit(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_pseudo_iter_is_valid(iter));
 
@@ -225,7 +227,7 @@ static void iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, const Set* set)
+static void iter_reset(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_pseudo_iter_is_valid(iter));
 

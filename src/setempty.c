@@ -1,3 +1,4 @@
+/* $Id: setempty.c,v 1.15 2014/03/03 16:44:23 bzfkocht Exp $ */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*                                                                           */
 /*   File....: setempty.c                                                    */
@@ -7,7 +8,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2015 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2014 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,6 +31,7 @@
 #include <assert.h>
 
 #include "bool.h"
+#include "lint.h"
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -139,7 +141,7 @@ static int set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_empty_get_tuple(
+static NORETURN void set_empty_get_tuple(
    const Set* set,
    int        idx,
    Tuple*     tuple,
@@ -193,10 +195,10 @@ static SetIter* iter_init(
  */
 /*ARGSUSED*/
 static Bool iter_next(
-   SetIter*   iter,
-   const Set* set,
-   Tuple*     tuple,
-   int        offset)
+   SetIter*      iter,
+   const Set*    set,
+   UNUSED Tuple* tuple,
+   UNUSED int    offset)
 {
    assert(set_empty_iter_is_valid(iter));
    assert(set_empty_is_valid(set));
@@ -209,7 +211,7 @@ static Bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, const Set* set)
+static void iter_exit(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_empty_iter_is_valid(iter));
 
@@ -223,7 +225,7 @@ static void iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, const Set* set)
+static void iter_reset(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_empty_iter_is_valid(iter));
 }
