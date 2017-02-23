@@ -1,4 +1,3 @@
-/* $Id: zcplex.c,v 1.2 2007/03/07 12:26:29 bzfkocht Exp $ */
 /*
    gcc -g -O -Wall -Wno-unknown-pragmas -I../src -I /opt/ilog/cplex100/include/ilcplex/ zcplex.c -L ../lib -lzimpl-2.06b.linux.x86.gnu.dbg -L /opt/ilog/cplex100/lib/x86_RHEL3.0_3.2/static_pic -lcplex -lpthread -lgmp -lm -lz
 */
