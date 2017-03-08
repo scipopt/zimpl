@@ -74,6 +74,8 @@
         
 #define YYERROR_VERBOSE 1
 
+extern int yylex(YYSTYPE* lval);
+
 /*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 extern void yyerror(const char* s);
  
