@@ -74,7 +74,11 @@
         
 #define YYERROR_VERBOSE 1
 
-extern int yylex(YYSTYPE* lval);
+/* the function is actually getting a YYSTYPE* as argument, but the
+ * type isn't available here, so it is decalred to accept any number of
+ * arguments, i.e. yylex() and not yylex(void).
+ */
+extern int yylex();
 
 /*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
 extern void yyerror(const char* s);
