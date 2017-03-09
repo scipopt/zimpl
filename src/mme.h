@@ -8,17 +8,17 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
  * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  332
+#define ZIMPL_VERSION  334
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.
@@ -38,7 +38,7 @@ extern "C" {
 enum code_type
 {
    CODE_ERR = 0, CODE_NUMB, CODE_STRG, CODE_NAME, CODE_TUPLE,
-   CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE, 
+   CODE_SET, CODE_TERM, CODE_BOOL, CODE_SIZE,
    CODE_IDXSET, CODE_LIST, CODE_VOID, CODE_ENTRY, CODE_VARCLASS, CODE_CONTYPE,
    CODE_RDEF, CODE_RPAR, CODE_BITS, CODE_SYM, CODE_DEF, CODE_BOUND
 };
@@ -62,7 +62,7 @@ typedef struct list              List;
 typedef enum   var_type      VarType;  /* From ratlptypes.h */
 typedef struct mono          Mono;     /* From mono.h */
 
-   
+
 #define SYMBOL_NAME_INTERNAL  "@@"
 
 #define VERB_QUIET    0
@@ -87,7 +87,7 @@ extern void         show_source(FILE* fp, const char* text, int column);
 extern void interns_init(void);
 extern void interns_exit(void);
 
-#define Min(a, b)    (((a) <= (b)) ? (a) : (b)) 
+#define Min(a, b)    (((a) <= (b)) ? (a) : (b))
 #define Sgn(a)       (((a) > 0) ? 1 : (((a) < 0) ? -1 : 0))
 
 /* Directory separator, so we could redefine it for Windoof.
