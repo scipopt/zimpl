@@ -65,14 +65,15 @@ static void* pool_alloc(void)
 {
    Pool*     pool;
    PoolElem* elem;
-   int       i;
-   
+
    if (pool_next == NULL)
    {
+      int i;
+
       pool       = malloc(sizeof(*pool));
       pool->next = pool_root;
       pool_root  = pool;
-
+      
       for(i = 0; i < POOL_SIZE - 1; i++)
          pool->elem[i].next = &pool->elem[i + 1];
 

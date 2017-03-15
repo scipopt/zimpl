@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii zimpl.man
 .\"
-.TH ZIMPL 1 "29 Jul 2012" Linux "User Manuals"
+.TH ZIMPL 1 "14 Mar 2017" Linux "User Manuals"
 .SH NAME
 zimpl \- Zuse Institute Mathematical Programming Language
 .SH SYNOPSIS
@@ -48,10 +48,10 @@ option is to select the output format.
 can be read by every
 solver. 
 .B lpf 
-is an CPLEX format, but can also read by several solvers.
+is a CPLEX format, but can also read by several solvers.
 BE aware that for example Range-rows can not be expressed in 
 .B lpf . 
-If you want to inspected the output yourself, 
+If you would like to inspected the output yourself, 
 .B hum
 format is a variant of 
 .B lpf
