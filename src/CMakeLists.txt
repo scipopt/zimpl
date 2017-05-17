@@ -1,0 +1,153 @@
+bison_target(MMLPARSE2 zimpl/mmlparse2.y ${CMAKE_CURRENT_BINARY_DIR}/mmlparse2.c COMPILE_FLAGS -t)
+flex_target(MMLSCAN zimpl/mmlscan.l  ${CMAKE_CURRENT_BINARY_DIR}/mmlscan.c)
+
+# add include directory for bison header
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+# for zimpl headers
+include_directories(zimpl)
+
+set(libsources
+    zimpl/blkmem.c
+    zimpl/bound.c
+    zimpl/code.c
+    zimpl/conname.c
+    zimpl/define.c
+    zimpl/elem.c
+    zimpl/entry.c
+    zimpl/hash.c
+    zimpl/heap.c
+    zimpl/idxset.c
+    zimpl/inst.c
+    zimpl/iread.c
+    zimpl/list.c
+    zimpl/load.c
+    zimpl/local.c
+    zimpl/metaio.c
+    ${BISON_MMLPARSE2_OUTPUTS}
+    ${FLEX_MMLSCAN_OUTPUTS}
+    zimpl/mono.c
+    zimpl/mshell.c
+    zimpl/prog.c
+    zimpl/random.c
+    zimpl/rdefpar.c
+    zimpl/source.c
+    zimpl/setempty.c
+    zimpl/setpseudo.c
+    zimpl/setlist.c
+    zimpl/setrange.c
+    zimpl/setprod.c
+    zimpl/setmulti.c
+    zimpl/set4.c
+    zimpl/stmt.c
+    zimpl/stkchk.c
+    zimpl/strstore2.c
+    zimpl/symbol.c
+    zimpl/term2.c
+    zimpl/tuple.c
+    zimpl/vinst.c
+    zimpl/zimpllib.c)
+
+if(GMP_FOUND)
+    set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
+else()
+    set(libsources ${libsources} zimpl/numbdbl.c)
+endif()
+
+set(binsources
+    zimpl/zimpl.c
+    zimpl/xlpglue.c
+    zimpl/zlpglue.c
+    zimpl/ratlpstore.c
+    zimpl/ratlpfwrite.c
+    zimpl/ratmpswrite.c
+    zimpl/ratmstwrite.c
+    zimpl/ratordwrite.c
+    zimpl/ratpresolve.c)
+
+set(headers
+    zimpl/blkmem.h
+    zimpl/bool.h
+    zimpl/bound.h
+    zimpl/code.h
+    zimpl/conname.h
+    zimpl/define.h
+    zimpl/elem.h
+    zimpl/entry.h
+    zimpl/gmpmisc.h
+    zimpl/hash.h
+    zimpl/heap.h
+    zimpl/idxset.h
+    zimpl/inst.h
+    zimpl/lint.h
+    zimpl/list.h
+    zimpl/local.h
+    zimpl/metaio.h
+    zimpl/mme.h
+    ${BISON_MMLPARSE2_OUTPUT_HEADER}
+    zimpl/mono.h
+    zimpl/mshell.h
+    zimpl/numb.h
+    zimpl/prog.h
+    zimpl/random.h
+    zimpl/ratlp.h
+    zimpl/ratlpstore.h
+    zimpl/ratlptypes.h
+    zimpl/rdefpar.h
+    zimpl/set4.h
+    zimpl/set.h
+    zimpl/stkchk.h
+    zimpl/stmt.h
+    zimpl/strstore.h
+    zimpl/symbol.h
+    zimpl/term.h
+    zimpl/tuple.h
+    zimpl/xlpglue.h
+    zimpl/zimpllib.h
+    zimpl/zlpglue.h)
+
+#create zimpl with pic
+add_library(zimpl-pic STATIC ${libsources})
+set_target_properties(zimpl-pic PROPERTIES POSITION_INDEPENDENT_CODE on)
+target_link_libraries(zimpl-pic ${libs})
+
+#create zimpl without pic
+add_library(zimpl STATIC ${libsources})
+target_link_libraries(zimpl ${libs})
+
+#create zimpl binary
+add_executable(zimpl-bin ${binsources})
+target_link_libraries(zimpl-bin zimpl ${libs})
+
+# we cannot have the same name for library and binary, so we redefine it here
+set_target_properties(zimpl-bin PROPERTIES
+                                OUTPUT_NAME zimpl)
+
+# install the header files of zimpl
+install(FILES ${headers} DESTINATION include/zimpl)
+
+# install the binary and the library to appropriate locations and add them to an export group
+install(TARGETS zimpl zimpl-bin zimpl-pic EXPORT zimpl-targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include)
+
+# Add all targets to the build-tree export set
+export(TARGETS zimpl zimpl-bin zimpl-pic
+  FILE "${PROJECT_BINARY_DIR}/zimpl-targets.cmake")
+
+#configure the config file for the build tree
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src")
+configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
+  "${PROJECT_BINARY_DIR}/zimpl-config.cmake" @ONLY)
+
+#configure the config file for the install
+set(CONF_INCLUDE_DIRS "\${CMAKE_CURRENT_LIST_DIR}/../../../include")
+configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" @ONLY)
+
+# install the targets of the zimpl export group and the config file so that oter projects
+# can link easily against zimpl
+install(EXPORT zimpl-targets FILE zimpl-targets.cmake DESTINATION lib/cmake/zimpl)
+install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" DESTINATION lib/cmake/zimpl)
