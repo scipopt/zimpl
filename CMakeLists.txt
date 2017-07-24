@@ -6,7 +6,7 @@ if(POLICY CMP0048)
 endif()
 
 project(ZIMPL
-    VERSION 3.3.3
+    VERSION 3.3.4
     LANGUAGES C)
 
 option(MT "use static runtime libraries for Visual Studio compiler" OFF)
