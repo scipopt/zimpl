@@ -9,6 +9,7 @@ project(ZIMPL
     VERSION 3.3.3
     LANGUAGES C)
 
+option(MT "use static runtime libraries for Visual Studio compiler" OFF)
 option(GMP "use GMP" ON)
 option(ZLIB "use ZLIB" ON)
 
@@ -38,6 +39,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE Release)
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+# set MT or MTd flag when using the static VS runtime libraries
+if(MSVC AND MT)
+    set(CMAKE_C_FLAGS_RELEASE "/MT")
+    set(CMAKE_C_FLAGS_DEBUG "/MTd")
+endif()
 
 if(GMP)
     find_package(GMP)
