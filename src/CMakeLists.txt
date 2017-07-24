@@ -1,5 +1,5 @@
 bison_target(MMLPARSE2 zimpl/mmlparse2.y ${CMAKE_CURRENT_BINARY_DIR}/mmlparse2.c COMPILE_FLAGS -t)
-flex_target(MMLSCAN zimpl/mmlscan.l  ${CMAKE_CURRENT_BINARY_DIR}/mmlscan.c)
+flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/mmlscan.c)
 
 # add include directory for bison header
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -107,34 +107,36 @@ set(headers
     zimpl/zlpglue.h)
 
 #create zimpl with pic
-add_library(zimpl-pic STATIC ${libsources})
-set_target_properties(zimpl-pic PROPERTIES POSITION_INDEPENDENT_CODE on)
-target_link_libraries(zimpl-pic ${libs})
+add_library(libzimpl-pic STATIC ${libsources})
+set_target_properties(libzimpl-pic PROPERTIES POSITION_INDEPENDENT_CODE on)
+target_link_libraries(libzimpl-pic ${libs})
 
 #create zimpl without pic
-add_library(zimpl STATIC ${libsources})
-target_link_libraries(zimpl ${libs})
+add_library(libzimpl STATIC ${libsources})
+target_link_libraries(libzimpl ${libs})
 
 #create zimpl binary
-add_executable(zimpl-bin ${binsources})
-target_link_libraries(zimpl-bin zimpl ${libs})
+add_executable(zimpl ${binsources})
+target_link_libraries(zimpl libzimpl ${libs})
 
-# we cannot have the same name for library and binary, so we redefine it here
-set_target_properties(zimpl-bin PROPERTIES
-                                OUTPUT_NAME zimpl)
+set_target_properties(libzimpl PROPERTIES
+    OUTPUT_NAME "zimpl")
+
+set_target_properties(libzimpl-pic PROPERTIES
+    OUTPUT_NAME "zimpl-pic")
 
 # install the header files of zimpl
 install(FILES ${headers} DESTINATION include/zimpl)
 
 # install the binary and the library to appropriate locations and add them to an export group
-install(TARGETS zimpl zimpl-bin zimpl-pic EXPORT zimpl-targets
+install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin
         INCLUDES DESTINATION include)
 
 # Add all targets to the build-tree export set
-export(TARGETS zimpl zimpl-bin zimpl-pic
+export(TARGETS libzimpl zimpl libzimpl-pic
   FILE "${PROJECT_BINARY_DIR}/zimpl-targets.cmake")
 
 #configure the config file for the build tree
