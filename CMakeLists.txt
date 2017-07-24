@@ -9,6 +9,7 @@ project(ZIMPL VERSION 3.3.3)
 
 option(GMP "should gmp be linked" ON)
 option(ZLIB "should zlib be linked" ON)
+option(MT "use static runtime libraries for Visual Studio compiler" OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ZIMPL_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${ZIMPL_BINARY_DIR})
@@ -36,6 +37,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE Release)
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+# set MT or MTd flag when using the static VS runtime libraries
+if(MSVC AND MT)
+    set(CMAKE_CXX_FLAGS_RELEASE "/MT")
+    set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+endif()
 
 if(GMP)
     find_package(GMP)
