@@ -5,10 +5,12 @@ if(POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif()
 
-project(ZIMPL VERSION 3.3.3)
+project(ZIMPL
+    VERSION 3.3.3
+    LANGUAGES C)
 
-option(GMP "should gmp be linked" ON)
-option(ZLIB "should zlib be linked" ON)
+option(GMP "use GMP" ON)
+option(ZLIB "use ZLIB" ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ZIMPL_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${ZIMPL_BINARY_DIR})
