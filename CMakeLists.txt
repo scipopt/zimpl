@@ -40,8 +40,8 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 # set MT or MTd flag when using the static VS runtime libraries
 if(MSVC AND MT)
-    set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-    set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+    set(CMAKE_C_FLAGS_RELEASE "/MT")
+    set(CMAKE_C_FLAGS_DEBUG "/MTd")
 endif()
 
 if(GMP)
