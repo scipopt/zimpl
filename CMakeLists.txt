@@ -1,9 +1,4 @@
-cmake_minimum_required(VERSION 2.8.8)
-
-#to set the version number directly with project
-if(POLICY CMP0048)
-  cmake_policy(SET CMP0048 NEW)
-endif()
+cmake_minimum_required(VERSION 3.0.0)
 
 project(ZIMPL
     VERSION 3.3.4
@@ -21,15 +16,6 @@ add_definitions(-DVERSION=\"${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMP
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
-
-# update the cmake submodule
-if(EXISTS ${PROJECT_SOURCE_DIR}/.git AND NOT EXISTS ${PROJECT_SOURCE_DIR}/cmake/.git)
-   find_program(GIT git)
-   if(GIT)
-      execute_process(
-         COMMAND ${GIT} submodule update --init ${PROJECT_SOURCE_DIR}/cmake)
-   endif()
-endif()
 
 # path to e.g. findGMP module
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
