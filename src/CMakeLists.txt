@@ -135,8 +135,8 @@ install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
         RUNTIME DESTINATION bin
         INCLUDES DESTINATION include)
 
-# Add all targets to the build-tree export set
-export(TARGETS libzimpl zimpl libzimpl-pic
+# Add library targets to the build-tree export set
+export(TARGETS libzimpl libzimpl-pic
   FILE "${PROJECT_BINARY_DIR}/zimpl-targets.cmake")
 
 #configure the config file for the build tree
