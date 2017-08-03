@@ -48,11 +48,6 @@ set(libsources
     zimpl/vinst.c
     zimpl/zimpllib.c)
 
-if(MSVC)
-   set(libsources ${libsources} zimpl/WIN/getopt.c)
-   include_directories(${PROJECT_SOURCE_DIR}/src/zimpl/WIN)
-endif()
-
 if(GMP_FOUND)
     set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
 else()
@@ -111,6 +106,12 @@ set(headers
     zimpl/zimpllib.h
     zimpl/zlpglue.h)
 
+if(MSVC)
+   set(headers ${headers} WIN/unistd.h)
+   set(libsources ${libsources} WIN/getopt.c)
+   include_directories(${PROJECT_SOURCE_DIR}/src/WIN)
+endif()
+
 #create zimpl with pic
 add_library(libzimpl-pic STATIC ${libsources})
 set_target_properties(libzimpl-pic PROPERTIES POSITION_INDEPENDENT_CODE on)
@@ -145,12 +146,20 @@ export(TARGETS libzimpl libzimpl-pic
   FILE "${PROJECT_BINARY_DIR}/zimpl-targets.cmake")
 
 #configure the config file for the build tree
-set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src")
+set(CONF_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src)
+if(MSVC)
+   set(CONF_INCLUDE_DIRS ${CONF_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src/WIN)
+endif()
+
 configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
   "${PROJECT_BINARY_DIR}/zimpl-config.cmake" @ONLY)
 
 #configure the config file for the install
-set(CONF_INCLUDE_DIRS "\${CMAKE_CURRENT_LIST_DIR}/../../../include")
+set(CONF_INCLUDE_DIRS \${CMAKE_CURRENT_LIST_DIR}/../../../include)
+if(MSVC)
+   set(CONF_INCLUDE_DIRS ${CONF_INCLUDE_DIRS} \${CMAKE_CURRENT_LIST_DIR}/../../../include/WIN)
+endif()
+
 configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" @ONLY)
 
