@@ -40,7 +40,7 @@ if(MSVC)
 
     foreach(variable ${variables})
        string(REGEX REPLACE "/M[T,D][ d]" "" ${variable} "${${variable}}")
-       message("${variable} = ${${variable}}")
+       # message("${variable} = ${${variable}}")
     endforeach()
 endif()
 
