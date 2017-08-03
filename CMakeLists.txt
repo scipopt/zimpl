@@ -26,10 +26,23 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-# set MT or MTd flag when using the static VS runtime libraries
-if(MSVC AND MT)
-    set(CMAKE_C_FLAGS_RELEASE "/MT")
-    set(CMAKE_C_FLAGS_DEBUG "/MTd")
+# filter /MD and /MDd from C and CXX flags
+if(MSVC)
+    set(variables
+      CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_MINSIZEREL
+      CMAKE_C_FLAGS_RELEASE
+      CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_MINSIZEREL
+      CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_RELWITHDEBINFO
+    )
+
+    foreach(variable ${variables})
+       string(REGEX REPLACE "/M[T,D][ d]" "" ${variable} "${${variable}}")
+       message("${variable} = ${${variable}}")
+    endforeach()
 endif()
 
 if(GMP)
@@ -48,6 +61,20 @@ if(ZLIB_FOUND)
     include_directories(${ZLIB_INCLUDE_DIRS})
 else()
     add_definitions(-DWITHOUT_ZLIB)
+
+    # look for pcre if ZLIB could not be found
+    find_package(PCRE)
+    if(PCRE_FOUND)
+        add_definitions(-DWITH_PCRE=1)
+        set(libs ${libs} ${PCRE_LIBRARIES})
+        include_directories(${PCRE_INCLUDE_DIRS})
+    endif()
+endif()
+
+if(MSVC)
+   add_definitions(-Dpopen=_popen)
+   add_definitions(-Dpclose=_pclose)
+   add_definitions(-Dinline=_inline)
 endif()
 
 include(CheckSymbolExists)

@@ -48,6 +48,11 @@ set(libsources
     zimpl/vinst.c
     zimpl/zimpllib.c)
 
+if(MSVC)
+   set(libsources ${libsources} zimpl/WIN/getopt.c)
+   include_directories(${PROJECT_SOURCE_DIR}/src/zimpl/WIN)
+endif()
+
 if(GMP_FOUND)
     set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
 else()
