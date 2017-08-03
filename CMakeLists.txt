@@ -4,7 +4,6 @@ project(ZIMPL
     VERSION 3.3.4
     LANGUAGES C)
 
-option(MT "use static runtime libraries for Visual Studio compiler" OFF)
 option(GMP "use GMP" ON)
 option(ZLIB "use ZLIB" ON)
 
