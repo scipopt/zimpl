@@ -37,7 +37,9 @@
 #endif
 
 #ifndef _lint
+#ifndef WITHOUT_ZLIB
 #include <zlib.h>
+#endif
 #else
 #include "lint.h"
 #endif /* _lint */
