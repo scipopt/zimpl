@@ -4,6 +4,10 @@ project(ZIMPL
     VERSION 3.3.4
     LANGUAGES C)
 
+set(ZIMPL_VERSION_MAJOR 3)
+set(ZIMPL_VERSION_MINOR 3)
+set(ZIMPL_VERSION_PATCH 4)
+
 option(GMP "use GMP" ON)
 option(ZLIB "use ZLIB" ON)
 
