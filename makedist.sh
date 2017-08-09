@@ -22,7 +22,7 @@ $NAME/doc/zimpl.man $NAME/check \
 $NAME/example/chvatal_diet.zpl $NAME/example/facility_location.zpl \
 $NAME/example/queens[12345].zpl $NAME/example/steinerbaum.zpl \
 $NAME/example/tsp.zpl $NAME/example/tsp.dat \
-$NAME/CMakeLists.txt $NAME/src/CMakeLists.txt $NAME/zimpl-config.cmake.in \
+$NAME/CMakeLists.txt $NAME/zimpl-config.cmake.in \
 $NAME/cmake/Modules/FindGMP.cmake $NAME/cmake/Modules/FindPCRE.cmake
 rm -f $NAME
 echo ""
