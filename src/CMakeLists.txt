@@ -152,7 +152,7 @@ if(MSVC)
 endif()
 
 configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
-  "${PROJECT_BINARY_DIR}/zimpl-config.cmake" @ONLY)
+  "${CMAKE_BINARY_DIR}/zimpl-config.cmake" @ONLY)
 
 #configure the config file for the install
 set(CONF_INCLUDE_DIRS \${CMAKE_CURRENT_LIST_DIR}/../../../include)
