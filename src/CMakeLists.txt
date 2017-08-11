@@ -143,7 +143,7 @@ install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
 
 # Add library targets to the build-tree export set
 export(TARGETS libzimpl libzimpl-pic
-  FILE "${PROJECT_BINARY_DIR}/zimpl-targets.cmake")
+  FILE "${CMAKE_BINARY_DIR}/zimpl-targets.cmake")
 
 #configure the config file for the build tree
 set(CONF_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src)
