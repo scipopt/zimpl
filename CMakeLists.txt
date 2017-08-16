@@ -82,19 +82,8 @@ endif()
 
 include(CheckSymbolExists)
 
-# check if we can use exp() with just including math.h
-unset(HAVE_EXP CACHE)
-check_symbol_exists(exp "math.h" HAVE_EXP)
-if(NOT HAVE_EXP)
-    # if not we link libm and check again
-    unset(HAVE_EXP CACHE)
-    list(APPEND CMAKE_REQUIRED_LIBRARIES m)
-    check_symbol_exists(exp "math.h" HAVE_EXP)
-    if(HAVE_EXP)
-        set(libs ${libs} m)
-    else()
-        message(FATAL_ERROR "No exp() found")
-    endif()
-endif()
+# link to math library if it is available
+find_library(libm m)
+set(libs ${libs} ${libm})
 
 add_subdirectory(src)
