@@ -84,6 +84,10 @@ include(CheckSymbolExists)
 
 # link to math library if it is available
 find_library(libm m)
+if(NOT libm)
+  set(libm "")
+endif()
+
 set(libs ${libs} ${libm})
 
 add_subdirectory(src)
