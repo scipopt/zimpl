@@ -17,6 +17,6 @@ CFLAGS		+=	-fPIC
 endif
 
 #ifeq ($(LINK),static)
-LDFLAGS		+=	-static
+#LDFLAGS		+=	-static
 #endif
 
