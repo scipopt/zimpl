@@ -1897,7 +1897,6 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    const List*  list;
    const Tuple* tuple;
    ListElem*    le    = NULL;
-   ElemType     elem_type;
    int          dim;
    int          i;
    
@@ -1950,7 +1949,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
          }
          for(i = 0; i < dim; i++)
          {
-            elem_type = elem_get_type(tuple_get_elem(tuple, i));
+            ElemType elem_type = elem_get_type(tuple_get_elem(tuple, i));
          
             if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
             {
@@ -1973,7 +1972,6 @@ CodeNode* i_set_new_elem(CodeNode* self)
    const List*  list;
    const Elem*  elem;
    ListElem*    le    = NULL;
-   ElemType     elem_type;
    
    Trace("i_set_new_elem");
 
@@ -1983,7 +1981,7 @@ CodeNode* i_set_new_elem(CodeNode* self)
 
    while(NULL != (elem = list_get_elem(list, &le)))
    {
-      elem_type = elem_get_type(elem);
+      ElemType elem_type = elem_get_type(elem);
       
       if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
       {
@@ -2034,8 +2032,6 @@ static void check_sets_compatible(
 {
    Tuple*      tuple_a;
    Tuple*      tuple_b;
-   ElemType    elem_type_a;
-   ElemType    elem_type_b;
    int         i;
 
    /* If one of the two involved sets is empty, the dimension of the
@@ -2058,8 +2054,8 @@ static void check_sets_compatible(
 
    for(i = 0; i < tuple_get_dim(tuple_a); i++)
    {
-      elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
-      elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
+      ElemType elem_type_a = elem_get_type(tuple_get_elem(tuple_a, i));
+      ElemType elem_type_b = elem_get_type(tuple_get_elem(tuple_b, i));
 
       assert(elem_type_a == ELEM_NUMB || elem_type_a == ELEM_STRG);
       assert(elem_type_b == ELEM_NUMB || elem_type_b == ELEM_STRG);
@@ -3564,7 +3560,6 @@ CodeNode* i_define_deref(CodeNode* self)
    const Define* def;
    const Tuple*  tuple;
    const Tuple*  param;
-   ElemType      elem_type;
    int           i;
    
    Trace("i_define_deref");
@@ -3576,7 +3571,7 @@ CodeNode* i_define_deref(CodeNode* self)
 
    for(i = 0; i < tuple_get_dim(tuple); i++)
    {
-      elem_type = elem_get_type(tuple_get_elem(tuple, i));
+      ElemType elem_type = elem_get_type(tuple_get_elem(tuple, i));
       
       if (elem_type != ELEM_NUMB && elem_type != ELEM_STRG)
       {
@@ -3639,7 +3634,6 @@ CodeNode* i_idxset_new(CodeNode* self)
    Tuple*       tuple;
    Tuple*       t0;
    Tuple*       t1;
-   ElemType     elem_type;
    CodeNode*    lexpr;
    const Set*   set;
    char         name[13]; /* "@-2000000000" */
@@ -3715,7 +3709,7 @@ CodeNode* i_idxset_new(CodeNode* self)
 
          for(i = 0; i < dim; i++)
          {
-            elem_type = elem_get_type(tuple_get_elem(tuple, i));
+            ElemType elem_type = elem_get_type(tuple_get_elem(tuple, i));
                
             if (elem_type != ELEM_NAME)
             {
