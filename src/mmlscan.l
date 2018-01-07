@@ -32,16 +32,10 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #pragma clang diagnostic ignored "-Wunneeded-internal-declaration"
 
-/*lint -e429 */
-/*lint -e506 -e525 -e528 -e527 -e537 -e539 -e551 -e553 -e613 -e633 */
-/*lint -e702 -e713 -e716 -e725 -e732 -e734 -e737 -e744 -e750 -e754 */ 
-/*lint -e774 -e770 -e775 -e794 -e825 -e835 */
-/*lint -esym(534,yy_init_globals) ignoring return value */
-/*lint -esym(613,b,buf) -esym(563,find_rule) */
-/*lint -esym(668,memset) possibly passing null pointer */
-/*lint -esym(752,yyset_extra,yyget_extra) not referenced */
-/*lint -esym(773,BEGIN) -esym(760,FLEX_DEBUG) */
-/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
+#pragma GCC   diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC   diagnostic ignored "-Wsign-compare"
+
+/*lint -e527 -e835 -e717 */
 
 #include <sys/types.h>
 #include <stdlib.h>

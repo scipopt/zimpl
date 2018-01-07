@@ -514,7 +514,7 @@ inline CodeNode* code_eval(CodeNode* node)
 
    inst_count++;
 
-   stkchk_used();
+   stkchk_used(); // record maximum stack use
    
    return (*node->eval)(node);
 }

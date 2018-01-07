@@ -194,10 +194,10 @@ static SetIter* iter_init(
  */
 /*ARGSUSED*/
 static Bool iter_next(
-   SetIter*      iter,
-   const Set*    set,
-   UNUSED Tuple* tuple,
-   UNUSED int    offset)
+   SetIter*       iter,
+   const Set*     set,
+   UNUSED Tuple*  tuple,
+   UNUSED int     offset)
 {
    assert(set_empty_iter_is_valid(iter));
    assert(set_empty_is_valid(set));

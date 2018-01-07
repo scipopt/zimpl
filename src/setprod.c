@@ -218,7 +218,7 @@ static SetIter* set_prod_iter_init(
 
    assert(iter != NULL);
 
-   iter->prod.elem = calloc(set->head.dim, sizeof(*iter->prod.elem));
+   iter->prod.elem = calloc((size_t)set->head.dim, sizeof(*iter->prod.elem));
 
    assert(iter->prod.elem != NULL);
 

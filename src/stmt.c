@@ -196,7 +196,7 @@ void stmt_parse(Stmt* stmt)
 
 void stmt_execute(const Stmt* stmt)
 {
-   int inst_count = code_get_inst_count();
+   unsigned int inst_count = code_get_inst_count();
    
    Trace("stmt_execute");
    

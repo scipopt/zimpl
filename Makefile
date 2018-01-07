@@ -63,7 +63,7 @@ LIBEXT	= .a
 YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
-LINT		=	flexelint
+LINT		=	pclp64_linux
 CPPCHECK	=	cppcheck
 AR		   =	ar cr
 AR_o	   =
@@ -210,8 +210,8 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
 lint:		$(OBJSRC) $(LIBSRC)
-		$(LINT) $(SRCDIR)/project.lnt \
-		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
+		$(LINT) /opt/pclint/config/co-gcc.lnt $(SRCDIR)/project2.lnt \
+		-I/opt/pclint/config -Isrc -dNO_MSHELL -dVERSION='"3.3.4"' $^
 
 cppcheck:	$(OBJSRC) $(LIBSRC)
 		$(CPPCHECK) $(CPPFLAGS) --inline-suppr --enable=warning,style,performance,portability,information $^

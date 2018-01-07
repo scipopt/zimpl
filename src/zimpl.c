@@ -376,7 +376,7 @@ int main(int argc, char* const* argv)
    /* Make symbol to hold entries of internal variables
     */
    set = set_pseudo_new();
-   (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
+   (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, ENTRY_NULL);
    set_free(set);
    
    /* Now store the param defines

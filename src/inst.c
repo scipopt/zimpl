@@ -697,9 +697,9 @@ CodeNode* i_expr_sin(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -719,9 +719,9 @@ CodeNode* i_expr_cos(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -741,9 +741,9 @@ CodeNode* i_expr_tan(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -763,9 +763,9 @@ CodeNode* i_expr_asin(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -785,9 +785,9 @@ CodeNode* i_expr_acos(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -807,9 +807,9 @@ CodeNode* i_expr_atan(CodeNode* self)
 
    fprintf(stderr, "Not implemented yet\n");
 
-   /* numb = numb_new_log(code_eval_child_numb(self, 0)); */
+   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
-   if (numb == NULL)
+   if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
@@ -3550,7 +3550,7 @@ CodeNode* i_newdef(CodeNode* self)
    assert(code_is_valid(self));
 
    def = code_eval_child_define(self, 0);
-   
+
    define_set_param(def, tuple_copy(code_eval_child_tuple(self, 1)));
    define_set_code(def, code_get_child(self, 2));
    

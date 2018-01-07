@@ -454,6 +454,8 @@ Numb* numb_new_pow(const Numb* base, int expo)
    assert(numb != NULL);
    assert(numb_is_valid(base));
 
+   /* ??? we should limit the exponent to say 1000
+    */
    if (expo < 0)
    {
       is_negative = TRUE;
@@ -461,7 +463,7 @@ Numb* numb_new_pow(const Numb* base, int expo)
    }
    mpq_set_si(numb->value.numb, 1, 1);  /* set to 1 */
 
-   for(i = 1; i <= expo; i++)
+   for(i = 0; i < expo; i++)
       mpq_mul(numb->value.numb, numb->value.numb, base->value.numb);
 
    if (is_negative)
@@ -479,7 +481,7 @@ Numb* numb_new_fac(int n)
    assert(n    >= 0);
 
    mpz_init(z);
-   mpz_fac_ui(z, n);
+   mpz_fac_ui(z, (unsigned int)n);
    mpq_set_z(numb->value.numb, z);
    mpz_clear(z);
    
@@ -525,8 +527,7 @@ int numb_get_sgn(const Numb* numb)
 {
    assert(numb_is_valid(numb));
 
-   /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
-   return mpq_sgn(numb->value.numb);
+   return mpq_sgn(numb->value.numb); //lint !e633 !e634 strong type mismatch
 }
 
 void numb_round(Numb* numb)
@@ -540,8 +541,7 @@ void numb_round(Numb* numb)
    mpq_init(h);
    mpq_set_d(h, 0.5);
 
-   /*lint -e(634) Strong type mismatch (type 'Bool') in equality or conditional */
-   if (mpq_sgn(numb->value.numb) >= 0)
+   if (mpq_sgn(numb->value.numb) >= 0) //lint !e633 !e634 !e638 strong type mismatch
       mpq_add(numb->value.numb, numb->value.numb, h);
    else
       mpq_sub(numb->value.numb, numb->value.numb, h);
@@ -774,7 +774,7 @@ int numb_toint(const Numb* numb)
    assert(numb_is_valid(numb));
    assert(numb_is_int(numb));
    
-   return mpz_get_si(mpq_numref(numb->value.numb)); 
+   return (int)mpz_get_si(mpq_numref(numb->value.numb)); 
 }
 
 Bool numb_is_number(const char *s)

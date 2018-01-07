@@ -55,9 +55,9 @@
 
 struct storage
 {
-   int  size;
-   Nzo* begin;
-   Sto* next;
+   unsigned int  size;
+   Nzo*          begin;
+   Sto*          next;
 };
 
 static const unsigned int sto_size  = 1000;
@@ -90,7 +90,7 @@ struct lps_hash
    LpsHElem**   bucket;
 };
 
-static void hash_statist(FILE* fp, const LpsHash* hash);
+static void hash_statist(FILE* fp, const LpsHash* hash); //lint !e528 not referenced
 
 static Bool hash_valid(const LpsHash* hash)
 {
@@ -334,7 +334,7 @@ static void hash_del_con(LpsHash* hash, const Con* con)
    assert(hash_valid(hash));
 }
 
-static void hash_statist(FILE* fp, const LpsHash* hash)
+static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referenced
 {
    LpsHElem*    he;
    int          min    = (int)hash->size;
@@ -1959,7 +1959,7 @@ void lps_makename(
    {
       if (lpfstrncpy(target, name, nlen))
       {
-         sprintf(temp, "@%x", no);
+         sprintf(temp, "@%x", (unsigned int)no);
 
          len = size - (int)strlen(temp) - 1;
 
@@ -1977,7 +1977,7 @@ void lps_makename(
    }
    else
    {
-      sprintf(temp, "@%x", no);
+      sprintf(temp, "@%x", (unsigned int)no);
       
       len = size - (int)strlen(temp) - 1; /* -1 for '\0' */
       

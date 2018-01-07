@@ -72,7 +72,7 @@ extern void         set_print(FILE* fp, const Set* set);
 
 /*lint -sem(        set_empty_new, 1n >= 0, @p == 1) */
 extern Set*         set_empty_new(int dim);
-/*lint -sem(        set_pseudo_new, @p == 1) */
+
 extern Set*         set_pseudo_new(void);
 /*lint -sem(        set_new_from_list, 1p == 1, @p == 1) */
 extern Set*         set_new_from_list(const List* list, SetCheckType check);

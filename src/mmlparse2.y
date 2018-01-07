@@ -24,19 +24,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*lint -e428 -e433 -e506 -e514 -e525 -e527 -e537 -e568 -e574 */
-/*lint -e639 -e659 -e661 -e662 -e676 -e685 */
-/*lint -e713 -e717 -e732 -e734 -e737 -e744 -e750 -e751 -e753 -e762 -e764 -e774 -e778 */
-/*lint -e810 -e818 -e825 -e830 */
-/*lint -esym(530,yylen) */
-/*lint -esym(563,yyerrorlab) */   
-/*lint -esym(746,__yy_memcpy) -esym(516,__yy_memcpy) */
-/*lint -esym(718,yylex) -esym(746,yylex) */
-/*lint -esym(644,yyval,yylval) -esym(645,yylval) -esym(550,yynerrs) */
-/*lint -esym(553,__GNUC__)  -esym(578,yylen) */
-/*lint -esym(768,bits) -esym(553,YYSTACK_USE_ALLOCA) */
-/*lint -esym(593,yymsg) Custodial pointer possibly not freed */
-/*lint -esym(426,mem_malloc) call violates semantics */
 
 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 #pragma clang diagnostic ignored "-Wconversion"
@@ -44,6 +31,8 @@
 #pragma clang diagnostic ignored "-Wunused-macros"
 #pragma clang diagnostic ignored "-Wimplicit-function-declaration"
 #pragma clang diagnostic ignored "-Wunreachable-code"
+
+#pragma GCC   diagnostic ignored "-Wstrict-prototypes"
 
 #include <stdio.h>
 #include <stdlib.h>

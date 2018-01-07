@@ -42,15 +42,13 @@ enum define_type     { DEF_ERR = 0, DEF_NUMB, DEF_STRG, DEF_BOOL, DEF_SET };
 typedef enum define_type         DefineType;
 typedef struct define            Define;
 
-/*lint -sem(        define_new, nulterm(1), 1p, @p == 1) */
+/*lint -sem(        define_new, nulterm(1), 1p) @p == 1 */
 extern Define*      define_new(const char* name, DefineType type);
 /*lint -sem(        define_set_param, custodial(2), 1p == 1 && 2p == 1) */
 extern void         define_set_param(Define* def, Tuple* param);
 /*lint -sem(        define_set_code, 1p == 1 && 2p == 1) */
 extern void         define_set_code(Define* def, CodeNode* code);
 extern void         define_exit(void);
-/*lint -sem(        define_is_valid, 1p == 1) */
-extern Bool         define_is_valid(const Define* def);
 /*lint -sem(        define_lookup, nulterm(1), 1p, r_null) */
 extern Define*      define_lookup(const char* name);
 /*lint -sem(        define_get_name, 1p == 1, @p && nulterm(@)) */

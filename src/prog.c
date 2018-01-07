@@ -185,7 +185,7 @@ void prog_execute(const Prog* prog, void* lp)
       printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
 
-char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int max_output_line_len)
+char* prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len)
 {
    size_t len;
    char*  text;
@@ -194,7 +194,7 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
 
    assert(prog_is_valid(prog));
    assert(prefix != NULL);
-   assert(max_output_line_len > (int)strlen(prefix));
+   assert(max_output_line_len > strlen(prefix));
 
    /* prefix + title + \n
     * prog->used * (\n + prefix + stmt)
@@ -204,8 +204,8 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
 
    for(i = 0; i < prog->used; i++)
    {
-      int line_len         = strlen(stmt_get_text(prog->stmt[i]));
-      int max_eff_line_len = max_output_line_len - strlen(prefix) - 1;
+      size_t line_len         = strlen(stmt_get_text(prog->stmt[i]));
+      size_t max_eff_line_len = max_output_line_len - strlen(prefix) - 1;
 
       len += line_len + ((line_len + max_eff_line_len - 1) / max_eff_line_len) * (strlen(prefix) + 1);
    }
@@ -219,7 +219,7 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, int ma
 
       while(*s != '\0')
       {
-         if (k % max_output_line_len == 0)
+         if ((size_t)k % max_output_line_len == 0)
          {
             k = sprintf(&text[pos], "\n%s", prefix);            
             pos += k;

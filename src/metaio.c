@@ -32,13 +32,13 @@
 #include <ctype.h>
 #include <fcntl.h>
 
-#ifndef _lint
+//#ifndef _lint
 #ifndef WITHOUT_ZLIB
 #include <zlib.h>
 #endif
-#else
+//#else
 #include "lint.h"
-#endif /* _lint */
+//#endif /* _lint */
 
 #include "bool.h"
 #include "mshell.h"

@@ -55,6 +55,16 @@ static Define anchor  = { 0, "", DEF_ERR, NULL, NULL, NULL };
 static Define anchor  = {    "", DEF_ERR, NULL, NULL, NULL };
 #endif
 
+static Bool define_is_valid(const Define* def)
+{
+   if (def == NULL || !SID_ok(def, DEFINE_SID))
+      return FALSE;
+
+   mem_check(def);
+
+   return TRUE;
+}
+
 Define* define_new(
    const char*  name,
    DefineType   type)
@@ -120,16 +130,6 @@ void define_exit(void)
       free(p);
    }
    anchor.next = NULL;
-}
-
-Bool define_is_valid(const Define* def)
-{
-   if (def == NULL || !SID_ok(def, DEFINE_SID))
-      return FALSE;
-
-   mem_check(def);
-
-   return TRUE;
 }
 
 Define* define_lookup(const char* name)

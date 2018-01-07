@@ -71,7 +71,7 @@ Term* term_new(int size)
    term->constant = numb_new_integer(0);
    term->size     = size;
    term->used     = 0;
-   term->elem     = calloc(term->size, sizeof(*term->elem));
+   term->elem     = calloc((size_t)term->size, sizeof(*term->elem));
    
    SID_set(term, TERM_SID);
    assert(term_is_valid(term));

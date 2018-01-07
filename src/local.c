@@ -167,11 +167,11 @@ void local_print_all(FILE* fp)
 char* local_tostrall()
 {
    const Local* local;
-   unsigned int size = LOCAL_STR_SIZE;
-   unsigned int len  = 1; /* fuer die '\0' */
+   size_t       size = LOCAL_STR_SIZE;
+   size_t       len  = 1; /* fuer die '\0' */
    char*        str  = malloc(size);
    char*        selem;
-   unsigned int selemlen;
+   size_t       selemlen;
    Bool         after_elem = FALSE;
 
    assert(str != NULL);

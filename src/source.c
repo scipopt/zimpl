@@ -50,7 +50,7 @@ void show_source(FILE* fp, const char* text, int column)
    if (column > 0)
       column--;
    
-   len = strlen(text);
+   len = (int)strlen(text);
    beg = column - 30;
    end = column + 30;
 

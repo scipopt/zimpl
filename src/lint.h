@@ -31,6 +31,7 @@
  */
 #ifdef _lint
 
+#if 0
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -92,6 +93,7 @@ extern int    gzclose(gzFile file);
 #ifdef __cplusplus
 }
 #endif
+#endif // 0
 #endif /* _lint */
 
 #if defined(__GNUC__) || defined(__CLANG__)
