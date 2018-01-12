@@ -223,7 +223,6 @@ Bool xlp_addcon_term(
    Con*  con;
    mpq_t tlhs;
    mpq_t trhs;
-   int   i;
 
    assert(lp   != NULL);
    assert(name != NULL);
@@ -271,7 +270,7 @@ Bool xlp_addcon_term(
       lps_addterm(lp, con, term);
    else
    {
-      for(i = 0; i < term_get_elements(term); i++)
+      for(int i = 0; i < term_get_elements(term); i++)
       {
          const Mono* mono = term_get_element(term, i);
          Var*        var  = mono_get_var(mono, 0);
@@ -493,20 +492,23 @@ Bound* xlp_getlower(
    UNUSED const Lps* lp,          /**< Pointer to storage */
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
-   Bound* bound;
-   Numb*  numb;
-   mpq_t  lower;
-   
    assert(var != NULL);
 
+   Bound* bound;
+   
    if (!lps_haslower(var))
       bound = bound_new(BOUND_MINUS_INFTY, numb_zero());
    else
    {
+      mpq_t  lower;
+      
       mpq_init(lower);
       lps_getlower(var, lower);
-      numb  = numb_new_mpq(lower);
+      
+      Numb* numb  = numb_new_mpq(lower);
+      
       bound = bound_new(BOUND_VALUE, numb);
+
       numb_free(numb);
       mpq_clear(lower);
    }
@@ -522,20 +524,23 @@ Bound* xlp_getupper(
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 
 {
-   Bound* bound;
-   Numb*  numb;
-   mpq_t  upper;
-   
    assert(var != NULL);
 
+   Bound* bound;
+   
    if (!lps_hasupper(var))
       bound = bound_new(BOUND_INFTY, numb_zero());
    else
    {
+      mpq_t  upper;
+      
       mpq_init(upper);
       lps_getupper(var, upper);
-      numb  = numb_new_mpq(upper);
+      
+      Numb* numb  = numb_new_mpq(upper);
+      
       bound = bound_new(BOUND_VALUE, numb);
+      
       numb_free(numb);
       mpq_clear(upper);
    }

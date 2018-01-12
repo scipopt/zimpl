@@ -336,22 +336,20 @@ static void hash_del_con(LpsHash* hash, const Con* con)
 
 static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referenced
 {
+   assert(fp != NULL);
+   assert(hash_valid(hash));
+
    LpsHElem*    he;
    int          min    = (int)hash->size;
    int          max    = 0;
    int          sum    = 0;
    int          zeros  = 0;
    int          filled = 0;
-   int          count;
    double       avg    = 0.0;
-   unsigned int i;
 
-   assert(fp != NULL);
-   assert(hash_valid(hash));
-
-   for(i = 0; i < hash->size; i++)
+   for(unsigned int i = 0; i < hash->size; i++)
    {
-      count = 0;
+      int count = 0;
       
       for(he = hash->bucket[i]; he != NULL; he = he->next)
          count++;
@@ -399,6 +397,8 @@ static Bool lps_valid(const Lps* lp)
    const char* err18 = "Wrong SOS element count";
    const char* err19 = "Wrong SOS count";
    
+   assert(lp != NULL);
+
    Var* var;
    Var* var_prev;
    Con* con;
@@ -415,8 +415,6 @@ static Bool lps_valid(const Lps* lp)
    int  sos_count;
    int  sse_count;
    
-   assert(lp != NULL);
-
    /* Variable Test
     */
    var_count = lp->vars;
@@ -1866,14 +1864,14 @@ static void make_full_name(
    int         size,
    const char* name)
 {
+   assert(target != NULL);
+   assert(size   >= MIN_NAME_LEN);
+   assert(name   != NULL);
+
    const char* s         = name;
    Bool        first     = TRUE;
    Bool        in_string = FALSE;
    int         i         = 0;
-
-   assert(target != NULL);
-   assert(size   >= MIN_NAME_LEN);
-   assert(name   != NULL);
 
    /* We allways start with a space
     */

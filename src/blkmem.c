@@ -177,15 +177,13 @@ void blk_free(void* p, int size)
       int     elem_size = (chain_no + 1) * 8;
       size_t  offset    = (size_t)elem_size / sizeof(BlkMemElem);
 
-      while(anchor != NULL)
-      {      
-         if (elem >= anchor->elem && elem < anchor->elem + anchor->elem_count * offset)
-            break;
-      
-         anchor = anchor->next;
-      }
       assert(anchor != NULL);
-      assert(elem >= anchor->elem && elem < anchor->elem + anchor->elem_count * offset);
+
+      while(elem < anchor->elem || elem >= anchor->elem + anchor->elem_count * offset)
+      {
+         anchor = anchor->next;
+         assert(anchor != NULL);
+      }
    }
 #endif
    

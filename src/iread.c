@@ -662,7 +662,6 @@ CodeNode* i_read(CodeNode* self)
    MFP*        fp;
    char*       buf;
    char**      field;
-   int         fields;
    int*        param_field;  /* template parameter field number */
    int*        param_type;  /* template parameter field type */
    Bool        is_tuple_list;
@@ -783,7 +782,7 @@ CodeNode* i_read(CodeNode* self)
 
          /* Now we break the line in fields.
           */
-         fields = split_fields(s, hi_field_no, field);
+         int fields = split_fields(s, hi_field_no, field);
 #if 0
          {
             int i;

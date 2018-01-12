@@ -214,7 +214,7 @@ lint:		$(OBJSRC) $(LIBSRC)
 		-I/opt/pclint/config -Isrc -dNO_MSHELL -dVERSION='"3.3.4"' $^
 
 cppcheck:	$(OBJSRC) $(LIBSRC)
-		$(CPPCHECK) $(CPPFLAGS) --inline-suppr --enable=warning,style,performance,portability,information $^
+		$(CPPCHECK) $(CPPFLAGS) -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/bits -I/usr/include/x86_64-linux-gnu/sys -I/usr/include/linux -I/usr/lib/gcc/x86_64-linux-gnu/5/include --inline-suppr --suppressions-list=src/cppcheck.txt --enable=warning,style,performance,portability,information $^
 
 doc:
 		cd doc; make -f Makefile

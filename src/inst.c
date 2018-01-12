@@ -1898,7 +1898,6 @@ CodeNode* i_set_new_tuple(CodeNode* self)
    const Tuple* tuple;
    ListElem*    le    = NULL;
    int          dim;
-   int          i;
    
    Trace("i_set_new_tuple");
    
@@ -1947,7 +1946,7 @@ CodeNode* i_set_new_tuple(CodeNode* self)
             code_errmsg(self);
             zpl_exit(EXIT_FAILURE);
          }
-         for(i = 0; i < dim; i++)
+         for(int i = 0; i < dim; i++)
          {
             ElemType elem_type = elem_get_type(tuple_get_elem(tuple, i));
          
@@ -2588,16 +2587,15 @@ CodeNode* i_set_indexset(CodeNode* self)
 
 static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
 {
-   const CodeNode* code_cexpr_list;
-   int             dim = 1;
-   
    assert(code_is_valid(code_cexpr_or_tuple));
 
+   int dim = 1;
+   
    /* Is it a tuple or a cexpr ?
     */
    if (code_get_inst(code_cexpr_or_tuple) == (Inst)i_tuple_new)
    {
-      for(code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
+      for(const CodeNode* code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
           code_get_inst(code_cexpr_list) == (Inst)i_elem_list_add;
           code_cexpr_list = code_get_child(code_cexpr_list, 0))
       {
@@ -3187,7 +3185,6 @@ CodeNode* i_newsym_para2(CodeNode* self)
    const IdxSet* idxset;
    Symbol*       sym;
    Entry*        entry;
-   CodeNode*     child;
    Tuple*        tuple;
    const Tuple*  pattern;
    SetIter*      iter;
@@ -3225,7 +3222,7 @@ CodeNode* i_newsym_para2(CodeNode* self)
        */
       local_install_tuple(pattern, tuple);
 
-      child = code_eval_child(self, 2);
+      CodeNode* child = code_eval_child(self, 2);
 
       switch(code_get_type(child))
       {
@@ -3277,10 +3274,7 @@ CodeNode* i_newsym_var(CodeNode* self)
    Tuple*        tuple;
    const Tuple*  pattern;
    VarClass      varclass;
-   Var*          var;
    SetIter*      iter;
-   char*         tuplestr;
-   char*         varname;
    Numb*         temp;
    
    Trace("i_newsym_var");
@@ -3378,8 +3372,8 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Hier geben wir der Variable einen eindeutigen Namen
        */
-      tuplestr = tuple_tostr(tuple);
-      varname  = malloc(strlen(name) + strlen(tuplestr) + 2);
+      char* tuplestr = tuple_tostr(tuple);
+      char* varname  = malloc(strlen(name) + strlen(tuplestr) + 2);
 
       assert(varname != NULL);
       
@@ -3387,7 +3381,7 @@ CodeNode* i_newsym_var(CodeNode* self)
 
       /* Und nun legen wir sie an.
        */
-      var = xlp_addvar(prog_get_lp(), varname, varclass, lower, upper, priority, startval);
+      Var* var = xlp_addvar(prog_get_lp(), varname, varclass, lower, upper, priority, startval);
 
       symbol_add_entry(sym, entry_new_var(tuple, var));
 
@@ -3414,7 +3408,6 @@ CodeNode* i_symbol_deref(CodeNode* self)
    const Symbol* sym;
    const Tuple*  tuple;
    const Entry*  entry;
-   const Elem*   elem;
    Term*         term;
    int           i;
    
@@ -3431,7 +3424,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
 
    for(i = 0; i < tuple_get_dim(tuple); i++)
    {
-      elem = tuple_get_elem(tuple, i);
+      const Elem* elem = tuple_get_elem(tuple, i);
 
       /* Are there any unresolved names in the tuple?
        */
@@ -3500,7 +3493,6 @@ CodeNode* i_term_power(CodeNode* self)
    const Term*   term;
    Term*         term_result;
    Term*         term_temp;
-   int           i;
    
    Trace("i_term_power");
    
@@ -3525,7 +3517,7 @@ CodeNode* i_term_power(CodeNode* self)
    {
       term_result = term_copy(term);
 
-      for(i = 1; i < power; i++)
+      for(int i = 1; i < power; i++)
       {   
          term_temp = term_mul_term(term_result, term);
          term_free(term_result);
@@ -3631,19 +3623,17 @@ CodeNode* i_set_idxset(CodeNode* self)
 
 CodeNode* i_idxset_new(CodeNode* self)
 {
+   assert(code_is_valid(self));
+
    Tuple*       tuple;
    Tuple*       t0;
-   Tuple*       t1;
    CodeNode*    lexpr;
    const Set*   set;
-   char         name[13]; /* "@-2000000000" */
    int          dim;
-   int          i;
    Bool         is_unrestricted;
          
    Trace("i_idxset_new");
 
-   assert(code_is_valid(self));
 
    t0     = tuple_new(0);
    tuple  = tuple_copy(code_eval_child_tuple(self, 0));
@@ -3679,8 +3669,10 @@ CodeNode* i_idxset_new(CodeNode* self)
 
       tuple = tuple_new(dim);
       
-      for(i = 0; i < dim; i++)
+      for(int i = 0; i < dim; i++)
       {
+         char name[13]; /* "@-2000000000" */
+
          sprintf(name, "@%d", i + 1);
          tuple_set_elem(tuple, i, elem_new_name(str_new(name)));
       }
@@ -3705,9 +3697,9 @@ CodeNode* i_idxset_new(CodeNode* self)
       }
       if (set_get_members(set) > 0)
       {
-         t1 = set_get_tuple(set, 0);
+         Tuple* t1 = set_get_tuple(set, 0);
 
-         for(i = 0; i < dim; i++)
+         for(int i = 0; i < dim; i++)
          {
             ElemType elem_type = elem_get_type(tuple_get_elem(tuple, i));
                
@@ -4286,45 +4278,28 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
 
 CodeNode* i_list_matrix(CodeNode* self)
 {
-   const List* head_list;
-   const List* body_list;
-   const List* idx_list;
-   const List* val_list;
-   List*       list = NULL;
-   ListElem*   le_head;
-   ListElem*   le_body;
-   ListElem*   le_val;
-   ListElem*   le_idx;
-   int         head_count;
-   int         body_count;
-   int         idx_count;
-   Tuple*      tuple;
-   const Elem* elem;
-   Entry*      entry;
-   int         i;
-   int         j;
-   int         k;
-   
    Trace("i_list_matrix");
 
    assert(code_is_valid(self));
 
-   head_list  = code_eval_child_list(self, 0);
-   body_list  = code_eval_child_list(self, 1);
-   head_count = list_get_elems(head_list);
-   body_count = list_get_elems(body_list);
+   const List* head_list  = code_eval_child_list(self, 0);
+   const List* body_list  = code_eval_child_list(self, 1);
+   List*       list       = NULL;
+   ListElem*   le_body    = NULL;
+   int         head_count = list_get_elems(head_list);
+   int         body_count = list_get_elems(body_list);
    
    assert(head_count > 0);
    assert(body_count > 0);
    assert(body_count % 2 == 0); /* has to be even */
 
-   le_body = NULL;
-   
-   for(i = 0; i < body_count; i += 2)
+   for(int i = 0; i < body_count; i += 2)
    {
-      idx_list  = list_get_list(body_list, &le_body);
-      val_list  = list_get_list(body_list, &le_body);
-      idx_count = list_get_elems(idx_list);
+      const List* idx_list  = list_get_list(body_list, &le_body);
+      const List* val_list  = list_get_list(body_list, &le_body);
+      int         idx_count = list_get_elems(idx_list);
+      ListElem*   le_head   = NULL;
+      ListElem*   le_val    = NULL;
 
       /* Number of values in a lines has to be equal the
        * number of elements in the head list
@@ -4338,26 +4313,25 @@ CodeNode* i_list_matrix(CodeNode* self)
          zpl_exit(EXIT_FAILURE);
       }
 
-      le_head = NULL;
-      le_val  = NULL;
-
       /* For each element in the head list we end up with
        * one element in the result list
        */
-      for(j = 0; j < head_count; j++)
+      for(int j = 0; j < head_count; j++)
       {
          /* Construct tuple. If idx_count is not constant, we will later
           * get an error when the list is applied to the parameter
           */
-         tuple = tuple_new(idx_count + 1);
-
-         le_idx = NULL;
+         Tuple* tuple = tuple_new(idx_count + 1);
+         Entry* entry;
+         int    k;
+         
+         ListElem* le_idx = NULL;
          for(k = 0; k < idx_count; k++)
             tuple_set_elem(tuple, k, elem_copy(list_get_elem(idx_list, &le_idx)));
 
          tuple_set_elem(tuple, k, elem_copy(list_get_elem(head_list, &le_head)));
       
-         elem = list_get_elem(val_list, &le_val);
+         const Elem* elem = list_get_elem(val_list, &le_val);
 
          switch(elem_get_type(elem))
          {
