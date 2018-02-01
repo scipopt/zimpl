@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -507,7 +507,7 @@ Set* set_proj(const Set* set, const Tuple* pattern)
    assert(tuple_is_valid(pattern));
 
    dim = tuple_get_dim(pattern);
-   idx = malloc(sizeof(*idx) * dim);
+   idx = malloc(sizeof(*idx) * (size_t)dim);
 
    assert(idx != NULL);
    
@@ -682,7 +682,7 @@ List* set_subsets_list(
       return list;
    }
    
-   counter = malloc(sizeof(*counter) * subset_size);
+   counter = malloc(sizeof(*counter) * (size_t)subset_size);
 
    assert(counter != NULL);
    

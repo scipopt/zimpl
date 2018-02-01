@@ -307,7 +307,7 @@ input and produces as output the files solveme.mps and solveme.tbl.
 Note that in case \mps-output is specified for a maximization problem,
 the objective function will be inverted, because the \mps format has no
 provision for stating the sense of the objective function. The default
-is to assume maximization.
+is to assume minimization.
 
 \begin{table}[hbtp]
 {\sffamily\small\centering
@@ -344,11 +344,11 @@ is to assume maximization.
                   \code{-P "cpp -DWITH\_C1 \%s"} would pass the input
 		  file through the C-preprocessor.\\
 -s \emph{seed}   & Positive \code{seed} number for the random number generator.
-                 For example \code{-s `date +\%N`} will produce changing random numbers.\\
+                 For example, \code{-s `date +\%N`} will produce changing random numbers.\\
 -v \emph{0..5}   & Set the verbosity level. 0 is quiet, 1 is default,
                   2 is verbose, 3 and 4 are chatter, and 5 is debug.\\
 -D \emph{name=val} & Sets the parameter \emph{name} to the specified
-                  value. This is equivalent with having this line in the
+                  value. This is equivalent to having this line in the
                   \zimpl program: \code{param name:=val}. If there is
 		  a declaration in the \zimpl file and a \code{-D}
 		  setting for the same name, the latter takes precedent.\\
@@ -396,7 +396,7 @@ quotation marks, then this file is read and processed instead of the line.
 \zimpl works on its lowest level with two types of data: Strings and
 numbers. 
 Wherever a number or string is required it is also possible to use a
-parameter of the corresponding value type. In most cases expressions are
+parameter of the corresponding value type. In most cases, expressions are
 allowed instead of just a number or a string.
 The precedence of operators is the usual one, but
 parentheses can always be used to specify the evaluation order explicitly.
@@ -404,7 +404,7 @@ parentheses can always be used to specify the evaluation order explicitly.
 
 \subsubsection{Numeric expressions}
 A number in \zimpl can be given in the usual format, \eg as 2, -6.5 or 5.234e-12. 
-Numeric expressions consist of numbers, numeric valued parameters, and
+Numeric expressions consist of numbers, numerically valued parameters, and
 any of the operators and functions listed in Table~\ref{tab:zimpl-functions}.
 Additionally the functions shown in Table~\ref{tab:zimpl-double} can be
 used. Note that those functions are only computed with normal double precision
@@ -479,13 +479,13 @@ $a$ must be nonnegative integer \\
 
 \subsubsection{String expressions}
 A string is delimited by double quotation marks \code{"},
-\eg \code{"Hallo Keiken"}. Two strings can be concatenated using the
-\code{+} operator, \ie \code{"Hallo " + "Keiken"} gives \code{"Hallo
+\eg\ \code{"Hallo Keiken"}. Two strings can be concatenated using the
+\code{+} operator, \ie\ \code{"Hallo " + "Keiken"} gives \code{"Hallo
   Keiken"}. The function \code{substr(string, begin, length)} 
 can be used to extract parts of a string. \code{begin} is the first character 
 to be used, and counting starts with zero at first character. 
 If \code{begin} is negative, then counting starts
-at the end of the string. \code{length} is the number of chacaters to extract 
+at the end of the string. \code{length} is the number of charaters to extract 
 starting at \code{begin}. The length of a string can be determined
 using the \code{length} function.
 
@@ -501,7 +501,7 @@ Combinations of Boolean expressions with \code{and},
 and negation with \code{not} are possible.
 The expression \emph{tuple} \code{in} \emph{set-expression} (explained
 in the next section) can be used to test set membership of a tuple. 
-Boolean expresseion can also be in the \emph{then} or \emph{else} part of an 
+Boolean expressions can also be in the \emph{then} or \emph{else} part of an 
 \emph{if} expression.
 
 \subsubsection{Variant expressions}
@@ -521,23 +521,23 @@ a specific element of a set (details about sets are covered below).
 \subsection{Tuples and sets}
 
 A tuple is an ordered vector of fixed dimension where each component
-is either a number or a string. Sets consist of (a finite number of )
-tuples. Each tuple is unique within a set. The sets in \zimpl are all
-ordered, but there is no particular order of the tuples.  Sets are
+is either a number or a string. Sets consist of (a finite number of)
+tuples. Each tuple is unique within a set. All sets in \zimpl are
+internally ordered, but there is no particular order.  Sets are
 delimited by braces, \code{\{} and~\code{\}}, respectively.  All
 tuples of a specific set have the same number of components.  The type
 of the $n$-th component for all tuples of a set must be the same, \ie
 they have to be either all numbers or all strings.  The definition of
-a tuple is enclosed in angle brackets $<$ and $>$, \eg
-\code{$<$1,2,"x"$>$}. The components are separated by commas.  If
+a tuple is enclosed in angle brackets $<$ and $>$,
+\eg\ \code{$<$1,2,"x"$>$}. The components are separated by commas.  If
 tuples are one-dimensional, it is possible to omit the tuple
 delimiters in a list of elements, but in this case they must be
-omitted from all tuples in the definition, \eg \code{\{1,2,3}\} is
-valid while \code{\{1,2,$<$3$>$}\} is not.
+omitted from all tuples in the definition, \eg\ \code{\{1,2,3\}} is
+valid while \code{\{1,2,$<$3$>$\}} is not.
 
 Sets can be defined with the set statement. It consists of
 the keyword \code{set}, the name of the set, an assignment operator
-\code{:=} and a valid set expression.
+\code{:=}, and a valid set expression.
 
 Sets are referenced by the use of a \emph{template} tuple, consisting
 of placeholders which are replaced by the values of the components of
@@ -721,7 +721,7 @@ possible to declare a \emph{default} value.
 Parameters are declared in the following way: 
 The keyword \code{param} is followed by the name of the parameter
 optionally followed by the index set in square brackets. 
-Then, after the assignment operator there is a list of pairs. The first element of each
+Then, after the assignment operator, there is a list of pairs. The first element of each
 pair is a tuple from the index set, while the second element is the value of
 the parameter for this index.
 
@@ -740,7 +740,7 @@ param x[<i> in { 1 .. 8 } with i mod 2 == 0] := 3 * i;
 \end{verbatim}
 }
 \noindent
-Assignments need not to be complete.  In the example, no value is
+Assignments do not need to be complete.  In the example, no value is
 given for index \code{$<$3,7,"z"$>$} of parameter \code{w}. This is
 correct as long as it is never referenced.
 
@@ -804,10 +804,12 @@ file. The syntax is:
 \emph{template} is a string with a template for the tuples to
 generate. Each input line from the file is split into fields. The
 splitting is done according to the following rules:
+All leading and trailing space and tab characters in the line are removed.
 Whenever a space, tab, comma, semicolon or colon is encountered
 a new field is started. Text that is enclosed in double quotes is not
 split and the quotes are always removed. When a field is split all space
-and tab characters around the splitting point are removed. If the split is
+and tab characters around the splitting point are removed. 
+If the split is
 due to a comma, semicolon or colon, each occurrence of these
 characters starts a new field. 
 
@@ -825,12 +827,12 @@ Moin   7  2
 \noindent For each component of the tuple, the number of the field
 to use for the value is given, followed by either \code{n} if the
 field should be interpreted as a number or \code{s} for a string. 
-After the template some optional modifiers can be given. The order
+After the template, some optional modifiers can be given. The order
 does not matter. 
 \code{match} \emph{s} compares the regular expression \emph{s} against
 the line read from the file. Only if the expression matches the 
-line it is processed further. POSIX extended regular expression syntax
-can be used.
+line, it is processed further. POSIX extended regular expression syntax
+is used.
 \code{comment} \emph{s} sets a list of characters that start
 comments in the file. Each line is ended when any of the comment
 characters is found.
@@ -901,7 +903,7 @@ only to read a single line.
 {\small 
 \begin{verbatim}
 # Read the fourth value in the fifth line
-param n := read "huhu.dat" as "4n" skip 4 use 1
+param n := read "huhu.dat" as "4n" skip 4 use 1;
 \end{verbatim}
 }  
 
@@ -917,7 +919,6 @@ single line.
 # Read all values into a set
 set X := { read "stream.txt" as "<n+>" };
 
-\smallskip
 stream.txt:
 1 2 3 7 9 5 6 23 
 63 37 88 
@@ -1010,7 +1011,7 @@ with an appropriate error message. This can be used to assert that
 specific conditions are met.
 It is possible to use a \code{forall} clause before a \code{print}
 or \code{check} statement.
-For string and numeric values it is possible to give a comma separated
+For string and numeric values, it is possible to give a comma-separated
 list to the print statement.
 
 \subsubsection{Examples}
@@ -1029,7 +1030,7 @@ do forall <p> in P do check sum <p,i> in PI : 1 >= 1;
 %------------------------------------------------------------------------------
 \section{Models}
 %------------------------------------------------------------------------------
-In this section we use the machinery developed up to now in order to
+In this section, we use the machinery developed up to now to
 formulate mathematical programs. Apart from the usual syntax to
 declare variables, objective functions and constraints there is
 special syntax available that permits the easy formulation of special
@@ -1042,7 +1043,7 @@ Like parameters, variables can be indexed.
 A variable has to be one out of three possible types: 
 Continuous (called \code{real}), \code{binary} or \code{integer}. The default type is real. 
 Variables may have lower and upper bounds. Defaults are
-zero as lower and infinity as upper bound. Binary variables are
+zero as the lower and infinity as the upper bound. Binary variables are
 always bounded between zero and one.
 It is possible to compute the value of the lower or upper bounds
 depending on the index of the variable (see the last declaration in the
@@ -1051,9 +1052,9 @@ Binary and integer variables can be declared \code{implicit}, \ie the
 variable can be assumed to have an integral value in any optimal
 solution to the integer program, even if it is declared continuous. 
 Use of \emph{implicit} is only useful if used together with a solver
-that take advantage of this information. As of this writing only \scip
-(\url{http://scip.zib.de}) with linked in \zimpl is able to do so.
-In all other cases the variable is treated as a continous variable. 
+that take advantage of this information. As of this writing, only \scip
+(\url{http://scip.zib.de}) with linked in \zimpl can do so.
+In all other cases, the variable is treated as a continuous variable. 
 It is possible to specify initial values for integer variables by use
 of the \code{startval} keyword. Furthermore, the branching  priority
 can be given using the \code{priority} keyword. Currently, these
@@ -1083,7 +1084,7 @@ can be either \code{minimize} or \code{maximize}. Following the
 keyword is a name, a colon : and then a linear term expressing the
 objective function.
 
-If there is an objective offset, \ie, a constant value in the
+If there is an objective offset, \ie a constant value in the
 objective function, \zimpl automatically generates an internal
 variable \code{@@ObjOffset} set to one. This variable is put into the
 objective function with the appropriate coefficient.\footnote{The reason for
@@ -1109,7 +1110,7 @@ The general format for a constraint is:
 \verb|subto name: term sense term|
 
 \smallskip
-\noindent Alternatively it is also possible to define \emph{ranged} constraints 
+\noindent Alternatively, it is also possible to define \emph{ranged} constraints 
 which have the form:
 
 \smallskip
@@ -1183,7 +1184,7 @@ subto c1: forall <i> in I do
 %------------------------------------------------------------------------------
 It is possible to group constraints by concatenating them with
 \code{and}. This group will then always be processed together.
-This is particular useful in combination with \code{forall} and \code{if}.
+This operator is particularly useful in combination with \code{forall} and \code{if}.
 
 \subsubsection{Examples}
 {\small 
@@ -1229,19 +1230,21 @@ how it should be handled later on.
   When written to an \lpf file it will be written into a \code{LAZY
   CUTS} section, in \scip check will be set to true.
 \item[indicator]
-  If vif is part of the constraint then it is modelled as an 
+  If vif (see below) is part of the constraint then it is modeled as an 
   indicator constraint and not by a big-M formulation.
+  If you use this attribute, you can no longer write \mps-format, as
+  indicator variables are not supported by this format.
 \end{description}
 
 \noindent
 The attributes are given after the constraint, before the semi-colon
-and are separate by comma.
+and are separated by commas.
 
 \subsubsection{Examples}
 {\small 
 \begin{verbatim}
-subto c1: 1000 * x + 0.3 * y <= 5, scale;
-subto c2: x + y + z == 7, separate, checkonly;
+subto c1: 1000 * x + 0.3 * y <= 5, scale, checkonly;
+subto c2: x + y + z == 7, separate; 
 subto c3: vif x == 1 then y == 7 end, indicator;
 \end{verbatim}
 }
@@ -1251,8 +1254,8 @@ subto c3: vif x == 1 then y == 7 end, indicator;
 \subsubsection{Special ordered sets}
 %------------------------------------------------------------------------------
 \zimpl can be used to specify special ordered sets (\sos) for an
-integer program. If a model contains any \sos a \code{sos} file will
-be written together with the \code{lp} or \code{mps} file.
+integer program. If a model contains any \sos a \code{sos} file is
+written together with the \code{lp} or \code{mps} file.
 The general format of a special ordered set is:
 
 \smallskip
@@ -1281,7 +1284,7 @@ sos s3: forall <i> in I with i > 2:
 %------------------------------------------------------------------------------
 \subsubsection{Extended constraints}
 %------------------------------------------------------------------------------
-\zimpl has the possibility to generate systems of constraints that
+\zimpl can generate systems of constraints that
 mimic conditional constraints. The general syntax is as follows (note
 that the \code{else} part is optional):
 
@@ -1296,7 +1299,7 @@ variables. All these variables have to be bounded integer or binary
 variables. It is not possible to use any continuous variables or integer
 variables with infinite bounds in a \emph{boolean-constraint}.
 All comparison operators ($<$, $\le$, $==$, $!\!\!=$, $\ge$, $>$) are
-allowed. Also combination of several terms with \code{and},
+allowed. Also, the combination of several terms with \code{and},
 \code{or}, and \code{xor} and negation with \code{not} is possible.
 The conditional constraints (those which follow after \code{then} or
 \code{else}) may include bounded continuous variables. 
@@ -1412,7 +1415,7 @@ servings of pie.
 %x$Pie                         2.000000
 
 \subsection{The traveling salesman problem}
-In this example we show how to generate an exponential 
+In this example, we show how to generate an exponential 
 description of the \emph{symmetric traveling salesman problem} (\tsp)
 as given for example in 
 \cite[Section 58.5]{Schrijver2003}.
@@ -1544,7 +1547,7 @@ x_{ps},z_p&\in\BB&&\fa p\in P, s\in S\nonumber
 \end{align}
 %
 We use binary variables $z_p$ which are set to one, if and only if plant $p$ is
-to be built. Additionally we have binary variables $x_{ps}$ 
+to be built. Additionally, we have binary variables $x_{ps}$ 
 which are set to one if and only if plant $p$ serves shop $s$. 
 Equation~\eqref{eqn:assign} demands that each store is assigned to
 exactly one plant. Inequality~\eqref{eqn:open} makes sure that a plant
@@ -1570,7 +1573,7 @@ set PS     := PLANTS * STORES;
 param building[PLANTS]:= <"A"> 500, <"B"> 600, <"C"> 700, <"D"> 800;
 param capacity[PLANTS]:= <"A">  40, <"B">  55, <"C">  73, <"D">  90;
 
-# The demand of each store
+# The demand for each store
 param demand  [STORES]:= <1> 10, <2> 14,
                          <3> 17, <4>  8,
                          <5>  9, <6> 12,
@@ -1626,11 +1629,11 @@ their performance.
 The first formulation uses 
 one general integer variable for each row of the board.
 Each variable can assume the value of a column, \ie we have $n$ variables 
-with bounds $1\ldots n$. Next we use the 
+with bounds $1\ldots n$. Next, we use the 
 \code{vabs} extended function to model an \emph{all different}
 constraint on the variables (see constraint c1). 
 This makes sure that no queen is located
-on the same column than any other queen.
+in the same column than any other queen.
 The second constraint (c2) is used to block all the diagonals of a
 queen by demanding that the absolute value of the row
 distance and the column distance of each pair of queens are
@@ -1689,7 +1692,7 @@ feasibility improves the performance significantly.
 \subsubsection{The binary models}\label{nqueens:binary}
 Another approach to model the problem is to have 
 one binary variable for each square of the
-board. The variable is one if and only if a queen is on this square
+board. The variable is one if and only if a queen is in this square
 and we maximize the number of queens on the board.
 
 For each square we compute in advance which other squares are blocked if a queen is
@@ -1789,8 +1792,8 @@ mainly on the time it needs to find the optimal solution. While
 reducing the number of branch-and-bound nodes evaluated, 
 aggressive cut generation increases the total solution time.
 
-With this approach instances up to 96 queens can be solved. 
-At this point the integer program gets too large to be generated. 
+With this approach instances, up to 96 queens can be solved. 
+At this point, the integer program gets too large to be generated. 
 Even though the \cplex presolve routine is able to aggregate the
 constraints  again, \zimpl needs too much memory to generate the \ip.
 The column labeled \emph{Pres. NZ} lists the number of non-zero entries
@@ -1870,7 +1873,7 @@ Queens & S & Vars & Cons    &   NZ      & Root Node & Nodes & Time [s]\\
 In case of the 128 queens instance with default settings, a solution with 127 queens is found
 after 90 branch-and-bound nodes, but \cplex was not able to find the
 optimal solution within an hour. From the performance of the Feasible
-setting it can be presumed that generating cuts is not beneficial for
+setting, it can be presumed that generating cuts is not beneficial for
 this model.
 
 

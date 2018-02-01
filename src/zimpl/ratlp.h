@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -45,7 +45,7 @@ extern "C" {
 
 /* lpstore.c
  */
-/*lint -sem(        lps_alloc, nulterm(1), 1p, @p == 1) */
+/*lint -sem(        lps_alloc, nulterm(1), 1p, @p) */
 extern Lps*         lps_alloc(const char* name);
 /*lint -sem(        lps_free, custodial(1), 1p) */
 extern void         lps_free(Lps* lp);
@@ -59,15 +59,15 @@ extern Var*         lps_getvar(const Lps* lp, const char* name);
 extern Con*         lps_getcon(const Lps* lp, const char* name);
 /*lint -sem(        lps_getnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
-/*lint -sem(        lps_addsos, nulterm(2), 1p == 1 && 2p && 4n >= 0, @p == 1) */
+/*lint -sem(        lps_addsos, nulterm(2), 1p == 1 && 2p && 4n >= 0, @p) */
 extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority); 
 /*lint -sem(        lps_addsse, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         lps_addsse(Sos* sos, Var* var, const mpq_t weight); 
-/*lint -sem(        lps_addvar, nulterm(2), 1p == 1 && 2p, @p == 1) */
+/*lint -sem(        lps_addvar, nulterm(2), 1p == 1 && 2p, @p) */
 extern Var*         lps_addvar(Lps* lp, const char* name); 
 /*lint -sem(        lps_delvar, 1p == 1 && 2p == 1) */
 extern void         lps_delvar(Lps* lp, Var* var);
-/*lint -sem(        lps_addcon, nulterm(2), 1p == 1 && 2p, @p == 1) */
+/*lint -sem(        lps_addcon, nulterm(2), 1p == 1 && 2p, @p) */
 extern Con*         lps_addcon(Lps* lp, const char* name);
 /*lint -sem(        lps_delcon, 1p == 1 && 2p == 1) */
 extern void         lps_delcon(Lps* lp, Con* con);
@@ -131,7 +131,7 @@ extern VarType      lps_vartype(const Var* var);
 extern void         lps_getlhs(const Con* con, mpq_t lhs);
 /*lint -sem(        lps_getrhs, 1p == 1) */
 extern void         lps_getrhs(const Con* con, mpq_t rhs);
-/*lint -sem(        lps_varname, 1p == 1, nulterm(@) */
+/*lint -sem(        lps_varname, 1p == 1, @p) */ //nulterm(@) ???
 extern const char*  lps_varname(const Var* var);
 /*lint -sem(        lps_setvartype, 1p == 1) */
 extern void         lps_setvartype(Var* con, VarType type);
@@ -161,11 +161,6 @@ extern void         lps_scale(const Lps* lp);
 extern Bool         lps_has_sos(const Lps* lp);
 /*lint -sem(        lps_con_sumup, 1p == 1) */
 extern Bool         lps_con_sumup(const Con* con, mpq_t sum);
-
-/* ratmpsread.c
- */
-/*lint -sem(        lps_readmps, nulterm(1), 1p) */
-extern Lps*         lps_readmps(const char* filename);
 
 /* ratlpfwrite.c
  */

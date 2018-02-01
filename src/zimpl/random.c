@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2007-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2007-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -82,9 +82,9 @@
 /* Period parameters */  
 #define N            624
 #define M            397
-#define MATRIX_A     0x9908b0dfUL   /* constant vector a */
-#define UMASK        0x80000000UL /* most significant w-r bits */
-#define LMASK        0x7fffffffUL /* least significant r bits */
+#define MATRIX_A     0x9908b0dfU   /* constant vector a */
+#define UMASK        0x80000000U /* most significant w-r bits */
+#define LMASK        0x7fffffffU /* least significant r bits */
 #define MIXBITS(u,v) (((u) & UMASK) | ((v) & LMASK))
 #define TWIST(u,v)   ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
 
@@ -95,19 +95,19 @@ static const unsigned int* next;
 /* initializes state[N] with a seed */
 void rand_init(unsigned long s)
 {
-   int j;
+   unsigned int j;
     
-   state[0] = s & 0xffffffffUL;
+   state[0] = s & 0xffffffffU;
 
    for(j = 1; j < N; j++)
    {
-      state[j] = (1812433253UL * (state[j-1] ^ (state[j-1] >> 30)) + j); 
+      state[j] = (1812433253U * (state[j-1] ^ (state[j-1] >> 30)) + j); 
 
       /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
       /* In the previous versions, MSBs of the seed affect   */
       /* only MSBs of the array state[].                     */
       /* 2002/01/09 modified by Makoto Matsumoto             */
-      state[j] &= 0xffffffffUL;  /* for >32 bit machines */
+      state[j] &= 0xffffffffU;  /* for >32 bit machines */
    }
    left = 1;
 }
@@ -137,8 +137,8 @@ unsigned int rand_get_int32(void)
 
    /* Tempering */
    y ^= (y >> 11);
-   y ^= (y << 7) & 0x9d2c5680UL;
-   y ^= (y << 15) & 0xefc60000UL;
+   y ^= (y <<  7) & 0x9d2c5680U;
+   y ^= (y << 15) & 0xefc60000U;
    y ^= (y >> 18);
 
    return y;

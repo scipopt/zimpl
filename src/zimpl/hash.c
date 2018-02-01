@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -78,6 +78,15 @@ struct hash
 
 static void hash_statist(FILE* fp, const Hash* hash);
 
+static Bool hash_is_valid(const Hash* hash)
+{
+   return ((hash != NULL)
+      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
+       || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB
+       || hash->type == HASH_MONO)
+      && SID_ok(hash, HASH_SID));
+}
+
 Hash* hash_new(HashType type, int size)
 {
    static const unsigned int bucket_size[] =
@@ -137,15 +146,6 @@ void hash_free(Hash* hash)
    }
    free(hash->bucket);
    free(hash);
-}
-
-Bool hash_is_valid(const Hash* hash)
-{
-   return ((hash != NULL)
-      && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
-       || hash->type == HASH_ELEM_IDX || hash->type == HASH_NUMB
-       || hash->type == HASH_MONO)
-      && SID_ok(hash, HASH_SID));
 }
 
 void hash_add_tuple(Hash* hash, const Tuple* tuple)

@@ -7,7 +7,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #
-#    Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+#    Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
 # 
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU General Public License
@@ -28,11 +28,17 @@
 
 all:		zimpl.pdf
 
-zimpl.ps:	zimpl.dvi
-		dvips -ta4 -O0in,-1in -o $@ zimpl.dvi
+#zimpl.pdf:	zimpl.tex zimplug.tex zimplerr.tex zimpl.bib ziblogo2.eps
+#		pdflatex zimpl
+#		bibtex zimpl
+#		pdflatex zimpl
+#		pdflatex zimpl
 
 zimpl.pdf:	zimpl.ps
 		ps2pdf14 zimpl.ps
+
+zimpl.ps:	zimpl.dvi
+		dvips -ta4 -O0in,-1in -o $@ zimpl.dvi
 
 zimpl.dvi:	zimpl.tex zimplug.tex zimplerr.tex zimpl.bib ziblogo2.eps
 		latex zimpl

@@ -3,7 +3,7 @@
 /*                  This file is part of the program and library             */
 /*         SCIP --- Solving Constraint Integer Programs                      */
 /*                                                                           */
-/*                  2002-2010 Konrad-Zuse-Zentrum                            */
+/*                  2002-2018 Konrad-Zuse-Zentrum                            */
 /*                            fuer Informationstechnik Berlin                */
 /*                                                                           */
 /*  SCIP is distributed under the terms of the ZIB Academic License.         */
@@ -19,7 +19,7 @@
 
 /**@mainpage ZIMPL (Zuse Institute Mathematical Programming Language)
  * @author   Thorsten Koch 
- * @version  3.3.4
+ * @version  3.3.5
  *
  */
 

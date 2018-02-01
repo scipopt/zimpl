@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -50,7 +50,7 @@ void show_source(FILE* fp, const char* text, int column)
    if (column > 0)
       column--;
    
-   len = strlen(text);
+   len = (int)strlen(text);
    beg = column - 30;
    end = column + 30;
 

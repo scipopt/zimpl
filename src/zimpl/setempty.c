@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -194,10 +194,10 @@ static SetIter* iter_init(
  */
 /*ARGSUSED*/
 static Bool iter_next(
-   SetIter*      iter,
-   const Set*    set,
-   UNUSED Tuple* tuple,
-   UNUSED int    offset)
+   SetIter*       iter,
+   const Set*     set,
+   UNUSED Tuple*  tuple,
+   UNUSED int     offset)
 {
    assert(set_empty_iter_is_valid(iter));
    assert(set_empty_is_valid(set));

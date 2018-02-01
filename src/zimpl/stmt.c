@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -196,7 +196,7 @@ void stmt_parse(Stmt* stmt)
 
 void stmt_execute(const Stmt* stmt)
 {
-   int inst_count = code_get_inst_count();
+   unsigned int inst_count = code_get_inst_count();
    
    Trace("stmt_execute");
    

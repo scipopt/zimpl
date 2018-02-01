@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -514,7 +514,7 @@ inline CodeNode* code_eval(CodeNode* node)
 
    inst_count++;
 
-   stkchk_used();
+   stkchk_used(); // record maximum stack use
    
    return (*node->eval)(node);
 }

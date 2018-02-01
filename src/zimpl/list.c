@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -189,6 +189,8 @@ void list_free(List* list)
 
       for(p = list->anchor.next; p != &list->anchor; p = q)
       {
+         assert(p != NULL);
+         
          q = p->next;
          
          switch(list->type)
@@ -359,6 +361,8 @@ static ListData* list_get_data(const List* list, ListElem** idxp)
    if (*idxp == NULL)
       *idxp = list->anchor.next;
 
+   assert(*idxp != NULL);
+
    if (*idxp == &list->anchor)
       return NULL;
 
@@ -425,6 +429,8 @@ void list_print(FILE* fp, const List* list)
    
    for(le = list->anchor.next; le != &list->anchor; le = le->next)
    {
+      assert(le != NULL);
+
       switch(list->type)
       {
       case LIST_ELEM :

@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -80,10 +80,10 @@ static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t va
       fprintf(fp, force_sign ? "%+.15g" : "%.15g", mpq_get_d(val));
       break;
    case LP_FORM_HUM :
-      if (force_sign && (mpq_sgn(val) > 0)) /*lint !e634 Strong type mismatch (type 'Bool') */
+      if (force_sign && (mpq_sgn(val) > 0)) /*lint !e634 !e638 Strong type mismatch (type 'Bool') */
          fprintf(fp, "+");
 
-      mpq_out_str(fp, 10, val);
+      (void)mpq_out_str(fp, 10, val);
       break;
    default:
       abort();

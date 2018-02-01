@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,6 +31,7 @@
  */
 #ifdef _lint
 
+#if 0
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -92,6 +93,7 @@ extern int    gzclose(gzFile file);
 #ifdef __cplusplus
 }
 #endif
+#endif // 0
 #endif /* _lint */
 
 #if defined(__GNUC__) || defined(__CLANG__)

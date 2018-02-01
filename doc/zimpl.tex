@@ -4,7 +4,7 @@
 %*   File....: zimpl.tex                                                     *
 %*   Name....: Zuse Institute Mathematical Programming Language              *
 %*   Author..: Thorsten Koch                                                 *
-%*   Copyright (C) 2010 by Author, All rights reserved                       *
+%*   Copyright (C) 2010-2018 by Author, All rights reserved                  *
 %*                                                                           *
 %* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 %
@@ -35,7 +35,7 @@
 bookmarks,pdffitwindow,pdfcenterwindow=true,pdfstartview=Fit]{hyperref}
 \hypersetup{%
 pdftitle={ZIMPL User Guide},
-pdfsubject={Zuse Institute Mathematical Programming Language Version 3.3.4},
+pdfsubject={Zuse Institute Mathematical Programming Language Version 3.3.5},
 pdfauthor={Thorsten Koch},
 pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimization, Algebraic Modeling Language}
 }
@@ -97,7 +97,7 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \renewcommand{\labelitemi}{$\blacktriangleright$}
 %
 \newcommand{\eg}{{e.\,g.}\xspace}
-\newcommand{\ie}{{i.\,e.}\xspace}
+\newcommand{\ie}{{i.\,e.,}\xspace}
 \newcommand{\zimpl}{{\sc Zimpl}\xspace}
 \newcommand{\lp}{{\sc lp}\xspace}
 \newcommand{\ip}{{\sc ip}\xspace}
@@ -145,7 +145,7 @@ pdfkeywords={Mathematical Modeling Language,Mathematical Programming,Optimizatio
 \LARGE\zimpl User Guide\\
 \normalsize (Zuse Institute Mathematical Programming Language)}
 \author{Thorsten Koch}
-\date{\small for Version 3.3.4\\ February 21, 2015}
+\date{\small for Version 3.3.5\\ January 28, 2018}
 \maketitle
 %
 \tableofcontents
@@ -174,17 +174,17 @@ a look at \cite{Kallrath2004}.
 %
 On the other hand, having the source code of a program has its
 advantages. The possibility to run it regardless of architecture and
-operating system, the ability to modify it to suite the needs, and not
+operating system, the ability to modify it to suit the needs, and not
 having to hassle with license managers may make a much less powerful
 program the better choice.  And so \zimpl came into being.
 
 \bigskip
 By now \zimpl has grown up and matured. It has been used in several
-industry projects and university lectures, showing that it is able to
-cope with large scale models and also with students.
-This would have not been possible without my early adopters 
+industrial projects and university lectures, showing that it is able to
+cope with large-scale models and also with students.
+This would not have been possible without my early adopters 
 Armin F\"ugenschuh, Marc Pfetsch, Sascha Lukac, Daniel Junglas, J\"org
-Rambau and Tobias Achterberg. Thanks for their comments and bug
+Rambau, and Tobias Achterberg. Thanks for their comments and bug
 reports. Special thanks to Tuomo Takkula for revising this manual.
 
 \bigskip
@@ -196,7 +196,7 @@ If you find any bugs, then please send an email to
 \url{mailto:koch@zib.de}, and do not forget to 
 include an example that shows the problem.
 If somebody extends \zimpl, then I am interested in getting patches
-in order to include them into the main distribution.
+to include them into the main distribution.
 
 \bigskip
 \noindent{The best way to refer to \zimpl in a publication is to cite my

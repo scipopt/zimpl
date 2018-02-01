@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -225,7 +225,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
     */
    for(k = 0; k < dim; k++)
    {
-      set->multi.order[k] = calloc(set->head.members, sizeof(**set->multi.order));
+      set->multi.order[k] = calloc((size_t)set->head.members, sizeof(**set->multi.order));
       
       assert(set->multi.order[k] != NULL);
 
@@ -388,10 +388,10 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
       return -1;
 
    assert((result - (ptrdiff_t)set->multi.subset)
-      % (ptrdiff_t)(set->head.dim * sizeof(*set->multi.subset)) == 0);
+      % (ptrdiff_t)((size_t)set->head.dim * sizeof(*set->multi.subset)) == 0);
 
-   k = (result - (ptrdiff_t)set->multi.subset)
-      / (ptrdiff_t)(set->head.dim * sizeof(*set->multi.subset));
+   k = (int)(result - (ptrdiff_t)set->multi.subset)
+      / (ptrdiff_t)((size_t)set->head.dim * sizeof(*set->multi.subset));
 
    assert(k >= 0);
    assert(k <  set->head.members);
@@ -524,7 +524,7 @@ static SetIter* set_multi_iter_init(
 #endif
          assert(result != 0);
 
-         k = (result - (ptrdiff_t)set->multi.order[fixed_idx])
+         k = (int)(result - (ptrdiff_t)set->multi.order[fixed_idx])
             / (ptrdiff_t)sizeof(**set->multi.order);
 
          assert(k >= 0);

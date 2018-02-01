@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2003-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2003-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -48,7 +48,7 @@ typedef struct pool     Pool;
 
 union pool_elem
 {
-   char      pad[POOL_ELEM_SIZE];
+   char      pad[POOL_ELEM_SIZE]; //lint !e754 union member not referenced
    PoolElem* next;   
 };
 
@@ -171,7 +171,7 @@ void gmp_str2mpq(mpq_t value, const char* num)
 
    /* printf("%s\n", tmp);*/
    
-   mpq_set_str(value, tmp, 10);
+   (void)mpq_set_str(value, tmp, 10);
    mpq_canonicalize(value);
 }
 
@@ -181,9 +181,9 @@ void gmp_print_mpq(FILE* fp, const mpq_t qval)
    
    mpf_init(fval);
    mpf_set_q(fval, qval);
-   mpf_out_str(fp, 10, 32, fval);
+   (void)mpf_out_str(fp, 10, 32, fval); 
    fprintf(fp, " = ");
-   mpq_out_str(fp, 10, qval);
+   (void)mpq_out_str(fp, 10, qval);
    fputc('\n', fp);
    mpf_clear(fval);
 }
@@ -268,9 +268,4 @@ void gmp_exit()
 
    pool_exit();
 }
-
-
-
-
-
 

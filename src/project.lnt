@@ -5,8 +5,8 @@
 -hFb^3
 -width(132,4)
 -"format=%f:%l: %t %n: %m"
--Ilint
--Ilint/posix
+//-Ilint
+//-Ilint/posix
 //-I/usr/include
 +libh(lint.h)
 -function(exit,_assert)

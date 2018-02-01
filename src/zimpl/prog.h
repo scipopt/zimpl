@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -56,8 +56,8 @@ extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 extern void         prog_print(FILE* fp, const Prog* prog);
 /*lint -sem(        prog_execute, 1p == 1) */
 extern void         prog_execute(const Prog* prog, void* lp);
-/*lint -sem(        prog_tostr, 1p == 1 && nulterm(2) && 3n > 0, nulterm(@)) */
-extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, int max_output_line_len);
+/*lint -sem(        prog_tostr, 1p == 1 && nulterm(2), @p == 1) */
+extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len);
 
 /* load.c
  */

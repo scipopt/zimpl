@@ -1,3 +1,5 @@
+warnung bei MPS format wenn indicator variablen im problem sind.
+
 PROD sollte auch mit Variablen gehen.
 
 bei xlp_glue das lps_getnzo dient nur dafuer sicherzustellen

@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -55,8 +55,6 @@ typedef struct hash              Hash;
 extern Hash*        hash_new(HashType type, int size);
 /*lint -sem(        hash_free, 1p == 1) */
 extern void         hash_free(Hash* hash);
-/*lint -sem(        hash_is_valid, 1p == 1) */
-extern Bool         hash_is_valid(const Hash* hash);
 /*lint -sem(        hash_add_tuple, 1p == 1 && 2p == 1) */
 extern void         hash_add_tuple(Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_add_entry, 1p == 1 && 2p == 1) */

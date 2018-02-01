@@ -1,3 +1,12 @@
+
+3.3.5  28. Jan 2018 Release
+
+ - changed to PClint+ 1.0
+
+ - Removed more cppcheck messages
+
+ - Fixed minor issues in the documentation
+	
 3.3.4  8. Mar 2017 Release
 
  - added cppcheck target to makefile
@@ -10,7 +19,7 @@
    the random seed by arguments.
 
  - Fixed two bugs in the examples of the documentation
-   found by Maximilian Ernestus 
+   found by Maximilian Ernestus
 
 3.3.3  1. Jul 2015 Release
 
@@ -27,7 +36,7 @@
 
  - Fixed bug when using indicators with vif
 
- - Fixed bug that appeared when asking a param with a 
+ - Fixed bug that appeared when asking a param with a
    ranged index set and a default for a string entry.
 
 3.3.1  9. Dec 2012 Release

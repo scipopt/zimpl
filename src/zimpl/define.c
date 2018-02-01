@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -54,6 +54,16 @@ static Define anchor  = { 0, "", DEF_ERR, NULL, NULL, NULL };
 #else
 static Define anchor  = {    "", DEF_ERR, NULL, NULL, NULL };
 #endif
+
+static Bool define_is_valid(const Define* def)
+{
+   if (def == NULL || !SID_ok(def, DEFINE_SID))
+      return FALSE;
+
+   mem_check(def);
+
+   return TRUE;
+}
 
 Define* define_new(
    const char*  name,
@@ -120,16 +130,6 @@ void define_exit(void)
       free(p);
    }
    anchor.next = NULL;
-}
-
-Bool define_is_valid(const Define* def)
-{
-   if (def == NULL || !SID_ok(def, DEFINE_SID))
-      return FALSE;
-
-   mem_check(def);
-
-   return TRUE;
 }
 
 Define* define_lookup(const char* name)

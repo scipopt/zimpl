@@ -7,7 +7,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2017 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2018 by Thorsten Koch <koch@zib.de>
 #* 
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	3.3.4
+VERSION		=	3.3.5
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false
@@ -63,7 +63,7 @@ LIBEXT	= .a
 YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
-LINT		=	flexelint
+LINT		=	pclp64_linux
 CPPCHECK	=	cppcheck
 AR		   =	ar cr
 AR_o	   =
@@ -210,11 +210,11 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
 lint:		$(OBJSRC) $(LIBSRC)
-		$(LINT) $(SRCDIR)/project.lnt \
-		$(CPPFLAGS) -UNDEBUG -Dinline= -DNO_MSHELL $^
+		$(LINT) /opt/pclint/config/co-gcc.lnt $(SRCDIR)/project2.lnt \
+		-I/opt/pclint/config -Isrc -dNO_MSHELL -dVERSION='"3.3.4"' $^
 
 cppcheck:	$(OBJSRC) $(LIBSRC)
-		$(CPPCHECK) $(CPPFLAGS) --inline-suppr --enable=warning,style,performance,portability,information $^
+		$(CPPCHECK) $(CPPFLAGS) -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/bits -I/usr/include/x86_64-linux-gnu/sys -I/usr/include/linux -I/usr/lib/gcc/x86_64-linux-gnu/5/include --inline-suppr --suppressions-list=src/cppcheck.txt --enable=warning,style,performance,portability,information $^
 
 doc:
 		cd doc; make -f Makefile

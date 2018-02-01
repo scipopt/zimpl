@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -39,16 +39,16 @@ typedef struct string_storage StrStore;
 struct string_storage
 {
    char*      begin;
-   int        size;
-   int        used;
+   size_t     size;
+   size_t     used;
    StrStore*  next;
 };
 
-#define MIN_STR_STORE_SIZE 65536      /* 64k */
-#define MAX_STR_STORE_SIZE 1073741824 /* 1G  */
+#define MIN_STR_STORE_SIZE 65536UL      /* 64k */
+#define MAX_STR_STORE_SIZE 1073741824UL /* 1G  */
 
 static StrStore* store_anchor = NULL;
-static int       store_size   = MIN_STR_STORE_SIZE;
+static size_t    store_size   = MIN_STR_STORE_SIZE;
 
 static void extend_storage(void)
 {
@@ -81,8 +81,8 @@ static void extend_storage(void)
 
 const char* str_new(const char* s)
 {
-   char* t;
-   int   len;
+   char*  t;
+   size_t len;
 
    assert(store_anchor != NULL);
    assert(s            != NULL);
@@ -91,7 +91,7 @@ const char* str_new(const char* s)
 
    if (len > MAX_STR_STORE_SIZE)
    {
-      fprintf(stderr, "*** Error 803: String too long %d > %d\n",
+      fprintf(stderr, "*** Error 803: String too long %zu > %zu\n",
          len + 1, MAX_STR_STORE_SIZE); 
 
       zpl_exit(EXIT_FAILURE);
@@ -145,11 +145,11 @@ unsigned int str_hash(const char* s)
 #if 0
    return (unsigned int)s;
 #else
-   unsigned int sum;
+   unsigned int sum = 0;
    int          i;
    
-   for(sum = 0, i = 0; s[i] != '\0'; i++)
-      sum = sum * 31 + s[i];
+   for(i = 0; s[i] != '\0'; i++)
+      sum = sum * 31 + (unsigned int)s[i];
 
    return sum;
 #endif

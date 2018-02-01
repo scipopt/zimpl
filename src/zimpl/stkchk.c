@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2011-2017 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2011-2018 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -35,7 +35,7 @@ void stkchk_init_x()
 {
    int a;
 
-   stkchk_start = &a; /*lint !e789 Assigning address of auto variable 'a' to static */
+   stkchk_start = &a; /*lint !e733 !e789 Assigning address of auto variable 'a' to static */
    stkchk_maxi  = 0;
 }
 
@@ -43,6 +43,9 @@ size_t stkchk_used_x()
 {
    size_t used = (size_t)((const char*)stkchk_start - (const char*)&used);
 
+   /*??? Questionable side effect. Function looks like reporting stack use
+    *    but actually also needed for recording.
+    */
    if (used > stkchk_maxi)
       stkchk_maxi = used;
 
