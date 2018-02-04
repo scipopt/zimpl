@@ -43,7 +43,7 @@ typedef struct heap              Heap;
 typedef union heap_data          HeapData;
 typedef int                    (*HeapCmp)(HeapData, HeapData);
 
-/*lint -sem(        heap_new_entry, 1n > 0 && 2p == 1, @p == 1) */
+/*lint -sem(        heap_new_entry, 1n > 0 && 2p == 1, @P > malloc(1P)) */
 extern Heap*        heap_new_entry(int size, HeapCmp entry_cmp);
 /*lint -sem(        heap_free, 1p == 1) */
 extern void         heap_free(Heap* heap);
@@ -51,9 +51,9 @@ extern void         heap_free(Heap* heap);
 extern bool         heap_is_valid(const Heap* heap);
 /*lint -sem(        heap_push_entry, 1p == 1 && 2p == 1) */
 extern void         heap_push_entry(Heap* heap, Entry* entry);
-/*lint -sem(        heap_pop_entry, 1p == 1, @p == 1) */
+/*lint -sem(        heap_pop_entry, 1p == 1, @P > malloc(1P)) */
 extern Entry*       heap_pop_entry(Heap* heap);
-/*lint -sem(        heap_top_entry, 1p == 1, @p == 1) */
+/*lint -sem(        heap_top_entry, 1p == 1, @P > malloc(1P)) */
 extern const Entry* heap_top_entry(const Heap* heap);
 /*lint -sem(        heap_is_full, 1p == 1) */
 extern bool         heap_is_full(const Heap* heap);

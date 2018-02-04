@@ -42,13 +42,13 @@ enum bound_type
 typedef enum bound_type          BoundType;
 typedef struct bound             Bound;
 
-/*lint -sem(        bound_new, @p == 1) */
+/*lint -sem(        bound_new, @P > malloc(1P)) */
 extern Bound*       bound_new(BoundType type, const Numb* value);
 /*lint -sem(        bound_free, custodial(1), 1p == 1) */
 extern void         bound_free(Bound* bound);
 /*lint -sem(        bound_is_valid, 1p == 1) */
 extern bool         bound_is_valid(const Bound* bound);
-/*lint -sem(        bound_copy, 1p == 1, @p == 1) */
+/*lint -sem(        bound_copy, 1p == 1, @P > malloc(1P)) */
 extern Bound*       bound_copy(const Bound* source);
 /*lint -sem(        bound_get_type, 1p == 1) */
 extern BoundType    bound_get_type(const Bound* bound);

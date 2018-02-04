@@ -29,12 +29,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <stdbool.h>
 
 #include <gmp.h>
 
 #include "lint.h"
 #include "mshell.h"
-#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "numb.h"

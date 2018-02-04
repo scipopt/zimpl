@@ -40,7 +40,7 @@
 extern "C" {
 #endif
 
-/*lint -sem(        symbol_new, nulterm(1), 1p && 3p == 1 && 4n >= 0, @p) */
+/*lint -sem(        symbol_new, nulterm(1), 1p && 3p == 1 && 4n >= 0, @P > malloc(1P)) */
 extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
 extern void         symbol_exit(void);
@@ -56,7 +56,7 @@ extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 extern void         symbol_add_entry(Symbol* sym, Entry* entry);
 /*lint -sem(        symbol_get_dim, 1p == 1, @n >= 0) */
 extern int          symbol_get_dim(const Symbol* sym);
-/*lint -sem(        symbol_get_iset, 1p == 1, @p == 1) */
+/*lint -sem(        symbol_get_iset, 1p == 1, @P > malloc(1P)) */
 extern const Set*   symbol_get_iset(const Symbol* sym);
 /*lint -sem(        symbol_get_name, 1p == 1, @p && nulterm(@)) */
 extern const char*  symbol_get_name(const Symbol* sym);
@@ -66,9 +66,9 @@ extern SymbolType   symbol_get_type(const Symbol* sym);
 extern const Numb*  symbol_get_numb(const Symbol* sym, int idx);
 /*lint -sem(        symbol_get_strg, 1p == 1, @p && nulterm(@)) */
 extern const char*  symbol_get_strg(const Symbol* sym, int idx);
-/*lint -sem(        symbol_get_set, 1p == 1, @p == 1) */
+/*lint -sem(        symbol_get_set, 1p == 1, @P > malloc(1P)) */
 extern const Set*   symbol_get_set(const Symbol* sym, int idx);
-/*lint -sem(        symbol_get_var, 1p == 1, @p == 1) */
+/*lint -sem(        symbol_get_var, 1p == 1, @P > malloc(1P)) */
 extern Var*         symbol_get_var(const Symbol* sym, int idx);
 /*lint -sem(        symbol_print, 1p == 1 && 2p == 1) */
 extern void         symbol_print(FILE* fp, const Symbol* sym);

@@ -1,16 +1,18 @@
 
-3.3.5  28. Jan 2018 Release
+3.3.5  04. Feb 2018 Release
 
- - changed to PClint+ 1.0
+ - changed to C99
+
+ - changed to PClint+ (in progress)
 
  - Removed more cppcheck messages
 
- - Fixed minor issues in the documentation
+ - Fixed minor issues in the documentation found by Laurent Poirrier
 
  - Fixed strange behaviour when encountering another objective function.
 
  - Replaced my bool.h by stdbool.h
-	
+
 3.3.4  8. Mar 2017 Release
 
  - added cppcheck target to makefile

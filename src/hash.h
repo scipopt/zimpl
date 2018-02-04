@@ -48,7 +48,7 @@ enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH
 typedef enum hash_type           HashType;
 typedef struct hash              Hash;
 
-/*lint -sem(        hash_new, 2n >= 0, @p == 1) */
+/*lint -sem(        hash_new, 2n >= 0, @P > malloc(1P)) */
 extern Hash*        hash_new(HashType type, int size);
 /*lint -sem(        hash_free, 1p == 1) */
 extern void         hash_free(Hash* hash);

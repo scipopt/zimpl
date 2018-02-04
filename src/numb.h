@@ -32,11 +32,11 @@ typedef struct number            Numb;
  */
 extern void         numb_init(bool with_management);
 extern void         numb_exit(void);
-/*lint -sem(        numb_new, @p == 1) */
+/*lint -sem(        numb_new, @P > malloc(1P)) */
 extern Numb*        numb_new(void);
-/*lint -sem(        numb_new_ascii, nulterm(1), 1p, @p == 1) */
+/*lint -sem(        numb_new_ascii, nulterm(1), 1p, @P > malloc(1P)) */
 extern Numb*        numb_new_ascii(const char* val);
-/*lint -sem(        numb_new_integer, @p == 1) */
+/*lint -sem(        numb_new_integer, @P > malloc(1P)) */
 extern Numb*        numb_new_integer(int val);
 
 /*lint -sem(        numb_free, custodial(1), 1p == 1) */
@@ -44,7 +44,7 @@ extern void         numb_free(Numb* numb);
 /*lint -sem(        numb_is_valid, 1p == 1) */
 extern bool         numb_is_valid(const Numb* numb);
 
-/*lint -sem(        numb_copy, 1p == 1, @p == 1) */
+/*lint -sem(        numb_copy, 1p == 1, @P > malloc(1P)) */
 extern Numb*        numb_copy(const Numb* source);
 /*lint -sem(        numb_equal, 1p == 1 && 2p == 1) */
 extern bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
@@ -54,31 +54,31 @@ extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
 extern void         numb_set(Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_add, 1p == 1 && 2p == 1) */
 extern void         numb_add(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_add, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_add, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_add(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_sub, 1p == 1 && 2p == 1) */
 extern void         numb_sub(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_sub, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_sub, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_sub(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_mul, 1p == 1 && 2p == 1) */
 extern void         numb_mul(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_mul, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_mul, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_mul(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_div, 1p == 1 && 2p == 1) */
 extern void         numb_div(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_div, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_div, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_intdiv, 1p == 1 && 2p == 1) */
 extern void         numb_intdiv(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_intdiv, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_intdiv, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_intdiv(const Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_pow, 1p == 1 && 2n >= 0, @p == 1) */
+/*lint -sem(        numb_new_pow, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
 extern Numb*        numb_new_pow(const Numb* base, int expo);
-/*lint -sem(        numb_new_fac, 1n >= 0, @p == 1) */
+/*lint -sem(        numb_new_fac, 1n >= 0, @P > malloc(1P)) */
 extern Numb*        numb_new_fac(int n);
 /*lint -sem(        numb_mod, 1p == 1 && 2p == 1) */
 extern void         numb_mod(Numb* numb_a, const Numb* numb_b);
-/*lint -sem(        numb_new_mod, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_mod, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_mod(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_neg, 1p == 1) */
 extern void         numb_neg(Numb* numb);
@@ -94,15 +94,15 @@ extern void         numb_round(Numb* numb);
 extern void         numb_ceil(Numb* numb);
 /*lint -sem(        numb_floor, 1p == 1) */
 extern void         numb_floor(Numb* numb);
-/*lint -sem(        numb_new_log, 1p == 1, @p == 1 || @p == 0) */
+/*lint -sem(        numb_new_log, 1p == 1, @P > malloc(1P) || @p == 0) */
 extern Numb*        numb_new_log(const Numb* numb);
-/*lint -sem(        numb_new_sqrt, 1p == 1, @p == 1 || @p == 0) */
+/*lint -sem(        numb_new_sqrt, 1p == 1, @P > malloc(1P) || @p == 0) */
 extern Numb*        numb_new_sqrt(const Numb* numb);
-/*lint -sem(        numb_new_exp, 1p == 1, @p == 1) */
+/*lint -sem(        numb_new_exp, 1p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_exp(const Numb* numb);
-/*lint -sem(        numb_new_ln, 1p == 1, @p == 1 || @p == 0) */
+/*lint -sem(        numb_new_ln, 1p == 1, @P > malloc(1P) || @p == 0) */
 extern Numb*        numb_new_ln(const Numb* numb);
-/*lint -sem(        numb_new_rand, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        numb_new_rand, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Numb*        numb_new_rand(const Numb* mini, const Numb* maxi);
 /*lint -sem(        numb_todbl, 1p == 1) */
 extern double       numb_todbl(const Numb* numb);
@@ -128,7 +128,7 @@ extern int          numb_toint(const Numb* numb);
 extern bool         numb_is_number(const char *s);
 
 #ifdef __GMP_H__
-/*lint -sem(        numb_new_mpq, @p == 1) */
+/*lint -sem(        numb_new_mpq, @P > malloc(1P)) */
 extern Numb*        numb_new_mpq(const mpq_t val);
 /*lint -sem(        numb_new_mpq, 1p == 1) */
 extern void         numb_get_mpq(const Numb* numb, mpq_t value);

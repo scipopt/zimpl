@@ -41,14 +41,14 @@ typedef struct statement         Stmt;
 
 /* stmt.c
  */
-/*lint -sem(        stmt_new, nulterm(2), nulterm(4), 2p && 3n >= 0 && 4p, @p == 1) */
+/*lint -sem(        stmt_new, nulterm(2), nulterm(4), 2p && 3n >= 0 && 4p, @P > malloc(1P)) */
 extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
    const char* text);
 /*lint -sem(        stmt_free, custodial(1), 1p == 1) */
 extern void         stmt_free(Stmt* stmt);
 /*lint -sem(        stmt_is_valid, 1p == 1) */
 extern bool         stmt_is_valid(const Stmt* stmt);
-/*lint -sem(        stmt_get_filename, 1p == 1, @p && nulterm(@)) */
+/*lint -sem(        stmt_get_filename, 1p == 1, @P > malloc(1P) && nulterm(@)) */
 extern const char*  stmt_get_filename(const Stmt* stmt);
 /*lint -sem(        stmt_get_lineno, 1p == 1, @n > 0) */
 extern int          stmt_get_lineno(const Stmt* stmt);

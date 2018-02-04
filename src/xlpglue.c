@@ -42,9 +42,9 @@
 #include <assert.h>
 
 #include <gmp.h>
+#include <stdbool.h>
 
 #include "lint.h"
-#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"

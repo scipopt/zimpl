@@ -38,7 +38,7 @@ typedef struct term              Term;
 
 /* term.c
  */
-/*lint -sem(        term_new, 1n > 0, @p == 1) */
+/*lint -sem(        term_new, 1n > 0, @P > malloc(1P)) */
 extern Term*        term_new(int size);
 /*lint -sem(        term_add_elem, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         term_add_elem(Term* term, const Entry* entry, const Numb* coeff, MFun mfun);
@@ -50,17 +50,17 @@ extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* co
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
 extern bool         term_is_valid(const Term* term);
-/*lint -sem(        term_copy, 1p == 1, @p == 1) */
+/*lint -sem(        term_copy, 1p == 1, @P > malloc(1P)) */
 extern Term*        term_copy(const Term* term);
 /*lint -sem(        term_print, 1p == 1 && 2p == 1) */
 extern void         term_print(FILE* fp, const Term* term, bool print_symbol_index);
 /*lint -sem(        term_append_term, 1p == 1 && 2p == 1) */
 extern void         term_append_term(Term* term_a, const Term* term_b);
-/*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Term*        term_add_term(const Term* term_a, const Term* term_b);
-/*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        term_sub_term, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
-/*lint -sem(        term_mul_term, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        term_mul_term, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Term*        term_mul_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_simplify, 1p == 1, @P > malloc(1P)) */
 extern Term*        term_simplify(const Term* term_org);
@@ -80,11 +80,11 @@ extern void         term_negate(Term* term);
 extern void         term_to_objective(const Term* term);
 /*lint -sem(        term_get_elements, 1p == 1, @n >= 0) */
 extern int          term_get_elements(const Term* term);
-/*lint -sem(        term_get_element, 1p == 1, @p == 1) */
+/*lint -sem(        term_get_element, 1p == 1, @P > malloc(1P)) */
 extern Mono*        term_get_element(const Term* term, int i);
-/*lint -sem(        term_get_lower_bound, 1p == 1, @p == 1) */
+/*lint -sem(        term_get_lower_bound, 1p == 1, @P > malloc(1P)) */
 extern Bound*       term_get_lower_bound(const Term* term);
-/*lint -sem(        term_get_upper_bound, 1p == 1, @p == 1) */
+/*lint -sem(        term_get_upper_bound, 1p == 1, @P > malloc(1P)) */
 extern Bound*       term_get_upper_bound(const Term* term);
 /*lint -sem(        term_is_all_integer, 1p == 1) */
 extern bool         term_is_all_integer(const Term* term);
@@ -94,7 +94,7 @@ extern bool         term_is_linear(const Term* term);
 extern bool         term_is_polynomial(const Term* term);
 /*lint -sem(        term_get_degree, 1p == 1) */
 extern int          term_get_degree(const Term* term);
-/*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @p == 1) */
+/*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @P > malloc(1P)) */
 extern Term*        term_make_conditional(const Term* ind_term, const Term* cond_term, bool is_true);
 
 #ifdef __cplusplus
