@@ -1,3 +1,8 @@
+convert from Bool.h to stdbool.h
+
+
+clean up lint.h
+
 warnung bei MPS format wenn indicator variablen im problem sind.
 
 PROD sollte auch mit Variablen gehen.

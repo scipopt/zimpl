@@ -4421,8 +4421,11 @@ static void objective(CodeNode* self, Bool minimize)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);      
    }
-   xlp_objname(prog_get_lp(), name);
-   xlp_setdir(prog_get_lp(), minimize);
+   if (xlp_setobj(prog_get_lp(), name, minimize))
+   {
+      fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
+      code_errmsg(self);
+   }
    term_to_objective(term);
 
    conname_free();

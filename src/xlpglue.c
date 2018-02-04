@@ -547,27 +547,22 @@ Bound* xlp_getupper(
    return bound;
 }
      
-/** Set the name of the objective function.
+/** Set the name and direction of the objective function, i.e. minimization or maximization
+ *  Coefficents of the objective function will be set to all zero.
  */
-void xlp_objname(
+Bool xlp_setobj(
    Lps*        lp,          /**< Pointer to storage */
-   const char* name)        /**< The name of the objective function */
+   const char* name,        /**< The name of the objective function */
+   Bool        minimize)    /**< True if the problem should be minimized, False if it should be maximized */
 {
    assert(lp   != NULL);
    assert(name != NULL);
 
-   lps_setobjname(lp, name);
-}
-
-/** Set the direction of optimization, i.e. minimization or maximization.
- */
-void xlp_setdir(
-   Lps* lp,          /**< Pointer to storage */
-   Bool minimize)    /**< True if the problem should be minimized, False if it should be maximized */
-{
-   assert(lp != NULL);
+   lps_clearobj(lp);
 
    lps_setdir(lp, minimize ? LP_MIN : LP_MAX);
+
+   return lps_setobjname(lp, name);
 }
 
 /** Add to the objective value coefficient of a variable.

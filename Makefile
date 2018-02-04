@@ -55,18 +55,18 @@ ZLIB		=	true
 LINK		=	static
 OPT		=	opt
 COMP		=	gnu
-CC		   =	gcc
-CC_o	   = -o
-LINKCC   =	gcc
-LINKCC_o =	 -o #the white space is important
-LIBEXT	= .a
+CC		=	gcc
+CC_o		= 	-o #
+LINKCC   	=	gcc
+LINKCC_o 	=	-o #the white space is important
+LIBEXT		= 	.a
 YACC		=	bison
 LEX		=	flex
 DCC		=	gcc
 LINT		=	pclp64_linux
 CPPCHECK	=	cppcheck
-AR		   =	ar cr
-AR_o	   =
+AR		=	ar cr
+AR_o	   	=
 RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
@@ -75,6 +75,7 @@ VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
 SRCDIR		=	src
 BINDIR		=	bin
 LIBDIR		=	lib
+LINTCONF	=	/opt/pclint/config
 
 CPPFLAGS	=	-I$(SRCDIR) -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
@@ -210,8 +211,8 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		$(LEX) $(LFLAGS) -o$@ $< 
 
 lint:		$(OBJSRC) $(LIBSRC)
-		$(LINT) /opt/pclint/config/co-gcc.lnt $(SRCDIR)/project2.lnt \
-		-I/opt/pclint/config -Isrc -dNO_MSHELL -dVERSION='"3.3.4"' $^
+		$(LINT) $(LINTCONF)/co-gcc.lnt $(SRCDIR)/project2.lnt \
+		-I$(LINTCONF) -I$(SRCDIR) -dNO_MSHELL -dVERSION='"$(VERSION)"' $^
 
 cppcheck:	$(OBJSRC) $(LIBSRC)
 		$(CPPCHECK) $(CPPFLAGS) -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/bits -I/usr/include/x86_64-linux-gnu/sys -I/usr/include/linux -I/usr/lib/gcc/x86_64-linux-gnu/5/include --inline-suppr --suppressions-list=src/cppcheck.txt --enable=warning,style,performance,portability,information $^

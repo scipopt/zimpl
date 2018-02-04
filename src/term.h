@@ -66,7 +66,7 @@ extern Term*        term_add_term(const Term* term_a, const Term* term_b);
 extern Term*        term_sub_term(const Term* term_a, const Term* term_b);
 /*lint -sem(        term_mul_term, 1p == 1 && 2p == 1, @p == 1) */
 extern Term*        term_mul_term(const Term* term_a, const Term* term_b);
-/*lint -sem(        term_simplify, 1p == 1, @p == 1) */
+/*lint -sem(        term_simplify, 1p == 1, @P > malloc(1P)) */
 extern Term*        term_simplify(const Term* term_org);
 /*lint -sem(        term_add_constant, 1p == 1 && 2p == 1) */
 extern void         term_add_constant(Term* term, const Numb* value);

@@ -90,7 +90,7 @@ extern void         lps_setdir(Lps* lp, LpDirect direct);
 /*lint -sem(        lps_setprobname, nulterm(2), 1p && 2p) */
 extern void         lps_setprobname(Lps* lp, const char* name);
 /*lint -sem(        lps_setobjname, nulterm(2), 1p && 2p) */
-extern void         lps_setobjname(Lps* lp, const char* name);
+extern Bool         lps_setobjname(Lps* lp, const char* name);
 /*lint -sem(        lps_setrhsname, nulterm(2), 1p && 2p) */
 extern void         lps_setrhsname(Lps* lp, const char* name);
 /*lint -sem(        lps_setbndname, nulterm(2), 1p && 2p) */
@@ -155,6 +155,8 @@ extern void         lps_setindicator(Con* con, Var* var, Bool on_true);
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, nulterm(4), 1p == 1 && 2p == 1 && 4p) */
 extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head);
+/*lint -sem(        lps_clearobj, 1p == 1) */
+extern void         lps_clearobj(const Lps* lp);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern void         lps_scale(const Lps* lp);
 /*lint -sem(        lps_scale, 1p == 1) */

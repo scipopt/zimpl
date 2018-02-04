@@ -1,4 +1,13 @@
--hook(pre_option, -cond('%[option]' == '-sem', -reject))
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                           */
+/*   File....: project2.lnt                                                  */
+/*   Name....: PCLint+ Project Settings                                      */
+/*   Author..: Thorsten Koch                                                 */
+/*   Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>                  */
+/*                                                                           */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// TK 29Jan2018
+//hook(pre_option, -cond('%[option]' == '-sem', -reject)) //# Fix Bug in pclint 1.0
 -max_threads=8
 -vt_depth=20
 +fsc // strings are const
@@ -12,9 +21,6 @@
 -e632 // strong type
 -e571 // cast leads to sign extention 
 -e750 // local MACRO not referenced
-//-e714 // ??
-//-e759 // ??
-//-e765 // ??
 //
 -esym(534,close,creat,fclose,fprintf,fputc,fflush,fsync,pclose,gzclose)
 -esym(534,fputs,fscanf,fseek,fwrite,lseek,memcpy,memmove,memset)

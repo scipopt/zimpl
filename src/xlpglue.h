@@ -66,9 +66,7 @@ extern Bound*   xlp_getlower(const Lps* lp, const Var* var);
 /*lint -sem(    xlp_getupper, 1p == 1, @p) */
 extern Bound*   xlp_getupper(const Lps* lp, const Var* var);
 /*lint -sem(    xlp_objname, 1p == 1 && nulterm(2) && 2p) */
-extern void     xlp_objname(Lps* lp, const char* name);
-/*lint -sem(    xlp_setdir, 1p == 1) */
-extern void     xlp_setdir(Lps* lp, Bool minimize);
+extern Bool     xlp_setobj(Lps* lp, const char* name, Bool minimize);
 /*lint -sem(    xlp_addtocost, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void     xlp_addtocost(Lps* lp, Var* var, const Numb* cost);
 

@@ -1406,17 +1406,21 @@ void lps_setprobname(
    lp->probname = strdup(name);
 }
 
-void lps_setobjname(
+Bool lps_setobjname(
    Lps*        lp,
    const char* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
+
+   Bool is_not_empty = lp->objname != NULL;
    
-   if (lp->objname != NULL)
+   if (is_not_empty)
       free(lp->objname);
    
    lp->objname = strdup(name);
+
+   return is_not_empty;
 }
 
 void lps_setrhsname(
@@ -2028,6 +2032,14 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
          head, con->number, namelen - 1, temp, con->name, mpq_get_d(con->scale));
    }
    free(temp);
+}
+
+void lps_clearobj(const Lps* lp)
+{
+   assert(lps_valid(lp));
+
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+      mpq_set(var->cost, const_zero);   
 }
 
 void lps_scale(const Lps* lp)

@@ -112,13 +112,13 @@ extern void         numb_print(FILE* fp, const Numb* numb);
 extern unsigned int numb_hash(const Numb* numb);
 /*lint -sem(        numb_tostr, 1p == 1, @p && nulterm(@)) */
 extern char*        numb_tostr(const Numb* numb);
-/*lint -sem(        numb_zero, @p == 1) */
+/*lint -sem(        numb_zero, @P > 0) */
 extern const Numb*  numb_zero(void);
-/*lint -sem(        numb_one, @p == 1) */
+/*lint -sem(        numb_one, @P > 0) */
 extern const Numb*  numb_one(void);
-/*lint -sem(        numb_minusone, @p == 1) */
+/*lint -sem(        numb_minusone, @P > 0) */
 extern const Numb*  numb_minusone(void);
-/*lint -sem(        numb_unkown, @p == 1) */
+/*lint -sem(        numb_unknown, @P > 0) */
 extern const Numb*  numb_unknown(void);
 /*lint -sem(        numb_is_int, 1p == 1) */
 extern Bool         numb_is_int(const Numb* numb);
