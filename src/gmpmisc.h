@@ -29,9 +29,6 @@
 #ifndef __GMP_H__
 #error "Need to include gmp.h before gmpmisc.h"
 #endif
-#ifndef _BOOL_H_
-#error "Need to include bool.h before gmpmisc.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,7 +42,7 @@ extern mpq_t const_minus_one;
 extern void gmp_str2mpq(mpq_t value, const char* num);
 /*lint -sem(gmp_print, 1p == 1 && 2p ) */
 extern void gmp_print_mpq(FILE* fp, const mpq_t qval);
-extern void gmp_init(Bool verb, Bool with_management);
+extern void gmp_init(bool verb, bool with_management);
 extern void gmp_exit(void);
 
 #ifdef __cplusplus

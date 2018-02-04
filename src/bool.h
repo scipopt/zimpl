@@ -32,11 +32,11 @@ extern "C" {
 
 typedef int            Bool;
 
-#ifndef TRUE
-#define TRUE            ((Bool)1)
+#ifndef true
+#define true            ((Bool)1)
 #endif
-#ifndef FALSE
-#define FALSE           ((Bool)0)
+#ifndef false
+#define false           ((Bool)0)
 #endif
 
 #ifdef __cplusplus

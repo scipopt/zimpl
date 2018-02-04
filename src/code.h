@@ -27,14 +27,9 @@
 #ifndef _CODE_H_
 #define _CODE_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before code.h"
-#endif
-
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before code.h"
 #endif
-
 #ifndef _MME_H_
 #error "Need to include mme.h before code.h"
 #endif
@@ -70,7 +65,7 @@ extern void         code_free(CodeNode* node);
 /*lint -sem(        code_free_value, @p == 1) */
 extern void         code_free_value(CodeNode* node);
 /*lint -sem(        code_is_valid, 1p == 1) */
-extern Bool         code_is_valid(const CodeNode* node);
+extern bool         code_is_valid(const CodeNode* node);
 /*lint -sem(        code_get_type, 1p == 1) */
 extern CodeType     code_get_type(const CodeNode* node);
 /*lint -sem(        code_get_inst, 1p == 1, @p) */
@@ -90,7 +85,7 @@ extern CodeNode*    code_check_type(CodeNode* node, CodeType expected);
 /*lint -sem(        code_eval, 1p == 1, @p == 1p) */
 extern CodeNode*    code_eval(CodeNode* node);
 /*lint -sem(        code_prune_tree, 1p == 1) */
-extern Bool         code_prune_tree(CodeNode* node);
+extern bool         code_prune_tree(CodeNode* node);
 /*lint -sem(        code_get_child, 1p == 1 && 2n >= 0, @p == 1) */
 extern CodeNode*    code_get_child(const CodeNode* node, int no);
 /*lint -sem(        code_get_numb, 1p == 1) */
@@ -114,7 +109,7 @@ extern const Term*  code_get_term(CodeNode* node);
 /*lint -sem(        code_get_size, 1p == 1) */
 extern int          code_get_size(CodeNode* node);
 /*lint -sem(        code_get_bool, 1p == 1) */
-extern Bool         code_get_bool(CodeNode* node);
+extern bool         code_get_bool(CodeNode* node);
 /*lint -sem(        code_get_list, 1p == 1, @p == 1) */
 extern const List*  code_get_list(CodeNode* node);
 /*lint -sem(        code_get_varclass, 1p == 1) */
@@ -152,7 +147,7 @@ extern void         code_value_term(CodeNode* node, Term* term);
 /*lint -sem(        code_value_steal_child_term, 1p == 1 && 2n >= 0, @p == 1p) */
 extern Term*        code_value_steal_term(CodeNode* node, int no);
 /*lint -sem(        code_value_bool, 1p == 1) */
-extern void         code_value_bool(CodeNode* node, Bool bool);
+extern void         code_value_bool(CodeNode* node, bool bvalue);
 /*lint -sem(        code_value_size, 1p == 1) */
 extern void         code_value_size(CodeNode* node, int size);
 /*lint -sem(        code_value_list, custodial(2), 1p == 1 && 2p == 1) */
@@ -197,7 +192,7 @@ extern const Term*  code_eval_child_term(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_size, 1p == 1 && 2n >= 0, @n >= 0) */
 extern int          code_eval_child_size(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_bool, 1p == 1 && 2n >= 0) */
-extern Bool         code_eval_child_bool(const CodeNode* node, int no);
+extern bool         code_eval_child_bool(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_list, 1p == 1 && 2n >= 0, @p == 1) */
 extern const List*  code_eval_child_list(const CodeNode* node, int no);
 /*lint -sem(        code_eval_child_varclass, 1p == 1 && 2n >= 0) */

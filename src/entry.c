@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -170,14 +170,14 @@ void entry_free(Entry* entry)
    }
 }
 
-Bool entry_is_valid(const Entry* entry)
+bool entry_is_valid(const Entry* entry)
 {
    if (entry == NULL || !SID_ok(entry, ENTRY_SID))
-      return FALSE;
+      return false;
 
    mem_check(entry);
 
-   return TRUE;
+   return true;
 }
 
 Entry* entry_copy(const Entry* source)
@@ -191,7 +191,7 @@ Entry* entry_copy(const Entry* source)
    return entry;
 }
 
-Bool entry_cmp(const Entry* entry, const Tuple* tuple)
+bool entry_cmp(const Entry* entry, const Tuple* tuple)
 {
    assert(entry_is_valid(entry));
    assert(tuple_is_valid(tuple));

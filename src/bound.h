@@ -47,7 +47,7 @@ extern Bound*       bound_new(BoundType type, const Numb* value);
 /*lint -sem(        bound_free, custodial(1), 1p == 1) */
 extern void         bound_free(Bound* bound);
 /*lint -sem(        bound_is_valid, 1p == 1) */
-extern Bool         bound_is_valid(const Bound* bound);
+extern bool         bound_is_valid(const Bound* bound);
 /*lint -sem(        bound_copy, 1p == 1, @p == 1) */
 extern Bound*       bound_copy(const Bound* source);
 /*lint -sem(        bound_get_type, 1p == 1) */

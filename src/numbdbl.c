@@ -34,7 +34,7 @@
 
 /* #define TRACE 1 */
 
-#include "bool.h"
+#include <stdbool.h>
 #include "lint.h"
 #include "mshell.h"
 #include "random.h"
@@ -109,7 +109,7 @@ static void extend_storage(void)
    assert(store_free   != NULL);
 }
 
-void numb_init(Bool with_management)
+void numb_init(bool with_management)
 {
    store_anchor = NULL;
    store_free   = NULL;
@@ -202,7 +202,7 @@ void numb_free(Numb* numb)
    store_count--;   
 }
 
-Bool numb_is_valid(const Numb* numb)
+bool numb_is_valid(const Numb* numb)
 {
    return numb != NULL && SID_ok(numb, NUMB_SID);
 }
@@ -219,10 +219,10 @@ Numb* numb_copy(const Numb* source)
    return numb;
 }
 
-/* TRUE wenn gleich, sonst FALSE
+/* true wenn gleich, sonst false
  */
 /* ??? This not the same as with gmp :-) */
-Bool numb_equal(const Numb* numb_a, const Numb* numb_b)
+bool numb_equal(const Numb* numb_a, const Numb* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -628,7 +628,7 @@ const Numb* numb_minusone()
    return numb_const_minusone;
 }
 
-Bool numb_is_int(const Numb* numb)
+bool numb_is_int(const Numb* numb)
 {
    return numb->value.numb == (double)((int)numb->value.numb);
 }
@@ -641,31 +641,31 @@ int numb_toint(const Numb* numb)
    return (int)numb->value.numb; 
 }
 
-Bool numb_is_number(const char *s)
+bool numb_is_number(const char *s)
 {
    /* 5 !*/
    if (isdigit(*s))
-      return TRUE;
+      return true;
 
    /* maybe -5 or .6 or -.7 ? */
    if (*s != '+' && *s != '-' && *s != '.')
-      return FALSE;
+      return false;
 
    if (*s == '\0')
-      return FALSE;
+      return false;
 
    s++;
 
    /* -5 or .6 ! */
    if (isdigit(*s))
-      return TRUE;
+      return true;
 
    /* maybe -.7 ? */
    if (*s != '.')
-      return FALSE;
+      return false;
    
    if (*s == '\0')
-      return FALSE;
+      return false;
 
    s++;
    

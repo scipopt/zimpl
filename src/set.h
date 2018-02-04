@@ -26,10 +26,6 @@
 #ifndef _SET_H_
 #define _SET_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before set.h"
-#endif
-
 #ifndef _MME_H_
 #error "Need to include mme.h before set.h"
 #endif
@@ -50,11 +46,11 @@ extern void         set_exit(void);
 /*lint -sem(        set_free, custodial(1), 1p == 1) */
 extern void         set_free(Set* set);
 /*lint -sem(        set_is_valid, 1p == 1) */
-extern Bool         set_is_valid(const Set* set);
+extern bool         set_is_valid(const Set* set);
 /*lint -sem(        set_copy, 1p == 1, @p == 1) */
 extern Set*         set_copy(const Set* set);
 /*lint -sem(        set_lookup, 1p == 1 && 2p == 1) */
-extern Bool         set_lookup(const Set* set, const Tuple* tuple);
+extern bool         set_lookup(const Set* set, const Tuple* tuple);
 /*lint -sem(        set_iter_init, 1p == 1, @p == 1) */
 extern SetIter*     set_iter_init(const Set* set, const Tuple* pattern);
 /*lint -sem(        set_iter_next, 1p == 1 && 2p == 1) */
@@ -91,11 +87,11 @@ extern Set*         set_sdiff(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_proj, 1p == 1 && 2p == 1, @p == 1) */
 extern Set*         set_proj(const Set* set_a, const Tuple* pattern);
 /*lint -sem(        set_is_subseteq, 1p == 1 && 2p == 1) */
-extern Bool         set_is_subseteq(const Set* set_a, const Set* set_b);
+extern bool         set_is_subseteq(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_is_subset, 1p == 1 && 2p == 1) */
-extern Bool         set_is_subset(const Set* set_a, const Set* set_b);
+extern bool         set_is_subset(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_is_equal, 1p == 1 && 2p == 1) */
-extern Bool         set_is_equal(const Set* set_a, const Set* set_b);
+extern bool         set_is_equal(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_subset_list, 1p == 1 && 2n > 0 && 4p == 1, @p == 1) */
 extern List*        set_subsets_list(
    const Set* set, int subset_size, List* list, int* idx);

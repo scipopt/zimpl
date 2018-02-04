@@ -26,10 +26,6 @@
 #ifndef _TERM_H_
 #define _TERM_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before term.h"
-#endif
-
 #ifndef _MONO_H_
 #error "Need to include mono.h before term.h"
 #endif
@@ -53,11 +49,11 @@ extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* co
 /*lint -sem(        term_free, custodial(1), 1p == 1) */
 extern void         term_free(Term* term);
 /*lint -sem(        term_is_valid, 1p == 1) */
-extern Bool         term_is_valid(const Term* term);
+extern bool         term_is_valid(const Term* term);
 /*lint -sem(        term_copy, 1p == 1, @p == 1) */
 extern Term*        term_copy(const Term* term);
 /*lint -sem(        term_print, 1p == 1 && 2p == 1) */
-extern void         term_print(FILE* fp, const Term* term, Bool print_symbol_index);
+extern void         term_print(FILE* fp, const Term* term, bool print_symbol_index);
 /*lint -sem(        term_append_term, 1p == 1 && 2p == 1) */
 extern void         term_append_term(Term* term_a, const Term* term_b);
 /*lint -sem(        term_add_term, 1p == 1 && 2p == 1, @p == 1) */
@@ -91,15 +87,15 @@ extern Bound*       term_get_lower_bound(const Term* term);
 /*lint -sem(        term_get_upper_bound, 1p == 1, @p == 1) */
 extern Bound*       term_get_upper_bound(const Term* term);
 /*lint -sem(        term_is_all_integer, 1p == 1) */
-extern Bool         term_is_all_integer(const Term* term);
+extern bool         term_is_all_integer(const Term* term);
 /*lint -sem(        term_is_linear, 1p == 1) */
-extern Bool         term_is_linear(const Term* term);
+extern bool         term_is_linear(const Term* term);
 /*lint -sem(        term_is_polynomial, 1p == 1) */
-extern Bool         term_is_polynomial(const Term* term);
+extern bool         term_is_polynomial(const Term* term);
 /*lint -sem(        term_get_degree, 1p == 1) */
 extern int          term_get_degree(const Term* term);
 /*lint -sem(        term_make_conditional, 1p == 1 && 2p == 1, @p == 1) */
-extern Term*        term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is_true);
+extern Term*        term_make_conditional(const Term* ind_term, const Term* cond_term, bool is_true);
 
 #ifdef __cplusplus
 }

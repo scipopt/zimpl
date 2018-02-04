@@ -33,7 +33,7 @@
 #include <gmp.h>
 
 #include "mshell.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "ratlp.h"
 #include "ratlpstore.h"
 #include "mme.h"

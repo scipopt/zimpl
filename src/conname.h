@@ -26,10 +26,6 @@
 #ifndef _CONNAME_H_
 #define _CONNAME_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before conname.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,7 +37,7 @@ typedef enum con_name_format     ConNameForm;
 extern void        conname_format(ConNameForm format);
 extern void        conname_free(void);
 /*lint -sem(       conname_set, nulterm(1), 1p) */
-extern Bool        conname_set(const char* prefix);
+extern bool        conname_set(const char* prefix);
 /*lint -sem(       conname_set, @p && nulterm(@)) */
 extern const char* conname_get(void);
 extern void        conname_next(void);

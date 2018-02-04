@@ -30,7 +30,7 @@ typedef struct number            Numb;
 
  /* numbgmp.c
  */
-extern void         numb_init(Bool with_management);
+extern void         numb_init(bool with_management);
 extern void         numb_exit(void);
 /*lint -sem(        numb_new, @p == 1) */
 extern Numb*        numb_new(void);
@@ -42,12 +42,12 @@ extern Numb*        numb_new_integer(int val);
 /*lint -sem(        numb_free, custodial(1), 1p == 1) */
 extern void         numb_free(Numb* numb);
 /*lint -sem(        numb_is_valid, 1p == 1) */
-extern Bool         numb_is_valid(const Numb* numb);
+extern bool         numb_is_valid(const Numb* numb);
 
 /*lint -sem(        numb_copy, 1p == 1, @p == 1) */
 extern Numb*        numb_copy(const Numb* source);
 /*lint -sem(        numb_equal, 1p == 1 && 2p == 1) */
-extern Bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
+extern bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_cmp, 1p == 1 && 2p == 1) */
 extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
 /*lint -sem(        numb_set, 1p == 1 && 2p == 1) */
@@ -121,11 +121,11 @@ extern const Numb*  numb_minusone(void);
 /*lint -sem(        numb_unknown, @P > 0) */
 extern const Numb*  numb_unknown(void);
 /*lint -sem(        numb_is_int, 1p == 1) */
-extern Bool         numb_is_int(const Numb* numb);
+extern bool         numb_is_int(const Numb* numb);
 /*lint -sem(        numb_toint, 1p == 1) */
 extern int          numb_toint(const Numb* numb);
 /*lint -sem(        numb_is_number, nulterm(1), 1p) */
-extern Bool         numb_is_number(const char *s);
+extern bool         numb_is_number(const char *s);
 
 #ifdef __GMP_H__
 /*lint -sem(        numb_new_mpq, @p == 1) */

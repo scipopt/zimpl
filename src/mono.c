@@ -31,7 +31,7 @@
 
 /* #define TRACE 1 */
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -69,7 +69,7 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 }
 
 #ifndef NDEBUG
-Bool mono_is_valid(const Mono* mono)
+bool mono_is_valid(const Mono* mono)
 {
    const MonoElem* e;
    int             count = 1;
@@ -99,7 +99,7 @@ Bool mono_is_valid(const Mono* mono)
    if (count != mono->count)
       abort();
    
-   return TRUE;
+   return true;
 }
 #endif
 
@@ -223,7 +223,7 @@ unsigned int mono_hash(const Mono* mono)
 #if 1
 /* We assume (I think it is true that there is only one distinct entry per var
  */
-Bool mono_equal(const Mono* ma, const Mono* mb)
+bool mono_equal(const Mono* ma, const Mono* mb)
 {
    const MonoElem* ea;
    const MonoElem* eb;
@@ -232,10 +232,10 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
    assert(mono_is_valid(mb));   
 
    if (ma->count != mb->count)
-      return FALSE;
+      return false;
 
    if (ma->count == 1 && (ma->first.entry != mb->first.entry))
-      return FALSE;
+      return false;
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
    {
@@ -249,23 +249,23 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
             break;
 
       if (eb == NULL)
-         return FALSE;
+         return false;
       
       /* Now all variables of a kind are consecutive 
        */
       while(ea->next != NULL && ea->next->entry == entry_a) 
       {
          if (eb->next == NULL || eb->next->entry != entry_a)
-            return FALSE;
+            return false;
                
          ea = ea->next; /*lint !e850 loop index variable is modified in body of the loop */
          eb = eb->next;               
       }
    } 
-   return TRUE;
+   return true;
 }
 #else /* old */
-Bool mono_equal(const Mono* ma, const Mono* mb)
+bool mono_equal(const Mono* ma, const Mono* mb)
 {
    const MonoElem* ea;
    const MonoElem* eb;
@@ -275,10 +275,10 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
    assert(mono_is_valid(mb));   
 
    if (ma->count != mb->count)
-      return FALSE;
+      return false;
 
    if (ma->count == 1 && (entry_get_var(ma->first.entry) != entry_get_var(mb->first.entry)))
-      return FALSE;
+      return false;
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
    {
@@ -291,20 +291,20 @@ Bool mono_equal(const Mono* ma, const Mono* mb)
             break;
 
       if (eb == NULL)
-         return FALSE;
+         return false;
       
       /* Now all variables of a kind are consecutive 
        */
       while(ea->next != NULL && entry_get_var(ea->next->entry) == var_a)
       {
          if (eb->next == NULL || entry_get_var(eb->next->entry) != var_a)
-            return FALSE;
+            return false;
                
          ea = ea->next;
          eb = eb->next;               
       }
    }
-   return TRUE;
+   return true;
 }
 #endif
 
@@ -338,7 +338,7 @@ void mono_neg(Mono* mono)
    numb_neg(mono->coeff);
 }
 
-Bool mono_is_linear(const Mono* mono)
+bool mono_is_linear(const Mono* mono)
 {
    assert(mono_is_valid(mono));
 
@@ -398,7 +398,7 @@ Var* mono_get_var(const Mono* mono, int idx)
 }
 
 #ifndef NDEBUG
-void mono_print(FILE* fp, const Mono* mono, Bool print_symbol_index)
+void mono_print(FILE* fp, const Mono* mono, bool print_symbol_index)
 {
    const MonoElem* e;
 

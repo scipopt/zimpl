@@ -34,7 +34,7 @@
 
 #include "lint.h"
 #include "mshell.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -47,7 +47,7 @@
 
 static void write_data(
    FILE*        fp,
-   Bool         use_field5,
+   bool         use_field5,
    const int    indicator1,
    const int    indicator2,
    const char*  name1,
@@ -82,7 +82,7 @@ static void write_vars(
    VarClass   varclass,
    int        name_size)
 {
-   static Bool first = TRUE;
+   static bool first = true;
 
    const Var*  var;
    const Nzo*  nzo;
@@ -127,10 +127,10 @@ static void write_vars(
                      "--- Warning: Objective function inverted to make",
                      "             minimization problem for MPS output\n");
                }
-               first = FALSE;
+               first = false;
             }
          }
-         write_data(fp, TRUE, ' ', ' ', vtmp, "OBJECTIV", temp);
+         write_data(fp, true, ' ', ' ', vtmp, "OBJECTIV", temp);
       }
       for(nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {
@@ -140,7 +140,7 @@ static void write_vars(
          lps_makename(vtmp, name_size, var->name, var->number);
          lps_makename(ctmp, name_size, nzo->con->name, nzo->con->number);
 
-         write_data(fp, TRUE, ' ', ' ', vtmp, ctmp, nzo->value);
+         write_data(fp, true, ' ', ' ', vtmp, ctmp, nzo->value);
       }
    }   
    mpq_clear(temp);
@@ -157,7 +157,7 @@ void mps_write(
    const Var*  var;
    const Con*  con;
    int   indicator;
-   Bool  has_ranges = FALSE;
+   bool  has_ranges = false;
    int   name_size;
    char* vtmp;
    char* ctmp;
@@ -181,7 +181,7 @@ void mps_write(
    fprintf(fp, "NAME          %8.8s\n", lp->name);
    fprintf(fp, "ROWS\n");
    
-   write_data(fp, FALSE, 'N', ' ', "OBJECTIV", "", const_zero);
+   write_data(fp, false, 'N', ' ', "OBJECTIV", "", const_zero);
 
    for(con = lp->con_root; con != NULL; con = con->next)
    {
@@ -202,12 +202,12 @@ void mps_write(
             break;
          case CON_RANGE:
             indicator = 'E';
-            has_ranges = TRUE;
+            has_ranges = true;
             break;
          default :
             abort();
          }
-         write_data(fp, FALSE, indicator, ' ', ctmp, "", const_zero);
+         write_data(fp, false, indicator, ' ', ctmp, "", const_zero);
       }
    }
    fprintf(fp, "COLUMNS\n");
@@ -237,19 +237,19 @@ void mps_write(
       {
       case CON_EQUAL:
          if (!mpq_equal(con->rhs, const_zero))
-            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
+            write_data(fp, true, ' ', ' ', "RHS", ctmp, con->rhs);
          break;
       case CON_LHS:
          if (!mpq_equal(con->lhs, const_zero))
-            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->lhs);
+            write_data(fp, true, ' ', ' ', "RHS", ctmp, con->lhs);
          break;
       case CON_RHS:
          if (!mpq_equal(con->rhs, const_zero))
-            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->rhs);
+            write_data(fp, true, ' ', ' ', "RHS", ctmp, con->rhs);
          break;
       case CON_RANGE:
          if (!mpq_equal(con->lhs, const_zero))
-            write_data(fp, TRUE, ' ', ' ', "RHS", ctmp, con->lhs);
+            write_data(fp, true, ' ', ' ', "RHS", ctmp, con->lhs);
          break;
       default :
          abort();
@@ -272,7 +272,7 @@ void mps_write(
             
             assert(!mpq_equal(temp, const_zero));
             
-            write_data(fp, TRUE, ' ', ' ', "RNG", ctmp, temp);
+            write_data(fp, true, ' ', ' ', "RNG", ctmp, temp);
          }
       }
    }
@@ -302,18 +302,18 @@ void mps_write(
       lps_makename(vtmp, name_size, var->name, var->number);
 
       if (var->type == VAR_FIXED)
-         write_data(fp, TRUE, 'F', 'X', "BOUND", vtmp, var->lower);
+         write_data(fp, true, 'F', 'X', "BOUND", vtmp, var->lower);
       else
       {
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
-            write_data(fp, TRUE, 'L', 'O', "BOUND", vtmp, var->lower);
+            write_data(fp, true, 'L', 'O', "BOUND", vtmp, var->lower);
          else
-            write_data(fp, FALSE, 'M', 'I', "BOUND", vtmp, const_zero);
+            write_data(fp, false, 'M', 'I', "BOUND", vtmp, const_zero);
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
-            write_data(fp, TRUE, 'U', 'P', "BOUND", vtmp, var->upper);
+            write_data(fp, true, 'U', 'P', "BOUND", vtmp, var->upper);
          else
-            write_data(fp, FALSE, 'P', 'L', "BOUND", vtmp, const_zero);
+            write_data(fp, false, 'P', 'L', "BOUND", vtmp, const_zero);
       }
    }
    if (lps_has_sos(lp))
@@ -325,13 +325,13 @@ void mps_write(
 
       for(sos = lp->sos_root; sos != NULL; sos = sos->next)
       {
-         write_data(fp, FALSE, 'S', sos->type == SOS_TYPE1 ? '1' : '2', sos->name, "", const_zero);
+         write_data(fp, false, 'S', sos->type == SOS_TYPE1 ? '1' : '2', sos->name, "", const_zero);
 
          for (sse = sos->first; sse != NULL; sse = sse->next)
          {
             lps_makename(vtmp, name_size, sse->var->name, sse->var->number);
 
-            write_data(fp, TRUE, ' ', ' ', "", vtmp, sse->weight);
+            write_data(fp, true, ' ', ' ', "", vtmp, sse->weight);
          }
       }    
    }

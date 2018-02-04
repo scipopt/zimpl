@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "blkmem.h"
 #include "numb.h"
@@ -102,7 +102,7 @@ void tuple_free(Tuple* tuple)
    }
 }
 
-Bool tuple_is_valid(const Tuple* tuple)
+bool tuple_is_valid(const Tuple* tuple)
 {
    return tuple != NULL && SID_ok(tuple, TUPLE_SID) && tuple->refc > 0;
 }
@@ -121,7 +121,7 @@ Tuple* tuple_copy(const Tuple* source)
 /* 1 = verschieden,
  * 0 = gleich.
  */
-Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
+bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
 {   
    int i;
 
@@ -129,7 +129,7 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
    assert(tuple_is_valid(tuple_b));
 
    if (tuple_a == tuple_b)
-      return FALSE;
+      return false;
    
    if (tuple_a->dim != tuple_b->dim)
    {
@@ -147,7 +147,7 @@ Bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
             fputc('\n', stderr);
          }
       }
-      return TRUE;
+      return true;
    }
    assert(tuple_a->dim == tuple_b->dim);
    
@@ -220,7 +220,7 @@ void tuple_print(FILE* fp, const Tuple* tuple)
       
    for(i = 0; i < tuple->dim; i++)
    {
-      elem_print(fp, tuple->element[i], TRUE);
+      elem_print(fp, tuple->element[i], true);
       
       fprintf(fp, "%s", (i < tuple->dim - 1) ? "," : "");
    }

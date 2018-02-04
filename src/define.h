@@ -26,9 +26,6 @@
 #ifndef _DEFINE_H_
 #define _DEFINE_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before define.h"
-#endif
 #ifndef _NUMB_H_
 #error "Need to include numb.h before define.h"
 #endif

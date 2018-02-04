@@ -26,10 +26,6 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before list.h"
-#endif
-
 #ifndef _MME_H_
 #error "Need to include mme.h before list.h"
 #endif
@@ -51,13 +47,13 @@ extern List*        list_new_list(const List* list);
 /*lint -sem(        list_free, custodial(1), 1p == 1) */
 extern void         list_free(List* list);
 /*lint -sem(        list_is_valid, 1p == 1) */
-extern Bool         list_is_valid(const List* list);
+extern bool         list_is_valid(const List* list);
 /*lint -sem(        list_is_elemlist, 1p == 1) */
-extern Bool         list_is_elemlist(const List* list);
+extern bool         list_is_elemlist(const List* list);
 /*lint -sem(        list_is_entrylist, 1p == 1) */
-extern Bool         list_is_entrylist(const List* list);
+extern bool         list_is_entrylist(const List* list);
 /*lint -sem(        list_is_tuplelist, 1p == 1) */
-extern Bool         list_is_tuplelist(const List* list);
+extern bool         list_is_tuplelist(const List* list);
 /*lint -sem(        list_copy, 1p == 1, @p == 1) */
 extern List*        list_copy(const List* list);
 /*lint -sem(        list_add_list, 1p == 1 && 2p == 1) */

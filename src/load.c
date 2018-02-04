@@ -31,7 +31,7 @@
 #include <ctype.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "mme.h"
 #include "stmt.h"
@@ -83,7 +83,7 @@ static void skip_comment(const MFP* fp, int* lineno)
 
 static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
 {
-   Bool in_string = FALSE;
+   bool in_string = false;
    int  cnt = 0;
 
    for(;;)

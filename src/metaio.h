@@ -26,10 +26,6 @@
 #ifndef _METAIO_H_
 #define _METAIO_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before metaio.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,7 +35,7 @@ typedef struct meta_file_ptr     MFP;
 /* metaio.c
  */
 /*lint -sem(        mio_add_strg_file, nulterm(1), nulterm(2), 1p && 2p) */
-extern void         mio_add_strg_file(const char* name, const char* content, Bool use_copy);
+extern void         mio_add_strg_file(const char* name, const char* content, bool use_copy);
 extern void         mio_init(void);
 extern void         mio_exit(void);
 /*lint -sem(        mio_open, nulterm(2), 2p) */

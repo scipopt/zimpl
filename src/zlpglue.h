@@ -26,10 +26,6 @@
 #ifndef _ZLPGLUE_H_
 #define _ZLPGLUE_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before xlpglue.h"
-#endif
-
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before xlpglue.h"
 #endif

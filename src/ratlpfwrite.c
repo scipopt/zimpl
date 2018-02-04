@@ -32,7 +32,7 @@
 
 #include "lint.h"
 #include "mshell.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -70,7 +70,7 @@ static void permute(int size, void** tab)
    }
 }
 
-static void write_val(FILE* fp, LpFormat format, Bool force_sign, const mpq_t val)
+static void write_val(FILE* fp, LpFormat format, bool force_sign, const mpq_t val)
 {
    switch(format)
    {
@@ -102,7 +102,7 @@ static void write_lhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    case CON_EQUAL :
       break;
    case CON_RANGE :
-      write_val(fp, format, FALSE, con->lhs);
+      write_val(fp, format, false, con->lhs);
       fprintf(fp, " <= ");
       break;
    default :
@@ -120,15 +120,15 @@ static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    case CON_RHS :
    case CON_RANGE :
       fprintf(fp, " <= ");
-      write_val(fp, format, FALSE, con->rhs);
+      write_val(fp, format, false, con->rhs);
       break;
    case CON_LHS :
       fprintf(fp, " >= ");
-      write_val(fp, format, FALSE, con->lhs);
+      write_val(fp, format, false, con->lhs);
       break;
    case CON_EQUAL :
       fprintf(fp, " = ");
-      write_val(fp, format, FALSE, con->rhs);
+      write_val(fp, format, false, con->rhs);
       break;
    default :
       abort();
@@ -181,7 +181,7 @@ static void write_row(
       else
       {
          fprintf(fp, " ");
-         write_val(fp, format, TRUE, nzo->value);      
+         write_val(fp, format, true, nzo->value);      
          fprintf(fp, " %s", name);
       }
       if (++cnt % 6 == 0)
@@ -210,7 +210,7 @@ static void write_row(
          else
          {
             fprintf(fp, " ");         
-            write_val(fp, format, TRUE, qme->value);      
+            write_val(fp, format, true, qme->value);      
             fprintf(fp, " %s", name);
          }
 
@@ -234,7 +234,7 @@ static void write_row(
    if (con->term != NULL)
    {
       const Term* term  = con->term;
-      Bool only_comment = FALSE;
+      bool only_comment = false;
 
       assert(term_get_degree(term) > 2 || !term_is_polynomial(term));
 
@@ -246,7 +246,7 @@ static void write_row(
             fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
                con->name, term_get_degree(term));
          }
-         only_comment = TRUE;
+         only_comment = true;
       }
       assert(numb_equal(term_get_constant(term), numb_zero()));
    
@@ -275,7 +275,7 @@ static void write_row(
                mpq_init(t);
                numb_get_mpq(coeff, t);
                fprintf(fp, " ");         
-               write_val(fp, format, TRUE, t);      
+               write_val(fp, format, true, t);      
                mpq_clear(t);
             }
             fputc(' ', fp);
@@ -355,7 +355,7 @@ static void write_row(
                mpq_init(t);
                numb_get_mpq(coeff, t);
                fprintf(fp, " ,");         
-               write_val(fp, format, FALSE, t);      
+               write_val(fp, format, false, t);      
                mpq_clear(t);
             }
             fprintf(fp, ") ");
@@ -381,9 +381,9 @@ void lpf_write(
    const Var* var;
    Con*       con;
    Con**      contab;
-   Bool  have_integer   = FALSE;
-   Bool  have_separate  = FALSE;
-   Bool  have_checkonly = FALSE;
+   bool  have_integer   = false;
+   bool  have_separate  = false;
+   bool  have_checkonly = false;
    int   cnt;
    int   i;
    int   k;
@@ -437,7 +437,7 @@ void lpf_write(
       else
       {
          fprintf(fp, " ");         
-         write_val(fp, format, TRUE, var->cost);      
+         write_val(fp, format, true, var->cost);      
          fprintf(fp, " %s", name);
       }
 
@@ -478,9 +478,9 @@ void lpf_write(
          if (i == 0 && ((con->flags & (LP_FLAG_CON_SEPAR | LP_FLAG_CON_CHECK)) != 0))
          {
             if ((con->flags & LP_FLAG_CON_SEPAR) == LP_FLAG_CON_SEPAR)
-               have_separate = TRUE;
+               have_separate = true;
             if ((con->flags & LP_FLAG_CON_CHECK) == LP_FLAG_CON_CHECK)
-               have_checkonly = TRUE;
+               have_checkonly = true;
 
             continue;
          }        
@@ -558,7 +558,7 @@ void lpf_write(
       if (var->type == VAR_FIXED)
       {
          fprintf(fp, " %s = ", name);
-         write_val(fp, format, FALSE, var->lower);      
+         write_val(fp, format, false, var->lower);      
          fprintf(fp, "\n");
       }
       else
@@ -566,12 +566,12 @@ void lpf_write(
          /* Check if we have integer variables
           */
          if (var->vclass == VAR_INT)
-            have_integer = TRUE;
+            have_integer = true;
          
          fprintf(fp, " ");
 
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
-            write_val(fp, format, FALSE, var->lower);      
+            write_val(fp, format, false, var->lower);      
          else
             fprintf(fp, "-inf");
          
@@ -579,7 +579,7 @@ void lpf_write(
          
          if (var->type == VAR_UPPER || var->type == VAR_BOXED)
          {
-            write_val(fp, format, FALSE, var->upper);      
+            write_val(fp, format, false, var->upper);      
             fprintf(fp, "\n");
          }
          else
@@ -629,7 +629,7 @@ void lpf_write(
             lps_makename(name, name_size, sse->var->name, format == LP_FORM_HUM ? -1 : sse->var->number);
 
             fprintf(fp, " %s:", name);
-            write_val(fp, format, FALSE, sse->weight);      
+            write_val(fp, format, false, sse->weight);      
 
             if (++cnt % 6 == 0)
                fputc('\n', fp);         

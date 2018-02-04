@@ -26,10 +26,6 @@
 #ifndef _RATLPTYPES_H_
 #define _RATLPTYPES_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before ratlp.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -46,14 +46,14 @@ struct index_set
    Tuple*        tuple;
    Set*          set;
    CodeNode*     lexpr;
-   Bool          is_unrestricted;
+   bool          is_unrestricted;
 };
 
 IdxSet* idxset_new(
    const Tuple* tuple,
    const Set*   set,
    CodeNode*    lexpr,
-   Bool         is_unrestricted)
+   bool         is_unrestricted)
 {
    IdxSet* idxset = calloc(1, sizeof(*idxset));
    
@@ -84,7 +84,7 @@ void idxset_free(IdxSet* idxset)
    free(idxset);
 }
 
-Bool idxset_is_valid(const IdxSet* idxset)
+bool idxset_is_valid(const IdxSet* idxset)
 {
    return ((idxset != NULL) && SID_ok(idxset, IDXSET_SID));
 }
@@ -117,7 +117,7 @@ const Set* idxset_get_set(const IdxSet* idxset)
    return idxset->set;
 }
 
-Bool idxset_is_unrestricted(const IdxSet* idxset)
+bool idxset_is_unrestricted(const IdxSet* idxset)
 {
    assert(idxset_is_valid(idxset));
    

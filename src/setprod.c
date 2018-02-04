@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -46,7 +46,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_prod_is_valid(const Set* set)
+static bool set_prod_is_valid(const Set* set)
 {
    return set != NULL
       && SID_ok2(set->prod, SET_PROD_SID)
@@ -56,7 +56,7 @@ static Bool set_prod_is_valid(const Set* set)
       && set_is_valid(set->prod.set_b);
 }
 
-static Bool set_prod_iter_is_valid(const SetIter* iter)
+static bool set_prod_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
       && SID_ok2(iter->prod, SET_PROD_ITER_SID)
@@ -222,7 +222,7 @@ static SetIter* set_prod_iter_init(
 
    assert(iter->prod.elem != NULL);
 
-   iter->prod.first = TRUE;
+   iter->prod.first = true;
    
    iter->prod.iter_a = set_iter_init_intern(set->prod.set_a, pattern, offset);
    iter->prod.iter_b = set_iter_init_intern(set->prod.set_b, pattern,
@@ -242,7 +242,7 @@ static SetIter* set_prod_iter_init(
 /* This gets the fore part of the product and saves it and
  * also gets the back part
  */
-static Bool get_both_parts(
+static bool get_both_parts(
    const Set* a,
    const Set* b,
    SetIter*   iter,
@@ -255,7 +255,7 @@ static Bool get_both_parts(
    int i;
    
    if (!set_iter_next_intern(iter_a, a, tuple, offset))
-      return FALSE;
+      return false;
 
    for(i = 0; i < a->head.dim; i++)
    {
@@ -266,16 +266,16 @@ static Bool get_both_parts(
       assert(elem_is_valid(iter->prod.elem[i]));
    }
    if (!set_iter_next_intern(iter_b, b, tuple, offset2))
-      return FALSE;
+      return false;
 
-   return TRUE;
+   return true;
 }
 
 
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
 /*ARGSUSED*/
-static Bool set_prod_iter_next(
+static bool set_prod_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -302,7 +302,7 @@ static Bool set_prod_iter_next(
 
    if (iter->prod.first)
    {
-      iter->prod.first = FALSE;
+      iter->prod.first = false;
 
       return get_both_parts(a, b, iter, iter_a, iter_b, tuple, offset, offset2);
    }
@@ -317,7 +317,7 @@ static Bool set_prod_iter_next(
       for(i = 0; i < a->head.dim; i++)
          tuple_set_elem(tuple, i + offset, elem_copy(iter->prod.elem[i]));
 
-      return TRUE;
+      return true;
    }
 
    /* No back part, so reset it
@@ -373,7 +373,7 @@ static void set_prod_iter_reset(SetIter* iter, const Set* set)
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
 
-   iter->prod.first = TRUE;
+   iter->prod.first = true;
    
    set_iter_reset_intern(iter->prod.iter_a, set->prod.set_a);
    set_iter_reset_intern(iter->prod.iter_b, set->prod.set_b);

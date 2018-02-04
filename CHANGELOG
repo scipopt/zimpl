@@ -6,6 +6,10 @@
  - Removed more cppcheck messages
 
  - Fixed minor issues in the documentation
+
+ - Fixed strange behaviour when encountering another objective function.
+
+ - Replaced my bool.h by stdbool.h
 	
 3.3.4  8. Mar 2017 Release
 

@@ -108,10 +108,10 @@ extern void interns_exit(void);
 #define SID              /* */
 #define SID_set(p, sid)  /* */
 #define SID_del(p)       /* */
-#define SID_ok(p, id)    TRUE
+#define SID_ok(p, id)    true
 #define SID_set2(p, sid) /* */
 #define SID_del2(p)      /* */
-#define SID_ok2(p, id)   TRUE
+#define SID_ok2(p, id)   true
 #endif /* NDEBUG */
 
 #define DISPERSE(x) (1664525U * (x) + 1013904223U)

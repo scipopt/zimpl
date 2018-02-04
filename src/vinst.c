@@ -31,7 +31,7 @@
 /* #define TRACE  1  */
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -807,7 +807,7 @@ static void generate_conditional_constraint(
    ConType         con_type,
    const Numb*     rhs,
    unsigned int    flags,
-   Bool            then_case)
+   bool            then_case)
 {
    Bound*       bound;
    const Numb*  bound_val;
@@ -874,7 +874,7 @@ static void generate_indicator_constraint(
    ConType                con_type,
    const Numb*            rhs,
    unsigned int           flags,
-   Bool                   then_case)
+   bool                   then_case)
 {
    Numb*        lhs;
    Term*        ind_term;
@@ -918,7 +918,7 @@ static void handle_vif_then_else(
    ConType         con_type,
    const Term*     rhs_term,
    unsigned int    flags,
-   Bool            then_case)
+   bool            then_case)
 {
    Term*        term;
    Numb*        rhs;
@@ -985,14 +985,14 @@ CodeNode* i_vif_else(CodeNode* self)
    rhs_term   = code_eval_child_term(self, 3);
 
    handle_vif_then_else(code_get_child(self, 1), /* pos for error messages */
-      vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
+      vif_term, lhs_term, con_type, rhs_term, flags, true);
    
    lhs_term   = code_eval_child_term(self, 4);
    con_type   = code_eval_child_contype(self, 5);
    rhs_term   = code_eval_child_term(self, 6);
 
    handle_vif_then_else(code_get_child(self, 4), /* pos for error messages */
-      vif_term, lhs_term, con_type, rhs_term, flags, FALSE);
+      vif_term, lhs_term, con_type, rhs_term, flags, false);
 
    code_value_void(self);
 
@@ -1020,7 +1020,7 @@ CodeNode* i_vif(CodeNode* self)
    flags      = code_eval_child_bits(self, 4);
 
    handle_vif_then_else(code_get_child(self, 1), /* pos for error messages */
-      vif_term, lhs_term, con_type, rhs_term, flags, TRUE);
+      vif_term, lhs_term, con_type, rhs_term, flags, true);
    
    code_value_void(self);
 

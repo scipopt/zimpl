@@ -30,7 +30,7 @@
 
 #include <gmp.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -69,7 +69,7 @@ void zlp_setnamelen(
 }
 
 #if 0 /* Not used anymore */
-Bool zlp_presolve(Lps* lp)
+bool zlp_presolve(Lps* lp)
 {
    PSResult res;
    
@@ -79,10 +79,10 @@ Bool zlp_presolve(Lps* lp)
    {
    case PRESOLVE_INFEASIBLE :
       printf("Model is infeasible\n");
-      return FALSE;
+      return false;
    case PRESOLVE_UNBOUNDED :
       printf("Model is unbounded\n");
-      return FALSE;
+      return false;
    case PRESOLVE_VANISHED :
       printf("Presolve solved the problem -- see .tbl file for values\n");
       break;
@@ -91,7 +91,7 @@ Bool zlp_presolve(Lps* lp)
    default :
       abort();
    }
-   return TRUE;
+   return true;
 }
 
 #endif

@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "lint.h"
 #include "mshell.h"
 #include "numb.h"
@@ -52,7 +52,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_range_is_valid(const Set* set)
+static bool set_range_is_valid(const Set* set)
 {
    return set != NULL
       && SID_ok2(set->range, SET_RANGE_SID)
@@ -60,7 +60,7 @@ static Bool set_range_is_valid(const Set* set)
       && set->head.dim == 1;
 }
 
-static Bool set_range_iter_is_valid(const SetIter* iter)
+static bool set_range_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->range, SET_RANGE_ITER_SID)
       && iter->range.first >= 0
@@ -292,9 +292,9 @@ static SetIter* set_range_iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
-static Bool set_range_iter_next(
+static bool set_range_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -310,7 +310,7 @@ static Bool set_range_iter_next(
    assert(offset <  tuple_get_dim(tuple));
 
    if (iter->range.now > iter->range.last)
-      return FALSE;
+      return false;
 
    val  = idx_to_val(set->range.begin, set->range.step, iter->range.now);
    numb = numb_new_integer(val);
@@ -321,7 +321,7 @@ static Bool set_range_iter_next(
 
    iter->range.now++;
 
-   return TRUE;
+   return true;
 }
 
 /* ------------------------------------------------------------------------- 

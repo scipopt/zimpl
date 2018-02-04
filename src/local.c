@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -88,7 +88,7 @@ static void local_new_frame(void)
 
 void local_drop_frame(void)
 {
-   Bool   frame = FALSE;
+   bool   frame = false;
    Local* q     = NULL;
    Local* p;
    
@@ -97,7 +97,7 @@ void local_drop_frame(void)
       q = p->next;
 
       if (p->element == ELEM_NULL)
-         frame = TRUE;
+         frame = true;
       else
          elem_free(p->element);
       
@@ -158,7 +158,7 @@ void local_print_all(FILE* fp)
       else
       {
          fprintf(fp, "%s = ", local->name);
-         elem_print(fp, local->element, TRUE);
+         elem_print(fp, local->element, true);
       }
       fprintf(fp, "\n");
    }
@@ -172,7 +172,7 @@ char* local_tostrall()
    char*        str  = malloc(size);
    char*        selem;
    size_t       selemlen;
-   Bool         after_elem = FALSE;
+   bool         after_elem = false;
 
    assert(str != NULL);
 
@@ -186,7 +186,7 @@ char* local_tostrall()
       {
          selem      = strdup(";");
          selemlen   = 1;
-         after_elem = FALSE;
+         after_elem = false;
       }
       else
       {

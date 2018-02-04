@@ -38,7 +38,7 @@ extern RDef*       rdef_new(const char* filename, const char* pattern);
 /*lint -sem(       rdef_free, custodial(1), 1p == 1) */
 extern void        rdef_free(RDef* rdef);
 /*lint -sem(       rdef_is_valid, 1p == 1) */
-extern Bool        rdef_is_valid(const RDef* rdef);
+extern bool        rdef_is_valid(const RDef* rdef);
 /*lint -sem(       rdef_copy, 1p == 1, @p == 1) */
 extern RDef*       rdef_copy(const RDef* rdef);
 /*lint -sem(       rdef_set_param, 1p == 1 && 2p == 1) */
@@ -67,7 +67,7 @@ extern RPar*       rpar_new_match(const char* match);
 /*lint -sem(       rpar_free, custodial(1), 1p == 1) */
 extern void        rpar_free(RPar* rpar);
 /*lint -sem(       rpar_is_valid, 1p == 1) */
-extern Bool        rpar_is_valid(const RPar* rpar);
+extern bool        rpar_is_valid(const RPar* rpar);
 /*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
 extern RPar*       rpar_copy(const RPar* rpar);
 

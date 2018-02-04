@@ -26,9 +26,6 @@
 #ifndef _IDXSET_H_
 #define _IDXSET_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before idxset.h"
-#endif
 #ifndef _TUPLE_H_
 #error "Need to include tuple.h before idxset.h"
 #endif
@@ -46,11 +43,11 @@ typedef struct index_set         IdxSet;
  */
 /*lint -sem(        idxset_new, 1p == 1 && 2p == 1 && 3p == 1, @p == 1) */
 extern IdxSet*      idxset_new(
-   const Tuple* tuple, const Set* set, CodeNode* lexpr, Bool is_unrestricted);
+   const Tuple* tuple, const Set* set, CodeNode* lexpr, bool is_unrestricted);
 /*lint -sem(        idxset_free, custodial(1), 1p == 1) */
 extern void         idxset_free(IdxSet* idxset);
 /*lint -sem(        idxset_is_valid, 1p == 1) */
-extern Bool         idxset_is_valid(const IdxSet* idxset);
+extern bool         idxset_is_valid(const IdxSet* idxset);
 /*lint -sem(        idxset_copy, 1p == 1, @p == 1) */
 extern IdxSet*      idxset_copy(const IdxSet* source);
 /*lint -sem(        idxset_get_lexpr, 1p == 1, @p == 1) */
@@ -60,7 +57,7 @@ extern const Tuple* idxset_get_tuple(const IdxSet* idxset);
 /*lint -sem(        idxset_get_set, 1p == 1, @p == 1) */
 extern const Set*   idxset_get_set(const IdxSet* idxset);
 /*lint -sem(        idxset_is_unrestricted, 1p == 1) */
-extern Bool         idxset_is_unrestricted(const IdxSet* idxset);
+extern bool         idxset_is_unrestricted(const IdxSet* idxset);
 /*lint -sem(        idxset_print, 1p == 1 && 2p == 1) */
 extern void         idxset_print(FILE* fp, const IdxSet* idxset);
 

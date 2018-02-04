@@ -38,8 +38,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-#include "bool.h"
+#include <stdbool.h>
+   
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"

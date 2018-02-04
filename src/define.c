@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -55,14 +55,14 @@ static Define anchor  = { 0, "", DEF_ERR, NULL, NULL, NULL };
 static Define anchor  = {    "", DEF_ERR, NULL, NULL, NULL };
 #endif
 
-static Bool define_is_valid(const Define* def)
+static bool define_is_valid(const Define* def)
 {
    if (def == NULL || !SID_ok(def, DEFINE_SID))
-      return FALSE;
+      return false;
 
    mem_check(def);
 
-   return TRUE;
+   return true;
 }
 
 Define* define_new(

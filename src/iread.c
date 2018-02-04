@@ -42,7 +42,7 @@
 #include "lint.h"
 #endif /* _lint */
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -208,8 +208,8 @@ static int parse_pattern(
    const char*     pattern,
    int*            param_field,
    int*            param_type,
-   Bool*           is_tuple_list,
-   Bool*           is_streaming,
+   bool*           is_tuple_list,
+   bool*           is_streaming,
    int*            hi_field_no)
 {
    const char* sep = " ,<>";
@@ -220,7 +220,7 @@ static int parse_pattern(
    int   field;
    char  type;
    int   params = 0;
-   Bool  is_single_value = FALSE;
+   bool  is_single_value = false;
    
    assert(self          != NULL);
    assert(pattern       != NULL);
@@ -229,8 +229,8 @@ static int parse_pattern(
    assert(is_tuple_list != NULL);
    assert(hi_field_no   != NULL);
    
-   *is_streaming  = FALSE;
-   *is_tuple_list = FALSE;
+   *is_streaming  = false;
+   *is_tuple_list = false;
    *hi_field_no   = 0;
    
    /* Is this a tuple_list "<1n,2s>" or
@@ -267,7 +267,7 @@ static int parse_pattern(
             code_errmsg(self);
             zpl_exit(EXIT_FAILURE);
          }
-         *is_tuple_list = TRUE;
+         *is_tuple_list = true;
          
          t++;
          t[2] = '\0';
@@ -278,7 +278,7 @@ static int parse_pattern(
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
-      *is_streaming = TRUE;
+      *is_streaming = true;
       
       param_field[0] = 0;
       param_type [0] = t[0];
@@ -296,7 +296,7 @@ static int parse_pattern(
    if (NULL == s)
    {
       /* Single value */
-      is_single_value = TRUE;
+      is_single_value = true;
    }
    else
    {
@@ -371,7 +371,7 @@ static int split_fields(char* s, int hi_field_no, char* field[])
    
    for(;;)
    {
-      Bool new_field = FALSE;
+      bool new_field = false;
       
       switch(*s)
       {
@@ -380,7 +380,7 @@ static int split_fields(char* s, int hi_field_no, char* field[])
          t = s;
          while((*s != '\0') && (*s != '\"'))
             s++;
-         new_field = TRUE;
+         new_field = true;
          break;
       case '\0' :
       case '\t' :
@@ -388,7 +388,7 @@ static int split_fields(char* s, int hi_field_no, char* field[])
       case ',' :
       case ';' :
       case ':' :
-         new_field = TRUE;
+         new_field = true;
          break;
       default :
          s++;
@@ -544,7 +544,7 @@ static List* process_line(
    List*           list,
    const RDef*     rdef,
    int             line,
-   Bool            is_tuple_list,
+   bool            is_tuple_list,
    int             dim,
    int             fields,
    char**          field,
@@ -664,8 +664,8 @@ CodeNode* i_read(CodeNode* self)
    char**      field;
    int*        param_field;  /* template parameter field number */
    int*        param_type;  /* template parameter field type */
-   Bool        is_tuple_list;
-   Bool        is_streaming;
+   bool        is_tuple_list;
+   bool        is_streaming;
    int         hi_field_no;
    int         dim;
    const RDef* rdef;

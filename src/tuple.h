@@ -26,9 +26,6 @@
 #ifndef _TUPLE_H_
 #define _TUPLE_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before tuple.h"
-#endif
 #ifndef _ELEM_H_
 #error "Need to include elem.h before tuple.h"
 #endif
@@ -46,11 +43,11 @@ extern Tuple*       tuple_new(int dim);
 /*lint -sem(        tuple_free, custodial(1), 1p == 1) */
 extern void         tuple_free(Tuple* tuple);
 /*lint -sem(        tuple_is_valid, 1p == 1) */
-extern Bool         tuple_is_valid(const Tuple* tuple);
+extern bool         tuple_is_valid(const Tuple* tuple);
 /*lint -sem(        tuple_copy, 1p == 1, @p == 1) */
 extern Tuple*       tuple_copy(const Tuple* tuple);
 /*lint -sem(        tuple_cmp, 1p == 1 && 2p == 1) */
-extern Bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
+extern bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b);
 /*lint -sem(        tuple_get_dim, 1p == 1, @n > 0) */
 extern int          tuple_get_dim(const Tuple* tuple);
 /*lint -sem(        tuple_set_elem, custodial(3), 1p == 1 && 2n >= 0 && 3p == 1) */

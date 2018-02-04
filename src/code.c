@@ -30,7 +30,7 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "stkchk.h"
 #include "ratlptypes.h"
@@ -65,7 +65,7 @@ union code_value
    Term*        term;
    Entry*       entry;
    IdxSet*      idxset;
-   Bool         bool;
+   bool         bval;
    int          size;
    List*        list;
    VarClass     varclass;
@@ -96,7 +96,7 @@ struct code_node
 static CodeNode*    root       = NULL;
 static unsigned int inst_count = 0;
 
-inline Bool code_is_valid(const CodeNode* node)
+inline bool code_is_valid(const CodeNode* node)
 {
    return ((node != NULL) && SID_ok(node, CODE_SID));
 }
@@ -520,7 +520,7 @@ inline CodeNode* code_eval(CodeNode* node)
 }
 
 
-Bool code_prune_tree(CodeNode* node)
+bool code_prune_tree(CodeNode* node)
 {
    static Inst const prunable[] = 
    { 
@@ -531,17 +531,17 @@ Bool code_prune_tree(CodeNode* node)
       i_expr_mod, i_expr_neg, i_expr_pow, i_expr_sub, i_expr_substr, NULL 
    };
 
-   Bool is_all_const = TRUE;
+   bool is_all_const = true;
    int  i;
 
    if (node->eval == (Inst)i_nop)
-      return TRUE;
+      return true;
 
    for(i = 0; i < MAX_CHILDS; i++)
    {
       if (node->child[i] != NULL)
       {
-         Bool is_const = code_prune_tree(node->child[i]);
+         bool is_const = code_prune_tree(node->child[i]);
 
          /* Writing directly && code_prune_tree might not work
           * due to shortcut evaluation.
@@ -557,7 +557,7 @@ Bool code_prune_tree(CodeNode* node)
             break;
 
       if (prunable[i] == INST_NULL)
-         return FALSE;
+         return false;
 
       (void)code_eval(node);
 
@@ -635,9 +635,9 @@ inline int code_get_size(CodeNode* node)
    return code_check_type(node, CODE_SIZE)->value.size;
 }
 
-inline Bool code_get_bool(CodeNode* node)
+inline bool code_get_bool(CodeNode* node)
 {
-   return code_check_type(node, CODE_BOOL)->value.bool;
+   return code_check_type(node, CODE_BOOL)->value.bval;
 }
 
 inline const List* code_get_list(CodeNode* node)
@@ -795,14 +795,14 @@ Term* code_value_steal_term(CodeNode* node, int no)
 }
 
 
-void code_value_bool(CodeNode* node, Bool bval)
+void code_value_bool(CodeNode* node, bool bval)
 {
    assert(code_is_valid(node));
 
    code_free_value(node);
 
    node->type       = CODE_BOOL;
-   node->value.bool = bval;
+   node->value.bval = bval;
 }
 
 void code_value_size(CodeNode* node, int size)
@@ -931,7 +931,7 @@ void code_copy_value(CodeNode* dst, const CodeNode* src)
       dst->value.term = term_copy(src->value.term);
       break;
    case CODE_BOOL :
-      dst->value.bool = src->value.bool;
+      dst->value.bval = src->value.bval;
       break;
    case CODE_SIZE :
       dst->value.size = src->value.size;
@@ -1019,7 +1019,7 @@ int code_eval_child_size(const CodeNode* node, int no)
    return code_get_size(code_eval(code_get_child(node, no)));
 }
 
-Bool code_eval_child_bool(const CodeNode* node, int no)
+bool code_eval_child_bool(const CodeNode* node, int no)
 {
    return code_get_bool(code_eval(code_get_child(node, no)));
 }

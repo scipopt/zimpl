@@ -26,10 +26,6 @@
 #ifndef _ENTRY_H_
 #define _ENTRY_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before entry.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,11 +43,11 @@ extern Entry*       entry_new_var(const Tuple* tuple, Var* var);
 /*lint -sem(        entry_free, custodial(1), 1p == 1) */
 extern void         entry_free(Entry* entry);
 /*lint -sem(        entry_is_valid, 1p == 1) */
-extern Bool         entry_is_valid(const Entry* entry);
+extern bool         entry_is_valid(const Entry* entry);
 /*lint -sem(        entry_copy, 1p == 1, @p == 1) */
 extern Entry*       entry_copy(const Entry* entry);
 /*lint -sem(        entry_cmp, 1p == 1 && 2p == 1) */
-extern Bool         entry_cmp(const Entry* entry, const Tuple* tuple);
+extern bool         entry_cmp(const Entry* entry, const Tuple* tuple);
 /*lint -sem(        entry_get_type, 1p == 1, @n >= 0) */
 extern SymbolType   entry_get_type(const Entry* entry);
 /*lint -sem(        entry_get_tuple, 1p == 1, @p == 1) */

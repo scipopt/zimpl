@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "mme.h"
 #include "numb.h"
@@ -77,16 +77,16 @@ void bound_free(Bound* bound)
    free(bound);
 }
 
-Bool bound_is_valid(const Bound* bound)
+bool bound_is_valid(const Bound* bound)
 {
    if (bound == NULL || !SID_ok(bound, BOUND_SID)
       || (bound->type == BOUND_VALUE && bound->value == NULL)
       || (bound->type != BOUND_VALUE && bound->value != NULL))
-      return FALSE;
+      return false;
 
    mem_check(bound);
 
-   return TRUE;
+   return true;
 }
 
 Bound* bound_copy(const Bound* source)

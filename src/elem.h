@@ -26,9 +26,6 @@
 #ifndef _ELEM_H_
 #define _ELEM_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before elem.h"
-#endif
 #ifndef _NUMB_H_
 #error "Need to include numb.h before elem.h"
 #endif
@@ -58,11 +55,11 @@ extern Elem*        elem_new_name(const char* s);
 /*lint -sem(        elem_free, custodial(1), 1p == 1) */
 extern void         elem_free(Elem* elem);
 /*lint -sem(        elem_is_valid, 1p == 1) */
-extern Bool         elem_is_valid(const Elem* elem);
+extern bool         elem_is_valid(const Elem* elem);
 /*lint -sem(        elem_copy, 1p == 1, @p == 1) */
 extern Elem*        elem_copy(const Elem* elem);
 /*lint -sem(        elem_cmp, 1p == 1 && 2p == 1) */
-extern Bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
+extern bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
 /*lint -sem(        elem_get_type, 1p == 1) */
 extern ElemType     elem_get_type(const Elem* elem);
 /*lint -sem(        elem_get_numb, 1p == 1) */
@@ -72,7 +69,7 @@ extern const char*  elem_get_strg(const Elem* elem);
 /*lint -sem(        elem_get_name, 1p == 1, @p && nulterm(@)) */
 extern const char*  elem_get_name(const Elem* elem);
 /*lint -sem(        elem_print, 1p == 1 && 2p == 1) */
-extern void         elem_print(FILE* fp, const Elem* elem, Bool use_quotes);
+extern void         elem_print(FILE* fp, const Elem* elem, bool use_quotes);
 /*lint -sem(        elem_hash, 1p == 1) */
 extern unsigned int elem_hash(const Elem* elem);
 /*lint -sem(        elem_tostr, 1p == 1, @p && nulterm(@)) */

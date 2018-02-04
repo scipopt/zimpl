@@ -26,9 +26,6 @@
 #ifndef _SYMBOL_H_
 #define _SYMBOL_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before symbol.h"
-#endif
 #ifndef _TUPLE_H_
 #error "Need to include tuple.h before symbol.h"
 #endif
@@ -48,11 +45,11 @@ extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
 extern void         symbol_exit(void);
 /*lint -sem(        symbol_is_valid, 1p == 1) */
-extern Bool         symbol_is_valid(const Symbol* symbol);
+extern bool         symbol_is_valid(const Symbol* symbol);
 /*lint -sem(        symbol_lookup, nulterm(1), 1p, r_null) */
 extern Symbol*      symbol_lookup(const char* name);
 /*lint -sem(        symbol_has_entry, 1p == 1 && 2p == 1) */
-extern Bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
+extern bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
 /*lint -sem(        symbol_add_entry, custodial(2), 1p == 1 && 2p == 1) */

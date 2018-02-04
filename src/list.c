@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
@@ -218,26 +218,26 @@ void list_free(List* list)
    }
 }
 
-Bool list_is_valid(const List* list)
+bool list_is_valid(const List* list)
 {
    return ((list != NULL) && SID_ok(list, LIST_SID) && (list->refc > 0));
 }
 
-Bool list_is_elemlist(const List* list)
+bool list_is_elemlist(const List* list)
 {
    assert(list_is_valid(list));
 
    return list->type == LIST_ELEM;
 }
    
-Bool list_is_entrylist(const List* list)
+bool list_is_entrylist(const List* list)
 {
    assert(list_is_valid(list));
 
    return list->type == LIST_ENTRY;
 }
    
-Bool list_is_tuplelist(const List* list)
+bool list_is_tuplelist(const List* list)
 {
    assert(list_is_valid(list));
 
@@ -434,7 +434,7 @@ void list_print(FILE* fp, const List* list)
       switch(list->type)
       {
       case LIST_ELEM :
-         elem_print(fp, le->data.elem, TRUE);
+         elem_print(fp, le->data.elem, true);
          break;
       case LIST_TUPLE :
          tuple_print(fp, le->data.tuple);

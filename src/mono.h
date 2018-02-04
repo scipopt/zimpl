@@ -26,10 +26,6 @@
 #ifndef _MONO_H_
 #define _MONO_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before mono.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,7 +62,7 @@ struct mono
 /*lint -sem(        mono_new, 1p == 1 && 2p == 1, @p == 1) */
 extern Mono*        mono_new(const Numb* coeff, const Entry* entry, MFun fun);
 /*lint -sem(        mono_is_valid, 1p == 1) */
-extern Bool         mono_is_valid(const Mono* mono);
+extern bool         mono_is_valid(const Mono* mono);
 /*lint -sem(        mono_free, custodial(1), 1p == 1) */
 extern void         mono_free(Mono* mono);
 /*lint -sem(        mono_is_valid, 1p == 1 && 2p == 1) */
@@ -80,13 +76,13 @@ extern void         mono_add_coeff(const Mono* term, const Numb* value);
 /*lint -sem(        mono_is_valid, 1p == 1) */
 extern unsigned int mono_hash(const Mono* mono);
 /*lint -sem(        mono_equal, 1p == 1 && 2p == 1) */
-extern Bool         mono_equal(const Mono* ma, const Mono* mb);
+extern bool         mono_equal(const Mono* ma, const Mono* mb);
 /*lint -sem(        mono_mul, 1p == 1 && 2p == 1, @p == 1) */
 extern Mono*        mono_mul(const Mono* ma, const Mono* mb);
 /*lint -sem(        mono_neg, 1p == 1) */
 extern void         mono_neg(Mono* mono);
 /*lint -sem(        mono_is_linear, 1p == 1) */
-extern Bool         mono_is_linear(const Mono* mono);
+extern bool         mono_is_linear(const Mono* mono);
 /*lint -sem(        mono_get_count, 1p == 1, @n >= 1) */
 extern int          mono_get_degree(const Mono* mono);
 /*lint -sem(        mono_get_count, 1p == 1, @p == 1) */
@@ -98,7 +94,7 @@ extern MFun         mono_get_function(const Mono* mono);
 /*lint -sem(        mono_get_var, 1p == 1 && 2n >= 0, @p == 1) */
 extern Var*         mono_get_var(const Mono* mono, int idx);
 /*lint -sem(        mono_print, 1p == 1) */
-extern void         mono_print(FILE* fp, const Mono* mono, Bool print_symbol_index);
+extern void         mono_print(FILE* fp, const Mono* mono, bool print_symbol_index);
 
 #ifdef __cplusplus
 }

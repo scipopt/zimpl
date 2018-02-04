@@ -1,5 +1,6 @@
 convert from Bool.h to stdbool.h
 
+numb_is_number könnte checken ob der ganze string als Zahl durchgeht und nicht nur der anfang.
 
 clean up lint.h
 

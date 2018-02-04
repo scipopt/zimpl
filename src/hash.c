@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "blkmem.h"
 #include "ratlptypes.h"
@@ -78,7 +78,7 @@ struct hash
 
 static void hash_statist(FILE* fp, const Hash* hash);
 
-static Bool hash_is_valid(const Hash* hash)
+static bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)
       && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
@@ -219,7 +219,7 @@ void hash_add_mono(Hash* hash, const Mono* mono)
    hash->elems++;
 }
 
-Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
+bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he;
@@ -234,7 +234,7 @@ Bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
+bool hash_has_entry(const Hash* hash, const Tuple* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
    HElem*       he;
@@ -249,7 +249,7 @@ Bool hash_has_entry(const Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-Bool hash_has_numb(const Hash* hash, const Numb* numb)
+bool hash_has_numb(const Hash* hash, const Numb* numb)
 {
    unsigned int hcode = numb_hash(numb) % hash->size;
    HElem*       he;
