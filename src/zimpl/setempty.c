@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "lint.h"
 #include "mshell.h"
 #include "numb.h"
@@ -51,7 +51,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_empty_is_valid(const Set* set)
+static bool set_empty_is_valid(const Set* set)
 {
    return set != NULL
       && SID_ok2(set->empty, SET_EMPTY_SID)
@@ -59,7 +59,7 @@ static Bool set_empty_is_valid(const Set* set)
       && set->head.members == 0;
 }
 
-static Bool set_empty_iter_is_valid(const SetIter* iter)
+static bool set_empty_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->empty, SET_EMPTY_ITER_SID);
 }
@@ -190,10 +190,10 @@ static SetIter* iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
 /*ARGSUSED*/
-static Bool iter_next(
+static bool iter_next(
    SetIter*       iter,
    const Set*     set,
    UNUSED Tuple*  tuple,
@@ -202,7 +202,7 @@ static Bool iter_next(
    assert(set_empty_iter_is_valid(iter));
    assert(set_empty_is_valid(set));
 
-   return FALSE;
+   return false;
 }
 
 /* ------------------------------------------------------------------------- 

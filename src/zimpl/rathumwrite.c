@@ -30,7 +30,7 @@
 
 #include <gmp.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlp.h"
 #include "ratlpstore.h"
@@ -38,8 +38,8 @@
 static void write_name(FILE* fp, const char* name)
 {
    const char* s         = name;
-   Bool        first     = TRUE;
-   Bool        in_string = FALSE;
+   bool        first     = true;
+   bool        in_string = false;
    
    assert(fp   != NULL);
    assert(name != NULL);
@@ -56,7 +56,7 @@ static void write_name(FILE* fp, const char* name)
       {
          if (first)
          {
-            first = FALSE;
+            first = false;
             fputc('[', fp);
          }
          else
@@ -64,7 +64,7 @@ static void write_name(FILE* fp, const char* name)
             if (in_string)
             {
                fputc('\"', fp);
-               in_string = FALSE;
+               in_string = false;
             }
             fputc(',', fp);
          }
@@ -72,7 +72,7 @@ static void write_name(FILE* fp, const char* name)
          {
             assert(!in_string);
 
-            in_string = TRUE;
+            in_string = true;
             fputc('\"', fp);
          }
       }
@@ -170,7 +170,7 @@ void hum_write(
 {
    const Var* var;
    const Con* con;
-   Bool  have_integer  = FALSE;
+   bool  have_integer  = false;
    int   cnt;
    
    assert(lp       != NULL);
@@ -249,7 +249,7 @@ void hum_write(
          /* Check if we have integer variables
           */
          if (var->vclass == VAR_INT)
-            have_integer = TRUE;
+            have_integer = true;
          
          if (var->type == VAR_LOWER || var->type == VAR_BOXED)
             mpq_out_str(fp, 10, var->lower);

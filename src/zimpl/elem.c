@@ -30,7 +30,7 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "numb.h"
 #include "elem.h"
@@ -140,7 +140,7 @@ void elem_exit()
       
       for(i = 0; i < ELEM_STORE_SIZE - 1; i++)
       {
-         elem_print(stderr, &store->begin[i], TRUE);
+         elem_print(stderr, &store->begin[i], true);
          fprintf(stderr, "\n");
       }
 #endif
@@ -205,7 +205,7 @@ void elem_free(Elem* elem)
    store_count--;
 }
 
-Bool elem_is_valid(const Elem* elem)
+bool elem_is_valid(const Elem* elem)
 {
    return elem != NULL && SID_ok(elem, ELEM_SID);
 }
@@ -229,7 +229,7 @@ Elem* elem_copy(const Elem* source)
 
 /* 0 wenn gleich, sonst != 0
  */
-Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
+bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
 {
    assert(elem_is_valid(elem_a));
    assert(elem_is_valid(elem_b));
@@ -239,15 +239,15 @@ Bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    /* Auf die schnelle vorweg.
     */
    if (elem_a == elem_b)
-      return FALSE;
+      return false;
 
    if (elem_a->type != elem_b->type)
    {
       fprintf(stderr,
          "*** Error 160: Comparison of elements with different types ");
-      elem_print(stderr, elem_a, TRUE);
+      elem_print(stderr, elem_a, true);
       fprintf(stderr, " / ");
-      elem_print(stderr, elem_b, TRUE);
+      elem_print(stderr, elem_b, true);
       fputc('\n', stderr);
       zpl_exit(EXIT_FAILURE);
    }
@@ -294,7 +294,7 @@ const char* elem_get_name(const Elem* elem)
    return elem->value.name;
 }
 
-void elem_print(FILE* fp, const Elem* elem, Bool use_quotes)
+void elem_print(FILE* fp, const Elem* elem, bool use_quotes)
 {
    assert(elem_is_valid(elem));
 

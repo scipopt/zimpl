@@ -26,10 +26,6 @@
 #ifndef _XLPGLUE_H_
 #define _XLPGLUE_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before xlpglue.h"
-#endif
-
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before xlpglue.h"
 #endif
@@ -43,13 +39,13 @@ extern "C" {
 #endif
 
 /*lint -sem(    xlp_alloc, nulterm(1) && 1p, @p) */
-extern Lps*     xlp_alloc(const char* name, Bool need_startval, void* user_data);
+extern Lps*     xlp_alloc(const char* name, bool need_startval, void* user_data);
 /*lint -sem(    xlp_free, 1p == 1) */
 extern void     xlp_free(Lps* lp);
 /*lint -sem(    xlp_conname, nulterm(1), 1p == 1 && 2p && nulterm(2)) */
-extern Bool     xlp_conname_exists(const Lps* lp, const char* conname);
+extern bool     xlp_conname_exists(const Lps* lp, const char* conname);
 /*lint -sem(    xlp_addcon_term, 1p == 1 && nulterm(2) && 2p && 4p == 1 && 5p == 1 && 7p == 1) */
-extern Bool     xlp_addcon_term(Lps* lp, const char* name, ConType type,
+extern bool     xlp_addcon_term(Lps* lp, const char* name, ConType type,
    const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term);
 /*lint -sem(    xlp_addvar, 1p == 1 && nulterm(2) && 2p && 4p == 1 && 5p == 1 && 6p == 1 && 7p == 1, @p) */
 extern Var*     xlp_addvar(Lps* lp, const char* name, VarClass usevarclass,
@@ -66,9 +62,7 @@ extern Bound*   xlp_getlower(const Lps* lp, const Var* var);
 /*lint -sem(    xlp_getupper, 1p == 1, @p) */
 extern Bound*   xlp_getupper(const Lps* lp, const Var* var);
 /*lint -sem(    xlp_objname, 1p == 1 && nulterm(2) && 2p) */
-extern void     xlp_objname(Lps* lp, const char* name);
-/*lint -sem(    xlp_setdir, 1p == 1) */
-extern void     xlp_setdir(Lps* lp, Bool minimize);
+extern bool     xlp_setobj(Lps* lp, const char* name, bool minimize);
 /*lint -sem(    xlp_addtocost, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void     xlp_addtocost(Lps* lp, Var* var, const Numb* cost);
 

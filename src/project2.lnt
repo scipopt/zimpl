@@ -1,4 +1,13 @@
--hook(pre_option, -cond('%[option]' == '-sem', -reject))
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*                                                                           */
+/*   File....: project2.lnt                                                  */
+/*   Name....: PCLint+ Project Settings                                      */
+/*   Author..: Thorsten Koch                                                 */
+/*   Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>                  */
+/*                                                                           */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// TK 29Jan2018
+-hook(pre_option, -cond('%[option]' == '-sem', -reject)) //# Fix Bug in pclint 1.0
 -max_threads=8
 -vt_depth=20
 +fsc // strings are const
@@ -8,13 +17,10 @@
 //-ffc // Function takes Custody flag -> off
 //-hFb^3
 //
--e636 // strong type
--e632 // strong type
+//-e636 // strong type
+//-e632 // strong type
 -e571 // cast leads to sign extention 
 -e750 // local MACRO not referenced
-//-e714 // ??
-//-e759 // ??
-//-e765 // ??
 //
 -esym(534,close,creat,fclose,fprintf,fputc,fflush,fsync,pclose,gzclose)
 -esym(534,fputs,fscanf,fseek,fwrite,lseek,memcpy,memmove,memset)
@@ -35,9 +41,10 @@
 -strong(AzJzX,ListElem,List,ListData,list_type)
 -strong(AzJzX,stmt_type,Stmt,Prog,code_type,CodeNode)
 -strong(AzJzX,RDef,RPar,MFP,rpar_type,RParVal)
--strong(AzJzX,Bound,bound_type)
+-strong(AazJzX,Bound)
+-strong(AzJzX,bound_type)
 -strong(AzJzX,Heap,heap_type,HeapData,heapCmp)
--strong(AzJzX,SetIter,setcheck_type,define_type,Define)
+-strong(AizJzX,SetIter,setcheck_type,define_type,Define)
 -strong(AzJzX,Var,var_type,VarState,var_class,Con,con_type,ConState,LpDirect,lp_type,lp_format,lp_type,lp_direct)
 -strong(AzJzX,LpsHElem,lps_hash_type)
 -strong(AzJzX,PSResult)
@@ -51,7 +58,7 @@
 -strong(AzJzX,hash_type,Hash,HElem,SetElemIdx)
 -strong(AzJzX,HeapData,heap_data)
 -strong(AcJX,Inst)
--strong(AJXbl,Bool)
+-strong(AJXB,bool)
 //
 -esym(537,stdarg.h,sys/types.h) // repeated include file
 -esym(534,stkchk_used_x) // ignore return value

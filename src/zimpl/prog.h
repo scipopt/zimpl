@@ -26,9 +26,6 @@
 #ifndef _PROG_H_
 #define _PROG_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before prog.h"
-#endif
 #ifndef _STMT_H_
 #error "Need to include stmt.h before prog.h"
 #endif
@@ -47,9 +44,9 @@ extern Prog*        prog_new(void);
 /*lint -sem(        prog_free, custodial(1), 1p == 1) */
 extern void         prog_free(Prog* prog);
 /*lint -sem(        prog_is_valid, 1p == 1) */
-extern Bool         prog_is_valid(const Prog* prog);
+extern bool         prog_is_valid(const Prog* prog);
 /*lint -sem(        prog_is_empty, 1p == 1) */
-extern Bool         prog_is_empty(const Prog* prog);
+extern bool         prog_is_empty(const Prog* prog);
 /*lint -sem(        prog_add_stmt, custodial(2), 1p == 1 && 2p == 1) */
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 /*lint -sem(        prog_print, 1p == 1 && 2p == 1) */

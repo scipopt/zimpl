@@ -26,9 +26,6 @@
 #ifndef _ELEM_H_
 #define _ELEM_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before elem.h"
-#endif
 #ifndef _NUMB_H_
 #error "Need to include numb.h before elem.h"
 #endif
@@ -49,33 +46,33 @@ typedef struct element           Elem;
 
 extern void         elem_init(void);
 extern void         elem_exit(void);
-/*lint -sem(        elem_new_numb, @p == 1) */
+/*lint -sem(        elem_new_numb, @P > malloc(1P)) */
 extern Elem*        elem_new_numb(const Numb* n);
-/*lint -sem(        elem_new_strg, nulterm(1), 1p, @p == 1) */
+/*lint -sem(        elem_new_strg, nulterm(1), 1p, @P > malloc(1P)) */
 extern Elem*        elem_new_strg(const char* s);
-/*lint -sem(        elem_new_name, nulterm(1), 1p, @p == 1) */
+/*lint -sem(        elem_new_name, nulterm(1), 1p, @P > malloc(1P)) */
 extern Elem*        elem_new_name(const char* s);
 /*lint -sem(        elem_free, custodial(1), 1p == 1) */
 extern void         elem_free(Elem* elem);
 /*lint -sem(        elem_is_valid, 1p == 1) */
-extern Bool         elem_is_valid(const Elem* elem);
-/*lint -sem(        elem_copy, 1p == 1, @p == 1) */
+extern bool         elem_is_valid(const Elem* elem);
+/*lint -sem(        elem_copy, 1p == 1, @P > malloc(1P)) */
 extern Elem*        elem_copy(const Elem* elem);
 /*lint -sem(        elem_cmp, 1p == 1 && 2p == 1) */
-extern Bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
+extern bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
 /*lint -sem(        elem_get_type, 1p == 1) */
 extern ElemType     elem_get_type(const Elem* elem);
 /*lint -sem(        elem_get_numb, 1p == 1) */
 extern const Numb*  elem_get_numb(const Elem* elem);
-/*lint -sem(        elem_get_strg, 1p == 1, @p && nulterm(@)) */
+/*lint -sem(        elem_get_strg, 1p == 1, @P > malloc(1P) && nulterm(@)) */
 extern const char*  elem_get_strg(const Elem* elem);
-/*lint -sem(        elem_get_name, 1p == 1, @p && nulterm(@)) */
+/*lint -sem(        elem_get_name, 1p == 1, @P > malloc(1P) && nulterm(@)) */
 extern const char*  elem_get_name(const Elem* elem);
 /*lint -sem(        elem_print, 1p == 1 && 2p == 1) */
-extern void         elem_print(FILE* fp, const Elem* elem, Bool use_quotes);
+extern void         elem_print(FILE* fp, const Elem* elem, bool use_quotes);
 /*lint -sem(        elem_hash, 1p == 1) */
 extern unsigned int elem_hash(const Elem* elem);
-/*lint -sem(        elem_tostr, 1p == 1, @p && nulterm(@)) */
+/*lint -sem(        elem_tostr, 1p == 1, @P > malloc(1P) && nulterm(@)) */
 extern char*        elem_tostr(const Elem* elem);
 
 #ifdef __cplusplus

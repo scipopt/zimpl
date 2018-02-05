@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -124,7 +124,7 @@ void set_free(Set* set)
    set_vtab_global[set->head.type].set_free(set);
 }
 
-Bool set_is_valid(const Set* set)
+bool set_is_valid(const Set* set)
 {
    return set != NULL && set_vtab_global[set->head.type].set_is_valid(set);
 }
@@ -139,10 +139,10 @@ inline int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, offset);
 }
 
-Bool set_lookup(const Set* set, const Tuple* tuple)
+bool set_lookup(const Set* set, const Tuple* tuple)
 {
    if (set->head.dim != tuple_get_dim(tuple))
-      return FALSE;
+      return false;
    
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
@@ -177,7 +177,7 @@ SetIter* set_iter_init(const Set* set, const Tuple* pattern)
    return set_iter_init_intern(set, pattern, 0);
 }
 
-inline Bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
+inline bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].iter_next(iter, set, tuple, offset);
 }
@@ -229,7 +229,7 @@ void set_print(FILE* fp, const Set* set)
 {
    SetIter* iter;
    Tuple*   tuple;
-   Bool     first = TRUE;
+   bool     first = true;
 
    assert(fp != NULL);
    assert(set_is_valid(set));
@@ -266,7 +266,7 @@ void set_print(FILE* fp, const Set* set)
    while(NULL != (tuple = set_iter_next(iter, set)))
    {
       if (first)
-         first = FALSE;
+         first = false;
       else
          fprintf(fp, ",");
       
@@ -556,11 +556,11 @@ Set* set_proj(const Set* set, const Tuple* pattern)
 }
 
 /* Is A subset (or equal) of B */
-Bool set_is_subseteq(const Set* set_a, const Set* set_b)
+bool set_is_subseteq(const Set* set_a, const Set* set_b)
 {
    SetIter* iter;
    Tuple*   tuple;
-   Bool     is_subset = TRUE;
+   bool     is_subset = true;
    
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
@@ -569,7 +569,7 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
     * A is a subset of B
     */
    if (set_a->head.members == 0)
-      return TRUE;
+      return true;
    
    if (set_a->head.dim != set_b->head.dim)
    {
@@ -581,10 +581,10 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
          set_print(stderr, set_b);
          fputc('\n', stderr);
       }
-      return FALSE;
+      return false;
    }
    if (set_a->head.members > set_b->head.members)
-      return FALSE;
+      return false;
 
    iter = set_iter_init(set_a, NULL);
    
@@ -600,25 +600,25 @@ Bool set_is_subseteq(const Set* set_a, const Set* set_b)
 }
 
 /* A is real subset of B */
-Bool set_is_subset(const Set* set_a, const Set* set_b)
+bool set_is_subset(const Set* set_a, const Set* set_b)
 {
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
 
    if (set_a->head.members >= set_b->head.members)
-      return FALSE;
+      return false;
 
    return set_is_subseteq(set_a, set_b);
 }
 
 /* A has the same elements as B */
-Bool set_is_equal(const Set* set_a, const Set* set_b)
+bool set_is_equal(const Set* set_a, const Set* set_b)
 {
    assert(set_is_valid(set_a));
    assert(set_is_valid(set_b));
 
    if (set_a->head.members != set_b->head.members)
-      return FALSE;
+      return false;
 
    return set_is_subseteq(set_a, set_b);
 }

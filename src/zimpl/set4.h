@@ -137,7 +137,7 @@ struct set_empty_iter
 
 struct set_pseudo_iter
 {
-   Bool first;
+   bool first;
    SID
 };
 
@@ -159,7 +159,7 @@ struct set_range_iter
 
 struct set_prod_iter
 {
-   Bool     first;
+   bool     first;
    SetIter* iter_a;
    SetIter* iter_b;
    Elem**   elem;
@@ -192,10 +192,10 @@ struct set_vtab
    int      (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
    void     (*set_get_tuple) (const Set* set, int idx, Tuple* tuple, int offset);
    SetIter* (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
-   Bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
+   bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
    void     (*iter_exit)     (SetIter* iter, const Set* set);
    void     (*iter_reset)    (SetIter* iter, const Set* set);
-   Bool     (*set_is_valid)  (const Set* set);
+   bool     (*set_is_valid)  (const Set* set);
 };
 
 #define SET_DEFAULT 0x0
@@ -212,10 +212,10 @@ extern SetVTab* set_vtab_global;
 extern int          set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
 /*lint -sem(        set_get_tuple_intern, 1p == 1 && 2n >= 0 && 3p == 1 && 4n >= 0) */
 extern void         set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset);
-/*lint -sem(        set_iter_init_intern, 1p == 1 && 3n >= 0, @p == 1) */
+/*lint -sem(        set_iter_init_intern, 1p == 1 && 3n >= 0, @P > malloc(1P)) */
 extern SetIter*     set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
 /*lint -sem(        set_iter_next_intern, 1p == 1 && 2p == 1 && 3p == 1 && 4n >= 0) */
-extern Bool         set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
+extern bool         set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
 /*lint -sem(        set_iter_exit_intern, custodial(1), 1p == 1 && 2p == 1) */
 extern void         set_iter_exit_intern(SetIter* iter, const Set* set);
 /*lint -sem(        set_iter_reset_intern, 1p == 1 && 2p == 1) */
@@ -235,17 +235,17 @@ extern void         set_pseudo_init(SetVTab* vtab);
  */
 /*lint -sem(        set_list_init, 1p == SET_TYPES) */
 extern void         set_list_init(SetVTab* vtab);
-/*lint -sem(        set_list_new, 1n > 0 && 2n >= 0, @p == 1) */
+/*lint -sem(        set_list_new, 1n > 0 && 2n >= 0, @P > malloc(1P)) */
 extern Set*         set_list_new(int size, int flags);
 /*lint -sem(        set_list_add_elem, 1p == 1 && 2p == 1, @n >= -1) */
 extern int          set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
-/*lint -sem(        set_list_new_from_elems, 1p == 1, @p == 1) */
+/*lint -sem(        set_list_new_from_elems, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_list_new_from_elems(const List* list, SetCheckType check);
-/*lint -sem(        set_list_new_from_tuples, 1p == 1, @p == 1) */
+/*lint -sem(        set_list_new_from_tuples, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_list_new_from_tuples(const List* list, SetCheckType check);
-/*lint -sem(        set_list_new_from_entries, 1p == 1, @p == 1) */
+/*lint -sem(        set_list_new_from_entries, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_list_new_from_entries(const List* list, SetCheckType check);
-/*lint -sem(        set_list_get_elem, 1p == 1 && 2n >= 0, @p == 1) */
+/*lint -sem(        set_list_get_elem, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
 extern const Elem*  set_list_get_elem(const Set* set, int idx);
 
 /* setrange.c
@@ -262,7 +262,7 @@ extern void         set_prod_init(SetVTab* vtab);
  */
 /*lint -sem(        set_multi_init, 1p == SET_TYPES) */
 extern void         set_multi_init(SetVTab* vtab);
-/*lint -sem(        set_multi_new_from_list, 1p == 1, @p == 1) */
+/*lint -sem(        set_multi_new_from_list, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_multi_new_from_list(const List* list, SetCheckType check);
 
 #ifdef __cplusplus

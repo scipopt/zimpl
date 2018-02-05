@@ -30,7 +30,7 @@
 
 /* #define TRACE  1 */
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -329,7 +329,7 @@ CodeNode* i_soset(CodeNode* self)
    return self;
 }
 
-static Bool has_pattern_name(
+static bool has_pattern_name(
    const Tuple* pattern)
 {
    int dim = tuple_get_dim(pattern);
@@ -928,7 +928,7 @@ CodeNode* i_expr_min(CodeNode* self)
    SetIter*      iter;
    const Numb*   value;
    Numb*         min   = numb_new();
-   Bool          first = TRUE;
+   bool          first = true;
    
    Trace("i_expr_min");
    
@@ -953,7 +953,7 @@ CodeNode* i_expr_min(CodeNode* self)
          if (first || numb_cmp(value, min) < 0)
          {
             numb_set(min, value);
-            first = FALSE;
+            first = false;
          }
       }
       local_drop_frame();
@@ -983,7 +983,7 @@ CodeNode* i_expr_sglmin(CodeNode* self)
    CodeNode*     lexpr;
    SetIter*      iter;
    Numb*         min   = numb_new();
-   Bool          first = TRUE;
+   bool          first = true;
    
    Trace("i_expr_sglmin");
    
@@ -1025,7 +1025,7 @@ CodeNode* i_expr_sglmin(CodeNode* self)
             if (first || numb_cmp(value, min) < 0)
             {
                numb_set(min, value);
-               first = FALSE;
+               first = false;
             }
          }
          local_drop_frame();
@@ -1058,7 +1058,7 @@ CodeNode* i_expr_max(CodeNode* self)
    SetIter*      iter;
    const Numb*   value;
    Numb*         max   = numb_new();
-   Bool          first = TRUE;
+   bool          first = true;
 
    Trace("i_expr_max");
    
@@ -1083,7 +1083,7 @@ CodeNode* i_expr_max(CodeNode* self)
          if (first || numb_cmp(value, max) > 0)
          {
             numb_set(max, value);
-            first = FALSE;
+            first = false;
          }
       }
       local_drop_frame();
@@ -1113,7 +1113,7 @@ CodeNode* i_expr_sglmax(CodeNode* self)
    CodeNode*     lexpr;
    SetIter*      iter;
    Numb*         max   = numb_new();
-   Bool          first = TRUE;
+   bool          first = true;
 
    Trace("i_expr_max");
    
@@ -1154,7 +1154,7 @@ CodeNode* i_expr_sglmax(CodeNode* self)
             if (first || numb_cmp(value, max) > 0)
             {
                numb_set(max, value);
-               first = FALSE;
+               first = false;
             }
          }
          local_drop_frame();
@@ -1262,7 +1262,7 @@ CodeNode* i_expr_min2(CodeNode* self)
    Numb*         min;
    ListElem*     le    = NULL;
    int           n;
-   Bool          first = TRUE;
+   bool          first = true;
    
    Trace("i_expr_min2");
    
@@ -1284,7 +1284,7 @@ CodeNode* i_expr_min2(CodeNode* self)
       if (ELEM_NUMB != elem_get_type(elem))
       {
          fprintf(stderr, "*** Error 116: Illegal value type in min: ");
-         elem_print(stderr, elem, TRUE);
+         elem_print(stderr, elem, true);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
@@ -1294,7 +1294,7 @@ CodeNode* i_expr_min2(CodeNode* self)
       if (first || numb_cmp(min, numb) > 0)
       {
          numb_set(min, numb);
-         first = FALSE;
+         first = false;
       }
    }
    code_value_numb(self, min);
@@ -1308,7 +1308,7 @@ CodeNode* i_expr_max2(CodeNode* self)
    Numb*         max;
    ListElem*     le    = NULL;
    int           n;
-   Bool          first = TRUE;
+   bool          first = true;
    
    Trace("i_expr_max2");
    
@@ -1330,7 +1330,7 @@ CodeNode* i_expr_max2(CodeNode* self)
       if (ELEM_NUMB != elem_get_type(elem))
       {
          fprintf(stderr, "*** Error 117: Illegal value type in max: ");
-         elem_print(stderr, elem, TRUE);
+         elem_print(stderr, elem, true);
          fprintf(stderr, " only numbers are possible\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
@@ -1340,7 +1340,7 @@ CodeNode* i_expr_max2(CodeNode* self)
       if (first || numb_cmp(max, numb) < 0)
       {
          numb_set(max, numb);
-         first = FALSE;
+         first = false;
       }
    }
    code_value_numb(self, max);
@@ -1471,7 +1471,7 @@ CodeNode* i_bool_true(CodeNode* self)
 
    assert(code_is_valid(self));
    
-   code_value_bool(self, TRUE);
+   code_value_bool(self, true);
 
    return self;
 }
@@ -1482,7 +1482,7 @@ CodeNode* i_bool_false(CodeNode* self)
 
    assert(code_is_valid(self));
    
-   code_value_bool(self, FALSE);
+   code_value_bool(self, false);
 
    return self;
 }
@@ -1524,8 +1524,8 @@ CodeNode* i_bool_or(CodeNode* self)
 
 CodeNode* i_bool_xor(CodeNode* self)
 {
-   Bool a;
-   Bool b;
+   bool a;
+   bool b;
    
    Trace("i_bool_or");
 
@@ -1545,7 +1545,7 @@ CodeNode* i_bool_eq(CodeNode* self)
    CodeNode* op2;
    CodeType  tp1;
    CodeType  tp2;
-   Bool      result;
+   bool      result;
    
    Trace("i_bool_eq");
 
@@ -1602,7 +1602,7 @@ CodeNode* i_bool_ge(CodeNode* self)
    CodeNode* op2;
    CodeType  tp1;
    CodeType  tp2;
-   Bool      result;
+   bool      result;
    
    Trace("i_bool_ge");
 
@@ -1648,7 +1648,7 @@ CodeNode* i_bool_gt(CodeNode* self)
    CodeNode* op2;
    CodeType  tp1;
    CodeType  tp2;
-   Bool      result;
+   bool      result;
    
    Trace("i_bool_gt");
 
@@ -1857,7 +1857,7 @@ CodeNode* i_bool_exists(CodeNode* self)
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   Bool          exists = FALSE;
+   bool          exists = false;
 
    Trace("i_bool_exists");
    
@@ -2410,7 +2410,7 @@ static int argmax_entry_cmp_ascending(HeapData a, HeapData b)
    return numb_cmp(entry_get_numb(a.entry), entry_get_numb(b.entry));
 }
 
-static CodeNode* do_set_argminmax(CodeNode* self, Bool is_min)
+static CodeNode* do_set_argminmax(CodeNode* self, bool is_min)
 {
    const IdxSet* idxset;
    const Set*    set;
@@ -2500,14 +2500,14 @@ CodeNode* i_set_argmin(CodeNode* self)
 {
    Trace("i_set_argmin");
    
-   return do_set_argminmax(self, TRUE);
+   return do_set_argminmax(self, true);
 }
 
 CodeNode* i_set_argmax(CodeNode* self)
 {
    Trace("i_set_argmax");
    
-   return do_set_argminmax(self, FALSE);
+   return do_set_argminmax(self, false);
 }
 
 CodeNode* i_set_proj(CodeNode* self)
@@ -2616,7 +2616,7 @@ CodeNode* i_set_expr(CodeNode* self)
    CodeNode*     cexpr_or_tuple;
    Elem*         elem          = NULL;
    List*         list          = NULL;
-   Bool          is_tuple_list = FALSE;
+   bool          is_tuple_list = false;
    
    Trace("i_set_expr");
 
@@ -2643,7 +2643,7 @@ CodeNode* i_set_expr(CodeNode* self)
          case CODE_TUPLE :
             assert(list == NULL || is_tuple_list);
 
-            is_tuple_list = TRUE;
+            is_tuple_list = true;
             break;
          case CODE_NUMB :
             assert(!is_tuple_list);
@@ -3630,7 +3630,7 @@ CodeNode* i_idxset_new(CodeNode* self)
    CodeNode*    lexpr;
    const Set*   set;
    int          dim;
-   Bool         is_unrestricted;
+   bool         is_unrestricted;
          
    Trace("i_idxset_new");
 
@@ -3705,7 +3705,7 @@ CodeNode* i_idxset_new(CodeNode* self)
                
             if (elem_type != ELEM_NAME)
             {
-               is_unrestricted = FALSE;
+               is_unrestricted = false;
                
                if (elem_type != elem_get_type(tuple_get_elem(t1, i)))
                {
@@ -3742,7 +3742,7 @@ CodeNode* i_idxset_pseudo_new(CodeNode* self)
    tuple = tuple_new(0);
    set   = set_pseudo_new();
    
-   code_value_idxset(self, idxset_new(tuple, set, code_get_child(self, 0), TRUE));
+   code_value_idxset(self, idxset_new(tuple, set, code_get_child(self, 0), true));
 
    set_free(set);
    tuple_free(tuple);
@@ -4398,7 +4398,7 @@ CodeNode* i_matrix_list_add(CodeNode* self)
    return self;
 }
 
-static void objective(CodeNode* self, Bool minimize)
+static void objective(CodeNode* self, bool minimize)
 {
    const char* name;
    const Term* term;
@@ -4421,8 +4421,11 @@ static void objective(CodeNode* self, Bool minimize)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);      
    }
-   xlp_objname(prog_get_lp(), name);
-   xlp_setdir(prog_get_lp(), minimize);
+   if (xlp_setobj(prog_get_lp(), name, minimize))
+   {
+      fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
+      code_errmsg(self);
+   }
    term_to_objective(term);
 
    conname_free();
@@ -4436,7 +4439,7 @@ CodeNode* i_object_min(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   objective(self, TRUE);
+   objective(self, true);
 
    return self;
 }
@@ -4447,7 +4450,7 @@ CodeNode* i_object_max(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   objective(self, FALSE);
+   objective(self, false);
 
    return self;
 }
@@ -4473,7 +4476,7 @@ CodeNode* i_print(CodeNode* self)
          assert(list_is_elemlist(list));
          
          while(NULL != (elem = list_get_elem(list, &le)))
-            elem_print(stdout, elem, FALSE);
+            elem_print(stdout, elem, false);
       }
       break;      
    case CODE_TUPLE :

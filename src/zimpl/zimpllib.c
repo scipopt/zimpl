@@ -35,7 +35,7 @@
 #include <setjmp.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "stkchk.h"
 #include "blkmem.h"
@@ -67,9 +67,9 @@ extern int yy_flex_debug;
 int verbose = VERB_QUIET;
 
 static jmp_buf zpl_read_env;
-static Bool    is_longjmp_ok = FALSE;
+static bool    is_longjmp_ok = false;
 
-void zpl_print_banner(FILE* fp, Bool with_license)
+void zpl_print_banner(FILE* fp, bool with_license)
 {
    const char* const banner = 
       "****************************************************\n" \
@@ -106,14 +106,14 @@ void zpl_exit(int retval)
 #endif
 }
 
-static Bool is_valid_identifier(const char* s)
+static bool is_valid_identifier(const char* s)
 {
    assert(s != NULL);
 
    /* Identifiers start with a letter or a '_'
     */
    if (!isalpha(*s) || *s == '_')
-      return FALSE;
+      return false;
 
    /* Then letters, digits or '_' can follow.
     */
@@ -207,18 +207,18 @@ void zpl_add_parameter(const char* def)
    free(name); 
 }
 
-Bool zpl_read(const char* filename, Bool with_management, void* user_data)
+bool zpl_read(const char* filename, bool with_management, void* user_data)
 {
    Prog*       prog = NULL;
    void*       lp  = NULL;
-   Bool        ret = FALSE;
+   bool        ret = false;
 
    stkchk_init();
    
    yydebug       = 0;
    yy_flex_debug = 0;
 
-   zpl_print_banner(stdout, FALSE);
+   zpl_print_banner(stdout, false);
 
    blk_init();
    str_init();
@@ -234,7 +234,7 @@ Bool zpl_read(const char* filename, Bool with_management, void* user_data)
    {
       Set* set;
 
-      is_longjmp_ok = TRUE;
+      is_longjmp_ok = true;
       
       set = set_pseudo_new();
       (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
@@ -251,14 +251,14 @@ Bool zpl_read(const char* filename, Bool with_management, void* user_data)
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
    
-         lp = xlp_alloc(filename, FALSE, user_data);
+         lp = xlp_alloc(filename, false, user_data);
 
          prog_execute(prog, lp);
 
-         ret = TRUE;
+         ret = true;
       }
    }
-   is_longjmp_ok = FALSE;
+   is_longjmp_ok = false;
 
    if (lp != NULL)
       xlp_free(lp);
@@ -280,7 +280,7 @@ Bool zpl_read(const char* filename, Bool with_management, void* user_data)
    return ret;
 }
 
-Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_data)
+bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_data)
 {
    const char* options = "D:mP:s:v:";
 
@@ -291,9 +291,9 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
    int           i;
    Prog*         prog = NULL;
    void*         lp  = NULL;
-   Bool          ret = FALSE;
+   bool          ret = false;
    char*         inppipe = NULL;
-   Bool          use_startval = FALSE;
+   bool          use_startval = false;
    
    stkchk_init();
 
@@ -301,7 +301,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
    yy_flex_debug = 0;
    param_table   = malloc(sizeof(*param_table));
 
-   zpl_print_banner(stdout, FALSE);
+   zpl_print_banner(stdout, false);
 
    /* getopt might be called more than once
     */
@@ -322,7 +322,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
          param_count++;
          break;
       case 'm' :
-         use_startval = TRUE;
+         use_startval = true;
          break;
       case 'P' :
          inppipe = strdup(optarg);
@@ -335,7 +335,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
          break;
       case '?':
          fprintf(stderr, "Unknown option '%c'\n", c);
-         return FALSE;
+         return false;
       default :
          abort();
       }
@@ -345,7 +345,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
       fprintf(stderr, "Filename missing\n");
       free(param_table);
 
-      return FALSE;
+      return false;
    }
 
    blk_init();
@@ -362,7 +362,7 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
    {
       Set* set;
 
-      is_longjmp_ok = TRUE;
+      is_longjmp_ok = true;
       
       /* Make symbol to hold entries of internal variables
        */
@@ -391,10 +391,10 @@ Bool zpl_read_with_args(char** argv, int argc, Bool with_management, void* user_
 
          prog_execute(prog, lp);
 
-         ret = TRUE;
+         ret = true;
       }
    }
-   is_longjmp_ok = FALSE;
+   is_longjmp_ok = false;
 
    if (lp != NULL)
       xlp_free(lp);

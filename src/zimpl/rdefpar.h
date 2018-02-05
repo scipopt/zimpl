@@ -33,13 +33,13 @@ extern "C" {
 typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
 
-/*lint -sem(       rdef_new, nulterm(1), nulterm(2), 1p && 2p, @p == 1) */
+/*lint -sem(       rdef_new, nulterm(1), nulterm(2), 1p && 2p, @P > malloc(1P)) */
 extern RDef*       rdef_new(const char* filename, const char* pattern);
 /*lint -sem(       rdef_free, custodial(1), 1p == 1) */
 extern void        rdef_free(RDef* rdef);
 /*lint -sem(       rdef_is_valid, 1p == 1) */
-extern Bool        rdef_is_valid(const RDef* rdef);
-/*lint -sem(       rdef_copy, 1p == 1, @p == 1) */
+extern bool        rdef_is_valid(const RDef* rdef);
+/*lint -sem(       rdef_copy, 1p == 1, @P > malloc(1P)) */
 extern RDef*       rdef_copy(const RDef* rdef);
 /*lint -sem(       rdef_set_param, 1p == 1 && 2p == 1) */
 extern void        rdef_set_param(RDef* rdef, const RPar* rpar);
@@ -56,19 +56,19 @@ extern int         rdef_get_use(const RDef* rdef);
 /*lint -sem(       rdef_get_skip, 1p == 1) */
 extern int         rdef_get_skip(const RDef* rdef);
 
-/*lint -sem(       rpar_new_skip, @p == 1) */
+/*lint -sem(       rpar_new_skip, @P > malloc(1P)) */
 extern RPar*       rpar_new_skip(int skip);
-/*lint -sem(       rpar_new_use, @p == 1) */
+/*lint -sem(       rpar_new_use, @P > malloc(1P)) */
 extern RPar*       rpar_new_use(int use);
-/*lint -sem(       rpar_new_comment, 1p && nulterm(1), @p == 1) */
+/*lint -sem(       rpar_new_comment, 1p && nulterm(1), @P > malloc(1P)) */
 extern RPar*       rpar_new_comment(const char* comment);
-/*lint -sem(       rpar_new_match, 1p && nulterm(1), @p == 1) */
+/*lint -sem(       rpar_new_match, 1p && nulterm(1), @P > malloc(1P)) */
 extern RPar*       rpar_new_match(const char* match);
 /*lint -sem(       rpar_free, custodial(1), 1p == 1) */
 extern void        rpar_free(RPar* rpar);
 /*lint -sem(       rpar_is_valid, 1p == 1) */
-extern Bool        rpar_is_valid(const RPar* rpar);
-/*lint -sem(       rpar_copy, 1p == 1, @p == 1) */
+extern bool        rpar_is_valid(const RPar* rpar);
+/*lint -sem(       rpar_copy, 1p == 1, @P > malloc(1P)) */
 extern RPar*       rpar_copy(const RPar* rpar);
 
 #ifdef __cplusplus

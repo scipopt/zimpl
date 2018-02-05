@@ -42,8 +42,8 @@
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
+#include <stdbool.h>
 
-#include "bool.h"
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"

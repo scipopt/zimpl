@@ -32,7 +32,7 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -106,12 +106,12 @@ void prog_free(Prog* prog)
    free(prog);
 }
 
-Bool prog_is_valid(const Prog* prog)
+bool prog_is_valid(const Prog* prog)
 {
    return ((prog != NULL) && SID_ok(prog, PROG_SID));
 }
 
-Bool prog_is_empty(const Prog* prog)
+bool prog_is_empty(const Prog* prog)
 {
    return prog->used == 0;
 }

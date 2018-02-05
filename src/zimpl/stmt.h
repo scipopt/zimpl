@@ -26,10 +26,6 @@
 #ifndef _STMT_H_
 #define _STMT_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before stmt.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,14 +41,14 @@ typedef struct statement         Stmt;
 
 /* stmt.c
  */
-/*lint -sem(        stmt_new, nulterm(2), nulterm(4), 2p && 3n >= 0 && 4p, @p == 1) */
+/*lint -sem(        stmt_new, nulterm(2), nulterm(4), 2p && 3n >= 0 && 4p, @P > malloc(1P)) */
 extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
    const char* text);
 /*lint -sem(        stmt_free, custodial(1), 1p == 1) */
 extern void         stmt_free(Stmt* stmt);
 /*lint -sem(        stmt_is_valid, 1p == 1) */
-extern Bool         stmt_is_valid(const Stmt* stmt);
-/*lint -sem(        stmt_get_filename, 1p == 1, @p && nulterm(@)) */
+extern bool         stmt_is_valid(const Stmt* stmt);
+/*lint -sem(        stmt_get_filename, 1p == 1, @P > malloc(1P) && nulterm(@)) */
 extern const char*  stmt_get_filename(const Stmt* stmt);
 /*lint -sem(        stmt_get_lineno, 1p == 1, @n > 0) */
 extern int          stmt_get_lineno(const Stmt* stmt);
@@ -65,7 +61,7 @@ extern void         stmt_execute(const Stmt* stmt);
 /*lint -sem(        stmt_print, 1p == 1 && 2p == 1) */
 extern void         stmt_print(FILE* fp, const Stmt* stmt);
 /*lint -sem(        stmt_trigger_warning, 1n >= 0) */
-extern Bool         stmt_trigger_warning(int no);
+extern bool         stmt_trigger_warning(int no);
 
 /* mmlparse.y
  */

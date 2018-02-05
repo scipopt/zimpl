@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -73,7 +73,7 @@ void conname_free()
  * is unimportant, because all constraints will get a unique
  * number anyway.
  */
-Bool conname_set(const char* prefix)
+bool conname_set(const char* prefix)
 {
    assert(prefix != NULL);
    assert(cname  == NULL);
@@ -85,7 +85,7 @@ Bool conname_set(const char* prefix)
    assert(cname != NULL);
 
    if (cform != CON_FORM_NAME)
-      return TRUE;
+      return true;
 
    assert(cform == CON_FORM_NAME);
    
@@ -95,7 +95,7 @@ Bool conname_set(const char* prefix)
    strcat(cname, "_1");
 
    if (xlp_conname_exists(prog_get_lp(), cname))
-      return FALSE;
+      return false;
 
    strcat(cname, "_a_0");
 

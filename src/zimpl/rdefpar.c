@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "mme.h"
 #include "strstore.h"
@@ -105,7 +105,7 @@ void rdef_free(RDef* rdef)
    }
 }
 
-Bool rdef_is_valid(const RDef* rdef)
+bool rdef_is_valid(const RDef* rdef)
 {
    return ((rdef != NULL)
       && SID_ok(rdef, RDEF_SID)
@@ -271,7 +271,7 @@ void rpar_free(RPar* rpar)
    free(rpar);
 }
 
-Bool rpar_is_valid(const RPar* rpar)
+bool rpar_is_valid(const RPar* rpar)
 {
    return ((rpar != NULL) && SID_ok(rpar, RPAR_SID)
       && (rpar->type != RPAR_ERR));

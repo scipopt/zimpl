@@ -30,9 +30,6 @@
 #ifndef __GMP_H__
 #error "Need to include gmp.h before ratlpstore.h"
 #endif
-#ifndef _BOOL_H_
-#error "Need to include bool.h before ratlpstore.h"
-#endif
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before ratlpstore.h"
 #endif
@@ -63,7 +60,7 @@ struct variable
    int          number;
    VarClass     vclass;
    VarType      type;
-   Bool         is_used;
+   bool         is_used;
    int          size;
    mpq_t        cost;
    mpq_t        lower;
@@ -90,7 +87,7 @@ struct constraint
    mpq_t        rhs;
    mpq_t        scale;
    Var*         ind_var;
-   Bool         ind_dir;
+   bool         ind_dir;
    Con*         prev;
    Con*         next;
    Nzo*         first;

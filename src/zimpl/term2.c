@@ -31,7 +31,7 @@
 
 /* #define TRACE 1 */
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -144,7 +144,7 @@ void term_free(Term* term)
    free(term);
 }
 
-Bool term_is_valid(const Term* term)
+bool term_is_valid(const Term* term)
 {
    int i;
 
@@ -155,7 +155,7 @@ Bool term_is_valid(const Term* term)
       if (numb_equal(mono_get_coeff(term->elem[i]), numb_zero()))
          abort();      
 
-   return TRUE;
+   return true;
 }
 
 Term* term_copy(const Term* term)
@@ -418,7 +418,7 @@ Term* term_simplify(const Term* term_org)
          if (!done[k] && mono_equal(term->elem[term->used], term_org->elem[k]))
          {
             mono_add_coeff(term->elem[term->used], mono_get_coeff(term_org->elem[k]));
-            done[k] = TRUE;
+            done[k] = true;
          }
       }
       if (!numb_equal(mono_get_coeff(term->elem[term->used]), numb_zero()))
@@ -655,18 +655,18 @@ int term_get_degree(const Term* term)
    return degree;
 }
      
-Bool term_is_linear(const Term* term)
+bool term_is_linear(const Term* term)
 {
    int i;
    
    for(i = 0; i < term->used; i++)
       if (!mono_is_linear(term->elem[i]))
-         return FALSE;
+         return false;
 
-   return TRUE;
+   return true;
 }
 
-Bool term_is_polynomial(const Term* term)
+bool term_is_polynomial(const Term* term)
 {
    int i;
    
@@ -674,13 +674,13 @@ Bool term_is_polynomial(const Term* term)
       if ((mono_get_function(term->elem[i]) != MFUN_NONE)
        && (mono_get_function(term->elem[i]) != MFUN_TRUE)   
        && (mono_get_function(term->elem[i]) != MFUN_FALSE))
-         return FALSE;
+         return false;
 
-   return TRUE;
+   return true;
 }
 
 
-Term* term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is_true)
+Term* term_make_conditional(const Term* ind_term, const Term* cond_term, bool is_true)
 {
    Term* term;
 
@@ -700,7 +700,7 @@ Term* term_make_conditional(const Term* ind_term, const Term* cond_term, Bool is
    return term;
 }
 
-Bool term_is_all_integer(const Term* term)
+bool term_is_all_integer(const Term* term)
 {
    int i;
    
@@ -709,13 +709,13 @@ Bool term_is_all_integer(const Term* term)
       VarClass vc = xlp_getclass(prog_get_lp(), mono_get_var(term->elem[i], 0));
 
       if (vc != VAR_INT && vc != VAR_IMP)
-         return FALSE;
+         return false;
    }
-   return TRUE;
+   return true;
 }
 
 #ifndef NDEBUG
-void term_print(FILE* fp, const Term* term, Bool print_symbol_index)
+void term_print(FILE* fp, const Term* term, bool print_symbol_index)
 {
    int i;
    

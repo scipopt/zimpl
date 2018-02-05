@@ -421,8 +421,12 @@
    Only objective functions with linear constraints are allowed.
 % vinst.c
 \item[222 Term inside a then or else constraint not linear]\ \\
-   The term inside a \code{then} or \code{else} is not linear.
-%
+  The term inside a \code{then} or \code{else} is not linear.
+% inst.c
+\item[223 Objective function \code{xxx} overwrites existing one
+  (warning)]\ \\
+  Another objective function declaration has been encountered,
+  superceeding the previous one. 
 % xlpglue.c
 \item[301 variable priority has to be integral] (warning)\ \\
    If branching priorities for variables are given, these have to be integral.

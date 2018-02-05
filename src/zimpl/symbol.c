@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -131,15 +131,15 @@ void symbol_exit(void)
    anchor = NULL;
 }
 
-Bool symbol_is_valid(const Symbol* sym)
+bool symbol_is_valid(const Symbol* sym)
 {
    if (sym == NULL || !SID_ok(sym, SYMBOL_SID))
-      return FALSE;
+      return false;
 
    mem_check(sym);
    mem_check(sym->entry);
       
-   return TRUE;
+   return true;
 }
 
 Symbol* symbol_lookup(const char* name)
@@ -155,7 +155,7 @@ Symbol* symbol_lookup(const char* name)
    return sym;
 }
 
-Bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
+bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));

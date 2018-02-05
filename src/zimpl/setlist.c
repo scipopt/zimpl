@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "lint.h"
 #include "mshell.h"
 #include "ratlptypes.h"
@@ -57,7 +57,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_list_is_valid(const Set* set)
+static bool set_list_is_valid(const Set* set)
 {
    int i;
 
@@ -68,16 +68,16 @@ static Bool set_list_is_valid(const Set* set)
       || set->head.members <  0
       || set->list.size    <  set->head.members
       || set->list.member  == NULL)
-      return FALSE;
+      return false;
    
    for(i = 0; i < set->head.members; i++)
       if (!elem_is_valid(set->list.member[i]))
-         return FALSE;
+         return false;
 
-   return TRUE;
+   return true;
 }
 
-static Bool set_list_iter_is_valid(const SetIter*iter)
+static bool set_list_iter_is_valid(const SetIter*iter)
 {
    return iter != NULL
       && SID_ok2(iter->list, SET_LIST_ITER_SID)
@@ -159,7 +159,7 @@ int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
          if (stmt_trigger_warning(164))
          {
             fprintf(stderr, "--- Warning 164: Duplicate element ");
-            elem_print(stderr, elem, TRUE);
+            elem_print(stderr, elem, true);
             fprintf(stderr, " for set rejected\n");
          }
       }
@@ -399,9 +399,9 @@ static SetIter* set_list_iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
-static Bool set_list_iter_next(
+static bool set_list_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -414,13 +414,13 @@ static Bool set_list_iter_next(
    assert(offset <  tuple_get_dim(tuple));
    
    if (iter->list.now > iter->list.last)
-      return FALSE;
+      return false;
 
    tuple_set_elem(tuple, offset, elem_copy(set->list.member[iter->list.now]));
 
    iter->list.now++;
 
-   return TRUE;
+   return true;
 }
 
 /* ------------------------------------------------------------------------- 

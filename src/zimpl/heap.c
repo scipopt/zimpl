@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -79,7 +79,7 @@ static void heap_print(FILE* fp, const Heap* heap)
    }
 }
 
-Bool heap_is_valid(const Heap* heap)
+bool heap_is_valid(const Heap* heap)
 {
    HeapData* data;
    int       i;
@@ -91,7 +91,7 @@ Bool heap_is_valid(const Heap* heap)
       || heap->size     <= 0
       || heap->used     <  0
       || heap->used     >  heap->size)
-      return FALSE;
+      return false;
 
    data = heap->data;
    
@@ -102,15 +102,15 @@ Bool heap_is_valid(const Heap* heap)
       if ((*heap->data_cmp)(data[i], data[i + i]) > 0)
       {
          heap_print(stderr, heap);
-         return FALSE;
+         return false;
       }
       if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0)
       {
          heap_print(stderr, heap);
-         return FALSE;
+         return false;
       }
    }
-   return TRUE;
+   return true;
 }
 
 static Heap* heap_new(
@@ -288,14 +288,14 @@ const Entry* heap_top_entry(
    return heap->data[0].entry;
 }
 
-Bool heap_is_full(const Heap* heap)
+bool heap_is_full(const Heap* heap)
 {
    assert(heap_is_valid(heap));
 
    return heap->used == heap->size;
 }
 
-Bool heap_is_empty(const Heap* heap)
+bool heap_is_empty(const Heap* heap)
 {
    assert(heap_is_valid(heap));
 

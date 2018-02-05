@@ -31,7 +31,7 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -62,7 +62,7 @@ static int        cmp_dim = 0;
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_multi_is_valid(const Set* set)
+static bool set_multi_is_valid(const Set* set)
 {
    return set != NULL
       && SID_ok2(set->multi, SET_MULTI_SID)
@@ -72,7 +72,7 @@ static Bool set_multi_is_valid(const Set* set)
       && set->multi.set    != NULL;
 }
 
-static Bool set_multi_iter_is_valid(const SetIter* iter)
+static bool set_multi_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
       && SID_ok2(iter->multi, SET_MULTI_ITER_SID)
@@ -134,7 +134,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    int          i;
    int          k;
    int          dim;
-   Bool         is_entrylist;
+   bool         is_entrylist;
    Hash*        hash = NULL;
    
    assert(list_is_valid(list));
@@ -608,9 +608,9 @@ static SetIter* set_multi_iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
-static Bool set_multi_iter_next(
+static bool set_multi_iter_next(
    SetIter*   iter,
    const Set* set,
    Tuple*     tuple,
@@ -625,7 +625,7 @@ static Bool set_multi_iter_next(
    assert(offset + set->head.dim <= tuple_get_dim(tuple));
 
    if (iter->multi.now >= iter->multi.members)
-      return FALSE;
+      return false;
 
    for(i = 0; i < iter->multi.dim; i++)
    {
@@ -635,7 +635,7 @@ static Bool set_multi_iter_next(
    }
    iter->multi.now++;
    
-   return TRUE;
+   return true;
 }
 
 /* ------------------------------------------------------------------------- 

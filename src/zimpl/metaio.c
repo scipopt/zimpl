@@ -38,7 +38,7 @@
 
 #include "lint.h"
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "mme.h"
 #include "metaio.h"
@@ -67,7 +67,7 @@ struct strg_file
    const char* content;
    int         length;
    int         offset;
-   Bool        use_copy;
+   bool        use_copy;
    StrgFile*   next;
 };
 
@@ -87,7 +87,7 @@ struct meta_file_ptr
 
 static StrgFile* strg_file_root = NULL;
 
-static Bool strgfile_is_valid(const StrgFile* sf)
+static bool strgfile_is_valid(const StrgFile* sf)
 {
    return (sf != NULL)
       && SID_ok(sf, STRGFILE_SID)
@@ -98,7 +98,7 @@ static Bool strgfile_is_valid(const StrgFile* sf)
       && (sf->offset <= sf->length);
 }
 
-void mio_add_strg_file(const char* name, const char* content, Bool use_copy)
+void mio_add_strg_file(const char* name, const char* content, bool use_copy)
 {
    StrgFile* sf = calloc(1, sizeof(*sf));
    
@@ -168,7 +168,7 @@ static char* strgfile_gets(StrgFile* sf, char* buf, int size)
    
 }
 
-static Bool mfp_is_valid(const MFP* mfp)
+static bool mfp_is_valid(const MFP* mfp)
 {
    return mfp != NULL && SID_ok(mfp, MFP_SID) && mfp->type != MFP_ERR;
 }
@@ -444,8 +444,8 @@ void mio_init()
       "Koblenz    5033  759\n"
       "Dortmund   5148  741\n";
 
-   mio_add_strg_file("@selftest_tspste.zpl", progstrg, FALSE);
-   mio_add_strg_file("@selftest_cities.dat", datastrg, FALSE);
+   mio_add_strg_file("@selftest_tspste.zpl", progstrg, false);
+   mio_add_strg_file("@selftest_cities.dat", datastrg, false);
 }
 
 void mio_exit()

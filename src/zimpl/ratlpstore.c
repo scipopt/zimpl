@@ -32,7 +32,7 @@
 #include <gmp.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "gmpmisc.h"
 #include "ratlptypes.h"
@@ -92,7 +92,7 @@ struct lps_hash
 
 static void hash_statist(FILE* fp, const LpsHash* hash); //lint !e528 not referenced
 
-static Bool hash_valid(const LpsHash* hash)
+static bool hash_valid(const LpsHash* hash)
 {
    return hash != NULL
       && (hash->type == LHT_CON || hash->type == LHT_VAR || hash->type == LHT_SOS);
@@ -376,7 +376,7 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 }
 
 #ifndef NDEBUG
-static Bool lps_valid(const Lps* lp)
+static bool lps_valid(const Lps* lp)
 {
    const char* err1  = "Wrong Previous Variable";
    const char* err2  = "Wrong Variable Previous Nonzero";
@@ -424,14 +424,14 @@ static Bool lps_valid(const Lps* lp)
       if (var->sid != VAR_SID)
       {
          fprintf(stderr, "%s\n", err12);
-         return FALSE;
+         return false;
       }
       if (var_prev == var->prev)
          var_prev = var;
       else
       {
          fprintf(stderr, "%s\n", err1);
-         return FALSE;
+         return false;
       }
       var_count--;
       nzo_count = var->size;
@@ -443,25 +443,25 @@ static Bool lps_valid(const Lps* lp)
          else
          {
             fprintf(stderr, "%s\n", err2);
-            return FALSE;
+            return false;
          }
          if (nzo->var != var)
          {
             fprintf(stderr, "%s\n", err9);
-            return FALSE;
+            return false;
          }         
          nzo_count--;
       }
       if (nzo_count)
       {
          fprintf(stderr, "%s\n", err3);
-         return FALSE;
+         return false;
       }
    }
    if (var_count)
    {
       fprintf(stderr, "%s\n", err4);
-      return FALSE;
+      return false;
    }
 
    /* Constraint Test
@@ -473,14 +473,14 @@ static Bool lps_valid(const Lps* lp)
       if (con->sid != CON_SID)
       {
          fprintf(stderr, "%s\n", err13);
-         return FALSE;
+         return false;
       }
       if (con_prev == con->prev)
          con_prev = con;
       else
       {
          fprintf(stderr, "%s\n", err5);
-         return FALSE;
+         return false;
       }
       switch(con->type)
       {
@@ -493,7 +493,7 @@ static Bool lps_valid(const Lps* lp)
          {
             fprintf(stderr, "%s %s %g %g\n",
                err14, con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
-            return FALSE;
+            return false;
          }
          break;
       case CON_EQUAL :
@@ -501,7 +501,7 @@ static Bool lps_valid(const Lps* lp)
          {
             fprintf(stderr, "%s %s %g %g\n",
                err14, con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
-            return FALSE;
+            return false;
          }
          break;
       default :
@@ -517,25 +517,25 @@ static Bool lps_valid(const Lps* lp)
          else
          {
             fprintf(stderr, "%s\n", err6);
-            return FALSE;
+            return false;
          }
          if (nzo->con != con)
          {
             fprintf(stderr, "%s\n", err10);
-            return FALSE;
+            return false;
          }         
          nzo_count--;
       }
       if (nzo_count)
       {
          fprintf(stderr, "%s\n", err7);
-         return FALSE;
+         return false;
       }
    }
    if (con_count)
    {
       fprintf(stderr, "%s\n", err8);
-      return FALSE;
+      return false;
    }
    /* SOS Test
     */
@@ -546,7 +546,7 @@ static Bool lps_valid(const Lps* lp)
       if (sos->sid != SOS_SID)
       {
          fprintf(stderr, "%s\n", err15);
-         return FALSE;
+         return false;
       }
       sos_count--;
       sse_count = sos->sses;
@@ -556,20 +556,20 @@ static Bool lps_valid(const Lps* lp)
          if (sse->var->sid != VAR_SID)
          {
             fprintf(stderr, "%s\n", err16);
-            return FALSE;
+            return false;
          }
          sse_count--;
       }
       if (sse_count)
       {
          fprintf(stderr, "%s\n", err18);
-         return FALSE;
+         return false;
       }
    }
    if (sos_count)
    {
       fprintf(stderr, "%s\n", err19);
-      return FALSE;
+      return false;
    }
    
    /* Storage Test
@@ -586,9 +586,9 @@ static Bool lps_valid(const Lps* lp)
    {
       fprintf(stderr, "%s %d %u %d\n",
          err11, sto_count, sto_size, lp->nonzeros);
-      return FALSE;
+      return false;
    }
-   return TRUE;
+   return true;
 }
 #endif /* !NDEBUG */
 
@@ -946,7 +946,7 @@ Var* lps_addvar(
    v->number    = lp->vars;
    v->vclass    = VAR_CON;
    v->type      = VAR_FREE;
-   v->is_used   = FALSE;
+   v->is_used   = false;
    v->priority  = 0;
    v->size      = 0;
    v->first     = NULL;
@@ -1060,7 +1060,7 @@ Con* lps_addcon(
    c->type      = CON_FREE;
    c->flags     = 0;
    c->ind_var   = NULL;
-   c->ind_dir   = TRUE;
+   c->ind_dir   = true;
    c->first     = NULL;
    c->qme_first = NULL;
    c->term      = NULL;
@@ -1212,8 +1212,8 @@ void lps_addqme(
    qme->next      = con->qme_first;
    con->qme_first = qme;
 
-   var1->is_used = TRUE;
-   var2->is_used = TRUE;
+   var1->is_used = true;
+   var2->is_used = true;
 }
 
 /*ARGSUSED*/
@@ -1236,7 +1236,7 @@ void lps_addterm(
       const Mono* mono  = term_get_element(term, i);
 
       for(k = 0; k < mono_get_degree(mono); k++)
-         mono_get_var(mono, k)->is_used = TRUE;
+         mono_get_var(mono, k)->is_used = true;
    }
 }
 
@@ -1265,7 +1265,7 @@ void lps_addsse(
 
    sos->sses++;
 
-   sse->var->is_used = TRUE;
+   sse->var->is_used = true;
 }
 
 void lps_addnzo(
@@ -1406,17 +1406,21 @@ void lps_setprobname(
    lp->probname = strdup(name);
 }
 
-void lps_setobjname(
+bool lps_setobjname(
    Lps*        lp,
    const char* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
+
+   bool is_not_empty = lp->objname != NULL;
    
-   if (lp->objname != NULL)
+   if (is_not_empty)
       free(lp->objname);
    
    lp->objname = strdup(name);
+
+   return is_not_empty;
 }
 
 void lps_setrhsname(
@@ -1468,7 +1472,7 @@ void lps_getcost(
    mpq_set(cost, var->cost);
 }
 
-Bool lps_haslower(const Var* var)
+bool lps_haslower(const Var* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1519,7 +1523,7 @@ void lps_setlower(
    }
 }
 
-Bool lps_hasupper(const Var* var)
+bool lps_hasupper(const Var* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1757,7 +1761,7 @@ void lps_setnamelen(
 void lps_setindicator(
    Con* con, 
    Var* var, 
-   Bool on_true)
+   bool on_true)
 {
    assert(con      != NULL);
    assert(con->sid == CON_SID);
@@ -1834,13 +1838,13 @@ void lps_write(
    }
 }
 
-static Bool lpfstrncpy(char* t, const char* s, int len)
+static bool lpfstrncpy(char* t, const char* s, int len)
 {
    /* '@' was excluded, to make sure the appendix is unique.
     */
    static const char* const allowed = "!#$%&()/,.;?_{}|~"; 
 
-   Bool was_smashed = FALSE;
+   bool was_smashed = false;
    
    while(--len >= 0 && *s != '\0')
    {
@@ -1849,7 +1853,7 @@ static Bool lpfstrncpy(char* t, const char* s, int len)
       else
       {
          *t = '_';
-         was_smashed = TRUE;
+         was_smashed = true;
       }
       s++;
       t++;
@@ -1869,8 +1873,8 @@ static void make_full_name(
    assert(name   != NULL);
 
    const char* s         = name;
-   Bool        first     = TRUE;
-   Bool        in_string = FALSE;
+   bool        first     = true;
+   bool        in_string = false;
    int         i         = 0;
 
    /* We allways start with a space
@@ -1883,7 +1887,7 @@ static void make_full_name(
       {
          if (first)
          {
-            first = FALSE;
+            first = false;
             target[i++] = '[';
          }
          else
@@ -1891,7 +1895,7 @@ static void make_full_name(
             if (in_string)
             {
                target[i++] = '\"';
-               in_string = FALSE;
+               in_string = false;
             }
             target[i++] = ',';
          }
@@ -1899,7 +1903,7 @@ static void make_full_name(
          {
             assert(!in_string);
 
-            in_string = TRUE;
+            in_string = true;
             target[i++] = '\"';
          }
       }
@@ -2030,6 +2034,14 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    free(temp);
 }
 
+void lps_clearobj(const Lps* lp)
+{
+   assert(lps_valid(lp));
+
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+      mpq_set(var->cost, const_zero);   
+}
+
 void lps_scale(const Lps* lp)
 {
    Con*   con;
@@ -2071,16 +2083,16 @@ void lps_scale(const Lps* lp)
    mpq_clear(maxi);
 }
 
-Bool lps_has_sos(const Lps* lp)
+bool lps_has_sos(const Lps* lp)
 {
    assert(lps_valid(lp));
    
    return lp->soss > 0;
 }
 
-Bool lps_con_sumup(const Con* con, mpq_t sum)
+bool lps_con_sumup(const Con* con, mpq_t sum)
 {
-   Bool  usable = TRUE;
+   bool  usable = true;
    Nzo*  nzo;
    mpq_t val;
 
@@ -2091,7 +2103,7 @@ Bool lps_con_sumup(const Con* con, mpq_t sum)
    {
       if (nzo->var->vclass != VAR_INT)
       {
-         usable = FALSE;
+         usable = false;
          break;
       }
       mpq_mul(val, nzo->value, nzo->var->startval);

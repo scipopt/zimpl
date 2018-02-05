@@ -31,7 +31,7 @@
 
 #include <gmp.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 
 #include "gmpmisc.h"
@@ -243,7 +243,7 @@ static void gmp_free(void* ptr, size_t size)
       free(ptr);
 }
 
-void gmp_init(Bool verbose, Bool with_management)
+void gmp_init(bool verbose, bool with_management)
 {
    if (with_management)
       mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);

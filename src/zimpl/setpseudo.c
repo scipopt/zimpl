@@ -29,7 +29,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "bool.h"
+#include <stdbool.h>
 #include "lint.h"
 #include "mshell.h"
 #include "numb.h"
@@ -47,7 +47,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
-static Bool set_pseudo_is_valid(const Set* set)
+static bool set_pseudo_is_valid(const Set* set)
 {
    return set != NULL
       && SID_ok2(set->pseudo, SET_PSEUDO_SID)
@@ -56,7 +56,7 @@ static Bool set_pseudo_is_valid(const Set* set)
       && set->head.members == 1;
 }
 
-static Bool set_pseudo_iter_is_valid(const SetIter* iter)
+static bool set_pseudo_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->pseudo, SET_PSEUDO_ITER_SID);
 }
@@ -174,7 +174,7 @@ static SetIter* iter_init(
 
    assert(iter != NULL);
 
-   iter->pseudo.first = TRUE;
+   iter->pseudo.first = true;
    
    SID_set2(iter->pseudo, SET_PSEUDO_ITER_SID);
 
@@ -187,10 +187,10 @@ static SetIter* iter_init(
  * --- iter_next
  * -------------------------------------------------------------------------
  */
-/* FALSE means, there is no further element
+/* false means, there is no further element
  */
 /*ARGSUSED*/
-static Bool iter_next(
+static bool iter_next(
    SetIter*          iter,
    UNUSED const Set* set,
    UNUSED Tuple*     tuple,
@@ -200,11 +200,11 @@ static Bool iter_next(
    assert(set_pseudo_is_valid(set));
 
    if (!iter->pseudo.first)
-      return FALSE;
+      return false;
 
-   iter->pseudo.first = FALSE;
+   iter->pseudo.first = false;
    
-   return TRUE;
+   return true;
 }
 
 /* ------------------------------------------------------------------------- 
@@ -230,7 +230,7 @@ static void iter_reset(SetIter* iter, UNUSED const Set* set)
 {
    assert(set_pseudo_iter_is_valid(iter));
 
-   iter->pseudo.first = TRUE;
+   iter->pseudo.first = true;
 }
 
 /* ------------------------------------------------------------------------- 

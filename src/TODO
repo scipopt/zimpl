@@ -1,3 +1,6 @@
+
+clean up lint.h  das includ verzeichnis wird auch nicht mehr gebraucht
+
 warnung bei MPS format wenn indicator variablen im problem sind.
 
 PROD sollte auch mit Variablen gehen.

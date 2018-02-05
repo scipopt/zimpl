@@ -29,9 +29,6 @@
 #ifndef __GMP_H__
 #error "Need to include gmp.h before ratlp.h"
 #endif
-#ifndef _BOOL_H_
-#error "Need to include bool.h before ratlp.h"
-#endif
 #ifndef _RATLPTYPES_H_
 #error "Need to include ratlptypes.h before ratlp.h"
 #endif
@@ -90,7 +87,7 @@ extern void         lps_setdir(Lps* lp, LpDirect direct);
 /*lint -sem(        lps_setprobname, nulterm(2), 1p && 2p) */
 extern void         lps_setprobname(Lps* lp, const char* name);
 /*lint -sem(        lps_setobjname, nulterm(2), 1p && 2p) */
-extern void         lps_setobjname(Lps* lp, const char* name);
+extern bool         lps_setobjname(Lps* lp, const char* name);
 /*lint -sem(        lps_setrhsname, nulterm(2), 1p && 2p) */
 extern void         lps_setrhsname(Lps* lp, const char* name);
 /*lint -sem(        lps_setbndname, nulterm(2), 1p && 2p) */
@@ -102,13 +99,13 @@ extern void         lps_getcost(const Var* var, mpq_t cost);
 /*lint -sem(        lps_setcost, 1p == 1) */
 extern void         lps_setcost(Var* var, const mpq_t cost);
 /*lint -sem(        lps_haslower, 1p == 1) */
-extern Bool         lps_haslower(const Var* var);
+extern bool         lps_haslower(const Var* var);
 /*lint -sem(        lps_getlower, 1p == 1) */
 extern void         lps_getlower(const Var* var, mpq_t lower);
 /*lint -sem(        lps_setlower, 1p == 1) */
 extern void         lps_setlower(Var* var, const mpq_t lower);
 /*lint -sem(        lps_hasupper, 1p == 1) */
-extern Bool         lps_hasupper(const Var* var);
+extern bool         lps_hasupper(const Var* var);
 /*lint -sem(        lps_getupper, 1p == 1) */
 extern void         lps_getupper(const Var* var, mpq_t upper);
 /*lint -sem(        lps_setupper, 1p == 1) */
@@ -150,17 +147,19 @@ extern void         lps_setstartval(Var* var, const mpq_t startval);
 /*lint -sem(        lps_setnamelen, 1p == 1) */
 extern void         lps_setnamelen(Lps* lp, int name_len);
 /*lint -sem(        lps_setindictaor, 1p == 1 && 2p == 1) */
-extern void         lps_setindicator(Con* con, Var* var, Bool on_true);
+extern void         lps_setindicator(Con* con, Var* var, bool on_true);
 /*lint -sem(        lps_write, nulterm(4), 1p == 1 && 2p == 1) */
 extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
 /*lint -sem(        lps_transtable, nulterm(4), 1p == 1 && 2p == 1 && 4p) */
 extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head);
+/*lint -sem(        lps_clearobj, 1p == 1) */
+extern void         lps_clearobj(const Lps* lp);
 /*lint -sem(        lps_scale, 1p == 1) */
 extern void         lps_scale(const Lps* lp);
 /*lint -sem(        lps_scale, 1p == 1) */
-extern Bool         lps_has_sos(const Lps* lp);
+extern bool         lps_has_sos(const Lps* lp);
 /*lint -sem(        lps_con_sumup, 1p == 1) */
-extern Bool         lps_con_sumup(const Con* con, mpq_t sum);
+extern bool         lps_con_sumup(const Con* con, mpq_t sum);
 
 /* ratlpfwrite.c
  */

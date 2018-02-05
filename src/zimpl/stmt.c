@@ -30,7 +30,7 @@
 #include <assert.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "stkchk.h"
 #include "ratlptypes.h"
@@ -91,9 +91,9 @@ static void show_suppressed_warnings(void)
    }
 }
 
-Bool stmt_trigger_warning(int no)
+bool stmt_trigger_warning(int no)
 {
-   Bool ret;
+   bool ret;
    
    assert(no >= 0);
    assert(no < MAX_WARNINGS);
@@ -103,10 +103,10 @@ Bool stmt_trigger_warning(int no)
    warning_count[no]++;
 
    if (verbose >= VERB_CHATTER)
-      ret = TRUE;
+      ret = true;
 
    if (verbose <= VERB_QUIET)
-      ret = FALSE;
+      ret = false;
    
    return ret;
 }
@@ -150,7 +150,7 @@ void stmt_free(Stmt* stmt)
    free(stmt);
 }
 
-Bool stmt_is_valid(const Stmt* stmt)
+bool stmt_is_valid(const Stmt* stmt)
 {
    return ((stmt != NULL)
       && SID_ok(stmt, STMT_SID)

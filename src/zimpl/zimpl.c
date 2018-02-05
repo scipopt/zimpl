@@ -34,7 +34,7 @@
 #include <errno.h>
 
 #include "lint.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "mshell.h"
 #include "stkchk.h"
 #include "random.h"
@@ -190,9 +190,9 @@ int main(int argc, char* const* argv)
    char*         outpipe;
    LpFormat      format   = LP_FORM_LPF;
    FILE*         fp;
-   Bool          write_order = FALSE;
-   Bool          write_mst   = FALSE;
-   Bool          presolve    = FALSE;
+   bool          write_order = false;
+   bool          write_mst   = false;
+   bool          presolve    = false;
    int           name_length = 0;
    char*         prog_text;
    unsigned long seed = 13021967UL;
@@ -224,7 +224,7 @@ int main(int argc, char* const* argv)
          param_count++;
          break;
       case 'h' :
-         zpl_print_banner(stdout, TRUE);
+         zpl_print_banner(stdout, true);
          printf(usage, argv[0]);
          puts(help);
          exit(0);
@@ -242,7 +242,7 @@ int main(int argc, char* const* argv)
          name_length = atoi(optarg);
          break;
       case 'm' :
-         write_mst = TRUE;
+         write_mst = true;
          break;
       case 'n' :
          if (*optarg != 'c')
@@ -270,7 +270,7 @@ int main(int argc, char* const* argv)
          basefile = strdup(optarg);
          break;
       case 'O' :
-         presolve = TRUE;
+         presolve = true;
          break;
       case 'P' :
          inppipe = strdup(optarg);
@@ -279,7 +279,7 @@ int main(int argc, char* const* argv)
          seed = (unsigned long)atol(optarg);
          break;
       case 'r' :
-         write_order = TRUE;
+         write_order = true;
          break;
       case 't' :
          switch(tolower(*optarg))
@@ -327,7 +327,7 @@ int main(int argc, char* const* argv)
       exit(0);
    }
 
-   zpl_print_banner(stdout, TRUE);
+   zpl_print_banner(stdout, true);
    
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));
@@ -366,7 +366,7 @@ int main(int argc, char* const* argv)
    blk_init();
    str_init();
    rand_init(seed);
-   numb_init(TRUE);
+   numb_init(true);
    elem_init();
    set_init();
    mio_init();

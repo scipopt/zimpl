@@ -34,7 +34,7 @@
 
 #include "lint.h"
 #include "mshell.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "numb.h"

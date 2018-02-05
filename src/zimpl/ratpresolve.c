@@ -34,7 +34,7 @@
 
 #include "lint.h"
 #include "mshell.h"
-#include "bool.h"
+#include <stdbool.h>
 #include "gmpmisc.h"
 #include "ratlptypes.h"
 #include "numb.h"
@@ -54,7 +54,7 @@ static void remove_fixed_var(
    Nzo*  nzo;
    mpq_t x;
    mpq_t temp;
-   Bool  is_zero;
+   bool  is_zero;
    
    assert(lp  != NULL);
    assert(var != NULL);
@@ -105,8 +105,8 @@ static PSResult simple_rows(
    Bool* again,
    int   verbose_level)
 {
-   Bool  have_up;
-   Bool  have_lo;
+   bool  have_up;
+   bool  have_lo;
    mpq_t up;
    mpq_t lo;
    Nzo*  nzo;
@@ -169,8 +169,8 @@ static PSResult simple_rows(
        */
       if (con->size == 1)
       {
-         have_up = FALSE;
-         have_lo = FALSE;
+         have_up = false;
+         have_lo = false;
          nzo     = con->first;
          var     = nzo->var;
 
@@ -179,12 +179,12 @@ static PSResult simple_rows(
             if (HAS_RHS(con)) 
             {
                mpq_div(up, con->rhs, nzo->value);
-               have_up = TRUE;
+               have_up = true;
             }
             if (HAS_LHS(con))
             {
                mpq_div(lo, con->lhs, nzo->value);
-               have_lo = TRUE;
+               have_lo = true;
             }
          }
          else if (mpq_cmp(nzo->value, const_zero) < 0) /* x < 0 */
@@ -192,12 +192,12 @@ static PSResult simple_rows(
             if (HAS_RHS(con))
             {
                mpq_div(lo, con->rhs, nzo->value);
-               have_lo = TRUE;
+               have_lo = true;
             }
             if (HAS_LHS(con))
             {
                mpq_div(up, con->lhs, nzo->value);
-               have_up = TRUE;
+               have_up = true;
             }
          }
          else if ((HAS_RHS(con) && !mpq_equal(con->rhs, const_zero))
@@ -240,7 +240,7 @@ static PSResult simple_rows(
 
    if (rem_rows > 0)
    {
-      *again = TRUE;
+      *again = true;
 
       if (verbose_level > 0)
          printf("Simple row presolve removed %d rows and %d non-zeros\n",
@@ -559,7 +559,7 @@ static PSResult simple_cols(
 
    if (rem_cols > 0)
    {
-      *again = TRUE;
+      *again = true;
 
       if (verbose_level > 0)
          printf("Simple col presolve removed %d cols and %d non-zeros\n",
@@ -576,14 +576,14 @@ static PSResult simple_cols(
 PSResult lps_presolve(Lps* lp, int verbose_level)
 {
    PSResult ret = PRESOLVE_OKAY;
-   Bool     again;
+   bool     again;
    /*
-   Bool     rcagain;
-   Bool     rragain;
+   bool     rcagain;
+   bool     rragain;
    */
    do
    {
-      again = FALSE;
+      again = false;
  
       if (ret == PRESOLVE_OKAY)
          ret = simple_rows(lp, &again, verbose_level);
@@ -591,7 +591,7 @@ PSResult lps_presolve(Lps* lp, int verbose_level)
       if (ret == PRESOLVE_OKAY)
          ret = simple_cols(lp, &again, verbose_level);
 
-      assert(ret == PRESOLVE_OKAY || again == FALSE);
+      assert(ret == PRESOLVE_OKAY || again == false);
    }
    while(again);
 

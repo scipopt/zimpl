@@ -26,9 +26,6 @@
 #ifndef _HASH_H_
 #define _HASH_H_
 
-#ifndef _BOOL_H_
-#error "Need to include bool.h before hash.h"
-#endif
 #ifndef _NUMB_H_
 #error "Need to include numb.h before hash.h"
 #endif
@@ -51,7 +48,7 @@ enum hash_type       { HASH_ERR = 0, HASH_TUPLE, HASH_ENTRY, HASH_ELEM_IDX, HASH
 typedef enum hash_type           HashType;
 typedef struct hash              Hash;
 
-/*lint -sem(        hash_new, 2n >= 0, @p == 1) */
+/*lint -sem(        hash_new, 2n >= 0, @P > malloc(1P)) */
 extern Hash*        hash_new(HashType type, int size);
 /*lint -sem(        hash_free, 1p == 1) */
 extern void         hash_free(Hash* hash);
@@ -66,11 +63,11 @@ extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx);
 /*lint -sem(        hash_add_numb, 1p == 1 && 2p == 1) */
 extern void         hash_add_numb(Hash* hash, const Numb* numb);
 /*lint -sem(        hash_has_tuple, 1p == 1 && 2p == 1) */
-extern Bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
+extern bool         hash_has_tuple(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_entry, 1p == 1 && 2p == 1) */
-extern Bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
+extern bool         hash_has_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_has_numb, 1p == 1 && 2p == 1) */
-extern Bool         hash_has_numb(const Hash* hash, const Numb* numb);
+extern bool         hash_has_numb(const Hash* hash, const Numb* numb);
 /*lint -sem(        hash_lookup_entry, 1p == 1 && 2p == 1) */
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_mono, 1p == 1 && 2p == 1) */
