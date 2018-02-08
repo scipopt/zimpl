@@ -67,7 +67,6 @@ set(binsources
 
 set(headers
     zimpl/blkmem.h
-    zimpl/bool.h
     zimpl/bound.h
     zimpl/code.h
     zimpl/conname.h

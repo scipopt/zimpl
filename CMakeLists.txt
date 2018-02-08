@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 project(ZIMPL
-    VERSION 3.3.4
+    VERSION 3.3.5
     LANGUAGES C)
 
-set(ZIMPL_VERSION_MAJOR 3)
-set(ZIMPL_VERSION_MINOR 3)
-set(ZIMPL_VERSION_PATCH 4)
+# use C99 standard
+set(CMAKE_C_STANDARD 99)
 
 option(GMP "use GMP" ON)
 option(ZLIB "use ZLIB" ON)
