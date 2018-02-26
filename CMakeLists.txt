@@ -7,7 +7,6 @@ project(ZIMPL
 # use C99 standard
 set(CMAKE_C_STANDARD 99)
 
-option(GMP "use GMP" ON)
 option(ZLIB "use ZLIB" ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -18,6 +17,7 @@ add_definitions(-DVERSION=\"${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMP
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
+find_package(GMP REQUIRED)
 
 # path to e.g. findGMP module
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
@@ -47,13 +47,8 @@ if(MSVC)
     endforeach()
 endif()
 
-if(GMP)
-    find_package(GMP)
-endif()
-if(GMP_FOUND)
-    include_directories(${GMP_INCLUDE_DIRS})
-    set(libs ${libs} ${GMP_LIBRARIES})
-endif()
+include_directories(${GMP_INCLUDE_DIRS})
+set(libs ${libs} ${GMP_LIBRARIES})
 
 if(ZLIB)
     find_package(ZLIB)
