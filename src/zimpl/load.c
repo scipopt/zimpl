@@ -30,13 +30,13 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "lint.h"
+#include "zimpl/lint.h"
 #include <stdbool.h>
-#include "mshell.h"
-#include "mme.h"
-#include "stmt.h"
-#include "prog.h"
-#include "metaio.h"
+#include "zimpl/mshell.h"
+#include "zimpl/mme.h"
+#include "zimpl/stmt.h"
+#include "zimpl/prog.h"
+#include "zimpl/metaio.h"
 
 #define BUF_EXT 65536
 

@@ -11,10 +11,10 @@
 #include <cplex.h>
 
 #include "bool.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "mme.h"
-#include "zimpllib.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/mme.h"
+#include "zimpl/lib.h"
 
 static CPXENVptr env          = NULL;
 static CPXLPptr  lp           = NULL;

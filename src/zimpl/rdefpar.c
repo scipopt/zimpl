@@ -30,10 +30,10 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "mme.h"
-#include "strstore.h"
-#include "rdefpar.h"
+#include "zimpl/mshell.h"
+#include "zimpl/mme.h"
+#include "zimpl/strstore.h"
+#include "zimpl/rdefpar.h"
 
 #define RDEF_SID     0x52446566
 #define RPAR_SID     0x52506172

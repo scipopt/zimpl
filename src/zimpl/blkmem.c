@@ -29,8 +29,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include "mshell.h"
-#include "blkmem.h"
+#include "zimpl/mshell.h"
+#include "zimpl/blkmem.h"
 
 typedef struct memory_block_element BlkMemElem;
 typedef struct memory_block         BlkMem;

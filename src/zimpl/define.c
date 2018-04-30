@@ -30,12 +30,12 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "define.h"
+#include "zimpl/mshell.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/define.h"
 
 #define DEFINE_SID  0x44656669
 

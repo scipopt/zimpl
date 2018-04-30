@@ -35,11 +35,11 @@
 #include <assert.h>
 #include <string.h>
 
-#include "lint.h"
+#include "zimpl/lint.h"
 
 #define _MSHELL_C_
 
-#include "mshell.h"
+#include "zimpl/mshell.h"
 
 #if !defined(NO_MSHELL) 
 

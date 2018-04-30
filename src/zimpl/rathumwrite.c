@@ -31,9 +31,9 @@
 #include <gmp.h>
 
 #include <stdbool.h>
-#include "gmpmisc.h"
-#include "ratlp.h"
-#include "ratlpstore.h"
+#include "zimpl/gmpmisc.h"
+#include "zimpl/ratlp.h"
+#include "zimpl/ratlpstore.h"
 
 static void write_name(FILE* fp, const char* name)
 {

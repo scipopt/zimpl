@@ -30,14 +30,14 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "hash.h"
-#include "set.h"
-#include "set4.h"
+#include "zimpl/mshell.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/hash.h"
+#include "zimpl/set.h"
+#include "zimpl/set4.h"
 
 #define SET_PROD_SID          0x53455450
 #define SET_PROD_ITER_SID     0x53455049

@@ -26,7 +26,7 @@
 #ifndef NDEBUG
 
 #include <stdio.h>
-#include "stkchk.h"
+#include "zimpl/stkchk.h"
 
 const void*  stkchk_start = 0;
 size_t       stkchk_maxi  = 0;

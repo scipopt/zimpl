@@ -32,11 +32,11 @@
 
 #include <gmp.h>
 
-#include "mshell.h"
+#include "zimpl/mshell.h"
 #include <stdbool.h>
-#include "ratlp.h"
-#include "ratlpstore.h"
-#include "mme.h"
+#include "zimpl/ratlp.h"
+#include "zimpl/ratlpstore.h"
+#include "zimpl/mme.h"
 
 /* Write SOS definitions to a file.
  * A specification for the SOS file format can be found in the

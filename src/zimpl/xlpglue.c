@@ -44,22 +44,22 @@
 #include <gmp.h>
 #include <stdbool.h>
 
-#include "lint.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "bound.h"
-#include "mono.h"
-#include "term.h"
-#include "ratlp.h"
-#include "gmpmisc.h"
-#include "conname.h"
-#include "stmt.h"
-#include "hash.h"
-#include "xlpglue.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/bound.h"
+#include "zimpl/mono.h"
+#include "zimpl/term.h"
+#include "zimpl/ratlp.h"
+#include "zimpl/gmpmisc.h"
+#include "zimpl/conname.h"
+#include "zimpl/stmt.h"
+#include "zimpl/hash.h"
+#include "zimpl/xlpglue.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4100) /* unreferenced formal parameter */

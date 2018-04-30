@@ -30,15 +30,15 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "blkmem.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "entry.h"
-#include "list.h"
+#include "zimpl/mshell.h"
+#include "zimpl/blkmem.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/entry.h"
+#include "zimpl/list.h"
 
 #define LIST_SID  0x4c697374
 

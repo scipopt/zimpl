@@ -29,13 +29,13 @@
 #include <string.h>
 #include <assert.h>
 
-#include "lint.h"
+#include "zimpl/lint.h"
 #include <stdbool.h>
-#include "mshell.h"
-#include "numb.h"
-#include "elem.h"
-#include "mme.h"
-#include "strstore.h"
+#include "zimpl/mshell.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/mme.h"
+#include "zimpl/strstore.h"
 
 #define ELEM_STORE_SIZE  1000
 #define ELEM_SID         0x456c656d

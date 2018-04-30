@@ -30,12 +30,12 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
 
 void show_source(FILE* fp, const char* text, int column)
 {

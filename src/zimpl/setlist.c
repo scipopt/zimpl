@@ -30,19 +30,19 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "lint.h"
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "entry.h"
-#include "hash.h"
-#include "list.h"
-#include "stmt.h"
-#include "set.h"
-#include "set4.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/entry.h"
+#include "zimpl/hash.h"
+#include "zimpl/list.h"
+#include "zimpl/stmt.h"
+#include "zimpl/set.h"
+#include "zimpl/set4.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4100) /* unreferenced formal parameter */

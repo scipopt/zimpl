@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-#ifndef _ZIMPLLIB_H_
-#define _ZIMPLLIB_H_
+#ifndef _ZIMPL_LIB_H_
+#define _ZIMPL_LIB_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,4 +46,4 @@ extern bool         zpl_read_with_args(char** argv, int argc, bool with_manageme
 }
 #endif
 
-#endif /* _ZIMPLLIB_H_ */
+#endif /* _ZIMPL_LIB_H_ */

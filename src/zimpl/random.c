@@ -31,9 +31,9 @@
 
 /* #define TRACE 1 */
 
-#include "lint.h"
-#include "mshell.h"
-#include "random.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/random.h"
 
 /* 
    A C-program for MT19937, with initialization improved 2002/2/10.

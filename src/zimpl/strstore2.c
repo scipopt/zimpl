@@ -29,10 +29,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include "lint.h"
-#include "mshell.h"
-#include "strstore.h"
-#include "mme.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/strstore.h"
+#include "zimpl/mme.h"
 
 typedef struct string_storage StrStore;
 

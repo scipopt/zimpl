@@ -36,12 +36,12 @@
 /* #define TRACE 1 */
 
 #include <stdbool.h>
-#include "lint.h"
-#include "mshell.h"
-#include "random.h"
-#include "gmpmisc.h"
-#include "mme.h"
-#include "numb.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/random.h"
+#include "zimpl/gmpmisc.h"
+#include "zimpl/mme.h"
+#include "zimpl/numb.h"
 
 #define NUMB_STORE_SIZE  1000
 #define NUMB_SID         0x4e756d62

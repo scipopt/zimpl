@@ -32,14 +32,14 @@
 /* #define TRACE 1 */
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "entry.h"
-#include "mono.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/entry.h"
+#include "zimpl/mono.h"
 
 #define MONO_SID         0x4d6f6e6f
 #define MOEL_SID         0x4d6f456c

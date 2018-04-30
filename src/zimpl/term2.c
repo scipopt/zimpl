@@ -32,20 +32,20 @@
 /* #define TRACE 1 */
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "bound.h"
-#include "entry.h"
-#include "mono.h"
-#include "hash.h"
-#include "term.h"
-#include "stmt.h"
-#include "prog.h"
-#include "xlpglue.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/bound.h"
+#include "zimpl/entry.h"
+#include "zimpl/mono.h"
+#include "zimpl/hash.h"
+#include "zimpl/term.h"
+#include "zimpl/stmt.h"
+#include "zimpl/prog.h"
+#include "zimpl/xlpglue.h"
 
 #define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d

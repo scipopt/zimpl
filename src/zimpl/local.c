@@ -30,12 +30,12 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "local.h"
+#include "zimpl/mshell.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/local.h"
 
 #define LOCAL_STR_SIZE 100
 

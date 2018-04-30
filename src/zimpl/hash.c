@@ -30,18 +30,18 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "blkmem.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "set.h"
-#include "symbol.h"
-#include "entry.h"
-#include "mono.h"
-#include "hash.h"
+#include "zimpl/mshell.h"
+#include "zimpl/blkmem.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/set.h"
+#include "zimpl/symbol.h"
+#include "zimpl/entry.h"
+#include "zimpl/mono.h"
+#include "zimpl/hash.h"
 
 #define HASH_SID      0x48617368
 

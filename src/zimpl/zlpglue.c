@@ -31,17 +31,17 @@
 #include <gmp.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "bound.h"
-#include "mono.h"
-#include "term.h"
-#include "ratlp.h"
-#include "zlpglue.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/bound.h"
+#include "zimpl/mono.h"
+#include "zimpl/term.h"
+#include "zimpl/ratlp.h"
+#include "zimpl/zlpglue.h"
 
 /*lint -esym(818, lp) 'lp' could be declared as pointing to const */
 

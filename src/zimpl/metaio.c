@@ -36,12 +36,12 @@
 #include <zlib.h>
 #endif
 
-#include "lint.h"
+#include "zimpl/lint.h"
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "mme.h"
-#include "metaio.h"
+#include "zimpl/mshell.h"
+#include "zimpl/mme.h"
+#include "zimpl/metaio.h"
 
 enum file_type { 
   MFP_ERR, 

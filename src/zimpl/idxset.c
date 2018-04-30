@@ -30,13 +30,13 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "set.h"
-#include "idxset.h"
+#include "zimpl/mshell.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/set.h"
+#include "zimpl/idxset.h"
 
 #define IDXSET_SID  0x49647853
 

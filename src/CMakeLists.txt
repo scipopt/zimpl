@@ -46,7 +46,7 @@ set(libsources
     zimpl/term2.c
     zimpl/tuple.c
     zimpl/vinst.c
-    zimpl/zimpllib.c)
+    zimpl/lib.c)
 
 if(GMP_FOUND)
     set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
@@ -102,8 +102,10 @@ set(headers
     zimpl/term.h
     zimpl/tuple.h
     zimpl/xlpglue.h
-    zimpl/zimpllib.h
+    zimpl/lib.h
     zimpl/zlpglue.h)
+
+include_directories(${PROJECT_SOURCE_DIR}/src)
 
 if(MSVC)
    set(headers ${headers} WIN/unistd.h)

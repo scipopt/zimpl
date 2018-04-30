@@ -32,9 +32,9 @@
 #include <gmp.h>
 
 #include <stdbool.h>
-#include "mshell.h"
+#include "zimpl/mshell.h"
 
-#include "gmpmisc.h"
+#include "zimpl/gmpmisc.h"
 
 mpq_t const_zero;
 mpq_t const_one;

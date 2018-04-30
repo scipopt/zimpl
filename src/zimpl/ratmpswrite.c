@@ -33,17 +33,17 @@
 
 #include <gmp.h>
 
-#include "lint.h"
-#include "mshell.h"
-#include "gmpmisc.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "bound.h"
-#include "mme.h"
-#include "mono.h"
-#include "term.h"
-#include "ratlp.h"
-#include "ratlpstore.h"
+#include "zimpl/lint.h"
+#include "zimpl/mshell.h"
+#include "zimpl/gmpmisc.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/bound.h"
+#include "zimpl/mme.h"
+#include "zimpl/mono.h"
+#include "zimpl/term.h"
+#include "zimpl/ratlp.h"
+#include "zimpl/ratlpstore.h"
 
 static void write_data(
    FILE*        fp,

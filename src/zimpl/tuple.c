@@ -30,13 +30,13 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "blkmem.h"
-#include "numb.h"
-#include "elem.h"
-#include "mme.h"
-#include "stmt.h"
-#include "tuple.h"
+#include "zimpl/mshell.h"
+#include "zimpl/blkmem.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/mme.h"
+#include "zimpl/stmt.h"
+#include "zimpl/tuple.h"
 
 #define TUPLE_SID      0x5475706c
 #define TUPLE_STR_SIZE 100

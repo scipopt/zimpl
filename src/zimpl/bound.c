@@ -30,10 +30,10 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "mme.h"
-#include "numb.h"
-#include "bound.h"
+#include "zimpl/mshell.h"
+#include "zimpl/mme.h"
+#include "zimpl/numb.h"
+#include "zimpl/bound.h"
 
 #define BOUND_SID     0x426F756E
 

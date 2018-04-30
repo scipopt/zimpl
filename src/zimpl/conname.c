@@ -30,20 +30,20 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "mme.h"
-#include "bound.h"
-#include "mono.h"
-#include "term.h"
-#include "elem.h"
-#include "tuple.h"
-#include "local.h"
-#include "stmt.h"
-#include "prog.h"
-#include "xlpglue.h"
-#include "conname.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/mme.h"
+#include "zimpl/bound.h"
+#include "zimpl/mono.h"
+#include "zimpl/term.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/local.h"
+#include "zimpl/stmt.h"
+#include "zimpl/prog.h"
+#include "zimpl/xlpglue.h"
+#include "zimpl/conname.h"
 
 static char*        cpfix  = NULL;
 static int          count  = 1;

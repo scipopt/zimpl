@@ -30,18 +30,18 @@
 #include <assert.h>
 
 #include <stdbool.h>
-#include "mshell.h"
-#include "ratlptypes.h"
-#include "numb.h"
-#include "elem.h"
-#include "tuple.h"
-#include "mme.h"
-#include "entry.h"
-#include "list.h"
-#include "hash.h"
-#include "stmt.h"
-#include "set.h"
-#include "set4.h"
+#include "zimpl/mshell.h"
+#include "zimpl/ratlptypes.h"
+#include "zimpl/numb.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
+#include "zimpl/mme.h"
+#include "zimpl/entry.h"
+#include "zimpl/list.h"
+#include "zimpl/hash.h"
+#include "zimpl/stmt.h"
+#include "zimpl/set.h"
+#include "zimpl/set4.h"
 
 #define TEST_DUBLICATE   0
 
