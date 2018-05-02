@@ -59,7 +59,7 @@
 #include "zimpl/prog.h"
 #include "zimpl/metaio.h"
 #include "zimpl/strstore.h"
-#include "zimpl/lib.h"
+#include "zimpl/zimpllib.h"
 
 extern int yydebug;
 extern int yy_flex_debug;

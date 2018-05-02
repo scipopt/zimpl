@@ -131,7 +131,7 @@ LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			mshell.o prog.o random.o rdefpar.o source.o \
 			setempty.o setpseudo.o setlist.o setrange.o setprod.o \
 			setmulti.o set4.o stmt.o stkchk.o strstore2.o symbol.o \
-			term2.o tuple.o vinst.o lib.o
+			term2.o tuple.o vinst.o zimpllib.o
 LIBOBJ		=	$(LIBBASE) gmpmisc.o numbgmp.o
 LIBDBLOBJ	=	$(LIBBASE) numbdbl.o
 OBJXXX		=	$(addprefix $(OBJDIR)/,$(OBJECT))

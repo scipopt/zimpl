@@ -14,7 +14,7 @@
 #include "zimpl/mshell.h"
 #include "zimpl/ratlptypes.h"
 #include "zimpl/mme.h"
-#include "zimpl/lib.h"
+#include "zimpl/zimpllib.h"
 
 static CPXENVptr env          = NULL;
 static CPXLPptr  lp           = NULL;

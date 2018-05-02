@@ -1,5 +1,7 @@
-bison_target(MMLPARSE2 zimpl/mmlparse2.y ${CMAKE_CURRENT_BINARY_DIR}/mmlparse2.c COMPILE_FLAGS -t)
-flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/mmlscan.c)
+bison_target(MMLPARSE2 zimpl/mmlparse2.y ${CMAKE_CURRENT_BINARY_DIR}/zimpl/mmlparse2.c COMPILE_FLAGS -t)
+flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/zimpl/mmlscan.c)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zimpl)
 
 # add include directory for bison header
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -46,7 +48,7 @@ set(libsources
     zimpl/term2.c
     zimpl/tuple.c
     zimpl/vinst.c
-    zimpl/lib.c)
+    zimpl/zimpllib.c)
 
 if(GMP_FOUND)
     set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
@@ -102,7 +104,7 @@ set(headers
     zimpl/term.h
     zimpl/tuple.h
     zimpl/xlpglue.h
-    zimpl/lib.h
+    zimpl/zimpllib.h
     zimpl/zlpglue.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

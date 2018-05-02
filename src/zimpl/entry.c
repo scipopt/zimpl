@@ -39,7 +39,7 @@
 #include "zimpl/set.h"
 #include "zimpl/symbol.h"
 #include "zimpl/entry.h"
-#include "zimpl/lib.h"
+#include "zimpl/zimpllib.h"
 
 #define ENTRY_SID  0x456e7472
 
