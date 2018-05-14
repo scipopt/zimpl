@@ -59,41 +59,41 @@ struct mono
    MonoElem  first;
 };
 
-/*lint -sem(        mono_new, 1p == 1 && 2p == 1, @P > malloc(1P)) */
+/*lint -sem(        mono_new, 1P >= 1, 2P >= 1, @P >= malloc(1)) */
 extern Mono*        mono_new(const Numb* coeff, const Entry* entry, MFun fun);
-/*lint -sem(        mono_is_valid, 1p == 1) */
+/*lint -sem(        mono_is_valid, pure, 1P >= 1) */
 extern bool         mono_is_valid(const Mono* mono);
-/*lint -sem(        mono_free, custodial(1), 1p == 1) */
+/*lint -sem(        mono_free, custodial(1), cleanup, inout(1), 1P >= 1) */
 extern void         mono_free(Mono* mono);
-/*lint -sem(        mono_is_valid, 1p == 1 && 2p == 1) */
+/*lint -sem(        mono_mul_entry, inout(1), 1P >= 1, 2P >= 1) */
 extern void         mono_mul_entry(Mono* mono, const Entry* entry);
-/*lint -sem(        mono_copy, 1p == 1, @P > malloc(1P)) */
+/*lint -sem(        mono_copy, 1P >= 1, @P == malloc(1P)) */
 extern Mono*        mono_copy(const Mono* mono);
-/*lint -sem(        mono_mul_coeff, 1p == 1 && 2p == 1) */
+/*lint -sem(        mono_mul_coeff, inout(1), 1P >= 1, 2P >= 1) */
 extern void         mono_mul_coeff(const Mono* term, const Numb* value);
-/*lint -sem(        mono_add_coeff, 1p == 1 && 2p == 1) */
+/*lint -sem(        mono_add_coeff, inout(1), 1P >= 1, 2P >= 1) */
 extern void         mono_add_coeff(const Mono* term, const Numb* value);
-/*lint -sem(        mono_is_valid, 1p == 1) */
+/*lint -sem(        mono_hash, pure, 1P >= 1) */
 extern unsigned int mono_hash(const Mono* mono);
-/*lint -sem(        mono_equal, 1p == 1 && 2p == 1) */
+/*lint -sem(        mono_equal, pure, 1P >= 1, 2P >= 1) */
 extern bool         mono_equal(const Mono* ma, const Mono* mb);
-/*lint -sem(        mono_mul, 1p == 1 && 2p == 1, @P > malloc(1P)) */
+/*lint -sem(        mono_mul, 1P >= 1, 2P >= 1, @P == malloc(1P)) */
 extern Mono*        mono_mul(const Mono* ma, const Mono* mb);
-/*lint -sem(        mono_neg, 1p == 1) */
+/*lint -sem(        mono_neg, inout(1), 1P >= 1) */
 extern void         mono_neg(Mono* mono);
-/*lint -sem(        mono_is_linear, 1p == 1) */
+/*lint -sem(        mono_is_linear, pure, 1P >= 1) */
 extern bool         mono_is_linear(const Mono* mono);
-/*lint -sem(        mono_get_count, 1p == 1, @n >= 1) */
+/*lint -sem(        mono_get_degree, pure, 1P >= 1, @n >= 1) */
 extern int          mono_get_degree(const Mono* mono);
-/*lint -sem(        mono_get_count, 1p == 1, @P > malloc(1P)) */
+/*lint -sem(        mono_get_coeff, pure, 1P >= 1, @P >= 1) */
 extern const Numb*  mono_get_coeff(const Mono* mono);
-/*lint -sem(        mono_set_function, 1p == 1) */
+/*lint -sem(        mono_set_function, inout(1), 1P >= 1) */
 extern void         mono_set_function(Mono* mono, MFun f);
-/*lint -sem(        mono_get_function, 1p == 1) */
+/*lint -sem(        mono_get_function, pure, 1P >= 1) */
 extern MFun         mono_get_function(const Mono* mono);
-/*lint -sem(        mono_get_var, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+/*lint -sem(        mono_get_var, 1P >= 1, chneg(2), @P >= 1) */
 extern Var*         mono_get_var(const Mono* mono, int idx);
-/*lint -sem(        mono_print, 1p == 1) */
+/*lint -sem(        mono_print, 1P >= 1, 2P >= 1) */
 extern void         mono_print(FILE* fp, const Mono* mono, bool print_symbol_index);
 
 #ifdef __cplusplus

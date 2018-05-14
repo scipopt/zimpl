@@ -38,6 +38,7 @@
 #include "elem.h"
 #include "tuple.h"
 #include "mme.h"
+#include "set.h"
 #include "entry.h"
 #include "mono.h"
 

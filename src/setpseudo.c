@@ -123,7 +123,7 @@ static void set_pseudo_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 /*ARGSUSED*/
-static int set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_pseudo_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -140,7 +140,7 @@ static int set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 /*ARGSUSED*/
 static void set_pseudo_get_tuple(
    const Set* set,
-   int        idx,
+   SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
 {

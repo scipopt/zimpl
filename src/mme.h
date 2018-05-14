@@ -53,8 +53,6 @@ typedef struct code_node         CodeNode;
 typedef CodeNode*              (*Inst)(CodeNode* self);
 
 typedef struct entry             Entry;
-typedef union set                Set;
-typedef union set_iter           SetIter;
 
 typedef struct list_element      ListElem;
 typedef struct list              List;
@@ -122,6 +120,14 @@ extern void interns_exit(void);
 #define Trace(fname) /* */
 #endif /* TRACE */
 
+#if defined(__GNUC__) || defined(__CLANG__)
+#define UNUSED __attribute__ ((unused))
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define UNUSED
+#define NORETURN
+#endif /* __GNUC__ || __CLANG__ */
+   
 #ifdef __cplusplus
 }
 #endif

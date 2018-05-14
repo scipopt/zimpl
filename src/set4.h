@@ -67,7 +67,7 @@ struct set_head
 {
    int        refc;
    int        dim;
-   int        members;
+   SetIterIdx members;
    SetType    type;
 };
 
@@ -109,12 +109,15 @@ struct set_prod
    SID
 };
 
+/* set consists of dim list set that contain the elements of the tuples to be stored
+ * subset is an array with consists of    
+ */
 struct set_multi
 {
-   SetHead  head;   /* head.dim > 1  */
-   Set**    set;    /* dim times, type == SET_LIST */
-   int*     subset; /* members * dim */
-   int**    order;  /* dim * members */
+   SetHead      head;   /* head.dim > 1  */
+   Set**        set;    /* dim times, type == SET_LIST */
+   SetIterIdx*  subset; /* members * dim */
+   SetIterIdx** order;  /* dim * members */
    SID
 };
 
@@ -168,10 +171,10 @@ struct set_prod_iter
 
 struct set_multi_iter
 {
-   int  dim;
-   int  members;
-   int  now;
-   int* subset;
+   int         dim;
+   SetIterIdx  members;
+   SetIterIdx  now;
+   SetIterIdx* subset;
    SID
 };
 
@@ -187,15 +190,15 @@ union set_iter
 
 struct set_vtab
 {
-   void     (*set_free)      (Set* set);
-   Set*     (*set_copy)      (const Set* set);
-   int      (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
-   void     (*set_get_tuple) (const Set* set, int idx, Tuple* tuple, int offset);
-   SetIter* (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
-   bool     (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
-   void     (*iter_exit)     (SetIter* iter, const Set* set);
-   void     (*iter_reset)    (SetIter* iter, const Set* set);
-   bool     (*set_is_valid)  (const Set* set);
+   void       (*set_free)      (Set* set);
+   Set*       (*set_copy)      (const Set* set);
+   SetIterIdx (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
+   void       (*set_get_tuple) (const Set* set, SetIterIdx idx, Tuple* tuple, int offset);
+   SetIter*   (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
+   bool       (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
+   void       (*iter_exit)     (SetIter* iter, const Set* set);
+   void       (*iter_reset)    (SetIter* iter, const Set* set);
+   bool       (*set_is_valid)  (const Set* set);
 };
 
 #define SET_DEFAULT 0x0
@@ -208,10 +211,10 @@ extern SetVTab* set_vtab_global;
 
 /* set4.c
  */
-/*lint -sem(        set_lookup, 1p == 1 && 2p == 1 && 3n >= 0, @n >= -1) */
-extern int          set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
+/*lint -sem(        set_lookup_idx, 1p == 1 && 2p == 1 && 3n >= 0, @n >= -1) */
+extern SetIterIdx   set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
 /*lint -sem(        set_get_tuple_intern, 1p == 1 && 2n >= 0 && 3p == 1 && 4n >= 0) */
-extern void         set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset);
+extern void         set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset);
 /*lint -sem(        set_iter_init_intern, 1p == 1 && 3n >= 0, @P > malloc(1P)) */
 extern SetIter*     set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
 /*lint -sem(        set_iter_next_intern, 1p == 1 && 2p == 1 && 3p == 1 && 4n >= 0) */
@@ -238,7 +241,7 @@ extern void         set_list_init(SetVTab* vtab);
 /*lint -sem(        set_list_new, 1n > 0 && 2n >= 0, @P > malloc(1P)) */
 extern Set*         set_list_new(int size, int flags);
 /*lint -sem(        set_list_add_elem, 1p == 1 && 2p == 1, @n >= -1) */
-extern int          set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
+extern SetIterIdx   set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
 /*lint -sem(        set_list_new_from_elems, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_list_new_from_elems(const List* list, SetCheckType check);
 /*lint -sem(        set_list_new_from_tuples, 1p == 1, @P > malloc(1P)) */
@@ -246,7 +249,7 @@ extern Set*         set_list_new_from_tuples(const List* list, SetCheckType chec
 /*lint -sem(        set_list_new_from_entries, 1p == 1, @P > malloc(1P)) */
 extern Set*         set_list_new_from_entries(const List* list, SetCheckType check);
 /*lint -sem(        set_list_get_elem, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
-extern const Elem*  set_list_get_elem(const Set* set, int idx);
+extern const Elem*  set_list_get_elem(const Set* set, SetIterIdx idx);
 
 /* setrange.c
  */

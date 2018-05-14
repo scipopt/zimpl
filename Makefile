@@ -162,6 +162,8 @@ endif
 
 all:		$(LIBRARY) $(LIBLINK) $(BINARY) $(BINLINK) $(BINSHORTLINK)
 
+double:		$(LIBRARYDBL) $(LIBDBLLINK) $(BINARYDBL) # $(BINLINK) $(BINSHORTLINK)
+
 $(LIBLINK):	$(LIBRARY)
 		@rm -f $@
 		cd $(dir $@) && ln -s $(notdir $(LIBRARY)) $(notdir $@)

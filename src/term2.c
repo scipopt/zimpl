@@ -39,6 +39,7 @@
 #include "tuple.h"
 #include "mme.h"
 #include "bound.h"
+#include "set.h"
 #include "entry.h"
 #include "mono.h"
 #include "hash.h"

@@ -126,7 +126,7 @@ static void set_empty_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 /*ARGSUSED*/
-static int set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_empty_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -142,7 +142,7 @@ static int set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 /*ARGSUSED*/
 static NORETURN void set_empty_get_tuple(
    const Set* set,
-   int        idx,
+   SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
 {

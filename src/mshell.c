@@ -41,6 +41,14 @@
 
 #include "mshell.h"
 
+#if defined(__GNUC__) || defined(__CLANG__)
+#define UNUSED __attribute__ ((unused))
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define UNUSED
+#define NORETURN
+#endif /* __GNUC__ || __CLANG__ */
+
 #if !defined(NO_MSHELL) 
 
 #define ALIGN_SIZE   sizeof(double)

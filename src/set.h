@@ -41,6 +41,11 @@ enum set_check_type
 
 typedef enum set_check_type      SetCheckType;
 
+typedef long long                SetIterIdx;
+
+typedef union set                Set;
+typedef union set_iter           SetIter;
+
 extern void         set_init(void);
 extern void         set_exit(void);
 /*lint -sem(        set_free, custodial(1), 1p == 1) */
@@ -62,7 +67,7 @@ extern int          set_get_dim(const Set* set);
 /*lint -sem(        set_get_members, 1p == 1, @n >= 0) */
 extern int          set_get_members(const Set* set);
 /*lint -sem(        set_get_tuple, 1p == 1 && 2n >= 0) */
-extern Tuple*       set_get_tuple(const Set* set, int idx);
+extern Tuple*       set_get_tuple(const Set* set, SetIterIdx idx);
 /*lint -sem(        set_print, 1p == 1 && 2p == 1) */
 extern void         set_print(FILE* fp, const Set* set);
 
@@ -94,7 +99,7 @@ extern bool         set_is_subset(const Set* set_a, const Set* set_b);
 extern bool         set_is_equal(const Set* set_a, const Set* set_b);
 /*lint -sem(        set_subset_list, 1p == 1 && 2n > 0 && 4p == 1, @P > malloc(1P)) */
 extern List*        set_subsets_list(
-   const Set* set, int subset_size, List* list, int* idx);
+   const Set* set, int subset_size, List* list, SetIterIdx* idx);
 
 #ifdef __cplusplus
 }

@@ -96,13 +96,7 @@ extern int    gzclose(gzFile file);
 #endif // 0
 #endif /* _lint */
 
-#if defined(__GNUC__) || defined(__CLANG__)
-#define UNUSED __attribute__ ((unused))
-#define NORETURN __attribute__ ((noreturn))
-#else
-#define UNUSED
-#define NORETURN
-#endif /* __GNUC__ || __CLANG__ */
+typedef _Bool LintBool;
 
 #endif /* _LINT_H_ */
 

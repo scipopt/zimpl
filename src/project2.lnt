@@ -7,14 +7,14 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // TK 29Jan2018
--hook(pre_option, -cond('%[option]' == '-sem', -reject)) //# Fix Bug in pclint 1.0
+//-hook(pre_option, -cond('%[option]' == '-sem', -reject)) //# Fix Bug in pclint 1.0
 -max_threads=8
 -vt_depth=20
 +fsc // strings are const
 -A(C99)
 -width(132,4)
 -"format=%f:%l: %t %n: %m"
-//-ffc // Function takes Custody flag -> off
+-ffc // Function takes Custody flag -> off
 //-hFb^3
 //
 //-e636 // strong type
@@ -41,7 +41,7 @@
 -strong(AzJzX,ListElem,List,ListData,list_type)
 -strong(AzJzX,stmt_type,Stmt,Prog,code_type,CodeNode)
 -strong(AzJzX,RDef,RPar,MFP,rpar_type,RParVal)
--strong(AazJzX,Bound)
+-strong(AazJX,Bound)
 -strong(AzJzX,bound_type)
 -strong(AzJzX,Heap,heap_type,HeapData,heapCmp)
 -strong(AizJzX,SetIter,setcheck_type,define_type,Define)
@@ -58,7 +58,7 @@
 -strong(AzJzX,hash_type,Hash,HElem,SetElemIdx)
 -strong(AzJzX,HeapData,heap_data)
 -strong(AcJX,Inst)
--strong(AJXB,bool)
+//-strong(AJXB,LintBool)
 //
 -esym(537,stdarg.h,sys/types.h) // repeated include file
 -esym(534,stkchk_used_x) // ignore return value
@@ -100,3 +100,8 @@
 -esym(714 759 765, stkchk_display_x, stkchk_maxi, stkchk_start)
 -esym(714 759 765, mono_mul_entry)
 -esym(714 759 765, prog_is_valid)
+
+//++dbool=LintBool
+//++dtrue=((LintBool)1)
+//++dfalse=((LintBool)0)
+//-header(lint.h)
