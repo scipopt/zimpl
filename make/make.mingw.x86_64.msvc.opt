@@ -16,7 +16,7 @@ RANLIB      =
 LIBEXT      = .lib
 
 CPPFLAGS += -Dpopen=_popen -Dpclose=_pclose -Dinline=_inline -DNDEBUG -DWITH_PCRE=1 -D_WIN64 -W2 -wd4272 -Ox -nologo
-CPPFLAGS += -I$(SRCDIR)/WIN -Ilib/pcre -Ilib/zlib -Ilib/pcre -Ilib/mpir.$(ARCH)
+CPPFLAGS += -Isrc/WIN -Ilib/pcre -Ilib/zlib -Ilib/pcre -Ilib/mpir.$(ARCH)
 
 LDFLAGS  		+=  lib/libz.$(ARCH).$(OPT).lib \
                    lib/libpcre.$(ARCH).$(OPT).lib \

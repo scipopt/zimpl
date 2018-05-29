@@ -72,12 +72,12 @@ DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
 			--leak-resolution=high --show-reachable=yes 
 
-SRCDIR		=	src
+SRCDIR		=	src/zimpl
 BINDIR		=	bin
 LIBDIR		=	lib
 LINTCONF	=	/opt/pclint/config
 
-CPPFLAGS	=	-I$(SRCDIR) -DVERSION='"$(VERSION)"'
+CPPFLAGS	=	-I$(SRCDIR)/.. -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lm
 YFLAGS		=	-d -t -v  
