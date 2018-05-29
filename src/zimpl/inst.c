@@ -2354,14 +2354,12 @@ CodeNode* i_set_range2(CodeNode* self)
 
 static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
 {
-   Entry* entry;
-   List*  list;
-   Set*   set;
-
    assert(code_is_valid(self));
    assert(heap_is_valid(heap));
    assert(dim >= 0);
    
+   Set* set;
+
    if (heap_is_empty(heap))
    {
       if (stmt_trigger_warning(206))
@@ -2373,8 +2371,8 @@ static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
    }
    else
    {
-      entry = heap_pop_entry(heap);
-      list  = list_new_tuple(entry_get_tuple(entry));
+      Entry* entry = heap_pop_entry(heap);
+      List*  list  = list_new_tuple(entry_get_tuple(entry));
       entry_free(entry);
 
       while(!heap_is_empty(heap))
@@ -4195,7 +4193,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
    List*      list = NULL;
    int        subset_size_from;
    int        subset_size_to;
-   int        idx  = 0;
+   SetIterIdx idx  = 0;
    int        used;
    int        i;
    
@@ -4247,7 +4245,7 @@ CodeNode* i_entry_list_powerset(CodeNode* self)
 {
    const Set* set;
    List*      list = NULL;
-   int        idx  = 0;
+   SetIterIdx idx  = 0;
    int        i;
    int        used;
 

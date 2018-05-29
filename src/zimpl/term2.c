@@ -39,6 +39,7 @@
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
 #include "zimpl/bound.h"
+#include "zimpl/set.h"
 #include "zimpl/entry.h"
 #include "zimpl/mono.h"
 #include "zimpl/hash.h"
@@ -46,6 +47,7 @@
 #include "zimpl/stmt.h"
 #include "zimpl/prog.h"
 #include "zimpl/xlpglue.h"
+
 
 #define TERM_EXTEND_SIZE 16
 #define TERM_SID         0x5465726d

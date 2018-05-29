@@ -111,6 +111,7 @@ void __cyg_profile_func_exit(void *this_fn, void *call_site)
 }
 #endif
 
+//lint  -sem(add_extention, 1p, 2p, @p)
 static char* add_extention(const char* filename, const char* extension)
 {
    char* basename;
@@ -124,9 +125,8 @@ static char* add_extention(const char* filename, const char* extension)
    assert(basename != NULL);
 
    strcpy(basename, filename);
-
-   /*lint -e{429} suppress 'Custodial pointer 'basename' (line 96) has not been freed or returned' */
-   return strcat(basename, extension);
+   
+   return strcat(basename, extension); /*lint !e429 suppress 'Custodial pointer 'basename' has not been freed or returned' */
 }
 
 static const char* strip_path(const char* filename)
@@ -510,9 +510,6 @@ int main(int argc, char* const* argv)
 
       (void)(*closefile)(fp);
    }
-
-
-
 
    free(prog_text);
    

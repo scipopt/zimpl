@@ -38,11 +38,11 @@
 #include "zimpl/elem.h"
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
-#include "zimpl/entry.h"
 #include "zimpl/list.h"
 #include "zimpl/hash.h"
 #include "zimpl/stmt.h"
 #include "zimpl/set.h"
+#include "zimpl/entry.h"
 #include "zimpl/set4.h"
 
 #ifdef _MSC_VER
@@ -88,37 +88,41 @@ static bool set_multi_iter_is_valid(const SetIter* iter)
  */
 static int subset_cmp(const void* a, const void* b)
 {
-   const int* aa = (const int*)a;
-   const int* bb = (const int*)b;
+   const SetIterIdx* aa = (const SetIterIdx*)a;
+   const SetIterIdx* bb = (const SetIterIdx*)b;
 
-   int i;
-
-   for(i = 0; i < cmp_dim; i++)
+   for(int i = 0; i < cmp_dim; i++)
    {
-      int d = aa[i] - bb[i];
+      SetIterIdx d = aa[i] - bb[i];
 
-      if (d != 0)
-         return d;
+      if (d < 0)
+         return -1;
+      if (d > 0)
+         return 1;
    }
    return 0;
 }
 
 static int order_cmp(const void* a, const void* b)
 {
-   const int* aa = (const int*)a;
-   const int* bb = (const int*)b;
-
-   int ai;
-   int bi;
+   const SetIterIdx* aa = (const SetIterIdx*)a;
+   const SetIterIdx* bb = (const SetIterIdx*)b;
 
    assert(cmp_set != NULL);
    assert(cmp_dim >= 0);
    assert(cmp_dim <  cmp_set->head.dim);
    
-   ai = *aa * cmp_set->head.dim + cmp_dim;
-   bi = *bb * cmp_set->head.dim + cmp_dim;
+   SetIterIdx ai = *aa * cmp_set->head.dim + cmp_dim;
+   SetIterIdx bi = *bb * cmp_set->head.dim + cmp_dim;
 
-   return cmp_set->multi.subset[ai] - cmp_set->multi.subset[bi];
+   SetIterIdx d = cmp_set->multi.subset[ai] - cmp_set->multi.subset[bi];
+
+   if (d < 0)
+      return -1;
+   if (d > 0)
+      return 1;
+
+   return 0;
 }
 
 /* ------------------------------------------------------------------------- 
@@ -127,30 +131,21 @@ static int order_cmp(const void* a, const void* b)
  */
 Set* set_multi_new_from_list(const List* list, SetCheckType check)
 {
-   const Tuple* tuple;
-   ListElem*    le = NULL;
-   Set*         set;
-   int          n;
-   int          i;
-   int          k;
-   int          dim;
-   bool         is_entrylist;
-   Hash*        hash = NULL;
-   
    assert(list_is_valid(list));
-   
-   is_entrylist = list_is_entrylist(list);
-   
-   n     = list_get_elems(list);
-   tuple = is_entrylist
+
+   ListElem*    le            = NULL;
+   Hash*        hash          = NULL;     
+   bool         is_entrylist  = list_is_entrylist(list); 
+   int          n             = list_get_elems(list);
+   const Tuple* tuple         = is_entrylist
       ? entry_get_tuple(list_get_entry(list, &le))
       : list_get_tuple(list, &le);
-   dim   = tuple_get_dim(tuple);
+   int          dim           = tuple_get_dim(tuple);
 
    assert(n   > 0);
    assert(dim > 1);
    
-   set = calloc(1, sizeof(*set));
+   Set* set = calloc(1, sizeof(*set));
    
    assert(set != NULL);
 
@@ -166,15 +161,15 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    assert(set->multi.subset != NULL);
    assert(set->multi.order  != NULL);
    
-   for(k = 0; k < dim; k++)
-      set->multi.set  [k] = set_list_new(n, SET_DEFAULT);
+   for(int k = 0; k < dim; k++)
+      set->multi.set[k] = set_list_new(n, SET_DEFAULT);
 
    if (check != SET_CHECK_NONE)
       hash = hash_new(HASH_TUPLE, n);
    
-   le   = NULL;
+   le = NULL;
    
-   for(i = 0; i < n; i++)
+   for(int i = 0; i < n; i++)
    {
       tuple = is_entrylist
          ? entry_get_tuple(list_get_entry(list, &le))
@@ -200,7 +195,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
          if (hash != NULL)
             hash_add_tuple(hash, tuple);
 
-         for(k = 0; k < dim; k++)
+         for(int k = 0; k < dim; k++)
             set->multi.subset[set->head.members * dim + k] =
                set_list_add_elem(set->multi.set[k],
                   tuple_get_elem(tuple, k), SET_CHECK_QUIET);
@@ -223,13 +218,13 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    
    /* This could be done also later On-Demand
     */
-   for(k = 0; k < dim; k++)
+   for(int k = 0; k < dim; k++)
    {
       set->multi.order[k] = calloc((size_t)set->head.members, sizeof(**set->multi.order));
       
       assert(set->multi.order[k] != NULL);
 
-      for(i = 0; i < set->head.members; i++)
+      for(SetIterIdx i = 0; i < set->head.members; i++)
          set->multi.order[k][i] = i;
 
       /* No need to sort order[0] because subset ist already sorted.
@@ -244,10 +239,10 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
 #ifndef NDEBUG
       /* Make sure order is sorted
        */
-      for(i = 0; i < set->head.members - 1; i++)
+      for(SetIterIdx i = 0; i < set->head.members - 1; i++)
       {
-         int a = set->multi.order[k][i]     * set->head.dim + k;
-         int b = set->multi.order[k][i + 1] * set->head.dim + k;
+         SetIterIdx a = set->multi.order[k][i]     * set->head.dim + k;
+         SetIterIdx b = set->multi.order[k][i + 1] * set->head.dim + k;
          
          assert(set->multi.subset[a] <= set->multi.subset[b]);
       }
@@ -257,6 +252,19 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
 
    assert(set_multi_is_valid(set));
 
+#ifndef NDEBUG
+   le = NULL;
+   
+   for(int i = 0; i < n; i++)
+   {
+      tuple = is_entrylist
+         ? entry_get_tuple(list_get_entry(list, &le))
+         : list_get_tuple(list, &le);
+
+      assert(set_lookup(set, tuple));
+   }
+#endif
+   
    return set;
 }
 
@@ -314,9 +322,9 @@ static void set_multi_free(Set* set)
  */
 static int subset_idx_cmp(const void* a, const void* b)
 {
-   const int* key    = (const int*)a;
-   const int* subset = (const int*)b;
-   int        i;
+   const SetIterIdx* key    = (const SetIterIdx*)a;
+   const SetIterIdx* subset = (const SetIterIdx*)b;
+   int               i;
    
    assert(key    != NULL);
    assert(subset != NULL);
@@ -325,38 +333,45 @@ static int subset_idx_cmp(const void* a, const void* b)
 
    for(i = 0; i < cmp_dim; i++)
    {
-      int d = key[i] - subset[i];
+      SetIterIdx d = key[i] - subset[i];
 
-      if (d != 0)
-         return d;
+      if (d < 0)
+         return -1;
+      if (d > 0)
+         return 1;
    }
    return 0;
 }
 
 static int order_idx_cmp(const void* a, const void* b)
 {
-   const int* key   = (const int*)a;
-   const int* order = (const int*)b;
+   const SetIterIdx* key   = (const SetIterIdx*)a;
+   const SetIterIdx* order = (const SetIterIdx*)b;
 
    assert(key     != NULL);
    assert(order   != NULL);
    assert(cmp_set != NULL);
+
    assert(cmp_dim >= 0);
    assert(cmp_dim <  cmp_set->head.dim);
    assert(*order  >= 0);
    assert(*order  <  cmp_set->head.members);
 
-   return *key - cmp_set->multi.subset[*order * cmp_set->head.dim + cmp_dim];
+   SetIterIdx d = *key - cmp_set->multi.subset[*order * cmp_set->head.dim + cmp_dim];
+
+   if (d < 0)
+      return -1;
+   if (d > 0)
+      return 1;
+   return 0;
 }
 
 /* return the index of the element, -1 if not found
  */
-static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
-   int*       idx;
-   ptrdiff_t  result;
-   int        i;
-   int        k;
+   SetIterIdx* idx;
+   ptrdiff_t   result;
    
    assert(set_multi_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -367,7 +382,7 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 
    assert(idx != NULL);
 
-   for(i = 0; i < set->head.dim; i++)
+   for(int i = 0; i < set->head.dim; i++)
    {
       idx[i] = set_lookup_idx(set->multi.set[i], tuple, offset + i);
 
@@ -390,7 +405,7 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
    assert((result - (ptrdiff_t)set->multi.subset)
       % (ptrdiff_t)((size_t)set->head.dim * sizeof(*set->multi.subset)) == 0);
 
-   k = (int)(result - (ptrdiff_t)set->multi.subset)
+   SetIterIdx k = (SetIterIdx)(result - (ptrdiff_t)set->multi.subset)
       / (ptrdiff_t)((size_t)set->head.dim * sizeof(*set->multi.subset));
 
    assert(k >= 0);
@@ -405,12 +420,10 @@ static int set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  */
 static void set_multi_get_tuple(
    const Set* set,
-   int        idx,
+   SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
 {
-   int i;
-   
    assert(set_multi_is_valid(set));
    assert(idx >= 0);
    assert(idx <= set->head.members);
@@ -418,7 +431,7 @@ static void set_multi_get_tuple(
    assert(offset >= 0);
    assert(offset + set->head.dim <= tuple_get_dim(tuple));
 
-   for(i = 0; i < set->head.dim; i++)
+   for(int i = 0; i < set->head.dim; i++)
    {
       tuple_set_elem(tuple, offset + i,
          elem_copy(set_list_get_elem(set->multi.set[i],
@@ -436,9 +449,9 @@ static SetIter* set_multi_iter_init(
    int          offset)
 {
    SetIter*     iter;
-   int*         idx;
+   SetIterIdx*  idx;
    int          i;
-   int          j;
+   SetIterIdx   j;
    int          k;
    int          m;
    int          first;
@@ -616,8 +629,6 @@ static bool set_multi_iter_next(
    Tuple*     tuple,
    int        offset)
 {
-   int i;
-   
    assert(set_multi_iter_is_valid(iter));
    assert(set_multi_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -627,12 +638,11 @@ static bool set_multi_iter_next(
    if (iter->multi.now >= iter->multi.members)
       return false;
 
-   for(i = 0; i < iter->multi.dim; i++)
-   {
+   for(int i = 0; i < iter->multi.dim; i++)
       tuple_set_elem(tuple, offset + i,
          elem_copy(set_list_get_elem(set->multi.set[i],
             iter->multi.subset[iter->multi.now * iter->multi.dim + i])));
-   }
+
    iter->multi.now++;
    
    return true;

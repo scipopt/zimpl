@@ -37,11 +37,11 @@
 #include "zimpl/elem.h"
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
-#include "zimpl/entry.h"
 #include "zimpl/hash.h"
 #include "zimpl/list.h"
 #include "zimpl/stmt.h"
 #include "zimpl/set.h"
+#include "zimpl/entry.h"
 #include "zimpl/set4.h"
 
 #ifdef _MSC_VER
@@ -59,8 +59,6 @@
  */
 static bool set_list_is_valid(const Set* set)
 {
-   int i;
-
    if (set == NULL
       || !SID_ok2(set->list, SET_LIST_SID)
       || set->head.refc    <= 0
@@ -70,7 +68,7 @@ static bool set_list_is_valid(const Set* set)
       || set->list.member  == NULL)
       return false;
    
-   for(i = 0; i < set->head.members; i++)
+   for(SetIterIdx i = 0; i < set->head.members; i++)
       if (!elem_is_valid(set->list.member[i]))
          return false;
 
@@ -93,17 +91,15 @@ static bool set_list_iter_is_valid(const SetIter*iter)
  */
 /* Return index number of element. -1 if not present
  */
-static int lookup_elem_idx(const Set* set, const Elem* elem)
+static SetIterIdx lookup_elem_idx(const Set* set, const Elem* elem)
 {
-   int i;
-   
    assert(set_list_is_valid(set));
    assert(elem_is_valid(elem));
 
    if (set->list.hash != NULL)
       return hash_lookup_elem_idx(set->list.hash, elem);
 
-   for(i = 0; i < set->list.head.members; i++)
+   for(SetIterIdx i = 0; i < set->list.head.members; i++)
       if (!elem_cmp(elem, set->list.member[i]))
          return i;
 
@@ -143,9 +139,9 @@ Set* set_list_new(int size, int flags)
    return set;
 }
 
-int set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
+SetIterIdx set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
 {
-   int idx = -1;
+   SetIterIdx idx = -1;
    
    assert(set_list_is_valid(set));
    assert(elem_is_valid(elem));
@@ -306,7 +302,7 @@ static void set_list_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
-static int set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_list_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -322,7 +318,7 @@ static int set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  */
 static void set_list_get_tuple(
    const Set* set,
-   int        idx,
+   SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
 {
@@ -470,7 +466,7 @@ void set_list_init(SetVTab* vtab)
  * --- extras
  * -------------------------------------------------------------------------
  */
-const Elem* set_list_get_elem(const Set* set, int idx)
+const Elem* set_list_get_elem(const Set* set, SetIterIdx idx)
 {
    assert(set_list_is_valid(set));
    assert(idx >= 0);

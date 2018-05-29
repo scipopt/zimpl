@@ -36,11 +36,11 @@
 #include "zimpl/elem.h"
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
-#include "zimpl/entry.h"
 #include "zimpl/list.h"
 #include "zimpl/hash.h"
 #include "zimpl/stmt.h"
 #include "zimpl/set.h"
+#include "zimpl/entry.h"
 #include "zimpl/set4.h"
 
 #define TEST_DUBLICATE   0
@@ -86,7 +86,6 @@ void set_exit()
 Set* set_new_from_list(const List* list, SetCheckType check)
 {
    ListElem* le  = NULL;
-   int       dim;
    Set*      set = NULL;
 
    assert(list_is_valid(list));
@@ -96,7 +95,7 @@ Set* set_new_from_list(const List* list, SetCheckType check)
       set = set_list_new_from_elems(list, check);
    else if (list_is_tuplelist(list))
    {
-      dim = tuple_get_dim(list_get_tuple(list, &le));
+      int dim = tuple_get_dim(list_get_tuple(list, &le));
 
       if (dim == 1)
          set = set_list_new_from_tuples(list, check);
@@ -107,7 +106,7 @@ Set* set_new_from_list(const List* list, SetCheckType check)
    {
       assert(list_is_entrylist(list));
 
-      dim = tuple_get_dim(entry_get_tuple(list_get_entry(list, &le)));
+      int dim = tuple_get_dim(entry_get_tuple(list_get_entry(list, &le)));
    
       if (dim == 1)
          set = set_list_new_from_entries(list, check);
@@ -134,7 +133,7 @@ Set* set_copy(const Set* set)
    return set_vtab_global[set->head.type].set_copy(set);
 }
 
-inline int set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+inline SetIterIdx set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, offset);
 }
@@ -143,16 +142,16 @@ bool set_lookup(const Set* set, const Tuple* tuple)
 {
    if (set->head.dim != tuple_get_dim(tuple))
       return false;
-   
+
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
 
-inline void set_get_tuple_intern(const Set* set, int idx, Tuple* tuple, int offset)
+inline void set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset)
 {
    set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
 }
 
-Tuple* set_get_tuple(const Set* set, int idx)
+Tuple* set_get_tuple(const Set* set, SetIterIdx idx)
 {
    Tuple* tuple;
 
@@ -227,10 +226,6 @@ int set_get_members(const Set* set)
 
 void set_print(FILE* fp, const Set* set)
 {
-   SetIter* iter;
-   Tuple*   tuple;
-   bool     first = true;
-
    assert(fp != NULL);
    assert(set_is_valid(set));
 
@@ -261,7 +256,9 @@ void set_print(FILE* fp, const Set* set)
    fprintf(fp, "|%d|", set->head.dim);
    fprintf(fp, "{");
 
-   iter = set_iter_init(set, NULL);
+   SetIter* iter = set_iter_init(set, NULL);
+   Tuple*   tuple;
+   bool     first = true;
 
    while(NULL != (tuple = set_iter_next(iter, set)))
    {
@@ -647,10 +644,10 @@ static int counter_inc(int* counter, int n, int k, int i)
 }
 
 List* set_subsets_list(
-   const Set* set,
-   int        subset_size,
-   List*      list,
-   int*       idx)
+   const Set*  set,
+   int         subset_size,
+   List*       list,
+   SetIterIdx* idx)
 {
    int*   counter;
    int    i;

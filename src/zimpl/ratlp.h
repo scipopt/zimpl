@@ -70,7 +70,7 @@ extern Con*         lps_addcon(Lps* lp, const char* name);
 extern void         lps_delcon(Lps* lp, Con* con);
 /*lint -sem(        lps_addnzo, 1p == 1 && 2p == 1 && 3p == 1) */
 extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value);
-/*lint -sem(        lps_delnzo, 1p == 1 && 2p == 2) */
+/*lint -sem(        lps_delnzo, 1p == 1 && 2p == 1) */
 extern void         lps_delnzo(Lps* lp, Nzo* nzo);
 /*lint -sem(        lps_addqme, 1p == 1 && 2p == 1 && 3p == 1 && 4p == 1) */
 extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value);

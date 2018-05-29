@@ -133,25 +133,25 @@ static void set_range_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
-static int idx_to_val(int begin, int step, int idx)
+static int idx_to_val(SetIterIdx begin, SetIterIdx step, SetIterIdx idx)
 {
 #if 0
-   fprintf(stderr, "idx_to_val: %d %d %d = %d\n",
+   fprintf(stderr, "idx_to_val: %lld %lld %lld = %lld\n",
       begin, step, idx, begin + idx * step);
 #endif
    return begin + idx * step;
 }
 
-static int val_to_idx(int begin, int step, int val)
+static SetIterIdx val_to_idx(SetIterIdx begin, SetIterIdx step, SetIterIdx val)
 {
 #if 0
-   fprintf(stderr, "val_to_idx: %d %d %d = %d\n",
+   fprintf(stderr, "val_to_idx: %lld %lld %lld = %lld\n",
       begin, step, val, (val - begin) / step);
 #endif
    return (val - begin) / step;
 }
 
-static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    const Elem* elem;
    const Numb* numb;
@@ -200,7 +200,7 @@ static int set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
  */
 static void set_range_get_tuple(
    const Set* set,
-   int        idx,
+   SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
 {

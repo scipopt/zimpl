@@ -1,6 +1,6 @@
 #--- $Id: make.linux.x86.gnu.gcov,v 1.10 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-DCOVERAGE -DFREEMEM -D__NO_MATH_INLINES 
-CFLAGS		=	-O0 -m64 -g -fprofile-arcs -ftest-coverage 
+CFLAGS		=	-O0 -m64 -g -fprofile-arcs -ftest-coverage -std=gnu99
 LDFLAGS		=	-lgmp -lm
 
 ifeq ($(LINK),shared)

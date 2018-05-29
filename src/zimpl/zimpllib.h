@@ -30,16 +30,16 @@
 extern "C" {
 #endif
 
-/*lint -sem(        zpl_add_parameter, 1p && nulterm(1)) */
+/*lint -sem(        zpl_add_parameter, 1p >= 1) */
 extern void         zpl_add_parameter(const char* def);
 /*lint -sem(        zpl_var_print, 1p == 1 && 2p == 1) */
 extern void         zpl_var_print(FILE* fp, const Var* var);
 /*lint -sem(        zpl_print_banner, 1p == 1) */
 extern void         zpl_print_banner(FILE* fp, bool with_license);
 
-/*lint -sem(zpl_read, nulterm(1)) */
+/*lint -sem(        zpl_read, 1p >= 1) */
 extern bool         zpl_read(const char* filename, bool with_management, void* user_data);
-/*lint -sem(zpl_read_with_args, 1n > 0 && 2p) */
+/*lint -sem(        zpl_read_with_args, 1p >= 2n && 2n > 0) */
 extern bool         zpl_read_with_args(char** argv, int argc, bool with_management, void* user_data);
 
 #ifdef __cplusplus

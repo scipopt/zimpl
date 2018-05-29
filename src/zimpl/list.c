@@ -37,6 +37,7 @@
 #include "zimpl/elem.h"
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
+#include "zimpl/set.h"
 #include "zimpl/entry.h"
 #include "zimpl/list.h"
 
