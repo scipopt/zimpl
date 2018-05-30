@@ -33,6 +33,8 @@
 \ set Z   := C * (A * B);
 \ set AA  := { <b> in B : 2 * b };
 \ set BB  := { <a,b> in A*B : <a,b+2> };
+\ set CC  := { 1 ..  1000 } * { 1001 .. 2000 } * { "A", "B", "C", "D", "E"} * { 2001 .. 9999 } * { 1 .. 100 };
+\ set DD  := { <2,2000,"D",3000,e> in CC };
 \ var a[L2I];
 \ var b[B];
 \ var c[C];
@@ -56,6 +58,7 @@
 \ var z[Z];
 \ var aa[AA];
 \ var bb[BB];
+\ var dd[DD];
 \ subto a1: sum <i> in L2I : a[i] >= 0;
 \ subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
 \ subto c1: sum <i> in C : c[i] >= ord(C2,1,1);
@@ -81,6 +84,7 @@
 \ subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
 \ subto aa1: sum <i> in AA : aa[i] >= 5;
 \ subto bb1: sum <i1,i2> in BB : bb[i1,i2] <= 3;
+\ subto dd1: b[1] == card(DD);
 \Problem name: set.zpl
 Minimize
  Objective: 
@@ -204,6 +208,8 @@ Subject to
  bb1_1:
   + bb$c#5 + bb$c#4 + bb$c#3 + bb$b#5 + bb$b#4 + bb$b#3
   + bb$a#5 + bb$a#4 + bb$a#3 <= 3
+ dd1_1:
+  + b#1 = 100
 Bounds
  0 <= a$a <= +inf
  0 <= a$b <= +inf
