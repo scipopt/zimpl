@@ -1,3 +1,10 @@
+3.3.6  30. May 2018 Release
+
+ - fixed bug not restoring gmp memory functions
+   when using zimpl as a library
+
+ - Zimpl now should be able to handle sets with more
+   than 2 billion entries.
 
 3.3.5  04. Feb 2018 Release
 

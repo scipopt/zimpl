@@ -61,6 +61,11 @@ struct pool
 static Pool*     pool_root  = NULL;
 static PoolElem* pool_next  = NULL;
 
+static bool     gmp_with_management                      = false;
+static void* (*gmp_old_alloc)  (size_t)                 = NULL;
+static void* (*gmp_old_realloc)(void*, size_t, size_t) = NULL;
+static void  (*gmp_old_free)   (void*, size_t)         = NULL;
+
 static void* pool_alloc(void)
 {
    Pool*     pool;
@@ -246,8 +251,11 @@ static void gmp_free(void* ptr, size_t size)
 void gmp_init(bool verbose, bool with_management)
 {
    if (with_management)
+   {
+      gmp_with_management = true;
+      mp_get_memory_functions(&gmp_old_alloc, &gmp_old_realloc, &gmp_old_free);      
       mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);
-
+   }
    mpq_init(const_zero);
    mpq_init(const_one);
    mpq_init(const_minus_one);
@@ -267,5 +275,11 @@ void gmp_exit()
    mpq_clear(const_minus_one);
 
    pool_exit();
+
+   if (gmp_with_management)
+   {
+      mp_set_memory_functions(gmp_old_alloc, gmp_old_realloc, gmp_old_free);
+      gmp_with_management = false;
+   }
 }
 
