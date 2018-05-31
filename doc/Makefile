@@ -41,10 +41,10 @@ zimpl.ps:	zimpl.dvi
 		dvips -ta4 -O0in,-1in -o $@ zimpl.dvi
 
 zimpl.dvi:	zimpl.tex zimplug.tex zimplerr.tex zimpl.bib ziblogo2.eps
-		latex zimpl
+		latex -halt-on-error zimpl
 		bibtex zimpl
-		latex zimpl
-		latex zimpl
+		latex -halt-on-error zimpl
+		latex -halt-on-error zimpl
 
 zimpl.man.ps:	zimpl.man
 		groff -man -Tps zimpl.man >zimpl.man.ps
