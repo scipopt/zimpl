@@ -6,7 +6,7 @@ NAME="zimpl-$VERSION"
 echo ">>> Packaging $NAME."
 
 # remove old tarball
-rm -f $NAME.tar
+rm -f $NAME.tgz
 
 # compile a fresh documentation
 echo ">>> Compiling documentation."
@@ -14,7 +14,7 @@ make doc > /dev/null 2>&1
 
 # create tarball
 echo ">>> Creating tarball."
-tar --transform "s|^|${NAME}/|" -chf $NAME.tar \
+tar --transform "s|^|${NAME}/|" -czhf $NAME.tgz \
 --exclude="*CVS*" \
 --exclude="*cvs*" \
 --exclude="*~" \
