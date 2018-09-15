@@ -46,36 +46,36 @@ typedef struct element           Elem;
 
 extern void         elem_init(void);
 extern void         elem_exit(void);
-/*lint -sem(        elem_new_numb, @P > malloc(1P)) */
+//lint -sem(        elem_new_numb, 1p == 1, @P >= malloc(1)) 
 extern Elem*        elem_new_numb(const Numb* n);
-/*lint -sem(        elem_new_strg, nulterm(1), 1p, @P > malloc(1P)) */
+//lint -sem(        elem_new_strg, 1p, @P >= malloc(1)) 
 extern Elem*        elem_new_strg(const char* s);
-/*lint -sem(        elem_new_name, nulterm(1), 1p, @P > malloc(1P)) */
+//lint -sem(        elem_new_name, 1p, @P >= malloc(1)) 
 extern Elem*        elem_new_name(const char* s);
-/*lint -sem(        elem_free, custodial(1), 1p == 1) */
+//lint -sem(        elem_free, custodial(1), inout(1), 1p == 1) 
 extern void         elem_free(Elem* elem);
-/*lint -sem(        elem_is_valid, 1p == 1) */
+//lint -sem(        elem_is_valid, pure, 1p == 1) 
 extern bool         elem_is_valid(const Elem* elem);
-/*lint -sem(        elem_copy, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        elem_copy, 1p == 1, @P >= malloc(1)) 
 extern Elem*        elem_copy(const Elem* elem);
-/*lint -sem(        elem_cmp, 1p == 1 && 2p == 1) */
+//lint -sem(        elem_cmp, 1p == 1, 2p == 1) 
 extern bool         elem_cmp(const Elem* elem_a, const Elem* elem_b);
-/*lint -sem(        elem_get_type, 1p == 1) */
+//lint -sem(        elem_get_type, pure, 1p == 1) 
 extern ElemType     elem_get_type(const Elem* elem);
-/*lint -sem(        elem_get_numb, 1p == 1) */
+//lint -sem(        elem_get_numb, pure, 1p == 1, @p) 
 extern const Numb*  elem_get_numb(const Elem* elem);
-/*lint -sem(        elem_get_strg, 1p == 1, @P > malloc(1P) && nulterm(@)) */
+//lint -sem(        elem_get_strg, pure, 1p == 1, @p) 
 extern const char*  elem_get_strg(const Elem* elem);
-/*lint -sem(        elem_get_name, 1p == 1, @P > malloc(1P) && nulterm(@)) */
+//lint -sem(        elem_get_name, pure, 1p == 1, @p) 
 extern const char*  elem_get_name(const Elem* elem);
-/*lint -sem(        elem_print, 1p == 1 && 2p == 1) */
+//lint -sem(        elem_print, 1p == 1, 2p == 1) 
 extern void         elem_print(FILE* fp, const Elem* elem, bool use_quotes);
-/*lint -sem(        elem_hash, 1p == 1) */
+//lint -sem(        elem_hash, pure, 1p == 1) 
 extern unsigned int elem_hash(const Elem* elem);
-/*lint -sem(        elem_tostr, 1p == 1, @P > malloc(1P) && nulterm(@)) */
+//lint -sem(        elem_tostr, 1p == 1, @P >= malloc(1)) 
 extern char*        elem_tostr(const Elem* elem);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _ELEM_H_ */
+#endif // _ELEM_H_ 

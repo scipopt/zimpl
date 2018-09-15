@@ -72,7 +72,7 @@ extern bool         hash_has_numb(const Hash* hash, const Numb* numb);
 extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple);
 /*lint -sem(        hash_lookup_mono, pure, 1P >= 1, 2P >= 1) */
 extern const Mono*  hash_lookup_mono(const Hash* hash, const Mono* mono);
-/*lint -sem(        hash_lookup_elem_idx, pure, 1P >= 1, 2P >= 1) */
+/*lint -sem(        hash_lookup_elem_idx, 1P >= 1, 2P >= 1) */
 extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem);
 
 #ifdef __cplusplus

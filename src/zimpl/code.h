@@ -38,181 +38,176 @@
 extern "C" {
 #endif
 
-/*lint -sem(        code_new_inst, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_new_inst, 1p == 1, chneg(2), @P > malloc(1)) 
 extern CodeNode*    code_new_inst(Inst inst, int childs, ...);
-/*lint -sem(        code_new_numb, custodial(1), 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_new_numb, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_numb(Numb* numb);
-/*lint -sem(        code_new_strg, nulterm(1), 1p, @P > malloc(1P)) */
+//lint -sem(        code_new_strg, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_strg(const char* strg);
-/*lint -sem(        code_new_name, nulterm(1), 1p, @P > malloc(1P)) */
+//lint -sem(        code_new_name, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_name(const char* name);
-/*lint -sem(        code_new_size, @P > malloc(1P)) */
+//lint -sem(        code_new_size, chneg(1), @P >= malloc(1)) 
 extern CodeNode*    code_new_size(int size);
-/*lint -sem(        code_new_varclass, @P > malloc(1P)) */
+//lint -sem(        code_new_varclass, @P >= malloc(1)) 
 extern CodeNode*    code_new_varclass(VarClass varclass);
-/*lint -sem(        code_new_contype, @P > malloc(1P)) */
+//lint -sem(        code_new_contype, @P >= malloc(1)) 
 extern CodeNode*    code_new_contype(ConType contype);
-/*lint -sem(        code_new_bits, @P > malloc(1P)) */
+//lint -sem(        code_new_bits, @P >= malloc(1)) 
 extern CodeNode*    code_new_bits(unsigned int bits);
-/*lint -sem(        code_new_symbol, @P > malloc(1P)) */
+//lint -sem(        code_new_symbol, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_symbol(Symbol* sym);
-/*lint -sem(        code_new_define, @P > malloc(1P)) */
+//lint -sem(        code_new_define, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_define(Define* def);
-/*lint -sem(        code_new_bound, @P > malloc(1P)) */
+//lint -sem(        code_new_bound, custodial(1), 1p == 1, @P >= malloc(1))
 extern CodeNode*    code_new_bound(BoundType type);
-/*lint -sem(        code_free, custodial(1), 1p == 1) */
+//lint -sem(        code_free, custodial(1), inout(1), 1p == 1) 
 extern void         code_free(CodeNode* node);
-/*lint -sem(        code_free_value, @P > malloc(1P)) */
+//lint -sem(        code_free_value, custodial(1), inout(1), 1p == 1) 
 extern void         code_free_value(CodeNode* node);
-/*lint -sem(        code_is_valid, 1p == 1) */
+//lint -sem(        code_is_valid, pure, 1p == 1) 
 extern bool         code_is_valid(const CodeNode* node);
-/*lint -sem(        code_get_type, 1p == 1) */
+//lint -sem(        code_get_type, pure, 1p == 1) 
 extern CodeType     code_get_type(const CodeNode* node);
-/*lint -sem(        code_get_inst, 1p == 1, @p) */
+//lint -sem(        code_get_inst, pure, 1p == 1, @p) 
 extern Inst         code_get_inst(const CodeNode* node);
-/*lint -sem(        code_set_root, custodial(1), 1p == 1) */
+//lint -sem(        code_set_root, custodial(1), 1p == 1) 
 extern void         code_set_root(CodeNode* node);
-/*lint -sem(        code_get_root, @P > malloc(1P)) */
+//lint -sem(        code_get_root, pure, @p == 1) 
 extern CodeNode*    code_get_root(void);
-/*lint -sem(        code_set_child, custodial(3), 1p == 1 && 2n >= 0 && 3p == 1) */
+//lint -sem(        code_set_child, 1p == 1, chneg(2), custodial(3), 3p == 1) 
 extern void         code_set_child(CodeNode* node, int idx, CodeNode* child);
-/*lint -sem(        code_errmsg, 1p == 1) */
+//lint -sem(        code_errmsg, 1p == 1) 
 extern void         code_errmsg(const CodeNode* node);
-#if 0
-/*lint -sem(        code_check_type, 1p == 1, @P > malloc(1P)p) */
-extern CodeNode*    code_check_type(CodeNode* node, CodeType expected);
-#endif
-/*lint -sem(        code_eval, 1p == 1, @P > malloc(1P)p) */
+//lint -sem(        code_eval, 1p == 1, @P >= malloc(1)) 
 extern CodeNode*    code_eval(CodeNode* node);
-/*lint -sem(        code_prune_tree, 1p == 1) */
+//lint -sem(        code_prune_tree, inout(1), 1p == 1) 
 extern bool         code_prune_tree(CodeNode* node);
-/*lint -sem(        code_get_child, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_get_child, pure, 1p == 1, chneg(2), @p == 1) 
 extern CodeNode*    code_get_child(const CodeNode* node, int no);
-/*lint -sem(        code_get_numb, 1p == 1) */
+//lint -sem(        code_get_numb, 1p == 1, @p) 
 extern const Numb*  code_get_numb(CodeNode* node);
-/*lint -sem(        code_get_strg, 1p == 1, @p && nulterm(@)) */
+//lint -sem(        code_get_strg, 1p == 1, @p) 
 extern const char*  code_get_strg(CodeNode* node);
-/*lint -sem(        code_get_name, 1p == 1, @p && nulterm(@)) */
+//lint -sem(        code_get_name, 1p == 1, @p) 
 extern const char*  code_get_name(CodeNode* node);
+//lint -sem(        code_get_inst_count, pure)    
 extern unsigned int code_get_inst_count(void);
-/*lint -sem(        code_get_tuple, 1p == 1, @P > malloc(1P)) */
 extern void         code_clear_inst_count(void);
+//lint -sem(        code_get_tuple, 1p == 1, @p) 
 extern const Tuple* code_get_tuple(CodeNode* node);
-/*lint -sem(        code_get_set, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_set, 1p == 1, @p) 
 extern const Set*   code_get_set(CodeNode* node);
-/*lint -sem(        code_get_idxset, 1p == 1, @P > malloc(1P)) */
+//lint -sem(         code_get_idxset, pure, 1p == 1, @p) 
 extern const IdxSet* code_get_idxset(CodeNode* node);
-/*lint -sem(        code_get_entry, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_entry, 1p == 1, @p)
 extern const Entry* code_get_entry(CodeNode* node);
-/*lint -sem(        code_get_term, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_term, 1p == 1, @p)
 extern const Term*  code_get_term(CodeNode* node);
-/*lint -sem(        code_get_size, 1p == 1) */
+//lint -sem(        code_get_size, 1p == 1, chneg(@)) 
 extern int          code_get_size(CodeNode* node);
-/*lint -sem(        code_get_bool, 1p == 1) */
+//lint -sem(        code_get_bool, 1p == 1) 
 extern bool         code_get_bool(CodeNode* node);
-/*lint -sem(        code_get_list, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_list, 1p == 1, @p) 
 extern const List*  code_get_list(CodeNode* node);
-/*lint -sem(        code_get_varclass, 1p == 1) */
+//lint -sem(        code_get_varclass, 1p == 1) 
 extern VarClass     code_get_varclass(CodeNode* node);
-/*lint -sem(        code_get_contype, 1p == 1) */
+//lint -sem(        code_get_contype, 1p == 1) 
 extern ConType      code_get_contype(CodeNode* node);
-/*lint -sem(        code_get_rdef, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_rdef, 1p == 1, @p) 
 extern const RDef*  code_get_rdef(CodeNode* node);
-/*lint -sem(        code_get_rpar, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        code_get_rpar, 1p == 1, @p)
 extern const RPar*  code_get_rpar(CodeNode* node);
-/*lint -sem(        code_get_bits, 1p == 1) */
+//lint -sem(        code_get_bits, 1p == 1) 
 extern unsigned int code_get_bits(CodeNode* node);
-/*lint -sem(        code_get_symbol, 1p == 1) */
+//lint -sem(        code_get_symbol, 1p == 1, @p) 
 extern Symbol*      code_get_symbol(CodeNode* node);
-/*lint -sem(        code_get_define, 1p == 1) */
+//lint -sem(        code_get_define, 1p == 1, @p) 
 extern Define*      code_get_define(CodeNode* node);
-/*lint -sem(        code_get_bound, 1p == 1) */
+//lint -sem(        code_get_bound, 1p == 1, @p) 
 extern const Bound* code_get_bound(CodeNode* node);
-/*lint -sem(        code_value_numb, custodial(2), 1p == 1) */
+//lint -sem(        code_value_numb, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_numb(CodeNode* node, Numb* numb);
-/*lint -sem(        code_value_strg, nulterm(2), 1p == 1 && 2p) */
+//lint -sem(        code_value_strg, inout(1), 1p == 1, custodial(2), 2p >= 1) 
 extern void         code_value_strg(CodeNode* node, const char* strg);
-/*lint -sem(        code_value_name, nulterm(2), 1p == 1 && 2p) */
+//lint -sem(        code_value_name, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_name(CodeNode* node, const char* name);
-/*lint -sem(        code_value_tuple, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_tuple, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_tuple(CodeNode* node, Tuple* tuple);
-/*lint -sem(        code_value_set, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_set, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_set(CodeNode* node, Set* set);
-/*lint -sem(        code_value_idxset, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_idxset, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_idxset(CodeNode* node, IdxSet* idxset);
-/*lint -sem(        code_value_entry, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_entry, inout(1), 1p == 1, custodial(2), 2p == 1)  
 extern void         code_value_entry(CodeNode* node, Entry* entry);
-/*lint -sem(        code_value_term, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_term, inout(1), 1p == 1, custodial(2), 2p == 1)  
 extern void         code_value_term(CodeNode* node, Term* term);
-/*lint -sem(        code_value_steal_child_term, 1p == 1 && 2n >= 0, @P > malloc(1P)p) */
+//lint -sem(        code_value_steal_term, inout(1), 1p == 1, chneg(2)) 
 extern Term*        code_value_steal_term(CodeNode* node, int no);
-/*lint -sem(        code_value_bool, 1p == 1) */
+//lint -sem(        code_value_bool, inout(1), 1p == 1) 
 extern void         code_value_bool(CodeNode* node, bool bvalue);
-/*lint -sem(        code_value_size, 1p == 1) */
+//lint -sem(        code_value_size, inout(1), 1p == 1, chneg(2)) 
 extern void         code_value_size(CodeNode* node, int size);
-/*lint -sem(        code_value_list, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_list, inout(1), 1p == 1, custodial(2), 2p == 1)  
 extern void         code_value_list(CodeNode* node, List* list);
-/*lint -sem(        code_value_varclass, 1p == 1) */
+//lint -sem(        code_value_varclass, inout(1), 1p == 1) 
 extern void         code_value_varclass(CodeNode* node, VarClass varclass);
-/*lint -sem(        code_value_contype, 1p == 1) */
+//lint -sem(        code_value_contype, inout(1), 1p == 1) 
 extern void         code_value_contype(CodeNode* node, ConType contype);
-/*lint -sem(        code_value_rdef, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_rdef, inout(1), 1p == 1, custodial(2), 2p == 1)  
 extern void         code_value_rdef(CodeNode* node, RDef* rdef);
-/*lint -sem(        code_value_rpar, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_rpar, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         code_value_rpar(CodeNode* node, RPar* rpar);
-/*lint -sem(        code_value_bits, 1p == 1) */
+//lint -sem(        code_value_bits, inout(1), 1p == 1) 
 extern void         code_value_bits(CodeNode* node, unsigned int bits);
-/*lint -sem(        code_value_bound, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        code_value_bound, inout(1), 1p == 1, custodial(2), 2p == 1)  
 extern void         code_value_bound(CodeNode* node, Bound* bound);
-/*lint -sem(        code_value_void, 1p == 1) */
+//lint -sem(        code_value_void, inout(1), 1p == 1) 
 extern void         code_value_void(CodeNode* node);
-/*lint -sem(        code_copy_value, 1p == 1 && 2p == 1) */
+//lint -sem(        code_copy_value, inout(1), 1p == 1, 2p == 1, @P >= malloc(1))  
 extern void         code_copy_value(CodeNode* dst, const CodeNode* src);
 
-/*lint -sem(        code_eval_child, 1p == 1 && 2n >= 0, @P > malloc(1P)p) */
+//lint -sem(        code_eval_child, 1p == 1, chneg(2), @p == 1) 
 extern CodeNode*    code_eval_child(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_numb, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_numb, 1p == 1, chneg(2), @p == 1) 
 extern const Numb*  code_eval_child_numb(const CodeNode* node, int no);
-/*lint -sem(        char* code_eval_child_strg, 1p == 1 && 2n >= 0,
-                    @p && nulterm(@)) */
+//lint -sem(        code_eval_child_strg, 1p == 1, chneg(2), @p)  
 extern const char*  code_eval_child_strg(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_name, 1p == 1 && 2n >= 0,
-                    @p && nulterm(@)) */
+//lint -sem(        code_eval_child_name, 1p == 1, chneg(2), @p) 
 extern const char*  code_eval_child_name(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_tuple, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_tuple, 1p == 1, chneg(2), @p == 1)  
 extern const Tuple* code_eval_child_tuple(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_set, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_set, 1p == 1, chneg(2), @p == 1)  
 extern const Set*   code_eval_child_set(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_idxset, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(         code_eval_child_idxset, 1p == 1, chneg(2), @p == 1)  
 extern const IdxSet* code_eval_child_idxset(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_entry, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_entry, 1p == 1, chneg(2), @p == 1)  
 extern const Entry* code_eval_child_entry(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_term, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_term, 1p == 1, chneg(2), @p == 1)  
 extern const Term*  code_eval_child_term(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_size, 1p == 1 && 2n >= 0, @n >= 0) */
+//lint -sem(        code_eval_child_size, 1p == 1, chneg(2), chneg(@)) 
 extern int          code_eval_child_size(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_bool, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_bool, 1p == 1, chneg(2)) 
 extern bool         code_eval_child_bool(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_list, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_list, 1p == 1, chneg(2), @p == 1)  
 extern const List*  code_eval_child_list(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_varclass, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_varclass, 1p == 1, chneg(2)) 
 extern VarClass     code_eval_child_varclass(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_contype, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_contype, 1p == 1, chneg(2)) 
 extern ConType      code_eval_child_contype(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_rdef, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_rdef, 1p == 1, chneg(2), @p == 1)  
 extern const RDef*  code_eval_child_rdef(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_rpar, 1p == 1 && 2n >= 0, @P > malloc(1P)) */
+//lint -sem(        code_eval_child_rpar, 1p == 1, chneg(2), @p == 1)  
 extern const RPar*  code_eval_child_rpar(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_bits, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_bits, 1p == 1, chneg(2)) 
 extern unsigned int code_eval_child_bits(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_symbol, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_symbol, 1p == 1, chneg(2), @p == 1)  
 extern Symbol*      code_eval_child_symbol(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_define, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_define, 1p == 1, chneg(2), @p == 1)  
 extern Define*      code_eval_child_define(const CodeNode* node, int no);
-/*lint -sem(        code_eval_child_bound, 1p == 1 && 2n >= 0) */
+//lint -sem(        code_eval_child_bound, 1p == 1, chneg(2), @p == 1)  
 extern const Bound* code_eval_child_bound(const CodeNode* node, int no);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _CODE_H_ */
+#endif // _CODE_H_ 

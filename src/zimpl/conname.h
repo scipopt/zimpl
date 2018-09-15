@@ -36,9 +36,9 @@ typedef enum con_name_format     ConNameForm;
 
 extern void        conname_format(ConNameForm format);
 extern void        conname_free(void);
-/*lint -sem(       conname_set, nulterm(1), 1p) */
+/*lint -sem(       conname_set, 1p) */
 extern bool        conname_set(const char* prefix);
-/*lint -sem(       conname_set, @p && nulterm(@)) */
+/*lint -sem(       conname_get, @p) */
 extern const char* conname_get(void);
 extern void        conname_next(void);
 

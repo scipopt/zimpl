@@ -53,12 +53,12 @@ extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
 extern void         prog_print(FILE* fp, const Prog* prog);
 /*lint -sem(        prog_execute, 1p == 1) */
 extern void         prog_execute(const Prog* prog, void* lp);
-/*lint -sem(        prog_tostr, 1p == 1 && nulterm(2), @p == 1) */
+/*lint -sem(        prog_tostr, 1p == 1, 2p, 3p, @p) */
 extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len);
 
 /* load.c
  */
-/*lint -sem(        prog_load, nulterm(3), 1p == 1) */
+/*lint -sem(        prog_load, 1p == 1, 3p) */
 extern void         prog_load(Prog* prog, const char* cmd, const char* filename);
 
 #ifdef __cplusplus

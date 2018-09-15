@@ -38,7 +38,7 @@ extern "C" {
 extern void     zlp_stat(Lps* lp);
 /*lint -sem(    zlp_setnamelen, 1p ==1 && 2n >= 0) */
 extern void     zlp_setnamelen(Lps* lp, int name_len);
-/*lint -sem(    zlp_write, 1p == 1 && 2p == 1 && nulterm(4)) */
+/*lint -sem(    zlp_write, 1p == 1 && 2p == 1, 4p) */
 extern void     zlp_write(Lps* lp, FILE* fp, LpFormat format, const char* title);
 /*lint -sem(    zlp_transtable, 1p == 1 && 2p == 1) */
 extern void     zlp_transtable(Lps* lp, FILE* fp, LpFormat format);

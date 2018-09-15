@@ -334,7 +334,7 @@ unsigned int elem_hash(const Elem* elem)
       break;
    case ELEM_FREE :
    default :
-      abort();
+      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
    }
    return hcode;
 }

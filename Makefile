@@ -214,7 +214,7 @@ $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 
 lint:		$(OBJSRC) $(LIBSRC)
 		$(LINT) $(LINTCONF)/co-gcc.lnt $(SRCDIR)/project2.lnt \
-		-I$(LINTCONF) -I$(SRCDIR) -dNO_MSHELL -dVERSION='"$(VERSION)"' $^
+		-I$(LINTCONF) -I$(SRCDIR)/.. -dNO_MSHELL -dVERSION='"$(VERSION)"' $^
 
 cppcheck:	$(OBJSRC) $(LIBSRC)
 		$(CPPCHECK) $(CPPFLAGS) -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/bits -I/usr/include/x86_64-linux-gnu/sys -I/usr/include/linux -I/usr/lib/gcc/x86_64-linux-gnu/5/include --inline-suppr --suppressions-list=src/cppcheck.txt --enable=warning,style,performance,portability,information $^
