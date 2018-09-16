@@ -39,29 +39,29 @@ typedef struct program           Prog;
 /* prog.c
  */
 extern void*        prog_get_lp(void);
-/*lint -sem(        prog_new, 1p) */
+//lint -sem(        prog_new, @p) 
 extern Prog*        prog_new(void);
-/*lint -sem(        prog_free, custodial(1), 1p == 1) */
+//lint -sem(        prog_free, custodial(1), inout(1), 1p == 1) 
 extern void         prog_free(Prog* prog);
-/*lint -sem(        prog_is_valid, 1p == 1) */
+//lint -sem(        prog_is_valid, pure, 1p == 1) 
 extern bool         prog_is_valid(const Prog* prog);
-/*lint -sem(        prog_is_empty, 1p == 1) */
+//lint -sem(        prog_is_empty, pure, 1p == 1) 
 extern bool         prog_is_empty(const Prog* prog);
-/*lint -sem(        prog_add_stmt, custodial(2), 1p == 1 && 2p == 1) */
+//lint -sem(        prog_add_stmt, 1p == 1, custodial(2), 2p == 1) 
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt);
-/*lint -sem(        prog_print, 1p == 1 && 2p == 1) */
+//lint -sem(        prog_print, inout(1), 1p == 1, 2p == 1) 
 extern void         prog_print(FILE* fp, const Prog* prog);
-/*lint -sem(        prog_execute, 1p == 1) */
+//lint -sem(        prog_execute, 1p == 1) 
 extern void         prog_execute(const Prog* prog, void* lp);
-/*lint -sem(        prog_tostr, 1p == 1, 2p, 3p, @p) */
+//lint -sem(        prog_tostr, 1p == 1, 2p, 3p, @P >= malloc(1)) 
 extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len);
 
 /* load.c
  */
-/*lint -sem(        prog_load, 1p == 1, 3p) */
+//lint -sem(        prog_load, inout(1), 1p == 1, 3p) 
 extern void         prog_load(Prog* prog, const char* cmd, const char* filename);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _PROG_H_ */
+#endif // _PROG_H_ 

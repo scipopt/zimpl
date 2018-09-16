@@ -32,12 +32,12 @@ extern "C" {
 
 extern void         str_init(void);
 extern void         str_exit(void);
-/*lint -sem(        str_new, 1p && nulterm(1), @p == 1p && nulterm(@)) */
+//lint -sem(        str_new, 1p, @p) 
 extern const char*  str_new(const char* s);
-/*lint -sem(        str_hash, 1p)           */
+//lint -sem(        str_hash, pure, 1p)           
 extern unsigned int str_hash(const char* s);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _STRSTORE_H_ */
+#endif // _STRSTORE_H_ 

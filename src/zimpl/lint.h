@@ -31,14 +31,14 @@
  */
 #ifdef _lint
 
-#if 0
+#if 0  // not needed anymore for pc-lint 1.2 ?
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Unfortunately strdup() is not a POSIX function.
  */
-/*lint -sem(strdup, 1p && nulterm(1), @P == malloc(1P) && nulterm(@p)) */ 
+/*lint -sem(strdup, 1p, @P >= malloc(1)) */ 
 extern char* strdup(const char* s);
 
 /* It is not clear if isinf() and isnan() are already POSIX
@@ -71,13 +71,13 @@ extern int   fsync(int fd);
 
 typedef void* gzFile;
 
-/*lint -sem(  gzopen, 1p && nulterm(1) && 2p && nulterm(2), r_null) */
+/*lint -sem(  gzopen, 1p && 2p, r_null) */
 extern gzFile gzopen(const char *path, const char *mode);
 /*lint -sem(  gzread, 1p == 1 && 2p) */
 extern int    gzread(gzFile file, void* buf, unsigned len);
 /*lint -sem(  gzwrite, 1p == 1 && 2p) */
 extern int    gzwrite(gzFile file, const void* buf, unsigned len);
-/*lint -sem(  gzputs, 1p == 1 && 2p && nulterm(2)) */
+/*lint -sem(  gzputs, 1p == 1 && 2p) */
 extern int    gzputs(gzFile file, const char *s);
 /*lintx -sem(  gzgets, 1p == 1 && 2p > 0 && 2P <= 3n && 3n > 0, @P == 2P || @P == 0) */
 /*lint -function(fgets(1), gzgets(2)) */

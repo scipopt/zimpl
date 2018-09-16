@@ -33,10 +33,10 @@ extern "C" {
 
 extern void         rand_init(unsigned long s);
 extern unsigned int rand_get_int32(void);
-/*lint -sem(        rand_get_range, 1n < 2n) */
+//lint -sem(        rand_get_range, 1n < 2n) 
 extern int          rand_get_range(int mini, int maxi);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* RANDOM */
+#endif // RANDOM 

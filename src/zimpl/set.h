@@ -50,21 +50,21 @@ extern void         set_init(void);
 extern void         set_exit(void);
 //lint -sem(        set_free, custodial(1), inout(1), 1p == 1) 
 extern void         set_free(Set* set);
-//lint -sem(        set_is_valid, pure, 1p == 1) 
+//lint -sem(        set_is_valid, 1p == 1) 
 extern bool         set_is_valid(const Set* set);
 //lint -sem(        set_copy, 1p == 1, @P >= malloc(1)) 
 extern Set*         set_copy(const Set* set);
-//lint -sem(        set_lookup, pure, 1p == 1, 2p == 1) 
+//lint -sem(        set_lookup, 1p == 1, 2p == 1) 
 extern bool         set_lookup(const Set* set, const Tuple* tuple);
 //lint -sem(        set_iter_init, 1p == 1, @P >= malloc(1)) 
 extern SetIter*     set_iter_init(const Set* set, const Tuple* pattern);
 //lint -sem(        set_iter_next, inout(1), 1p == 1, 2p == 1, r_null) 
 extern Tuple*       set_iter_next(SetIter* iter, const Set* set);
-//lint -sem(        set_iter_exit, inout(1), 1p == 1, 2p == 1) 
+//lint -sem(        set_iter_exit, custodial(1), inout(1), 1p == 1, 2p == 1) 
 extern void         set_iter_exit(SetIter* iter, const Set* set);
-//lint -sem(        set_get_dim, pure, 1p == 1, chneg(@)) 
+//lint -sem(        set_get_dim, 1p == 1, chneg(@)) 
 extern int          set_get_dim(const Set* set);
-//lint -sem(        set_get_members, pure, 1p == 1, chneg(@)) 
+//lint -sem(        set_get_members, 1p == 1, chneg(@)) 
 extern int          set_get_members(const Set* set);
 //lint -sem(        set_get_tuple, 1p == 1, chneg(2), @P >= 1) 
 extern Tuple*       set_get_tuple(const Set* set, SetIterIdx idx);
@@ -86,17 +86,17 @@ extern Set*         set_prod_new(const Set* a, const Set* b);
 extern Set*         set_union(const Set* seta, const Set* setb);
 //lint -sem(        set_inter, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Set*         set_inter(const Set* set_a, const Set* set_b);
-//lint -sem(        set_minus, 1p == 1, 2p == 1, @P > malloc(1)) 
+//lint -sem(        set_minus, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Set*         set_minus(const Set* set_a, const Set* set_b);
 //lint -sem(        set_sdiff, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Set*         set_sdiff(const Set* set_a, const Set* set_b);
 //lint -sem(        set_proj, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Set*         set_proj(const Set* set_a, const Tuple* pattern);
-//lint -sem(        set_is_subseteq, pure, 1p == 1, 2p == 1) 
+//lint -sem(        set_is_subseteq, 1p == 1, 2p == 1) 
 extern bool         set_is_subseteq(const Set* set_a, const Set* set_b);
-//lint -sem(        set_is_subset, pure, 1p == 1, 2p == 1) 
+//lint -sem(        set_is_subset, 1p == 1, 2p == 1) 
 extern bool         set_is_subset(const Set* set_a, const Set* set_b);
-//lint -sem(        set_is_equal, pure, 1p == 1, 2p == 1) 
+//lint -sem(        set_is_equal, 1p == 1, 2p == 1) 
 extern bool         set_is_equal(const Set* set_a, const Set* set_b);
 //lint -sem(        set_subset_list, 1p == 1, 2n > 0, 3p == 1, 4p == 1, @P > malloc(1)) 
 extern List*        set_subsets_list(

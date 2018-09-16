@@ -79,7 +79,7 @@ bool mono_is_valid(const Mono* mono)
     || !SID_ok(mono, MONO_SID)
     || !SID_ok2(mono->first, MOEL_SID)
     || mono->count < 1)
-      abort();
+      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
 
    mem_check(mono);
 
@@ -92,13 +92,13 @@ bool mono_is_valid(const Mono* mono)
       mem_check(e);
 
       if (!SID_ok(e, MOEL_SID))
-         abort();
+         abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
       
       assert(entry_is_valid(e->entry));
       assert(entry_get_type(e->entry) == SYM_VAR);
    }
    if (count != mono->count)
-      abort();
+      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
    
    return true;
 }

@@ -43,24 +43,24 @@ typedef struct heap              Heap;
 typedef union heap_data          HeapData;
 typedef int                    (*HeapCmp)(HeapData, HeapData);
 
-/*lint -sem(        heap_new_entry, 1n > 0 && 2p == 1, @P > malloc(1P)) */
+//lint -sem(        heap_new_entry, 1n > 0, 2p == 1, @P >= malloc(1)) 
 extern Heap*        heap_new_entry(int size, HeapCmp entry_cmp);
-/*lint -sem(        heap_free, 1p == 1) */
+//lint -sem(        heap_free, custodial(1), inout(1), 1p == 1) 
 extern void         heap_free(Heap* heap);
-/*lint -sem(        heap_is_valid, 1p == 1) */
+//lint -sem(        heap_is_valid, 1p == 1) 
 extern bool         heap_is_valid(const Heap* heap);
-/*lint -sem(        heap_push_entry, 1p == 1 && 2p == 1) */
+//lint -sem(        heap_push_entry, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         heap_push_entry(Heap* heap, Entry* entry);
-/*lint -sem(        heap_pop_entry, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        heap_pop_entry, inout(1), 1p == 1, @P >= malloc(1)) 
 extern Entry*       heap_pop_entry(Heap* heap);
-/*lint -sem(        heap_top_entry, 1p == 1, @P > malloc(1P)) */
+//lint -sem(        heap_top_entry, 1p == 1, @p == 1) 
 extern const Entry* heap_top_entry(const Heap* heap);
-/*lint -sem(        heap_is_full, 1p == 1) */
+//lint -sem(        heap_is_full, 1p == 1) 
 extern bool         heap_is_full(const Heap* heap);
-/*lint -sem(        heap_is_empty, 1p == 1) */
+//lint -sem(        heap_is_empty, 1p == 1) 
 extern bool         heap_is_empty(const Heap* heap);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _HEAP_H_ */
+#endif // _HEAP_H_ 

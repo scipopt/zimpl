@@ -46,19 +46,19 @@ extern void         entry_free(Entry* entry);
 extern bool         entry_is_valid(const Entry* entry);
 //lint -sem(        entry_copy, 1p == 1, @P >= malloc(1)) 
 extern Entry*       entry_copy(const Entry* entry);
-//lint -sem(        entry_cmp, pure, 1p == 1, 2p == 1) 
+//lint -sem(        entry_cmp, 1p == 1, 2p == 1) 
 extern bool         entry_cmp(const Entry* entry, const Tuple* tuple);
 //lint -sem(        entry_get_type, pure, 1p == 1) 
 extern SymbolType   entry_get_type(const Entry* entry);
-//lint -sem(        entry_get_tuple, 1p == 1, @p) 
+//lint -sem(        entry_get_tuple, pure, 1p == 1, @p) 
 extern const Tuple* entry_get_tuple(const Entry* entry);
-//lint -sem(        entry_get_numb, 1p == 1, @p) 
+//lint -sem(        entry_get_numb, pure, 1p == 1, @p) 
 extern const Numb*  entry_get_numb(const Entry* entry);
-//lint -sem(        entry_get_strg, 1p == 1, @p) 
+//lint -sem(        entry_get_strg, pure, 1p == 1, @p) 
 extern const char*  entry_get_strg(const Entry* entry);
-//lint -sem(        entry_get_set, 1p == 1, @p) 
+//lint -sem(        entry_get_set, pure, 1p == 1, @p) 
 extern const Set*   entry_get_set(const Entry* entry);
-//lint -sem(        entry_get_var, 1p == 1, @p) 
+//lint -sem(        entry_get_var, pure, 1p == 1, @p) 
 extern Var*         entry_get_var(const Entry* entry);
 //lint -sem(        entry_print, 1p == 1, 2p == 1) 
 extern void         entry_print(FILE* fp, const Entry* entry);

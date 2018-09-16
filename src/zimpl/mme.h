@@ -72,12 +72,12 @@ typedef struct mono          Mono;     /* From mono.h */
 /* zimpllib.c
  */
 extern int          verbose;
-/*lint -function(exit,zpl_exit) */
+//lint -function(exit, zpl_exit) 
 extern void         zpl_exit(int retval);
 
 /* source.c
  */
-/*lint -sem(        show_source, nulterm(2), 1p == 1 && 2p) */
+//lint -sem(        show_source, inout(1), 1p == 1, 2p, chneg(3)) 
 extern void         show_source(FILE* fp, const char* text, int column);
 
 /* vinst.c

@@ -41,16 +41,16 @@ extern "C" {
 extern void         local_init(void);
 extern void         local_exit(void);
 extern void         local_drop_frame(void);
-/*lint -sem(        local_lookup, nulterm(1), 1p, r_null) */
+//lint -sem(        local_lookup, 1p, r_null) 
 extern const Elem*  local_lookup(const char* name);
-/*lint -sem(        local_install_tuple, 1p == 1 && 2p == 1) */
+//lint -sem(        local_install_tuple, 1p == 1, 2p == 1) 
 extern void         local_install_tuple(const Tuple* patt, const Tuple* vals);
-/*lint -sem(        local_print_all, 1p == 1) */
+//lint -sem(        local_print_all, inout(1), 1p == 1) 
 extern void         local_print_all(FILE* fp);
-/*lint -sem(        local_tostrall, @p && nulterm(@)) */
+//lint -sem(        local_tostrall, @P >= malloc(1)) 
 extern char*        local_tostrall(void);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _LOCAL_H_ */
+#endif // _LOCAL_H_ 

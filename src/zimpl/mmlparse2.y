@@ -69,7 +69,7 @@
  */
 extern int yylex();
 
-/*lint -sem(yyerror, 1p && nulterm(1), r_no) */ 
+/*lint -sem(yyerror, 1p, r_no) */ 
 extern void yyerror(const char* s);
  
 %}

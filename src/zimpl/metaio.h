@@ -34,27 +34,28 @@ typedef struct meta_file_ptr     MFP;
 
 /* metaio.c
  */
-/*lint -sem(        mio_add_strg_file, nulterm(1), nulterm(2), 1p && 2p) */
+//lint -sem(        mio_add_strg_file, 1p, 2p) 
 extern void         mio_add_strg_file(const char* name, const char* content, bool use_copy);
 extern void         mio_init(void);
 extern void         mio_exit(void);
-/*lint -sem(        mio_open, nulterm(2), 2p) */
-/*lint -function(   fopen(1), mio_open(1)) */
-/*lint -function(   fopen(r), mio_open(r)) */
+//lint -sem(        mio_open, 1p, 2p) 
+//lint -function(   fopen(1), mio_open(1)) 
+//lint -function(   fopen(r), mio_open(r)) 
 extern MFP*         mio_open(const char* name, const char* ext);
-/*lint -function(   fclose, mio_close) */
+//lint -sem(        mio_close, 1p == 1)   
+//lint -function(   fclose, mio_close) 
 extern void         mio_close(MFP* mfp);
-/*lint -function(   fgetc, mio_getc) */
+//lint -function(   fgetc, mio_getc) 
 extern int          mio_getc(const MFP* mfp);
-/*lint -function(   fgets(1), mio_gets(2)) */
-/*lint -function(   fgets(2), mio_gets(3)) */
-/*lint -function(   fgets(3), mio_gets(1)) */
-/*lint -function(   fgets(r), mio_gets(r)) */
+//lint -function(   fgets(1), mio_gets(2)) 
+//lint -function(   fgets(2), mio_gets(3)) 
+//lint -function(   fgets(3), mio_gets(1)) 
+//lint -function(   fgets(r), mio_gets(r)) 
 extern char*        mio_gets(const MFP* mfp, char* buf, int len);
-/*lint -sem(        mio_get_line, 1p) */
+//lint -sem(        mio_get_line, 1p == 1, @p) 
 extern char*        mio_get_line(const MFP* mfp);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _METAIO_H_ */
+#endif // _METAIO_H_ 

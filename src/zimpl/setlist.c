@@ -180,21 +180,24 @@ SetIterIdx set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
 
 Set* set_list_new_from_elems(const List* list, SetCheckType check)
 {
-   ListElem*   le = NULL;
-   Set*        set;
-   int         n;
-
    assert(list_is_valid(list));
 
-   n   = list_get_elems(list);
+   int n = list_get_elems(list);
 
    assert(n > 0);
 
-   set = set_list_new(n, SET_DEFAULT);
+   Set*      set = set_list_new(n, SET_DEFAULT);
+   ListElem* le = NULL;
 
    while(n-- > 0)
-      (void)set_list_add_elem(set, list_get_elem(list, &le), check);
+   {
+      const Elem* elem = list_get_elem(list, &le);
 
+      assert(elem_is_valid(elem));
+      assert(elem != NULL);
+      
+      (void)set_list_add_elem(set, elem, check);
+   }
    assert(set_list_is_valid(set));
 
    return set;
@@ -202,22 +205,18 @@ Set* set_list_new_from_elems(const List* list, SetCheckType check)
 
 Set* set_list_new_from_tuples(const List* list, SetCheckType check)
 {
-   ListElem*    le = NULL;
-   const Tuple* tuple;
-   Set*         set;
-   int          n;
-
    assert(list_is_valid(list));
 
-   n   = list_get_elems(list);
+   int n = list_get_elems(list);
 
    assert(n > 0);
 
-   set = set_list_new(n, SET_DEFAULT);
+   Set*      set = set_list_new(n, SET_DEFAULT);
+   ListElem* le = NULL;
 
    while(n-- > 0)
    {
-      tuple = list_get_tuple(list, &le);
+      const Tuple* tuple = list_get_tuple(list, &le);
 
       assert(tuple_get_dim(tuple) == 1);
       
@@ -230,22 +229,18 @@ Set* set_list_new_from_tuples(const List* list, SetCheckType check)
 
 Set* set_list_new_from_entries(const List* list, SetCheckType check)
 {
-   ListElem*    le = NULL;
-   const Tuple* tuple;
-   Set*         set;
-   int          n;
-
    assert(list_is_valid(list));
 
-   n   = list_get_elems(list);
+   int n = list_get_elems(list);
 
    assert(n > 0);
 
-   set = set_list_new(n, SET_DEFAULT);
+   Set*      set = set_list_new(n, SET_DEFAULT);
+   ListElem* le = NULL;
 
    while(n-- > 0)
    {
-      tuple = entry_get_tuple(list_get_entry(list, &le));
+      const Tuple* tuple = entry_get_tuple(list_get_entry(list, &le));
 
       assert(tuple_get_dim(tuple) == 1);
       

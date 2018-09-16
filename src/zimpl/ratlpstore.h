@@ -158,15 +158,15 @@ struct qmatentry
 
 /* Internal functions
  */
-/*lint -sem(        lps_getnamesize, 1p, @n > 8) */
+//lint -sem(        lps_getnamesize, 1p == 1, @n > 8) 
 int                 lps_getnamesize(const Lps* lp, LpFormat format);
-/*lint -sem(        lps_makename, nulterm(3), 1p && 2n > 0 && 3p && 4n >= -1) */
+//lint -sem(        lps_makename, 1p, 2n > 0, 3p, 4n >= -1) 
 void                lps_makename(char* target, int size, const char* name, int no);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* _RATLPSTORE_H_ */
+#endif // _RATLPSTORE_H_ 
 
 
 

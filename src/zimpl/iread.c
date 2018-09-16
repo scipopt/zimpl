@@ -360,7 +360,7 @@ static int parse_pattern(
    return params;
 }
 
-/*lint -sem(split_fields, nulterm(1), 1p && 2n >= 0 && 2n < MAX_FIELDS && 3p, @n >= 0) */
+//lint -sem(split_fields, 1p, chneg(2), 2n < MAX_FIELDS, 3p, @n >= 0)
 static int split_fields(char* s, int hi_field_no, char* field[])
 {
    char* t = s;

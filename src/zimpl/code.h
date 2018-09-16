@@ -78,7 +78,7 @@ extern CodeNode*    code_get_root(void);
 extern void         code_set_child(CodeNode* node, int idx, CodeNode* child);
 //lint -sem(        code_errmsg, 1p == 1) 
 extern void         code_errmsg(const CodeNode* node);
-//lint -sem(        code_eval, 1p == 1, @P >= malloc(1)) 
+//lint -sem(        code_eval, 1p == 1, @p == 1) 
 extern CodeNode*    code_eval(CodeNode* node);
 //lint -sem(        code_prune_tree, inout(1), 1p == 1) 
 extern bool         code_prune_tree(CodeNode* node);
@@ -97,7 +97,7 @@ extern void         code_clear_inst_count(void);
 extern const Tuple* code_get_tuple(CodeNode* node);
 //lint -sem(        code_get_set, 1p == 1, @p) 
 extern const Set*   code_get_set(CodeNode* node);
-//lint -sem(         code_get_idxset, pure, 1p == 1, @p) 
+//lint -sem(         code_get_idxset, 1p == 1, @p) 
 extern const IdxSet* code_get_idxset(CodeNode* node);
 //lint -sem(        code_get_entry, 1p == 1, @p)
 extern const Entry* code_get_entry(CodeNode* node);

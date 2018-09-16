@@ -977,23 +977,16 @@ CodeNode* i_expr_min(CodeNode* self)
 
 CodeNode* i_expr_sglmin(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
-   CodeNode*     lexpr;
-   SetIter*      iter;
-   Numb*         min   = numb_new();
-   bool          first = true;
-   
    Trace("i_expr_sglmin");
    
    assert(code_is_valid(self));
 
-   idxset  = code_eval_child_idxset(self, 0);
-   set     = idxset_get_set(idxset);
-   pattern = idxset_get_tuple(idxset);
-   lexpr   = idxset_get_lexpr(idxset);
-   iter    = set_iter_init(set, pattern);
+   const IdxSet* idxset  = code_eval_child_idxset(self, 0);
+   const Set*    set     = idxset_get_set(idxset);
+   const Tuple*  pattern = idxset_get_tuple(idxset);
+   CodeNode*     lexpr   = idxset_get_lexpr(idxset);
+   Numb*         min     = numb_new();
+   bool          first   = true;
 
    if (set_get_dim(set) != 1)
    {
@@ -1014,6 +1007,8 @@ CodeNode* i_expr_sglmin(CodeNode* self)
       }
       tuple_free(tuple);
    
+      SetIter* iter = set_iter_init(set, pattern);
+
       while((tuple = set_iter_next(iter, set)) != NULL)
       {
          local_install_tuple(pattern, tuple);
@@ -1107,23 +1102,16 @@ CodeNode* i_expr_max(CodeNode* self)
 
 CodeNode* i_expr_sglmax(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
-   CodeNode*     lexpr;
-   SetIter*      iter;
-   Numb*         max   = numb_new();
-   bool          first = true;
-
    Trace("i_expr_max");
    
    assert(code_is_valid(self));
 
-   idxset  = code_eval_child_idxset(self, 0);
-   set     = idxset_get_set(idxset);
-   pattern = idxset_get_tuple(idxset);
-   lexpr   = idxset_get_lexpr(idxset);
-   iter    = set_iter_init(set, pattern);
+   const IdxSet* idxset  = code_eval_child_idxset(self, 0);
+   const Set*    set     = idxset_get_set(idxset);
+   const Tuple*  pattern = idxset_get_tuple(idxset);
+   CodeNode*     lexpr   = idxset_get_lexpr(idxset);
+   Numb*         max     = numb_new();
+   bool          first   = true;
 
    if (set_get_dim(set) != 1)
    {
@@ -1142,6 +1130,8 @@ CodeNode* i_expr_sglmax(CodeNode* self)
          zpl_exit(EXIT_FAILURE);
       }
       tuple_free(tuple);
+
+      SetIter* iter = set_iter_init(set, pattern);
 
       while((tuple = set_iter_next(iter, set)) != NULL)
       {
@@ -1279,6 +1269,8 @@ CodeNode* i_expr_min2(CodeNode* self)
       const Elem* elem = list_get_elem(list, &le);
       const Numb* numb;
 
+      assert(elem != NULL);
+      
       /* Are there only number in the selection tuple ?
        */
       if (ELEM_NUMB != elem_get_type(elem))
@@ -1325,6 +1317,8 @@ CodeNode* i_expr_max2(CodeNode* self)
       const Numb* numb;
       const Elem* elem = list_get_elem(list, &le);
 
+      assert(elem != NULL);
+      
       /* Are there only number in the selection tuple ?
        */
       if (ELEM_NUMB != elem_get_type(elem))
@@ -2172,15 +2166,12 @@ CodeNode* i_set_minus(CodeNode* self)
 
 CodeNode* i_set_inter(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
-   
    Trace("i_set_inter");
 
    assert(code_is_valid(self));
 
-   set_a = code_eval_child_set(self, 0);
-   set_b = code_eval_child_set(self, 1);
+   const Set* set_a = code_eval_child_set(self, 0);
+   const Set* set_b = code_eval_child_set(self, 1);
 
    check_sets_compatible(self, set_a, set_b, "Intersection");
 
@@ -2323,19 +2314,14 @@ CodeNode* i_set_range(CodeNode* self)
 
 CodeNode* i_set_range2(CodeNode* self)
 {
-   int from;
-   int upto;
-   int step;
-   int diff;
-   
    Trace("i_set_range2");
 
    assert(code_is_valid(self));
 
-   from = checked_eval_numb_toint(self, 0, "123: \"from\" value");
-   upto = checked_eval_numb_toint(self, 1, "124: \"upto\" value");
-   step = checked_eval_numb_toint(self, 2, "125: \"step\" value");   
-   diff = upto - from;
+   int from = checked_eval_numb_toint(self, 0, "123: \"from\" value");
+   int upto = checked_eval_numb_toint(self, 1, "124: \"upto\" value");
+   int step = checked_eval_numb_toint(self, 2, "125: \"step\" value");   
+   int diff = upto - from;
 
    if (step == 0) 
    {
@@ -2343,8 +2329,8 @@ CodeNode* i_set_range2(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   if ((Sgn(step) > 0 && diff < 0)
-    || (Sgn(step) < 0 && diff > 0))
+   if (((Sgn(step) > 0) && (diff < 0))
+    || ((Sgn(step) < 0) && (diff > 0)))
       code_value_set(self, set_empty_new(1));
    else
       code_value_set(self, set_range_new(from, upto, step));
@@ -2730,8 +2716,13 @@ CodeNode* i_tuple_new(CodeNode* self)
    assert(code_is_valid(self));
    
    for(i = 0; i < n; i++)
-      tuple_set_elem(tuple, i, elem_copy(list_get_elem(list, &le)));
+   {
+      const Elem* elem = list_get_elem(list, &le);
 
+      assert(elem != NULL);
+
+      tuple_set_elem(tuple, i, elem_copy(elem));
+   }
    code_value_tuple(self, tuple);
 
    return self;

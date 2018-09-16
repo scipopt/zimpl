@@ -78,7 +78,8 @@ void interns_exit()
    internal_vars = 0;
    internal_cons = 0;
 }
-     
+
+//lint -sem(create_new_constraint, 1p, 2p, custodial(3), inout(3), 3p == 1, 5p == 1)
 static void create_new_constraint(
    const char*  basename,
    const char*  extension,

@@ -81,7 +81,7 @@ static void heap_print(FILE* fp, const Heap* heap)
 
 bool heap_is_valid(const Heap* heap)
 {
-   HeapData* data;
+   const HeapData* data;
    int       i;
    
    if (  heap           == NULL

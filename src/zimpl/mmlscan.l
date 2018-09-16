@@ -35,7 +35,7 @@
 #pragma GCC   diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC   diagnostic ignored "-Wsign-compare"
 
-/*lint -e527 -e835 -e717 */
+/*lint -e527 -e717 -e835 */
 
 #include <sys/types.h>
 #include <stdlib.h>
