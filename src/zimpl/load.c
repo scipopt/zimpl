@@ -84,7 +84,8 @@ static void skip_comment(const MFP* fp, int* lineno)
 static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
 {
    bool in_string = false;
-   int  cnt = 0;
+   bool in_bslash = false;
+   int  cnt       = 0;
 
    for(;;)
    {
@@ -129,7 +130,7 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
        */
       if (cnt == 0 && isspace(c))
          continue;
-      
+
       if (c == '"')
          in_string = !in_string;
 

@@ -8,11 +8,11 @@ LDFLAGS		+=	-lz
 endif
 
 ifeq ($(LINK),shared)
-#LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
-#LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
-CFLAGS		+=	-fPIC
+#LIBRARY	=	$(LIBDIR)/lib$(LIBNAME).so
+#LIBLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).so
+CFLAGS		+=	-fPIC -fvisibility=hidden
 #AR		=	gcc -m64 -shared -o # the trailing space is important
-#ARFLAGS		=       $(LDFLAGS)
+#ARFLAGS	=       $(LDFLAGS)
 #RANLIB		=	true
 endif
 

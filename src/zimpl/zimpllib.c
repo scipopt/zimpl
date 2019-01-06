@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2005-2018 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2005-2019 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -33,9 +33,9 @@
 #include <string.h>
 #include <errno.h>
 #include <setjmp.h>
+#include <stdbool.h>
 
 #include "zimpl/lint.h"
-#include <stdbool.h>
 #include "zimpl/mshell.h"
 #include "zimpl/stkchk.h"
 #include "zimpl/blkmem.h"
@@ -94,7 +94,7 @@ void zpl_print_banner(FILE* fp, bool with_license)
    }
 }
 
-void zpl_exit(int retval)
+void NORETURN zpl_exit(int retval)
 {
    if (is_longjmp_ok)
       longjmp(zpl_read_env, retval);

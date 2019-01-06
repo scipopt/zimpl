@@ -88,7 +88,9 @@ DFLAGS		=	-MM
 GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 			-Wstrict-prototypes -Wmissing-prototypes -Winline \
 			-Wmissing-declarations -Wshadow -Waggregate-return \
-			-Wno-unused -Wno-unknown-pragmas 
+			-Wno-unused -Wno-unknown-pragmas -Wstrict-overflow=4 \
+			-Wsuggest-attribute=pure -Wsuggest-attribute=const \
+			-Wsuggest-attribute=noreturn -Wsuggest-attribute=format 
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

@@ -1,3 +1,7 @@
+ - added note about scope to documentation
+
+ - added -fvisibility=hidden to shared gcc builds
+
 3.3.6  30. May 2018 Release
 
  - fixed bug not restoring gmp memory functions
