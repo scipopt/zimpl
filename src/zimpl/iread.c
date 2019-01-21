@@ -31,7 +31,7 @@
 #include <sys/types.h>
 
 #ifdef WITH_PCRE
-#include <pcreposix.h>
+#include <pcre2posix.h>
 #else
 #include <regex.h>
 #endif

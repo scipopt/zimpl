@@ -60,9 +60,10 @@ else()
     add_definitions(-DWITHOUT_ZLIB)
 
     # look for pcre if ZLIB could not be found
-    find_package(PCRE)
+    find_package(PCRE REQUIRED)
     if(PCRE_FOUND)
-        add_definitions(-DWITH_PCRE=1)
+        add_definitions(-DWITH_PCRE)
+        add_definitions(-DPCRE2_STATIC)
         set(libs ${libs} ${PCRE_LIBRARIES})
         include_directories(${PCRE_INCLUDE_DIRS})
     endif()
