@@ -60,7 +60,7 @@ else()
     add_definitions(-DWITHOUT_ZLIB)
 
     # look for pcre if ZLIB could not be found
-    find_package(PCRE REQUIRED)
+    find_package(PCRE)
     if(PCRE_FOUND)
         add_definitions(-DWITH_PCRE)
         add_definitions(-DPCRE2_STATIC)
