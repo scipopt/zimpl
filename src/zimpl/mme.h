@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2019 by Thorsten Koch <koch@zib.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  336
+#define ZIMPL_VERSION  337
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.

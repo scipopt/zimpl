@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.3)
 
 project(ZIMPL
-    VERSION 3.3.7
+    VERSION 3.3.8
     LANGUAGES C)
 
 # use C99 standard
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 option(ZLIB "use ZLIB" ON)
 
@@ -62,7 +64,8 @@ else()
     # look for pcre if ZLIB could not be found
     find_package(PCRE)
     if(PCRE_FOUND)
-        add_definitions(-DWITH_PCRE=1)
+        add_definitions(-DWITH_PCRE)
+        add_definitions(-DPCRE2_STATIC)
         set(libs ${libs} ${PCRE_LIBRARIES})
         include_directories(${PCRE_INCLUDE_DIRS})
     endif()

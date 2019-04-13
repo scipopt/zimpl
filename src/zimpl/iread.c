@@ -7,7 +7,7 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
- * Copyright (C) 2001-2018 by Thorsten Koch <koch@zib.de>
+ * Copyright (C) 2001-2019 by Thorsten Koch <koch@zib.de>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,7 +31,7 @@
 #include <sys/types.h>
 
 #ifdef WITH_PCRE
-#include <pcreposix.h>
+#include <pcre2posix.h>
 #else
 #include <regex.h>
 #endif
