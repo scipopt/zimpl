@@ -166,7 +166,16 @@ endif()
 configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" @ONLY)
 
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+	 ${CMAKE_BINARY_DIR}/zimpl-config-version.cmake
+	 VERSION ${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMPL_VERSION_PATCH}
+	 COMPATIBILITY SameMajorVersion
+	 )
+
 # install the targets of the zimpl export group and the config file so that oter projects
 # can link easily against zimpl
 install(EXPORT zimpl-targets FILE zimpl-targets.cmake DESTINATION lib/cmake/zimpl)
-install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" DESTINATION lib/cmake/zimpl)
+install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake"
+   "${CMAKE_BINARY_DIR}/zimpl-config-version.cmake"
+   DESTINATION lib/cmake/zimpl)
