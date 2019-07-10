@@ -127,7 +127,7 @@ extern void interns_exit(void);
 #define UNUSED
 #define NORETURN
 #endif /* __GNUC__ || __CLANG__ */
-   
+
 #ifdef __cplusplus
 }
 #endif

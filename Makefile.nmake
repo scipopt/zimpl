@@ -9,17 +9,17 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
 #* Copyright (C) 2005-2019 by Thorsten Koch <koch@zib.de>
-#* 
+#*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
 #* as published by the Free Software Foundation; either version 2
 #* of the License, or (at your option) any later version.
-#* 
+#*
 #* This program is distributed in the hope that it will be useful,
 #* but WITHOUT ANY WARRANTY; without even the implied warranty of
 #* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #* GNU General Public License for more details.
-#* 
+#*
 #* You should have received a copy of the GNU General Public License
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -50,11 +50,11 @@ CPPFLAGS	=  /DVERSION=\"$(VERSION)\" \
             /Ilib\mpir.$(ARCH) \
              /D_CRT_SECURE_NO_WARNINGS
 
-CFLAGS		=	
+CFLAGS		=
 ARFLAGS     =  /nologo
 LIBS  		=  lib\libz.$(ARCH).lib \
                lib\libpcre.$(ARCH).lib \
-               lib\libmpir.$(ARCH).lib 
+               lib\libmpir.$(ARCH).lib
 
 LDFLAGS     =  /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD /STACK:67108864 /OPT:REF /OPT:ICF /NOLOGO
 
@@ -71,7 +71,7 @@ DEPEND		=	$(SRCDIR)\depend
 
 OBJECT  	   =  $(OBJDIR)\zimpl.obj $(OBJDIR)\xlpglue.obj $(OBJDIR)\zlpglue.obj \
 			$(OBJDIR)\ratlpstore.obj $(OBJDIR)\ratlpfwrite.obj $(OBJDIR)\ratmpswrite.obj $(OBJDIR)\ratmstwrite.obj \
-			$(OBJDIR)\ratordwrite.obj $(OBJDIR)\ratpresolve.obj  
+			$(OBJDIR)\ratordwrite.obj $(OBJDIR)\ratpresolve.obj
 LIBBASE		=	$(OBJDIR)\getopt.obj $(OBJDIR)\blkmem.obj $(OBJDIR)\bound.obj $(OBJDIR)\code.obj $(OBJDIR)\conname.obj \
          $(OBJDIR)\define.obj $(OBJDIR)\elem.obj $(OBJDIR)\entry.obj \
 			$(OBJDIR)\hash.obj $(OBJDIR)\heap.obj $(OBJDIR)\idxset.obj $(OBJDIR)\inst.obj $(OBJDIR)\iread.obj $(OBJDIR)\list.obj \
@@ -90,18 +90,18 @@ LIBOBJ		=	$(LIBBASE) $(OBJDIR)\gmpmisc.obj $(OBJDIR)\numbgmp.obj
 !CMDSWITCHES +S
 !endif
 
-all:		$(LIBRARY) $(BINARY) 
+all:		$(LIBRARY) $(BINARY)
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJECT) $(LIBRARY) 
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJECT) $(LIBRARY)
 		@echo "-> linking $@"
-		$(LD) $(LDFLAGS) /OUT:$@ $(OBJECT) $(LIBRARY) $(LIBS)  
+		$(LD) $(LDFLAGS) /OUT:$@ $(OBJECT) $(LIBRARY) $(LIBS)
 
-$(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBOBJ) 
+$(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBOBJ)
 		@echo "-> generating library $@"
 		@del $(LIBRARY)
-		$(AR) $(ARFLAGS) /OUT:$@ $(LIBOBJ) 
+		$(AR) $(ARFLAGS) /OUT:$@ $(LIBOBJ)
 
-$(OBJDIR):	
+$(OBJDIR):
 		@echo "** creating directory \"$@\""
 		@mkdir $(OBJDIR)
 
@@ -114,7 +114,7 @@ $(BINDIR):
 		@mkdir $(BINDIR)
 
 clean:
-		del /Q $(OBJDIR)\*.* $(BINARY) $(LIBRARY) 
+		del /Q $(OBJDIR)\*.* $(BINARY) $(LIBRARY)
 
 !include	$(DEPEND)
 
