@@ -345,7 +345,7 @@ Term* term_simplify(const Term* term_org)
    
    assert(term_is_valid(term_org));
 
-   term = term_new(term_org->used);
+   term = term_new(term_org->used + TERM_EXTEND_SIZE);
    hash = hash_new(HASH_MONO, term_org->used);
 
    numb_set(term->constant, term_org->constant);
