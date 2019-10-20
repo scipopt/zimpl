@@ -8,17 +8,17 @@
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
 #* Copyright (C) 2005-2019 by Thorsten Koch <koch@zib.de>
-#* 
+#*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
 #* as published by the Free Software Foundation; either version 2
 #* of the License, or (at your option) any later version.
-#* 
+#*
 #* This program is distributed in the hope that it will be useful,
 #* but WITHOUT ANY WARRANTY; without even the implied warranty of
 #* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #* GNU General Public License for more details.
-#* 
+#*
 #* You should have received a copy of the GNU General Public License
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,7 +47,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=	3.3.8
+VERSION		=	3.3.9
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false
@@ -70,7 +70,7 @@ AR_o	   	=
 RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
-			--leak-resolution=high --show-reachable=yes 
+			--leak-resolution=high --show-reachable=yes
 
 SRCDIR		=	src/zimpl
 BINDIR		=	bin
@@ -80,9 +80,9 @@ LINTCONF	=	/opt/pclint/config
 CPPFLAGS	=	-I$(SRCDIR)/.. -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lm
-YFLAGS		=	-d -t -v  
+YFLAGS		=	-d -t -v
 LFLAGS		=	-d
-ARFLAGS		=	
+ARFLAGS		=
 DFLAGS		=	-MM
 
 GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
@@ -126,7 +126,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o zlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratordwrite.o ratpresolve.o  
+			ratordwrite.o ratpresolve.o
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
@@ -178,7 +178,7 @@ $(BINLINK) $(BINSHORTLINK):	$(BINARY)
 		@rm -f $@
 		cd $(dir $@) && ln -s $(notdir $(BINARY)) $(notdir $@)
 
-$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY) 
+$(BINARY):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARY)
 		@echo "-> linking $@"
 ifeq ($(COMP), msvc)
 		$(LINKCC) $(CFLAGS) $(OBJXXX) $(LIBRARY) $(LDFLAGS) $(LINKCC_o)$@
@@ -186,11 +186,11 @@ else
 		$(LINKCC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME) $(LDFLAGS) $(LINKCC_o)$@
 endif
 
-$(BINARYDBL):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYDBL) 
+$(BINARYDBL):	$(OBJDIR) $(BINDIR) $(OBJXXX) $(LIBRARYDBL)
 		@echo "-> linking $@"
 		$(LINKCC) $(CFLAGS) $(OBJXXX) -L$(LIBDIR) -l$(LIBNAME).dbl $(LDFLAGS) $(CC_o)$@
 
-$(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX) 
+$(LIBRARY):	$(OBJDIR) $(LIBDIR) $(LIBXXX)
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARY)
 		$(AR) $(AR_o)$@ $(LIBXXX) $(ARFLAGS)
@@ -200,10 +200,10 @@ endif
 
 libdbl:		$(LIBRARYDBL) $(LIBDBLLINK)
 
-$(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX) 
+$(LIBRARYDBL):	$(OBJDIR) $(LIBDIR) $(LIBDBLXXX)
 		@echo "-> generating library $@"
 		-rm -f $(LIBRARYDBL)
-		$(AR) $@ $(LIBDBLXXX) $(ARFLAGS) 
+		$(AR) $@ $(LIBDBLXXX) $(ARFLAGS)
 		$(RANLIB) $@
 
 $(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
@@ -212,7 +212,7 @@ $(SRCDIR)/mmlparse2.c:	$(SRCDIR)/mmlparse2.y $(SRCDIR)/mme.h
 
 $(SRCDIR)/mmlscan.c:	$(SRCDIR)/mmlscan.l $(SRCDIR)/mme.h
 		@echo "-> generating lex scanner $@"
-		$(LEX) $(LFLAGS) -o$@ $< 
+		$(LEX) $(LFLAGS) -o$@ $<
 
 lint:		$(OBJSRC) $(LIBSRC)
 		$(LINT) $(LINTCONF)/co-gcc.lnt $(SRCDIR)/project2.lnt \
@@ -229,11 +229,11 @@ doxygen:
 
 check:
 		cd check; \
-		/bin/sh ./check.sh ../$(BINARY) 
+		/bin/sh ./check.sh ../$(BINARY)
 
 valgrind:
 		cd check; \
-		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)" 
+		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)"
 
 coverage:
 		-ln -s ../../src $(OBJDIR)
@@ -245,7 +245,7 @@ coverage:
 		genhtml -o gcov gcov/zimpl.capture
 		-rm gcov/z.capture
 
-$(OBJDIR):	
+$(OBJDIR):
 		@echo "** creating directory \"$@\""
 		@-mkdir -p $(OBJDIR)
 
