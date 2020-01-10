@@ -7,7 +7,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2019 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2020 by Thorsten Koch <koch@zib.de>
 #*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -90,7 +90,7 @@ GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
 			-Wmissing-declarations -Wshadow -Waggregate-return \
 			-Wno-unused -Wno-unknown-pragmas -Wstrict-overflow=4 \
 			-Wsuggest-attribute=pure -Wsuggest-attribute=const \
-			-Wsuggest-attribute=noreturn -Wsuggest-attribute=format 
+			-Wsuggest-attribute=noreturn -Wsuggest-attribute=format
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz
