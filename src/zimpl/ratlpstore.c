@@ -1961,7 +1961,7 @@ void lps_makename(
    {
       if (lpfstrncpy(target, name, nlen))
       {
-         sprintf(temp, "@%x", (unsigned int)no);
+         snprintf(temp, sizeof(temp), "@%x", (unsigned int)no);
 
          len = size - (int)strlen(temp) - 1;
 
@@ -1979,7 +1979,7 @@ void lps_makename(
    }
    else
    {
-      sprintf(temp, "@%x", (unsigned int)no);
+      snprintf(temp, sizeof(temp), "@%x", (unsigned int)no);
       
       len = size - (int)strlen(temp) - 1; /* -1 for '\0' */
       

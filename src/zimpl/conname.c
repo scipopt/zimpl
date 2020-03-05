@@ -113,10 +113,10 @@ const char* conname_get()
    switch(cform)
    {
    case CON_FORM_MAKE :
-      sprintf(cname, "c%d", count);
+      snprintf(cname, clen, "c%d", count);
       break;
    case CON_FORM_NAME :
-      sprintf(cname, "%s_%d", cpfix, count);
+      snprintf(cname, clen, "%s_%d", cpfix, count);
       break;
    case CON_FORM_FULL :
       localstr = local_tostrall();
@@ -129,7 +129,7 @@ const char* conname_get()
 
          assert(cname != NULL);
       }
-      sprintf(cname, "%s_%s%s",
+      snprintf(cname, clen, "%s_%s%s",
          cpfix,
          strlen(localstr) > 0 ? ";" : "",
          localstr);
