@@ -1,6 +1,10 @@
-3.3.9  ??. ???? 20?? Release
+3.3.9  06. March 2020 Release
 
-- fixed bug wit quadratic constraints multiplied by 0
+ - corrected typo in documentation
+
+ - fixed wrong warning about sprintf() 
+
+ - fixed bug wit quadratic constraints multiplied by 0
 
  - added note about scope to documentation
 
