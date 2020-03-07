@@ -133,7 +133,7 @@ void mono_mul_entry(
 {
    MonoElem* e;
    Var*      var;
-   MonoElem* last;
+   MonoElem* last = NULL;
    
    Trace("mono_add_elem");
 

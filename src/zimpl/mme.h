@@ -69,11 +69,19 @@ typedef struct mono          Mono;     /* From mono.h */
 #define VERB_CHATTER  3
 #define VERB_DEBUG    5
 
+#if defined(__GNUC__) || defined(__CLANG__)
+#define UNUSED __attribute__ ((unused))
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define UNUSED
+#define NORETURN
+#endif /* __GNUC__ || __CLANG__ */
+   
 /* zimpllib.c
  */
 extern int          verbose;
 //lint -function(exit, zpl_exit) 
-extern void         zpl_exit(int retval);
+extern void NORETURN zpl_exit(int retval);
 
 /* source.c
  */
@@ -119,14 +127,6 @@ extern void interns_exit(void);
 #else
 #define Trace(fname) /* */
 #endif /* TRACE */
-
-#if defined(__GNUC__) || defined(__CLANG__)
-#define UNUSED __attribute__ ((unused))
-#define NORETURN __attribute__ ((noreturn))
-#else
-#define UNUSED
-#define NORETURN
-#endif /* __GNUC__ || __CLANG__ */
 
 #ifdef __cplusplus
 }

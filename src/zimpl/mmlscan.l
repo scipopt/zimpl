@@ -31,9 +31,12 @@
 #pragma clang diagnostic ignored "-Wunused-macros"
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #pragma clang diagnostic ignored "-Wunneeded-internal-declaration"
+#pragma clang diagnostic ignored "-Wunreachable-code"
 
 #pragma GCC   diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC   diagnostic ignored "-Wsign-compare"
+#pragma GCC   diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC   diagnostic ignored "-Wsuggest-attribute=noreturn"
 
 /*lint -e527 -e717 -e835 */
 

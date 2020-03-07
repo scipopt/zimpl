@@ -1,5 +1,4 @@
-#--- $Id: make.cygwin.x86.gnu.opt,v 1.9 2014/01/12 11:07:04 bzfkocht Exp $
-CPPFLAGS	+=	-DWINDOWS -DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES
+CPPFLAGS	+=	-DWINDOWS -DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES -Wno-format-truncation
 CFLAGS		=	-O3 -march=pentiumpro $(GCCWARN)
 LDFLAGS		=	-lgmp -lm -static
 
