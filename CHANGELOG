@@ -1,8 +1,10 @@
-3.3.9  06. March 2020 Release
+3.3.9  30. March 2020 Release
+
+ - added -n option to internal call via SCIP.
 
  - corrected typo in documentation
 
- - fixed wrong warning about sprintf() 
+ - fixed wrong warning about sprintf()
 
  - fixed bug wit quadratic constraints multiplied by 0
 

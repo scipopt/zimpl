@@ -55,6 +55,7 @@
 #include "zimpl/local.h"
 #include "zimpl/list.h"
 #include "zimpl/entry.h"
+#include "zimpl/conname.h"
 #include "zimpl/xlpglue.h"
 #include "zimpl/prog.h"
 #include "zimpl/metaio.h"
@@ -282,7 +283,7 @@ bool zpl_read(const char* filename, bool with_management, void* user_data)
 
 bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_data)
 {
-   const char* options = "D:mP:s:v:";
+   const char* options = "D:mn:P:s:v:";
 
    unsigned long seed = 13021967UL;
    char**        param_table;
@@ -323,6 +324,28 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
          break;
       case 'm' :
          use_startval = true;
+         break;
+      case 'n' :
+         if (*optarg != 'c')
+         {
+            fprintf(stderr, "argument of -n must start with 'c'\n");
+            return false;
+         }
+         switch(optarg[1])
+         {
+         case 'm' :
+            conname_format(CON_FORM_MAKE);
+            break;
+         case 'n' :
+            conname_format(CON_FORM_NAME);
+            break;
+         case 'f' :
+            conname_format(CON_FORM_FULL);
+            break;
+         default :
+            fprintf(stderr, "unknown argument of -n\n");
+            return false;
+         }
          break;
       case 'P' :
          inppipe = strdup(optarg);
