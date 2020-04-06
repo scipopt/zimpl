@@ -837,6 +837,7 @@ command
    : PRINT cexpr_list { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT tuple      { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT sexpr      { $$ = code_new_inst(i_print, 1, $2); }
+   | PRINT lexpr      { $$ = code_new_inst(i_print, 1, $2); }
    | PRINT VARSYM     { $$ = code_new_inst(i_print, 1, code_new_symbol($2)); }
    | CHECK lexpr      { $$ = code_new_inst(i_check, 1, $2); }
    | FORALL idxset DO command {

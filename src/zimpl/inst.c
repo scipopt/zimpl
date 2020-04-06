@@ -4477,6 +4477,9 @@ CodeNode* i_print(CodeNode* self)
    case CODE_SYM :
       symbol_print(stdout, code_get_symbol(child));
       break;
+   case CODE_BOOL :
+      fputs(code_get_bool(child) ? "true" : "false", stdout); 
+      break;
    default :
       abort();
    }

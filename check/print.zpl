@@ -2,6 +2,7 @@
 # 2 "<print.zpl>"
 set A := { 1 .. 5 };
 set B := { "a", "b", "c" };
+param m := 6;
 #
 var x[<a> in A] >= if a < 3 then -infinity else 6 end <= if a mod 2 == 1 then infinity else 20 end;
 var y binary;
@@ -17,4 +18,6 @@ do print y;
 do print z;
 do print w;
 do print unknown;
+do print m > 7;
+do print 12 == 2*m;
 
