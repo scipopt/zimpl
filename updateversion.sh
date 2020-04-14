@@ -14,7 +14,16 @@ then
   sed -i "s/^VERSION	.*/VERSION		=  ${NEWVERSION}/" Makefile.nmake
   sed -i "s/^VERSION=.*/VERSION=\"${NEWVERSION}\"/" makedist.sh
 
-  sed -i "s/ZIMPL_VERSION \+[0-9]\+/ZIMPL_VERSION  $1$2$3/" src/zimpl/mme.h
+  if [[ "$1" -eq "0" ]]
+  then
+    sed -i "s/ZIMPL_VERSION \+[0-9]\+/ZIMPL_VERSION  $2$3/" src/zimpl/mme.h
+    if [[ "$2" -eq "0" ]]
+    then
+      sed -i "s/ZIMPL_VERSION \+[0-9]\+/ZIMPL_VERSION  $3/" src/zimpl/mme.h
+    fi
+  else
+    sed -i "s/ZIMPL_VERSION \+[0-9]\+/ZIMPL_VERSION  $1$2$3/" src/zimpl/mme.h
+  fi
   sed -i "s/@version  \+[0-9].[0-9].[0-9]\+/@version  ${NEWVERSION}/" doc/docu.c
 
   sed -i "s/    VERSION \+[0-9].[0-9].[0-9]\+/    VERSION ${NEWVERSION}/" CMakeLists.txt
