@@ -253,7 +253,7 @@ bool xlp_addcon_term(
       lps_setlhs(con, tlhs);
       break;
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
-      assert(mpq_equal(tlhs, trhs));
+      assert(mpq_equal(tlhs, trhs) != 0);
       /*lint -fallthrough*/
    case CON_RANGE :
       lps_setlhs(con, tlhs);

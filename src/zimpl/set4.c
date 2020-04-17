@@ -134,7 +134,7 @@ Set* set_copy(const Set* set)
    return set_vtab_global[set->head.type].set_copy(set);
 }
 
-inline SetIterIdx set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+SetIterIdx set_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, offset);
 }
@@ -147,7 +147,7 @@ bool set_lookup(const Set* set, const Tuple* tuple)
    return set_vtab_global[set->head.type].set_lookup_idx(set, tuple, 0) >= 0;
 }
 
-inline void set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset)
+void set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset)
 {
    set_vtab_global[set->head.type].set_get_tuple(set, idx, tuple, offset);
 }
@@ -167,7 +167,7 @@ Tuple* set_get_tuple(const Set* set, SetIterIdx idx)
    return tuple;
 }
      
-inline SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
+SetIter* set_iter_init_intern(const Set* set, const Tuple* pattern, int offset)
 {
    return set_vtab_global[set->head.type].iter_init(set, pattern, offset);
 }
@@ -177,7 +177,7 @@ SetIter* set_iter_init(const Set* set, const Tuple* pattern)
    return set_iter_init_intern(set, pattern, 0);
 }
 
-inline bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
+bool set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset)
 {
    return set_vtab_global[set->head.type].iter_next(iter, set, tuple, offset);
 }
@@ -196,7 +196,7 @@ Tuple* set_iter_next(SetIter* iter, const Set* set)
    return NULL;
 }
      
-inline void set_iter_exit_intern(SetIter* iter, const Set* set)
+void set_iter_exit_intern(SetIter* iter, const Set* set)
 {
    set_vtab_global[set->head.type].iter_exit(iter, set);
 }

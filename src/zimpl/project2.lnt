@@ -30,7 +30,7 @@
 //
 -esym(534,close,creat,fclose,fprintf,fputc,fflush,fsync,pclose,gzclose)
 -esym(534,fputs,fscanf,fseek,fwrite,lseek,memcpy,memmove,memset)
--esym(534,printf,puts,scanf,sprintf,sscanf,strcat,strcpy)
+-esym(534,printf,puts,scanf,sprintf,snprintf,sscanf,strcat,strcpy)
 -esym(534,strncat,strncpy,unlink,write,regerror)
 //
 -e592 // Non-literal format specifier used without arguments
@@ -82,6 +82,7 @@
 -strong(AacpJX,Inst)
 //-strong(AJXB,LintBool)
 //
+-esym(451,stdarg.h,stdio.h,sys/types.h) // no header guard
 -esym(537,stdarg.h,sys/types.h) // repeated include file
 -esym(534,stkchk_used_x) // ignore return value
 -efile(413 428 438 527 537 587 613 661 676 685, src/zimpl/mmlparse2.c)

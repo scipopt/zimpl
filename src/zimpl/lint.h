@@ -33,7 +33,7 @@
 #else // Use this only if we are linting
 
 extern void __assert(bool);  // this special function has the assert semantic by default
-#define assert(x) __assert(x)
+#define assert(x) /*lint -e{453} */ __assert(x)  
 
 //typedef _Bool LintBool;
 

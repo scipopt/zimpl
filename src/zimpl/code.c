@@ -98,7 +98,7 @@ struct code_node
 static CodeNode*    root       = NULL;
 static unsigned int inst_count = 0;
 
-inline bool code_is_valid(const CodeNode* node)
+bool code_is_valid(const CodeNode* node)
 {
    return ((node != NULL) && SID_ok(node, CODE_SID));
 }
@@ -510,7 +510,7 @@ void code_errmsg(const CodeNode* node)
       local_print_all(stderr);
 }
 
-inline CodeNode* code_eval(CodeNode* node)
+CodeNode* code_eval(CodeNode* node)
 {
    assert(code_is_valid(node));
 
@@ -582,7 +582,7 @@ bool code_prune_tree(CodeNode* node)
  * ----------------------------------------------------------------------------
  */
 
-inline CodeNode* code_get_child(const CodeNode* node, int no)
+CodeNode* code_get_child(const CodeNode* node, int no)
 {
    assert(code_is_valid(node));
    assert(no              >= 0);
@@ -592,97 +592,97 @@ inline CodeNode* code_get_child(const CodeNode* node, int no)
    return node->child[no];
 }
 
-inline const Numb* code_get_numb(CodeNode* node)
+const Numb* code_get_numb(CodeNode* node)
 {
    return code_check_type(node, CODE_NUMB)->value.numb;
 }
 
-inline const char* code_get_strg(CodeNode* node)
+const char* code_get_strg(CodeNode* node)
 {
    return code_check_type(node, CODE_STRG)->value.strg;
 }
 
-inline const char* code_get_name(CodeNode* node)
+const char* code_get_name(CodeNode* node)
 {
    return code_check_type(node, CODE_NAME)->value.name;
 }
 
-inline const Tuple* code_get_tuple(CodeNode* node)
+const Tuple* code_get_tuple(CodeNode* node)
 {
    return code_check_type(node, CODE_TUPLE)->value.tuple;
 }
 
-inline const Set* code_get_set(CodeNode* node)
+const Set* code_get_set(CodeNode* node)
 {
    return code_check_type(node, CODE_SET)->value.set;
 }
 
-inline const IdxSet* code_get_idxset(CodeNode* node)
+const IdxSet* code_get_idxset(CodeNode* node)
 {
    return code_check_type(node, CODE_IDXSET)->value.idxset;
 }
 
-inline const Entry* code_get_entry(CodeNode* node)
+const Entry* code_get_entry(CodeNode* node)
 {
    return code_check_type(node, CODE_ENTRY)->value.entry;
 }
 
-inline const Term* code_get_term(CodeNode* node)
+const Term* code_get_term(CodeNode* node)
 {
    return code_check_type(node, CODE_TERM)->value.term;
 }
 
-inline int code_get_size(CodeNode* node)
+int code_get_size(CodeNode* node)
 {
    return code_check_type(node, CODE_SIZE)->value.size;
 }
 
-inline bool code_get_bool(CodeNode* node)
+bool code_get_bool(CodeNode* node)
 {
    return code_check_type(node, CODE_BOOL)->value.bval;
 }
 
-inline const List* code_get_list(CodeNode* node)
+const List* code_get_list(CodeNode* node)
 {
    return code_check_type(node, CODE_LIST)->value.list;
 }
 
-inline VarClass code_get_varclass(CodeNode* node)
+VarClass code_get_varclass(CodeNode* node)
 {
    return code_check_type(node, CODE_VARCLASS)->value.varclass;
 }
 
-inline ConType code_get_contype(CodeNode* node)
+ConType code_get_contype(CodeNode* node)
 {
    return code_check_type(node, CODE_CONTYPE)->value.contype;
 }
 
-inline const RDef* code_get_rdef(CodeNode* node)
+const RDef* code_get_rdef(CodeNode* node)
 {
    return code_check_type(node, CODE_RDEF)->value.rdef;
 }
 
-inline const RPar* code_get_rpar(CodeNode* node)
+const RPar* code_get_rpar(CodeNode* node)
 {
    return code_check_type(node, CODE_RPAR)->value.rpar;
 }
 
-inline unsigned int code_get_bits(CodeNode* node)
+unsigned int code_get_bits(CodeNode* node)
 {
    return code_check_type(node, CODE_BITS)->value.bits;
 }
 
-inline Symbol* code_get_symbol(CodeNode* node)
+Symbol* code_get_symbol(CodeNode* node)
 {
    return code_check_type(node, CODE_SYM)->value.sym;
 }
 
-inline Define* code_get_define(CodeNode* node)
+Define* code_get_define(CodeNode* node)
 {
    return code_check_type(node, CODE_DEF)->value.def;
 }
 
-inline const Bound* code_get_bound(CodeNode* node)
+const Bound* code_get_bound(CodeNode* node)
 {
    return code_check_type(node, CODE_BOUND)->value.bound;
 }

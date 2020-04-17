@@ -2331,8 +2331,8 @@ CodeNode* i_set_range2(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   if (((Sgn(step) > 0) && (diff < 0))
-    || ((Sgn(step) < 0) && (diff > 0)))
+   if (((step > 0) && (diff < 0))
+    || ((step < 0) && (diff > 0)))
       code_value_set(self, set_empty_new(1));
    else
       code_value_set(self, set_range_new(from, upto, step));
