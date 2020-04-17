@@ -26,13 +26,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <stdbool.h>
 #include <math.h>
+//#include <assert.h>
 
 /* #define TRACE 1 */
 
 #include "zimpl/lint.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/random.h"
 
 /* 

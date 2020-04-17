@@ -43,11 +43,13 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <assert.h>
 #include <string.h>
 #include <stdbool.h>
+//#include <assert.h>
 
+#include "zimpl/lint.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"
 #include "zimpl/elem.h"

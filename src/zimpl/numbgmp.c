@@ -27,17 +27,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <stdbool.h>
 #include <math.h>
 #include <ctype.h>
 #include <errno.h>
+//#include <assert.h>
+
 #include <gmp.h>
 
 /* #define TRACE 1 */
 
-#include <stdbool.h>
 #include "zimpl/lint.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/random.h"
 #include "zimpl/gmpmisc.h"
 #include "zimpl/mme.h"

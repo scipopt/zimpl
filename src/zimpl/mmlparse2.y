@@ -39,7 +39,8 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-   
+
+#include "zimpl/lint.h"
 #include "zimpl/mshell.h"
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"

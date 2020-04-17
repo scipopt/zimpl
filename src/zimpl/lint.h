@@ -23,13 +23,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
 #ifndef _LINT_H_
 #define _LINT_H_
 
-/* Use this file only if we are linting
- */
-#ifdef _lint
+#ifndef _lint
+
+#include <assert.h>
+
+#else // Use this only if we are linting
+
+extern void __assert(bool);  // this special function has the assert semantic by default
+#define assert(x) __assert(x)
+
+//typedef _Bool LintBool;
 
 #if 0  // not needed anymore for pc-lint 1.2 ?
 #ifdef __cplusplus
@@ -95,8 +101,6 @@ extern int    gzclose(gzFile file);
 #endif
 #endif // 0
 #endif /* _lint */
-
-typedef _Bool LintBool;
 
 #endif /* _LINT_H_ */
 

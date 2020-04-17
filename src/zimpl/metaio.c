@@ -28,18 +28,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include <fcntl.h>
+//#include <assert.h>
 
 #ifndef WITHOUT_ZLIB
 #include <zlib.h>
 #endif
 
 #include "zimpl/lint.h"
-
-#include <stdbool.h>
 #include "zimpl/mshell.h"
+
 #include "zimpl/mme.h"
 #include "zimpl/metaio.h"
 

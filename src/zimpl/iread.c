@@ -26,9 +26,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <sys/types.h>
+//#include <assert.h>
 
 #ifdef WITH_PCRE
 #include <pcre2posix.h>
@@ -36,16 +37,13 @@
 #include <regex.h>
 #endif
 
-#ifndef _lint
 #ifndef WITHOUT_ZLIB
 #include <zlib.h>
 #endif
-#else
-#include "zimpl/lint.h"
-#endif /* _lint */
 
-#include <stdbool.h>
+#include "zimpl/lint.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"
 #include "zimpl/elem.h"

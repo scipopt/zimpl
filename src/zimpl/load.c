@@ -27,12 +27,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <stdbool.h>
 #include <ctype.h>
+//#include <assert.h>
 
 #include "zimpl/lint.h"
-#include <stdbool.h>
 #include "zimpl/mshell.h"
+
 #include "zimpl/mme.h"
 #include "zimpl/stmt.h"
 #include "zimpl/prog.h"

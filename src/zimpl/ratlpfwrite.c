@@ -26,13 +26,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <stdbool.h>
+//#include <assert.h>
 
 #include <gmp.h>
 
 #include "zimpl/lint.h"
 #include "zimpl/mshell.h"
-#include <stdbool.h>
+
 #include "zimpl/gmpmisc.h"
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"
