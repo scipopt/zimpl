@@ -134,7 +134,7 @@ static void set_range_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
-static int idx_to_val(SetIterIdx begin, SetIterIdx step, SetIterIdx idx)
+static long long idx_to_val(SetIterIdx begin, SetIterIdx step, SetIterIdx idx)
 {
 #if 0
    fprintf(stderr, "idx_to_val: %lld %lld %lld = %lld\n",
@@ -205,9 +205,6 @@ static void set_range_get_tuple(
    Tuple*     tuple,
    int        offset)
 {
-   int   val;
-   Numb* numb;
-      
    assert(set_range_is_valid(set));
    assert(idx >= 0);
    assert(idx <= set->head.members);
@@ -215,8 +212,7 @@ static void set_range_get_tuple(
    assert(offset >= 0);
    assert(offset <  tuple_get_dim(tuple));
 
-   val  = idx_to_val(set->range.begin, set->range.step, idx);
-   numb = numb_new_integer(val);
+   Numb* numb = numb_new_longlong(idx_to_val(set->range.begin, set->range.step, idx));
 
    tuple_set_elem(tuple, offset, elem_new_numb(numb));
 
@@ -301,9 +297,6 @@ static bool set_range_iter_next(
    Tuple*     tuple,
    int        offset)
 {
-   int   val;
-   Numb* numb;
-
    assert(set_range_iter_is_valid(iter));
    assert(set_range_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -313,8 +306,7 @@ static bool set_range_iter_next(
    if (iter->range.now > iter->range.last)
       return false;
 
-   val  = idx_to_val(set->range.begin, set->range.step, iter->range.now);
-   numb = numb_new_integer(val);
+   Numb* numb = numb_new_longlong(idx_to_val(set->range.begin, set->range.step, iter->range.now));
 
    tuple_set_elem(tuple, offset, elem_new_numb(numb));
 

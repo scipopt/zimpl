@@ -37,6 +37,7 @@ extern void __assert(bool);  // this special function has the assert semantic by
 
 //typedef _Bool LintBool;
 
+
 #if 0  // not needed anymore for pc-lint 1.2 ?
 #ifdef __cplusplus
 extern "C" {

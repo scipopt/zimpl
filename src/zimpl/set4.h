@@ -148,17 +148,17 @@ struct set_pseudo_iter
 
 struct set_list_iter
 {
-   int first;
-   int last;
-   int now;
+   SetIterIdx first;
+   SetIterIdx last;
+   SetIterIdx now;
    SID
 };
 
 struct set_range_iter
 {
-   int first;
-   int last;
-   int now;
+   SetIterIdx first;
+   SetIterIdx last;
+   SetIterIdx now;
    SID
 };
 

@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <ctype.h>
+#include <limits.h>
 #include <errno.h>
 //#include <assert.h>
 
@@ -204,6 +205,46 @@ Numb* numb_new_integer(int val)
    assert(numb != NULL);
 
    mpq_set_si(numb->value.numb, val, 1); 
+   
+   return numb;
+}
+
+Numb* numb_new_longlong(long long val)
+{
+   assert(val > LLONG_MIN);
+
+   Numb* numb = numb_new();
+
+   assert(numb != NULL);
+
+   bool is_negative = false;
+   
+   if (val < 0)
+   {
+      is_negative = true;
+      val         = -val;
+   }
+
+   mpz_t z;
+   mpz_init(z);
+   
+   /* Function: void mpz_import (
+      mpz_t rop,
+      size_t count,  // words of size bytes to read
+      int order,     // 1 for most significant word first or -1 for least significant first (doesn't matter with one word)
+      size_t size,   // sizeof(long long)
+      int endian,    // 0 for the native endianness of the host CPU.
+      size_t nails,  // 0 bits to skip
+      const void *op)
+   */
+   mpz_import(z, 1, -1, sizeof(val), 0, 0, &val);
+
+   if (is_negative)
+      mpz_neg(z, z);
+
+   mpq_set_z(numb->value.numb, z);
+   
+   mpz_clear(z);
    
    return numb;
 }
@@ -449,12 +490,14 @@ Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
 
 Numb* numb_new_pow(const Numb* base, int expo)
 {
+   assert(expo > INT_MIN);
+
    Numb* numb = numb_new();
-   int   i;
-   bool  is_negative = false;
    
    assert(numb != NULL);
    assert(numb_is_valid(base));
+
+   bool  is_negative = false;
 
    /* ??? we should limit the exponent to say 1000
     */
@@ -465,7 +508,7 @@ Numb* numb_new_pow(const Numb* base, int expo)
    }
    mpq_set_si(numb->value.numb, 1, 1);  /* set to 1 */
 
-   for(i = 0; i < expo; i++)
+   for(int i = 0; i < expo; i++)
       mpq_mul(numb->value.numb, numb->value.numb, base->value.numb);
 
    if (is_negative)

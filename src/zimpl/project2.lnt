@@ -14,6 +14,7 @@
 // pure if possible
 //
 //-hook(pre_option, -cond('%[option]' == '-sem', -reject)) //# Fix Bug in pclint 1.0
+-DCONSTCOND="lint -e{506}"
 -max_threads=8
 -vt_depth=20
 +fsc // strings are const
@@ -85,19 +86,18 @@
 -esym(451,stdarg.h,stdio.h,sys/types.h) // no header guard
 -esym(537,stdarg.h,sys/types.h) // repeated include file
 -esym(534,stkchk_used_x) // ignore return value
--efile(413 428 438 527 537 587 613 661 676 685, src/zimpl/mmlparse2.c)
+-efile(413 428 438 506 527 537 587 613 661 676 685, src/zimpl/mmlparse2.c)
 -efile(717 732 734 744 746 774 810 825 845, src/zimpl/mmlparse2.c)
--efile(2650 2704, src/zimpl/mmlparse2.c)
+-efile(2401 2650 2666 2704, src/zimpl/mmlparse2.c)
 -efile(755, src/zimpl/mmlparse2.h)
 -esym(*, yyptr, yynerrs, yystate, yyerrstatus, yytokentype, yychar, yylen)
 -esym(*, yyresult, yytype_int8, yytype_int16, yytop, yybottom, yyvsp, yyssp, yyvaluep)
 -esym(2701, yylex, yyerror, yydebug,yy_flex_debug)
--efile(825, src/zimpl/mmlscan.c)
--efile(429 527 534 537 539 574, src/zimpl/mmlscan.c)
+-efile(429 506 525 527 534 537 539 574, src/zimpl/mmlscan.c)
 -efile(616 633 676, src/zimpl/mmlscan.c)
--efile(702 712 714 716 717 725 732 737 744 755 765 773 774 775, src/zimpl/mmlscan.c)
--efile(825 835 845 891 893, src/zimpl/mmlscan.c)
--efile(2650 2662, src/zimpl/mmlscan.c)
+-efile(702 712 714 716 717 725 732 737 744 751 755 765 773 774 775, src/zimpl/mmlscan.c)
+-efile(823 825 835 845 891 893, src/zimpl/mmlscan.c)
+-efile(2597 2603 2650 2662, src/zimpl/mmlscan.c)
 -esym(*, yyleng, yytext, yyset_extra, yyget_extra, flex_int8_t, flex_uint8_t, flex_uint32_t, yy_trans_info, yy_trans_info::yy_verify, yy_trans_info::yy_nxt, yy_init_globals)
 -efile(663, src/zimpl/numbgmp.c)
 -esym(714 759 765, numb_div, numb_intdiv, numb_mod) // symbol not externally used
@@ -137,3 +137,5 @@
 
 // Bugs in PC-Lint
 -efile(661 2662, src/zimpl/iread.c)
+
+

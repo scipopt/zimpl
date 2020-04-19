@@ -38,6 +38,8 @@ extern Numb*        numb_new(void);
 extern Numb*        numb_new_ascii(const char* val);
 //lint -sem(        numb_new_integer, @P >= malloc(1)) 
 extern Numb*        numb_new_integer(int val);
+//lint -sem(        numb_new_longlong, @P >= malloc(1)) 
+extern Numb*        numb_new_longlong(long long val);
 
 //lint -sem(        numb_free, custodial(1), inout(1), 1p == 1) 
 extern void         numb_free(Numb* numb);

@@ -249,7 +249,7 @@ void prog_load(Prog* prog, const char* cmdpipe, const char* filename)
    {
       myfilename = malloc(strlen(filename) + strlen(cmdpipe) + 1024);
       
-      sprintf(&myfilename[1], cmdpipe, filename);
+      sprintf(&myfilename[1], cmdpipe, filename); //lint !e2662
       myfilename[0] = '#';
    }
    if (NULL == (fp = mio_open(myfilename, ".zpl")))

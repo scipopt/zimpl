@@ -57,7 +57,7 @@ void set_init()
 {
    assert(set_vtab_global == NULL);
 
-   set_vtab_global = calloc((size_t)SET_TYPES, sizeof(*set_vtab_global));
+   set_vtab_global = calloc((size_t)SET_TYPE_COUNT, sizeof(*set_vtab_global));
 
    assert(set_vtab_global != NULL);
 
@@ -206,7 +206,7 @@ void set_iter_exit(SetIter* iter, const Set* set)
    set_iter_exit_intern(iter, set);
 }
      
-inline void set_iter_reset_intern(SetIter* iter, const Set* set)
+void set_iter_reset_intern(SetIter* iter, const Set* set)
 {
    set_vtab_global[set->head.type].iter_reset(iter, set);
 }

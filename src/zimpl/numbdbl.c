@@ -190,6 +190,17 @@ Numb* numb_new_integer(int val)
    return numb;
 }
 
+Numb* numb_new_longlong(long long val)
+{
+   Numb* numb = numb_new();
+   
+   assert(numb != NULL);
+
+   numb->value.numb = val;
+   
+   return numb;
+}
+
 void numb_free(Numb* numb)
 {
    Trace("numb_free");

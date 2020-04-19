@@ -38,12 +38,10 @@
 #pragma GCC   diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC   diagnostic ignored "-Wsuggest-attribute=noreturn"
 
-/*lint -e527 -e717 -e835 */
-
 #include <sys/types.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <ctype.h>
-#include <string.h>
+//#include <string.h>
 #include <stdbool.h>
 //#include <assert.h>
 
@@ -62,7 +60,8 @@
 #include "zimpl/strstore.h"
 #include "zimpl/mmlparse2.h"
 
-extern void yyerror(const char* s);
+/*lint -sem(yyerror, 1p, r_no) */ 
+extern void NORETURN yyerror(const char* s);
 
 #define YY_DECL int yylex(YYSTYPE* lval)
 
@@ -332,7 +331,7 @@ static int        yydecl    = 0;
 %%
 static const Stmt* yystmt = NULL;
 
-void yyerror(const char* s)
+void NORETURN yyerror(const char* s)
 {
    fprintf(stderr, "*** Error 800: File %s Line %d : %s\n", 
       stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);

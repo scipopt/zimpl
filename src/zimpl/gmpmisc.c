@@ -92,12 +92,12 @@ static void* pool_alloc(void)
    elem      = pool_next;
    pool_next = elem->next;
 
-   return elem;
+   return elem; //lint !e636 strong type difference
 }
 
 static void pool_free(void* pv)
 {
-   PoolElem* elem = pv;
+   PoolElem* elem = pv; //lint !e636 strong type difference
 
    elem->next = pool_next;
    pool_next  = elem;

@@ -213,9 +213,10 @@ bool elem_is_valid(const Elem* elem)
 
 Elem* elem_copy(const Elem* source)
 {
+   assert(elem_is_valid(source));
+
    Elem* elem = new_elem();
 
-   assert(elem_is_valid(source));
    assert(elem_is_valid(elem));
 
    if (source->type != ELEM_NUMB)
