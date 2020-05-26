@@ -63,9 +63,13 @@ static void extend_storage(void)
     */
    if (store_anchor != NULL)
    {
+      assert(store_anchor->begin != NULL);
+
       store_anchor->begin =
          realloc(store_anchor->begin, store_anchor->used * sizeof(*store_anchor->begin));
       store_anchor->size = store_anchor->used;
+
+      assert(store_anchor->begin != NULL);
    }
    store = calloc(1, sizeof(*store_anchor));
 
