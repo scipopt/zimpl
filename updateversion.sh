@@ -48,3 +48,5 @@ else
   grep -i ^VERSION Makefile.nmake Makefile
   exit 1;
 fi
+
+echo "TODO update in two places in doc/zimpl.tex"
