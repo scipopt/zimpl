@@ -3,18 +3,13 @@ CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL -DFREEMEM -D__NO_MATH_INLINES
 CFLAGS		=	-O3 -m64 -march=native -g -std=gnu99
 LDFLAGS		=	-lgmp -lm
 
-ifeq ($(LINK),shared)
+LINK		=	shared
 #LIBRARY		=	$(LIBDIR)/lib$(LIBNAME).so
 #LIBLINK		=	$(LIBDIR)/lib$(NAME).$(BASE).so
 CFLAGS		+=	-fPIC
 #AR		=	gcc -m64 -shared -o # the trailing space is important
 #ARFLAGS		=       $(LDFLAGS)
 #RANLIB		=	true
-endif
-
-#ifeq ($(LINK),static)
-LDFLAGS		+=	-static
-#endif
 
 ifeq ($(ZLIB),true)
 LDFLAGS         +=      -lz

@@ -58,19 +58,6 @@ static void extend_storage(void)
 
    assert(store_size > 0);
    
-   /* Since we will not allocate anything again in this block, resize it to fit.
-    * (not clear if this is really usefull)
-    */
-   if (store_anchor != NULL)
-   {
-      assert(store_anchor->begin != NULL);
-
-      store_anchor->begin =
-         realloc(store_anchor->begin, store_anchor->used * sizeof(*store_anchor->begin));
-      store_anchor->size = store_anchor->used;
-
-      assert(store_anchor->begin != NULL);
-   }
    store = calloc(1, sizeof(*store_anchor));
 
    assert(store != NULL);
