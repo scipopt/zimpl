@@ -1,0 +1,335 @@
+bei xlp_glue das lps_getnzo dient nur dafuer sicherzustellen
+dasnicht zwei gleiche variablen in den monomen kommen.
+besser term_simplify vorher aufrufen dann braucht man das
+nicht mehr.
+
+hash_lookup ggf. scheller machen durch weniger vergleiche.
+
+
+Braucht man hier den else part und wenn ja warum.
+subto c2: sum <i> in I :
+     if (i mod 2 == 0) then 3 * x[i] else -2 * y[i] end <= 3;
+subto c1: if (0 == 1) then x + y else x end <= 0; geht
+subto c1: if (0 == 1) then x + y else 2 end <= 0; geht nicht
+subto c1: if (0 == 1) then x + y end <= 0; geht nicht
+
+need_startval dient nur dazu festzustellen ob constraints 
+beim erzeugen gegen die werte gecheckt werden. Das sollte
+auch automatisch gehen.
+
+numbdbl auf long double umstellen bzw. __float128 bei gnu
+
+Bei Read von leeren Daten die dimension des tuples aus
+dem read statement holen.
+
+SOS nicht extra implementieren sondern als sonderform von contraints.
+
+Constraintname check selbt machen
+
+Bug doublicate SOS names. (Crash)
+
+check blkmem. gucken ob auch woanders noch zu benutzen
+bei tuple element vorher gucken ob kleingenug. Meistens ja
+aber nicht immer.
+
+alles valids in NDEBUG und mem_check für allozierte dazu
+
+checks für lange zeilen, viele Felder
+set A := { read "ff" as "<65535n,65536n>" };
+
+alle ausgaben umlenkbar
+
+CHANGELOG durchgehen
+
+CPP documentiert ?
+
+set J := { 1 to max(I)+1 };
+Man muss statt dessen schreiben
+set J := { 1 to (max(I))+1 };
+
+Alles statics durchsehen ob am ende reset: gemacht
+Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
+Selbes Problem wie Kjell?
+
+cplex anbidung.
+
+WITH_ZLIB=1 im Makefile
+
+Checks vorrang operatoren Insbesondere -2^3 
+
+Fehler abgefangen wenn default anderer typ als werte in param? read!
+
+- doku index expressens in set.
+- warning / tests "
+
+namen von contrainst duerfen keine schlüsselworte sein. Unnötig.
+
+warum kann man nicht  x[i,j] (binary) == (w[i] - w[j] == 0) schreiben?
+------------------
+
+Index funtion die jedem set element eine eindeutige Zahl zuordnet.
+
+Dies erzeugt keinerleit Ausgabe. Warum?
+set I := { 1 .. 10 };
+param a[<i> in I] := i + 3;
+subto c17: a[min I] <= a[max I];
+
+check für filesystem/out of memory fehler (ulimit)
+
+numbdbl.c  for linking without gmp
+
+Regel bei Container sollte doch sein:
+Liefern wenn moeglich const
+Fressen wenn sie sichs merken (weil man immer ein copy zwischenschieben kann) oder?
+
+Man könnte vorher mal gucken welche reads ingesamt vorkommen.
+Komt einer mehrfach vor, wird die ganze Datei eingelesen und ein
+strg read fdraus gemacht.
+
+
+Test fuer spezielle fehlersituationen.
+z,B. param x[E] : = ...
+     do print x;
+gibt eine obscure Fehlermedung.
+Diser Fall sollte ewtl. behandelt werden.
+Auf jedenfall getestest werden.
+
+min2/max2 warnung wenn empty list
+
+x[i,j] = y[i] xor y[j];
+wie formuliert man das, warum geht 
+subto c1: forall <i,j> in E do 
+   vif (y[i] == 1) xor (y[j] == 1) then x[i,j] == 1 else x[i,j] == 0 end;
+nicht
+
+table sizes anpassen.
+
+static SetIter* set_multi_iter_init(
+Warum wird nicht der index mit der groessten anzahl von membern als fixed genommen?
+
+-fcheck-memory-usage ?
+
+Zielfunktion als Rows* einrichten
+Vorteile: nur non-zeros belegen speicher, mehrere Zielfunktionen möglich.
+
+Kann man vabs in der Zielfunktion einsetzen?
+Und wenn nichtwarum nicht?
+
+TeX output?
+
+var/con macht einzeln mallocs
+sto_size ist fix 1000
+Hash size ist fix 1000003
+
+
+"read from file found no data" in warning bei sets umwandeln.
+
+
+Schnelleren hash-code von numb über nenner/zaehler
+außerdem ggf im Tuple cachen.
+
+AND OR XOR mit variablen einfach als audruck für binärvariablen erlauben.
+z.b.  x[i] AND x[j] == 1
+
+
+Schneller machen, insbesonder <i,p> in I wenn p schon gesetzt ist dauert viel zu lange. Direkten zugrif auf die submenge einrichten.
+
+Einige Systeme zählen in check.sh nur die
+ersten 16, dann nicht weiter.
+
+Zugriff auf die Bounds der Variablen einbauen. Z.B. mit
+getupper(x), getlower(x). Geht das überhaupt?
+
+Bie sowas sollte es gehen daß das template wie <i, "xx", 1n> 
+aussieht.
+
+set A[<i> in I] := { read ipfile[i] as "<1n>" comment "#" };
+
+gcov -f -b -o obj/O.linux.x86.gnu.gcov/ src/vinst.c
+ist auch sehr geeignet um Statements und branches zu zählen.
+Automatische auswertung ?
+
+180 kann bei == kommen, wenn eine der Beiden Ungleichungen 
+an der Bound liegt.
+var x[I] integer >= -10 <= 10;
+subto c1: vif x[1] <  0 then x[2] == 10 end;
+
+
+Gibt es bei 180 einen false fall?
+
+Improve position of error messages by giving the right child.
+
+set.c testen ob bestimmte tuple automatisch in reihenfolge 
+erzeugt werden. Wenn ja, markieren, damit binsearch eingesetzt 
+werden kann. (z.B. range oder subset)
+
+105 kann auch von der Zielfunktion kommen.
+
+Frage, wie bring man Kosten an den internen variablen an.
+Idee:  VABS(..., "name");  VIF(..., name) vieleich dann doch
+       VAND(a, b, "name);  VCMP(.... <= 5, "name") oder so
+Dann Deklaration: var name binary bei den bool sachen und
+                  var name integer bei vabs und dann wird
+nichts erzeugt, sondern die angegebene variable benutzt. 
+
+checken was passiert wenn man if bin_var == 1 then schreibt.
+
+xor testen
+
+überprüfen ob type() in der semantic von inst.h richtig ist
+
+
+Mon sollte erkennen, das dies immer false ist
+var x[I] integer >= -7 <= 0;
+subto c1: vif x[1] + x[4] != 5 then x[2] + x[3] <= 7 end;
+
+
+check und print in checks expr? einbauen
+do print expr_list
+
+check.sh für warning erweitern
+
+test vergleich verbessern fuer 700er und 800er fehler.
+
+trace wenn fehler in function?
+
+cplex stream version? 
+enter prob
+zimpl -F cplex | awk 
+getrennte -F's fuer .lp und .tbl ?
+
+was passiert bei <i,i> in { <1,1>, <1,2>, <2,1>, <2,2> } = |2|{<1,1>,<1,2>,<2,1>,<2,2>} genau ?
+
+warum gibt set A:= {1,"hallo", 2, "a"}; keine fehler ? soll das so? 
+
+Warning 165 kommt nur wenn die Mengen die gleiche cardinalität haben.
+
+check, that   -2^4 + 3! * 2 - 3 has the right value.
+
+check fuer read/include siehe example
+
+MPS testen auch ranges.
+
+Funktion statistik Anzahl vars/Cons/Boxed/Fixed/NZOs etc, 
+         (bei soplex/extr gibts schon so was)
+
+Funktion timing.
+
+defterm?
+defcons?
+
+Test mit 1 Mill var einbauen oder Sascha fragen
+ewtl :    x1 + x2, x2 + x3, ... x98 + x99, x99 = 5 => preprocessing
+
+if (....) constraint else constraint endif 
+und/oder
+if (....) term else term endif 
+einbauen
+
+unterstuetzung von semi-continous variablen in cplex
+
+check mit fixierten variablen.
+
+check separate flag
+
+check: Tests für preprocessing
+
+
+
+Speedups:
+
+
+numbgmp: mpq_clear aufrufen für verwendete oder schon erledigt.
+strstore: string table, jeder nur einmal und dann handle. Macht auch
+          str_has und str_cmp schneller.
+
+
+auf explicite copys umstellen. list elem entry
+
+numb = new_numb
+elem = new_elem(numb);
+tuple_new_tuple(elem);
+free(elem);
+free(numb);
+
+nur noch 
+tuple_new_tuple(new_elem(new_numb)));
+
+und ansnsten hatlr
+
+tuple_new_tuple(elem_copy(elem))));
+
+
+
+
+
+
+
+
+Mindestens in Elem und Numb machen die SID wenig sinn,
+weil sie nie zurueckgesetzt werden.
+
+Einleseroutinen für indizerte Sets
+
+tru64/opt INFINITY warnung
+ibm ggf -qwarn64
+
+
+es fehlt noch sowas wie sum of sets (Big Uninion)
+
+macht es sinn  "idxset : sexpr condition" zu haben ?
+condition kann in keiner weise auf das element zugreifen.
+
+macht es einen Sinn param x[<i> in I ...] := 3 * i mit default zu haben.
+Es sind doch alle indices initialisiert.
+
+indexset sollte auch für variablen und parametergehen.
+-----------------------
+
+Mal überlegen ob es nicht eine ide wäre 
+Metakontruckte eiinzuführen wie
+
+IF x[i] > y[i] AND z[i] == 0 THEN
+   x[i] + y[i] == 5
+ELSE
+   x[i] + y[i] + z[i] == 7
+Was im prinzip ein bedingtes ODER ist.
+
+   x[i] + y[i] == 5 OR x[i] + y[i] + z[i] == 7
+
+------------------------------------------
+
+Warnung bei set operationen auf sets mit inkompatiblen tupeln
+z.B. { 1, 2, 3 } \ { "3" }
+
+-------------------------------
+
+Demangle script. das die .lp + .tbl für menschen lesbar macht.
+
+----------------------------
+Potenzmengen und mengen element kann dann auch eine menge sein,
+so das man sagen kann:
+
+forall w in pot(V) with s in W do
+
+---------------------------------------------------
+exists <a,b,c> in X : b == 4 and c == 3  shift/reduce beseitigen count?
+
+Teilmengen zuweisung in sexpr
+
+min <a,b> in X : expr 
+max =====================> Dokumentation
+
+include gucken auch innerhalt eines ; ausdrucks.
+
+
+shortcummings and Tips&Trick Abschnitt
+
+Im LP reihenfolge der sets beibehalten
+
+
+
+
+
+
+
