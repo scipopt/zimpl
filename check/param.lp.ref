@@ -10,6 +10,8 @@
 \ param g[J] := <"a"> 1, <"b"> 2, <"c"> 3, <"x"> 4, <"y"> 5, <"z"> 9;
 \ param h[I*J] :=    | "a", "c", "x", "z"   | |1|  12,  17, 99,     23 | |3|   4,   3,-17, 66*5.5 | |5| 2/3, -.4,  3, abs(-4)| 
 \ |9|   1,   2,  0,      3 | default -99;
+\ param m[I] := 2;
+\ param n[I] := default 3;
 \ var x[I];
 \ subto a1: a * x[1] >= 0;
 \ subto b2: if b == "hallo" then 5 else 3 end * x[1] >= 0;
@@ -18,6 +20,7 @@
 \ subto e1 : sum <i> in I with i > 5: e[i] * x[i] >= 0;
 \ subto f1 : g[f[5,"a"]] * x[1] + g[f[5,"b"]] * x[2] >= 0;
 \ subto h1 : sum <i,j> in I*J with h[i,j] != -99: h[i,j] * x[i] >= 0;
+\ subto mn1 : sum <i> in I: (1 + m[i] - n[i]) * x[i] >= 0;
 \Problem name: param.zpl
 Minimize
  Objective: 

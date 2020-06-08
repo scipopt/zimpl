@@ -274,6 +274,9 @@ decl_par
    | DECLPAR NAME '[' idxset ']' ASGN cexpr ';' {
          $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $7, code_new_inst(i_nop, 0));
       }
+   | DECLPAR NAME '[' idxset ']' ASGN DEFAULT cexpr ';' {
+         $$ = code_new_inst(i_newsym_para2, 4, code_new_name($2), $4, $8, code_new_inst(i_nop, 0));
+      }
    | DECLPAR NAME ASGN par_singleton ';' {
          $$ = code_new_inst(i_newsym_para1, 4,
             code_new_name($2),
@@ -292,7 +295,7 @@ par_singleton
    ;
 
 par_default
-   : /* empty */   { $$ = code_new_inst(i_nop, 0); }
+   : /* empty */    { $$ = code_new_inst(i_nop, 0); }
    | DEFAULT cexpr  { $$ = code_new_inst(i_entry, 2, code_new_inst(i_tuple_empty, 0), $2); }
    ;
 

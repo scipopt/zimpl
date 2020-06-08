@@ -723,7 +723,8 @@ The keyword \code{param} is followed by the name of the parameter
 optionally followed by the index set in square brackets. 
 Then, after the assignment operator, there is a list of pairs. The first element of each
 pair is a tuple from the index set, while the second element is the value of
-the parameter for this index.
+the parameter for this index. If there is only a single value given,
+it will be assigned to all members of the parameter.
 
 \subsubsection{Examples}
 {\small 
@@ -731,7 +732,10 @@ the parameter for this index.
 set A := { 12 .. 30 };
 set C := { <1,2,"x">, <6,5,"y">, <3,7,"z"> };
 param q := 5;
+param r[C] := 7;         # all members are 7
+param r[C] := default 7; # same as line above
 param u[A] := <13> 17, <17> 29, <23> 14 default 99;
+param str[A] := <13> "hallo", <17> "tach" default "moin";
 param amin := min A;               # = 12
 param umin := min <a> in A : u[a]; # = 14 
 param mmax := max <i> in { 1 .. 10 } : i mod 5;
