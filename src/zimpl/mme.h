@@ -77,8 +77,8 @@ extern void zpl_exit(int retval) is_NORETURN;
 
 /* source.c
  */
-//lint -sem(        show_source, inout(1), 1p == 1, 2p, chneg(3)) 
-extern void         show_source(FILE* fp, const char* text, int column);
+//lint -sem(show_source, inout(1), 1p == 1, 2p, chneg(3)) 
+extern void show_source(FILE* fp, const char* text, int column) expects_NONNULL;
 
 /* vinst.c
  */

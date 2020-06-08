@@ -33,107 +33,107 @@ typedef struct number            Numb;
 extern void         numb_init(bool with_management);
 extern void         numb_exit(void);
 //lint -sem(        numb_new, @P >= malloc(1)) 
-extern Numb*        numb_new(void);
+extern Numb*        numb_new(void) returns_NONNULL;
 //lint -sem(        numb_new_ascii, 1p, @P >= malloc(1)) 
-extern Numb*        numb_new_ascii(const char* val);
+extern Numb*        numb_new_ascii(const char* val) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_integer, @P >= malloc(1)) 
-extern Numb*        numb_new_integer(int val);
+extern Numb*        numb_new_integer(int val) returns_NONNULL;
 //lint -sem(        numb_new_longlong, @P >= malloc(1)) 
-extern Numb*        numb_new_longlong(long long val);
+extern Numb*        numb_new_longlong(long long val) returns_NONNULL;
 
 //lint -sem(        numb_free, custodial(1), inout(1), 1p == 1) 
-extern void         numb_free(Numb* numb);
+extern void         numb_free(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_is_valid, pure, 1p == 1) 
-extern bool         numb_is_valid(const Numb* numb);
+extern bool         numb_is_valid(const Numb* numb) expects_NONNULL is_PURE;
 
 //lint -sem(        numb_copy, 1p == 1, @P >= malloc(1)) 
-extern Numb*        numb_copy(const Numb* source);
+extern Numb*        numb_copy(const Numb* source) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_equal, pure, 1p == 1, 2p == 1) 
-extern bool         numb_equal(const Numb* numb_a, const Numb* numb_b);
+extern bool         numb_equal(const Numb* numb_a, const Numb* numb_b) expects_NONNULL is_PURE;
 //lint -sem(        numb_cmp, pure, 1p == 1, 2p == 1) 
-extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b);
+extern int          numb_cmp(const Numb* numb_a, const Numb* numb_b) expects_NONNULL is_PURE;
 //lint -sem(        numb_set, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_set(Numb* numb_a, const Numb* numb_b);
+extern void         numb_set(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_add, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_add(Numb* numb_a, const Numb* numb_b);
+extern void         numb_add(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_add, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_add(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_add(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_sub, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_sub(Numb* numb_a, const Numb* numb_b);
+extern void         numb_sub(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_sub, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_sub(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_sub(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_mul, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_mul(Numb* numb_a, const Numb* numb_b);
+extern void         numb_mul(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_mul, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_mul(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_mul(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_div, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_div(Numb* numb_a, const Numb* numb_b);
+extern void         numb_div(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_div, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_div(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_intdiv, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_intdiv(Numb* numb_a, const Numb* numb_b);
+extern void         numb_intdiv(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_intdiv, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_intdiv(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_intdiv(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_pow, 1p == 1, chneg(2), @P >= malloc(1)) 
-extern Numb*        numb_new_pow(const Numb* base, int expo);
+extern Numb*        numb_new_pow(const Numb* base, int expo) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_fac, chneg(1), @P >= malloc(1)) 
-extern Numb*        numb_new_fac(int n);
+extern Numb*        numb_new_fac(int n) returns_NONNULL;
 //lint -sem(        numb_mod, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_mod(Numb* numb_a, const Numb* numb_b);
+extern void         numb_mod(Numb* numb_a, const Numb* numb_b) expects_NONNULL;
 //lint -sem(        numb_new_mod, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_mod(const Numb* numb_a, const Numb* numb_b);
+extern Numb*        numb_new_mod(const Numb* numb_a, const Numb* numb_b) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_neg, inout(1), 1p == 1) 
-extern void         numb_neg(Numb* numb);
+extern void         numb_neg(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_abs, inout(1), 1p == 1) 
-extern void         numb_abs(Numb* numb);
+extern void         numb_abs(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_sgn, inout(1), 1p == 1) 
-extern void         numb_sgn(Numb* numb);
+extern void         numb_sgn(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_get_sgn, 1p == 1, @n >= -1 && @n <= 1) 
-extern int          numb_get_sgn(const Numb* numb);
+extern int          numb_get_sgn(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_round, inout(1), 1p == 1) 
-extern void         numb_round(Numb* numb);
+extern void         numb_round(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_ceil, inout(1), 1p == 1) 
-extern void         numb_ceil(Numb* numb);
+extern void         numb_ceil(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_floor, inout(1), 1p == 1) 
-extern void         numb_floor(Numb* numb);
+extern void         numb_floor(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_new_log, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_log(const Numb* numb);
+extern Numb*        numb_new_log(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_sqrt, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_sqrt(const Numb* numb);
+extern Numb*        numb_new_sqrt(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_exp, 1p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_exp(const Numb* numb);
+extern Numb*        numb_new_exp(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_ln, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_ln(const Numb* numb);
+extern Numb*        numb_new_ln(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_rand, 1p == 1, 2p == 1, @P >= malloc(1)) 
-extern Numb*        numb_new_rand(const Numb* mini, const Numb* maxi);
+extern Numb*        numb_new_rand(const Numb* mini, const Numb* maxi) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_todbl, pure, 1p == 1) 
-extern double       numb_todbl(const Numb* numb);
+extern double       numb_todbl(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_print, inout(1), 1p == 1, 2p == 1) 
-extern void         numb_print(FILE* fp, const Numb* numb);
+extern void         numb_print(FILE* fp, const Numb* numb) expects_NONNULL;
 //lint -sem(        numb_hash, pure, 1p == 1) 
-extern unsigned int numb_hash(const Numb* numb);
+extern unsigned int numb_hash(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_tostr, 1p == 1, @p) 
-extern char*        numb_tostr(const Numb* numb);
+extern char*        numb_tostr(const Numb* numb) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        numb_zero, pure, @p == 1) 
-extern const Numb*  numb_zero(void);
+extern const Numb*  numb_zero(void) returns_NONNULL is_CONST;
 //lint -sem(        numb_one, pure, @p == 1) 
-extern const Numb*  numb_one(void);
+extern const Numb*  numb_one(void) returns_NONNULL is_CONST;
 //lint -sem(        numb_minusone, pure, @p == 1) 
-extern const Numb*  numb_minusone(void);
+extern const Numb*  numb_minusone(void) returns_NONNULL is_CONST;
 //lint -sem(        numb_unknown, pure, @p == 1) 
-extern const Numb*  numb_unknown(void);
+extern const Numb*  numb_unknown(void) returns_NONNULL is_CONST;
 //lint -sem(        numb_is_int, pure, 1p == 1) 
-extern bool         numb_is_int(const Numb* numb);
+extern bool         numb_is_int(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_toint, pure, 1p == 1) 
-extern int          numb_toint(const Numb* numb);
+extern int          numb_toint(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_is_number, 1p == 1) 
-extern bool         numb_is_number(const char *s);
+extern bool         numb_is_number(const char *s) expects_NONNULL is_PURE;
 
 #ifdef __GMP_H__
 //lint -sem(        numb_new_mpq, @P >= malloc(1)) 
-extern Numb*        numb_new_mpq(const mpq_t val);
+extern Numb*        numb_new_mpq(const mpq_t val) returns_NONNULL;
 //lint -sem(        numb_new_mpq, 1p == 1) 
-extern void         numb_get_mpq(const Numb* numb, mpq_t value);
+extern void         numb_get_mpq(const Numb* numb, mpq_t value) expects_NONNULL;
 #endif // __GMP_H__ 
 
 #endif // _NUMB_H_ 
