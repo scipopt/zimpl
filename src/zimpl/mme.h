@@ -70,6 +70,34 @@ typedef struct mono          Mono;     /* From mono.h */
 #define VERB_DEBUG    5
 
 #if defined(__GNUC__) || defined(__CLANG__)
+#define is_UNUSED       __attribute__ ((unused))            //lint !e755
+#define is_NORETURN     __attribute__ ((noreturn))          //lint !e755
+#define is_COLD         __attribute__ ((cold))              //lint !e755
+#define is_HOT          __attribute__ ((hot))               //lint !e755
+#define expects_NONNULL __attribute__ ((nonnull))           //lint !e755
+#define is_CONST        __attribute__ ((const))             //lint !e755  
+#define is_PURE         __attribute__ ((pure))              //lint !e755
+#define returns_NONNULL __attribute__ ((returns_nonnull))   //lint !e755
+#define always_INLINE   __attribute__ ((always_inline))     //lint !e755
+#define is_MALLOC       __attribute__ ((malloc))            //lint !e755
+#define has_SIZE1       __attribute__ ((alloc_size (1)))    //lint !e755
+#define has_SIZE1x2     __attribute__ ((alloc_size (1,2)))  //lint !e755
+#else
+#define is_UNUSED       /**/
+#define is_NORETURN     /**/
+#define is_COLD         /**/
+#define is_HOT          /**/
+#define expects_NONNULL /**/
+#define is_CONST        /**/
+#define is_PURE         /**/
+#define returns_NONNULL /**/
+#define always_INLINE   /**/
+#define is_MALLOC       /**/
+#define has_SIZE1       /**/
+#define has_SIZE1x2     /**/
+#endif // __GNUC__ || __CLANG__ 
+   
+#if defined(__GNUC__) || defined(__CLANG__)
 #define UNUSED __attribute__ ((unused))
 #define NORETURN __attribute__ ((noreturn))
 #else

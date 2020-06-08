@@ -96,7 +96,7 @@ void zpl_print_banner(FILE* fp, bool with_license)
    }
 }
 
-void NORETURN zpl_exit(int retval)
+void zpl_exit(int retval)
 {
    if (is_longjmp_ok)
       longjmp(zpl_read_env, retval);
@@ -211,12 +211,13 @@ void zpl_add_parameter(const char* def)
 
 bool zpl_read(const char* filename, bool with_management, void* user_data)
 {
-   Prog*       prog = NULL;
-   void*       lp  = NULL;
-   bool        ret = false;
+   static Prog* prog = NULL;
+   static void* lp   = NULL;
+   static bool  ret  = false;
 
    stkchk_init();
-   
+
+   ret           = false;
    yydebug       = 0;
    yy_flex_debug = 0;
 
@@ -234,16 +235,13 @@ bool zpl_read(const char* filename, bool with_management, void* user_data)
    
    if (0 == setjmp(zpl_read_env))
    {
-      Set* set;
-
       is_longjmp_ok = true;
       
-      set = set_pseudo_new();
+      Set* set = set_pseudo_new();
       (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
       set_free(set);
    
       prog = prog_new();
-
       prog_load(prog, NULL, filename);
 
       if (prog_is_empty(prog))
@@ -263,11 +261,15 @@ bool zpl_read(const char* filename, bool with_management, void* user_data)
    is_longjmp_ok = false;
 
    if (lp != NULL)
+   {
       xlp_free(lp);
-
+      lp = NULL;
+   }
    if (prog != NULL)
+   {
       prog_free(prog);
-
+      prog = NULL;
+   }
    local_exit();
    interns_exit();
    mio_exit();
@@ -286,15 +288,15 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
 {
    const char* options = "D:mn:P:s:v:";
 
-   unsigned long seed = 13021967UL;
-   char**        param_table;
-   int           param_count = 0;
+   static Prog*  prog        = NULL;
+   static void*  lp          = NULL;
+   static bool   ret         = false;
+   static char*  inppipe     = NULL;
+   static int    param_count = 0;
+   static char** param_table;
+
+   unsigned long seed    = 13021967UL;
    int           c;
-   int           i;
-   Prog*         prog = NULL;
-   void*         lp  = NULL;
-   bool          ret = false;
-   char*         inppipe = NULL;
    bool          use_startval = false;
    
    stkchk_init();
@@ -302,7 +304,8 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
    yydebug       = 0;
    yy_flex_debug = 0;
    param_table   = malloc(sizeof(*param_table));
-
+   ret           = false;
+   
    zpl_print_banner(stdout, false);
 
    /* getopt might be called more than once
@@ -384,24 +387,22 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
    
    if (0 == setjmp( zpl_read_env))
    {
-      Set* set;
-
       is_longjmp_ok = true;
       
       /* Make symbol to hold entries of internal variables
        */
-      set = set_pseudo_new();
+      Set* set = set_pseudo_new();
       (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, NULL);
       set_free(set);
    
       /* Now store the param defines
        */
-      for(i = 0; i < param_count; i++)
+      for(int i = 0; i < param_count; i++)
          zpl_add_parameter(param_table[i]);
 
       prog = prog_new();
 
-      for(i = optind; i < argc; i++)
+      for(int i = optind; i < argc; i++)
          prog_load(prog, inppipe, argv[i]);
 
       if (prog_is_empty(prog))
@@ -421,20 +422,26 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
    is_longjmp_ok = false;
 
    if (lp != NULL)
+   {
       xlp_free(lp);
-
+      lp = NULL;
+   }
    /* Now clean up. 
     */
    if (inppipe != NULL)
+   {
       free(inppipe);
-   
-   for(i = 0; i < param_count; i++)
-      free(param_table[i]);
+      inppipe = NULL;
+   }
+   while(param_count)
+      free(param_table[--param_count]);
    free(param_table);
 
    if (prog != NULL)
+   {
       prog_free(prog);
-
+      prog = NULL;
+   }
    local_exit();
    interns_exit();
    mio_exit();

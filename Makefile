@@ -226,6 +226,7 @@ doxygen:
 		cd doc; $(DOXY) $(NAME).dxy
 
 check:
+		export GLIBC_TUNABLES=glibc.malloc.check=3
 		cd check; \
 		/bin/sh ./check.sh ../$(BINARY)
 

@@ -80,6 +80,7 @@ struct hash
 
 static void hash_statist(FILE* fp, const Hash* hash);
 
+is_PURE
 static bool hash_is_valid(const Hash* hash)
 {
    return ((hash != NULL)

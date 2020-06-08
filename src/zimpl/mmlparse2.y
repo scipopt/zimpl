@@ -71,7 +71,7 @@
 extern int yylex();
 
 /*lint -sem(yyerror, 1p, r_no) */ 
-extern void NORETURN yyerror(const char* s);
+extern void yyerror(const char* s) is_NORETURN;
  
 %}
 %pure-parser

@@ -1,3 +1,5 @@
+ - Fixed very old bug in strstore2.
+	
  - do print can now also print boolean values.
 
 3.3.9  30. March 2020 Release

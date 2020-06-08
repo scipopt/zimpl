@@ -61,7 +61,7 @@
 #include "zimpl/mmlparse2.h"
 
 /*lint -sem(yyerror, 1p, r_no) */ 
-extern void NORETURN yyerror(const char* s);
+extern void yyerror(const char* s) is_NORETURN;
 
 #define YY_DECL int yylex(YYSTYPE* lval)
 
@@ -331,7 +331,7 @@ static int        yydecl    = 0;
 %%
 static const Stmt* yystmt = NULL;
 
-void NORETURN yyerror(const char* s)
+void yyerror(const char* s)
 {
    fprintf(stderr, "*** Error 800: File %s Line %d : %s\n", 
       stmt_get_filename(yystmt), stmt_get_lineno(yystmt), s);
