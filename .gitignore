@@ -9,3 +9,13 @@ build/
 debug/
 release/
 .vscode/
+*~
+doc/zimpl.aux
+doc/zimpl.bbl
+doc/zimpl.blg
+doc/zimpl.dvi
+doc/zimpl.log
+doc/zimpl.out
+doc/zimpl.ps
+doc/zimpl.toc
+doc/zimplug.aux
