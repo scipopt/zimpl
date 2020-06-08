@@ -113,7 +113,7 @@ extern void         numb_print(FILE* fp, const Numb* numb) expects_NONNULL;
 //lint -sem(        numb_hash, pure, 1p == 1) 
 extern unsigned int numb_hash(const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        numb_tostr, 1p == 1, @p) 
-extern char*        numb_tostr(const Numb* numb) expects_NONNULL returns_NONNULL is_PURE;
+extern char*        numb_tostr(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_zero, pure, @p == 1) 
 extern const Numb*  numb_zero(void) returns_NONNULL is_CONST;
 //lint -sem(        numb_one, pure, @p == 1) 

@@ -63,17 +63,17 @@ extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx) exp
 //lint -sem(        hash_add_numb, inout(1), 1p == 1, 2p == 1) 
 extern void         hash_add_numb(Hash* hash, const Numb* numb) expects_NONNULL;
 //lint -sem(        hash_has_tuple, 1p == 1, 2p == 1) 
-extern bool         hash_has_tuple(const Hash* hash, const Tuple* tuple) expects_NONNULL is_PURE;
+extern bool         hash_has_tuple(const Hash* hash, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        hash_has_entry, 1p == 1, 2p == 1) 
-extern bool         hash_has_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL is_PURE;
+extern bool         hash_has_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        hash_has_numb, 1p == 1, 2p == 1) 
 extern bool         hash_has_numb(const Hash* hash, const Numb* numb) expects_NONNULL is_PURE;
 //lint -sem(        hash_lookup_entry, 1p == 1, 2p == 1) 
-extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL is_PURE;
+extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        hash_lookup_mono, 1p == 1, 2p == 1) 
 extern const Mono*  hash_lookup_mono(const Hash* hash, const Mono* mono) expects_NONNULL is_PURE;
 //lint -sem(        hash_lookup_elem_idx, 1p == 1, 2p == 1) 
-extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem) expects_NONNULL is_PURE;
+extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem) expects_NONNULL;
 
 #ifdef __cplusplus
 }

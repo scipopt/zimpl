@@ -51,7 +51,7 @@ extern void         set_exit(void);
 //lint -sem(        set_free, custodial(1), inout(1), 1p == 1) 
 extern void         set_free(Set* set) expects_NONNULL;
 //lint -sem(        set_is_valid, 1p == 1) 
-extern bool         set_is_valid(const Set* set) expects_NONNULL is_PURE;
+extern bool         set_is_valid(const Set* set) expects_NONNULL;
 //lint -sem(        set_copy, 1p == 1, @P >= malloc(1)) 
 extern Set*         set_copy(const Set* set) expects_NONNULL returns_NONNULL;
 //lint -sem(        set_lookup, 1p == 1, 2p == 1) 
@@ -67,7 +67,7 @@ extern int          set_get_dim(const Set* set) expects_NONNULL is_PURE;
 //lint -sem(        set_get_members, 1p == 1, chneg(@)) 
 extern int          set_get_members(const Set* set) expects_NONNULL is_PURE;
 //lint -sem(        set_get_tuple, 1p == 1, chneg(2), @P >= 1) 
-extern Tuple*       set_get_tuple(const Set* set, SetIterIdx idx) expects_NONNULL returns_NONNULL is_PURE;
+extern Tuple*       set_get_tuple(const Set* set, SetIterIdx idx) expects_NONNULL returns_NONNULL;
 //lint -sem(        set_print, 1p == 1, 2p == 1) 
 extern void         set_print(FILE* fp, const Set* set) expects_NONNULL;
 
@@ -93,11 +93,11 @@ extern Set*         set_sdiff(const Set* set_a, const Set* set_b) expects_NONNUL
 //lint -sem(        set_proj, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Set*         set_proj(const Set* set_a, const Tuple* pattern) expects_NONNULL returns_NONNULL;
 //lint -sem(        set_is_subseteq, 1p == 1, 2p == 1) 
-extern bool         set_is_subseteq(const Set* set_a, const Set* set_b) expects_NONNULL is_PURE;
+extern bool         set_is_subseteq(const Set* set_a, const Set* set_b) expects_NONNULL;
 //lint -sem(        set_is_subset, 1p == 1, 2p == 1) 
-extern bool         set_is_subset(const Set* set_a, const Set* set_b) expects_NONNULL is_PURE;
+extern bool         set_is_subset(const Set* set_a, const Set* set_b) expects_NONNULL;
 //lint -sem(        set_is_equal, 1p == 1, 2p == 1) 
-extern bool         set_is_equal(const Set* set_a, const Set* set_b) expects_NONNULL is_PURE;
+extern bool         set_is_equal(const Set* set_a, const Set* set_b) expects_NONNULL;
 //lint -sem(        set_subset_list, 1p == 1, 2n > 0, 4p == 1, @P > malloc(1)) 
 extern List*        set_subsets_list(
    const Set* set, int subset_size, List* list, SetIterIdx* idx) expects_NONNULL1 returns_NONNULL;

@@ -213,7 +213,7 @@ bool zpl_read(const char* filename, bool with_management, void* user_data)
 {
    static Prog* prog = NULL;
    static void* lp   = NULL;
-   static bool  ret  = false;
+   static bool  ret;
 
    stkchk_init();
 
@@ -290,7 +290,7 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
 
    static Prog*  prog        = NULL;
    static void*  lp          = NULL;
-   static bool   ret         = false;
+   static bool   ret;
    static char*  inppipe     = NULL;
    static int    param_count = 0;
    static char** param_table;

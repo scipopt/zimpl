@@ -47,11 +47,11 @@ extern void         symbol_exit(void);
 //lint -sem(        symbol_is_valid, 1p == 1) 
 extern bool         symbol_is_valid(const Symbol* symbol) expects_NONNULL is_PURE;
 //lint -sem(        symbol_lookup, 1p, r_null) 
-extern Symbol*      symbol_lookup(const char* name) expects_NONNULL is_PURE;
+extern Symbol*      symbol_lookup(const char* name) expects_NONNULL;
 //lint -sem(        symbol_has_entry, 1p == 1, 2p == 1) 
-extern bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL is_PURE;
+extern bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        symbol_lookup_entry, 1p == 1, 2p == 1) 
-extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL is_PURE;
+extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        symbol_add_entry, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         symbol_add_entry(Symbol* sym, Entry* entry) expects_NONNULL;
 //lint -sem(        symbol_get_dim, 1p == 1, chneg(@)) 

@@ -153,11 +153,11 @@ bool term_is_valid(const Term* term)
    int i;
 
    if (term == NULL || !SID_ok(term, TERM_SID) || term->used > term->size)
-      abort();
+      return false;
 
    for(i = 0; i < term->used; i++)
       if (numb_equal(mono_get_coeff(term->elem[i]), numb_zero()))
-         abort();      
+         return false;      
 
    return true;
 }

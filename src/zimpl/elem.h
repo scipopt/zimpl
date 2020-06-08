@@ -59,7 +59,7 @@ extern bool         elem_is_valid(const Elem* elem) expects_NONNULL is_PURE;
 //lint -sem(        elem_copy, 1p == 1, @P >= malloc(1)) 
 extern Elem*        elem_copy(const Elem* elem) expects_NONNULL returns_NONNULL;
 //lint -sem(        elem_cmp, 1p == 1, 2p == 1) 
-extern bool         elem_cmp(const Elem* elem_a, const Elem* elem_b) expects_NONNULL is_PURE;
+extern bool         elem_cmp(const Elem* elem_a, const Elem* elem_b) expects_NONNULL;
 //lint -sem(        elem_get_type, pure, 1p == 1) 
 extern ElemType     elem_get_type(const Elem* elem) expects_NONNULL is_PURE;
 //lint -sem(        elem_get_numb, pure, 1p == 1, @p) 
@@ -73,7 +73,7 @@ extern void         elem_print(FILE* fp, const Elem* elem, bool use_quotes) expe
 //lint -sem(        elem_hash, pure, 1p == 1) 
 extern unsigned int elem_hash(const Elem* elem) expects_NONNULL is_PURE;
 //lint -sem(        elem_tostr, 1p == 1, @P >= malloc(1)) 
-extern char*        elem_tostr(const Elem* elem) expects_NONNULL returns_NONNULL is_PURE;
+extern char*        elem_tostr(const Elem* elem) expects_NONNULL returns_NONNULL;
 
 #ifdef __cplusplus
 }

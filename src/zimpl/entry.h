@@ -47,7 +47,7 @@ extern bool         entry_is_valid(const Entry* entry) expects_NONNULL is_PURE;
 //lint -sem(        entry_copy, 1p == 1, @P >= malloc(1)) 
 extern Entry*       entry_copy(const Entry* entry) expects_NONNULL returns_NONNULL;
 //lint -sem(        entry_cmp, 1p == 1, 2p == 1) 
-extern bool         entry_cmp(const Entry* entry, const Tuple* tuple) expects_NONNULL is_PURE;
+extern bool         entry_cmp(const Entry* entry, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        entry_get_type, pure, 1p == 1) 
 extern SymbolType   entry_get_type(const Entry* entry) expects_NONNULL is_PURE;
 //lint -sem(        entry_get_tuple, pure, 1p == 1, @p) 

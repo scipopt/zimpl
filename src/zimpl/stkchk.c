@@ -26,6 +26,7 @@
 #ifndef NDEBUG
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "zimpl/lint.h"
 #include "zimpl/stkchk.h"

@@ -83,11 +83,11 @@ extern int          term_get_elements(const Term* term) expects_NONNULL is_PURE;
 //lint -sem(        term_get_element, 1p == 1, chneg(2), @p == 1) 
 extern Mono*        term_get_element(const Term* term, int i) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        term_get_lower_bound, 1p == 1, @P >= malloc(1)) 
-extern Bound*       term_get_lower_bound(const Term* term) expects_NONNULL returns_NONNULL is_PURE;
+extern Bound*       term_get_lower_bound(const Term* term) expects_NONNULL returns_NONNULL;
 //lint -sem(        term_get_upper_bound, 1p == 1, @P >= malloc(1)) 
-extern Bound*       term_get_upper_bound(const Term* term) expects_NONNULL returns_NONNULL is_PURE;
+extern Bound*       term_get_upper_bound(const Term* term) expects_NONNULL returns_NONNULL;
 //lint -sem(        term_is_all_integer, 1p == 1) 
-extern bool         term_is_all_integer(const Term* term) expects_NONNULL is_PURE;
+extern bool         term_is_all_integer(const Term* term) expects_NONNULL;
 //lint -sem(        term_is_linear, 1p == 1) 
 extern bool         term_is_linear(const Term* term) expects_NONNULL is_PURE;
 //lint -sem(        term_is_polynomial, 1p == 1) 

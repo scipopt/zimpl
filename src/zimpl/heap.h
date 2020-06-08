@@ -48,7 +48,7 @@ extern Heap*        heap_new_entry(int size, HeapCmp entry_cmp) returns_NONNULL;
 //lint -sem(        heap_free, custodial(1), inout(1), 1p == 1) 
 extern void         heap_free(Heap* heap) expects_NONNULL;
 //lint -sem(        heap_is_valid, 1p == 1) 
-extern bool         heap_is_valid(const Heap* heap) expects_NONNULL is_PURE;
+extern bool         heap_is_valid(const Heap* heap) expects_NONNULL;
 //lint -sem(        heap_push_entry, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         heap_push_entry(Heap* heap, Entry* entry) expects_NONNULL;
 //lint -sem(        heap_pop_entry, inout(1), 1p == 1, @P >= malloc(1)) 

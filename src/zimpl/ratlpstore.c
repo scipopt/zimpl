@@ -93,12 +93,15 @@ struct lps_hash
 
 static void hash_statist(FILE* fp, const LpsHash* hash); //lint !e528 not referenced
 
+is_PURE
 static bool hash_valid(const LpsHash* hash)
 {
    return hash != NULL
       && (hash->type == LHT_CON || hash->type == LHT_VAR || hash->type == LHT_SOS);
 }
 
+//lint -sem(hashit, 1p, pure)
+expects_NONNULL is_PURE
 static unsigned int hashit(const char* s)
 {
    unsigned int hcode = 0;
@@ -115,6 +118,8 @@ static unsigned int hashit(const char* s)
    return hcode;
 }
 
+//lint -sem(lps_hash_new, @p == 1)
+returns_NONNULL
 static LpsHash* lps_hash_new(LpsHashType type)
 {
    LpsHash* hash = calloc(1, sizeof(*hash));
@@ -133,6 +138,8 @@ static LpsHash* lps_hash_new(LpsHashType type)
    return hash;
 }
 
+//lint -sem(lps_hash_free, 1p == 1)
+expects_NONNULL
 static void lps_hash_free(LpsHash* hash)
 {
    LpsHElem*    he;
@@ -160,10 +167,12 @@ static void lps_hash_free(LpsHash* hash)
 
 /* Liefert NULL wenn nicht gefunden.
  */
+//lint -sem(hash_lookup_var, 1p == 1, 2p, pure, @p == 1)
+expects_NONNULL is_PURE 
 static Var* hash_lookup_var(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he;
+   const LpsHElem* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_VAR);
@@ -180,10 +189,12 @@ static Var* hash_lookup_var(const LpsHash* hash, const char* name)
 
 /* Liefert NULL wenn nicht gefunden.
  */
+//lint -sem(hash_lookup_con, 1p == 1, 2p, pure, @p == 1)
+expects_NONNULL is_PURE 
 static Con* hash_lookup_con(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he;
+   const LpsHElem* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_CON);
@@ -200,10 +211,12 @@ static Con* hash_lookup_con(const LpsHash* hash, const char* name)
 
 /* Liefert NULL wenn nicht gefunden.
  */
+//lint -sem(hash_lookup_sos, 1p == 1, 2p, pure, @p == 1)
+expects_NONNULL is_PURE 
 static Sos* hash_lookup_sos(const LpsHash* hash, const char* name)
 {
    unsigned int hcode;
-   LpsHElem*    he;
+   const LpsHElem* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_SOS);
@@ -218,6 +231,8 @@ static Sos* hash_lookup_sos(const LpsHash* hash, const char* name)
    return (he == NULL) ? (Sos*)0 : he->value.sos;
 }
 
+//lint -sem(hash_add_var, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_add_var(LpsHash* hash, Var* var)
 {
    LpsHElem*    he = calloc(1, sizeof(*he));
@@ -237,6 +252,8 @@ static void hash_add_var(LpsHash* hash, Var* var)
    assert(hash_lookup_var(hash, var->name) == var);
 }
 
+//lint -sem(hash_del_var, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_del_var(LpsHash* hash, const Var* var)
 {
    LpsHElem*    he;
@@ -267,6 +284,8 @@ static void hash_del_var(LpsHash* hash, const Var* var)
    assert(hash_valid(hash));
 }
 
+//lint -sem(hash_add_con, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_add_con(LpsHash* hash, Con* con)
 {
    LpsHElem*    he = calloc(1, sizeof(*he));
@@ -286,6 +305,8 @@ static void hash_add_con(LpsHash* hash, Con* con)
    assert(hash_lookup_con(hash, con->name) == con);
 }
 
+//lint -sem(hash_add_sos, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_add_sos(LpsHash* hash, Sos* sos)
 {
    LpsHElem*    he = calloc(1, sizeof(*he));
@@ -305,6 +326,8 @@ static void hash_add_sos(LpsHash* hash, Sos* sos)
    assert(hash_lookup_sos(hash, sos->name) == sos);
 }
 
+//lint -sem(hash_del_con, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_del_con(LpsHash* hash, const Con* con)
 {
    LpsHElem*    he;
@@ -335,6 +358,8 @@ static void hash_del_con(LpsHash* hash, const Con* con)
    assert(hash_valid(hash));
 }
 
+//lint -sem(lhash_statist, 1p == 1, 2p == 1)
+expects_NONNULL
 static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referenced
 {
    assert(fp != NULL);
@@ -377,6 +402,8 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 }
 
 #ifndef NDEBUG
+//lint -sem(lps_valid, 1p == 1)
+expects_NONNULL
 static bool lps_valid(const Lps* lp)
 {
    const char* err1  = "Wrong Previous Variable";
@@ -593,6 +620,8 @@ static bool lps_valid(const Lps* lp)
 }
 #endif /* !NDEBUG */
 
+//lint -sem(lps_storage, 1p == 1)
+expects_NONNULL
 static void lps_storage(Lps* lp)
 {
    Sto*         s;
@@ -1839,6 +1868,7 @@ void lps_write(
    }
 }
 
+//lint -sem(lpfstrncpy, 1p, 2p, chneg(3))
 static bool lpfstrncpy(char* t, const char* s, int len)
 {
    /* '@' was excluded, to make sure the appendix is unique.
@@ -1864,6 +1894,7 @@ static bool lpfstrncpy(char* t, const char* s, int len)
    return was_smashed;
 }
 
+//lint -sem(make_full_name, 1p, chneg(2), 3p)
 static void make_full_name(
    char*       target,
    int         size,
@@ -1940,6 +1971,7 @@ void lps_makename(
    assert(target != NULL);
    assert(size   >  MIN_NAME_LEN);   /* 8+1, so we have at least '@' + 7 digits + '\0' */
    assert(name   != NULL);
+   assert(strlen(name) > 0);
    assert(no     >= -1);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
@@ -1960,6 +1992,8 @@ void lps_makename(
       make_full_name(target, size, name);
    else if (nlen < size)
    {
+      assert(nlen > 0);
+      
       if (lpfstrncpy(target, name, nlen))
       {
          snprintf(temp, sizeof(temp), "@%x", (unsigned int)no);

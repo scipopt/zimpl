@@ -47,7 +47,7 @@ extern bool         tuple_is_valid(const Tuple* tuple) expects_NONNULL is_PURE;
 //lint -sem(        tuple_copy, 1p == 1, @P >= malloc(1)) 
 extern Tuple*       tuple_copy(const Tuple* tuple) expects_NONNULL returns_NONNULL;
 //lint -sem(        tuple_cmp, 1p == 1 && 2p == 1) 
-   extern bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b) expects_NONNULL is_PURE;
+   extern bool         tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b) expects_NONNULL;
 //lint -sem(        tuple_get_dim, pure, 1p == 1, chneg(@)) 
 extern int          tuple_get_dim(const Tuple* tuple) expects_NONNULL is_PURE;
 //lint -sem(        tuple_set_elem, custodial(3), 1p == 1, chneg(2), 3p == 1) 
@@ -61,7 +61,7 @@ extern void         tuple_print(FILE* fp, const Tuple* tuple) expects_NONNULL;
 //lint -sem(        tuple_hash, pure, 1p == 1) 
 extern unsigned int tuple_hash(const Tuple* tuple) expects_NONNULL is_PURE;
 //lint -sem(        tuple_tostr, 1p == 1, @P >= malloc(1)) 
-extern char*        tuple_tostr(const Tuple* tuple) expects_NONNULL returns_NONNULL is_PURE;
+extern char*        tuple_tostr(const Tuple* tuple) expects_NONNULL returns_NONNULL;
 
 #ifdef __cplusplus
 }

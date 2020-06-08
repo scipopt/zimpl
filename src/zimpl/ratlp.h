@@ -55,7 +55,7 @@ extern Var*         lps_getvar(const Lps* lp, const char* name) expects_NONNULL 
 //lint -sem(        lps_getcon, 1p == 1, 2p, r_null) 
 extern Con*         lps_getcon(const Lps* lp, const char* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getnzo, 1p == 1, 2p == 1, 3p == 1, r_null) 
-extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var) expects_NONNULL is_PURE;
+extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var) expects_NONNULL;
 //lint -sem(        lps_addsos, inout(1), 1p == 1, 2p, chneg(4), @p) 
 extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority) expects_NONNULL returns_NONNULL; 
 //lint -sem(        lps_addsse, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
@@ -159,7 +159,7 @@ extern void         lps_scale(const Lps* lp) expects_NONNULL;
 //lint -sem(        lps_has_sos, 1p == 1) 
 extern bool         lps_has_sos(const Lps* lp) expects_NONNULL is_PURE;
 //lint -sem(        lps_con_sumup, 1p == 1) 
-extern bool         lps_con_sumup(const Con* con, mpq_t sum) expects_NONNULL is_PURE;
+extern bool         lps_con_sumup(const Con* con, mpq_t sum) expects_NONNULL;
 
 /* ratlpfwrite.c
  */

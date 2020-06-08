@@ -109,7 +109,7 @@ void local_drop_frame(void)
 
 const Elem* local_lookup(const char* name)
 {
-   Local* local;
+   const Local* local;
 
    assert(name != NULL);
 

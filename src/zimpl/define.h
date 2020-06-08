@@ -47,7 +47,7 @@ extern void         define_set_param(Define* def, Tuple* param) expects_NONNULL;
 extern void         define_set_code(Define* def, CodeNode* code) expects_NONNULL;
 extern void         define_exit(void);
 //lint -sem(        define_lookup, 1p, r_null) */
-extern Define*      define_lookup(const char* name) expects_NONNULL is_PURE;
+extern Define*      define_lookup(const char* name) expects_NONNULL;
 //lint -sem(        define_get_name, 1p == 1, @p) */
 extern const char*  define_get_name(const Define* def) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        define_get_type, 1p == 1) */
