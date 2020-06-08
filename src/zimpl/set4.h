@@ -214,61 +214,61 @@ extern SetVTab* set_vtab_global;
 /* set4.c
  */
 //lint -sem(        set_lookup_idx, 1p == 1, 2p == 1, chneg(3), @n >= -1) 
-extern SetIterIdx   set_lookup_idx(const Set* set, const Tuple* tuple, int offset);
+extern SetIterIdx   set_lookup_idx(const Set* set, const Tuple* tuple, int offset) expects_NONNULL;
 //lint -sem(        set_get_tuple_intern, 1p == 1, chneg(2), 3p == 1, chneg(4)) 
-extern void         set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset);
+extern void         set_get_tuple_intern(const Set* set, SetIterIdx idx, Tuple* tuple, int offset) expects_NONNULL;
 //lint -sem(        set_iter_init_intern, 1p == 1, chneg(3), @P >= malloc(1)) 
-extern SetIter*     set_iter_init_intern(const Set* set, const Tuple* pattern, int offset);
+extern SetIter*     set_iter_init_intern(const Set* set, const Tuple* pattern, int offset) expects_NONNULL1 returns_NONNULL;
 //lint -sem(        set_iter_next_intern, inout(1), 1p == 1, 2p == 1, inout(3), 3p == 1, chneg(4)) 
-extern bool         set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset);
+extern bool         set_iter_next_intern(SetIter* iter, const Set* set, Tuple* tuple, int offset) expects_NONNULL;
 //lint -sem(        set_iter_exit_intern, custodial(1), inout(1), 1p == 1, 2p == 1) 
-extern void         set_iter_exit_intern(SetIter* iter, const Set* set);
+extern void         set_iter_exit_intern(SetIter* iter, const Set* set) expects_NONNULL;
 //lint -sem(        set_iter_reset_intern, inout(1), 1p == 1, 2p == 1) 
-extern void         set_iter_reset_intern(SetIter* iter, const Set* set);
+extern void         set_iter_reset_intern(SetIter* iter, const Set* set) expects_NONNULL;
 
 /* setempty.c
  */
 //lint -sem(        set_empty_init, 1p == SET_TYPE_COUNT) 
-extern void         set_empty_init(SetVTab* vtab);
+extern void         set_empty_init(SetVTab* vtab) expects_NONNULL;
    
 /* setpseudo.c
  */
 //lint -sem(        set_pseudo_init, 1p == SET_TYPE_COUNT) 
-extern void         set_pseudo_init(SetVTab* vtab);
+extern void         set_pseudo_init(SetVTab* vtab) expects_NONNULL;
    
 /* setlist.c
  */
 //lint -sem(        set_list_init, 1p == SET_TYPE_COUNT) 
-extern void         set_list_init(SetVTab* vtab);
+extern void         set_list_init(SetVTab* vtab) expects_NONNULL;
 //lint -sem(        set_list_new, 1n > 0, chneg(2n), @P >= malloc(1)) 
-extern Set*         set_list_new(int size, int flags);
+extern Set*         set_list_new(int size, int flags) returns_NONNULL;
 //lint -sem(        set_list_add_elem, inout(1), 1p == 1, 2p == 1, @n >= -1) 
-extern SetIterIdx   set_list_add_elem(Set* set, const Elem* elem, SetCheckType check);
+extern SetIterIdx   set_list_add_elem(Set* set, const Elem* elem, SetCheckType check) expects_NONNULL;
 //lint -sem(        set_list_new_from_elems, 1p == 1, @P >= malloc(1)) 
-extern Set*         set_list_new_from_elems(const List* list, SetCheckType check);
+extern Set*         set_list_new_from_elems(const List* list, SetCheckType check) expects_NONNULL returns_NONNULL;
 //lint -sem(        set_list_new_from_tuples, 1p == 1, @P >= malloc(1)) 
-extern Set*         set_list_new_from_tuples(const List* list, SetCheckType check);
+extern Set*         set_list_new_from_tuples(const List* list, SetCheckType check) expects_NONNULL  returns_NONNULL;
 //lint -sem(        set_list_new_from_entries, 1p == 1, @P >= malloc(1)) 
-extern Set*         set_list_new_from_entries(const List* list, SetCheckType check);
+extern Set*         set_list_new_from_entries(const List* list, SetCheckType check) expects_NONNULL  returns_NONNULL;
 //lint -sem(        set_list_get_elem, 1p == 1, chneg(2), @p == 1) 
-extern const Elem*  set_list_get_elem(const Set* set, SetIterIdx idx);
+extern const Elem*  set_list_get_elem(const Set* set, SetIterIdx idx) expects_NONNULL returns_NONNULL is_PURE;
 
 /* setrange.c
  */
 //lint -sem(        set_range_init, 1p == SET_TYPE_COUNT) 
-extern void         set_range_init(SetVTab* vtab);
+extern void         set_range_init(SetVTab* vtab) expects_NONNULL;
 
 /* setprod.c
  */
 //lint -sem(        set_prod_init, 1p == SET_TYPE_COUNT) 
-extern void         set_prod_init(SetVTab* vtab);
+extern void         set_prod_init(SetVTab* vtab) expects_NONNULL;
 
 /* set multi.c
  */
 //lint -sem(        set_multi_init, 1p == SET_TYPE_COUNT) 
-extern void         set_multi_init(SetVTab* vtab);
+extern void         set_multi_init(SetVTab* vtab) expects_NONNULL;
 //lint -sem(        set_multi_new_from_list, 1p == 1, @P >= malloc(1)) 
-extern Set*         set_multi_new_from_list(const List* list, SetCheckType check);
+extern Set*         set_multi_new_from_list(const List* list, SetCheckType check) expects_NONNULL returns_NONNULL;
 
 #ifdef __cplusplus
 }

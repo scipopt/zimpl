@@ -42,38 +42,38 @@ extern "C" {
 
 //lint -sem(        symbol_new, 1p, 3p == 1, chneg(4), @p == 1) 
 extern Symbol*      symbol_new(const char* name,
-   SymbolType type, const Set* set, int estimated_size, const Entry* deflt);
+   SymbolType type, const Set* set, int estimated_size, const Entry* deflt) expects_NONNULL13 returns_NONNULL;
 extern void         symbol_exit(void);
 //lint -sem(        symbol_is_valid, 1p == 1) 
-extern bool         symbol_is_valid(const Symbol* symbol);
+extern bool         symbol_is_valid(const Symbol* symbol) expects_NONNULL is_PURE;
 //lint -sem(        symbol_lookup, 1p, r_null) 
-extern Symbol*      symbol_lookup(const char* name);
+extern Symbol*      symbol_lookup(const char* name) expects_NONNULL is_PURE;
 //lint -sem(        symbol_has_entry, 1p == 1, 2p == 1) 
-extern bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple);
+extern bool         symbol_has_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL is_PURE;
 //lint -sem(        symbol_lookup_entry, 1p == 1, 2p == 1) 
-extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple);
+extern const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple) expects_NONNULL is_PURE;
 //lint -sem(        symbol_add_entry, inout(1), 1p == 1, custodial(2), 2p == 1) 
-extern void         symbol_add_entry(Symbol* sym, Entry* entry);
+extern void         symbol_add_entry(Symbol* sym, Entry* entry) expects_NONNULL;
 //lint -sem(        symbol_get_dim, 1p == 1, chneg(@)) 
-extern int          symbol_get_dim(const Symbol* sym);
+extern int          symbol_get_dim(const Symbol* sym) expects_NONNULL is_PURE;
 //lint -sem(        symbol_get_iset, 1p == 1, @p == 1) 
-extern const Set*   symbol_get_iset(const Symbol* sym);
+extern const Set*   symbol_get_iset(const Symbol* sym) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_get_name, 1p == 1, @p) 
-extern const char*  symbol_get_name(const Symbol* sym);
+extern const char*  symbol_get_name(const Symbol* sym) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_get_type, 1p == 1) 
-extern SymbolType   symbol_get_type(const Symbol* sym);
+extern SymbolType   symbol_get_type(const Symbol* sym) expects_NONNULL is_PURE;
 //lint -sem(        symbol_get_numb, 1p == 1, chneg(2), @p == 1) 
-extern const Numb*  symbol_get_numb(const Symbol* sym, int idx);
+extern const Numb*  symbol_get_numb(const Symbol* sym, int idx) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_get_strg, 1p == 1, chneg(2), @p) 
-extern const char*  symbol_get_strg(const Symbol* sym, int idx);
+extern const char*  symbol_get_strg(const Symbol* sym, int idx) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_get_set, 1p == 1, chneg(2), @p == 1) 
-extern const Set*   symbol_get_set(const Symbol* sym, int idx);
+extern const Set*   symbol_get_set(const Symbol* sym, int idx) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_get_var, 1p == 1, chneg(2), @p == 1) 
-extern Var*         symbol_get_var(const Symbol* sym, int idx);
+extern Var*         symbol_get_var(const Symbol* sym, int idx) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        symbol_print, inout(1), 1p == 1, 2p == 1) 
-extern void         symbol_print(FILE* fp, const Symbol* sym);
+extern void         symbol_print(FILE* fp, const Symbol* sym) expects_NONNULL;
 //lint -sem(        symbol_print_all, inout(1), 1p == 1) 
-extern void         symbol_print_all(FILE* fp);
+extern void         symbol_print_all(FILE* fp) expects_NONNULL;
 
 #ifdef __cplusplus
 }

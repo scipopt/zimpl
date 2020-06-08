@@ -39,32 +39,32 @@ extern "C" {
 #endif
 
 //lint -sem(    xlp_alloc, 1p, @P >= malloc(1)) 
-extern Lps*     xlp_alloc(const char* name, bool need_startval, void* user_data);
+extern Lps*     xlp_alloc(const char* name, bool need_startval, void* user_data) expects_NONNULL1 returns_NONNULL;
 //lint -sem(    xlp_free, custodial(1), inout(1), 1p == 1) 
-extern void     xlp_free(Lps* lp);
+extern void     xlp_free(Lps* lp) expects_NONNULL;
 //lint -sem(    xlp_conname_exists, 1p == 1, 2p) 
-extern bool     xlp_conname_exists(const Lps* lp, const char* conname);
+extern bool     xlp_conname_exists(const Lps* lp, const char* conname) expects_NONNULL is_PURE;
 //lint -sem(    xlp_addcon_term, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1, 7p == 1) 
 extern bool     xlp_addcon_term(Lps* lp, const char* name, ConType type,
-   const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term);
+   const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term) expects_NONNULL;
 //lint -sem(    xlp_addvar, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1, 6p == 1, 7p == 1, @p == 1) 
 extern Var*     xlp_addvar(Lps* lp, const char* name, VarClass usevarclass,
-   const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval);
+   const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_addsos_term, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1) 
 extern int      xlp_addsos_term(Lps* lp, const char* name, SosType type,
-   const Numb* priority, const Term* term);
+   const Numb* priority, const Term* term) expects_NONNULL;
 //lint -sem(    xlp_getvarname, 1p == 1, 2p == 1, @p) 
-const char*     xlp_getvarname(const Lps* lp, const Var* var);
+const char*     xlp_getvarname(const Lps* lp, const Var* var) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(    xlp_getclass, 1p == 1, 2p == 1) 
-extern VarClass xlp_getclass(const Lps* lp, const Var* var);
+extern VarClass xlp_getclass(const Lps* lp, const Var* var) expects_NONNULL is_PURE;
 //lint -sem(    xlp_getlower, 1p == 1, 2p == 1, @p == 1) 
-extern Bound*   xlp_getlower(const Lps* lp, const Var* var);
+extern Bound*   xlp_getlower(const Lps* lp, const Var* var) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_getupper, 1p == 1, 2p == 1, @p == 1) 
-extern Bound*   xlp_getupper(const Lps* lp, const Var* var);
+extern Bound*   xlp_getupper(const Lps* lp, const Var* var) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_setobj, inout(1), 1p == 1, 2p) 
-extern bool     xlp_setobj(Lps* lp, const char* name, bool minimize);
+extern bool     xlp_setobj(Lps* lp, const char* name, bool minimize) expects_NONNULL;
 //lint -sem(    xlp_addtocost, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
-extern void     xlp_addtocost(Lps* lp, Var* var, const Numb* cost);
+extern void     xlp_addtocost(Lps* lp, Var* var, const Numb* cost) expects_NONNULL;
 
 #ifdef __cplusplus
 }

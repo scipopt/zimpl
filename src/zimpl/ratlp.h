@@ -43,149 +43,149 @@ extern "C" {
 /* lpstore.c
  */
 //lint -sem(        lps_alloc, 1p, @p == 1) 
-extern Lps*         lps_alloc(const char* name);
+extern Lps*         lps_alloc(const char* name) expects_NONNULL returns_NONNULL;
 //lint -sem(        lps_free, custodial(1), inout(1), 1p == 1) 
-extern void         lps_free(Lps* lp);
+extern void         lps_free(Lps* lp) expects_NONNULL;
 //lint -sem(        lps_number, inout(1), 1p == 1) 
-extern void         lps_number(const Lps* lp);
+extern void         lps_number(const Lps* lp) expects_NONNULL;
 //lint -sem(        lps_getsos, 1p == 1, 2p, r_null) 
-extern Sos*         lps_getsos(const Lps* lp, const char* name);
+extern Sos*         lps_getsos(const Lps* lp, const char* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getvar, 1p == 1, 2p, r_null) 
-extern Var*         lps_getvar(const Lps* lp, const char* name);
+extern Var*         lps_getvar(const Lps* lp, const char* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getcon, 1p == 1, 2p, r_null) 
-extern Con*         lps_getcon(const Lps* lp, const char* name);
+extern Con*         lps_getcon(const Lps* lp, const char* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getnzo, 1p == 1, 2p == 1, 3p == 1, r_null) 
-extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var);
+extern Nzo*         lps_getnzo(const Lps* lp, const Con* con, const Var* var) expects_NONNULL is_PURE;
 //lint -sem(        lps_addsos, inout(1), 1p == 1, 2p, chneg(4), @p) 
-extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority); 
+extern Sos*         lps_addsos(Lps* lp, const char* name, SosType type, int priority) expects_NONNULL returns_NONNULL; 
 //lint -sem(        lps_addsse, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
-extern void         lps_addsse(Sos* sos, Var* var, const mpq_t weight); 
+extern void         lps_addsse(Sos* sos, Var* var, const mpq_t weight) expects_NONNULL; 
 //lint -sem(        lps_addvar, inout(1), 1p == 1, 2p, @p) 
-extern Var*         lps_addvar(Lps* lp, const char* name); 
+extern Var*         lps_addvar(Lps* lp, const char* name) expects_NONNULL returns_NONNULL; 
 //lint -sem(        lps_delvar, inout(1), 1p == 1, 2p == 1) 
-extern void         lps_delvar(Lps* lp, Var* var);
+extern void         lps_delvar(Lps* lp, Var* var) expects_NONNULL;
 //lint -sem(        lps_addcon, inout(1), 1p == 1, 2p, @p) 
-extern Con*         lps_addcon(Lps* lp, const char* name);
+extern Con*         lps_addcon(Lps* lp, const char* name) expects_NONNULL returns_NONNULL;
 //lint -sem(        lps_delcon, inout(1), 1p == 1, 2p == 1) 
-extern void         lps_delcon(Lps* lp, Con* con);
+extern void         lps_delcon(Lps* lp, Con* con) expects_NONNULL;
 //lint -sem(        lps_addnzo, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1) 
-extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value);
+extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_delnzo, inout(1), 1p == 1, inout(2), 2p == 1) 
-extern void         lps_delnzo(Lps* lp, Nzo* nzo);
+extern void         lps_delnzo(Lps* lp, Nzo* nzo) expects_NONNULL;
 //lint -sem(        lps_addqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1, inout(4), 4p == 1) 
-extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value);
+extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_addterm, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
-extern void         lps_addterm(Lps* lp, Con* con, const Term* term);
+extern void         lps_addterm(Lps* lp, Con* con, const Term* term) expects_NONNULL;
 //lint -sem(        lps_stat, 1p == 1) 
-extern void         lps_stat(const Lps* lp);
+extern void         lps_stat(const Lps* lp) expects_NONNULL;
 //lint -sem(        lps_setval, 1p == 1) 
-extern void         lps_setval(Nzo* nzo, const mpq_t value);
+extern void         lps_setval(Nzo* nzo, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_getval, 1p == 1) 
-extern void         lps_getval(const Nzo* nzo, mpq_t value);
+extern void         lps_getval(const Nzo* nzo, mpq_t value) expects_NONNULL;
 //lint -sem(        lps_setdir, inout(1), 1p == 1) 
-extern void         lps_setdir(Lps* lp, LpDirect direct);
+extern void         lps_setdir(Lps* lp, LpDirect direct) expects_NONNULL;
 //lint -sem(        lps_setprobname, inout(1), 1p == 1, 2p) 
-extern void         lps_setprobname(Lps* lp, const char* name);
+extern void         lps_setprobname(Lps* lp, const char* name) expects_NONNULL;
 //lint -sem(        lps_setobjname, inout(1), 1p == 1, 2p) 
-extern bool         lps_setobjname(Lps* lp, const char* name);
+extern bool         lps_setobjname(Lps* lp, const char* name) expects_NONNULL;
 //lint -sem(        lps_setrhsname, inout(1), 1p == 1, 2p) 
-extern void         lps_setrhsname(Lps* lp, const char* name);
+extern void         lps_setrhsname(Lps* lp, const char* name) expects_NONNULL;
 //lint -sem(        lps_setbndname, inout(1), 1p == 1, 2p) 
-extern void         lps_setbndname(Lps* lp, const char* name);
+extern void         lps_setbndname(Lps* lp, const char* name) expects_NONNULL;
 //lint -sem(        lps_setrngname, inout(1), 1p == 1, 2p) 
-extern void         lps_setrngname(Lps* lp, const char* name);
+extern void         lps_setrngname(Lps* lp, const char* name) expects_NONNULL;
 //lint -sem(        lps_getcost, 1p == 1) 
-extern void         lps_getcost(const Var* var, mpq_t cost);
+extern void         lps_getcost(const Var* var, mpq_t cost) expects_NONNULL;
 //lint -sem(        lps_setcost, inout(1), 1p == 1) 
-extern void         lps_setcost(Var* var, const mpq_t cost);
+extern void         lps_setcost(Var* var, const mpq_t cost) expects_NONNULL;
 //lint -sem(        lps_haslower, 1p == 1) 
-extern bool         lps_haslower(const Var* var);
+extern bool         lps_haslower(const Var* var) expects_NONNULL is_PURE;
 //lint -sem(        lps_getlower, 1p == 1) 
-extern void         lps_getlower(const Var* var, mpq_t lower);
+extern void         lps_getlower(const Var* var, mpq_t lower) expects_NONNULL;
 //lint -sem(        lps_setlower, inout(1), 1p == 1) 
-extern void         lps_setlower(Var* var, const mpq_t lower);
+extern void         lps_setlower(Var* var, const mpq_t lower) expects_NONNULL;
 //lint -sem(        lps_hasupper, 1p == 1) 
-extern bool         lps_hasupper(const Var* var);
+extern bool         lps_hasupper(const Var* var) expects_NONNULL is_PURE;
 //lint -sem(        lps_getupper, 1p == 1) 
-extern void         lps_getupper(const Var* var, mpq_t upper);
+extern void         lps_getupper(const Var* var, mpq_t upper) expects_NONNULL;
 //lint -sem(        lps_setupper, inout(1), 1p == 1) 
-extern void         lps_setupper(Var* var, const mpq_t upper);
+extern void         lps_setupper(Var* var, const mpq_t upper) expects_NONNULL;
 //lint -sem(        lps_getclass, 1p == 1) 
-extern VarClass     lps_getclass(const Var* var);
+extern VarClass     lps_getclass(const Var* var) expects_NONNULL is_PURE;
 //lint -sem(        lps_setclass, inout(1), 1p == 1) 
-extern void         lps_setclass(Var* var, VarClass vclass);
+extern void         lps_setclass(Var* var, VarClass vclass) expects_NONNULL;
 //lint -sem(        lps_setlhs, inout(1), 1p == 1) 
-extern void         lps_setlhs(Con* con, const mpq_t lhs);
+extern void         lps_setlhs(Con* con, const mpq_t lhs) expects_NONNULL;
 //lint -sem(        lps_setrhs, inout(1), 1p == 1) 
-extern void         lps_setrhs(Con* con, const mpq_t rhs);
+extern void         lps_setrhs(Con* con, const mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_setcontype, inout(1), 1p == 1) 
-extern void         lps_setcontype(Con* con, ConType type);
+extern void         lps_setcontype(Con* con, ConType type) expects_NONNULL;
 //lint -sem(        lps_contype, 1p == 1) 
-extern ConType      lps_contype(const Con* con);
+extern ConType      lps_contype(const Con* con) expects_NONNULL is_PURE;
 //lint -sem(        lps_vartype, 1p == 1) 
-extern VarType      lps_vartype(const Var* var);
+extern VarType      lps_vartype(const Var* var) expects_NONNULL is_PURE;
 //lint -sem(        lps_getlhs, 1p == 1) 
-extern void         lps_getlhs(const Con* con, mpq_t lhs);
+extern void         lps_getlhs(const Con* con, mpq_t lhs) expects_NONNULL;
 //lint -sem(        lps_getrhs, 1p == 1) 
-extern void         lps_getrhs(const Con* con, mpq_t rhs);
+extern void         lps_getrhs(const Con* con, mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_varname, 1p == 1, @p) 
-extern const char*  lps_varname(const Var* var);
+extern const char*  lps_varname(const Var* var) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        lps_setvartype, inout(1), 1p == 1) 
-extern void         lps_setvartype(Var* con, VarType type);
+extern void         lps_setvartype(Var* con, VarType type) expects_NONNULL;
 //lint -sem(        lps_flags, 1p == 1) 
-extern unsigned int lps_flags(const Con* con);
+extern unsigned int lps_flags(const Con* con) expects_NONNULL is_PURE;
 //lint -sem(        lps_addflags, inout(1), 1p == 1) 
-extern void         lps_addflags(Con* con, unsigned int flags);
+extern void         lps_addflags(Con* con, unsigned int flags) expects_NONNULL;
 //lint -sem(        lps_setscale, inout(1), 1p == 1) 
-extern void         lps_setscale(Con* con, const mpq_t scale);
+extern void         lps_setscale(Con* con, const mpq_t scale) expects_NONNULL;
 //lint -sem(        lps_setpriority, inout(1), 1p == 1) 
-extern void         lps_setpriority(Var* var, int priority);
+extern void         lps_setpriority(Var* var, int priority) expects_NONNULL;
 //lint -sem(        lps_setvalue, inout(1), 1p == 1) 
-extern void         lps_setvalue(Var* var, const mpq_t value);
+extern void         lps_setvalue(Var* var, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_setstartval, inout(1), 1p == 1) 
-extern void         lps_setstartval(Var* var, const mpq_t startval);
+extern void         lps_setstartval(Var* var, const mpq_t startval) expects_NONNULL;
 //lint -sem(        lps_setnamelen, inout(1), 1p == 1, chneg(2)) 
-extern void         lps_setnamelen(Lps* lp, int name_len);
+extern void         lps_setnamelen(Lps* lp, int name_len) expects_NONNULL;
 //lint -sem(        lps_setindictaor, inout(1), 1p == 1, inout(2), 2p == 1) 
-extern void         lps_setindicator(Con* con, Var* var, bool on_true);
+extern void         lps_setindicator(Con* con, Var* var, bool on_true) expects_NONNULL;
 //lint -sem(        lps_write, 1p == 1, inout(2), 2p == 1) 
-extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
+extern void         lps_write(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 //lint -sem(        lps_transtable, 1p == 1, inout(2), 2p == 1, 4p) 
-extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head);
+extern void         lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head) expects_NONNULL;
 //lint -sem(        lps_clearobj, inout(1), 1p == 1) 
-extern void         lps_clearobj(const Lps* lp);
+extern void         lps_clearobj(const Lps* lp) expects_NONNULL;
 //lint -sem(        lps_scale, inout(1), 1p == 1) 
-extern void         lps_scale(const Lps* lp);
+extern void         lps_scale(const Lps* lp) expects_NONNULL;
 //lint -sem(        lps_has_sos, 1p == 1) 
-extern bool         lps_has_sos(const Lps* lp);
+extern bool         lps_has_sos(const Lps* lp) expects_NONNULL is_PURE;
 //lint -sem(        lps_con_sumup, 1p == 1) 
-extern bool         lps_con_sumup(const Con* con, mpq_t sum);
+extern bool         lps_con_sumup(const Con* con, mpq_t sum) expects_NONNULL is_PURE;
 
 /* ratlpfwrite.c
  */
 //lint -sem(        lpf_write, 1p == 1, inout(2), 2p == 1) 
-extern void         lpf_write(const Lps* lp, FILE* fp, LpFormat format, const char* text);
+extern void         lpf_write(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 
 /* ratmpswrite.c
  */
 //lint -sem(        lpf_write, 1p == 1, inout(2), 2p == 1) 
-extern void         mps_write(const Lps* lp, FILE* fp, const char* text);
+extern void         mps_write(const Lps* lp, FILE* fp, const char* text) expects_NONNULL12;
 
 /* ratordwrite.c
 */
 //lint -sem(        lps_ordwrite, 1p == 1, inout(2), 2p == 1) 
-extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
+extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 
 /* ratmstwrite.c
 */
 //lint -sem(        lps_mstwrite, 1p == 1, inout(2), 2p == 1) 
-extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const char* text);
+extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 
 #if 0 // Not used anymore ??? 
 /* ratpresolve.c
  */
 //lint -sem(        lps_presolve, 1p == 1, chneg(2)) 
-extern PSResult     lps_presolve(Lps* lp, int verbose_level);
+extern PSResult     lps_presolve(Lps* lp, int verbose_level) expects_NONNULL;
 #endif
    
 #ifdef __cplusplus

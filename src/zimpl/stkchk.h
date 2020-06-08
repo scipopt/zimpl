@@ -37,9 +37,9 @@ extern size_t      stkchk_maxi;
 extern void   stkchk_init_x(void);
 extern size_t stkchk_used_x(void);
 //lint -sem(  stkchk_maximum_x, inout(1), 1p == 1) 
-extern void   stkchk_maximum_x(FILE* fp);
+extern void   stkchk_maximum_x(FILE* fp) expects_NONNULL;
 //lint -sem(  stkchk_display_x, inout(1), 1p == 1) 
-extern void   stkchk_display_x(FILE* fp);
+extern void   stkchk_display_x(FILE* fp) expects_NONNULL;
 
 #define stkchk_init()      stkchk_init_x()
 #define stkchk_used()      stkchk_used_x()

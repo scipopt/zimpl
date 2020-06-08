@@ -35,17 +35,17 @@ extern "C" {
 #endif
 
 //lint -sem(    zlp_stat, 1p == 1) 
-extern void     zlp_stat(const Lps* lp);
+extern void     zlp_stat(const Lps* lp) expects_NONNULL;
 //lint -sem(    zlp_setnamelen, inout(1), 1p == 1, chneg(2)) 
-extern void     zlp_setnamelen(Lps* lp, int name_len);
+extern void     zlp_setnamelen(Lps* lp, int name_len) expects_NONNULL;
 //lint -sem(    zlp_write, 1p == 1, inout(2), 2p == 1, 4p) 
-extern void     zlp_write(const Lps* lp, FILE* fp, LpFormat format, const char* title);
+extern void     zlp_write(const Lps* lp, FILE* fp, LpFormat format, const char* title) expects_NONNULL;
 //lint -sem(    zlp_transtable, 1p == 1, inout(2), 2p == 1) 
-extern void     zlp_transtable(const Lps* lp, FILE* fp, LpFormat format);
+extern void     zlp_transtable(const Lps* lp, FILE* fp, LpFormat format) expects_NONNULL;
 //lint -sem(    zlp_orderfile, 1p == 1, inout(2), 2p == 1) 
-extern void     zlp_orderfile(const Lps* lp, FILE* fp, LpFormat format);
+extern void     zlp_orderfile(const Lps* lp, FILE* fp, LpFormat format) expects_NONNULL;
 //lint -sem(    zlp_mstfile, 1p == 1, inout(2), 2p == 1) 
-extern void     zlp_mstfile(const Lps* lp, FILE* fp, LpFormat format);
+extern void     zlp_mstfile(const Lps* lp, FILE* fp, LpFormat format) expects_NONNULL;
 
 #ifdef __cplusplus
 }

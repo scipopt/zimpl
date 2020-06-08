@@ -26,6 +26,8 @@
 #ifndef NDEBUG
 
 #include <stdio.h>
+
+#include "zimpl/lint.h"
 #include "zimpl/stkchk.h"
 
 const void*  stkchk_start = 0;
