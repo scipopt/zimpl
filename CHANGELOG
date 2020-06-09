@@ -1,6 +1,14 @@
+3.4.0  10. June 2020 Release
+
  - Started to put in function attributes for gcc/clang
 
+ - Support for pclint 1.3.5
+
  - Now possible to have "default" without any non default values.
+
+ - Improved compiler warning settings
+
+ - Fixed possible bug with setjump/longjump
 
  - Fixed very old bug in strstore2.
 
