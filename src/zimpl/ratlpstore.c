@@ -1964,7 +1964,7 @@ void lps_makename(
    const char* name,
    int         no)
 {
-   char  temp[9];
+   char  temp[12]; // 9 ok but to quiet gcc warning message
    int   len;
    int   nlen;
 

@@ -84,7 +84,7 @@ YFLAGS		=	-d -t -v
 LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
-GCCWARN		=	-Wall -W -Wpointer-arith -Wcast-align -Wwrite-strings \
+GCCWARN		=	-Wall -Wextra -Wpointer-arith -Wcast-align -Wwrite-strings \
 			-Wstrict-prototypes -Wmissing-prototypes -Winline \
 			-Wmissing-declarations -Wshadow -Waggregate-return \
 			-Wno-unused -Wno-unknown-pragmas -Wstrict-overflow=4 \
