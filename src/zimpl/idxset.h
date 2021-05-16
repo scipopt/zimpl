@@ -47,7 +47,7 @@ extern IdxSet*      idxset_new(
 //lint -sem(        idxset_free, custodial(1), inout(1), 1p == 1) 
 extern void         idxset_free(IdxSet* idxset) expects_NONNULL;
 //lint -sem(        idxset_is_valid, pure, 1p == 1) 
-extern bool         idxset_is_valid(const IdxSet* idxset) expects_NONNULL is_PURE;
+extern bool         idxset_is_valid(const IdxSet* idxset) is_PURE;
 //lint -sem(        idxset_copy, 1p == 1, @P >= malloc(1)) 
 extern IdxSet*      idxset_copy(const IdxSet* source) expects_NONNULL returns_NONNULL;
 //lint -sem(        idxset_get_lexpr, 1p == 1, @p == 1) 

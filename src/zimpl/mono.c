@@ -77,11 +77,9 @@ bool mono_is_valid(const Mono* mono)
    const MonoElem* e;
    int             count = 1;
    
-   if (mono == NULL
-    || !SID_ok(mono, MONO_SID)
-    || !SID_ok2(mono->first, MOEL_SID)
-    || mono->count < 1)
-      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
+   assert(SID_ok(mono, MONO_SID));
+   assert(SID_ok2(mono->first, MOEL_SID));
+   assert(mono->count > 0);
 
    mem_check(mono);
 
@@ -93,14 +91,11 @@ bool mono_is_valid(const Mono* mono)
       
       mem_check(e);
 
-      if (!SID_ok(e, MOEL_SID))
-         abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
-      
+      assert(SID_ok(e, MOEL_SID));      
       assert(entry_is_valid(e->entry));
       assert(entry_get_type(e->entry) == SYM_VAR);
    }
-   if (count != mono->count)
-      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
+   assert(count == mono->count);
    
    return true;
 }
@@ -388,13 +383,15 @@ Var* mono_get_var(const Mono* mono, int idx)
    assert(idx >= 0);
    assert(idx <= mono->count);
 
-   if (idx > 0)
+   while(idx > 0)
    {
-      for(e = e->next; --idx > 0; e = e->next) /*lint !e441 loop variable 'e' not found in 2nd expression */
-         assert(e != NULL);
-
       assert(e != NULL);
+
+      e = e->next;
+      idx--;
    }
+   assert(e != NULL);
+
    assert(entry_is_valid(e->entry));
 
    return entry_get_var(e->entry);

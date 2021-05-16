@@ -74,7 +74,7 @@ extern int yylex();
 extern void yyerror(const char* s) is_NORETURN;
  
 %}
-%pure-parser
+%define api.pure
 %expect 12
 
 %union

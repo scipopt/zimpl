@@ -107,7 +107,7 @@ bool heap_is_valid(const Heap* heap)
       }
       if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0)
       {
-         heap_print(stderr, heap);
+         // heap_print(stderr, heap);
          return false;
       }
    }

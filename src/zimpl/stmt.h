@@ -47,7 +47,7 @@ extern Stmt*        stmt_new(StmtType type, const char* filename, int lineno,
 //lint -sem(        stmt_free, custodial(1), inout(1), 1p == 1) 
 extern void         stmt_free(Stmt* stmt) expects_NONNULL;
 //lint -sem(        stmt_is_valid, pure, 1p == 1) 
-extern bool         stmt_is_valid(const Stmt* stmt) expects_NONNULL is_PURE;
+extern bool         stmt_is_valid(const Stmt* stmt) is_PURE;
 //lint -sem(        stmt_get_filename, 1p == 1, @p) 
 extern const char*  stmt_get_filename(const Stmt* stmt) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        stmt_get_lineno, 1p == 1, chneg(@)) 

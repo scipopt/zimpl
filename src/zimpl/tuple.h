@@ -43,7 +43,7 @@ extern Tuple*       tuple_new(int dim) returns_NONNULL;
 //lint -sem(        tuple_free, custodial(1), inout(1), 1p == 1) 
 extern void         tuple_free(Tuple* tuple) expects_NONNULL;
 //lint -sem(        tuple_is_valid, pure, 1p == 1) 
-extern bool         tuple_is_valid(const Tuple* tuple) expects_NONNULL is_PURE;
+extern bool         tuple_is_valid(const Tuple* tuple) is_PURE;
 //lint -sem(        tuple_copy, 1p == 1, @P >= malloc(1)) 
 extern Tuple*       tuple_copy(const Tuple* tuple) expects_NONNULL returns_NONNULL;
 //lint -sem(        tuple_cmp, 1p == 1 && 2p == 1) 

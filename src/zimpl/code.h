@@ -65,7 +65,7 @@ extern void         code_free(CodeNode* node) expects_NONNULL;
 //lint -sem(        code_free_value, custodial(1), inout(1), 1p == 1) 
 extern void         code_free_value(CodeNode* node) expects_NONNULL;
 //lint -sem(        code_is_valid, pure, 1p == 1) 
-extern bool         code_is_valid(const CodeNode* node) expects_NONNULL is_PURE;
+extern bool         code_is_valid(const CodeNode* node) is_PURE;
 //lint -sem(        code_get_type, pure, 1p == 1) 
 extern CodeType     code_get_type(const CodeNode* node) expects_NONNULL is_PURE;
 //lint -sem(        code_get_inst, pure, 1p == 1, @p) 

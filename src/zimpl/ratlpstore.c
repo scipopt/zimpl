@@ -270,7 +270,7 @@ static void hash_del_var(LpsHash* hash, const Var* var)
       if (he->value.var == var)
          break;
 
-   assert(he != NULL);
+   assert(he != NULL); //??? he == NULL if we try to delete a non-existing variable
 
    if (next == NULL)
       hash->bucket[hcode] = he->next;
@@ -344,7 +344,7 @@ static void hash_del_con(LpsHash* hash, const Con* con)
       if (he->value.con == con)
          break;
 
-   assert(he != NULL);
+   assert(he != NULL); //??? he == NULL if we try to delete a non-existing constraint
 
    if (next == NULL)
       hash->bucket[hcode] = he->next;
@@ -425,7 +425,8 @@ static bool lps_valid(const Lps* lp)
    const char* err18 = "Wrong SOS element count";
    const char* err19 = "Wrong SOS count";
    
-   assert(lp != NULL);
+   if (lp == NULL)
+      return false;
 
    Var* var;
    Var* var_prev;

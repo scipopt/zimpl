@@ -55,7 +55,7 @@ extern Elem*        elem_new_name(const char* s) expects_NONNULL returns_NONNULL
 //lint -sem(        elem_free, custodial(1), inout(1), 1p == 1) 
 extern void         elem_free(Elem* elem) expects_NONNULL;
 //lint -sem(        elem_is_valid, pure, 1p == 1) 
-extern bool         elem_is_valid(const Elem* elem) expects_NONNULL is_PURE;
+extern bool         elem_is_valid(const Elem* elem) is_PURE;
 //lint -sem(        elem_copy, 1p == 1, @P >= malloc(1)) 
 extern Elem*        elem_copy(const Elem* elem) expects_NONNULL returns_NONNULL;
 //lint -sem(        elem_cmp, 1p == 1, 2p == 1) 

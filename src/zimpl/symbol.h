@@ -45,7 +45,7 @@ extern Symbol*      symbol_new(const char* name,
    SymbolType type, const Set* set, int estimated_size, const Entry* deflt) expects_NONNULL13 returns_NONNULL;
 extern void         symbol_exit(void);
 //lint -sem(        symbol_is_valid, 1p == 1) 
-extern bool         symbol_is_valid(const Symbol* symbol) expects_NONNULL is_PURE;
+extern bool         symbol_is_valid(const Symbol* symbol) is_PURE;
 //lint -sem(        symbol_lookup, 1p, r_null) 
 extern Symbol*      symbol_lookup(const char* name) expects_NONNULL;
 //lint -sem(        symbol_has_entry, 1p == 1, 2p == 1) 
