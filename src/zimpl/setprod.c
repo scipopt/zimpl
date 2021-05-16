@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/numb.h"
@@ -48,6 +49,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_prod_is_valid(const Set* set)
 {
    return set != NULL
@@ -59,6 +61,7 @@ static bool set_prod_is_valid(const Set* set)
       && set_is_valid(set->prod.set_b);
 }
 
+is_PURE
 static bool set_prod_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
@@ -71,6 +74,7 @@ static bool set_prod_iter_is_valid(const SetIter* iter)
  * --- set_new                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 Set* set_prod_new(const Set* a, const Set* b)
 {
    assert(set_is_valid(a));
@@ -104,6 +108,7 @@ Set* set_prod_new(const Set* a, const Set* b)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_prod_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -120,6 +125,7 @@ static Set* set_prod_copy(const Set* source)
  * --- set_free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_prod_free(Set* set)
 {
    assert(set_prod_is_valid(set));
@@ -143,6 +149,7 @@ static void set_prod_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
+expects_NONNULL 
 static SetIterIdx set_prod_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_prod_is_valid(set));
@@ -173,6 +180,7 @@ static SetIterIdx set_prod_lookup_idx(const Set* set, const Tuple* tuple, int of
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_prod_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -200,6 +208,7 @@ static void set_prod_get_tuple(
  */
 /* Initialise Iterator. Write into iter
  */
+expects_NONNULL1 returns_NONNULL 
 static SetIter* set_prod_iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -238,6 +247,7 @@ static SetIter* set_prod_iter_init(
 /* This gets the fore part of the product and saves it and
  * also gets the back part
  */
+expects_NONNULL
 static bool get_both_parts(
    const Set* a,
    const Set* b,
@@ -269,6 +279,7 @@ static bool get_both_parts(
 /* false means, there is no further element
  */
 /*ARGSUSED*/
+expects_NONNULL 
 static bool set_prod_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -330,6 +341,7 @@ static bool set_prod_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
+expects_NONNULL 
 static void set_prod_iter_exit(SetIter* iter, const Set* set)
 {
    assert(set_prod_iter_is_valid(iter));
@@ -353,6 +365,7 @@ static void set_prod_iter_exit(SetIter* iter, const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
+expects_NONNULL 
 static void set_prod_iter_reset(SetIter* iter, const Set* set)
 {
    assert(set_prod_iter_is_valid(iter));

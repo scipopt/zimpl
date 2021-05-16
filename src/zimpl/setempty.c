@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/numb.h"
@@ -52,6 +53,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_empty_is_valid(const Set* set)
 {
    return set != NULL
@@ -93,6 +95,7 @@ Set* set_empty_new(int dim)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_empty_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -106,6 +109,7 @@ static Set* set_empty_copy(const Set* source)
  * --- set_free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL
 static void set_empty_free(Set* set)
 {
    assert(set_empty_is_valid(set));
@@ -127,6 +131,7 @@ static void set_empty_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 /*ARGSUSED*/
+expects_NONNULL
 static SetIterIdx set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_empty_is_valid(set));
@@ -141,7 +146,8 @@ static SetIterIdx set_empty_lookup_idx(const Set* set, const Tuple* tuple, int o
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static NORETURN void set_empty_get_tuple(
+expects_NONNULL is_NORETURN
+static void set_empty_get_tuple(
    const Set* set,
    SetIterIdx idx,
    Tuple*     tuple,
@@ -165,6 +171,7 @@ static NORETURN void set_empty_get_tuple(
 /* Initialise Iterator. Write into iter
  */
 /*ARGSUSED*/
+expects_NONNULL1 returns_NONNULL 
 static SetIter* iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -194,11 +201,12 @@ static SetIter* iter_init(
 /* false means, there is no further element
  */
 /*ARGSUSED*/
+expects_NONNULL 
 static bool iter_next(
    SetIter*       iter,
    const Set*     set,
-   UNUSED Tuple*  tuple,
-   UNUSED int     offset)
+   is_UNUSED Tuple*  tuple,
+   is_UNUSED int     offset)
 {
    assert(set_empty_iter_is_valid(iter));
    assert(set_empty_is_valid(set));
@@ -211,7 +219,8 @@ static bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL 
+static void iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_empty_iter_is_valid(iter));
 
@@ -225,7 +234,8 @@ static void iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_empty_iter_is_valid(iter));
 }
@@ -233,7 +243,7 @@ static void iter_reset(SetIter* iter, UNUSED const Set* set)
 /* ------------------------------------------------------------------------- 
  * --- vtab_init
  * -------------------------------------------------------------------------
- */
+ */ 
 void set_empty_init(SetVTab* vtab)
 {
    vtab[SET_EMPTY].set_copy       = set_empty_copy;

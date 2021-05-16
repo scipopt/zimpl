@@ -32,13 +32,14 @@
 #include <ctype.h>
 #include <limits.h>
 #include <errno.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include <gmp.h>
 
 /* #define TRACE 1 */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/random.h"

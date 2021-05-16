@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -58,6 +59,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_list_is_valid(const Set* set)
 {
    if (set == NULL
@@ -76,6 +78,7 @@ static bool set_list_is_valid(const Set* set)
    return true;
 }
 
+is_PURE
 static bool set_list_iter_is_valid(const SetIter*iter)
 {
    return iter != NULL
@@ -92,6 +95,7 @@ static bool set_list_iter_is_valid(const SetIter*iter)
  */
 /* Return index number of element. -1 if not present
  */
+expects_NONNULL 
 static SetIterIdx lookup_elem_idx(const Set* set, const Elem* elem)
 {
    assert(set_list_is_valid(set));
@@ -127,8 +131,6 @@ Set* set_list_new(int size, int flags)
    set->head.type    = SET_LIST;
    set->list.size    = size;
    set->list.member  = calloc((size_t)size, sizeof(*set->list.member));
-
-   assert(set->list.member != NULL);
 
    if ((flags & SET_NO_HASH) == 0 && size > HASH_THRESHOLD)
       set->list.hash = hash_new(HASH_ELEM_IDX, size);
@@ -256,6 +258,7 @@ Set* set_list_new_from_entries(const List* list, SetCheckType check)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL
 static Set* set_list_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -298,6 +301,7 @@ static void set_list_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
+expects_NONNULL 
 static SetIterIdx set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_list_is_valid(set));
@@ -312,6 +316,7 @@ static SetIterIdx set_list_lookup_idx(const Set* set, const Tuple* tuple, int of
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL
 static void set_list_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -334,6 +339,7 @@ static void set_list_get_tuple(
  */
 /* Initialise Iterator. Write into iter
  */
+expects_NONNULL1 returns_NONNULL 
 static SetIter* set_list_iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -393,6 +399,7 @@ static SetIter* set_list_iter_init(
  */
 /* false means, there is no further element
  */
+expects_NONNULL
 static bool set_list_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -420,7 +427,7 @@ static bool set_list_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_list_iter_exit(SetIter* iter, UNUSED const Set* set)
+static void set_list_iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_list_iter_is_valid(iter));
 
@@ -434,7 +441,8 @@ static void set_list_iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_list_iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void set_list_iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_list_iter_is_valid(iter));
    

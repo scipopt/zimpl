@@ -27,11 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include <gmp.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/gmpmisc.h"

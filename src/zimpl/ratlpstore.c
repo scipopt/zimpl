@@ -28,11 +28,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include <gmp.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/gmpmisc.h"
@@ -403,7 +404,6 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 
 #ifndef NDEBUG
 //lint -sem(lps_valid, 1p == 1)
-expects_NONNULL
 static bool lps_valid(const Lps* lp)
 {
    const char* err1  = "Wrong Previous Variable";
@@ -1223,7 +1223,7 @@ Sos* lps_addsos(
 
 /*ARGSUSED*/
 void lps_addqme(
-   UNUSED Lps* lp,
+   is_UNUSED Lps* lp,
    Con*        con,
    Var*        var1,
    Var*        var2,
@@ -1249,7 +1249,7 @@ void lps_addqme(
 
 /*ARGSUSED*/
 void lps_addterm(
-   UNUSED Lps* lp,
+   is_UNUSED Lps* lp,
    Con*        con,
    const Term* term)
 {

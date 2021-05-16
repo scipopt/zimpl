@@ -26,15 +26,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <assert.h>
 
 #include <gmp.h>
 
-#include <stdbool.h>
+#include "zimpl/attribute.h"
 #include "zimpl/gmpmisc.h"
 #include "zimpl/ratlp.h"
 #include "zimpl/ratlpstore.h"
 
+expects_NONNULL
 static void write_name(FILE* fp, const char* name)
 {
    const char* s         = name;
@@ -84,6 +86,7 @@ static void write_name(FILE* fp, const char* name)
       fputc(']', fp);
 }
 
+expects_NONNULL
 static void write_lhs(FILE* fp, const Con* con, ConType type)
 {
    assert(fp  != NULL);
@@ -104,6 +107,7 @@ static void write_lhs(FILE* fp, const Con* con, ConType type)
    }
 }
 
+expects_NONNULL
 static void write_rhs(FILE* fp, const Con* con, ConType type)
 {
    assert(fp  != NULL);
@@ -130,6 +134,7 @@ static void write_rhs(FILE* fp, const Con* con, ConType type)
    fprintf(fp, "\n");
 }
 
+expects_NONNULL
 static void write_row(
    FILE* fp,
    const Con* con)
@@ -163,6 +168,7 @@ static void write_row(
    }
 }
 
+expects_NONNULL12
 void hum_write(
    const Lps*  lp,
    FILE*       fp,

@@ -26,6 +26,7 @@
 #ifndef _LINT_H_
 #define _LINT_H_
 
+#if 0
 #include <assert.h>
 
 
@@ -79,7 +80,7 @@
 #define expects_NONNULL13 /**/
 
 #endif // (__GNUC__ || __CLANG__) && !_lint
-   
+#endif
    
 #if 0  // not needed anymore for pc-lint 1.2 ?
 #ifdef __cplusplus

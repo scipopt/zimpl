@@ -31,13 +31,14 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <fcntl.h>
-//#include <assert.h>
+#include <assert.h>
 
 #ifndef WITHOUT_ZLIB
 #include <zlib.h>
 #endif
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/mme.h"

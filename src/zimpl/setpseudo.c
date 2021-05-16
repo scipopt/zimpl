@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/numb.h"
@@ -48,6 +49,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_pseudo_is_valid(const Set* set)
 {
    return set != NULL
@@ -90,6 +92,7 @@ Set* set_pseudo_new()
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_pseudo_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -103,6 +106,7 @@ static Set* set_pseudo_copy(const Set* source)
  * --- set_free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL
 static void set_pseudo_free(Set* set)
 {
    assert(set_pseudo_is_valid(set));
@@ -124,6 +128,7 @@ static void set_pseudo_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 /*ARGSUSED*/
+expects_NONNULL
 static SetIterIdx set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    assert(set_pseudo_is_valid(set));
@@ -139,6 +144,7 @@ static SetIterIdx set_pseudo_lookup_idx(const Set* set, const Tuple* tuple, int 
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
+expects_NONNULL
 static void set_pseudo_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -159,6 +165,7 @@ static void set_pseudo_get_tuple(
 /* Initialise Iterator. Write into iter
  */
 /*ARGSUSED*/
+expects_NONNULL1 returns_NONNULL
 static SetIter* iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -191,11 +198,12 @@ static SetIter* iter_init(
 /* false means, there is no further element
  */
 /*ARGSUSED*/
+expects_NONNULL
 static bool iter_next(
-   SetIter*          iter,
-   UNUSED const Set* set,
-   UNUSED Tuple*     tuple,
-   UNUSED int        offset)
+   SetIter*             iter,
+   is_UNUSED const Set* set,
+   is_UNUSED Tuple*     tuple,
+   is_UNUSED int        offset)
 {
    assert(set_pseudo_iter_is_valid(iter));
    assert(set_pseudo_is_valid(set));
@@ -213,7 +221,8 @@ static bool iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_exit(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_pseudo_iter_is_valid(iter));
 
@@ -227,7 +236,8 @@ static void iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_pseudo_iter_is_valid(iter));
 

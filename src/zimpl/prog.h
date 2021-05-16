@@ -44,7 +44,7 @@ extern Prog*        prog_new(void) returns_NONNULL;
 //lint -sem(        prog_free, custodial(1), inout(1), 1p == 1) 
 extern void         prog_free(Prog* prog) expects_NONNULL;
 //lint -sem(        prog_is_valid, pure, 1p == 1) 
-extern bool         prog_is_valid(const Prog* prog) expects_NONNULL is_PURE;
+extern bool         prog_is_valid(const Prog* prog) is_PURE;
 //lint -sem(        prog_is_empty, pure, 1p == 1) 
 extern bool         prog_is_empty(const Prog* prog) expects_NONNULL is_PURE;
 //lint -sem(        prog_add_stmt, 1p == 1, custodial(2), 2p == 1) 

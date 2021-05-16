@@ -29,9 +29,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -63,6 +64,7 @@ static int        cmp_dim = 0;
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_multi_is_valid(const Set* set)
 {
    return set != NULL
@@ -73,6 +75,7 @@ static bool set_multi_is_valid(const Set* set)
       && set->multi.set    != NULL;
 }
 
+is_PURE
 static bool set_multi_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
@@ -87,6 +90,7 @@ static bool set_multi_iter_is_valid(const SetIter* iter)
  * --- internal                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL is_PURE
 static int subset_cmp(const void* a, const void* b)
 {
    const SetIterIdx* aa = (const SetIterIdx*)a;
@@ -104,6 +108,7 @@ static int subset_cmp(const void* a, const void* b)
    return 0;
 }
 
+expects_NONNULL is_PURE
 static int order_cmp(const void* a, const void* b)
 {
    const SetIterIdx* aa = (const SetIterIdx*)a;
@@ -130,6 +135,7 @@ static int order_cmp(const void* a, const void* b)
  * --- new                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 Set* set_multi_new_from_list(const List* list, SetCheckType check)
 {
    assert(list_is_valid(list));
@@ -273,6 +279,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_multi_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -292,6 +299,7 @@ static Set* set_multi_copy(const Set* source)
  * --- free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_multi_free(Set* set)
 {
    int i;
@@ -321,6 +329,7 @@ static void set_multi_free(Set* set)
  * --- lookup                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL is_PURE
 static int subset_idx_cmp(const void* a, const void* b)
 {
    const SetIterIdx* key    = (const SetIterIdx*)a;
@@ -344,6 +353,7 @@ static int subset_idx_cmp(const void* a, const void* b)
    return 0;
 }
 
+expects_NONNULL is_PURE
 static int order_idx_cmp(const void* a, const void* b)
 {
    const SetIterIdx* key   = (const SetIterIdx*)a;
@@ -369,6 +379,7 @@ static int order_idx_cmp(const void* a, const void* b)
 
 /* return the index of the element, -1 if not found
  */
+expects_NONNULL 
 static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    SetIterIdx* idx;
@@ -419,6 +430,7 @@ static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int o
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_multi_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -444,6 +456,7 @@ static void set_multi_get_tuple(
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL1 returns_NONNULL 
 static SetIter* set_multi_iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -613,6 +626,7 @@ static SetIter* set_multi_iter_init(
  */
 /* false means, there is no further element
  */
+expects_NONNULL 
 static bool set_multi_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -643,7 +657,8 @@ static bool set_multi_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_exit(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void set_multi_iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
 
@@ -660,7 +675,8 @@ static void set_multi_iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL 
+static void set_multi_iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
    

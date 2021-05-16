@@ -192,15 +192,15 @@ union set_iter
 
 struct set_vtab
 {
-   void       (*set_free)      (Set* set);
-   Set*       (*set_copy)      (const Set* set);
-   SetIterIdx (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
-   void       (*set_get_tuple) (const Set* set, SetIterIdx idx, Tuple* tuple, int offset);
-   SetIter*   (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
-   bool       (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
-   void       (*iter_exit)     (SetIter* iter, const Set* set);
-   void       (*iter_reset)    (SetIter* iter, const Set* set);
-   bool       (*set_is_valid)  (const Set* set);
+   expects_NONNULL                  void       (*set_free)      (Set* set);
+   expects_NONNULL  returns_NONNULL Set*       (*set_copy)      (const Set* set);
+   expects_NONNULL                  SetIterIdx (*set_lookup_idx)(const Set* set, const Tuple* tuple, int offset);
+   expects_NONNULL                  void       (*set_get_tuple) (const Set* set, SetIterIdx idx, Tuple* tuple, int offset);
+   expects_NONNULL1 returns_NONNULL SetIter*   (*iter_init)     (const Set* set, const Tuple* pattern, int offset);
+   expects_NONNULL                  bool       (*iter_next)     (SetIter* iter, const Set* set, Tuple* tuple, int offset);
+   expects_NONNULL                  void       (*iter_exit)     (SetIter* iter, const Set* set);
+   expects_NONNULL                  void       (*iter_reset)    (SetIter* iter, const Set* set);
+                                    bool       (*set_is_valid)  (const Set* set);
 };
 
 #define SET_DEFAULT 0x0

@@ -40,11 +40,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include <gmp.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -83,7 +84,7 @@ static bool use_startval = false;
 Lps* xlp_alloc(
    const char*  name,          /**< Instance name, will appear e.g. in MPS NAME section */
    bool         need_startval, /**< Will we supply starting values for the variables? */
-   UNUSED void* user_data)     /**< Pointer with arbitrary data. */
+   is_UNUSED void* user_data)     /**< Pointer with arbitrary data. */
 {
    assert(name != NULL);
    
@@ -464,7 +465,7 @@ Var* xlp_addvar(
  */
 /*ARGSUSED*/
 const char* xlp_getvarname(
-   UNUSED const Lps* lp,          /**< Pointer to storage */
+   is_UNUSED const Lps* lp,          /**< Pointer to storage */
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
@@ -477,7 +478,7 @@ const char* xlp_getvarname(
  */
 /*ARGSUSED*/
 VarClass xlp_getclass(
-   UNUSED const Lps* lp,          /**< Pointer to storage */
+   is_UNUSED const Lps* lp,          /**< Pointer to storage */
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
@@ -490,7 +491,7 @@ VarClass xlp_getclass(
  */
 /*ARGSUSED*/
 Bound* xlp_getlower(
-   UNUSED const Lps* lp,          /**< Pointer to storage */
+   is_UNUSED const Lps* lp,          /**< Pointer to storage */
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
@@ -521,7 +522,7 @@ Bound* xlp_getlower(
  */
 /*ARGSUSED*/
 Bound* xlp_getupper(
-   UNUSED const Lps* lp,          /**< Pointer to storage */
+   is_UNUSED const Lps* lp,          /**< Pointer to storage */
    const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 
 {
@@ -570,7 +571,7 @@ bool xlp_setobj(
  */
 /*ARGSUSED*/
 void xlp_addtocost(
-   UNUSED Lps*        lp,      /**< Pointer to storage */
+   is_UNUSED Lps*        lp,      /**< Pointer to storage */
    Var*               var,     /**< Pointer to variable as returned by xlp_addvar() */
    const Numb*        cost)    /**< Value to be added to the objective coefficient of the variable */
 {
