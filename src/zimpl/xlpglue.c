@@ -571,7 +571,7 @@ bool xlp_setobj(
  */
 /*ARGSUSED*/
 void xlp_addtocost(
-   is_UNUSED Lps*        lp,      /**< Pointer to storage */
+   is_UNUSED Lps*     lp,      /**< Pointer to storage */
    Var*               var,     /**< Pointer to variable as returned by xlp_addvar() */
    const Numb*        cost)    /**< Value to be added to the objective coefficient of the variable */
 {
@@ -594,3 +594,27 @@ void xlp_addtocost(
 }
 
 
+/** Add to the objective value coefficient of a variable.
+ */
+/*ARGSUSED*/
+void xlp_addobjqme(
+   Lps*        lp,      /**< Pointer to storage */
+   Var*        var1,    /**< Pointer to variable as returned by xlp_addvar() */
+   Var*        var2,    /**< Pointer to variable as returned by xlp_addvar() */
+   const Numb* cost)    /**< Value to be added to the objective coefficient of the variable */
+{
+   assert(lp   != NULL);
+   assert(var1 != NULL);
+   assert(var2 != NULL);
+   
+   mpq_t val1;
+   
+   mpq_init(val1);
+   
+   numb_get_mpq(cost, val1);
+
+   lps_objqme(lp, var1, var2, val1);
+
+   mpq_clear(val1);
+
+}

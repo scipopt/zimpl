@@ -4407,9 +4407,11 @@ static void objective(CodeNode* self, bool minimize)
    }
    term = code_eval_child_term(self, 1);
 
-   if (!term_is_linear(term))
+   const int degree = term_get_degree(term);
+   
+   if (degree != 1 && degree != 2)
    {
-      fprintf(stderr, "*** Error 221: The objective function has to be linear\n");
+      fprintf(stderr, "*** Error 221: The objective function has to be linear or quadratic\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);      
    }

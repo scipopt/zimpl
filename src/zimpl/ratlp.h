@@ -72,6 +72,8 @@ extern void         lps_delcon(Lps* lp, Con* con) expects_NONNULL;
 extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_delnzo, inout(1), 1p == 1, inout(2), 2p == 1) 
 extern void         lps_delnzo(Lps* lp, Nzo* nzo) expects_NONNULL;
+//lint -sem(        lps_objqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1) 
+extern void         lps_objqme(Lps* lp, Var* var1, Var* var2, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_addqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1, inout(4), 4p == 1) 
 extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_addterm, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 

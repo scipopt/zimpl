@@ -406,24 +406,26 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 //lint -sem(lps_valid, 1p == 1)
 static bool lps_valid(const Lps* lp)
 {
-   const char* err1  = "Wrong Previous Variable";
-   const char* err2  = "Wrong Variable Previous Nonzero";
-   const char* err3  = "Wrong Variable Nonzero Count";
-   const char* err4  = "Wrong Variable Count";
-   const char* err5  = "Wrong Previous Constraint";
-   const char* err6  = "Wrong Constraint Previous Nonzero";
-   const char* err7  = "Wrong Constraint Nonzero Count";
-   const char* err8  = "Wrong Constraint Count";
-   const char* err9  = "Wrong Variable";
-   const char* err10 = "Wrong Constraint";
-   const char* err11 = "Storage-size error";
-   const char* err12 = "Wrong Variable SID";
-   const char* err13 = "Wrong Constraint SID";
-   const char* err14 = "Strange lhs/rhs";
-   const char* err15 = "Wrong SOS SID";
-   const char* err16 = "Wrong SOS Variable SID";
-   const char* err18 = "Wrong SOS element count";
-   const char* err19 = "Wrong SOS count";
+   const char* const err1  = "Wrong Previous Variable";
+   const char* const err2  = "Wrong Variable Previous Nonzero";
+   const char* const err3  = "Wrong Variable Nonzero Count";
+   const char* const err4  = "Wrong Variable Count";
+   const char* const err5  = "Wrong Previous Constraint";
+   const char* const err6  = "Wrong Constraint Previous Nonzero";
+   const char* const err7  = "Wrong Constraint Nonzero Count";
+   const char* const err8  = "Wrong Constraint Count";
+   const char* const err9  = "Wrong Variable";
+   const char* const err10 = "Wrong Constraint";
+   const char* const err11 = "Storage-size error";
+   const char* const err12 = "Wrong Variable SID";
+   const char* const err13 = "Wrong Constraint SID";
+   const char* const err14 = "Strange lhs/rhs";
+   const char* const err15 = "Wrong SOS SID";
+   const char* const err16 = "Wrong SOS Variable SID";
+   const char* const err18 = "Wrong SOS element count";
+   const char* const err19 = "Wrong SOS count";
+   const char* const err20 = "Wrong Constraint QME SID";
+   const char* const err21 = "Wrong Objective QME SID";
    
    if (lp == NULL)
       return false;
@@ -437,6 +439,7 @@ static bool lps_valid(const Lps* lp)
    Sto* sto;
    Sos* sos;
    Sse* sse;
+   Qme* qme_next;
    int  var_count;
    int  con_count;
    int  nzo_count;
@@ -560,6 +563,16 @@ static bool lps_valid(const Lps* lp)
          fprintf(stderr, "%s\n", err7);
          return false;
       }
+      for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
+      {
+         qme_next = qme->next;
+
+         if (qme->sid != QME_SID)
+         {
+            fprintf(stderr, "%s\n", err20);
+            return false;
+         }
+      }
    }
    if (con_count)
    {
@@ -600,6 +613,20 @@ static bool lps_valid(const Lps* lp)
       fprintf(stderr, "%s\n", err19);
       return false;
    }
+
+   /* Check quadratic objective
+    */
+   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
+   {
+      qme_next = qme->next;
+         
+      if (qme->sid != QME_SID)
+      {
+         fprintf(stderr, "%s\n", err21);
+         return false;
+      }
+   }
+
    
    /* Storage Test
     */
@@ -673,38 +700,18 @@ static void lps_storage(Lps* lp)
 Lps* lps_alloc(
    const char* name)
 {
-   Lps* lp;
-   
    assert(name != NULL);
    
-   lp = malloc(sizeof(*lp));
+   Lps* lp = calloc(1, sizeof(*lp));
    
    assert(lp != NULL);
 
    lp->name     = strdup(name);
-   lp->probname = NULL;
-   lp->objname  = NULL;
-   lp->rhsname  = NULL;
-   lp->bndname  = NULL;
-   lp->rngname  = NULL;
    lp->type     = LP_LP;
    lp->direct   = LP_MIN;
-   lp->vars     = 0;
-   lp->cons     = 0;
-   lp->soss     = 0;
-   lp->nonzeros = 0;
-   lp->var_root = NULL;
-   lp->con_root = NULL;
-   lp->sos_root = NULL;
-   lp->sto_root = NULL;
-   lp->next     = NULL;
    lp->var_hash = lps_hash_new(LHT_VAR);
    lp->con_hash = lps_hash_new(LHT_CON);
    lp->sos_hash = lps_hash_new(LHT_SOS);
-   lp->var_last = NULL;
-   lp->con_last = NULL;
-   lp->sos_last = NULL;
-   lp->name_len = 0;
    
    assert(lps_valid(lp));
 
@@ -723,6 +730,7 @@ void lps_free(Lps* lp)
    Sse* sse_next;
    Sto* sto;
    Sto* sto_next;
+   Qme* qme_next;
    unsigned int  i;
    
    assert(lps_valid(lp));
@@ -757,13 +765,10 @@ void lps_free(Lps* lp)
    }
    for(con = lp->con_root; con != NULL; con = con_next)
    {
-      Qme* qme;
-      Qme* qme_next;
-
       con_next = con->next;
       con->sid = 0x0;
 
-      for(qme = con->qme_first; qme != NULL; qme = qme_next)
+      for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
       {
          qme_next = qme->next;
 
@@ -794,6 +799,15 @@ void lps_free(Lps* lp)
       free(sos->name);
       free(sos);
    }
+
+   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
+   {
+      qme_next = qme->next;
+
+      mpq_clear(qme->value);
+      free(qme);
+   }
+   
    if (lp->probname != NULL)
       free(lp->probname);
    if (lp->objname != NULL)
@@ -1219,6 +1233,30 @@ Sos* lps_addsos(
    assert(lps_valid(lp));
 
    return sos;
+}
+
+void lps_objqme(
+   Lps*        lp,
+   Var*        var1,
+   Var*        var2,
+   const mpq_t value)
+{
+   Qme* qme = malloc(sizeof(*qme));
+
+   assert(qme != NULL);
+
+   qme->sid  = QME_SID;
+   qme->var1 = var1;
+   qme->var2 = var2;
+
+   mpq_init(qme->value);
+   mpq_set(qme->value, value);
+
+   qme->next   = lp->qme_obj;
+   lp->qme_obj = qme;
+
+   var1->is_used = true;
+   var2->is_used = true;
 }
 
 /*ARGSUSED*/

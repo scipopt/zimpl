@@ -138,6 +138,53 @@ static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    fprintf(fp, "\n");
 }
 
+static void write_qme(
+   FILE*      fp,
+   LpFormat   format,
+   const Qme* qme,
+   char*      name,
+   int        name_size)
+{
+   int cnt = 0;
+
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      fprintf(fp, " + [");
+
+   while(qme != NULL)
+   {
+      lps_makename(name, name_size, qme->var1->name, format == LP_FORM_HUM ? -1 : qme->var1->number);
+
+      if (mpq_equal(qme->value, const_one))
+         fprintf(fp, " + %s", name);
+      else if (mpq_equal(qme->value, const_minus_one))
+         fprintf(fp, " - %s", name);
+      else
+      {
+         fprintf(fp, " ");         
+         write_val(fp, format, true, qme->value);      
+         fprintf(fp, " %s", name);
+      }
+
+      if (qme->var1 == qme->var2)
+         fprintf(fp, "^2");
+      else
+      {
+         lps_makename(name, name_size, qme->var2->name, format == LP_FORM_HUM ? -1 : qme->var2->number);
+         
+         fprintf(fp, " * %s", name);
+      }
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n ");
+
+      qme = qme->next;         
+   }
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+   {
+      fprintf(fp,  " ]\n");
+      cnt = 0;
+   }      
+}
+
 static void write_row(
    FILE*      fp,
    LpFormat   format,
@@ -189,13 +236,13 @@ static void write_row(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");         
    }
-   if (con->qme_first != NULL)
+   if (con->qme_first != NULL)      
    {
-      Qme* qme;
-
       if (cnt % 6 != 0)
          fprintf(fp, "\n ");         
 
+      write_qme(fp, format, con->qme_first, name, name_size);
+#if 0
       cnt = 0;
 
       if (format == LP_FORM_LPF || format == LP_FORM_RLP)
@@ -232,6 +279,7 @@ static void write_row(
          fprintf(fp,  " ]\n");
          cnt = 0;
       }
+#endif
    }
    if (con->term != NULL)
    {
@@ -446,6 +494,9 @@ void lpf_write(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");
    }
+   if (lp->qme_obj != NULL)      
+      write_qme(fp, format, lp->qme_obj, name, name_size);
+   
    /* ---------------------------------------------------------------------- */
 
    /* First loop run for normal constraints, second one for

@@ -508,14 +508,15 @@ void term_negate(Term* term)
 }
 #endif
 
-void term_to_objective(const Term* term)
+void term_to_objective(const Term* term_org)
 {
-   Var*   var;
-   int    i;
-   
    Trace("term_to_objective");
 
-   assert(term_is_valid(term));
+   assert(term_is_valid(term_org));
+
+   Term* term = term_simplify(term_org);
+
+   Lps* lp = prog_get_lp();
 
    /* If we have a constant in the objective, generate an artificial
     * variable @OOffset fixed to the value. This works allways.
@@ -531,25 +532,33 @@ void term_to_objective(const Term* term)
       char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
 
       sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-      var = xlp_addvar(prog_get_lp(), vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
-      xlp_addtocost(prog_get_lp(), var, term->constant);
+      Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+      xlp_addtocost(lp, var, term->constant);
 
       free(vname);
       bound_free(upper);
       bound_free(lower);
    }
    
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
    {
-      const Numb* coeff = mono_get_coeff(term->elem[i]);
-      
+      const Mono* mono   = term->elem[i];
+      const Numb* coeff  = mono_get_coeff(mono);
+      const int   degree = mono_get_degree(mono);
+         
       assert(!numb_equal(coeff, numb_zero()));
-      assert(mono_is_linear(term->elem[i]));
+      assert(degree == 1 || degree == 2);
       
-      var = mono_get_var(term->elem[i], 0);
-      
-      xlp_addtocost(prog_get_lp(), var, coeff);
+      if (degree == 1) // linear
+      {
+         xlp_addtocost(lp, mono_get_var(mono, 0), coeff);
+      }
+      else // quadratic
+      {
+         xlp_addobjqme(lp, mono_get_var(mono, 0), mono_get_var(mono, 1), coeff);
+      }
    }
+   term_free(term);
 }
 
 int term_get_elements(const Term* term)
