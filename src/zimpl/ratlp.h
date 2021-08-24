@@ -132,6 +132,8 @@ extern void         lps_getlhs(const Con* con, mpq_t lhs) expects_NONNULL;
 extern void         lps_getrhs(const Con* con, mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_varname, 1p == 1, @p) 
 extern const char*  lps_varname(const Var* var) expects_NONNULL returns_NONNULL is_PURE;
+//lint -sem(        lps_varnumber, 1p == 1, @ >= 0) 
+extern int          lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
 //lint -sem(        lps_setvartype, inout(1), 1p == 1) 
 extern void         lps_setvartype(Var* con, VarType type) expects_NONNULL;
 //lint -sem(        lps_flags, 1p == 1) 

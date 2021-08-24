@@ -1752,6 +1752,14 @@ const char* lps_varname(const Var* var)
    return var->name;
 }
 
+int lps_varnumber(const Var* var)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   return var->number;
+}
+   
 void lps_setvartype(
    Var*    var,
    VarType type)
@@ -1893,7 +1901,7 @@ void lps_write(
    assert(lp   != NULL);
    assert(fp   != NULL);
    
-   lps_number(lp);
+   // lps_number(lp); // not needed. Automaticall done on var creation.
 
    switch(format)
    {
@@ -2089,7 +2097,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
 
    assert(temp != NULL);
 
-   lps_number(lp);
+   // lps_number(lp); // not needed. Automatically done on var creation.
    
    for(var = lp->var_root; var != NULL; var = var->next)
    {

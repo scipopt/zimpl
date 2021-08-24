@@ -43,6 +43,7 @@
 #include "zimpl/mme.h"
 #include "zimpl/set.h"
 #include "zimpl/entry.h"
+
 #include "zimpl/mono.h"
 
 #define MONO_SID         0x4d6f6e6f
@@ -129,39 +130,58 @@ void mono_mul_entry(
    Mono*        mono,
    const Entry* entry)
 {
-   MonoElem* e;
-   Var*      var;
-   MonoElem* last = NULL;
-   
-   Trace("mono_add_elem");
+   extern int lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
+
+   Trace("mono_mul_entry");
 
    assert(mono_is_valid(mono));
    assert(entry_is_valid(entry));
    assert(entry_get_type(entry) == SYM_VAR);
 
-   var = entry_get_var(entry);
-
-   /* ??? This ensures that if the same variable is to come several times,
-    * all of them come together, i.e. yxy is not allowed, yyx would be ok.
-    * Is there any reason to do this?
-    */
-   for(e = &mono->first; e != NULL; e = e->next)
-   {
-      last = e;
-
-      assert(entry_is_valid(e->entry));
-
-      if (var == entry_get_var(e->entry))
-         break;
-   }
-   assert(last != NULL);
-       
-   e = calloc(1, sizeof(*e));
+   MonoElem* new_me = calloc(1, sizeof(*new_me));
    
-   e->entry   = entry_copy(entry);
-   e->next    = last->next;
-   SID_set(e, MOEL_SID);
-   last->next = e;
+   Var* var       = entry_get_var(entry);
+   int  varnumber = lps_varnumber(var);
+   
+   /* Do we have to put the new entry at the start of the list?
+    */
+   if (lps_varnumber(entry_get_var(mono->first.entry)) >= varnumber)
+   {
+      *new_me = mono->first;
+
+      mono->first.entry = entry_copy(entry);
+      mono->first.next  = new_me;
+      SID_set2(mono->first, MOEL_SID);
+   }
+   else
+   {
+   /* This ensures that if the same variable is to come several times,
+    * all of them come together, i.e. yxy is not allowed, yyx would be ok.
+    * Neccessary for simplify of terms and other things.
+    */
+      MonoElem* last = NULL;
+
+      for(MonoElem* e = &mono->first; e != NULL; e = e->next)
+      {
+         assert(var != entry_get_var(e->entry));
+
+         last = e;
+
+         if (e->next == NULL)
+            break;
+         
+         assert(entry_is_valid(e->next->entry));
+
+         if (varnumber <= lps_varnumber(entry_get_var(e->next->entry)))
+            break;
+      }
+      assert(last != NULL);
+       
+      new_me->entry   = entry_copy(entry);
+      new_me->next    = last->next;
+      SID_set(new_me, MOEL_SID);
+      last->next      = new_me;
+   }
    mono->count++;
    
    assert(mono_is_valid(mono));
