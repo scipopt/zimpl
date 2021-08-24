@@ -96,8 +96,8 @@ static void qubo_free(Qubo* qubo)
 expects_NONNULL
 static int entry_cmp_row(const void* a, const void* b)
 {
-   Qme* aa = *(Qme**)a;
-   Qme* bb = *(Qme**)b;
+   Qme* aa = (Qme*)a;
+   Qme* bb = (Qme*)b;
 
    int d = aa->var1->number - bb->var1->number;
 
@@ -108,26 +108,26 @@ static int entry_cmp_row(const void* a, const void* b)
 }
 
 expects_NONNULL returns_NONNULL
-static Qubo* qubo_from_entries(int rows, int entry_used, Qme** entry)
+static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 {
    qsort(entry, entry_used, sizeof(*entry), entry_cmp_row);
 
 #ifndef NDEBUG
    for(int i = 1; i < entry_used; i++)
-      assert(entry[i - 1]->var1->number < entry[i]->var1->number || (entry[i - 1]->var1->number == entry[i]->var1->number && entry[i - 1]->var2->number <= entry[i]->var2->number));   
+      assert(entry[i - 1].var1->number < entry[i].var1->number || (entry[i - 1].var1->number == entry[i].var1->number && entry[i - 1].var2->number <= entry[i].var2->number));   
 #endif
 
    int zero_count = 0;
    
    for(int i = 0; i < entry_used; i++)
    {
-      if (mpq_equal(entry[i]->value, const_zero))
+      if (mpq_equal(entry[i].value, const_zero))
          zero_count++;
       else
       {
-         if (i + 1 < entry_used && entry[i]->var1->number == entry[i + 1]->var1->number && entry[i]->var2->number == entry[i + 1]->var2->number)
+         if (i + 1 < entry_used && entry[i].var1->number == entry[i + 1].var1->number && entry[i].var2->number == entry[i + 1].var2->number)
          {
-            assert(!mpq_equal(entry[i]->value, entry[i + 1]->value)); // non-symmetric matrix
+            assert(!mpq_equal(entry[i].value, entry[i + 1].value)); // non-symmetric matrix
          }
       }
    }
@@ -139,10 +139,10 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme** entry)
    
    for(int i = 0; i < entry_used; i++)
    {
-      if (mpq_equal(entry[i]->value, const_zero))
+      if (mpq_equal(entry[i].value, const_zero))
          continue;
 
-      int row = entry[i]->var1->number;
+      int row = entry[i].var1->number;
 
       if (prev_row != row)
       {
@@ -152,9 +152,9 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme** entry)
       }
       assert(prev_row < rows);
 
-      qubo->col [qubo->used] = entry[i]->var2->number;
+      qubo->col [qubo->used] = entry[i].var2->number;
 
-      mpq_set(qubo->val[qubo->used], entry[i]->value);
+      mpq_set(qubo->val[qubo->used], entry[i].value);
       
       qubo->used++;
    }
@@ -186,17 +186,63 @@ void qbo_write(
       return;
    }
    // how many entries do we need?
-   int entry_size = 0;
+   int entry_size     = 0;
+   int linear_entries = lp->vars;
    
    for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme->next)
+   {
       entry_size++;
 
-   Qme** entry      = calloc(entry_size, sizeof(**entry));
+      if (qme->var1 == qme->var2)
+      {
+         assert(qme->var1->is_used);
+         
+         /* if var->size != 0 we are missing something, but not important in this context.
+          */
+         if (!mpq_equal(qme->var1->cost, const_zero))
+            linear_entries--;
+      }
+   }
+   /* Also subtract the linear variables with 0 cost
+    */
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+      if (mpq_equal(var->cost, const_zero))
+         linear_entries--;
+
+   entry_size += linear_entries;
+
+   bool* done       = calloc(lp->vars, sizeof(*done));
+   Qme*  entry      = calloc(entry_size, sizeof(*entry));
    int   entry_used = 0;
 
    for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme->next)
-      entry[entry_used++] = qme;
+   {
+      entry[entry_used] = *qme;
+      
+      if (qme->var1 == qme->var2)
+      {
+         if (!mpq_equal(qme->var1->cost, const_zero))
+         {
+            mpq_add(entry[entry_used].value, entry[entry_used].value, qme->var1->cost);
 
+            done[qme->var1->number] = true;
+         }
+      }
+      entry_used++;         
+   }
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+   {
+      if (!done[var->number] && !mpq_equal(var->cost, const_zero))
+      {
+         entry[entry_used].var1 = var;
+         entry[entry_used].var2 = var;
+         mpq_set(entry[entry_used].value, var->cost);
+         
+         entry_used++;                  
+      }
+   }
+   assert(entry_used == entry_size);
+   
    Qubo* qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
    fprintf(fp, "%d %d\n", lp->vars, entry_used);
@@ -213,6 +259,7 @@ void qbo_write(
       }
    }
    qubo_free(qubo);
+   free(done);
    free(entry);
 }   
 

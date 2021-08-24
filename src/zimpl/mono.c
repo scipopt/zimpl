@@ -49,6 +49,8 @@
 #define MONO_SID         0x4d6f6e6f
 #define MOEL_SID         0x4d6f456c
 
+extern int lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
+
 Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 {
    Mono* mono = calloc(1, sizeof(*mono));
@@ -96,6 +98,9 @@ bool mono_is_valid(const Mono* mono)
       assert(SID_ok(e, MOEL_SID));      
       assert(entry_is_valid(e->entry));
       assert(entry_get_type(e->entry) == SYM_VAR);
+
+      // Variables in mono are ordered
+      assert(e->next == NULL || (lps_varnumber(entry_get_var(e->entry)) <= lps_varnumber(entry_get_var(e->next->entry))));
    }
    assert(count == mono->count);
    
@@ -130,8 +135,6 @@ void mono_mul_entry(
    Mono*        mono,
    const Entry* entry)
 {
-   extern int lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
-
    Trace("mono_mul_entry");
 
    assert(mono_is_valid(mono));
