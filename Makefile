@@ -125,7 +125,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o zlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratordwrite.o ratpresolve.o
+			ratordwrite.o ratpresolve.o ratqbowrite.o
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \

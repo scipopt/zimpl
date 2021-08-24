@@ -183,6 +183,11 @@ extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, cons
 //lint -sem(        lps_mstwrite, 1p == 1, inout(2), 2p == 1) 
 extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 
+/* ratqubowrite.c
+ */
+//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1) 
+extern void         qbo_write(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
+
 #if 0 // Not used anymore ??? 
 /* ratpresolve.c
  */

@@ -86,8 +86,9 @@ static const char* const help =
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
-"  -t lp|mps|hum|rlp|pip  select output format. Either LP (default), MPS format,\n" \
-"                 human readable HUM, randomly permuted LP, or PIP polynomial IP.\n" \
+"  -t lp|mps|hum|rlp|pip|qbo  select output format. Either LP (default), MPS format,\n" \
+"                 human readable HUM, randomly permuted LP, PIP polynomial IP, or\n" \
+"                 QUBO format\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
@@ -298,6 +299,9 @@ int main(int argc, char* const* argv)
          case 'p' :
             format = LP_FORM_PIP;
             break;
+         case 'q' :
+            format = LP_FORM_QBO;
+            break;
          case 'r' :
             format = LP_FORM_RLP;
             break;
@@ -350,6 +354,9 @@ int main(int argc, char* const* argv)
       break;
    case LP_FORM_PIP :
       extension = ".pip";
+      break;
+   case LP_FORM_QBO :
+      extension = ".qbo";
       break;
    default :
       abort();

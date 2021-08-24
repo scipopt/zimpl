@@ -54,6 +54,7 @@
 #define MPS_NAME_LEN  8
 #define PIP_NAME_LEN  255
 #define MIN_NAME_LEN  8
+#define QBO_NAME_LEN  255
 
 struct storage
 {
@@ -1872,6 +1873,9 @@ int lps_getnamesize(const Lps* lp, LpFormat format)
    case LP_FORM_PIP :
       name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? PIP_NAME_LEN : lp->name_len);
       break;
+   case LP_FORM_QBO :
+      name_size = 1 + ((lp->name_len < MIN_NAME_LEN) ? QBO_NAME_LEN : lp->name_len);
+      break;
    default :
       abort();
    }
@@ -1901,6 +1905,9 @@ void lps_write(
       break;
    case LP_FORM_MPS :
       mps_write(lp, fp, text);
+      break;
+   case LP_FORM_QBO :
+      qbo_write(lp, fp, format, text);
       break;
    default :
       abort();
@@ -2075,7 +2082,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    assert(lps_valid(lp));
    assert(fp      != NULL);
    assert(head    != NULL);
-   assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP || format == LP_FORM_PIP);
+   assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP || format == LP_FORM_PIP || format == LP_FORM_QBO);
    
    namelen = lps_getnamesize(lp, format);
    temp    = malloc((size_t)namelen);
