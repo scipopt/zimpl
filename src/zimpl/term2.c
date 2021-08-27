@@ -184,12 +184,24 @@ Term* term_copy(const Term* term)
    return tnew;
 }
 
+void term_append_elem(Term* term, Mono* mono)
+{
+   Trace("term_append_elem");
+
+   assert(term_is_valid(term));
+   assert(mono_is_valid(mono));
+   assert(term->used < term->size);
+
+   term->elem[term->used] = mono;
+   term->used++;
+
+   assert(term_is_valid(term));
+}
+
 void term_append_term(
    Term* term,
    const Term* term_b)
 {
-   int i;
-   
    /* ??? test auf gleiche monome fehlt!!! */
 
    Trace("term_append_term");
@@ -210,7 +222,7 @@ void term_append_term(
    if (!numb_equal(term_b->constant, numb_zero()))
        numb_add(term->constant, term_b->constant);
 
-   for(i = 0; i < term_b->used; i++)
+   for(int i = 0; i < term_b->used; i++)
    {
       term->elem[term->used] = mono_copy(term_b->elem[i]);
       term->used++;

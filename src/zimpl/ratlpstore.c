@@ -808,6 +808,9 @@ void lps_free(Lps* lp)
       mpq_clear(qme->value);
       free(qme);
    }
+
+   if (lp->obj_term != NULL)
+      term_free(lp->obj_term);
    
    if (lp->probname != NULL)
       free(lp->probname);
@@ -1242,6 +1245,13 @@ void lps_objqme(
    Var*        var2,
    const mpq_t value)
 {
+   assert(lp   != NULL);
+   assert(var1 != NULL);
+   assert(var2 != NULL);
+   
+   if (mpq_sgn(value) == 0)
+      return;
+   
    Qme* qme = malloc(sizeof(*qme));
 
    assert(qme != NULL);
@@ -1268,6 +1278,13 @@ void lps_addqme(
    Var*        var2,
    const mpq_t value)
 {
+   assert(lp   != NULL);
+   assert(var1 != NULL);
+   assert(var2 != NULL);
+   
+   if (mpq_sgn(value) == 0)
+      return;
+
    Qme* qme = malloc(sizeof(*qme));
 
    assert(qme != NULL);
@@ -1285,6 +1302,27 @@ void lps_addqme(
    var1->is_used = true;
    var2->is_used = true;
 }
+
+void lps_addtoobjterm(
+   Lps*        lp,
+   const Term* term)
+{
+   assert(lp   != NULL);
+   assert(term != NULL);
+
+   if (lp->obj_term == NULL)
+      lp->obj_term = term_new(lp->vars);
+   
+   term_append_term(lp->obj_term, term);         
+
+   for(int i = 0; i < term_get_elements(term); i++)
+   {
+      const Mono* mono = term_get_element(term, i);
+
+      for(int k = 0; k < mono_get_degree(mono); k++)
+         mono_get_var(mono, k)->is_used = true;
+   }
+}   
 
 /*ARGSUSED*/
 void lps_addterm(

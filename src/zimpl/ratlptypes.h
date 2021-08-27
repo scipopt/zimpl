@@ -36,7 +36,7 @@ enum sos_type        { SOS_ERR     = 0, SOS_TYPE1, SOS_TYPE2 };
 enum var_class       { VAR_CON     = 0, VAR_IMP,   VAR_INT };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
-   enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP, LP_FORM_QBO };
+enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP, LP_FORM_QBO };
 
 #if 0 /* not used anymore ??? */
 enum presolve_result
@@ -67,6 +67,7 @@ typedef enum   lp_format     LpFormat;
 #define LP_FLAG_CON_SEPAR    0x02
 #define LP_FLAG_CON_CHECK    0x04
 #define LP_FLAG_CON_INDIC    0x08
+#define LP_FLAG_CON_QUBO     0x16
 
 #define HAS_LOWER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_UPPER)
 #define HAS_UPPER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_LOWER)

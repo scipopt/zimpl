@@ -39,9 +39,13 @@
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"
 #include "zimpl/bound.h"
+#include "zimpl/elem.h"
+#include "zimpl/tuple.h"
 #include "zimpl/mme.h"
+#include "zimpl/set.h"
 #include "zimpl/mono.h"
 #include "zimpl/term.h"
+#include "zimpl/entry.h"
 #include "zimpl/ratlp.h"
 #include "zimpl/ratlpstore.h"
 #include "zimpl/random.h"
@@ -165,7 +169,7 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 
    return qubo;      
 }
-
+#if 0
 /* A specification for the QUBO LP file format can be found in the
  */
 void qbo_write(
@@ -262,6 +266,82 @@ void qbo_write(
    free(done);
    free(entry);
 }   
+#endif
+/* A specification for the QUBO LP file format can be found in the
+ */
+void qbo_write(
+   const Lps*  lp,
+   FILE*       fp,
+   LpFormat    format,
+   const char* text)
+{
+   assert(lp != NULL);
+   assert(fp != NULL);
+
+   if (text != NULL)
+      fprintf(fp, "%s", text);   
+
+   Term* term_seq = term_new(lp->vars);
+
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+   {
+      if (mpq_equal(var->cost, const_zero))
+         continue;
+
+      Entry* entry = entry_new_var(tuple_new(0), var); 
+      Mono*  mono = mono_new(numb_one(), entry, MFUN_NONE);
+
+      mono_mul_entry(mono, entry);
+      term_append_elem(term_seq, mono);
+      entry_free(entry);
+   }
+
+   term_append_term(term_seq, lp->obj_term);
+   
+   Term* term_obj = term_simplify(term_seq);
+
+   term_free(term_seq);
+   
+   int   entry_size = term_get_elements(term_obj);
+   Qme*  entry      = calloc(entry_size, sizeof(*entry));
+   int   entry_used = 0;
+
+   for(int i = 0; i < entry_size; i++)
+   {
+      const Mono* mono = term_get_element(term_obj, i);
+      
+      entry[entry_used].var1 = mono_get_var(mono, 0);
+      entry[entry_used].var2 = mono_get_var(mono, 1);
+
+      numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
+      //mpq_set(entry[entry_used].value, mono_get_coeff(mono));
+      entry_used++;         
+   }
+   assert(entry_used == entry_size);
+
+   term_free(term_obj);
+   
+   Qubo* qubo = qubo_from_entries(lp->vars, entry_used, entry);
+
+   fprintf(fp, "%d %d\n", lp->vars, entry_used);
+   
+   for(int row = 0; row < qubo->rows; row++)
+   {
+      int i = 0;
+      
+      for(int k = qubo->rowbeg[row]; k < qubo->rowbeg[row + 1]; k++)
+      {
+         int col = qubo->col[k];
+
+         fprintf(fp, "%d %d %.15g\n", row, col, mpq_get_d(qubo->val[k]));
+      }
+   }
+   qubo_free(qubo);
+   free(entry);
+}   
+
+
+
 
 /* ------------------------------------------------------------------------- */
 /* Emacs Local Variables:                                                    */

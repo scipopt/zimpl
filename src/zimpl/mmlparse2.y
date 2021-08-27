@@ -113,7 +113,7 @@ extern void yyerror(const char* s) is_NORETURN;
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
-%token <bits> SCALE SEPARATE CHECKONLY INDICATOR
+%token <bits> SCALE SEPARATE CHECKONLY INDICATOR QUBO
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
 %type <code> def_numb def_strg def_bool def_set
@@ -727,6 +727,7 @@ con_attr
    | SEPARATE  { $$ = LP_FLAG_CON_SEPAR; }
    | CHECKONLY { $$ = LP_FLAG_CON_CHECK; }
    | INDICATOR { $$ = LP_FLAG_CON_INDIC; }
+   | QUBO      { $$ = LP_FLAG_CON_QUBO;  }
    ;
 
 con_type

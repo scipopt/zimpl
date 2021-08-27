@@ -206,6 +206,103 @@ static bool check_con_is_invalid(
    return is_invalid;
 }
 
+expects_NONNULL
+static bool addcon_term_as_qubo(
+   Lps*         lp,         /**< Pointer to storage */
+   const char*  name,       /**< Name of the constraint */
+   ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   const Numb*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
+   const Numb*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
+   unsigned int flags,      /**< special treatment flags, see ratlptypes.h */
+   const Term*  term_org)   /**< term to use */
+{
+   assert(lp   != NULL);
+   assert(name != NULL);
+   assert(lhs  != NULL);
+   assert(rhs  != NULL);
+   assert(term_is_valid(term_org));
+   assert(numb_equal(term_get_constant(term_org), numb_zero()));
+   assert(flags & LP_FLAG_CON_QUBO);
+
+   Term* term = term_simplify(term_org);
+
+   //  if ((term_get_degree(term) > 2) || !term_is_polynomial(term))
+   if (!term_is_linear(term))
+   {
+      fprintf(stderr, "Error: can't QUBO it");
+      abort();           
+   }
+   
+   switch(contype)
+   {
+   case CON_EQUAL : /* In case of EQUAL, both should be equal */
+      assert(numb_equal(lhs, rhs));
+      //lint -fallthrough
+   case CON_RHS :
+      if (!numb_equal(rhs, numb_one()))
+      {
+         fprintf(stderr, "Error: can't QUBO it");
+         abort();           
+      }
+      break;
+   case CON_LHS :
+      //if (!nump_equal(lhs, numb_one))
+      //lint -fallthrough
+   case CON_RANGE :
+      fprintf(stderr, "Error: can't QUBO");
+      abort();     
+      break;
+   default :
+      abort();
+   }
+   if (flags & ~LP_FLAG_CON_QUBO)
+   {
+      fprintf(stderr, "Warning other flags ignored");      
+   }
+   int telems = term_get_elements(term);   
+
+   for(int i = 0; i < telems; i++)
+   {
+      const Mono* mono = term_get_element(term, i);
+      Var*        var1 = mono_get_var(mono, 0);
+   
+      assert(mono_is_linear(mono));
+
+      if (mono_get_function(mono) != MFUN_NONE)
+      {
+         fprintf(stderr, "Error: can't QUBO");
+         abort();     
+      }
+      if (!numb_equal(mono_get_coeff(mono), numb_one()))
+      {
+         fprintf(stderr, "Error: can't QUBO");
+         abort();     
+      }
+      for(int k = 0; k < telems; k++)
+      {
+         const Mono* mono2 = term_get_element(term, k);
+         Var*        var2  = mono_get_var(mono2, 0);
+         int         coef_value = 1;
+                  
+         if (i == k)
+            coef_value = (contype == CON_RHS) ? 0 : -1;
+
+         mpq_t coef;
+   
+         mpq_init(coef);
+   
+         mpq_set_si(coef, coef_value, 1);
+
+         lps_objqme(lp, var1, var2, coef);
+
+         mpq_clear(coef);
+      }
+   }
+   term_free(term);
+
+   return false;
+}
+
 /** Add a constraint.
  *  Add a given a Zimpl term together with a right and/or left hand side as
  *  a constraint to the mathematical program. The form is lhs <= term <= rhs.
@@ -232,6 +329,10 @@ bool xlp_addcon_term(
    assert(rhs  != NULL);
    assert(term_is_valid(term_org));
    assert(numb_equal(term_get_constant(term_org), numb_zero()));
+
+   // shall we put the constrait as quadratic into the objective? 
+   if (flags & LP_FLAG_CON_QUBO)
+      return addcon_term_as_qubo(lp, name, contype, lhs, rhs, flags, term_org);   
 
    term = term_simplify(term_org);
 
@@ -616,5 +717,14 @@ void xlp_addobjqme(
    lps_objqme(lp, var1, var2, val1);
 
    mpq_clear(val1);
+}
 
+void xlp_addtermtoobj(
+   Lps*        lp,
+   const Term* term)
+{
+   assert(lp != NULL);
+   assert(term_is_valid(term));
+
+   lps_addtoobjterm(lp, term);
 }

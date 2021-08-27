@@ -67,6 +67,8 @@ extern bool     xlp_setobj(Lps* lp, const char* name, bool minimize) expects_NON
 extern void     xlp_addtocost(Lps* lp, Var* var, const Numb* cost) expects_NONNULL;
 //lint -sem(    xlp_addobjqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1, 4p == 1) 
 extern void     xlp_addobjqme(Lps* lp, Var* var1, Var* var2, const Numb* cost) expects_NONNULL;
+//lint -sem(    xlp_addtermtoobj, inout(1), 1p == 1, 2p == 1) 
+extern void     xlp_addtermtoobj(Lps* lp, const Term* term) expects_NONNULL;
    
 #ifdef __cplusplus
 }
