@@ -206,6 +206,7 @@ static bool check_con_is_invalid(
    return is_invalid;
 }
 
+#if 0
 expects_NONNULL
 static bool addcon_term_as_qubo(
    Lps*         lp,         /**< Pointer to storage */
@@ -302,6 +303,7 @@ static bool addcon_term_as_qubo(
 
    return false;
 }
+#endif
 
 /** Add a constraint.
  *  Add a given a Zimpl term together with a right and/or left hand side as
@@ -330,10 +332,12 @@ bool xlp_addcon_term(
    assert(term_is_valid(term_org));
    assert(numb_equal(term_get_constant(term_org), numb_zero()));
 
+#if 0
    // shall we put the constrait as quadratic into the objective? 
    if (flags & LP_FLAG_CON_QUBO)
       return addcon_term_as_qubo(lp, name, contype, lhs, rhs, flags, term_org);   
-
+#endif
+   
    term = term_simplify(term_org);
 
    con = lps_addcon(lp, name);
@@ -369,7 +373,7 @@ bool xlp_addcon_term(
    mpq_clear(trhs);
    mpq_clear(tlhs);
 
-   if ((term_get_degree(term) > 2) || !term_is_polynomial(term))
+   if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
       lps_addterm(lp, con, term);
    else
    {
@@ -392,35 +396,28 @@ bool xlp_addcon_term(
    
          numb_get_mpq(mono_get_coeff(mono), val1);
    
-         if (mono_is_linear(mono))
-         {
-            Nzo* nzo = lps_getnzo(lp, con, var);
+         assert(mono_is_linear(mono));
+
+         Nzo* nzo = lps_getnzo(lp, con, var);
          
-            if (nzo == NULL)
-               lps_addnzo(lp, con, var, val1);
-            else
-            {
-               mpq_t val2;
-               
-               mpq_init(val2);
-               
-               lps_getval(nzo, val2);
-               
-               mpq_add(val1, val1, val2);
-               
-               if (mpq_equal(val1, const_zero))
-                  lps_delnzo(lp, nzo);
-               else
-                  lps_setval(nzo, val1);
-               
-               mpq_clear(val2);
-            }
-         }
+         if (nzo == NULL)
+            lps_addnzo(lp, con, var, val1);
          else
          {
-            assert(term_get_degree(term) == 2);
-
-            lps_addqme(lp, con, var, mono_get_var(mono, 1), val1);
+            mpq_t val2;
+            
+            mpq_init(val2);
+               
+            lps_getval(nzo, val2);
+               
+            mpq_add(val1, val1, val2);
+               
+            if (mpq_equal(val1, const_zero))
+               lps_delnzo(lp, nzo);
+            else
+               lps_setval(nzo, val1);
+               
+            mpq_clear(val2);
          }
          mpq_clear(val1);
       }
