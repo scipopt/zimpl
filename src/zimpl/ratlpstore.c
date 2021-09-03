@@ -2120,24 +2120,34 @@ void lps_makename(
 
 void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
 {
-   Var*  var;
-   Con*  con;
-   char* temp;
-   int   namelen;
-   
    assert(lps_valid(lp));
    assert(fp      != NULL);
    assert(head    != NULL);
    assert(format == LP_FORM_LPF || format == LP_FORM_MPS || format == LP_FORM_RLP || format == LP_FORM_PIP || format == LP_FORM_QBO);
    
-   namelen = lps_getnamesize(lp, format);
-   temp    = malloc((size_t)namelen);
+   int maxlen  = MIN_NAME_LEN;
+   
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
+   {
+      int len = strlen(var->name);
+
+      if (len > maxlen)
+         maxlen = len;
+   }
+   maxlen++; // need space for the '\0'
+   
+   int namelen = lps_getnamesize(lp, format);
+
+   if (maxlen < namelen)
+      namelen = maxlen;
+
+   char* temp = malloc((size_t)namelen);
 
    assert(temp != NULL);
 
    // lps_number(lp); // not needed. Automatically done on var creation.
    
-   for(var = lp->var_root; var != NULL; var = var->next)
+   for(Var* var = lp->var_root; var != NULL; var = var->next)
    {
       lps_makename(temp, namelen, var->name, var->number);
 
@@ -2145,13 +2155,13 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
          fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\t%.16e\n",
             head, var->number, namelen - 1, temp, var->name, mpq_get_d(var->lower));
       else
-      {
-         if (var->size > 0 || !mpq_equal(var->cost, const_zero))
+      {         
+         if (var->is_used || var->size > 0 || !mpq_equal(var->cost, const_zero))
             fprintf(fp, "%s\tv %7d\t%-*s\t\"%s\"\n",
                head, var->number, namelen - 1, temp, var->name);
       }
    }
-   for(con = lp->con_root; con != NULL; con = con->next)
+   for(Con* con = lp->con_root; con != NULL; con = con->next)
    {
       lps_makename(temp, namelen, con->name, con->number);
       

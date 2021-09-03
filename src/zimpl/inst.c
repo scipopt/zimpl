@@ -180,7 +180,9 @@ static void addcon_as_qubo(
    int telems = term_get_elements(term);   
 
    Term* qterm = term_new(telems * telems + telems);
-   
+
+   term_add_constant(qterm, numb_one());
+         
    for(int i = 0; i < telems; i++)
    {
       const Mono* mono1 = term_get_element(term, i);
@@ -198,7 +200,7 @@ static void addcon_as_qubo(
          fprintf(stderr, "*** Error XXX: Constraints with coefficients != 1 can't be converted to QUBO\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
-      }
+      }    
       for(int k = 0; k < telems; k++)
       {
          if ((contype == CON_RHS) && (i == k))

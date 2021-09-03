@@ -302,10 +302,15 @@ void qbo_write(
 
    term_free(term_seq);
    
-   int   entry_size = term_get_elements(term_obj);
-   Qme*  entry      = calloc(entry_size, sizeof(*entry));
-   int   entry_used = 0;
+   int    entry_size = term_get_elements(term_obj);
+   Qme*   entry      = calloc(entry_size, sizeof(*entry));
+   int    entry_used = 0;
+   mpq_t  offset;
 
+   mpq_init(offset);
+ 
+   numb_get_mpq(term_get_constant(term_obj), offset);
+   
    for(int i = 0; i < entry_size; i++)
    {
       const Mono* mono = term_get_element(term_obj, i);
@@ -315,6 +320,7 @@ void qbo_write(
 
       numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
       //mpq_set(entry[entry_used].value, mono_get_coeff(mono));
+
       entry_used++;         
    }
    assert(entry_used == entry_size);
@@ -323,7 +329,7 @@ void qbo_write(
    
    Qubo* qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
-   fprintf(fp, "%d %d\n", lp->vars, entry_used);
+   fprintf(fp, "%d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
    
    for(int row = 0; row < qubo->rows; row++)
    {
@@ -336,6 +342,7 @@ void qbo_write(
          fprintf(fp, "%d %d %.15g\n", row, col, mpq_get_d(qubo->val[k]));
       }
    }
+   mpq_clear(offset);   
    qubo_free(qubo);
    free(entry);
 }   

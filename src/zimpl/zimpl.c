@@ -479,15 +479,21 @@ int main(int argc, char* const* argv)
       perror(outfile);
       exit(EXIT_FAILURE);
    }
-   if (format != LP_FORM_RLP)
-      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title, 128);
-   else
+   switch(format)
    {
+   case LP_FORM_QBO :
+      prog_text = strdup("");
+      break;
+   case LP_FORM_RLP :
       prog_text = malloc(strlen(title) + 4);
       
       assert(prog_text != NULL);
 
       sprintf(prog_text, "\\%s\n", title);
+      break;
+   default :
+      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title, 128);
+      break;
    }
    zlp_write(lp, fp, format, prog_text);
 
