@@ -41,7 +41,7 @@
 
 #endif // // __GNUC__ || __CLANG__ || _lint
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint)) && !defined(__INTEL_COMPILER)
+#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint) && !defined(__INTEL_COMPILER)
 
 #define is_MALLOC         __attribute__ ((malloc))            //lint !e755
 #define always_INLINE     __attribute__ ((always_inline))     //lint !e755
