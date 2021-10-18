@@ -29,6 +29,8 @@
 #include <stdbool.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
+
 #include "zimpl/stkchk.h"
 
 const void*  stkchk_start = 0;

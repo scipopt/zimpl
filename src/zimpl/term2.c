@@ -28,11 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 /* #define TRACE 1 */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -183,12 +184,24 @@ Term* term_copy(const Term* term)
    return tnew;
 }
 
+void term_append_elem(Term* term, Mono* mono)
+{
+   Trace("term_append_elem");
+
+   assert(term_is_valid(term));
+   assert(mono_is_valid(mono));
+   assert(term->used < term->size);
+
+   term->elem[term->used] = mono;
+   term->used++;
+
+   assert(term_is_valid(term));
+}
+
 void term_append_term(
    Term* term,
    const Term* term_b)
 {
-   int i;
-   
    /* ??? test auf gleiche monome fehlt!!! */
 
    Trace("term_append_term");
@@ -209,7 +222,7 @@ void term_append_term(
    if (!numb_equal(term_b->constant, numb_zero()))
        numb_add(term->constant, term_b->constant);
 
-   for(i = 0; i < term_b->used; i++)
+   for(int i = 0; i < term_b->used; i++)
    {
       term->elem[term->used] = mono_copy(term_b->elem[i]);
       term->used++;
@@ -506,50 +519,6 @@ void term_negate(Term* term)
    term_mul_coeff(term, numb_minusone());
 }
 #endif
-
-void term_to_objective(const Term* term)
-{
-   Var*   var;
-   int    i;
-   
-   Trace("term_to_objective");
-
-   assert(term_is_valid(term));
-
-   /* If we have a constant in the objective, generate an artificial
-    * variable @OOffset fixed to the value. This works allways.
-    * This is needed because there is no general way for example in
-    * MPS format to specify an objective value offset.
-    */
-   if (!numb_equal(term->constant, numb_zero()))
-   {
-      const char* format = "%sObjOffset";
-   
-      Bound* lower = bound_new(BOUND_VALUE, numb_one());
-      Bound* upper = bound_new(BOUND_VALUE, numb_one());
-      char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
-
-      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-      var = xlp_addvar(prog_get_lp(), vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
-      xlp_addtocost(prog_get_lp(), var, term->constant);
-
-      free(vname);
-      bound_free(upper);
-      bound_free(lower);
-   }
-   
-   for(i = 0; i < term->used; i++)
-   {
-      const Numb* coeff = mono_get_coeff(term->elem[i]);
-      
-      assert(!numb_equal(coeff, numb_zero()));
-      assert(mono_is_linear(term->elem[i]));
-      
-      var = mono_get_var(term->elem[i], 0);
-      
-      xlp_addtocost(prog_get_lp(), var, coeff);
-   }
-}
 
 int term_get_elements(const Term* term)
 {

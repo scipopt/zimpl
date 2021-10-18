@@ -27,11 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 /* #define TRACE  1  */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -870,7 +871,7 @@ static void generate_conditional_constraint(
 
 /*ARGSUSED*/
 static void generate_indicator_constraint(
-   UNUSED const CodeNode* self,
+   is_UNUSED const CodeNode* self,
    const Term*            vif_term,
    const Term*            lhs_term,
    ConType                con_type,

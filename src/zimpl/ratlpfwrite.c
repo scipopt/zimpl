@@ -27,11 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include <gmp.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/gmpmisc.h"
@@ -137,6 +138,211 @@ static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    fprintf(fp, "\n");
 }
 
+#if 0
+static void write_qme(
+   FILE*      fp,
+   LpFormat   format,
+   const Qme* qme,
+   char*      name,
+   int        name_size)
+{
+   int cnt = 0;
+
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      fprintf(fp, " + [");
+
+   while(qme != NULL)
+   {
+      lps_makename(name, name_size, qme->var1->name, format == LP_FORM_HUM ? -1 : qme->var1->number);
+
+      if (mpq_equal(qme->value, const_one))
+         fprintf(fp, " + %s", name);
+      else if (mpq_equal(qme->value, const_minus_one))
+         fprintf(fp, " - %s", name);
+      else
+      {
+         fprintf(fp, " ");         
+         write_val(fp, format, true, qme->value);      
+         fprintf(fp, " %s", name);
+      }
+
+      if (qme->var1 == qme->var2)
+         fprintf(fp, "^2");
+      else
+      {
+         lps_makename(name, name_size, qme->var2->name, format == LP_FORM_HUM ? -1 : qme->var2->number);
+         
+         fprintf(fp, " * %s", name);
+      }
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n ");
+
+      qme = qme->next;         
+   }
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+   {
+      fprintf(fp,  " ]\n");
+      cnt = 0;
+   }      
+}
+#endif
+
+expects_NONNULL
+static void write_term(
+   FILE*          fp,
+   const LpFormat format,
+   const Term*    term_org,
+   char*          name,
+   const int      name_size,
+   const bool     is_objective)
+{
+   Term* term  = term_simplify(term_org);
+   
+   bool only_comment = false;
+
+   if (term_get_degree(term) > 2 || !term_is_polynomial(term))
+   {
+      if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      {
+         if (verbose > 0)
+         {
+            fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
+            fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
+               name, term_get_degree(term));
+         }
+         only_comment = true;
+      }
+   }
+   // assert(numb_equal(term_get_constant(term), numb_zero())); // ???
+
+   // ???
+   //   if (cnt % 6 != 0)
+   //   fprintf(fp, "\n ");         
+   
+   int cnt = 0;
+      
+   if (only_comment)
+      fprintf(fp, "\\ ");
+
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      fprintf(fp, " + [");
+
+   for(int i = 0; i < term_get_elements(term); i++)
+   {
+      const Mono* mono  = term_get_element(term, i);
+      const Numb* coeff = mono_get_coeff(mono);
+      MFun        fun   = mono_get_function(mono);
+      int         k;
+      
+      if (fun == MFUN_NONE)
+      {
+         if (numb_equal(coeff, numb_one()))
+            fprintf(fp, " +");
+         else
+         {
+            mpq_t t;
+            mpq_init(t);
+            numb_get_mpq(coeff, t);
+
+            if (is_objective && (format == LP_FORM_LPF || format == LP_FORM_RLP))
+               mpq_add(t, t, t); // t *= 2 needed for [...]/2
+
+            fprintf(fp, " ");         
+            write_val(fp, format, true, t);      
+            mpq_clear(t);
+         }
+         fputc(' ', fp);
+      }
+      else
+      {
+         switch(fun)
+         {
+         case MFUN_SQRT :
+            fprintf(fp, " + sqrt(");
+            break;
+         case MFUN_LOG :
+            fprintf(fp, " + log(");
+            break;
+         case MFUN_EXP :
+            fprintf(fp, " + exp(");
+            break;
+         case MFUN_LN :
+            fprintf(fp, " + ln(");
+            break;
+         case MFUN_SIN :
+            fprintf(fp, " + sin(");
+            break;
+         case MFUN_COS :
+            fprintf(fp, " + cos(");
+            break;
+         case MFUN_TAN :
+            fprintf(fp, " + tan(");
+            break;
+         case MFUN_ABS :
+            fprintf(fp, " + abs(");
+            break;
+         case MFUN_SGN :
+            fprintf(fp, " + sgn(");
+            break;
+         case MFUN_POW :
+            fprintf(fp, " + pow(");
+            break;
+         case MFUN_SGNPOW :
+            fprintf(fp, " + sgnpow(");
+            break;
+         case MFUN_TRUE :
+         case MFUN_FALSE :
+            break;
+         default :
+            abort();
+         } 
+      }
+      
+      for(k = 0; k < mono_get_degree(mono); k++)
+      {
+         Var* var = mono_get_var(mono, k);
+         int  j;
+         
+         if (k > 0)
+            fprintf(fp, " * ");
+         
+         for(j = 1; k + j < mono_get_degree(mono); j++)
+            if (var != mono_get_var(mono, k + j))
+               break;
+         
+         lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
+         
+         if (j == 1)
+            fprintf(fp, "%s", name);
+         else
+         {
+            fprintf(fp, "%s^%d", name, j);
+            k += j - 1; /*lint !e850 loop index variable is modified in body of the loop */
+         }
+      }
+      if (fun != MFUN_NONE)
+      {
+         if (fun == MFUN_POW || fun == MFUN_SGNPOW)
+         {
+            mpq_t t;
+            mpq_init(t);
+            numb_get_mpq(coeff, t);
+            fprintf(fp, " ,");         
+            write_val(fp, format, false, t);      
+            mpq_clear(t);
+         }
+         fprintf(fp, ") ");
+      }
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
+   }
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      fprintf(fp, is_objective ? " ]/2\n" : " ]\n");
+
+   term_free(term);
+}
+
+
 static void write_row(
    FILE*      fp,
    LpFormat   format,
@@ -188,13 +394,16 @@ static void write_row(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");         
    }
-   if (con->qme_first != NULL)
-   {
-      Qme* qme;
+   free(nzotab);
 
+#if 0
+   if (con->qme_first != NULL)      
+   {
       if (cnt % 6 != 0)
          fprintf(fp, "\n ");         
 
+      write_qme(fp, format, con->qme_first, name, name_size);
+#if 0
       cnt = 0;
 
       if (format == LP_FORM_LPF || format == LP_FORM_RLP)
@@ -231,13 +440,17 @@ static void write_row(
          fprintf(fp,  " ]\n");
          cnt = 0;
       }
+#endif
    }
+#endif
    if (con->term != NULL)
+      write_term(fp, format, con->term, name, name_size, false);
+#if 0
    {
       const Term* term  = con->term;
       bool only_comment = false;
 
-      assert(term_get_degree(term) > 2 || !term_is_polynomial(term));
+      assert(term_get_degree(term) >= 2 || !term_is_polynomial(term));
 
       if (format != LP_FORM_PIP)
       {
@@ -365,8 +578,11 @@ static void write_row(
             fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
       }
    }
-   free(nzotab);
+#endif
 }
+
+
+
 
 /* A specification for the LP file format can be found in the
  * ILOG CPLEX 7.0 Reference Manual page 527.
@@ -445,6 +661,14 @@ void lpf_write(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n ");
    }
+#if 0
+   if (lp->qme_obj != NULL)      
+      write_qme(fp, format, lp->qme_obj, name, name_size);
+#endif
+
+   if (lp->obj_term != NULL)
+      write_term(fp, format, lp->obj_term, name, name_size, true);
+   
    /* ---------------------------------------------------------------------- */
 
    /* First loop run for normal constraints, second one for

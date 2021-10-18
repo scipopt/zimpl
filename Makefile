@@ -53,7 +53,7 @@ SHARED		=	false
 STATIC		=	false
 ZLIB		=	true
 LINK		=	static
-OPT		=	opt
+OPT		=	dbg
 COMP		=	gnu
 CC		=	gcc
 CC_o		= 	-o #
@@ -71,6 +71,7 @@ RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
 			--leak-resolution=high --show-reachable=yes
+ANALYZER	=	scan-build
 
 SRCDIR		=	src/zimpl
 BINDIR		=	bin
@@ -80,7 +81,7 @@ LINTCONF	=	/opt/pclint/config
 CPPFLAGS	=	-I$(SRCDIR)/.. -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lm
-YFLAGS		=	-d -t -v
+YFLAGS		=	-d -t -v 
 LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
@@ -124,7 +125,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o zlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratordwrite.o ratpresolve.o
+			ratordwrite.o ratpresolve.o ratqbowrite.o
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
@@ -233,6 +234,10 @@ check:
 valgrind:
 		cd check; \
 		/bin/sh ./check.sh "$(VALGRIND) ../$(BINARY)"
+
+analyze:
+		make clean
+		$(ANALYZER) make
 
 coverage:
 		-ln -s ../../src $(OBJDIR)

@@ -32,15 +32,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
-#include <stdbool.h>
-//#include <assert.h>
 
-#include "zimpl/lint.h"
+#include "attribute.h"
 
 #define _MSHELL_C_
 
-#include "zimpl/mshell.h"
+#include "mshell.h"
 
 #if !defined(NO_MSHELL) 
 
@@ -66,6 +65,7 @@ typedef struct memnod
 #define HDR_SIZE        sizeof(MHDR)
 #define RESERVE_SIZE    (((HDR_SIZE + (ALIGN_SIZE - 1)) \
                          / ALIGN_SIZE) * ALIGN_SIZE)
+//lint -emacro(433 676 826 2445, CLIENT_2_HDR) 
 #define CLIENT_2_HDR(a) ((MHDR*)(((char*)(a)) - RESERVE_SIZE))
 #define HDR_2_CLIENT(a) ((void*)(((char*)(a)) + RESERVE_SIZE))
 
@@ -73,6 +73,7 @@ static unsigned long mem_size = 0;
 static unsigned long mem_maxi = 0;
 static MHDR*         memlist  = MHDR_NIL;
 
+//lint -emacro(433 826, Mem_tag_err) 
 #define Mem_tag_err(a, b, c, d)  mem_tag_err((a), (b), (c), (d), file, line)
 
 static size_t mem_alloc_size(
@@ -80,7 +81,7 @@ static size_t mem_alloc_size(
 {
    size += RESERVE_SIZE + ALIGN_SIZE + ALIGN_SIZE - 1;
    
-   return((size / ALIGN_SIZE) * ALIGN_SIZE);
+   return (size / ALIGN_SIZE) * ALIGN_SIZE;
 }
    
 static int* mem_endptr(
@@ -93,7 +94,7 @@ static int* mem_endptr(
    offset = ((RESERVE_SIZE + p->size + ALIGN_SIZE - 1) / ALIGN_SIZE)
       * ALIGN_SIZE;
    
-   return((int*)((char*)p + offset));
+   return (int*)((char*)p + offset); //lint !e2445 !e826
 }  
    
 static void mem_add_list(
@@ -132,8 +133,8 @@ static void mem_del_list(
       memlist = p->next;
 }
 
-static NORETURN void mem_tag_err(
-   MHDR*       p,
+static is_NORETURN void mem_tag_err(
+   const MHDR* p,
    int         typ,
    const char* file1,
    const int   line1,
@@ -185,27 +186,26 @@ void* mem_malloc(
    const char*  file,
    const int    line) 
 {
-   const char* errmsg1 =
-      "mem_malloc(size=%u, file=%s, line=%d): out of memory\n";
-   const char* errmsg2 =
-      "mem_malloc(size=%u, file=%s, line=%d): zero size\n";
-
-   MHDR* p;
-   size_t alloc_size;
+   const char* const errmsg1 =
+      "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
+   const char* const errmsg2 =
+      "mem_malloc(size=%zu, file=%s, line=%d): zero size\n";
 
    if (size == 0)
    {
       fprintf(stderr, errmsg2, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
-   alloc_size = mem_alloc_size(size);
+   size_t alloc_size = mem_alloc_size(size);
 
    assert(alloc_size > 0);
 
-   if ((p = malloc(alloc_size)) == MHDR_NIL)
+   MHDR* p = malloc(alloc_size); //lint --e{429}
+
+   if (p == MHDR_NIL)
    {
       fprintf(stderr, errmsg1, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
    p->tag1        = MEMTAG1;
    p->tag2        = MEMTAG2;
@@ -217,7 +217,7 @@ void* mem_malloc(
 
    mem_add_list(p);
 
-   return(HDR_2_CLIENT(p));
+   return HDR_2_CLIENT(p);
 } 
 
 void* mem_calloc(
@@ -226,22 +226,23 @@ void* mem_calloc(
    const char*  file,
    const int    line)
 {
-   const char* errmsg1 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory\n";
-   const char* errmsg2 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): zero item/size\n";
-
-   MHDR* p;
+   const char* const errmsg1 =
+      "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
+   const char* const errmsg2 =
+      "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): zero item/size\n";
    
    if (item == 0 || size == 0)
    {
       fprintf(stderr, errmsg2, item, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
-   if ((p = calloc(mem_alloc_size(size * item), sizeof(char))) == MHDR_NIL)
+
+   MHDR* p = calloc(1, mem_alloc_size(size * item)); //lint --e{429}
+
+   if (p == MHDR_NIL)
    {
       fprintf(stderr, errmsg1, item, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
    p->tag1        = MEMTAG1;
    p->tag2        = MEMTAG2;
@@ -253,7 +254,7 @@ void* mem_calloc(
    
    mem_add_list(p);
    
-   return(HDR_2_CLIENT(p));
+   return HDR_2_CLIENT(p);
 } 
 
 void* mem_realloc(
@@ -262,34 +263,29 @@ void* mem_realloc(
    const char*  file,
    const int    line)
 {
-   const char* errmsg1 =
-      "mem_realloc(size=%u, file=%s, line=%d): out of memory\n";
-   const char* errmsg2 =
-      "mem_realloc(file=%s, line=%d): null pointer\n";
-   const char* errmsg3 =
-      "mem_realloc(size=%u, file=%s, line=%d): zero size\n";
-
-   MHDR* p;
-
-   if (ptr == NULL)
-   {
-      fprintf(stderr, errmsg2, file, line);
-      exit(EXIT_FAILURE);
-   }
-   p = CLIENT_2_HDR(ptr);
-
-   mem_valid(p, file, line);   
-   mem_del_list(p);
+   const char* const errmsg1 =
+      "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
+   const char* const errmsg3 =
+      "mem_realloc(size=%zu, file=%s, line=%d): zero size\n";
 
    if (size == 0)
    {
       fprintf(stderr, errmsg3, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
-   if ((p = realloc(p, mem_alloc_size(size))) == MHDR_NIL)
+   MHDR* p = NULL;
+
+   if (ptr != NULL)
+   {
+      p = CLIENT_2_HDR(ptr); 
+
+      mem_valid(p, file, line);   
+      mem_del_list(p);
+   }
+   if ((p = realloc(p, mem_alloc_size(size))) == MHDR_NIL) //lint !e698 --e{429} 
    {
       fprintf(stderr, errmsg1, size, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
    p->tag1        = MEMTAG1;
    p->tag2        = MEMTAG2;
@@ -301,7 +297,7 @@ void* mem_realloc(
    
    mem_add_list(p);
    
-   return(HDR_2_CLIENT(p));
+   return HDR_2_CLIENT(p);
 }
 
 char* mem_strdup(
@@ -309,14 +305,14 @@ char* mem_strdup(
    const char* file,
    const int   line)
 {
-   const char* errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
+   const char* const errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
 
    if (str == NULL)
    {
       (void)fprintf(stderr, errmsg1, file, line);
-      exit(EXIT_FAILURE);
+      abort();
    }
-   return(strcpy(mem_malloc((size_t)(strlen(str) + 1), file, line), str));
+   return strcpy(mem_malloc((size_t)(strlen(str) + 1), file, line), str);
 }
       
 void mem_free(
@@ -324,21 +320,19 @@ void mem_free(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_free(file=%s, line=%d): null pointer\n";
-
-   MHDR* p;
+   const char* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
    if (ptr == NULL)
    {
       (void)fprintf(stderr, errmsg, file, line);
       abort();
    }
-   p = CLIENT_2_HDR(ptr);
+   MHDR* p = CLIENT_2_HDR(ptr); 
 
    mem_valid(p, file, line);   
    mem_del_list(p);
 
-   free(p);
+   free(p); //lint !e424
 }
 
 void mem_hide_x(
@@ -346,16 +340,14 @@ void mem_hide_x(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
-
-   MHDR* p;
+   const char* const errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
 
    if (ptr == NULL)
    {
       (void)fprintf(stderr, errmsg, file, line);
       abort();
    }
-   p = CLIENT_2_HDR(ptr);
+   MHDR* p = CLIENT_2_HDR(ptr);
 
    mem_valid(p, file, line);   
    mem_del_list(p);
@@ -367,7 +359,7 @@ void mem_hide_x(
 
 size_t mem_used()
 {
-   return(mem_size);
+   return mem_size;
 }
 
 void mem_maximum(
@@ -380,12 +372,10 @@ void mem_maximum(
 void mem_display(
    FILE* fp)
 {
-   MHDR* p;
-      
    (void)fprintf(fp, "\nAddress     Size  File(Line) - total size %lu\n",
       mem_size);
    
-   for(p = memlist; p != MHDR_NIL; p = p->next)
+   for(MHDR* p = memlist; p != MHDR_NIL; p = p->next)
    {
       (void)fprintf(fp, "%8lx  %6lu  %s(%d) %s %s\n",
          (unsigned long)p,
@@ -412,9 +402,7 @@ void mem_check_all_x(
    const char* file,
    const int   line)
 {
-   MHDR* p;
-      
-   for(p = memlist; p != MHDR_NIL; p = p->next)
+   for(MHDR* p = memlist; p != MHDR_NIL; p = p->next)
       mem_valid(p, file, line);
 }      
 
@@ -425,14 +413,14 @@ void* mem_malloc(
    const char*  file,
    const int    line) 
 {
-   const char* errmsg1 =
-      "mem_malloc(size=%u, file=%s, line=%d): out of memory\n";
-
-   void* p;
+   const char* const errmsg1 =
+      "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(size > 0);
+
+   void* p = malloc(size);
    
-   if (NULL == (p = malloc(size)))
+   if (NULL == p)
    {
       fprintf(stderr, errmsg1, size, file, line);
       exit(EXIT_FAILURE);
@@ -446,15 +434,15 @@ void* mem_calloc(
    const char*  file,
    const int    line)
 {
-   const char* errmsg1 =
-      "mem_calloc(item=%u, size=%u, file=%s, line=%d): out of memory\n";
-
-   void* p;
+   const char* const errmsg1 =
+      "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(item > 0);
    assert(size > 0);
+
+   void* p = calloc(item, size); //lint --e{429}
    
-   if (NULL == (p = calloc(item, size)))
+   if (NULL == p)
    {
       fprintf(stderr, errmsg1, item, size, file, line);
       exit(EXIT_FAILURE);
@@ -468,15 +456,15 @@ void* mem_realloc(
    const char*  file,
    const int    line)
 {
-   const char* errmsg1 =
-      "mem_realloc(size=%u, file=%s, line=%d): out of memory\n";
-
-   void* p;
+   const char* const errmsg1 =
+      "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(ptr  != NULL);
    assert(size >  0);
    
-   if (NULL == (p = realloc(ptr, size)))
+   void* p = realloc(ptr, size);
+
+   if (NULL == p)
    {
       fprintf(stderr, errmsg1, size, file, line);
       exit(EXIT_FAILURE);
@@ -489,14 +477,14 @@ char* mem_strdup(
    const char* file,
    const int   line)
 {
-   const char* errmsg1 =
-      "mem_strdup(size=%u, file=%s, line=%d): out of memory\n";
+   const char* const errmsg1 =
+      "mem_strdup(size=%zu, file=%s, line=%d): out of memory\n";
 
-   char* s;
-   
    assert(str != NULL);
    
-   if (NULL == (s = strdup(str)))
+   char* s = strdup(str);
+   
+   if (NULL == s)
    {
       fprintf(stderr, errmsg1, strlen(str), file, line);
       exit(EXIT_FAILURE);
@@ -509,7 +497,7 @@ void mem_free(
    const char* file,
    const int   line)
 {
-   const char *errmsg = "mem_free(file=%s, line=%d): null pointer\n";
+   const char* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
 #ifndef NDEBUG
    if (ptr == NULL)
@@ -523,13 +511,20 @@ void mem_free(
 
 #endif /* !NO_MSHELL */
 
-/* ------------------------------------------------------------------------- */
-/* Emacs Local Variables:                                                    */
-/* Emacs mode:c                                                              */
-/* Emacs c-basic-offset:3                                                    */
-/* Emacs tab-width:8                                                         */
-/* Emacs indent-tabs-mode:nil                                                */
-/* Emacs End:                                                                */
-/* ------------------------------------------------------------------------- */
+/*
+ * This code is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 

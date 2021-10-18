@@ -28,11 +28,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-//#include <assert.h>
+#include <assert.h>
 
 /* #define TRACE 1 */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/random.h"
@@ -127,10 +128,10 @@ unsigned int rand_get_int32(void)
       left = N;
       next = state;
     
-      for(j = N - M + 1; --j; p++) /*lint !e441 !e443 */
+      for(j = N - M + 1; --j; p++) //lint !e440 !e441 !e443 
          *p = p[M] ^ TWIST(p[0], p[1]);
 
-      for(j = M; --j; p++) /*lint !e441 !e443 */
+      for(j = M; --j; p++) //lint !e440 !e441 !e443 
          *p = p[M-N] ^ TWIST(p[0], p[1]);
 
       *p = p[M-N] ^ TWIST(p[0], state[0]);

@@ -28,9 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/numb.h"
@@ -53,6 +54,7 @@
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_range_is_valid(const Set* set)
 {
    return set != NULL
@@ -61,6 +63,7 @@ static bool set_range_is_valid(const Set* set)
       && set->head.dim == 1;
 }
 
+is_PURE
 static bool set_range_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL && SID_ok2(iter->range, SET_RANGE_ITER_SID)
@@ -73,6 +76,7 @@ static bool set_range_iter_is_valid(const SetIter* iter)
  * --- set_new                 
  * -------------------------------------------------------------------------
  */
+returns_NONNULL 
 Set* set_range_new(int begin, int end, int step)
 {
    Set* set;
@@ -101,6 +105,7 @@ Set* set_range_new(int begin, int end, int step)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_range_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -114,6 +119,7 @@ static Set* set_range_copy(const Set* source)
  * --- set_free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_range_free(Set* set)
 {
    assert(set_range_is_valid(set));
@@ -134,6 +140,7 @@ static void set_range_free(Set* set)
  */
 /* Return index number of element. -1 if not present
  */
+is_CONST
 static long long idx_to_val(SetIterIdx begin, SetIterIdx step, SetIterIdx idx)
 {
 #if 0
@@ -143,6 +150,7 @@ static long long idx_to_val(SetIterIdx begin, SetIterIdx step, SetIterIdx idx)
    return begin + idx * step;
 }
 
+is_CONST
 static SetIterIdx val_to_idx(SetIterIdx begin, SetIterIdx step, SetIterIdx val)
 {
 #if 0
@@ -152,6 +160,7 @@ static SetIterIdx val_to_idx(SetIterIdx begin, SetIterIdx step, SetIterIdx val)
    return (val - begin) / step;
 }
 
+expects_NONNULL 
 static SetIterIdx set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    const Elem* elem;
@@ -199,6 +208,7 @@ static SetIterIdx set_range_lookup_idx(const Set* set, const Tuple* tuple, int o
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_range_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -225,6 +235,7 @@ static void set_range_get_tuple(
  */
 /* Initialise Iterator. Write into iter
  */
+expects_NONNULL1 returns_NONNULL 
 static SetIter* set_range_iter_init(
    const Set*   set,
    const Tuple* pattern,
@@ -291,6 +302,7 @@ static SetIter* set_range_iter_init(
  */
 /* false means, there is no further element
  */
+expects_NONNULL 
 static bool set_range_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -322,7 +334,8 @@ static bool set_range_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_range_iter_exit(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL 
+static void set_range_iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
 
@@ -336,7 +349,8 @@ static void set_range_iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_range_iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL 
+static void set_range_iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_range_iter_is_valid(iter));
    

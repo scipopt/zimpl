@@ -27,11 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 /* #define TRACE  1 */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -134,6 +135,94 @@ CodeNode* i_constraint_list(CodeNode* self)
    return self;
 }
 
+expects_NONNULL
+static void addcon_as_qubo(
+   CodeNode*    self,   
+   ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   const Numb*  rhs,        /**< term contype rhs.*/
+   const Term*  term_org)   /**< term to use */
+{
+   assert(rhs  != NULL);
+   assert(term_is_valid(term_org));
+   assert(numb_equal(term_get_constant(term_org), numb_zero()));
+
+   switch(contype)
+   {
+   case CON_EQUAL : /* In case of EQUAL, both should be equal */
+   case CON_RHS   :
+      if (!numb_equal(rhs, numb_one()))
+      {
+         fprintf(stderr, "*** Error XXX: RHS unequal to 1 can't be converted to QUBO\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      break;
+   case CON_LHS :
+      //if (!nump_equal(lhs, numb_one))
+      //lint -fallthrough
+   case CON_RANGE :
+      fprintf(stderr, "*** Error XXX: Less equal and range can't be converted to QUBO\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+      break;
+   default :
+      abort();
+   }
+   Term* term = term_simplify(term_org);
+
+   if (!term_is_linear(term))
+   {
+      fprintf(stderr, "*** Error XXX: Non linear term can't be converted to QUBO\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   
+   int telems = term_get_elements(term);   
+
+   Term* qterm = term_new(telems * telems + telems);
+
+   term_add_constant(qterm, numb_one());
+         
+   for(int i = 0; i < telems; i++)
+   {
+      const Mono* mono1 = term_get_element(term, i);
+   
+      assert(mono_is_linear(mono1));
+
+      if (mono_get_function(mono1) != MFUN_NONE)
+      {
+         fprintf(stderr, "*** Error XXX: Non linear expressions can't be converted to QUBO\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+      if (!numb_equal(mono_get_coeff(mono1), numb_one()))
+      {
+         fprintf(stderr, "*** Error XXX: Constraints with coefficients != 1 can't be converted to QUBO\n");
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }    
+      for(int k = 0; k < telems; k++)
+      {
+         if ((contype == CON_RHS) && (i == k))
+            continue;
+         
+         const Mono* mono2 = term_get_element(term, k);
+
+         Mono* mono = mono_mul(mono1, mono2);
+         
+         if (i == k)
+            mono_neg(mono);
+
+         term_append_elem(qterm, mono);
+      }
+   }
+   xlp_addtoobj(prog_get_lp(), qterm);
+   
+   term_free(qterm);
+   term_free(term);
+}
+
+
 CodeNode* i_constraint(CodeNode* self)
 {
    Term*        term;
@@ -179,9 +268,15 @@ CodeNode* i_constraint(CodeNode* self)
    {
       term_add_constant(term, rhs);
 
-      if (xlp_addcon_term(prog_get_lp(), conname_get(), type, rhs, rhs, flags, term))
-         code_errmsg(self);
-
+      if (flags & LP_FLAG_CON_QUBO)
+      {
+         addcon_as_qubo(self, type, rhs, term);
+      }
+      else
+      {      
+         if (xlp_addcon_term(prog_get_lp(), conname_get(), type, rhs, rhs, flags, term))
+            code_errmsg(self);
+      }
       conname_next();
    }
    code_value_void(self);
@@ -4406,9 +4501,11 @@ static void objective(CodeNode* self, bool minimize)
    }
    term = code_eval_child_term(self, 1);
 
-   if (!term_is_linear(term))
+   const int degree = term_get_degree(term);
+   
+   if (degree != 1 && degree != 2)
    {
-      fprintf(stderr, "*** Error 221: The objective function has to be linear\n");
+      fprintf(stderr, "*** Error 221: The objective function has to be linear or quadratic\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);      
    }
@@ -4417,7 +4514,7 @@ static void objective(CodeNode* self, bool minimize)
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
       code_errmsg(self);
    }
-   term_to_objective(term);
+   xlp_addtoobj(prog_get_lp(), term);
 
    conname_free();
 

@@ -130,7 +130,10 @@
 -esym(714 759 765, stkchk_display_x, stkchk_maxi, stkchk_start)
 -esym(714 759 765, mono_mul_entry)
 -esym(714 759 765, prog_is_valid)
--egrep(453, calls impure function '__assert_fail')
+
+-sem(__lint_assert, pure)
+-esym(522, __lint_assert)
+//-egrep(453, calls impure function '__assert_fail')
 
 //
 // Things to fix

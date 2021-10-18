@@ -72,8 +72,12 @@ extern void         lps_delcon(Lps* lp, Con* con) expects_NONNULL;
 extern void         lps_addnzo(Lps* lp, Con* con, Var* var, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_delnzo, inout(1), 1p == 1, inout(2), 2p == 1) 
 extern void         lps_delnzo(Lps* lp, Nzo* nzo) expects_NONNULL;
+//lint -sem(        lps_objqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1) 
+extern void         lps_objqme(Lps* lp, Var* var1, Var* var2, const mpq_t value) expects_NONNULL;
 //lint -sem(        lps_addqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1, inout(4), 4p == 1) 
 extern void         lps_addqme(Lps* lp, Con* con, Var* var1, Var* var2, const mpq_t value) expects_NONNULL;
+//lint -sem(        lps_addtoobjterm, inout(1), 1p == 1, 2p == 1) 
+extern void         lps_addtoobjterm(Lps* lp, const Term* term) expects_NONNULL;
 //lint -sem(        lps_addterm, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
 extern void         lps_addterm(Lps* lp, Con* con, const Term* term) expects_NONNULL;
 //lint -sem(        lps_stat, 1p == 1) 
@@ -130,6 +134,8 @@ extern void         lps_getlhs(const Con* con, mpq_t lhs) expects_NONNULL;
 extern void         lps_getrhs(const Con* con, mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_varname, 1p == 1, @p) 
 extern const char*  lps_varname(const Var* var) expects_NONNULL returns_NONNULL is_PURE;
+//lint -sem(        lps_varnumber, 1p == 1, @ >= 0) 
+extern int          lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
 //lint -sem(        lps_setvartype, inout(1), 1p == 1) 
 extern void         lps_setvartype(Var* con, VarType type) expects_NONNULL;
 //lint -sem(        lps_flags, 1p == 1) 
@@ -180,6 +186,11 @@ extern void         lps_orderfile(const Lps* lp, FILE* fp, LpFormat format, cons
 */
 //lint -sem(        lps_mstwrite, 1p == 1, inout(2), 2p == 1) 
 extern void         lps_mstfile(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
+
+/* ratqubowrite.c
+ */
+//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1) 
+extern void         qbo_write(const Lps* lp, FILE* fp, LpFormat format, const char* text) expects_NONNULL12;
 
 #if 0 // Not used anymore ??? 
 /* ratpresolve.c

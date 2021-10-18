@@ -28,10 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"
 #include "zimpl/elem.h"
@@ -107,7 +109,7 @@ bool heap_is_valid(const Heap* heap)
       }
       if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0)
       {
-         heap_print(stderr, heap);
+         // heap_print(stderr, heap);
          return false;
       }
    }

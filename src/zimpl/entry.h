@@ -43,7 +43,7 @@ extern Entry*       entry_new_var(const Tuple* tuple, Var* var) expects_NONNULL 
 //lint -sem(        entry_free, custodial(1), inout(1), 1p == 1) 
 extern void         entry_free(Entry* entry) expects_NONNULL;
 //lint -sem(        entry_is_valid, pure, 1p == 1) 
-extern bool         entry_is_valid(const Entry* entry) expects_NONNULL is_PURE;
+extern bool         entry_is_valid(const Entry* entry) is_PURE;
 //lint -sem(        entry_copy, 1p == 1, @P >= malloc(1)) 
 extern Entry*       entry_copy(const Entry* entry) expects_NONNULL returns_NONNULL;
 //lint -sem(        entry_cmp, 1p == 1, 2p == 1) 

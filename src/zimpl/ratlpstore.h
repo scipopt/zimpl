@@ -122,6 +122,8 @@ struct lpstorage
    Var*     var_last;
    Con*     con_last;
    Sos*     sos_last;
+   Qme*     qme_obj;
+   Term*    obj_term;
    int      name_len;
 }; 
 

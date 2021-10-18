@@ -27,16 +27,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include <math.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdbool.h>
+#include <assert.h>
 
 /* #define TRACE 1 */
 
-#include <stdbool.h>
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
+
 #include "zimpl/random.h"
 #include "zimpl/ratlptypes.h"
 #include "zimpl/numb.h"

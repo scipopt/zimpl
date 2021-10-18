@@ -44,7 +44,7 @@ extern Numb*        numb_new_longlong(long long val) returns_NONNULL;
 //lint -sem(        numb_free, custodial(1), inout(1), 1p == 1) 
 extern void         numb_free(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_is_valid, pure, 1p == 1) 
-extern bool         numb_is_valid(const Numb* numb) expects_NONNULL is_PURE;
+extern bool         numb_is_valid(const Numb* numb) is_PURE;
 
 //lint -sem(        numb_copy, 1p == 1, @P >= malloc(1)) 
 extern Numb*        numb_copy(const Numb* source) expects_NONNULL returns_NONNULL;

@@ -29,9 +29,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/mme.h"

@@ -39,7 +39,7 @@ do
     *) echo Test $i "(lp)" ERROR ;;
    esac
    COUNT=`expr $COUNT + 1` 
-   diff $i.tbl $i.tbl.ref >/dev/null
+   diff -b $i.tbl $i.tbl.ref >/dev/null
    case $? in
     0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
     1) echo Test $i "(tbl)" FAIL ;;
@@ -110,7 +110,7 @@ done
     1) echo Test minlp.zpl "(pip)" FAIL ;;
     *) echo Test minlp.zpl "(pip)" ERROR ;;
    esac
-   rm minlp.pip minlp.tbl
+   #rm minlp.pip minlp.tbl
 # 
 #
    $1 -v0 -Dcities=5 -o metaio @selftest_tspste.zpl >metaio.out

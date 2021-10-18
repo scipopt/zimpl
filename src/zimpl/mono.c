@@ -28,11 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 /* #define TRACE 1 */
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -42,10 +43,13 @@
 #include "zimpl/mme.h"
 #include "zimpl/set.h"
 #include "zimpl/entry.h"
+
 #include "zimpl/mono.h"
 
 #define MONO_SID         0x4d6f6e6f
 #define MOEL_SID         0x4d6f456c
+
+extern int lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
 
 Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 {
@@ -77,11 +81,9 @@ bool mono_is_valid(const Mono* mono)
    const MonoElem* e;
    int             count = 1;
    
-   if (mono == NULL
-    || !SID_ok(mono, MONO_SID)
-    || !SID_ok2(mono->first, MOEL_SID)
-    || mono->count < 1)
-      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
+   assert(SID_ok(mono, MONO_SID));
+   assert(SID_ok2(mono->first, MOEL_SID));
+   assert(mono->count > 0);
 
    mem_check(mono);
 
@@ -93,14 +95,14 @@ bool mono_is_valid(const Mono* mono)
       
       mem_check(e);
 
-      if (!SID_ok(e, MOEL_SID))
-         abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
-      
+      assert(SID_ok(e, MOEL_SID));      
       assert(entry_is_valid(e->entry));
       assert(entry_get_type(e->entry) == SYM_VAR);
+
+      // Variables in mono are ordered
+      assert(e->next == NULL || (lps_varnumber(entry_get_var(e->entry)) <= lps_varnumber(entry_get_var(e->next->entry))));
    }
-   if (count != mono->count)
-      abort(); //lint !e453 function previously designated pure, calls impure function 'abort'
+   assert(count == mono->count);
    
    return true;
 }
@@ -133,39 +135,56 @@ void mono_mul_entry(
    Mono*        mono,
    const Entry* entry)
 {
-   MonoElem* e;
-   Var*      var;
-   MonoElem* last = NULL;
-   
-   Trace("mono_add_elem");
+   Trace("mono_mul_entry");
 
    assert(mono_is_valid(mono));
    assert(entry_is_valid(entry));
    assert(entry_get_type(entry) == SYM_VAR);
 
-   var = entry_get_var(entry);
-
-   /* ??? This ensures that if the same variable is to come several times,
-    * all of them come together, i.e. yxy is not allowed, yyx would be ok.
-    * Is there any reason to do this?
-    */
-   for(e = &mono->first; e != NULL; e = e->next)
-   {
-      last = e;
-
-      assert(entry_is_valid(e->entry));
-
-      if (var == entry_get_var(e->entry))
-         break;
-   }
-   assert(last != NULL);
-       
-   e = calloc(1, sizeof(*e));
+   MonoElem* new_me = calloc(1, sizeof(*new_me));
    
-   e->entry   = entry_copy(entry);
-   e->next    = last->next;
-   SID_set(e, MOEL_SID);
-   last->next = e;
+   Var* var       = entry_get_var(entry);
+   int  varnumber = lps_varnumber(var);
+   
+   /* Do we have to put the new entry at the start of the list?
+    */
+   if (lps_varnumber(entry_get_var(mono->first.entry)) >= varnumber)
+   {
+      *new_me = mono->first;
+
+      mono->first.entry = entry_copy(entry);
+      mono->first.next  = new_me;
+      SID_set2(mono->first, MOEL_SID);
+   }
+   else
+   {
+   /* This ensures that if the same variable is to come several times,
+    * all of them come together, i.e. yxy is not allowed, yyx would be ok.
+    * Neccessary for simplify of terms and other things.
+    */
+      MonoElem* last = NULL;
+
+      for(MonoElem* e = &mono->first; e != NULL; e = e->next)
+      {
+         assert(var != entry_get_var(e->entry));
+
+         last = e;
+
+         if (e->next == NULL)
+            break;
+         
+         assert(entry_is_valid(e->next->entry));
+
+         if (varnumber <= lps_varnumber(entry_get_var(e->next->entry)))
+            break;
+      }
+      assert(last != NULL);
+       
+      new_me->entry   = entry_copy(entry);
+      new_me->next    = last->next;
+      SID_set(new_me, MOEL_SID);
+      last->next      = new_me;
+   }
    mono->count++;
    
    assert(mono_is_valid(mono));
@@ -388,13 +407,15 @@ Var* mono_get_var(const Mono* mono, int idx)
    assert(idx >= 0);
    assert(idx <= mono->count);
 
-   if (idx > 0)
+   while(idx > 0)
    {
-      for(e = e->next; --idx > 0; e = e->next) /*lint !e441 loop variable 'e' not found in 2nd expression */
-         assert(e != NULL);
-
       assert(e != NULL);
+
+      e = e->next;
+      idx--;
    }
+   assert(e != NULL);
+
    assert(entry_is_valid(e->entry));
 
    return entry_get_var(e->entry);

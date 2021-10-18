@@ -47,7 +47,7 @@ extern List*        list_new_list(const List* list) expects_NONNULL returns_NONN
 //lint -sem(        list_free, custodial(1), inout(1), 1p == 1) 
 extern void         list_free(List* list) expects_NONNULL;
 //lint -sem(        list_is_valid, pure, 1p == 1) 
-extern bool         list_is_valid(const List* list) expects_NONNULL is_PURE;
+extern bool         list_is_valid(const List* list) is_PURE;
 //lint -sem(        list_is_elemlist, pure, 1p == 1) 
 extern bool         list_is_elemlist(const List* list) expects_NONNULL is_PURE;
 //lint -sem(        list_is_entrylist, pure, 1p == 1) 

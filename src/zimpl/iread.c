@@ -29,7 +29,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <sys/types.h>
-//#include <assert.h>
+#include <assert.h>
 
 #ifdef WITH_PCRE
 #include <pcre2posix.h>
@@ -42,6 +42,7 @@
 #endif
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"

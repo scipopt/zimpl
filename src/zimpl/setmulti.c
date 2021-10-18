@@ -29,9 +29,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -63,6 +64,7 @@ static int        cmp_dim = 0;
  * --- valid                 
  * -------------------------------------------------------------------------
  */
+is_PURE
 static bool set_multi_is_valid(const Set* set)
 {
    return set != NULL
@@ -73,6 +75,7 @@ static bool set_multi_is_valid(const Set* set)
       && set->multi.set    != NULL;
 }
 
+is_PURE
 static bool set_multi_iter_is_valid(const SetIter* iter)
 {
    return iter != NULL
@@ -87,6 +90,7 @@ static bool set_multi_iter_is_valid(const SetIter* iter)
  * --- internal                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL is_PURE
 static int subset_cmp(const void* a, const void* b)
 {
    const SetIterIdx* aa = (const SetIterIdx*)a;
@@ -104,6 +108,7 @@ static int subset_cmp(const void* a, const void* b)
    return 0;
 }
 
+expects_NONNULL is_PURE
 static int order_cmp(const void* a, const void* b)
 {
    const SetIterIdx* aa = (const SetIterIdx*)a;
@@ -130,6 +135,7 @@ static int order_cmp(const void* a, const void* b)
  * --- new                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 Set* set_multi_new_from_list(const List* list, SetCheckType check)
 {
    assert(list_is_valid(list));
@@ -273,6 +279,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
  * --- copy
  * -------------------------------------------------------------------------
  */
+expects_NONNULL returns_NONNULL 
 static Set* set_multi_copy(const Set* source)
 {
    Set* set = (Set*)source;
@@ -292,6 +299,7 @@ static Set* set_multi_copy(const Set* source)
  * --- free                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_multi_free(Set* set)
 {
    int i;
@@ -321,6 +329,7 @@ static void set_multi_free(Set* set)
  * --- lookup                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL is_PURE
 static int subset_idx_cmp(const void* a, const void* b)
 {
    const SetIterIdx* key    = (const SetIterIdx*)a;
@@ -344,6 +353,7 @@ static int subset_idx_cmp(const void* a, const void* b)
    return 0;
 }
 
+expects_NONNULL is_PURE
 static int order_idx_cmp(const void* a, const void* b)
 {
    const SetIterIdx* key   = (const SetIterIdx*)a;
@@ -369,6 +379,7 @@ static int order_idx_cmp(const void* a, const void* b)
 
 /* return the index of the element, -1 if not found
  */
+expects_NONNULL 
 static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
 {
    SetIterIdx* idx;
@@ -419,6 +430,7 @@ static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int o
  * --- get_tuple                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL 
 static void set_multi_get_tuple(
    const Set* set,
    SetIterIdx idx,
@@ -444,16 +456,12 @@ static void set_multi_get_tuple(
  * --- iter_init                 
  * -------------------------------------------------------------------------
  */
+expects_NONNULL1 returns_NONNULL 
 static SetIter* set_multi_iter_init(
    const Set*   set,
    const Tuple* pattern,
    int          offset)
 {
-   SetIter*     iter;
-   SetIterIdx*  idx;
-   int          i;
-   SetIterIdx   j;
-   int          k;
    int          m;
    int          first;
    int          last;
@@ -465,14 +473,10 @@ static SetIter* set_multi_iter_init(
    assert(offset      >= 0);
    assert(pattern == NULL || offset < tuple_get_dim(pattern));
 
-   iter = calloc(1, sizeof(*iter));
-
-   assert(iter != NULL);
-
-   idx = malloc((size_t)set->head.dim * sizeof(*idx));
-
-   assert(idx != NULL);
-
+   SetIter*    iter = calloc(1, sizeof(*iter));
+   SetIterIdx* idx  = malloc((size_t)set->head.dim * sizeof(*idx));
+   int         i;
+   
    for(i = 0; i < set->head.dim; i++)
    {
       if (pattern == NULL
@@ -531,25 +535,23 @@ static SetIter* set_multi_iter_init(
 #if 0
          if (result == 0)
          {
-            for(i = 0; i < set->head.members; i++)
+            for(int i = 0; i < set->head.members; i++)
                fprintf(stderr, "%d %d %d\n", i, set->multi.order[fixed_idx][i],
                   set->multi.subset[set->multi.order[fixed_idx][i] * set->head.dim + fixed_idx]);
          }
 #endif
          assert(result != 0);
 
-         k = (int)(result - (ptrdiff_t)set->multi.order[fixed_idx])
+         int k = (int)(result - (ptrdiff_t)set->multi.order[fixed_idx])
             / (ptrdiff_t)sizeof(**set->multi.order);
 
          assert(k >= 0);
          assert(k <  set->head.members);
 
-         j = set->multi.order[fixed_idx][k];
+         assert(set->multi.order[fixed_idx][k] >= 0);
+         assert(set->multi.order[fixed_idx][k] <  set->head.members);
          
-         assert(j >= 0);
-         assert(j <  set->head.members);
-         
-         assert(idx[fixed_idx] == set->multi.subset[j * set->head.dim + fixed_idx]);
+         assert(idx[fixed_idx] == set->multi.subset[set->multi.order[fixed_idx][k] * set->head.dim + fixed_idx]);
 
 #if 0
          fprintf(stderr, "@ fixe_idx: %d idx[]=%d k=%d j=%d\n",
@@ -557,7 +559,7 @@ static SetIter* set_multi_iter_init(
 #endif     
          for(first = k; first >= 0; first--)
          {
-            j = set->multi.order[fixed_idx][first] * set->head.dim + fixed_idx;
+            SetIterIdx j = set->multi.order[fixed_idx][first] * set->head.dim + fixed_idx;
             
             if (idx[fixed_idx] != set->multi.subset[j])
             {
@@ -567,7 +569,7 @@ static SetIter* set_multi_iter_init(
          }
          for(last = k; last < set->head.members; last++)
          {
-            j = set->multi.order[fixed_idx][last] * set->head.dim + fixed_idx;
+            SetIterIdx j = set->multi.order[fixed_idx][last] * set->head.dim + fixed_idx;
             
             if (idx[fixed_idx] != set->multi.subset[j])
             {
@@ -581,8 +583,8 @@ static SetIter* set_multi_iter_init(
 
          for(k = first + 1; k < last; k++)
          {
-            j = set->multi.order[fixed_idx][k];
-         
+            SetIterIdx j = set->multi.order[fixed_idx][k];
+            
             assert(idx[fixed_idx] == set->multi.subset[j * set->head.dim + fixed_idx]);
 
             for(i = 0; i < set->head.dim; i++)
@@ -624,6 +626,7 @@ static SetIter* set_multi_iter_init(
  */
 /* false means, there is no further element
  */
+expects_NONNULL 
 static bool set_multi_iter_next(
    SetIter*   iter,
    const Set* set,
@@ -654,7 +657,8 @@ static bool set_multi_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_exit(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL
+static void set_multi_iter_exit(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
 
@@ -671,7 +675,8 @@ static void set_multi_iter_exit(SetIter* iter, UNUSED const Set* set)
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_multi_iter_reset(SetIter* iter, UNUSED const Set* set)
+expects_NONNULL 
+static void set_multi_iter_reset(SetIter* iter, is_UNUSED const Set* set)
 {
    assert(set_multi_iter_is_valid(iter));
    

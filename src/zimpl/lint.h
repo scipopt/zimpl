@@ -26,18 +26,8 @@
 #ifndef _LINT_H_
 #define _LINT_H_
 
-#ifndef _lint
-
+#if 0
 #include <assert.h>
-
-#else // Use this only if we are linting
-
-extern void __assert(bool);  // this special function has the assert semantic by default
-#define assert(x) /*lint -e{453} */ __assert(x)  
-
-//typedef _Bool LintBool;
-
-#endif /* _lint */
 
 
 #if defined(__GNUC__) || defined(__CLANG__) || defined(_lint)
@@ -90,7 +80,7 @@ extern void __assert(bool);  // this special function has the assert semantic by
 #define expects_NONNULL13 /**/
 
 #endif // (__GNUC__ || __CLANG__) && !_lint
-   
+#endif
    
 #if 0  // not needed anymore for pc-lint 1.2 ?
 #ifdef __cplusplus

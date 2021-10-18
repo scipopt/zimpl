@@ -43,9 +43,10 @@
 #include <ctype.h>
 //#include <string.h>
 #include <stdbool.h>
-//#include <assert.h>
+#include <assert.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 
 #include "zimpl/ratlptypes.h"
@@ -142,6 +143,7 @@ static int        yydecl    = 0;
 "separate"                { yycolumn += yyleng; return SEPARATE; }
 "checkonly"               { yycolumn += yyleng; return CHECKONLY; }
 "indicator"               { yycolumn += yyleng; return INDICATOR; }
+"qubo"                    { yycolumn += yyleng; return QUBO; }
 "card"                    { yycolumn += yyleng; return CARD; }
 "abs"                     { yycolumn += yyleng; return ABS; }
 "vabs"                    { yycolumn += yyleng; return VABS; }

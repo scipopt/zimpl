@@ -49,11 +49,13 @@ extern void         term_mul_elem(Term* term, const Entry* entry, const Numb* co
 //lint -sem(        term_free, custodial(1), inout(1), 1p == 1) 
 extern void         term_free(Term* term) expects_NONNULL;
 //lint -sem(        term_is_valid, 1p == 1) 
-extern bool         term_is_valid(const Term* term) expects_NONNULL is_PURE;
+extern bool         term_is_valid(const Term* term) is_PURE;
 //lint -sem(        term_copy, 1p == 1, @P >= malloc(1)) 
 extern Term*        term_copy(const Term* term) expects_NONNULL returns_NONNULL;
 //lint -sem(        term_print, inout(1), 1p == 1, 2p == 1) 
 extern void         term_print(FILE* fp, const Term* term, bool print_symbol_index) expects_NONNULL;
+//lint -sem(        term_append_elem, inout(1), 1p == 1, inout(2), custodial(2), 2p == 1) 
+extern void         term_append_elem(Term* term, Mono* mono) expects_NONNULL;
 //lint -sem(        term_append_term, inout(1), 1p == 1, 2p == 1) 
 extern void         term_append_term(Term* term_a, const Term* term_b) expects_NONNULL;
 //lint -sem(        term_add_term, 1p == 1, 2p == 1, @P >= malloc(1)) 

@@ -38,7 +38,7 @@ extern RDef*       rdef_new(const char* filename, const char* pattern) expects_N
 //lint -sem(       rdef_free, custodial(1), inout(1), 1p == 1) 
 extern void        rdef_free(RDef* rdef) expects_NONNULL;
 //lint -sem(       rdef_is_valid, pure, 1p == 1) 
-extern bool        rdef_is_valid(const RDef* rdef) expects_NONNULL is_PURE;
+extern bool        rdef_is_valid(const RDef* rdef) is_PURE;
 //lint -sem(       rdef_copy, 1p == 1, @P >= malloc(1)) 
 extern RDef*       rdef_copy(const RDef* rdef) expects_NONNULL returns_NONNULL;
 //lint -sem(       rdef_set_param, inout(1), 1p == 1, 2p == 1) 
@@ -67,7 +67,7 @@ extern RPar*       rpar_new_match(const char* match) expects_NONNULL returns_NON
 //lint -sem(       rpar_free, custodial(1), inout(1), 1p == 1) 
 extern void        rpar_free(RPar* rpar) expects_NONNULL;
 //lint -sem(       rpar_is_valid, pure, 1p == 1) 
-extern bool        rpar_is_valid(const RPar* rpar) expects_NONNULL is_PURE;
+extern bool        rpar_is_valid(const RPar* rpar) is_PURE;
 //lint -sem(       rpar_copy, 1p == 1, @P >= malloc(1)) 
 extern RPar*       rpar_copy(const RPar* rpar) expects_NONNULL returns_NONNULL;
 

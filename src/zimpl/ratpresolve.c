@@ -33,6 +33,7 @@
 #include <gmp.h>
 
 #include "zimpl/lint.h"
+#include "zimpl/attribute.h"
 #include "zimpl/mshell.h"
 #include <stdbool.h>
 #include "zimpl/gmpmisc.h"
