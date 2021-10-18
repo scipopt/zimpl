@@ -23,7 +23,7 @@
 //lint -esym(755, is_MALLOC, always_INLINE, has_SIZE1, has_SIZE1x2, is_COLD, is_HOT)
 //lint -esym(755, expects_NONNULL*)
 
-#if defined(__GNUC__) || defined(__CLANG__) || defined(_lint)
+#if (defined(__GNUC__) || defined(__CLANG__) || defined(_lint)) && !defined(__INTEL_COMPILER)
 
 #define is_UNUSED         __attribute__ ((unused))            //lint !e755
 #define is_NORETURN       __attribute__ ((noreturn))          //lint !e755
@@ -41,7 +41,7 @@
 
 #endif // // __GNUC__ || __CLANG__ || _lint
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint)
+#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint)) && !defined(__INTEL_COMPILER)
 
 #define is_MALLOC         __attribute__ ((malloc))            //lint !e755
 #define always_INLINE     __attribute__ ((always_inline))     //lint !e755
