@@ -138,6 +138,7 @@ static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    fprintf(fp, "\n");
 }
 
+#if 0
 static void write_qme(
    FILE*      fp,
    LpFormat   format,
@@ -184,6 +185,7 @@ static void write_qme(
       cnt = 0;
    }      
 }
+#endif
 
 expects_NONNULL
 static void write_term(

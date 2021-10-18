@@ -1,3 +1,7 @@
+3.4.1  October 2021 Release
+
+ - Quadratic objective functions are allowed.
+
 3.4.0  June 2020 Release
 
  - Started to put in function attributes for gcc/clang

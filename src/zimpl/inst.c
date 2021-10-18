@@ -216,7 +216,7 @@ static void addcon_as_qubo(
          term_append_elem(qterm, mono);
       }
    }
-   xlp_addtermtoobj(prog_get_lp(), qterm);
+   xlp_addtoobj(prog_get_lp(), qterm);
    
    term_free(qterm);
    term_free(term);
@@ -4514,7 +4514,7 @@ static void objective(CodeNode* self, bool minimize)
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
       code_errmsg(self);
    }
-   term_to_objective(term);
+   xlp_addtoobj(prog_get_lp(), term);
 
    conname_free();
 

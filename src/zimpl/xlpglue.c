@@ -665,6 +665,7 @@ bool xlp_setobj(
    return lps_setobjname(lp, name);
 }
 
+#if 0
 /** Add to the objective value coefficient of a variable.
  */
 /*ARGSUSED*/
@@ -690,8 +691,9 @@ void xlp_addtocost(
    mpq_clear(val1);
    mpq_clear(val2);
 }
+#endif
 
-
+#if 0
 /** Add to the objective value coefficient of a variable.
  */
 /*ARGSUSED*/
@@ -715,13 +717,129 @@ void xlp_addobjqme(
 
    mpq_clear(val1);
 }
+#endif
 
-void xlp_addtermtoobj(
+void xlp_addtoobj(
    Lps*        lp,
-   const Term* term)
+   const Term* term_org)
 {
    assert(lp != NULL);
-   assert(term_is_valid(term));
+   assert(term_is_valid(term_org));
 
-   lps_addtoobjterm(lp, term);
+   Term* term = term_simplify(term_org);
+   
+   if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
+      lps_addtoobjterm(lp, term);
+   else
+   {
+      /* If we have a constant in the objective, generate an artificial
+       * variable @OOffset fixed to the value. This works allways.
+       * This is needed because there is no general way for example in
+       * MPS format to specify an objective value offset.
+       */
+      const Numb* term_constant = term_get_constant(term);
+      
+      mpq_t val1;
+      mpq_t val2;
+         
+      mpq_init(val1);
+      mpq_init(val2);
+      
+      if (!numb_equal(term_constant, numb_zero()))
+      {
+         const char* format = "%sObjOffset";
+   
+         Bound* lower = bound_new(BOUND_VALUE, numb_one());
+         Bound* upper = bound_new(BOUND_VALUE, numb_one());
+         char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+
+         sprintf(vname, format, SYMBOL_NAME_INTERNAL);
+         Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+
+         lps_getcost(var, val1);
+         numb_get_mpq(term_constant, val2);
+         mpq_add(val1, val1, val2);
+         lps_setcost(var, val1);
+
+         free(vname);
+         bound_free(upper);
+         bound_free(lower);
+      }
+   
+      for(int i = 0; i < term_get_elements(term); i++)
+      {
+         const Mono* mono   = term_get_element(term, i);
+         const Numb* coeff  = mono_get_coeff(mono);
+
+         assert(mono_get_degree(mono) == 1);       
+         assert(!numb_equal(coeff, numb_zero()));
+
+         Var* var = mono_get_var(mono, 0);
+         
+         lps_getcost(var, val1);
+         numb_get_mpq(coeff, val2);
+         mpq_add(val1, val1, val2);
+         lps_setcost(var, val1);
+      }
+      mpq_clear(val1);
+      mpq_clear(val2);
+   }
+   term_free(term);
 }
+
+#if 0
+void term_to_objective(const Term* term_org)
+{
+   Trace("term_to_objective");
+
+   assert(term_is_valid(term_org));
+
+   Term* term = term_simplify(term_org);
+
+   Lps* lp = prog_get_lp();
+
+   /* If we have a constant in the objective, generate an artificial
+    * variable @OOffset fixed to the value. This works allways.
+    * This is needed because there is no general way for example in
+    * MPS format to specify an objective value offset.
+    */
+   if (!numb_equal(term->constant, numb_zero()))
+   {
+      const char* format = "%sObjOffset";
+   
+      Bound* lower = bound_new(BOUND_VALUE, numb_one());
+      Bound* upper = bound_new(BOUND_VALUE, numb_one());
+      char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+
+      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
+      Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+      xlp_addtocost(lp, var, term->constant);
+
+      free(vname);
+      bound_free(upper);
+      bound_free(lower);
+   }
+   
+   for(int i = 0; i < term->used; i++)
+   {
+      const Mono* mono   = term->elem[i];
+      const Numb* coeff  = mono_get_coeff(mono);
+      const int   degree = mono_get_degree(mono);
+         
+      assert(!numb_equal(coeff, numb_zero()));
+      assert(degree == 1 || degree == 2);
+      
+      if (degree == 1) // linear
+      {
+         xlp_addtocost(lp, mono_get_var(mono, 0), coeff);
+         mono_mul_coef(mono, numb_zero);
+      }
+      else // quadratic
+      {
+         xlp_addobjqme(lp, mono_get_var(mono, 0), mono_get_var(mono, 1), coeff);
+      }
+   }
+   term_free(term);
+}
+
+#endif

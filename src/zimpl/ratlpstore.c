@@ -740,30 +740,6 @@ void lps_free(Lps* lp)
    lps_hash_free(lp->con_hash);
    lps_hash_free(lp->sos_hash);
 
-   for(sto = lp->sto_root; sto != NULL; sto = sto_next)
-   {
-      for(i = 0; i < sto_size; i++)
-         mpq_clear(sto->begin[i].value);
-
-      sto_next = sto->next;
-       
-      free(sto->begin);
-      free(sto);
-   }
-   for(var = lp->var_root; var != NULL; var = var_next) 
-   {
-      var_next = var->next;
-      var->sid = 0x0;
-
-      mpq_clear(var->cost);
-      mpq_clear(var->lower);
-      mpq_clear(var->upper);
-      mpq_clear(var->value);
-      mpq_clear(var->startval);
-      
-      free(var->name);
-      free(var);
-   }
    for(con = lp->con_root; con != NULL; con = con_next)
    {
       con_next = con->next;
@@ -800,7 +776,31 @@ void lps_free(Lps* lp)
       free(sos->name);
       free(sos);
    }
+   for(var = lp->var_root; var != NULL; var = var_next) 
+   {
+      var_next = var->next;
+      var->sid = 0xDEADDEAD;
 
+      mpq_clear(var->cost);
+      mpq_clear(var->lower);
+      mpq_clear(var->upper);
+      mpq_clear(var->value);
+      mpq_clear(var->startval);
+      
+      free(var->name);
+      free(var);
+   }
+   for(sto = lp->sto_root; sto != NULL; sto = sto_next)
+   {
+      for(i = 0; i < sto_size; i++)
+         mpq_clear(sto->begin[i].value);
+
+      sto_next = sto->next;
+       
+      free(sto->begin);
+      free(sto);
+   }
+   ///?? kann weg
    for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
    {
       qme_next = qme->next;
@@ -1239,6 +1239,7 @@ Sos* lps_addsos(
    return sos;
 }
 
+#if 0
 void lps_objqme(
    Lps*        lp,
    Var*        var1,
@@ -1302,6 +1303,7 @@ void lps_addqme(
    var1->is_used = true;
    var2->is_used = true;
 }
+#endif
 
 void lps_addtoobjterm(
    Lps*        lp,

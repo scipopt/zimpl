@@ -520,59 +520,6 @@ void term_negate(Term* term)
 }
 #endif
 
-void term_to_objective(const Term* term_org)
-{
-   Trace("term_to_objective");
-
-   assert(term_is_valid(term_org));
-
-   Term* term = term_simplify(term_org);
-
-   Lps* lp = prog_get_lp();
-
-   /* If we have a constant in the objective, generate an artificial
-    * variable @OOffset fixed to the value. This works allways.
-    * This is needed because there is no general way for example in
-    * MPS format to specify an objective value offset.
-    */
-   if (!numb_equal(term->constant, numb_zero()))
-   {
-      const char* format = "%sObjOffset";
-   
-      Bound* lower = bound_new(BOUND_VALUE, numb_one());
-      Bound* upper = bound_new(BOUND_VALUE, numb_one());
-      char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
-
-      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-      Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
-      xlp_addtocost(lp, var, term->constant);
-
-      free(vname);
-      bound_free(upper);
-      bound_free(lower);
-   }
-   
-   for(int i = 0; i < term->used; i++)
-   {
-      const Mono* mono   = term->elem[i];
-      const Numb* coeff  = mono_get_coeff(mono);
-      const int   degree = mono_get_degree(mono);
-         
-      assert(!numb_equal(coeff, numb_zero()));
-      assert(degree == 1 || degree == 2);
-      
-      if (degree == 1) // linear
-      {
-         xlp_addtocost(lp, mono_get_var(mono, 0), coeff);
-      }
-      else // quadratic
-      {
-         xlp_addobjqme(lp, mono_get_var(mono, 0), mono_get_var(mono, 1), coeff);
-      }
-   }
-   term_free(term);
-}
-
 int term_get_elements(const Term* term)
 {
    assert(term_is_valid(term));
