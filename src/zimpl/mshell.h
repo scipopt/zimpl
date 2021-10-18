@@ -7,12 +7,8 @@
 /*                                                                           */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /*
-<<<<<<< HEAD
- * Copyright (C) 2007-2018 by Thorsten Koch <koch@zib.de>
-=======
  * Copyright (C) 2007-2021 by Thorsten Koch <koch@zib.de>
->>>>>>> 772e241c0f09f9b4aeaad67704060a0698d176b8
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3
