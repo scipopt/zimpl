@@ -289,7 +289,7 @@ void qbo_write(
          continue;
 
       Entry* entry = entry_new_var(tuple_new(0), var); 
-      Mono*  mono = mono_new(numb_one(), entry, MFUN_NONE);
+      Mono*  mono  = mono_new(numb_one(), entry, MFUN_NONE);
 
       mono_mul_entry(mono, entry);
       term_append_elem(term_seq, mono);
@@ -333,8 +333,6 @@ void qbo_write(
    
    for(int row = 0; row < qubo->rows; row++)
    {
-      int i = 0;
-      
       for(int k = qubo->rowbeg[row]; k < qubo->rowbeg[row + 1]; k++)
       {
          int col = qubo->col[k];

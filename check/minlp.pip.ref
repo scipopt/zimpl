@@ -24,7 +24,7 @@
 \ subto c17: sgnpow(a, 12^2) <= 200;
 \ subto c18: 16 * log(sqrt(exp(ln(sin(cos(tan(abs(sgn(pow(sgnpow(a, -2), -3)))))))))) == 99;
 \ subto c19: (2-exp(3*a-5))^2 == b;
-\Problem name: check/minlp.zpl
+\Problem name: minlp.zpl
 Minimize
  Objective: 
 Subject to

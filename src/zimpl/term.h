@@ -54,7 +54,7 @@ extern bool         term_is_valid(const Term* term) is_PURE;
 extern Term*        term_copy(const Term* term) expects_NONNULL returns_NONNULL;
 //lint -sem(        term_print, inout(1), 1p == 1, 2p == 1) 
 extern void         term_print(FILE* fp, const Term* term, bool print_symbol_index) expects_NONNULL;
-//lint -sem(        term_append_elem, inout(1), 1p == 1, inout(2), 2p == 1) 
+//lint -sem(        term_append_elem, inout(1), 1p == 1, inout(2), custodial(2), 2p == 1) 
 extern void         term_append_elem(Term* term, Mono* mono) expects_NONNULL;
 //lint -sem(        term_append_term, inout(1), 1p == 1, 2p == 1) 
 extern void         term_append_term(Term* term_a, const Term* term_b) expects_NONNULL;

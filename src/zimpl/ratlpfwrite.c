@@ -189,12 +189,12 @@ static void write_qme(
 
 expects_NONNULL
 static void write_term(
-   FILE*     fp,
-   LpFormat  format,
-   Term*     term_org,
-   char*     name,
-   int       name_size,
-   bool      is_objective)
+   FILE*          fp,
+   const LpFormat format,
+   const Term*    term_org,
+   char*          name,
+   const int      name_size,
+   const bool     is_objective)
 {
    Term* term  = term_simplify(term_org);
    
@@ -337,10 +337,8 @@ static void write_term(
          fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
    }
    if (format == LP_FORM_LPF || format == LP_FORM_RLP)
-   {
       fprintf(fp, is_objective ? " ]/2\n" : " ]\n");
-      cnt = 0;
-   }
+
    term_free(term);
 }
 

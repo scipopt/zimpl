@@ -47,7 +47,7 @@ extern bool     xlp_conname_exists(const Lps* lp, const char* conname) expects_N
 //lint -sem(    xlp_addcon_term, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1, 7p == 1) 
 extern bool     xlp_addcon_term(Lps* lp, const char* name, ConType type,
    const Numb* lhs, const Numb* rhs, unsigned int flags, const Term* term) expects_NONNULL;
-//lint -sem(    xlp_addvar, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1, 6p == 1, 7p == 1, @p == 1) 
+//lint -sem(    xlp_addvar, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1, 6p == 1, 7p == 1, @P >= malloc(1)) 
 extern Var*     xlp_addvar(Lps* lp, const char* name, VarClass usevarclass,
    const Bound* lower, const Bound* upper, const Numb* priority, const Numb* startval) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_addsos_term, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1) 
