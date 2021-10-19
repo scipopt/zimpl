@@ -119,7 +119,7 @@ Stmt* stmt_new(
    int         lineno,
    const char* text)
 {
-   Stmt* stmt = calloc(1, sizeof(*stmt));;
+   Stmt* stmt = calloc(1, sizeof(*stmt));
 
    assert(filename != NULL);
    assert(text     != NULL);

@@ -159,12 +159,11 @@ static void addcon_as_qubo(
       break;
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      //lint -fallthrough
+      fall_THROUGH;
    case CON_RANGE :
       fprintf(stderr, "*** Error XXX: Less equal and range can't be converted to QUBO\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
-      break;
    default :
       abort();
    }

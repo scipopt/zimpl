@@ -238,7 +238,7 @@ static bool addcon_term_as_qubo(
    {
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(numb_equal(lhs, rhs));
-      //lint -fallthrough
+      fall_THROUGH;
    case CON_RHS :
       if (!numb_equal(rhs, numb_one()))
       {
@@ -248,7 +248,7 @@ static bool addcon_term_as_qubo(
       break;
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      //lint -fallthrough
+      fall_THROUGH;
    case CON_RANGE :
       fprintf(stderr, "Error: can't QUBO");
       abort();     
@@ -360,7 +360,7 @@ bool xlp_addcon_term(
       break;
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(mpq_equal(tlhs, trhs) != 0);
-      /*lint -fallthrough*/
+      fall_THROUGH;
    case CON_RANGE :
       lps_setlhs(con, tlhs);
       lps_setrhs(con, trhs);

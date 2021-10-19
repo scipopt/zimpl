@@ -45,8 +45,6 @@
 #include "zimpl/stmt.h"
 #include "zimpl/symbol.h"
 
-#define TEST_DUBLICATE   0
-
 #define SYMBOL_SID  0x53796d62
 #define SYMBOL_EXTEND_SIZE 100
 

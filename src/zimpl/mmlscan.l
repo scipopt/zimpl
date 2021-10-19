@@ -25,7 +25,7 @@
  */
 %{   
 
-#if defined(__CLANG__)
+#if defined(__clang__)
 #pragma clang diagnostic ignored "-Wsign-conversion"
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wmissing-prototypes"
@@ -35,7 +35,7 @@
 #pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
-#if defined(__GNUC__) && !defined(__CLANG__) && !defined(__INTEL_COMPILER)
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
 #pragma GCC   diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC   diagnostic ignored "-Wsign-compare"
 #pragma GCC   diagnostic ignored "-Wimplicit-fallthrough"

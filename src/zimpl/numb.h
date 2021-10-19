@@ -97,13 +97,13 @@ extern void         numb_ceil(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_floor, inout(1), 1p == 1) 
 extern void         numb_floor(Numb* numb) expects_NONNULL;
 //lint -sem(        numb_new_log, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_log(const Numb* numb) expects_NONNULL returns_NONNULL;
+extern Numb*        numb_new_log(const Numb* numb) expects_NONNULL;
 //lint -sem(        numb_new_sqrt, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_sqrt(const Numb* numb) expects_NONNULL returns_NONNULL;
+extern Numb*        numb_new_sqrt(const Numb* numb) expects_NONNULL;
 //lint -sem(        numb_new_exp, 1p == 1, @P >= malloc(1)) 
 extern Numb*        numb_new_exp(const Numb* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_ln, 1p == 1, @P >= malloc(1) || @P == 0) 
-extern Numb*        numb_new_ln(const Numb* numb) expects_NONNULL returns_NONNULL;
+extern Numb*        numb_new_ln(const Numb* numb) expects_NONNULL;
 //lint -sem(        numb_new_rand, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Numb*        numb_new_rand(const Numb* mini, const Numb* maxi) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_todbl, pure, 1p == 1) 

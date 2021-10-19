@@ -23,13 +23,19 @@
 //lint -esym(755, is_MALLOC, always_INLINE, has_SIZE1, has_SIZE1x2, is_COLD, is_HOT)
 //lint -esym(755, expects_NONNULL*)
 
-#if (defined(__GNUC__) || defined(__CLANG__) || defined(_lint)) && !defined(__INTEL_COMPILER)
+
+#if (defined(__GNUC__) || defined(__clang__) || defined(_lint)) && !defined(__INTEL_COMPILER)
+
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wignored-attributes"
+#endif
 
 #define is_UNUSED         __attribute__ ((unused))            //lint !e755
 #define is_NORETURN       __attribute__ ((noreturn))          //lint !e755
 #define is_CONST          __attribute__ ((const))             //lint !e755  
 #define is_PURE           __attribute__ ((pure))              //lint !e755
 #define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
+#define fall_THROUGH      __attribute__ ((fallthrough))  /*lint -fallthrough */
 
 #else
 
@@ -38,10 +44,11 @@
 #define is_CONST          /**/
 #define is_PURE           /**/
 #define returns_NONNULL   /**/
+#define FALLTHROUGH       /**/
 
-#endif // // __GNUC__ || __CLANG__ || _lint
+#endif // // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint) && !defined(__INTEL_COMPILER)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(_lint) && !defined(__INTEL_COMPILER)
 
 #define is_MALLOC         __attribute__ ((malloc))            //lint !e755
 #define always_INLINE     __attribute__ ((always_inline))     //lint !e755
@@ -67,7 +74,7 @@
 #define expects_NONNULL12 /**/
 #define expects_NONNULL13 /**/
 
-#endif // (__GNUC__ || __CLANG__) && !_lint
+#endif // (__GNUC__ || __clang__) && !_lint && !__INTEL_COMPILER
 
 #endif // LINT_H_
 /*

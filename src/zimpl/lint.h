@@ -25,64 +25,9 @@
  */
 #ifndef _LINT_H_
 #define _LINT_H_
-
-#if 0
-#include <assert.h>
-
-
-#if defined(__GNUC__) || defined(__CLANG__) || defined(_lint)
-
-#define UNUSED            __attribute__ ((unused))
-#define NORETURN          __attribute__ ((noreturn))
-
-#define is_UNUSED         __attribute__ ((unused))            //lint !e755
-#define is_NORETURN       __attribute__ ((noreturn))          //lint !e755
-#define is_CONST          __attribute__ ((const))             //lint !e755  
-#define is_PURE           __attribute__ ((pure))              //lint !e755
-#define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
-
-#else
-
-#define UNUSED            /**/
-#define NORETURN          /**/
-#define is_UNUSED         /**/
-#define is_NORETURN       /**/
-#define is_CONST          /**/
-#define is_PURE           /**/
-#define returns_NONNULL   /**/
-
-#endif // // __GNUC__ || __CLANG__ || _lint
-
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(_lint)
-
-#define is_MALLOC         __attribute__ ((malloc))            //lint !e755
-#define always_INLINE     __attribute__ ((always_inline))     //lint !e755
-#define has_SIZE1         __attribute__ ((alloc_size (1)))    //lint !e755
-#define has_SIZE1x2       __attribute__ ((alloc_size (1,2)))  //lint !e755
-#define is_COLD           __attribute__ ((cold))              //lint !e755
-#define is_HOT            __attribute__ ((hot))               //lint !e755
-#define expects_NONNULL   __attribute__ ((nonnull))           //lint !e755
-#define expects_NONNULL1  __attribute__ ((nonnull (1)))       //lint !e755
-#define expects_NONNULL12 __attribute__ ((nonnull (1,2)))     //lint !e755
-#define expects_NONNULL13 __attribute__ ((nonnull (1,3)))     //lint !e755
-
-#else
-
-#define is_MALLOC         /**/
-#define always_INLINE     /**/
-#define has_SIZE1         /**/
-#define has_SIZE1x2       /**/
-#define is_COLD           /**/
-#define is_HOT            /**/
-#define expects_NONNULL   /**/
-#define expects_NONNULL1  /**/
-#define expects_NONNULL12 /**/
-#define expects_NONNULL13 /**/
-
-#endif // (__GNUC__ || __CLANG__) && !_lint
-#endif
-   
+  
 #if 0  // not needed anymore for pc-lint 1.2 ?
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -144,6 +89,7 @@ extern int    gzclose(gzFile file);
 #ifdef __cplusplus
 }
 #endif
+
 #endif // 0
 
 #endif /* _LINT_H_ */
