@@ -697,7 +697,8 @@ void lpf_write(
       {
          con = contab[k];
 
-         if (con->size == 0 && con->qme_first == NULL && con->term == NULL)
+         //         if (con->size == 0 && con->qme_first == NULL && con->term == NULL)
+         if (con->size == 0 && con->term == NULL)
             continue;
 
          if (i == 0 && ((con->flags & (LP_FLAG_CON_SEPAR | LP_FLAG_CON_CHECK)) != 0))

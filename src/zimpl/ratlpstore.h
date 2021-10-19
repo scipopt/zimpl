@@ -91,7 +91,7 @@ struct constraint
    Con*         prev;
    Con*         next;
    Nzo*         first;
-   Qme*         qme_first;
+   //   Qme*         qme_first;
    Term*        term;
 };
 
@@ -122,7 +122,7 @@ struct lpstorage
    Var*     var_last;
    Con*     con_last;
    Sos*     sos_last;
-   Qme*     qme_obj;
+   //   Qme*     qme_obj;
    Term*    obj_term;
    int      name_len;
 }; 
@@ -147,6 +147,7 @@ struct soset
 
 #define SOS_SID 0x5e534f53
 
+#if 0
 struct qmatentry
 {
    unsigned int sid;
@@ -157,7 +158,8 @@ struct qmatentry
 };
 
 #define QME_SID 0x514D656E
-
+#endif
+   
 /* Internal functions
  */
 //lint -sem(        lps_getnamesize, 1p == 1, @n > 8) 

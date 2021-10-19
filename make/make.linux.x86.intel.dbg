@@ -3,7 +3,7 @@ CC		=	icc
 LINKCC		=	icc
 CPPFLAGS	+=	-DFREEMEM
 CFLAGS		=	-g -fp-model precise -w2 -Wcheck \
-			-wd111,151,171,279,981,1173,1419,1684,2259
+			-wd111,151,161,279,981,1173,1419,1684,2259
 LDFLAGS         =       -lgmp -lm
 
 ifeq ($(ZLIB),true)

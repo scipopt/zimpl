@@ -62,6 +62,18 @@ struct qubo
 
 typedef struct qubo Qubo;
 
+struct qmentry
+{
+   unsigned int sid;
+   const Var*   var1;
+   const Var*   var2;
+   mpq_t        value;
+};
+
+#define QME_SID 0x514D656E
+
+typedef struct qmentry Qme;
+
 is_MALLOC returns_NONNULL
 static Qubo *qubo_new(int rows, int nonzeros)
 {
@@ -310,11 +322,13 @@ void qbo_write(
    mpq_init(offset);
  
    numb_get_mpq(term_get_constant(term_obj), offset);
-   
+
+   // TODO maybe move this into QUBO from entry.
    for(int i = 0; i < entry_size; i++)
    {
       const Mono* mono = term_get_element(term_obj, i);
-      
+
+      entry[entry_used].sid  = QME_SID;
       entry[entry_used].var1 = mono_get_var(mono, 0);
       entry[entry_used].var2 = mono_get_var(mono, 1);
 
@@ -331,6 +345,8 @@ void qbo_write(
 
    fprintf(fp, "%d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
    
+   free(entry);
+
    for(int row = 0; row < qubo->rows; row++)
    {
       for(int k = qubo->rowbeg[row]; k < qubo->rowbeg[row + 1]; k++)
@@ -342,7 +358,6 @@ void qbo_write(
    }
    mpq_clear(offset);   
    qubo_free(qubo);
-   free(entry);
 }   
 
 

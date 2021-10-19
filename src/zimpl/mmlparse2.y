@@ -25,15 +25,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#if defined(__CLANG__)
 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wsign-conversion"
 #pragma clang diagnostic ignored "-Wunused-macros"
 #pragma clang diagnostic ignored "-Wimplicit-function-declaration"
 #pragma clang diagnostic ignored "-Wunreachable-code"
-
+#endif
+   
+#if defined(__GNUC__) && !defined(__CLANG__) && !defined(__INTEL_COMPILER)
 #pragma GCC   diagnostic ignored "-Wstrict-prototypes"
-
+#endif
+   
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

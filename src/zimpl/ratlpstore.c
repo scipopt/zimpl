@@ -425,8 +425,8 @@ static bool lps_valid(const Lps* lp)
    const char* const err16 = "Wrong SOS Variable SID";
    const char* const err18 = "Wrong SOS element count";
    const char* const err19 = "Wrong SOS count";
-   const char* const err20 = "Wrong Constraint QME SID";
-   const char* const err21 = "Wrong Objective QME SID";
+   //   const char* const err20 = "Wrong Constraint QME SID";
+   //   const char* const err21 = "Wrong Objective QME SID";
    
    if (lp == NULL)
       return false;
@@ -440,7 +440,7 @@ static bool lps_valid(const Lps* lp)
    Sto* sto;
    Sos* sos;
    Sse* sse;
-   Qme* qme_next;
+   //   Qme* qme_next;
    int  var_count;
    int  con_count;
    int  nzo_count;
@@ -564,6 +564,7 @@ static bool lps_valid(const Lps* lp)
          fprintf(stderr, "%s\n", err7);
          return false;
       }
+#if 0
       for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
       {
          qme_next = qme->next;
@@ -574,6 +575,7 @@ static bool lps_valid(const Lps* lp)
             return false;
          }
       }
+#endif
    }
    if (con_count)
    {
@@ -614,7 +616,7 @@ static bool lps_valid(const Lps* lp)
       fprintf(stderr, "%s\n", err19);
       return false;
    }
-
+#if 0
    /* Check quadratic objective
     */
    for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
@@ -627,7 +629,7 @@ static bool lps_valid(const Lps* lp)
          return false;
       }
    }
-
+#endif
    
    /* Storage Test
     */
@@ -731,7 +733,7 @@ void lps_free(Lps* lp)
    Sse* sse_next;
    Sto* sto;
    Sto* sto_next;
-   Qme* qme_next;
+   // Qme* qme_next;
    unsigned int  i;
    
    assert(lps_valid(lp));
@@ -744,7 +746,7 @@ void lps_free(Lps* lp)
    {
       con_next = con->next;
       con->sid = 0x0;
-
+#if 0
       for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
       {
          qme_next = qme->next;
@@ -752,6 +754,7 @@ void lps_free(Lps* lp)
          mpq_clear(qme->value);
          free(qme);
       }
+#endif
       mpq_clear(con->lhs);
       mpq_clear(con->rhs);
       mpq_clear(con->scale);
@@ -800,6 +803,7 @@ void lps_free(Lps* lp)
       free(sto->begin);
       free(sto);
    }
+#if 0
    ///?? kann weg
    for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
    {
@@ -808,7 +812,7 @@ void lps_free(Lps* lp)
       mpq_clear(qme->value);
       free(qme);
    }
-
+#endif
    if (lp->obj_term != NULL)
       term_free(lp->obj_term);
    
@@ -1111,7 +1115,7 @@ Con* lps_addcon(
    c->ind_var   = NULL;
    c->ind_dir   = true;
    c->first     = NULL;
-   c->qme_first = NULL;
+   //   c->qme_first = NULL;
    c->term      = NULL;
    c->next      = NULL;
    c->prev      = lp->con_last;

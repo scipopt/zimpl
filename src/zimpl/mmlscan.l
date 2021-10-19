@@ -25,6 +25,7 @@
  */
 %{   
 
+#if defined(__CLANG__)
 #pragma clang diagnostic ignored "-Wsign-conversion"
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wmissing-prototypes"
@@ -32,11 +33,14 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #pragma clang diagnostic ignored "-Wunneeded-internal-declaration"
 #pragma clang diagnostic ignored "-Wunreachable-code"
+#endif
 
+#if defined(__GNUC__) && !defined(__CLANG__) && !defined(__INTEL_COMPILER)
 #pragma GCC   diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC   diagnostic ignored "-Wsign-compare"
 #pragma GCC   diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC   diagnostic ignored "-Wsuggest-attribute=noreturn"
+#endif
 
 #include <sys/types.h>
 //#include <stdlib.h>
