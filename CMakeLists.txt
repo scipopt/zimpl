@@ -30,6 +30,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
+if(CMAKE_C_COMPILER MATCHES "intel")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd111,151,171,279,981,1173,1419,1684,2259")
+endif()
+
 # filter /MD and /MDd from C and CXX flags
 if(MSVC)
     set(variables
