@@ -75,12 +75,14 @@ struct qmentry
 typedef struct qmentry Qme;
 
 is_MALLOC returns_NONNULL
-static Qubo *qubo_new(int rows, int nonzeros)
+static Qubo *qubo_new(
+   int const rows,
+   int const nonzeros)
 {
    assert(rows     > 0);
    assert(nonzeros > 0);
 
-   Qubo* qubo   = calloc(1, sizeof(*qubo));
+   Qubo* const qubo = calloc(1, sizeof(*qubo));
 
    qubo->rows   = rows;
    qubo->size   = nonzeros;
@@ -96,7 +98,7 @@ static Qubo *qubo_new(int rows, int nonzeros)
 }
 
 expects_NONNULL
-static void qubo_free(Qubo* qubo)
+static void qubo_free(Qubo* const qubo)
 {
    assert(qubo);
 
@@ -110,10 +112,10 @@ static void qubo_free(Qubo* qubo)
 }
 
 expects_NONNULL
-static int entry_cmp_row(const void* a, const void* b)
+static int entry_cmp_row(const void* const a, const void* const b)
 {
-   Qme* aa = (Qme*)a;
-   Qme* bb = (Qme*)b;
+   const Qme* const aa = (const Qme*)a;
+   const Qme* const bb = (const Qme*)b;
 
    assert(aa->sid == QME_SID);
    assert(bb->sid == QME_SID);
@@ -152,7 +154,7 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
    }
    assert(zero_count == 0); // ???
    
-   Qubo* qubo = qubo_new(rows, entry_used - zero_count);
+   Qubo* const qubo = qubo_new(rows, entry_used - zero_count);
 
    int prev_row = -1;
    
@@ -161,7 +163,7 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
       if (mpq_equal(entry[i].value, const_zero))
          continue;
 
-      int row = entry[i].var1->number;
+      int const row = entry[i].var1->number;
 
       if (prev_row != row)
       {
@@ -188,10 +190,10 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 /* A specification for the QUBO LP file format can be found in the
  */
 void qbo_write(
-   const Lps*  lp,
-   FILE*       fp,
-   LpFormat    format,
-   const char* text)
+   const Lps*  const lp,
+   FILE*       const fp,
+   LpFormat    const format,
+   const char* const text)
 {
    assert(lp != NULL);
    assert(fp != NULL);
@@ -199,15 +201,15 @@ void qbo_write(
    if (text != NULL)
       fprintf(fp, "%s", text);   
 
-   Term* term_seq = term_new(lp->vars);
+   Term* const term_seq = term_new(lp->vars);
 
    for(Var* var = lp->var_root; var != NULL; var = var->next)
    {
       if (mpq_equal(var->cost, const_zero))
          continue;
 
-      Entry* entry = entry_new_var(tuple_new(0), var); 
-      Mono*  mono  = mono_new(numb_one(), entry, MFUN_NONE);
+      Entry* const entry = entry_new_var(tuple_new(0), var); 
+      Mono*  const mono  = mono_new(numb_one(), entry, MFUN_NONE);
 
       mono_mul_entry(mono, entry);
       term_append_elem(term_seq, mono);
@@ -216,14 +218,14 @@ void qbo_write(
 
    term_append_term(term_seq, lp->obj_term);
    
-   Term* term_obj = term_simplify(term_seq);
+   Term* const term_obj = term_simplify(term_seq);
 
    term_free(term_seq);
    
-   int    entry_size = term_get_elements(term_obj);
-   Qme*   entry      = calloc(entry_size, sizeof(*entry));
-   int    entry_used = 0;
-   mpq_t  offset;
+   int    const entry_size = term_get_elements(term_obj);
+   Qme*   const entry      = calloc(entry_size, sizeof(*entry));
+   int          entry_used = 0;
+   mpq_t        offset;
 
    mpq_init(offset);
  
@@ -232,7 +234,7 @@ void qbo_write(
    // TODO maybe move this into QUBO from entry.
    for(int i = 0; i < entry_size; i++)
    {
-      const Mono* mono = term_get_element(term_obj, i);
+      const Mono* const mono = term_get_element(term_obj, i);
 
       entry[entry_used].sid  = QME_SID;
       entry[entry_used].var1 = mono_get_var(mono, 0);
@@ -247,7 +249,7 @@ void qbo_write(
 
    term_free(term_obj);
    
-   Qubo* qubo = qubo_from_entries(lp->vars, entry_used, entry);
+   Qubo* const qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
    fprintf(fp, "%d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
    
