@@ -65,9 +65,11 @@ set(binsources
     zimpl/ratmpswrite.c
     zimpl/ratmstwrite.c
     zimpl/ratordwrite.c
+    zimpl/ratqbowrite.c
     zimpl/ratpresolve.c)
 
 set(headers
+    zimpl/attribute.h
     zimpl/blkmem.h
     zimpl/bound.h
     zimpl/code.h
