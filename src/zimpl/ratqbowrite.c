@@ -115,6 +115,9 @@ static int entry_cmp_row(const void* a, const void* b)
    Qme* aa = (Qme*)a;
    Qme* bb = (Qme*)b;
 
+   assert(aa->sid == QME_SID);
+   assert(bb->sid == QME_SID);
+   
    int d = aa->var1->number - bb->var1->number;
 
    if (0 == d)
@@ -181,104 +184,7 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 
    return qubo;      
 }
-#if 0
-/* A specification for the QUBO LP file format can be found in the
- */
-void qbo_write(
-   const Lps*  lp,
-   FILE*       fp,
-   LpFormat    format,
-   const char* text)
-{
-   assert(lp != NULL);
-   assert(fp != NULL);
 
-   if (text != NULL)
-      fprintf(fp, "%s", text);   
-
-   if (lp->qme_obj == NULL)
-   {
-      fprintf(stderr, "Error no QUBO");
-      return;
-   }
-   // how many entries do we need?
-   int entry_size     = 0;
-   int linear_entries = lp->vars;
-   
-   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme->next)
-   {
-      entry_size++;
-
-      if (qme->var1 == qme->var2)
-      {
-         assert(qme->var1->is_used);
-         
-         /* if var->size != 0 we are missing something, but not important in this context.
-          */
-         if (!mpq_equal(qme->var1->cost, const_zero))
-            linear_entries--;
-      }
-   }
-   /* Also subtract the linear variables with 0 cost
-    */
-   for(Var* var = lp->var_root; var != NULL; var = var->next)
-      if (mpq_equal(var->cost, const_zero))
-         linear_entries--;
-
-   entry_size += linear_entries;
-
-   bool* done       = calloc(lp->vars, sizeof(*done));
-   Qme*  entry      = calloc(entry_size, sizeof(*entry));
-   int   entry_used = 0;
-
-   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme->next)
-   {
-      entry[entry_used] = *qme;
-      
-      if (qme->var1 == qme->var2)
-      {
-         if (!mpq_equal(qme->var1->cost, const_zero))
-         {
-            mpq_add(entry[entry_used].value, entry[entry_used].value, qme->var1->cost);
-
-            done[qme->var1->number] = true;
-         }
-      }
-      entry_used++;         
-   }
-   for(Var* var = lp->var_root; var != NULL; var = var->next)
-   {
-      if (!done[var->number] && !mpq_equal(var->cost, const_zero))
-      {
-         entry[entry_used].var1 = var;
-         entry[entry_used].var2 = var;
-         mpq_set(entry[entry_used].value, var->cost);
-         
-         entry_used++;                  
-      }
-   }
-   assert(entry_used == entry_size);
-   
-   Qubo* qubo = qubo_from_entries(lp->vars, entry_used, entry);
-
-   fprintf(fp, "%d %d\n", lp->vars, entry_used);
-   
-   for(int row = 0; row < qubo->rows; row++)
-   {
-      int i = 0;
-      
-      for(int k = qubo->rowbeg[row]; k < qubo->rowbeg[row + 1]; k++)
-      {
-         int col = qubo->col[k];
-
-         fprintf(fp, "%d %d %.15g\n", row, col, mpq_get_d(qubo->val[k]));
-      }
-   }
-   qubo_free(qubo);
-   free(done);
-   free(entry);
-}   
-#endif
 /* A specification for the QUBO LP file format can be found in the
  */
 void qbo_write(

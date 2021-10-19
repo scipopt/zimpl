@@ -53,7 +53,6 @@ typedef struct variable      Var;
 typedef struct constraint    Con;
 typedef struct soset         Sos;
 typedef struct soselement    Sse;
-   //typedef struct qmatentry     Qme;
 typedef struct lpstorage     Lps;
 
 typedef enum   con_type      ConType;

@@ -425,8 +425,6 @@ static bool lps_valid(const Lps* lp)
    const char* const err16 = "Wrong SOS Variable SID";
    const char* const err18 = "Wrong SOS element count";
    const char* const err19 = "Wrong SOS count";
-   //   const char* const err20 = "Wrong Constraint QME SID";
-   //   const char* const err21 = "Wrong Objective QME SID";
    
    if (lp == NULL)
       return false;
@@ -440,7 +438,6 @@ static bool lps_valid(const Lps* lp)
    Sto* sto;
    Sos* sos;
    Sse* sse;
-   //   Qme* qme_next;
    int  var_count;
    int  con_count;
    int  nzo_count;
@@ -564,18 +561,6 @@ static bool lps_valid(const Lps* lp)
          fprintf(stderr, "%s\n", err7);
          return false;
       }
-#if 0
-      for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
-      {
-         qme_next = qme->next;
-
-         if (qme->sid != QME_SID)
-         {
-            fprintf(stderr, "%s\n", err20);
-            return false;
-         }
-      }
-#endif
    }
    if (con_count)
    {
@@ -616,20 +601,6 @@ static bool lps_valid(const Lps* lp)
       fprintf(stderr, "%s\n", err19);
       return false;
    }
-#if 0
-   /* Check quadratic objective
-    */
-   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
-   {
-      qme_next = qme->next;
-         
-      if (qme->sid != QME_SID)
-      {
-         fprintf(stderr, "%s\n", err21);
-         return false;
-      }
-   }
-#endif
    
    /* Storage Test
     */
@@ -733,7 +704,6 @@ void lps_free(Lps* lp)
    Sse* sse_next;
    Sto* sto;
    Sto* sto_next;
-   // Qme* qme_next;
    unsigned int  i;
    
    assert(lps_valid(lp));
@@ -746,15 +716,7 @@ void lps_free(Lps* lp)
    {
       con_next = con->next;
       con->sid = 0x0;
-#if 0
-      for(Qme* qme = con->qme_first; qme != NULL; qme = qme_next)
-      {
-         qme_next = qme->next;
 
-         mpq_clear(qme->value);
-         free(qme);
-      }
-#endif
       mpq_clear(con->lhs);
       mpq_clear(con->rhs);
       mpq_clear(con->scale);
@@ -803,16 +765,6 @@ void lps_free(Lps* lp)
       free(sto->begin);
       free(sto);
    }
-#if 0
-   ///?? kann weg
-   for(Qme* qme = lp->qme_obj; qme != NULL; qme = qme_next)
-   {
-      qme_next = qme->next;
-
-      mpq_clear(qme->value);
-      free(qme);
-   }
-#endif
    if (lp->obj_term != NULL)
       term_free(lp->obj_term);
    
@@ -1115,7 +1067,6 @@ Con* lps_addcon(
    c->ind_var   = NULL;
    c->ind_dir   = true;
    c->first     = NULL;
-   //   c->qme_first = NULL;
    c->term      = NULL;
    c->next      = NULL;
    c->prev      = lp->con_last;
@@ -1197,8 +1148,6 @@ void lps_delcon(
 
    lp->cons--;
    
-   /* ??? qme_first  term ? */
-
    assert(lps_valid(lp));
 }
 
@@ -1242,72 +1191,6 @@ Sos* lps_addsos(
 
    return sos;
 }
-
-#if 0
-void lps_objqme(
-   Lps*        lp,
-   Var*        var1,
-   Var*        var2,
-   const mpq_t value)
-{
-   assert(lp   != NULL);
-   assert(var1 != NULL);
-   assert(var2 != NULL);
-   
-   if (mpq_sgn(value) == 0)
-      return;
-   
-   Qme* qme = malloc(sizeof(*qme));
-
-   assert(qme != NULL);
-
-   qme->sid  = QME_SID;
-   qme->var1 = var1;
-   qme->var2 = var2;
-
-   mpq_init(qme->value);
-   mpq_set(qme->value, value);
-
-   qme->next   = lp->qme_obj;
-   lp->qme_obj = qme;
-
-   var1->is_used = true;
-   var2->is_used = true;
-}
-
-/*ARGSUSED*/
-void lps_addqme(
-   is_UNUSED Lps* lp,
-   Con*        con,
-   Var*        var1,
-   Var*        var2,
-   const mpq_t value)
-{
-   assert(lp   != NULL);
-   assert(var1 != NULL);
-   assert(var2 != NULL);
-   
-   if (mpq_sgn(value) == 0)
-      return;
-
-   Qme* qme = malloc(sizeof(*qme));
-
-   assert(qme != NULL);
-
-   qme->sid = QME_SID;
-   qme->var1 = var1;
-   qme->var2 = var2;
-
-   mpq_init(qme->value);
-   mpq_set(qme->value, value);
-
-   qme->next      = con->qme_first;
-   con->qme_first = qme;
-
-   var1->is_used = true;
-   var2->is_used = true;
-}
-#endif
 
 void lps_addtoobjterm(
    Lps*        lp,

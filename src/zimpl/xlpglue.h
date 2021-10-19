@@ -34,6 +34,11 @@
 #error "Need to include mme.h before xlpglue.h"
 #endif
 
+#ifndef ATTRIBUTE_H_
+#error "Need to include attribute.h before xlpglue.h"
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

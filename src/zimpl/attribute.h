@@ -15,8 +15,8 @@
 
  See https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes
 */
-#ifndef LINT_H_
-#define LINT_H_
+#ifndef ATTRIBUTE_H_
+#define ATTRIBUTE_H_
 
 // 755 global macro not referenced
 //lint -esym(755, is_UNUSED, is_NORETURN, is_CONST, is_PURE, returns_NONNULL)
@@ -76,7 +76,7 @@
 
 #endif // (__GNUC__ || __clang__) && !_lint && !__INTEL_COMPILER
 
-#endif // LINT_H_
+#endif // ATTRIBUTE_H_
 /*
  * This code is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
