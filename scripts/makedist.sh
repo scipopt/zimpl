@@ -36,7 +36,7 @@ CMakeLists.txt zimpl-config.cmake.in \
 cmake/Modules/FindGMP.cmake cmake/Modules/FindPCRE.cmake
 
 # check version numbers
-echo ">>> Checking version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c, makedist.sh, CMakeLists.txt, src/zimpl/mme.h and makedist.sh. (Should be $VERSION)"
+echo ">>> Checking version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c, CMakeLists.txt, src/zimpl/mme.h and scripts/makedist.sh. (Should be $VERSION)"
 
 # find all version numbers
 VERSIONS=""
