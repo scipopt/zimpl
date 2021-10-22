@@ -47,7 +47,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=  3.4.1
+VERSION		=  3.5.0
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false

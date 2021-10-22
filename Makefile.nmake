@@ -29,7 +29,7 @@
 
 ARCH        =  x86
 OSTYPE      =  win
-VERSION		=  3.4.1
+VERSION		=  3.5.0
 VERBOSE		=	0
 LINK		   =	normal
 OPT		   =	opt

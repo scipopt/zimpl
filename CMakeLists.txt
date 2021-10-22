@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 
 project(ZIMPL
-    VERSION 3.4.1
+    VERSION 3.5.0
     LANGUAGES C)
 
 # use C99 standard
