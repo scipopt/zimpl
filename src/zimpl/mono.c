@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -49,7 +50,11 @@
 #define MONO_SID         0x4d6f6e6f
 #define MOEL_SID         0x4d6f456c
 
-extern int lps_varnumber(const Var* var) expects_NONNULL is_PURE; 
+is_PURE expects_NONNULL
+static inline ptrdiff_t get_varnumber(const Var* var)
+{
+   return (ptrdiff_t)var;
+}
 
 Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 {
@@ -100,7 +105,7 @@ bool mono_is_valid(const Mono* mono)
       assert(entry_get_type(e->entry) == SYM_VAR);
 
       // Variables in mono are ordered
-      assert(e->next == NULL || (lps_varnumber(entry_get_var(e->entry)) <= lps_varnumber(entry_get_var(e->next->entry))));
+      assert(e->next == NULL || (get_varnumber(entry_get_var(e->entry)) <= get_varnumber(entry_get_var(e->next->entry))));
    }
    assert(count == mono->count);
    
@@ -143,12 +148,12 @@ void mono_mul_entry(
 
    MonoElem* new_me = calloc(1, sizeof(*new_me));
    
-   Var* var       = entry_get_var(entry);
-   int  varnumber = lps_varnumber(var);
+   Var*       var       = entry_get_var(entry);
+   ptrdiff_t  varnumber = get_varnumber(var);
    
    /* Do we have to put the new entry at the start of the list?
     */
-   if (lps_varnumber(entry_get_var(mono->first.entry)) >= varnumber)
+   if (get_varnumber(entry_get_var(mono->first.entry)) >= varnumber)
    {
       *new_me = mono->first;
 
@@ -175,7 +180,7 @@ void mono_mul_entry(
          
          assert(entry_is_valid(e->next->entry));
 
-         if (varnumber <= lps_varnumber(entry_get_var(e->next->entry)))
+         if (varnumber <= get_varnumber(entry_get_var(e->next->entry)))
             break;
       }
       assert(last != NULL);
