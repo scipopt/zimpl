@@ -12,7 +12,7 @@ then
 
   sed -i "s/^VERSION	.*/VERSION		=  ${NEWVERSION}/" Makefile
   sed -i "s/^VERSION	.*/VERSION		=  ${NEWVERSION}/" Makefile.nmake
-  sed -i "s/^VERSION=.*/VERSION=\"${NEWVERSION}\"/" makedist.sh
+  sed -i "s/^VERSION=.*/VERSION=\"${NEWVERSION}\"/" scripts/makedist.sh
 
   if [[ "$1" -eq "0" ]]
   then
@@ -32,7 +32,7 @@ then
   grep " VERSION" CMakeLists.txt
   grep -i @version doc/docu.c
   grep -i ZIMPL_VERSION src/zimpl/mme.h
-  grep -i ^VERSION= makedist.sh
+  grep -i ^VERSION= scripts/makedist.sh
   grep -i ^VERSION Makefile.nmake Makefile
 else
   echo "usage:"
@@ -44,7 +44,7 @@ else
   grep " VERSION" CMakeLists.txt
   grep -i @version doc/docu.c
   grep -i ZIMPL_VERSION src/zimpl/mme.h
-  grep -i ^VERSION= makedist.sh
+  grep -i ^VERSION= scripts/makedist.sh
   grep -i ^VERSION Makefile.nmake Makefile
   exit 1;
 fi
