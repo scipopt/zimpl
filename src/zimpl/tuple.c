@@ -286,14 +286,13 @@ char* tuple_tostr(const Tuple* tuple)
    size_t  size = TUPLE_STR_SIZE;
    size_t  len  = 1; /* one for the zero '\0' */
    char*   str  = malloc(size);
-   int     i;
    
    assert(tuple_is_valid(tuple));
    assert(str != NULL);
 
    str[0] = '\0';
    
-   for(i = 0; i < tuple->dim; i++)
+   for(int i = 0; i < tuple->dim; i++)
    {
       char*  selem    = elem_tostr(tuple->element[i]);
       size_t selemlen = strlen(selem) + 1;
@@ -310,6 +309,8 @@ char* tuple_tostr(const Tuple* tuple)
       assert(elem_get_type(tuple->element[i]) == ELEM_NUMB
           || elem_get_type(tuple->element[i]) == ELEM_STRG);
 
+      assert(strlen(str) + strlen(selem) + 1 < size);
+      
       strcat(str, elem_get_type(tuple->element[i]) == ELEM_NUMB ? "#" : "$");
       strcat(str, selem);
 

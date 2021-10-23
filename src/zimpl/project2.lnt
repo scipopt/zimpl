@@ -87,7 +87,7 @@
 -esym(537,stdarg.h,sys/types.h) // repeated include file
 -esym(534,stkchk_used_x) // ignore return value
 -efile(413 428 438 506 527 537 587 613 661 676 685, src/zimpl/mmlparse2.c)
--efile(717 732 734 744 746 774 810 825 845, src/zimpl/mmlparse2.c)
+-efile(713 717 732 734 744 746 751 774 776 810 825 845, src/zimpl/mmlparse2.c)
 -efile(2401 2650 2666 2704, src/zimpl/mmlparse2.c)
 -emacro(506,yywrap)
 -efile(755, src/zimpl/mmlparse2.h)

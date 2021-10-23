@@ -50,6 +50,9 @@
 #define MONO_SID         0x4d6f6e6f
 #define MOEL_SID         0x4d6f456c
 
+/* Need some way to order variables. Since incomplete type not much possibilities.
+ * actually has a field var->number, but not accessible from here.
+ */
 is_PURE expects_NONNULL
 static inline ptrdiff_t get_varnumber(const Var* var)
 {

@@ -17,5 +17,5 @@ CFLAGS		+=	-fPIC -fvisibility=hidden
 endif
 
 #ifeq ($(LINK),static)
-LDFLAGS		+=	-static
+#LDFLAGS		+=	-static
 #endif

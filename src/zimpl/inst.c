@@ -137,10 +137,10 @@ CodeNode* i_constraint_list(CodeNode* self)
 
 expects_NONNULL
 static void addcon_as_qubo(
-   CodeNode*    self,   
-   ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
-   const Numb*  rhs,        /**< term contype rhs.*/
-   const Term*  term_org)   /**< term to use */
+   CodeNode const* const self,   
+   ConType         const  contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   Numb     const* const rhs,        /**< term contype rhs.*/
+   Term     const* const term_org)   /**< term to use */
 {
    assert(rhs  != NULL);
    assert(term_is_valid(term_org));
@@ -159,7 +159,7 @@ static void addcon_as_qubo(
       break;
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      fall_THROUGH;
+      fall_THROUGH; //lint -fallthrough 
    case CON_RANGE :
       fprintf(stderr, "*** Error XXX: Less equal and range can't be converted to QUBO\n");
       code_errmsg(self);
@@ -205,9 +205,8 @@ static void addcon_as_qubo(
          if ((contype == CON_RHS) && (i == k))
             continue;
          
-         const Mono* mono2 = term_get_element(term, k);
-
-         Mono* mono = mono_mul(mono1, mono2);
+         Mono const* mono2 = term_get_element(term, k);
+         Mono*       mono  = mono_mul(mono1, mono2);
          
          if (i == k)
             mono_neg(mono);
@@ -4416,8 +4415,10 @@ CodeNode* i_list_matrix(CodeNode* self)
 
          tuple_set_elem(tuple, k, elem_copy(list_get_elem(head_list, &le_head)));
       
-         const Elem* elem = list_get_elem(val_list, &le_val);
+         Elem const* const elem = list_get_elem(val_list, &le_val);
 
+         assert(elem != NULL);
+         
          switch(elem_get_type(elem))
          {
          case ELEM_NUMB :

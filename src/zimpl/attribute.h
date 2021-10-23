@@ -28,16 +28,21 @@
 
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wignored-attributes"
-#endif
+#endif // __clang__
 
 #define is_UNUSED         __attribute__ ((unused))            //lint !e755
 #define is_NORETURN       __attribute__ ((noreturn))          //lint !e755
 #define is_CONST          __attribute__ ((const))             //lint !e755  
 #define is_PURE           __attribute__ ((pure))              //lint !e755
 #define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
-#define fall_THROUGH      __attribute__ ((fallthrough))  /*lint -fallthrough */
 
+#if defined(_lint)
+#define fall_THROUGH      /*lint -fallthrough */
 #else
+#define fall_THROUGH      __attribute__ ((fallthrough))
+#endif // _lint
+
+#else // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
 #define is_UNUSED         /**/
 #define is_NORETURN       /**/
@@ -46,7 +51,7 @@
 #define returns_NONNULL   /**/
 #define FALLTHROUGH       /**/
 
-#endif // // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
+#endif // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
 #if (defined(__GNUC__) || defined(__clang__)) && !defined(_lint) && !defined(__INTEL_COMPILER)
 
@@ -61,7 +66,7 @@
 #define expects_NONNULL12 __attribute__ ((nonnull (1,2)))     //lint !e755
 #define expects_NONNULL13 __attribute__ ((nonnull (1,3)))     //lint !e755
 
-#else
+#else // __GNUC__ || __clang__ && !_lint && !__INTEL_COMPILER
 
 #define is_MALLOC         /**/
 #define always_INLINE     /**/

@@ -50,8 +50,8 @@ extern void         set_init(void);
 extern void         set_exit(void);
 //lint -sem(        set_free, custodial(1), inout(1), 1p == 1) 
 extern void         set_free(Set* set) expects_NONNULL;
-//lint -sem(        set_is_valid, 1p == 1) 
-extern bool         set_is_valid(const Set* set);
+//lint -sem(        set_is_valid, 1p == 1, pure) 
+extern bool         set_is_valid(const Set* set) is_PURE;
 //lint -sem(        set_copy, 1p == 1, @P >= malloc(1)) 
 extern Set*         set_copy(const Set* set) expects_NONNULL returns_NONNULL;
 //lint -sem(        set_lookup, 1p == 1, 2p == 1) 

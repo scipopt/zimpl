@@ -131,30 +131,22 @@ static int entry_cmp_row(const void* const a, const void* const b)
 expects_NONNULL returns_NONNULL
 static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 {
-   qsort(entry, entry_used, sizeof(*entry), entry_cmp_row);
+   qsort(entry, (size_t)entry_used, sizeof(*entry), entry_cmp_row);
 
 #ifndef NDEBUG
    for(int i = 1; i < entry_used; i++)
       assert(entry[i - 1].var1->number < entry[i].var1->number || (entry[i - 1].var1->number == entry[i].var1->number && entry[i - 1].var2->number <= entry[i].var2->number));   
-#endif
 
-   int zero_count = 0;
-   
    for(int i = 0; i < entry_used; i++)
    {
-      if (mpq_equal(entry[i].value, const_zero))
-         zero_count++;
-      else
-      {
-         if (i + 1 < entry_used && entry[i].var1->number == entry[i + 1].var1->number && entry[i].var2->number == entry[i + 1].var2->number)
-         {
-            assert(!mpq_equal(entry[i].value, entry[i + 1].value)); // non-symmetric matrix
-         }
-      }
+      assert(!mpq_equal(entry[i].value, const_zero));
+
+      if (i + 1 < entry_used && entry[i].var1->number == entry[i + 1].var1->number && entry[i].var2->number == entry[i + 1].var2->number)
+         assert(!mpq_equal(entry[i].value, entry[i + 1].value)); // non-symmetric matrix
    }
-   assert(zero_count == 0); // ???
-   
-   Qubo* const qubo = qubo_new(rows, entry_used - zero_count);
+#endif
+
+   Qubo* const qubo = qubo_new(rows, entry_used);
 
    int prev_row = -1;
    
@@ -192,7 +184,7 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 void qbo_write(
    const Lps*  const lp,
    FILE*       const fp,
-   LpFormat    const format,
+   LpFormat    const format ,
    const char* const text)
 {
    assert(lp != NULL);
@@ -222,10 +214,10 @@ void qbo_write(
 
    term_free(term_seq);
    
-   int    const entry_size = term_get_elements(term_obj);
-   Qme*   const entry      = calloc(entry_size, sizeof(*entry));
-   int          entry_used = 0;
-   mpq_t        offset;
+   int const  entry_size = term_get_elements(term_obj);
+   Qme* const entry      = calloc((size_t)entry_size, sizeof(*entry));
+   int        entry_used = 0;
+   mpq_t      offset;
 
    mpq_init(offset);
  
@@ -241,7 +233,8 @@ void qbo_write(
       entry[entry_used].var2 = mono_get_var(mono, 1);
 
       numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
-      //mpq_set(entry[entry_used].value, mono_get_coeff(mono));
+
+      assert(!mpq_equal(entry[entry_used].value, const_zero));
 
       entry_used++;         
    }

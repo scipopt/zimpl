@@ -102,12 +102,12 @@ bool heap_is_valid(const Heap* heap)
     */
    for(i = 0; i < heap->used / 2; i++)
    {
-      if ((*heap->data_cmp)(data[i], data[i + i]) > 0)
+      if ((*heap->data_cmp)(data[i], data[i + i]) > 0) //lint !e453
       {
-         heap_print(stderr, heap);
+         heap_print(stderr, heap); //lint !e453
          return false;
       }
-      if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0)
+      if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0) //lint !e453
       {
          // heap_print(stderr, heap);
          return false;

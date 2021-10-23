@@ -47,7 +47,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=  3.5.0
+VERSION		=  	3.5.0
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false
@@ -85,12 +85,36 @@ YFLAGS		=	-d -t -v
 LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
-GCCWARN		=	-Wall -Wextra -Wpointer-arith -Wcast-align -Wwrite-strings \
-			-Wstrict-prototypes -Wmissing-prototypes -Winline \
-			-Wmissing-declarations -Wshadow -Waggregate-return \
-			-Wno-unused -Wno-unknown-pragmas -Wstrict-overflow=4 \
-			-Wsuggest-attribute=pure -Wsuggest-attribute=const \
-			-Wsuggest-attribute=noreturn -Wsuggest-attribute=format
+GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
+			-Wno-nonnull-compare \
+			-Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow \
+			-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations \
+			-Wstrict-overflow=4 -Wduplicated-branches \
+			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
+			-Wmissing-noreturn -Wsuggest-attribute=malloc -Wsuggest-attribute=format \
+			-Wsuggest-attribute=cold \
+			-fno-omit-frame-pointer \
+			-fstack-protector-strong \
+			-fsanitize=address \
+			-fsanitize=undefined \
+			-fsanitize=shift \
+			-fsanitize=shift-exponent \
+			-fsanitize=shift-base \
+			-fsanitize=integer-divide-by-zero \
+			-fsanitize=unreachable \
+			-fsanitize=vla-bound \
+			-fsanitize=null \
+			-fsanitize=bounds \
+			-fsanitize=alignment \
+			-fsanitize=object-size \
+			-fsanitize=float-cast-overflow \
+			-fsanitize=nonnull-attribute \
+			-fsanitize=returns-nonnull-attribute \
+			-fsanitize=bool \
+			-fsanitize=enum \
+			-fsanitize=signed-integer-overflow \
+			-fsanitize=pointer-overflow \
+			-fsanitize=builtin
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz
 else

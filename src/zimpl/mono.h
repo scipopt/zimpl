@@ -77,7 +77,7 @@ extern void         mono_add_coeff(const Mono* term, const Numb* value) expects_
 extern unsigned int mono_hash(const Mono* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_equal, pure, 1P >= 1, 2P >= 1) 
 extern bool         mono_equal(const Mono* ma, const Mono* mb) expects_NONNULL is_PURE;
-//lint -sem(        mono_mul, 1P >= 1, 2P >= 1, @P == malloc(1P)) 
+//lint -sem(        mono_mul, 1P >= 1, 2P >= 1, @P >= malloc(1P)) 
 extern Mono*        mono_mul(const Mono* ma, const Mono* mb) expects_NONNULL returns_NONNULL;
 //lint -sem(        mono_neg, inout(1), 1P >= 1) 
 extern void         mono_neg(Mono* mono) expects_NONNULL;

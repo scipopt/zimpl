@@ -238,7 +238,7 @@ static bool addcon_term_as_qubo(
    {
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(numb_equal(lhs, rhs));
-      fall_THROUGH;
+      fall_THROUGH; //lint -fallthrough 
    case CON_RHS :
       if (!numb_equal(rhs, numb_one()))
       {
@@ -248,7 +248,7 @@ static bool addcon_term_as_qubo(
       break;
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      fall_THROUGH;
+      fall_THROUGH; //lint -fallthrough 
    case CON_RANGE :
       fprintf(stderr, "Error: can't QUBO");
       abort();     
@@ -360,7 +360,7 @@ bool xlp_addcon_term(
       break;
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(mpq_equal(tlhs, trhs) != 0);
-      fall_THROUGH;
+      fall_THROUGH; //lint -fallthrough 
    case CON_RANGE :
       lps_setlhs(con, tlhs);
       lps_setrhs(con, trhs);
@@ -747,14 +747,14 @@ void xlp_addtoobj(
       
       if (!numb_equal(term_constant, numb_zero()))
       {
-         const char* format = "%sObjOffset";
+         const char* const format = "%sObjOffset";
    
-         Bound* lower = bound_new(BOUND_VALUE, numb_one());
-         Bound* upper = bound_new(BOUND_VALUE, numb_one());
-         char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+         Bound* const lower = bound_new(BOUND_VALUE, numb_one());
+         Bound* const upper = bound_new(BOUND_VALUE, numb_one());
+         char*  const vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
 
          sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-         Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+         Var* const var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
 
          lps_getcost(var, val1);
          numb_get_mpq(term_constant, val2);
@@ -768,13 +768,13 @@ void xlp_addtoobj(
    
       for(int i = 0; i < term_get_elements(term); i++)
       {
-         const Mono* mono   = term_get_element(term, i);
-         const Numb* coeff  = mono_get_coeff(mono);
+         const Mono* const mono   = term_get_element(term, i);
+         const Numb* const coeff  = mono_get_coeff(mono);
 
          assert(mono_get_degree(mono) == 1);       
          assert(!numb_equal(coeff, numb_zero()));
 
-         Var* var = mono_get_var(mono, 0);
+         Var* const var = mono_get_var(mono, 0);
          
          lps_getcost(var, val1);
          numb_get_mpq(coeff, val2);

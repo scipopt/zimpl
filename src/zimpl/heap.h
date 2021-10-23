@@ -47,7 +47,7 @@ typedef int                    (*HeapCmp)(HeapData, HeapData);
 extern Heap*        heap_new_entry(int size, HeapCmp entry_cmp) returns_NONNULL;
 //lint -sem(        heap_free, custodial(1), inout(1), 1p == 1) 
 extern void         heap_free(Heap* heap) expects_NONNULL;
-//lint -sem(        heap_is_valid, 1p == 1) 
+//lint -sem(        heap_is_valid, 1p == 1, pure) 
 extern bool         heap_is_valid(const Heap* heap) is_PURE;
 //lint -sem(        heap_push_entry, inout(1), 1p == 1, custodial(2), 2p == 1) 
 extern void         heap_push_entry(Heap* heap, Entry* entry) expects_NONNULL;
@@ -55,9 +55,9 @@ extern void         heap_push_entry(Heap* heap, Entry* entry) expects_NONNULL;
 extern Entry*       heap_pop_entry(Heap* heap) expects_NONNULL returns_NONNULL;
 //lint -sem(        heap_top_entry, 1p == 1, @p == 1) 
 extern const Entry* heap_top_entry(const Heap* heap) expects_NONNULL returns_NONNULL;
-//lint -sem(        heap_is_full, 1p == 1) 
+//lint -sem(        heap_is_full, 1p == 1, pure) 
 extern bool         heap_is_full(const Heap* heap) expects_NONNULL is_PURE;
-//lint -sem(        heap_is_empty, 1p == 1) 
+//lint -sem(        heap_is_empty, 1p == 1, pure) 
 extern bool         heap_is_empty(const Heap* heap) expects_NONNULL is_PURE;
 
 #ifdef __cplusplus

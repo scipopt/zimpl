@@ -404,7 +404,7 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 }
 
 #ifndef NDEBUG
-//lint -sem(lps_valid, 1p == 1)
+//lint -sem(lps_valid, 1p == 1, pure)
 static bool lps_valid(const Lps* lp)
 {
    const char* const err1  = "Wrong Previous Variable";
@@ -429,15 +429,6 @@ static bool lps_valid(const Lps* lp)
    if (lp == NULL)
       return false;
 
-   Var* var;
-   Var* var_prev;
-   Con* con;
-   Con* con_prev;
-   Nzo* nzo;
-   Nzo* nzo_prev;
-   Sto* sto;
-   Sos* sos;
-   Sse* sse;
    int  var_count;
    int  con_count;
    int  nzo_count;
@@ -449,67 +440,71 @@ static bool lps_valid(const Lps* lp)
     */
    var_count = lp->vars;
    
-   for(var = lp->var_root, var_prev = NULL; var != NULL; var = var->next)
+   const Var* var_prev = NULL;
+
+   for(const Var* var = lp->var_root; var != NULL; var = var->next)
    {
       if (var->sid != VAR_SID)
       {
-         fprintf(stderr, "%s\n", err12);
+         fprintf(stderr, "%s\n", err12); //lint !e453
          return false;
       }
       if (var_prev == var->prev)
          var_prev = var;
       else
       {
-         fprintf(stderr, "%s\n", err1);
+         fprintf(stderr, "%s\n", err1); //lint !e453
          return false;
       }
       var_count--;
       nzo_count = var->size;
+      const Nzo* nzo_prev = NULL;
       
-      for(nzo = var->first, nzo_prev = NULL; nzo != NULL; nzo = nzo->var_next)
+      for(const Nzo* nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {
          if (nzo_prev == nzo->var_prev)
             nzo_prev = nzo;
          else
          {
-            fprintf(stderr, "%s\n", err2);
+            fprintf(stderr, "%s\n", err2); //lint !e453
             return false;
          }
          if (nzo->var != var)
          {
-            fprintf(stderr, "%s\n", err9);
+            fprintf(stderr, "%s\n", err9); //lint !e453
             return false;
          }         
          nzo_count--;
       }
       if (nzo_count)
       {
-         fprintf(stderr, "%s\n", err3);
+         fprintf(stderr, "%s\n", err3); //lint !e453
          return false;
       }
    }
    if (var_count)
    {
-      fprintf(stderr, "%s\n", err4);
+      fprintf(stderr, "%s\n", err4); //lint !e453
       return false;
    }
 
    /* Constraint Test
     */
    con_count = lp->cons;
+   const Con* con_prev = NULL;
    
-   for(con = lp->con_root, con_prev = NULL; con != NULL; con = con->next)
+   for(const Con* con = lp->con_root; con != NULL; con = con->next)
    {
       if (con->sid != CON_SID)
       {
-         fprintf(stderr, "%s\n", err13);
+         fprintf(stderr, "%s\n", err13); //lint !e453
          return false;
       }
       if (con_prev == con->prev)
          con_prev = con;
       else
       {
-         fprintf(stderr, "%s\n", err5);
+         fprintf(stderr, "%s\n", err5); //lint !e453
          return false;
       }
       switch(con->type)
@@ -521,84 +516,85 @@ static bool lps_valid(const Lps* lp)
       case CON_RANGE :
          if (mpq_cmp(con->lhs, con->rhs) >= 0)
          {
-            fprintf(stderr, "%s %s %g %g\n",
-               err14, con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
+            fprintf(stderr, "%s %s %g %g\n", //lint !e453
+               err14, con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs)); 
             return false;
          }
          break;
       case CON_EQUAL :
          if (!mpq_equal(con->lhs, con->rhs))
          {
-            fprintf(stderr, "%s %s %g %g\n",
+            fprintf(stderr, "%s %s %g %g\n", //lint !e453
                err14, con->name, mpq_get_d(con->lhs), mpq_get_d(con->rhs));
             return false;
          }
          break;
       default :
-         abort();
+         return false;
       }
       con_count--;
       nzo_count = con->size;
+      const Nzo* nzo_prev = NULL;
       
-      for(nzo = con->first, nzo_prev = NULL; nzo != NULL; nzo = nzo->con_next)
+      for(const Nzo* nzo = con->first; nzo != NULL; nzo = nzo->con_next)
       {
          if (nzo_prev == nzo->con_prev)
             nzo_prev = nzo;
          else
          {
-            fprintf(stderr, "%s\n", err6);
+            fprintf(stderr, "%s\n", err6); //lint !e453
             return false;
          }
          if (nzo->con != con)
          {
-            fprintf(stderr, "%s\n", err10);
+            fprintf(stderr, "%s\n", err10); //lint !e453
             return false;
          }         
          nzo_count--;
       }
       if (nzo_count)
       {
-         fprintf(stderr, "%s\n", err7);
+         fprintf(stderr, "%s\n", err7); //lint !e453
          return false;
       }
    }
    if (con_count)
    {
-      fprintf(stderr, "%s\n", err8);
+      fprintf(stderr, "%s\n", err8); //lint !e453
       return false;
    }
    /* SOS Test
     */
    sos_count = lp->soss;
 
-   for(sos = lp->sos_root; sos != NULL; sos = sos->next)
+   for(const Sos* sos = lp->sos_root; sos != NULL; sos = sos->next)
    {
       if (sos->sid != SOS_SID)
       {
-         fprintf(stderr, "%s\n", err15);
+         fprintf(stderr, "%s\n", err15); //lint !e453
          return false;
       }
       sos_count--;
       sse_count = sos->sses;
 
-      for(sse = sos->first; sse != NULL; sse = sse->next)
+      for(const Sse* sse = sos->first; sse != NULL; sse = sse->next)
       {
          if (sse->var->sid != VAR_SID)
          {
-            fprintf(stderr, "%s\n", err16);
+            fprintf(stderr, "%s\n", err16); //lint !e453
             return false;
          }
          sse_count--;
       }
       if (sse_count)
       {
-         fprintf(stderr, "%s\n", err18);
+         fprintf(stderr, "%s\n", err18); //lint !e453
          return false;
       }
    }
    if (sos_count)
    {
-      fprintf(stderr, "%s\n", err19);
+      fprintf(stderr, "%s\n", err19); //lint !e453
       return false;
    }
    
@@ -606,7 +602,7 @@ static bool lps_valid(const Lps* lp)
     */
    sto_count = 0;
    
-   for(sto = lp->sto_root; sto != NULL; sto = sto->next)
+   for(const Sto* sto = lp->sto_root; sto != NULL; sto = sto->next)
    {
       assert(sto->begin != NULL);
       
@@ -614,7 +610,7 @@ static bool lps_valid(const Lps* lp)
    }
    if (sto_count * (int)sto_size < lp->nonzeros)
    {
-      fprintf(stderr, "%s %d %u %d\n",
+      fprintf(stderr, "%s %d %u %d\n", //lint !e453
          err11, sto_count, sto_size, lp->nonzeros);
       return false;
    }
@@ -1940,15 +1936,11 @@ static void make_full_name(
  * and the var or row number.
  */
 void lps_makename(
-   char*       target,
-   int         size,
-   const char* name,
-   int         no)
+   char*             target,
+   int         const size,
+   char const* const name,
+   int         const no)
 {
-   char  temp[12]; // 9 ok but to quiet gcc warning message
-   int   len;
-   int   nlen;
-
    assert(target != NULL);
    assert(size   >  MIN_NAME_LEN);   /* 8+1, so we have at least '@' + 7 digits + '\0' */
    assert(name   != NULL);
@@ -1956,7 +1948,7 @@ void lps_makename(
    assert(no     >= -1);
    assert(no     <= 0xFFFFFFF); /* 7 hex digits = 268,435,455 */
 
-   nlen = (int)strlen(name);
+   int nlen = (int)strlen(name);
 
    /* There are 3 possibilities:
     *
@@ -1977,9 +1969,11 @@ void lps_makename(
       
       if (lpfstrncpy(target, name, nlen))
       {
+         char temp[12]; // 9 ok but to quiet gcc warning message
+
          snprintf(temp, sizeof(temp), "@%x", (unsigned int)no);
 
-         len = size - (int)strlen(temp) - 1;
+         int len = size - (int)strlen(temp) - 1;
 
          assert(len >= 0);
 
@@ -1995,9 +1989,11 @@ void lps_makename(
    }
    else
    {
+      char temp[12]; // 9 ok but to quiet gcc warning message
+
       snprintf(temp, sizeof(temp), "@%x", (unsigned int)no);
       
-      len = size - (int)strlen(temp) - 1; /* -1 for '\0' */
+      int len = size - (int)strlen(temp) - 1; /* -1 for '\0' */
       
       assert(len >= 0);
       
@@ -2018,7 +2014,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    
    for(Var* var = lp->var_root; var != NULL; var = var->next)
    {
-      int len = strlen(var->name);
+      int len = (int)strlen(var->name);
 
       if (len > maxlen)
          maxlen = len;

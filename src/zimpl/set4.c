@@ -128,7 +128,7 @@ void set_free(Set* set)
 
 bool set_is_valid(const Set* set)
 {
-   return set != NULL && set_vtab_global[set->head.type].set_is_valid(set);
+   return set != NULL && set_vtab_global[set->head.type].set_is_valid(set); //lint !e453
 }
 
 Set* set_copy(const Set* set)
