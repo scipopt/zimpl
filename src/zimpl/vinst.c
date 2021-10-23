@@ -83,11 +83,11 @@ void interns_exit()
 
 //lint -sem(create_new_constraint, 1p, 2p, custodial(3), inout(3), 3p == 1, 5p == 1)
 static void create_new_constraint(
-   const char*  basename,
-   const char*  extension,
+   char const*  basename,
+   char const*  extension,
    Term*        term,
    ConType      con_type,
-   const Numb*  lrhs,
+   Numb const*  lrhs,
    unsigned int flags)
 {
    char* cname;
@@ -109,11 +109,11 @@ static void create_new_constraint(
 }
 
 static Entry* create_new_var_entry(
-   const char*  basename,
-   const char*  extension,
+   char const*  basename,
+   char const*  extension,
    VarClass     var_class,
-   const Bound* lower,
-   const Bound* upper)
+   Bound const* lower,
+   Bound const* upper)
 {
    char*  vname;
    Tuple* tuple;
@@ -143,7 +143,7 @@ static Entry* create_new_var_entry(
 
 static VBFixed check_how_fixed(
    VBCmpOp     cmp_op,
-   const Numb* rhs)
+   Numb const* rhs)
 {
    VBFixed result = VBOOL_FALSE;
    
@@ -181,8 +181,8 @@ static VBFixed check_how_fixed(
 
 static VBFixed check_if_fixed(
    VBCmpOp     cmp_op,
-   const Numb* lower,
-   const Numb* upper)
+   Numb const* lower,
+   Numb const* upper)
 {
    VBFixed result = VBOOL_OPEN;
 
@@ -257,11 +257,11 @@ static CodeNode* handle_vbool_cmp(CodeNode* self, VBCmpOp cmp_op)
 {
    Symbol*      sym;
    Term*        term;
-   const Term*  term_lhs;
-   const Term*  term_rhs;
+   Term const*  term_lhs;
+   Term const*  term_rhs;
    Numb*        rhs;
    unsigned int flags;
-   const char*  cname;
+   char const*  cname;
    Bound*       lower;
    Bound*       upper;
    Bound*       bound_zero;
@@ -557,9 +557,9 @@ CodeNode* i_vbool_ge(CodeNode* self)
 
 CodeNode* i_vbool_and(CodeNode* self)
 {   
-   const Term*  term_a;
-   const Term*  term_b;
-   const char*  cname;
+   Term const*  term_a;
+   Term const*  term_b;
+   char const*  cname;
    Term*        term;
    Bound*       bound_zero;
    Bound*       bound_one;
@@ -620,9 +620,9 @@ CodeNode* i_vbool_and(CodeNode* self)
 
 CodeNode* i_vbool_or(CodeNode* self)
 {
-   const Term*  term_a;
-   const Term*  term_b;
-   const char*  cname;
+   Term const*  term_a;
+   Term const*  term_b;
+   char const*  cname;
    Term*        term;
    Bound*       bound_zero;
    Bound*       bound_one;
@@ -683,9 +683,9 @@ CodeNode* i_vbool_or(CodeNode* self)
 
 CodeNode* i_vbool_xor(CodeNode* self)
 {
-   const Term*  term_a;
-   const Term*  term_b;
-   const char*  cname;
+   Term const*  term_a;
+   Term const*  term_b;
+   char const*  cname;
    Term*        term;
    Bound*       bound_zero;
    Bound*       bound_one;
@@ -754,8 +754,8 @@ CodeNode* i_vbool_xor(CodeNode* self)
 
 CodeNode* i_vbool_not(CodeNode* self)
 {
-   const Term*  term_a;
-   const char*  cname;
+   Term const*  term_a;
+   char const*  cname;
    Term*        term;
    Bound*       bound_zero;
    Bound*       bound_one;
@@ -804,16 +804,16 @@ CodeNode* i_vbool_not(CodeNode* self)
 
 
 static void generate_conditional_constraint(
-   const CodeNode* self,
-   const Term*     vif_term,
-   const Term*     lhs_term,
+   CodeNode const* self,
+   Term const*     vif_term,
+   Term const*     lhs_term,
    ConType         con_type,
-   const Numb*     rhs,
+   Numb const*     rhs,
    unsigned int    flags,
    bool            then_case)
 {
    Bound*       bound;
-   const Numb*  bound_val;
+   Numb const*  bound_val;
 
    Trace("generate_conditional_constraint");
 
@@ -846,11 +846,11 @@ static void generate_conditional_constraint(
    }
    else
    {
-      const char*  basename  = conname_get();
+      char const*  basename  = conname_get();
       char*        cname     = malloc(strlen(basename) + 5);
       Term*        big_term  = term_copy(vif_term);
       Numb*        big_m     = then_case ? numb_new_sub(bound_val, rhs) : numb_new_sub(rhs, bound_val);
-      const Numb*  new_rhs   = then_case ? bound_val : rhs;
+      Numb const*  new_rhs   = then_case ? bound_val : rhs;
       
       term_mul_coeff(big_term, big_m);
 
@@ -871,17 +871,17 @@ static void generate_conditional_constraint(
 
 /*ARGSUSED*/
 static void generate_indicator_constraint(
-   is_UNUSED const CodeNode* self,
-   const Term*            vif_term,
-   const Term*            lhs_term,
+   is_UNUSED CodeNode const* self,
+   Term const*            vif_term,
+   Term const*            lhs_term,
    ConType                con_type,
-   const Numb*            rhs,
+   Numb const*            rhs,
    unsigned int           flags,
    bool                   then_case)
 {
    Numb*        lhs;
    Term*        ind_term;
-   const char*  basename;
+   char const*  basename;
    char*        cname;
 
    Trace("generate_indicator_constraint");
@@ -915,11 +915,11 @@ static void generate_indicator_constraint(
 
 
 static void handle_vif_then_else(
-   const CodeNode* self,
-   const Term*     vif_term,
-   const Term*     lhs_term,
+   CodeNode const* self,
+   Term const*     vif_term,
+   Term const*     lhs_term,
    ConType         con_type,
-   const Term*     rhs_term,
+   Term const*     rhs_term,
    unsigned int    flags,
    bool            then_case)
 {
@@ -970,9 +970,9 @@ static void handle_vif_then_else(
 
 CodeNode* i_vif_else(CodeNode* self)
 {
-   const Term*  vif_term;
-   const Term*  lhs_term;
-   const Term*  rhs_term;
+   Term const*  vif_term;
+   Term const*  lhs_term;
+   Term const*  rhs_term;
    ConType      con_type;   
    unsigned int flags;
    
@@ -1006,9 +1006,9 @@ CodeNode* i_vif_else(CodeNode* self)
 
 CodeNode* i_vif(CodeNode* self)
 {
-   const Term*  vif_term;
-   const Term*  lhs_term;
-   const Term*  rhs_term;
+   Term const*  vif_term;
+   Term const*  lhs_term;
+   Term const*  rhs_term;
    ConType      con_type;   
    unsigned int flags;
    
@@ -1036,13 +1036,13 @@ CodeNode* i_vabs(CodeNode* self)
 {
    Symbol*      sym;
    Term*        term;
-   const Term*  term_abs;
+   Term const*  term_abs;
    Numb*        rhs;
    unsigned int flags = 0;
-   const char*  cname;
+   char const*  cname;
    Bound*       lower;
    Bound*       upper;
-   const Bound* bigger;
+   Bound const* bigger;
    Bound*       bound_zero;
    Bound*       bound_one;
    Entry*       entry_xplus;
@@ -1177,10 +1177,10 @@ CodeNode* i_vabs(CodeNode* self)
 CodeNode* i_vexpr_fun(CodeNode* self)
 {
    Symbol*      sym;
-   const Term*  term_fun;
-   const char*  cname;
-   const Numb*  expo;
-   const Numb*  funno;
+   Term const*  term_fun;
+   char const*  cname;
+   Numb const*  expo;
+   Numb const*  funno;
    unsigned int flags = 0;
    Term*        term;
    Entry*       entry_tmp;

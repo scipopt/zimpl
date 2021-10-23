@@ -51,7 +51,7 @@ typedef union entry_value EntryValue;
 union entry_value
 {
    Numb*       numb;
-   const char* strg;
+   char const* strg;
    Set*        set;
    Var*        var;
 };
@@ -65,9 +65,11 @@ struct entry
    EntryValue value;
 };
 
-Entry* entry_new_numb(const Tuple* tuple, const Numb* numb)
+Entry* entry_new_numb(
+   Tuple const* const tuple,
+   Numb  const* const numb)
 {
-   Entry* entry = calloc(1, sizeof(*entry));
+   Entry* const entry = calloc(1, sizeof(*entry));
 
    assert(entry != NULL);
    assert(tuple != NULL);
@@ -85,9 +87,11 @@ Entry* entry_new_numb(const Tuple* tuple, const Numb* numb)
    return entry;
 }
 
-Entry* entry_new_strg(const Tuple* tuple, const char* strg)
+Entry* entry_new_strg(
+   Tuple const* const tuple,
+   char  const* const strg)
 {
-   Entry* entry = calloc(1, sizeof(*entry));
+   Entry* const entry = calloc(1, sizeof(*entry));
 
    assert(entry != NULL);
    assert(tuple != NULL);
@@ -104,9 +108,11 @@ Entry* entry_new_strg(const Tuple* tuple, const char* strg)
    return entry;
 }
 
-Entry* entry_new_set(const Tuple* tuple, const Set* set)
+Entry* entry_new_set(
+   Tuple const* const tuple,
+   Set  const*  const set)
 {
-   Entry* entry = calloc(1, sizeof(*entry));
+   Entry* const entry = calloc(1, sizeof(*entry));
 
    assert(entry != NULL);
    assert(tuple != NULL);
@@ -123,9 +129,11 @@ Entry* entry_new_set(const Tuple* tuple, const Set* set)
    return entry;
 }
 
-Entry* entry_new_var(const Tuple* tuple, Var* var)
+Entry* entry_new_var(
+   Tuple const* const tuple,
+   Var*         const var)
 {
-   Entry* entry = calloc(1, sizeof(*entry));
+   Entry* const entry = calloc(1, sizeof(*entry));
 
    assert(entry != NULL);
    assert(tuple != NULL);
@@ -142,7 +150,7 @@ Entry* entry_new_var(const Tuple* tuple, Var* var)
    return entry;
 }
 
-void entry_free(Entry* entry)
+void entry_free(Entry* const entry)
 {
    assert(entry_is_valid(entry));
 
@@ -173,7 +181,7 @@ void entry_free(Entry* entry)
    }
 }
 
-bool entry_is_valid(const Entry* entry)
+bool entry_is_valid(Entry const* const entry)
 {
    if (entry == NULL || !SID_ok(entry, ENTRY_SID))
       return false;
@@ -183,9 +191,9 @@ bool entry_is_valid(const Entry* entry)
    return true;
 }
 
-Entry* entry_copy(const Entry* source)
+Entry* entry_copy(Entry const* const source)
 {
-   Entry* entry = (Entry*)source;
+   Entry* const entry = (Entry*)source;
    
    assert(entry_is_valid(entry));
 
@@ -194,7 +202,9 @@ Entry* entry_copy(const Entry* source)
    return entry;
 }
 
-bool entry_cmp(const Entry* entry, const Tuple* tuple)
+bool entry_cmp(
+   Entry const* const entry,
+   Tuple const* const tuple)
 {
    assert(entry_is_valid(entry));
    assert(tuple_is_valid(tuple));
@@ -202,14 +212,14 @@ bool entry_cmp(const Entry* entry, const Tuple* tuple)
    return tuple_cmp(entry->tuple, tuple);
 }
 
-SymbolType entry_get_type(const Entry* entry)
+SymbolType entry_get_type(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
 
    return entry->type;
 }
 
-const Tuple* entry_get_tuple(const Entry* entry)
+Tuple const* entry_get_tuple(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
    assert(tuple_is_valid(entry->tuple));
@@ -217,7 +227,7 @@ const Tuple* entry_get_tuple(const Entry* entry)
    return entry->tuple;
 }
 
-const Numb* entry_get_numb(const Entry* entry)
+Numb const* entry_get_numb(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_NUMB);
@@ -225,7 +235,7 @@ const Numb* entry_get_numb(const Entry* entry)
    return entry->value.numb;
 }
 
-const char* entry_get_strg(const Entry* entry)
+char const* entry_get_strg(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_STRG);
@@ -233,7 +243,7 @@ const char* entry_get_strg(const Entry* entry)
    return entry->value.strg;
 }
 
-const Set* entry_get_set(const Entry* entry)
+Set const* entry_get_set(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_SET);
@@ -241,7 +251,7 @@ const Set* entry_get_set(const Entry* entry)
    return entry->value.set;
 }
 
-Var* entry_get_var(const Entry* entry)
+Var* entry_get_var(Entry const* const entry)
 {
    assert(entry_is_valid(entry));
    assert(entry->type == SYM_VAR);
@@ -249,7 +259,9 @@ Var* entry_get_var(const Entry* entry)
    return entry->value.var;
 }
 
-void entry_print(FILE* fp, const Entry* entry)
+void entry_print(
+   FILE*        const fp,
+   Entry const* const entry)
 {
    assert(entry_is_valid(entry));
 

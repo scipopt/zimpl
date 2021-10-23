@@ -35,25 +35,25 @@ typedef struct meta_file_ptr     MFP;
 /* metaio.c
  */
 //lint -sem(        mio_add_strg_file, 1p, 2p) 
-extern void         mio_add_strg_file(const char* name, const char* content, bool use_copy) expects_NONNULL;
+extern void         mio_add_strg_file(char const* name, char const* content, bool use_copy) expects_NONNULL;
 extern void         mio_init(void);
 extern void         mio_exit(void);
 //lint -sem(        mio_open, 1p, 2p) 
 //lint -function(   fopen(1), mio_open(1)) 
 //lint -function(   fopen(r), mio_open(r)) 
-extern MFP*         mio_open(const char* name, const char* ext) expects_NONNULL;
+extern MFP*         mio_open(char const* name, char const* ext) expects_NONNULL;
 //lint -sem(        mio_close, 1p == 1)   
 //lint -function(   fclose, mio_close) 
 extern void         mio_close(MFP* mfp) expects_NONNULL;
 //lint -function(   fgetc, mio_getc) 
-extern int          mio_getc(const MFP* mfp) expects_NONNULL;
+extern int          mio_getc(MFP const* mfp) expects_NONNULL;
 //lint -function(   fgets(1), mio_gets(2)) 
 //lint -function(   fgets(2), mio_gets(3)) 
 //lint -function(   fgets(3), mio_gets(1)) 
 //lint -function(   fgets(r), mio_gets(r)) 
-extern char*        mio_gets(const MFP* mfp, char* buf, int len) expects_NONNULL;
+extern char*        mio_gets(MFP const* mfp, char* buf, int len) expects_NONNULL;
 //lint -sem(        mio_get_line, 1p == 1, r_null) 
-extern char*        mio_get_line(const MFP* mfp) expects_NONNULL;
+extern char*        mio_get_line(MFP const* mfp) expects_NONNULL;
 
 #ifdef __cplusplus
 }

@@ -37,51 +37,51 @@ extern "C" {
 #define LIST_NULL ((List*)0)
 
 //lint -sem(        list_new_elem, 1p == 1, @P >= malloc(1)) 
-extern List*        list_new_elem(const Elem* elem) expects_NONNULL returns_NONNULL;
+extern List*        list_new_elem(Elem const* elem) expects_NONNULL returns_NONNULL;
 //lint -sem(        list_new_tuple, 1p == 1, @P >= malloc(1)) 
-extern List*        list_new_tuple(const Tuple* tuple) expects_NONNULL returns_NONNULL;
+extern List*        list_new_tuple(Tuple const* tuple) expects_NONNULL returns_NONNULL;
 //lint -sem(        list_new_entry, 1p == 1, @P >= malloc(1)) 
-extern List*        list_new_entry(const Entry* entry) expects_NONNULL returns_NONNULL;
+extern List*        list_new_entry(Entry const* entry) expects_NONNULL returns_NONNULL;
 //lint -sem(        list_new_list, 1p == 1, @P >= malloc(1)) 
-extern List*        list_new_list(const List* list) expects_NONNULL returns_NONNULL;
+extern List*        list_new_list(List const* list) expects_NONNULL returns_NONNULL;
 //lint -sem(        list_free, custodial(1), inout(1), 1p == 1) 
 extern void         list_free(List* list) expects_NONNULL;
 //lint -sem(        list_is_valid, pure, 1p == 1) 
-extern bool         list_is_valid(const List* list) is_PURE;
+extern bool         list_is_valid(List const* list) is_PURE;
 //lint -sem(        list_is_elemlist, pure, 1p == 1) 
-extern bool         list_is_elemlist(const List* list) expects_NONNULL is_PURE;
+extern bool         list_is_elemlist(List const* list) expects_NONNULL is_PURE;
 //lint -sem(        list_is_entrylist, pure, 1p == 1) 
-extern bool         list_is_entrylist(const List* list) expects_NONNULL is_PURE;
+extern bool         list_is_entrylist(List const* list) expects_NONNULL is_PURE;
 //lint -sem(        list_is_tuplelist, pure, 1p == 1) 
-extern bool         list_is_tuplelist(const List* list) expects_NONNULL is_PURE;
+extern bool         list_is_tuplelist(List const* list) expects_NONNULL is_PURE;
 //lint -sem(        list_copy, 1p == 1, @P >= malloc(1)) 
-extern List*        list_copy(const List* list) expects_NONNULL returns_NONNULL;
+extern List*        list_copy(List const* list) expects_NONNULL returns_NONNULL;
 //lint -sem(        list_add_list, inout(1), 1p == 1, 2p == 1) 
-extern void         list_add_list(List* list, const List* ll) expects_NONNULL;
+extern void         list_add_list(List* list, List const* ll) expects_NONNULL;
 //lint -sem(        list_add_elem, inout(1), 1p == 1, 2p == 1) 
-extern void         list_add_elem(List* list, const Elem* elem) expects_NONNULL;
+extern void         list_add_elem(List* list, Elem const* elem) expects_NONNULL;
 //lint -sem(        list_add_tuple, inout(1), 1p == 1, 2p == 1) 
-extern void         list_add_tuple(List* list, const Tuple* tuple) expects_NONNULL;
+extern void         list_add_tuple(List* list, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        list_add_entry, inout(1), 1p == 1, 2p == 1) 
-extern void         list_add_entry(List* list, const Entry* entry) expects_NONNULL;
+extern void         list_add_entry(List* list, Entry const* entry) expects_NONNULL;
 //lint -sem(        list_insert_elem, inout(1), 1p == 1, 2p == 1) 
-extern void         list_insert_elem(List* list, const Elem* elem) expects_NONNULL;
+extern void         list_insert_elem(List* list, Elem const* elem) expects_NONNULL;
 //lint -sem(        list_insert_tuple, inout(1), 1p == 1, 2p == 1) 
-extern void         list_insert_tuple(List* list, const Tuple* tuple) expects_NONNULL;
+extern void         list_insert_tuple(List* list, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        list_insert_entry, inout(1), 1p == 1, 2p == 1) 
-extern void         list_insert_entry(List* list, const Entry* entry) expects_NONNULL;
+extern void         list_insert_entry(List* list, Entry const* entry) expects_NONNULL;
 //lint -sem(        list_get_elems, pure, 1p == 1, chneg(@)) 
-extern int          list_get_elems(const List* list) expects_NONNULL is_PURE;
+extern int          list_get_elems(List const* list) expects_NONNULL is_PURE;
 //lint -sem(        list_get_elem, 1p == 1, 2p, r_null) 
-extern const Elem*  list_get_elem(const List* list, ListElem** idxp) expects_NONNULL;
+extern Elem const*  list_get_elem(List const* list, ListElem** idxp) expects_NONNULL;
 //lint -sem(        list_get_tuple, 1p == 1, 2p, r_null) 
-extern const Tuple* list_get_tuple(const List* list, ListElem** idxp) expects_NONNULL;
+extern Tuple const* list_get_tuple(List const* list, ListElem** idxp) expects_NONNULL;
 //lint -sem(        list_get_entry, 1p == 1, 2p r_null) 
-extern const Entry* list_get_entry(const List* list, ListElem** idxp) expects_NONNULL;
+extern Entry const* list_get_entry(List const* list, ListElem** idxp) expects_NONNULL;
 //lint -sem(        list_get_list, 1p == 1, 2p, r_null) 
-extern const List*  list_get_list(const List* list, ListElem** idxp) expects_NONNULL;
+extern List const*  list_get_list(List const* list, ListElem** idxp) expects_NONNULL;
 //lint -sem(        list_print, inout(1), 1p == 1, 2p == 1) 
-extern void         list_print(FILE* fp, const List* list) expects_NONNULL;
+extern void         list_print(FILE* fp, List const* list) expects_NONNULL;
 
 #ifdef __cplusplus
 }

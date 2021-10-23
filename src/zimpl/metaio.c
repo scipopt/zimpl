@@ -64,8 +64,8 @@ typedef enum file_type       FileType;
 struct strg_file
 {
    SID
-   const char* name;
-   const char* content;
+   char const* name;
+   char const* content;
    int         length;
    int         offset;
    bool        use_copy;
@@ -88,7 +88,7 @@ struct meta_file_ptr
 
 static StrgFile* strg_file_root = NULL;
 
-static bool strgfile_is_valid(const StrgFile* sf)
+static bool strgfile_is_valid(StrgFile const* sf)
 {
    return (sf != NULL)
       && SID_ok(sf, STRGFILE_SID)
@@ -99,7 +99,7 @@ static bool strgfile_is_valid(const StrgFile* sf)
       && (sf->offset <= sf->length);
 }
 
-void mio_add_strg_file(const char* name, const char* content, bool use_copy)
+void mio_add_strg_file(char const* name, char const* content, bool use_copy)
 {
    StrgFile* sf = calloc(1, sizeof(*sf));
    
@@ -169,12 +169,12 @@ static char* strgfile_gets(StrgFile* sf, char* buf, int size)
    
 }
 
-static bool mfp_is_valid(const MFP* mfp)
+static bool mfp_is_valid(MFP const* mfp)
 {
    return mfp != NULL && SID_ok(mfp, MFP_SID) && mfp->type != MFP_ERR;
 }
 
-MFP* mio_open(const char* name, const char* ext)
+MFP* mio_open(char const* name, char const* ext)
 {
    MFP*      mfp = calloc(1, sizeof(*mfp));
    char*     filename;
@@ -311,7 +311,7 @@ void mio_close(MFP* mfp)
    free(mfp);
 }
 
-int mio_getc(const MFP* mfp)
+int mio_getc(MFP const* mfp)
 {
    int c;
    
@@ -337,7 +337,7 @@ int mio_getc(const MFP* mfp)
    return c;
 }
 
-char* mio_gets(const MFP* mfp, char* buf, int len)
+char* mio_gets(MFP const* mfp, char* buf, int len)
 {
    char* s = NULL;
    
@@ -363,7 +363,7 @@ char* mio_gets(const MFP* mfp, char* buf, int len)
    return s;
 }
 
-char* mio_get_line(const MFP* mfp)
+char* mio_get_line(MFP const* mfp)
 {
    int    size = 1;
    char*  buf = NULL;
@@ -398,7 +398,7 @@ void mio_init()
 {
    /* Setup for internal test
     */
-   static const char* const progstrg = 
+   static char const* const progstrg = 
       "# $Id: metaio.c,v 1.21 2014/03/03 16:44:14 bzfkocht Exp $\n"
       "#\n"
       "# Generic formulation of the Travelling Salesmen Problem\n"
@@ -429,7 +429,7 @@ void mio_init()
       "      sum <i,j> in E with <i> in P[k] and <j> in P[k] : x[i,j] \n"
       "      <= card(P[k]) - 1;\n";
 
-   static const char* const datastrg =
+   static char const* const datastrg =
       "Berlin     5251 1340\n"
       "Frankfurt  5011  864\n"
       "Leipzig    5133 1237\n"

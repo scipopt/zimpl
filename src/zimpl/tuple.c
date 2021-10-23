@@ -105,12 +105,12 @@ void tuple_free(Tuple* tuple)
    }
 }
 
-bool tuple_is_valid(const Tuple* tuple)
+bool tuple_is_valid(Tuple const* tuple)
 {
    return tuple != NULL && SID_ok(tuple, TUPLE_SID) && tuple->refc > 0;
 }
 
-Tuple* tuple_copy(const Tuple* source)
+Tuple* tuple_copy(Tuple const* source)
 {
    Tuple* tuple = (Tuple*)source;
    
@@ -124,7 +124,7 @@ Tuple* tuple_copy(const Tuple* source)
 /* 1 = verschieden,
  * 0 = gleich.
  */
-bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
+bool tuple_cmp(Tuple const* tuple_a, Tuple const* tuple_b)
 {   
    int i;
 
@@ -161,7 +161,7 @@ bool tuple_cmp(const Tuple* tuple_a, const Tuple* tuple_b)
    return i < tuple_a->dim;
 }
 
-int tuple_get_dim(const Tuple* tuple)
+int tuple_get_dim(Tuple const* tuple)
 {
    assert(tuple_is_valid(tuple));
 
@@ -181,7 +181,7 @@ void tuple_set_elem(Tuple* tuple, int idx, Elem* elem)
    tuple->element[idx] = elem;
 }
 
-const Elem* tuple_get_elem(const Tuple* tuple, int idx)
+Elem const* tuple_get_elem(Tuple const* tuple, int idx)
 {
    assert(tuple_is_valid(tuple));
    assert(idx   >= 0);
@@ -194,7 +194,7 @@ const Elem* tuple_get_elem(const Tuple* tuple, int idx)
    return tuple->element[idx];
 }
 
-Tuple* tuple_combine(const Tuple* ta, const Tuple* tb)
+Tuple* tuple_combine(Tuple const* ta, Tuple const* tb)
 {
    Tuple* tuple;
    int    i;
@@ -213,7 +213,7 @@ Tuple* tuple_combine(const Tuple* ta, const Tuple* tb)
    return tuple;
 }
 
-void tuple_print(FILE* fp, const Tuple* tuple)
+void tuple_print(FILE* fp, Tuple const* tuple)
 {
    int i;
 
@@ -230,7 +230,7 @@ void tuple_print(FILE* fp, const Tuple* tuple)
    fprintf(fp, ">");
 }
 
-unsigned int tuple_hash(const Tuple* tuple)
+unsigned int tuple_hash(Tuple const* tuple)
 {
    unsigned int hcode = 0;
    int          i;
@@ -242,7 +242,7 @@ unsigned int tuple_hash(const Tuple* tuple)
 }
 
 #if 0
-char* tuple_tostr(const Tuple* tuple)
+char* tuple_tostr(Tuple const* tuple)
 {
    unsigned int   size = TUPLE_STR_SIZE;
    unsigned int   len  = 2; /* for the '\0' and the '[' */
@@ -281,7 +281,7 @@ char* tuple_tostr(const Tuple* tuple)
 }
 #endif
 
-char* tuple_tostr(const Tuple* tuple)
+char* tuple_tostr(Tuple const* tuple)
 {
    size_t  size = TUPLE_STR_SIZE;
    size_t  len  = 1; /* one for the zero '\0' */

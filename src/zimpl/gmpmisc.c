@@ -121,7 +121,7 @@ static void pool_exit(void)
 
 /* [+|-]?[0-9]*.[0-9]+[[e|E][+|-][0-9]+]? */
 /* if it does not fit here, it doesn't fit in a double either */
-void gmp_str2mpq(mpq_t value, const char* num)
+void gmp_str2mpq(mpq_t value, char const* num)
 {
    char  tmp[1024]; 
    int   i;

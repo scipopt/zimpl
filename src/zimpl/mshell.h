@@ -32,15 +32,15 @@ extern "C" {
 #endif
 
 //lint -sem(  mem_malloc, 1n > 0, 2p, @P == malloc(1n)) 
-extern void*  mem_malloc(size_t, const char*, const int) is_MALLOC returns_NONNULL;
+extern void*  mem_malloc(size_t, char const*, const int) is_MALLOC returns_NONNULL;
 //lint -sem(  mem_calloc, 1n > 0, 2n > 0, 3p, @P == malloc(1n * 2n)) 
-extern void*  mem_calloc(size_t, size_t, const char*, const int) is_MALLOC returns_NONNULL;
+extern void*  mem_calloc(size_t, size_t, char const*, const int) is_MALLOC returns_NONNULL;
 //lint -sem(  mem_realloc, custodial(1), 1p, 2n > 0, 3p, @P == malloc(2n)) 
-extern void*  mem_realloc(void*, size_t, const char*, const int) is_MALLOC returns_NONNULL;
+extern void*  mem_realloc(void*, size_t, char const*, const int) is_MALLOC returns_NONNULL;
 //lint -sem(  mem_strdup, 1p > 0, 2p, @p == malloc(1p)) 
-extern char*  mem_strdup(const char*, const char*, const int) is_MALLOC returns_NONNULL;
+extern char*  mem_strdup(char const*, char const*, const int) is_MALLOC returns_NONNULL;
 //lint -sem(  mem_free, custodial(1), 1p > 0, 2p) 
-extern void   mem_free(void*, const char*, const int);
+extern void   mem_free(void*, char const*, const int);
 
 /* realloc, free, and strdup expect non NULL pointer arguments.
    But since they will check for wrong behaviour this is not conveyed to the compiler.
@@ -67,9 +67,9 @@ extern void   mem_free(void*, const char*, const int);
 extern size_t mem_used(void) is_PURE;
 extern void   mem_maximum(FILE* fp);
 extern void   mem_display(FILE* fp);
-extern void   mem_check_x(const void* p, const char* file, const int line);
-extern void   mem_check_all_x(const char* file, const int line);
-extern void   mem_hide_x(void* p, const char* file, const int line);
+extern void   mem_check_x(void const* p, char const* file, const int line);
+extern void   mem_check_all_x(char const* file, const int line);
+extern void   mem_hide_x(void* p, char const* file, const int line);
 
 #define mem_check(a)    mem_check_x(a, __FILE__, __LINE__)
 #define mem_check_all() mem_check_all_x(__FILE__, __LINE__)

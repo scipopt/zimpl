@@ -63,7 +63,7 @@ struct heap
    HeapCmp   data_cmp;
 };
 
-static void heap_print(FILE* fp, const Heap* heap)
+static void heap_print(FILE* fp, Heap const* heap)
 {
    int i;
    
@@ -82,9 +82,9 @@ static void heap_print(FILE* fp, const Heap* heap)
    }
 }
 
-bool heap_is_valid(const Heap* heap)
+bool heap_is_valid(Heap const* heap)
 {
-   const HeapData* data;
+   HeapData const* data;
    int       i;
    
    if (  heap           == NULL
@@ -171,7 +171,7 @@ void heap_free(Heap* heap)
    free(heap);
 }
 
-static void swap_entries(const Heap* heap, int i, int j)
+static void swap_entries(Heap const* heap, int i, int j)
 {
    HeapData* data = heap->data;
    HeapData  t;
@@ -185,7 +185,7 @@ static void swap_entries(const Heap* heap, int i, int j)
  * bis die Teilsortierung des Baumes wieder hergestellt ist.
  */
 static void sift_down(
-   const Heap* heap,
+   Heap const* heap,
    int         current)
 {
    HeapData* data = heap->data;
@@ -217,7 +217,7 @@ static void sift_down(
  * bis die Teilsortierung des Baumes wieder hergestellt ist.
  */
 static void sift_up(
-   const Heap* heap,
+   Heap const* heap,
    int         current)
 {
    HeapData* data   = heap->data;
@@ -281,8 +281,8 @@ Entry* heap_pop_entry(
    return entry;
 }
 
-const Entry* heap_top_entry(
-   const Heap* heap)
+Entry const* heap_top_entry(
+   Heap const* heap)
 {
    assert(heap_is_valid(heap));
    assert(heap->used > 0);
@@ -291,14 +291,14 @@ const Entry* heap_top_entry(
    return heap->data[0].entry;
 }
 
-bool heap_is_full(const Heap* heap)
+bool heap_is_full(Heap const* heap)
 {
    assert(heap_is_valid(heap));
 
    return heap->used == heap->size;
 }
 
-bool heap_is_empty(const Heap* heap)
+bool heap_is_empty(Heap const* heap)
 {
    assert(heap_is_valid(heap));
 

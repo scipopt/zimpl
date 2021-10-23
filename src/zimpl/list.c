@@ -78,7 +78,7 @@ struct list
    ListElem anchor;
 };
 
-static void list_add_data(List* list, const ListData* data)
+static void list_add_data(List* list, ListData const* data)
 {
    ListElem* elem = blk_alloc(sizeof(*elem));
 
@@ -95,7 +95,7 @@ static void list_add_data(List* list, const ListData* data)
    list->elems++;
 }
 
-static void list_insert_data(List* list, const ListData* data)
+static void list_insert_data(List* list, ListData const* data)
 {
    ListElem* elem = blk_alloc(sizeof(*elem));
 
@@ -113,7 +113,7 @@ static void list_insert_data(List* list, const ListData* data)
    list->elems++;
 }
 
-static List* list_new(ListType type, const ListData* data)
+static List* list_new(ListType type, ListData const* data)
 {
    List* list = calloc(1, sizeof(*list));
    
@@ -134,7 +134,7 @@ static List* list_new(ListType type, const ListData* data)
    return list;
 }
 
-List* list_new_elem(const Elem* elem)
+List* list_new_elem(Elem const* elem)
 {
    ListData data;
    
@@ -145,7 +145,7 @@ List* list_new_elem(const Elem* elem)
    return list_new(LIST_ELEM, &data);
 }
 
-List* list_new_tuple(const Tuple* tuple)
+List* list_new_tuple(Tuple const* tuple)
 {
    ListData data;
    
@@ -156,7 +156,7 @@ List* list_new_tuple(const Tuple* tuple)
    return list_new(LIST_TUPLE, &data);
 }
 
-List* list_new_entry(const Entry* entry)
+List* list_new_entry(Entry const* entry)
 {
    ListData data;
    
@@ -167,7 +167,7 @@ List* list_new_entry(const Entry* entry)
    return list_new(LIST_ENTRY, &data);
 }
 
-List* list_new_list(const List* list)
+List* list_new_list(List const* list)
 {
    ListData data;
    
@@ -222,33 +222,33 @@ void list_free(List* list)
    }
 }
 
-bool list_is_valid(const List* list)
+bool list_is_valid(List const* list)
 {
    return ((list != NULL) && SID_ok(list, LIST_SID) && (list->refc > 0));
 }
 
-bool list_is_elemlist(const List* list)
+bool list_is_elemlist(List const* list)
 {
    assert(list_is_valid(list));
 
    return list->type == LIST_ELEM;
 }
    
-bool list_is_entrylist(const List* list)
+bool list_is_entrylist(List const* list)
 {
    assert(list_is_valid(list));
 
    return list->type == LIST_ENTRY;
 }
    
-bool list_is_tuplelist(const List* list)
+bool list_is_tuplelist(List const* list)
 {
    assert(list_is_valid(list));
 
    return list->type == LIST_TUPLE;
 }
 
-List* list_copy(const List* source)
+List* list_copy(List const* source)
 {
    List* list = (List*)source;
    
@@ -259,7 +259,7 @@ List* list_copy(const List* source)
    return list;
 }
 
-void list_add_elem(List* list, const Elem* elem)
+void list_add_elem(List* list, Elem const* elem)
 {
    ListData data;
 
@@ -272,7 +272,7 @@ void list_add_elem(List* list, const Elem* elem)
    list_add_data(list, &data);
 }
 
-void list_insert_elem(List* list, const Elem* elem)
+void list_insert_elem(List* list, Elem const* elem)
 {
    ListData data;
 
@@ -285,7 +285,7 @@ void list_insert_elem(List* list, const Elem* elem)
    list_insert_data(list, &data);
 }
 
-void list_add_tuple(List* list, const Tuple* tuple)
+void list_add_tuple(List* list, Tuple const* tuple)
 {
    ListData data;
 
@@ -298,7 +298,7 @@ void list_add_tuple(List* list, const Tuple* tuple)
    list_add_data(list, &data);
 }
 
-void list_insert_tuple(List* list, const Tuple* tuple)
+void list_insert_tuple(List* list, Tuple const* tuple)
 {
    ListData data;
 
@@ -311,7 +311,7 @@ void list_insert_tuple(List* list, const Tuple* tuple)
    list_insert_data(list, &data);
 }
 
-void list_add_entry(List* list, const Entry* entry)
+void list_add_entry(List* list, Entry const* entry)
 {
    ListData data;
 
@@ -324,7 +324,7 @@ void list_add_entry(List* list, const Entry* entry)
    list_add_data(list, &data);
 }
 
-void list_insert_entry(List* list, const Entry* entry)
+void list_insert_entry(List* list, Entry const* entry)
 {
    ListData data;
 
@@ -337,7 +337,7 @@ void list_insert_entry(List* list, const Entry* entry)
    list_insert_data(list, &data);
 }
 
-void list_add_list(List* list, const List* ll)
+void list_add_list(List* list, List const* ll)
 {
    ListData data;
 
@@ -350,14 +350,14 @@ void list_add_list(List* list, const List* ll)
    list_add_data(list, &data);
 }
 
-int list_get_elems(const List* list)
+int list_get_elems(List const* list)
 {
    assert(list_is_valid(list));
 
    return list->elems;
 }
 
-static ListData* list_get_data(const List* list, ListElem** idxp)
+static ListData* list_get_data(List const* list, ListElem** idxp)
 {
    assert(list_is_valid(list));
    assert(idxp != NULL);
@@ -375,7 +375,7 @@ static ListData* list_get_data(const List* list, ListElem** idxp)
    return &((*idxp)->prev->data);
 }
 
-const Elem* list_get_elem(const List* list, ListElem** idxp)
+Elem const* list_get_elem(List const* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -388,7 +388,7 @@ const Elem* list_get_elem(const List* list, ListElem** idxp)
    return (data == NULL) ? ELEM_NULL : data->elem;
 }
 
-const Tuple* list_get_tuple(const List* list, ListElem** idxp)
+Tuple const* list_get_tuple(List const* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -401,7 +401,7 @@ const Tuple* list_get_tuple(const List* list, ListElem** idxp)
    return (data == NULL) ? TUPLE_NULL : data->tuple;
 }
 
-const Entry* list_get_entry(const List* list, ListElem** idxp)
+Entry const* list_get_entry(List const* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -414,7 +414,7 @@ const Entry* list_get_entry(const List* list, ListElem** idxp)
    return (data == NULL) ? ENTRY_NULL : data->entry;
 }
 
-const List* list_get_list(const List* list, ListElem** idxp)
+List const* list_get_list(List const* list, ListElem** idxp)
 {
    ListData* data;
    
@@ -427,7 +427,7 @@ const List* list_get_list(const List* list, ListElem** idxp)
    return (data == NULL) ? LIST_NULL : data->list;
 }
 
-void list_print(FILE* fp, const List* list)
+void list_print(FILE* fp, List const* list)
 {
    ListElem* le;
    

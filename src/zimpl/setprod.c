@@ -50,7 +50,7 @@
  * -------------------------------------------------------------------------
  */
 is_PURE
-static bool set_prod_is_valid(const Set* set)
+static bool set_prod_is_valid(Set const* set)
 {
    return set != NULL
       && SID_ok2(set->prod, SET_PROD_SID)
@@ -62,7 +62,7 @@ static bool set_prod_is_valid(const Set* set)
 }
 
 is_PURE
-static bool set_prod_iter_is_valid(const SetIter* iter)
+static bool set_prod_iter_is_valid(SetIter const* iter)
 {
    return iter != NULL
       && SID_ok2(iter->prod, SET_PROD_ITER_SID)
@@ -75,7 +75,7 @@ static bool set_prod_iter_is_valid(const SetIter* iter)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-Set* set_prod_new(const Set* a, const Set* b)
+Set* set_prod_new(Set const* a, Set const* b)
 {
    assert(set_is_valid(a));
    assert(set_is_valid(b));
@@ -109,7 +109,7 @@ Set* set_prod_new(const Set* a, const Set* b)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-static Set* set_prod_copy(const Set* source)
+static Set* set_prod_copy(Set const* source)
 {
    Set* set = (Set*)source;
    
@@ -150,7 +150,7 @@ static void set_prod_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 expects_NONNULL 
-static SetIterIdx set_prod_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_prod_lookup_idx(Set const* set, Tuple const* tuple, int offset)
 {
    assert(set_prod_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -182,7 +182,7 @@ static SetIterIdx set_prod_lookup_idx(const Set* set, const Tuple* tuple, int of
  */
 expects_NONNULL 
 static void set_prod_get_tuple(
-   const Set* set,
+   Set const* set,
    SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
@@ -194,8 +194,8 @@ static void set_prod_get_tuple(
    assert(offset >= 0);
    assert(offset + set->head.dim <= tuple_get_dim(tuple));
 
-   const Set* a       = set->prod.set_a;
-   const Set* b       = set->prod.set_b;
+   Set const* a       = set->prod.set_a;
+   Set const* b       = set->prod.set_b;
    int        offset2 = offset + a->head.dim;
 
    set_get_tuple_intern(a, idx / b->head.members, tuple, offset);
@@ -210,8 +210,8 @@ static void set_prod_get_tuple(
  */
 expects_NONNULL1 returns_NONNULL 
 static SetIter* set_prod_iter_init(
-   const Set*   set,
-   const Tuple* pattern,
+   Set const*   set,
+   Tuple const* pattern,
    int          offset)
 {
    assert(set_prod_is_valid(set));
@@ -249,8 +249,8 @@ static SetIter* set_prod_iter_init(
  */
 expects_NONNULL
 static bool get_both_parts(
-   const Set* a,
-   const Set* b,
+   Set const* a,
+   Set const* b,
    SetIter*   iter,
    SetIter*   iter_a,
    SetIter*   iter_b,
@@ -282,7 +282,7 @@ static bool get_both_parts(
 expects_NONNULL 
 static bool set_prod_iter_next(
    SetIter*   iter,
-   const Set* set,
+   Set const* set,
    Tuple*     tuple,
    int        offset)
 {
@@ -342,7 +342,7 @@ static bool set_prod_iter_next(
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void set_prod_iter_exit(SetIter* iter, const Set* set)
+static void set_prod_iter_exit(SetIter* iter, Set const* set)
 {
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));
@@ -366,7 +366,7 @@ static void set_prod_iter_exit(SetIter* iter, const Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void set_prod_iter_reset(SetIter* iter, const Set* set)
+static void set_prod_iter_reset(SetIter* iter, Set const* set)
 {
    assert(set_prod_iter_is_valid(iter));
    assert(set_prod_is_valid(set));

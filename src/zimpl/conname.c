@@ -76,7 +76,7 @@ void conname_free()
  * is unimportant, because all constraints will get a unique
  * number anyway.
  */
-bool conname_set(const char* prefix)
+bool conname_set(char const* prefix)
 {
    assert(prefix != NULL);
    assert(cname  == NULL);
@@ -105,7 +105,7 @@ bool conname_set(const char* prefix)
    return !xlp_conname_exists(prog_get_lp(), cname);
 }
 
-const char* conname_get()
+char const* conname_get()
 {
    char*  localstr;
    size_t newlen;

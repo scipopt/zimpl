@@ -40,7 +40,7 @@
 #include "zimpl/tuple.h"
 #include "zimpl/mme.h"
 
-void show_source(FILE* fp, const char* text, int column)
+void show_source(FILE* fp, char const* text, int column)
 {
    int len;
    int beg;

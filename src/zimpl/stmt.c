@@ -62,9 +62,9 @@ struct statement
 {
    SID
    StmtType    type;
-   const char* filename;
+   char const* filename;
    int         lineno;
-   const char* text;
+   char const* text;
    CodeNode*   node;
 };
 
@@ -115,9 +115,9 @@ bool stmt_trigger_warning(int no)
    
 Stmt* stmt_new(
    StmtType    type,
-   const char* filename,
+   char const* filename,
    int         lineno,
-   const char* text)
+   char const* text)
 {
    Stmt* stmt = calloc(1, sizeof(*stmt));
 
@@ -152,7 +152,7 @@ void stmt_free(Stmt* stmt)
    free(stmt);
 }
 
-bool stmt_is_valid(const Stmt* stmt)
+bool stmt_is_valid(Stmt const* stmt)
 {
    return ((stmt != NULL)
       && SID_ok(stmt, STMT_SID)
@@ -161,21 +161,21 @@ bool stmt_is_valid(const Stmt* stmt)
       && (stmt->text     != NULL));
 }
 
-const char* stmt_get_filename(const Stmt* stmt)
+char const* stmt_get_filename(Stmt const* stmt)
 {
    assert(stmt_is_valid(stmt));
 
    return stmt->filename;
 }
 
-int stmt_get_lineno(const Stmt* stmt)
+int stmt_get_lineno(Stmt const* stmt)
 {
    assert(stmt_is_valid(stmt));
 
    return stmt->lineno;
 }
 
-const char* stmt_get_text(const Stmt* stmt)
+char const* stmt_get_text(Stmt const* stmt)
 {
    assert(stmt_is_valid(stmt));
 
@@ -196,7 +196,7 @@ void stmt_parse(Stmt* stmt)
    stmt->node = code_get_root();
 }
 
-void stmt_execute(const Stmt* stmt)
+void stmt_execute(Stmt const* stmt)
 {
    unsigned int inst_count = code_get_inst_count();
    
@@ -227,9 +227,9 @@ void stmt_execute(const Stmt* stmt)
    }
 }
 
-void stmt_print(FILE* fp, const Stmt* stmt)
+void stmt_print(FILE* fp, Stmt const* stmt)
 {
-   static const char* const type_name[] =
+   static char const* const type_name[] =
    {
       "Unknown", "Set", "Param", "Var", "Min", "Max", "Cons", "Define", "Print", "SOS"
    };

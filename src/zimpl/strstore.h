@@ -33,9 +33,9 @@ extern "C" {
 extern void         str_init(void);
 extern void         str_exit(void);
 //lint -sem(        str_new, 1p, @p) 
-extern const char*  str_new(const char* s) returns_NONNULL;
+extern char const*  str_new(char const* s) returns_NONNULL;
 //lint -sem(        str_hash, pure, 1p)           
-extern unsigned int str_hash(const char* s) expects_NONNULL is_PURE;
+extern unsigned int str_hash(char const* s) expects_NONNULL is_PURE;
 
 #ifdef __cplusplus
 }

@@ -53,7 +53,7 @@ typedef struct set_elem_idx SetElemIdx;
 
 struct set_elem_idx
 {
-   const Elem* elem;
+   Elem const* elem;
    int         idx;
 };
 
@@ -61,11 +61,11 @@ struct hash_element
 {
    union
    {
-      const Tuple* tuple;
-      const Entry* entry;
+      Tuple const* tuple;
+      Entry const* entry;
       SetElemIdx   elem_idx;
-      const Numb*  numb;
-      const Mono*  mono;
+      Numb const*  numb;
+      Mono const*  mono;
    } value;
    HElem* next;
 };
@@ -79,10 +79,10 @@ struct hash
    HElem**      bucket;
 };
 
-static void hash_statist(FILE* fp, const Hash* hash);
+static void hash_statist(FILE* fp, Hash const* hash);
 
 is_PURE
-static bool hash_is_valid(const Hash* hash)
+static bool hash_is_valid(Hash const* hash)
 {
    return ((hash != NULL)
       && (hash->type == HASH_TUPLE || hash->type == HASH_ENTRY
@@ -152,7 +152,7 @@ void hash_free(Hash* hash)
    free(hash);
 }
 
-void hash_add_tuple(Hash* hash, const Tuple* tuple)
+void hash_add_tuple(Hash* hash, Tuple const* tuple)
 {
    HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
@@ -170,10 +170,10 @@ void hash_add_tuple(Hash* hash, const Tuple* tuple)
 }
 
 
-void hash_add_entry(Hash* hash, const Entry* entry)
+void hash_add_entry(Hash* hash, Entry const* entry)
 {
    HElem*       he = blk_alloc(sizeof(*he));
-   const Tuple* tuple;
+   Tuple const* tuple;
    unsigned int hcode;
 
    assert(hash_is_valid(hash));
@@ -189,7 +189,7 @@ void hash_add_entry(Hash* hash, const Entry* entry)
    hash->elems++;
 }
 
-void hash_add_numb(Hash* hash, const Numb* numb)
+void hash_add_numb(Hash* hash, Numb const* numb)
 {
    HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
@@ -206,7 +206,7 @@ void hash_add_numb(Hash* hash, const Numb* numb)
    hash->elems++;
 }
 
-void hash_add_mono(Hash* hash, const Mono* mono)
+void hash_add_mono(Hash* hash, Mono const* mono)
 {
    HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
@@ -223,10 +223,10 @@ void hash_add_mono(Hash* hash, const Mono* mono)
    hash->elems++;
 }
 
-bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
+bool hash_has_tuple(Hash const* hash, Tuple const* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -238,10 +238,10 @@ bool hash_has_tuple(const Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-bool hash_has_entry(const Hash* hash, const Tuple* tuple)
+bool hash_has_entry(Hash const* hash, Tuple const* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -253,10 +253,10 @@ bool hash_has_entry(const Hash* hash, const Tuple* tuple)
    return he != NULL;
 }
 
-bool hash_has_numb(const Hash* hash, const Numb* numb)
+bool hash_has_numb(Hash const* hash, Numb const* numb)
 {
    unsigned int hcode = numb_hash(numb) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(numb_is_valid(numb));
@@ -270,10 +270,10 @@ bool hash_has_numb(const Hash* hash, const Numb* numb)
 
 /* Liefert NULL wenn nicht gefunden.
  */
-const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
+Entry const* hash_lookup_entry(Hash const* hash, Tuple const* tuple)
 {
    unsigned int hcode = tuple_hash(tuple) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(tuple_is_valid(tuple));
@@ -294,10 +294,10 @@ const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple)
 
 /* Liefert NULL wenn nicht gefunden.
  */
-const Mono* hash_lookup_mono(const Hash* hash, const Mono* mono)
+Mono const* hash_lookup_mono(Hash const* hash, Mono const* mono)
 {
    unsigned int hcode = mono_hash(mono) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(mono_is_valid(mono));
@@ -316,7 +316,7 @@ const Mono* hash_lookup_mono(const Hash* hash, const Mono* mono)
    return he->value.mono;
 }
 
-void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
+void hash_add_elem_idx(Hash* hash, Elem const* elem, int idx)
 {
    HElem*       he = blk_alloc(sizeof(*he));
    unsigned int hcode;
@@ -335,10 +335,10 @@ void hash_add_elem_idx(Hash* hash, const Elem* elem, int idx)
 
 /* Liefert -1 wenn nicht gefunden.
  */
-int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
+int hash_lookup_elem_idx(Hash const* hash, Elem const* elem)
 {
    unsigned int hcode = elem_hash(elem) % hash->size;
-   const HElem* he;
+   HElem const* he;
    
    assert(hash_is_valid(hash));
    assert(elem_is_valid(elem));
@@ -355,7 +355,7 @@ int hash_lookup_elem_idx(const Hash* hash, const Elem* elem)
    return he->value.elem_idx.idx;
 }
 
-static void hash_statist(FILE* fp, const Hash* hash)
+static void hash_statist(FILE* fp, Hash const* hash)
 {
    HElem* he;
    int    min    = (int)hash->size;

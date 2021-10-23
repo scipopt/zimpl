@@ -93,10 +93,10 @@ struct lps_hash
    LpsHElem**   bucket;
 };
 
-static void hash_statist(FILE* fp, const LpsHash* hash); //lint !e528 not referenced
+static void hash_statist(FILE* fp, LpsHash const* hash); //lint !e528 not referenced
 
 is_PURE
-static bool hash_valid(const LpsHash* hash)
+static bool hash_valid(LpsHash const* hash)
 {
    return hash != NULL
       && (hash->type == LHT_CON || hash->type == LHT_VAR || hash->type == LHT_SOS);
@@ -104,7 +104,7 @@ static bool hash_valid(const LpsHash* hash)
 
 //lint -sem(hashit, 1p, pure)
 expects_NONNULL is_PURE
-static unsigned int hashit(const char* s)
+static unsigned int hashit(char const* s)
 {
    unsigned int hcode = 0;
    
@@ -171,10 +171,10 @@ static void lps_hash_free(LpsHash* hash)
  */
 //lint -sem(hash_lookup_var, 1p == 1, 2p, pure, @p == 1)
 expects_NONNULL is_PURE 
-static Var* hash_lookup_var(const LpsHash* hash, const char* name)
+static Var* hash_lookup_var(LpsHash const* hash, char const* name)
 {
    unsigned int hcode;
-   const LpsHElem* he;
+   LpsHElem const* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_VAR);
@@ -193,10 +193,10 @@ static Var* hash_lookup_var(const LpsHash* hash, const char* name)
  */
 //lint -sem(hash_lookup_con, 1p == 1, 2p, pure, @p == 1)
 expects_NONNULL is_PURE 
-static Con* hash_lookup_con(const LpsHash* hash, const char* name)
+static Con* hash_lookup_con(LpsHash const* hash, char const* name)
 {
    unsigned int hcode;
-   const LpsHElem* he;
+   LpsHElem const* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_CON);
@@ -215,10 +215,10 @@ static Con* hash_lookup_con(const LpsHash* hash, const char* name)
  */
 //lint -sem(hash_lookup_sos, 1p == 1, 2p, pure, @p == 1)
 expects_NONNULL is_PURE 
-static Sos* hash_lookup_sos(const LpsHash* hash, const char* name)
+static Sos* hash_lookup_sos(LpsHash const* hash, char const* name)
 {
    unsigned int hcode;
-   const LpsHElem* he;
+   LpsHElem const* he;
    
    assert(hash_valid(hash));
    assert(hash->type == LHT_SOS);
@@ -256,7 +256,7 @@ static void hash_add_var(LpsHash* hash, Var* var)
 
 //lint -sem(hash_del_var, 1p == 1, 2p == 1)
 expects_NONNULL
-static void hash_del_var(LpsHash* hash, const Var* var)
+static void hash_del_var(LpsHash* hash, Var const* var)
 {
    LpsHElem*    he;
    LpsHElem*    next;
@@ -330,7 +330,7 @@ static void hash_add_sos(LpsHash* hash, Sos* sos)
 
 //lint -sem(hash_del_con, 1p == 1, 2p == 1)
 expects_NONNULL
-static void hash_del_con(LpsHash* hash, const Con* con)
+static void hash_del_con(LpsHash* hash, Con const* con)
 {
    LpsHElem*    he;
    LpsHElem*    next;
@@ -362,7 +362,7 @@ static void hash_del_con(LpsHash* hash, const Con* con)
 
 //lint -sem(lhash_statist, 1p == 1, 2p == 1)
 expects_NONNULL
-static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referenced
+static void hash_statist(FILE* fp, LpsHash const* hash) //lint !e528 not referenced
 {
    assert(fp != NULL);
    assert(hash_valid(hash));
@@ -405,26 +405,26 @@ static void hash_statist(FILE* fp, const LpsHash* hash) //lint !e528 not referen
 
 #ifndef NDEBUG
 //lint -sem(lps_valid, 1p == 1, pure)
-static bool lps_valid(const Lps* lp)
+static bool lps_valid(Lps const* lp)
 {
-   const char* const err1  = "Wrong Previous Variable";
-   const char* const err2  = "Wrong Variable Previous Nonzero";
-   const char* const err3  = "Wrong Variable Nonzero Count";
-   const char* const err4  = "Wrong Variable Count";
-   const char* const err5  = "Wrong Previous Constraint";
-   const char* const err6  = "Wrong Constraint Previous Nonzero";
-   const char* const err7  = "Wrong Constraint Nonzero Count";
-   const char* const err8  = "Wrong Constraint Count";
-   const char* const err9  = "Wrong Variable";
-   const char* const err10 = "Wrong Constraint";
-   const char* const err11 = "Storage-size error";
-   const char* const err12 = "Wrong Variable SID";
-   const char* const err13 = "Wrong Constraint SID";
-   const char* const err14 = "Strange lhs/rhs";
-   const char* const err15 = "Wrong SOS SID";
-   const char* const err16 = "Wrong SOS Variable SID";
-   const char* const err18 = "Wrong SOS element count";
-   const char* const err19 = "Wrong SOS count";
+   char const* const err1  = "Wrong Previous Variable";
+   char const* const err2  = "Wrong Variable Previous Nonzero";
+   char const* const err3  = "Wrong Variable Nonzero Count";
+   char const* const err4  = "Wrong Variable Count";
+   char const* const err5  = "Wrong Previous Constraint";
+   char const* const err6  = "Wrong Constraint Previous Nonzero";
+   char const* const err7  = "Wrong Constraint Nonzero Count";
+   char const* const err8  = "Wrong Constraint Count";
+   char const* const err9  = "Wrong Variable";
+   char const* const err10 = "Wrong Constraint";
+   char const* const err11 = "Storage-size error";
+   char const* const err12 = "Wrong Variable SID";
+   char const* const err13 = "Wrong Constraint SID";
+   char const* const err14 = "Strange lhs/rhs";
+   char const* const err15 = "Wrong SOS SID";
+   char const* const err16 = "Wrong SOS Variable SID";
+   char const* const err18 = "Wrong SOS element count";
+   char const* const err19 = "Wrong SOS count";
    
    if (lp == NULL)
       return false;
@@ -440,9 +440,9 @@ static bool lps_valid(const Lps* lp)
     */
    var_count = lp->vars;
    
-   const Var* var_prev = NULL;
+   Var const* var_prev = NULL;
 
-   for(const Var* var = lp->var_root; var != NULL; var = var->next)
+   for(Var const* var = lp->var_root; var != NULL; var = var->next)
    {
       if (var->sid != VAR_SID)
       {
@@ -458,9 +458,9 @@ static bool lps_valid(const Lps* lp)
       }
       var_count--;
       nzo_count = var->size;
-      const Nzo* nzo_prev = NULL;
+      Nzo const* nzo_prev = NULL;
       
-      for(const Nzo* nzo = var->first; nzo != NULL; nzo = nzo->var_next)
+      for(Nzo const* nzo = var->first; nzo != NULL; nzo = nzo->var_next)
       {
          if (nzo_prev == nzo->var_prev)
             nzo_prev = nzo;
@@ -491,9 +491,9 @@ static bool lps_valid(const Lps* lp)
    /* Constraint Test
     */
    con_count = lp->cons;
-   const Con* con_prev = NULL;
+   Con const* con_prev = NULL;
    
-   for(const Con* con = lp->con_root; con != NULL; con = con->next)
+   for(Con const* con = lp->con_root; con != NULL; con = con->next)
    {
       if (con->sid != CON_SID)
       {
@@ -534,9 +534,9 @@ static bool lps_valid(const Lps* lp)
       }
       con_count--;
       nzo_count = con->size;
-      const Nzo* nzo_prev = NULL;
+      Nzo const* nzo_prev = NULL;
       
-      for(const Nzo* nzo = con->first; nzo != NULL; nzo = nzo->con_next)
+      for(Nzo const* nzo = con->first; nzo != NULL; nzo = nzo->con_next)
       {
          if (nzo_prev == nzo->con_prev)
             nzo_prev = nzo;
@@ -567,7 +567,7 @@ static bool lps_valid(const Lps* lp)
     */
    sos_count = lp->soss;
 
-   for(const Sos* sos = lp->sos_root; sos != NULL; sos = sos->next)
+   for(Sos const* sos = lp->sos_root; sos != NULL; sos = sos->next)
    {
       if (sos->sid != SOS_SID)
       {
@@ -577,7 +577,7 @@ static bool lps_valid(const Lps* lp)
       sos_count--;
       sse_count = sos->sses;
 
-      for(const Sse* sse = sos->first; sse != NULL; sse = sse->next)
+      for(Sse const* sse = sos->first; sse != NULL; sse = sse->next)
       {
          if (sse->var->sid != VAR_SID)
          {
@@ -602,7 +602,7 @@ static bool lps_valid(const Lps* lp)
     */
    sto_count = 0;
    
-   for(const Sto* sto = lp->sto_root; sto != NULL; sto = sto->next)
+   for(Sto const* sto = lp->sto_root; sto != NULL; sto = sto->next)
    {
       assert(sto->begin != NULL);
       
@@ -668,7 +668,7 @@ static void lps_storage(Lps* lp)
 }
 
 Lps* lps_alloc(
-   const char* name)
+   char const* name)
 {
    assert(name != NULL);
    
@@ -779,7 +779,8 @@ void lps_free(Lps* lp)
    free(lp);
 }
 
-void lps_number(const Lps* lp)
+#if 0
+void lps_number(Lps const* lp)
 {
    Var* var;
    Con* con;
@@ -805,10 +806,11 @@ void lps_number(const Lps* lp)
    }
    assert(i == lp->cons);
 }
+#endif
 
 Var* lps_getvar(
-   const Lps*  lp,
-   const char* name)
+   Lps const*  lp,
+   char const* name)
 {
    Var* vr;
    
@@ -822,7 +824,7 @@ Var* lps_getvar(
 
 #ifndef NDEBUG
    {
-      const Var* var;
+      Var const* var;
       
       for(var = lp->var_root; var != NULL; var = var->next)
          if (!strcmp(var->name, name))
@@ -835,8 +837,8 @@ Var* lps_getvar(
 }
    
 Con* lps_getcon(
-   const Lps*  lp,
-   const char* name)
+   Lps const*  lp,
+   char const* name)
 {
    Con* cr;
    
@@ -850,7 +852,7 @@ Con* lps_getcon(
 
 #ifndef NDEBUG
    {
-      const Con* con;
+      Con const* con;
       
       for(con = lp->con_root; con != NULL; con = con->next)
          if (!strcmp(con->name, name))
@@ -863,8 +865,8 @@ Con* lps_getcon(
 }
    
 Sos* lps_getsos(
-   const Lps*  lp,
-   const char* name)
+   Lps const*  lp,
+   char const* name)
 {
    Sos* sr;
    
@@ -878,7 +880,7 @@ Sos* lps_getsos(
 
 #ifndef NDEBUG
    {
-      const Sos* sos;
+      Sos const* sos;
       
       for(sos = lp->sos_root; sos != NULL; sos = sos->next)
          if (!strcmp(sos->name, name))
@@ -891,9 +893,9 @@ Sos* lps_getsos(
 }
    
 Nzo* lps_getnzo(
-   const Lps* lp,
-   const Con* con,
-   const Var* var)
+   Lps const* lp,
+   Con const* con,
+   Var const* var)
 {
    Nzo*   nzo;
    
@@ -924,7 +926,7 @@ Nzo* lps_getnzo(
    
 Var* lps_addvar(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    Var* v;
    
@@ -1038,7 +1040,7 @@ void lps_delvar(
 
 Con* lps_addcon(
    Lps*         lp,
-   const char*  name)
+   char const*  name)
 {
    Con* c;
    
@@ -1149,7 +1151,7 @@ void lps_delcon(
 
 Sos* lps_addsos(
    Lps*        lp,
-   const char* name,
+   char const* name,
    SosType     type,
    int         priority)
 {
@@ -1190,7 +1192,7 @@ Sos* lps_addsos(
 
 void lps_addtoobjterm(
    Lps*        lp,
-   const Term* term)
+   Term const* term)
 {
    assert(lp   != NULL);
    assert(term != NULL);
@@ -1202,7 +1204,7 @@ void lps_addtoobjterm(
 
    for(int i = 0; i < term_get_elements(term); i++)
    {
-      const Mono* mono = term_get_element(term, i);
+      Mono const* mono = term_get_element(term, i);
 
       for(int k = 0; k < mono_get_degree(mono); k++)
          mono_get_var(mono, k)->is_used = true;
@@ -1213,7 +1215,7 @@ void lps_addtoobjterm(
 void lps_addterm(
    is_UNUSED Lps* lp,
    Con*        con,
-   const Term* term)
+   Term const* term)
 {
    int i;
    int k;
@@ -1226,7 +1228,7 @@ void lps_addterm(
 
    for(i = 0; i < term_get_elements(term); i++)
    {
-      const Mono* mono  = term_get_element(term, i);
+      Mono const* mono  = term_get_element(term, i);
 
       for(k = 0; k < mono_get_degree(mono); k++)
          mono_get_var(mono, k)->is_used = true;
@@ -1369,7 +1371,7 @@ void lps_setval(
 }
 
 void lps_getval(
-   const Nzo* nzo,
+   Nzo const* nzo,
    mpq_t      value)
 {
    assert(nzo != NULL);
@@ -1388,7 +1390,7 @@ void lps_setdir(
 
 void lps_setprobname(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -1401,7 +1403,7 @@ void lps_setprobname(
 
 bool lps_setobjname(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -1418,7 +1420,7 @@ bool lps_setobjname(
 
 void lps_setrhsname(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -1431,7 +1433,7 @@ void lps_setrhsname(
 
 void lps_setbndname(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -1444,7 +1446,7 @@ void lps_setbndname(
 
 void lps_setrngname(
    Lps*        lp,
-   const char* name)
+   char const* name)
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -1456,7 +1458,7 @@ void lps_setrngname(
 }
 
 void lps_getcost(
-   const Var* var,
+   Var const* var,
    mpq_t      cost)
 {
    assert(var      != NULL);
@@ -1465,7 +1467,7 @@ void lps_getcost(
    mpq_set(cost, var->cost);
 }
 
-bool lps_haslower(const Var* var)
+bool lps_haslower(Var const* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1483,7 +1485,7 @@ void lps_setcost(
    mpq_set(var->cost, cost);
 }
 
-void lps_getlower(const Var* var, mpq_t lower)
+void lps_getlower(Var const* var, mpq_t lower)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1516,7 +1518,7 @@ void lps_setlower(
    }
 }
 
-bool lps_hasupper(const Var* var)
+bool lps_hasupper(Var const* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1524,7 +1526,7 @@ bool lps_hasupper(const Var* var)
    return HAS_UPPER(var);
 }
 
-void lps_getupper(const Var* var, mpq_t upper)
+void lps_getupper(Var const* var, mpq_t upper)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1615,7 +1617,7 @@ void lps_setcontype( Con* con, ConType type)
    con->type = type;
 }
 
-ConType lps_contype(const Con* con)
+ConType lps_contype(Con const* con)
 {
    assert(con      != NULL);
    assert(con->sid == CON_SID);
@@ -1623,7 +1625,7 @@ ConType lps_contype(const Con* con)
    return con->type;
 }
 
-VarType lps_vartype(const Var* var)
+VarType lps_vartype(Var const* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1648,7 +1650,7 @@ void lps_setclass(Var *var, VarClass vclass)
 }
 
 void lps_getlhs(
-   const Con* con,
+   Con const* con,
    mpq_t      lhs)
 {
    assert(con      != NULL);
@@ -1658,7 +1660,7 @@ void lps_getlhs(
 }
 
 void lps_getrhs(
-   const Con* con,
+   Con const* con,
    mpq_t      rhs)
 {
    assert(con      != NULL);
@@ -1667,7 +1669,7 @@ void lps_getrhs(
    mpq_set(rhs, con->rhs);
 }
 
-const char* lps_varname(const Var* var)
+char const* lps_varname(Var const* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
@@ -1675,14 +1677,16 @@ const char* lps_varname(const Var* var)
    return var->name;
 }
 
-int lps_varnumber(const Var* var)
+#if 0
+int lps_varnumber(Var const* var)
 {
    assert(var      != NULL);
    assert(var->sid == VAR_SID);
 
    return var->number;
 }
-   
+#endif
+
 void lps_setvartype(
    Var*    var,
    VarType type)
@@ -1693,7 +1697,7 @@ void lps_setvartype(
    var->type = type;   
 }
 
-unsigned int lps_flags(const Con* con)
+unsigned int lps_flags(Con const* con)
 {
    assert(con      != NULL);
    assert(con->sid == CON_SID);
@@ -1773,7 +1777,7 @@ void lps_setindicator(
    con->ind_dir = on_true;
 }
 
-void lps_stat(const Lps* lp)
+void lps_stat(Lps const* lp)
 {
    assert(lps_valid(lp));
 
@@ -1781,7 +1785,7 @@ void lps_stat(const Lps* lp)
       lp->name, lp->vars, lp->cons, lp->nonzeros);
 }
 
-int lps_getnamesize(const Lps* lp, LpFormat format)
+int lps_getnamesize(Lps const* lp, LpFormat format)
 {
    int name_size = 0;
    
@@ -1816,10 +1820,10 @@ int lps_getnamesize(const Lps* lp, LpFormat format)
 }
 
 void lps_write(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
    LpFormat    format,
-   const char* text)
+   char const* text)
 {
    assert(lp   != NULL);
    assert(fp   != NULL);
@@ -1846,11 +1850,11 @@ void lps_write(
 }
 
 //lint -sem(lpfstrncpy, 1p, 2p, chneg(3))
-static bool lpfstrncpy(char* t, const char* s, int len)
+static bool lpfstrncpy(char* t, char const* s, int len)
 {
    /* '@' was excluded, to make sure the appendix is unique.
     */
-   static const char* const allowed = "!#$%&()/,.;?_{}|~"; 
+   static char const* const allowed = "!#$%&()/,.;?_{}|~"; 
 
    bool was_smashed = false;
    
@@ -1875,13 +1879,13 @@ static bool lpfstrncpy(char* t, const char* s, int len)
 static void make_full_name(
    char*       target,
    int         size,
-   const char* name)
+   char const* name)
 {
    assert(target != NULL);
    assert(size   >= MIN_NAME_LEN);
    assert(name   != NULL);
 
-   const char* s         = name;
+   char const* s         = name;
    bool        first     = true;
    bool        in_string = false;
    int         i         = 0;
@@ -2003,7 +2007,7 @@ void lps_makename(
    assert(strlen(target) <= (size_t)size - 1);
 }
 
-void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
+void lps_transtable(Lps const* lp, FILE* fp, LpFormat format, char const* head)
 {
    assert(lps_valid(lp));
    assert(fp      != NULL);
@@ -2056,7 +2060,7 @@ void lps_transtable(const Lps* lp, FILE* fp, LpFormat format, const char* head)
    free(temp);
 }
 
-void lps_clearobj(const Lps* lp)
+void lps_clearobj(Lps const* lp)
 {
    assert(lps_valid(lp));
 
@@ -2064,7 +2068,7 @@ void lps_clearobj(const Lps* lp)
       mpq_set(var->cost, const_zero);   
 }
 
-void lps_scale(const Lps* lp)
+void lps_scale(Lps const* lp)
 {
    Con*   con;
    Nzo*   nzo;
@@ -2105,14 +2109,14 @@ void lps_scale(const Lps* lp)
    mpq_clear(maxi);
 }
 
-bool lps_has_sos(const Lps* lp)
+bool lps_has_sos(Lps const* lp)
 {
    assert(lps_valid(lp));
    
    return lp->soss > 0;
 }
 
-bool lps_con_sumup(const Con* con, mpq_t sum)
+bool lps_con_sumup(Con const* con, mpq_t sum)
 {
    bool  usable = true;
    Nzo*  nzo;

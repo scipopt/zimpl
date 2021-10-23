@@ -82,7 +82,7 @@ static bool use_startval = false;
  */
 /*ARGSUSED*/
 Lps* xlp_alloc(
-   const char*  name,          /**< Instance name, will appear e.g. in MPS NAME section */
+   char const*  name,          /**< Instance name, will appear e.g. in MPS NAME section */
    bool         need_startval, /**< Will we supply starting values for the variables? */
    is_UNUSED void* user_data)     /**< Pointer with arbitrary data. */
 {
@@ -109,7 +109,7 @@ void xlp_free(
  *  @return True if there is at least one SOS constraint, False otherwise.
  */
 bool xlp_hassos(
-   const Lps* lp)         /**< Pointer to storage */
+   Lps const* lp)         /**< Pointer to storage */
 {
    assert(lp != NULL);
 
@@ -123,8 +123,8 @@ bool xlp_hassos(
  */
 /*ARGSUSED*/
 bool xlp_conname_exists(
-   const Lps*  lp,         /**< Pointer to storage */
-   const char* conname)    /**< Constraint name to check */
+   Lps const*  lp,         /**< Pointer to storage */
+   char const* conname)    /**< Constraint name to check */
 {
    assert(lp      != NULL);
    assert(conname != NULL);
@@ -137,7 +137,7 @@ bool xlp_conname_exists(
  *          otherwise.
  */
 static bool check_con_is_invalid(
-   const Con* con)      /**< Pointer to a previous added constraint */
+   Con const* con)      /**< Pointer to a previous added constraint */
 {
    bool  is_invalid = false;
    mpq_t lhs;
@@ -210,12 +210,12 @@ static bool check_con_is_invalid(
 expects_NONNULL
 static bool addcon_term_as_qubo(
    Lps*         lp,         /**< Pointer to storage */
-   const char*  name,       /**< Name of the constraint */
+   char const*  name,       /**< Name of the constraint */
    ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
-   const Numb*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
-   const Numb*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
+   Numb const*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
+   Numb const*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
    unsigned int flags,      /**< special treatment flags, see ratlptypes.h */
-   const Term*  term_org)   /**< term to use */
+   Term const*  term_org)   /**< term to use */
 {
    assert(lp   != NULL);
    assert(name != NULL);
@@ -264,7 +264,7 @@ static bool addcon_term_as_qubo(
 
    for(int i = 0; i < telems; i++)
    {
-      const Mono* mono = term_get_element(term, i);
+      Mono const* mono = term_get_element(term, i);
       Var*        var1 = mono_get_var(mono, 0);
    
       assert(mono_is_linear(mono));
@@ -281,7 +281,7 @@ static bool addcon_term_as_qubo(
       }
       for(int k = 0; k < telems; k++)
       {
-         const Mono* mono2 = term_get_element(term, k);
+         Mono const* mono2 = term_get_element(term, k);
          Var*        var2  = mono_get_var(mono2, 0);
          int         coef_value = 1;
                   
@@ -313,12 +313,12 @@ static bool addcon_term_as_qubo(
   */
 bool xlp_addcon_term(
    Lps*         lp,         /**< Pointer to storage */
-   const char*  name,       /**< Name of the constraint */
+   char const*  name,       /**< Name of the constraint */
    ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
-   const Numb*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
-   const Numb*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
+   Numb const*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
+   Numb const*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
    unsigned int flags,      /**< special treatment flags, see ratlptypes.h */
-   const Term*  term_org)   /**< term to use */
+   Term const*  term_org)   /**< term to use */
 {
    Term* term;
    Con*  con;
@@ -379,7 +379,7 @@ bool xlp_addcon_term(
    {
       for(int i = 0; i < term_get_elements(term); i++)
       {
-         const Mono* mono = term_get_element(term, i);
+         Mono const* mono = term_get_element(term, i);
          Var*        var  = mono_get_var(mono, 0);
          MFun        mfun = mono_get_function(mono);
          mpq_t       val1;
@@ -434,12 +434,12 @@ bool xlp_addcon_term(
  */
 Var* xlp_addvar(
    Lps*         lp,         /**< Pointer to storage */
-   const char*  name,       /**< Name of the variable */
+   char const*  name,       /**< Name of the variable */
    VarClass     varclass,   /**< Class of the variable (Continous, Implicit, Integer) */
-   const Bound* lower,      /**< Lower bound of the variable */
-   const Bound* upper,      /**< Upper bound of the variable */
-   const Numb*  priority,   /**< Priority value of branching order */
-   const Numb*  startval)   /**< Start value. If equal numb_unknown() startval is undefined */
+   Bound const* lower,      /**< Lower bound of the variable */
+   Bound const* upper,      /**< Upper bound of the variable */
+   Numb const*  priority,   /**< Priority value of branching order */
+   Numb const*  startval)   /**< Start value. If equal numb_unknown() startval is undefined */
 {
    Var*      var;
    mpq_t     temp;
@@ -496,10 +496,10 @@ Var* xlp_addvar(
   */
  int xlp_addsos_term(
    Lps*         lp,          /**< Pointer to storage */
-   const char*  name,        /**< Name of the constraint */
+   char const*  name,        /**< Name of the constraint */
    SosType      type,        /**< Type of SOS (1, 2) */
-   const Numb*  priority,    /**< Priority value for constraint */
-   const Term*  term)        /**< Term to use */
+   Numb const*  priority,    /**< Priority value for constraint */
+   Term const*  term)        /**< Term to use */
 {
    Sos*   sos;
    mpq_t  temp;
@@ -533,8 +533,8 @@ Var* xlp_addvar(
    
    for(i = 0; i < term_get_elements(term); i++)
    {
-      const Mono* mono  = term_get_element(term, i);
-      const Numb* coeff = mono_get_coeff(mono);
+      Mono const* mono  = term_get_element(term, i);
+      Numb const* coeff = mono_get_coeff(mono);
       Var*        var   = mono_get_var(mono, 0);
       
       assert(!numb_equal(coeff, numb_zero()));
@@ -562,9 +562,9 @@ Var* xlp_addvar(
  *  @return The name of the variable.
  */
 /*ARGSUSED*/
-const char* xlp_getvarname(
-   is_UNUSED const Lps* lp,          /**< Pointer to storage */
-   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
+char const* xlp_getvarname(
+   is_UNUSED Lps const* lp,          /**< Pointer to storage */
+   Var const*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
 
@@ -576,8 +576,8 @@ const char* xlp_getvarname(
  */
 /*ARGSUSED*/
 VarClass xlp_getclass(
-   is_UNUSED const Lps* lp,          /**< Pointer to storage */
-   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
+   is_UNUSED Lps const* lp,          /**< Pointer to storage */
+   Var const*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
 
@@ -589,8 +589,8 @@ VarClass xlp_getclass(
  */
 /*ARGSUSED*/
 Bound* xlp_getlower(
-   is_UNUSED const Lps* lp,          /**< Pointer to storage */
-   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
+   is_UNUSED Lps const* lp,          /**< Pointer to storage */
+   Var const*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 {
    assert(var != NULL);
 
@@ -620,8 +620,8 @@ Bound* xlp_getlower(
  */
 /*ARGSUSED*/
 Bound* xlp_getupper(
-   is_UNUSED const Lps* lp,          /**< Pointer to storage */
-   const Var*        var)         /**< Pointer to variable as returned by xlp_addvar() */
+   is_UNUSED Lps const* lp,          /**< Pointer to storage */
+   Var const*        var)         /**< Pointer to variable as returned by xlp_addvar() */
 
 {
    assert(var != NULL);
@@ -652,7 +652,7 @@ Bound* xlp_getupper(
  */
 bool xlp_setobj(
    Lps*        lp,          /**< Pointer to storage */
-   const char* name,        /**< The name of the objective function */
+   char const* name,        /**< The name of the objective function */
    bool        minimize)    /**< True if the problem should be minimized, False if it should be maximized */
 {
    assert(lp   != NULL);
@@ -672,7 +672,7 @@ bool xlp_setobj(
 void xlp_addtocost(
    is_UNUSED Lps*     lp,      /**< Pointer to storage */
    Var*               var,     /**< Pointer to variable as returned by xlp_addvar() */
-   const Numb*        cost)    /**< Value to be added to the objective coefficient of the variable */
+   Numb const*        cost)    /**< Value to be added to the objective coefficient of the variable */
 {
    mpq_t val1;
    mpq_t val2;
@@ -701,7 +701,7 @@ void xlp_addobjqme(
    Lps*        lp,      /**< Pointer to storage */
    Var*        var1,    /**< Pointer to variable as returned by xlp_addvar() */
    Var*        var2,    /**< Pointer to variable as returned by xlp_addvar() */
-   const Numb* cost)    /**< Value to be added to the objective coefficient of the variable */
+   Numb const* cost)    /**< Value to be added to the objective coefficient of the variable */
 {
    assert(lp   != NULL);
    assert(var1 != NULL);
@@ -721,7 +721,7 @@ void xlp_addobjqme(
 
 void xlp_addtoobj(
    Lps*        lp,
-   const Term* term_org)
+   Term const* term_org)
 {
    assert(lp != NULL);
    assert(term_is_valid(term_org));
@@ -737,7 +737,7 @@ void xlp_addtoobj(
        * This is needed because there is no general way for example in
        * MPS format to specify an objective value offset.
        */
-      const Numb* term_constant = term_get_constant(term);
+      Numb const* term_constant = term_get_constant(term);
       
       mpq_t val1;
       mpq_t val2;
@@ -747,7 +747,7 @@ void xlp_addtoobj(
       
       if (!numb_equal(term_constant, numb_zero()))
       {
-         const char* const format = "%sObjOffset";
+         char const* const format = "%sObjOffset";
    
          Bound* const lower = bound_new(BOUND_VALUE, numb_one());
          Bound* const upper = bound_new(BOUND_VALUE, numb_one());
@@ -768,8 +768,8 @@ void xlp_addtoobj(
    
       for(int i = 0; i < term_get_elements(term); i++)
       {
-         const Mono* const mono   = term_get_element(term, i);
-         const Numb* const coeff  = mono_get_coeff(mono);
+         Mono const* const mono   = term_get_element(term, i);
+         Numb const* const coeff  = mono_get_coeff(mono);
 
          assert(mono_get_degree(mono) == 1);       
          assert(!numb_equal(coeff, numb_zero()));
@@ -788,7 +788,7 @@ void xlp_addtoobj(
 }
 
 #if 0
-void term_to_objective(const Term* term_org)
+void term_to_objective(Term const* term_org)
 {
    Trace("term_to_objective");
 
@@ -805,7 +805,7 @@ void term_to_objective(const Term* term_org)
     */
    if (!numb_equal(term->constant, numb_zero()))
    {
-      const char* format = "%sObjOffset";
+      char const* format = "%sObjOffset";
    
       Bound* lower = bound_new(BOUND_VALUE, numb_one());
       Bound* upper = bound_new(BOUND_VALUE, numb_one());
@@ -822,8 +822,8 @@ void term_to_objective(const Term* term_org)
    
    for(int i = 0; i < term->used; i++)
    {
-      const Mono* mono   = term->elem[i];
-      const Numb* coeff  = mono_get_coeff(mono);
+      Mono const* mono   = term->elem[i];
+      Numb const* coeff  = mono_get_coeff(mono);
       const int   degree = mono_get_degree(mono);
          
       assert(!numb_equal(coeff, numb_zero()));

@@ -46,7 +46,7 @@ typedef struct local Local;
 
 struct local
 {
-   const char*  name;
+   char const*  name;
    Elem*        element;
    Local*       next;
 };
@@ -68,7 +68,7 @@ void local_exit()
    anchor.next = NULL;
 }
 
-static void local_new(const char* name, const Elem* elem)
+static void local_new(char const* name, Elem const* elem)
 {
    Local* local;
 
@@ -109,9 +109,9 @@ void local_drop_frame(void)
    anchor.next = q;
 }
 
-const Elem* local_lookup(const char* name)
+Elem const* local_lookup(char const* name)
 {
-   const Local* local;
+   Local const* local;
 
    assert(name != NULL);
 
@@ -122,9 +122,9 @@ const Elem* local_lookup(const char* name)
    return local == NULL ? ELEM_NULL : local->element;
 }
 
-void local_install_tuple(const Tuple* pattern, const Tuple* values)
+void local_install_tuple(Tuple const* pattern, Tuple const* values)
 {
-   const char* name;
+   char const* name;
    int         i;
    
    assert(tuple_is_valid(pattern));
@@ -136,7 +136,7 @@ void local_install_tuple(const Tuple* pattern, const Tuple* values)
    
    for(i = 0; i < tuple_get_dim(pattern); i++)
    {
-      const Elem* elem = tuple_get_elem(pattern, i);
+      Elem const* elem = tuple_get_elem(pattern, i);
 
       if (elem_get_type(elem) == ELEM_NAME)
       {
@@ -152,7 +152,7 @@ void local_install_tuple(const Tuple* pattern, const Tuple* values)
 
 void local_print_all(FILE* fp)
 {
-   const Local* local;
+   Local const* local;
 
    for(local = anchor.next; local != NULL; local = local->next)
    {
@@ -169,7 +169,7 @@ void local_print_all(FILE* fp)
 
 char* local_tostrall()
 {
-   const Local* local;
+   Local const* local;
    size_t       size = LOCAL_STR_SIZE;
    size_t       len  = 1; /* fuer die '\0' */
    char*        str  = malloc(size);

@@ -65,8 +65,8 @@ typedef struct qubo Qubo;
 struct qmentry
 {
    unsigned int sid;
-   const Var*   var1;
-   const Var*   var2;
+   Var const*   var1;
+   Var const*   var2;
    mpq_t        value;
 };
 
@@ -112,10 +112,10 @@ static void qubo_free(Qubo* const qubo)
 }
 
 expects_NONNULL
-static int entry_cmp_row(const void* const a, const void* const b)
+static int entry_cmp_row(void const* const a, void const* const b)
 {
-   const Qme* const aa = (const Qme*)a;
-   const Qme* const bb = (const Qme*)b;
+   Qme const* const aa = (Qme const*)a;
+   Qme const* const bb = (Qme const*)b;
 
    assert(aa->sid == QME_SID);
    assert(bb->sid == QME_SID);
@@ -182,10 +182,10 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 /* A specification for the QUBO LP file format can be found in the
  */
 void qbo_write(
-   const Lps*  const lp,
+   Lps const*  const lp,
    FILE*       const fp,
    LpFormat    const format ,
-   const char* const text)
+   char const* const text)
 {
    assert(lp != NULL);
    assert(fp != NULL);
@@ -226,7 +226,7 @@ void qbo_write(
    // TODO maybe move this into QUBO from entry.
    for(int i = 0; i < entry_size; i++)
    {
-      const Mono* const mono = term_get_element(term_obj, i);
+      Mono const* const mono = term_get_element(term_obj, i);
 
       entry[entry_used].sid  = QME_SID;
       entry[entry_used].var1 = mono_get_var(mono, 0);

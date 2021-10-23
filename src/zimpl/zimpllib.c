@@ -74,13 +74,13 @@ static bool    is_longjmp_ok = false;
 
 void zpl_print_banner(FILE* fp, bool with_license)
 {
-   const char* const banner = 
+   char const* const banner = 
       "****************************************************\n" \
       "* Zuse Institute Mathematical Programming Language *\n" \
       "* Release %-5s Copyright (C)2018 by Thorsten Koch *\n" \
       "****************************************************\n";
 
-   const char* const license = 
+   char const* const license = 
       "*   This is free software and you are welcome to   *\n" \
       "*     redistribute it under certain conditions     *\n" \
       "*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *\n" \
@@ -109,7 +109,7 @@ void zpl_exit(int retval)
 #endif
 }
 
-static bool is_valid_identifier(const char* s)
+static bool is_valid_identifier(char const* s)
 {
    assert(s != NULL);
 
@@ -126,9 +126,9 @@ static bool is_valid_identifier(const char* s)
    return *s == '\0';
 }
 
-void zpl_var_print(FILE* fp, const Var* var)
+void zpl_var_print(FILE* fp, Var const* var)
 {
-   const char* name  = xlp_getvarname(prog_get_lp(), var);
+   char const* name  = xlp_getvarname(prog_get_lp(), var);
    VarClass    class = xlp_getclass(prog_get_lp(), var);
    Bound*      lower = xlp_getlower(prog_get_lp(), var);
    Bound*      upper = xlp_getupper(prog_get_lp(), var);
@@ -158,9 +158,9 @@ void zpl_var_print(FILE* fp, const Var* var)
    bound_free(lower);
 }
 
-void zpl_add_parameter(const char* def)
+void zpl_add_parameter(char const* def)
 {
-   const char* warning =
+   char const* warning =
       "--- Warning 175: Illegal syntax for command line define \"%s\" -- ignored\n";
    Set*    set;
    Symbol* sym;
@@ -210,7 +210,7 @@ void zpl_add_parameter(const char* def)
    free(name); 
 }
 
-bool zpl_read(const char* filename, bool with_management, void* user_data)
+bool zpl_read(char const* filename, bool with_management, void* user_data)
 {
    static Prog* prog = NULL;
    static void* lp   = NULL;
@@ -287,7 +287,7 @@ bool zpl_read(const char* filename, bool with_management, void* user_data)
 
 bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_data)
 {
-   const char* options = "D:mn:P:s:v:";
+   char const* options = "D:mn:P:s:v:";
 
    static Prog*  prog        = NULL;
    static void*  lp          = NULL;

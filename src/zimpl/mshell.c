@@ -134,14 +134,14 @@ static void mem_del_list(
 }
 
 static is_NORETURN void mem_tag_err(
-   const MHDR* p,
+   MHDR const* p,
    int         typ,
-   const char* file1,
+   char const* file1,
    const int   line1,
-   const char* file2,
+   char const* file2,
    const int   line2)
 {
-   const char* const errtyp[] = { "pre1", "pre2", "post" };
+   char const* const errtyp[] = { "pre1", "pre2", "post" };
    
    assert((typ >= 0) && (typ <= 2));
    
@@ -160,7 +160,7 @@ static is_NORETURN void mem_tag_err(
 
 static void mem_valid(
    MHDR*       p,
-   const char* file,
+   char const* file,
    const int   line)
 {
    if (p->tag1 != MEMTAG1)
@@ -183,12 +183,12 @@ static void mem_valid(
       
 void* mem_malloc(
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line) 
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
-   const char* const errmsg2 =
+   char const* const errmsg2 =
       "mem_malloc(size=%zu, file=%s, line=%d): zero size\n";
 
    if (size == 0)
@@ -223,12 +223,12 @@ void* mem_malloc(
 void* mem_calloc(
    size_t       item,
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line)
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
-   const char* const errmsg2 =
+   char const* const errmsg2 =
       "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): zero item/size\n";
    
    if (item == 0 || size == 0)
@@ -260,12 +260,12 @@ void* mem_calloc(
 void* mem_realloc(
    void*        ptr,
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line)
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
-   const char* const errmsg3 =
+   char const* const errmsg3 =
       "mem_realloc(size=%zu, file=%s, line=%d): zero size\n";
 
    if (size == 0)
@@ -301,11 +301,11 @@ void* mem_realloc(
 }
 
 char* mem_strdup(
-   const char* str,
-   const char* file,
+   char const* str,
+   char const* file,
    const int   line)
 {
-   const char* const errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
+   char const* const errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
 
    if (str == NULL)
    {
@@ -317,10 +317,10 @@ char* mem_strdup(
       
 void mem_free(
    void*       ptr,
-   const char* file,
+   char const* file,
    const int   line)
 {
-   const char* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
+   char const* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
    if (ptr == NULL)
    {
@@ -337,10 +337,10 @@ void mem_free(
 
 void mem_hide_x(
    void*       ptr,
-   const char* file,
+   char const* file,
    const int   line)
 {
-   const char* const errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
+   char const* const errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
 
    if (ptr == NULL)
    {
@@ -389,8 +389,8 @@ void mem_display(
 }      
 
 void mem_check_x(
-   const void* ptr,
-   const char* file,
+   void const* ptr,
+   char const* file,
    const int   line)
 {
    MHDR* p = CLIENT_2_HDR(ptr);
@@ -399,7 +399,7 @@ void mem_check_x(
 }      
 
 void mem_check_all_x(
-   const char* file,
+   char const* file,
    const int   line)
 {
    for(MHDR* p = memlist; p != MHDR_NIL; p = p->next)
@@ -410,10 +410,10 @@ void mem_check_all_x(
 
 void* mem_malloc(
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line) 
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(size > 0);
@@ -431,10 +431,10 @@ void* mem_malloc(
 void* mem_calloc(
    size_t       item,
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line)
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(item > 0);
@@ -453,10 +453,10 @@ void* mem_calloc(
 void* mem_realloc(
    void*        ptr,
    size_t       size,
-   const char*  file,
+   char const*  file,
    const int    line)
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(ptr  != NULL);
@@ -473,11 +473,11 @@ void* mem_realloc(
 }
 
 char* mem_strdup(
-   const char* str,
-   const char* file,
+   char const* str,
+   char const* file,
    const int   line)
 {
-   const char* const errmsg1 =
+   char const* const errmsg1 =
       "mem_strdup(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(str != NULL);
@@ -494,10 +494,10 @@ char* mem_strdup(
 
 void mem_free(
    void*       ptr,
-   const char* file,
+   char const* file,
    const int   line)
 {
-   const char* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
+   char const* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
 #ifndef NDEBUG
    if (ptr == NULL)

@@ -52,12 +52,12 @@
  * ILOG CPLEX 7.0 Reference Manual page 545.
  */
 void lps_mstfile(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
    LpFormat    format,
-   const char* text)
+   char const* text)
 {
-   const Var*  var;
+   Var const*  var;
    int         name_size;
    char*       vtmp;
    

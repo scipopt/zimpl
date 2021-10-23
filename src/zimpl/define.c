@@ -45,7 +45,7 @@
 struct define
 {
    SID
-   const char*  name;
+   char const*  name;
    DefineType   type;
    Tuple*       param;
    CodeNode*    code;
@@ -58,7 +58,7 @@ static Define anchor  = { 0, "", DEF_ERR, NULL, NULL, NULL };
 static Define anchor  = {    "", DEF_ERR, NULL, NULL, NULL };
 #endif
 
-static bool define_is_valid(const Define* def)
+static bool define_is_valid(Define const* def)
 {
    if (def == NULL || !SID_ok(def, DEFINE_SID))
       return false;
@@ -69,7 +69,7 @@ static bool define_is_valid(const Define* def)
 }
 
 Define* define_new(
-   const char*  name,
+   char const*  name,
    DefineType   type)
 {
    Define* def;
@@ -135,7 +135,7 @@ void define_exit(void)
    anchor.next = NULL;
 }
 
-Define* define_lookup(const char* name)
+Define* define_lookup(char const* name)
 {
    Define* def;
 
@@ -148,28 +148,28 @@ Define* define_lookup(const char* name)
    return def;
 }
 
-const char* define_get_name(const Define* def)
+char const* define_get_name(Define const* def)
 {
    assert(define_is_valid(def));
 
    return def->name;
 }
 
-DefineType define_get_type(const Define* def)
+DefineType define_get_type(Define const* def)
 {
    assert(define_is_valid(def));
 
    return def->type;
 }
 
-const Tuple* define_get_param(const Define* def)
+Tuple const* define_get_param(Define const* def)
 {
    assert(define_is_valid(def));
 
    return def->param;
 }
 
-CodeNode* define_get_code(const Define* def)
+CodeNode* define_get_code(Define const* def)
 {
    assert(define_is_valid(def));
 

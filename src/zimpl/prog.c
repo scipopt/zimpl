@@ -108,12 +108,12 @@ void prog_free(Prog* prog)
    free(prog);
 }
 
-bool prog_is_valid(const Prog* prog)
+bool prog_is_valid(Prog const* prog)
 {
    return ((prog != NULL) && SID_ok(prog, PROG_SID));
 }
 
-bool prog_is_empty(const Prog* prog)
+bool prog_is_empty(Prog const* prog)
 {
    return prog->used == 0;
 }
@@ -140,7 +140,7 @@ void prog_add_stmt(Prog* prog, Stmt* stmt)
    prog->used++;   
 }
 
-void prog_print(FILE* fp, const Prog* prog)
+void prog_print(FILE* fp, Prog const* prog)
 {
    int i;
 
@@ -152,7 +152,7 @@ void prog_print(FILE* fp, const Prog* prog)
       stmt_print(fp, prog->stmt[i]);
 }
 
-void prog_execute(const Prog* prog, void* lp)
+void prog_execute(Prog const* prog, void* lp)
 {
    int i;
 
@@ -187,7 +187,7 @@ void prog_execute(const Prog* prog, void* lp)
       printf("Instructions evaluated: %u\n", code_get_inst_count());
 }
 
-char* prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len)
+char* prog_tostr(Prog const* prog, char const* prefix, char const* title, size_t max_output_line_len)
 {
    size_t len;
    char*  text;
@@ -216,7 +216,7 @@ char* prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t
 
    for(i = 0; i < prog->used; i++)
    {    
-      const char* s = stmt_get_text(prog->stmt[i]);
+      char const* s = stmt_get_text(prog->stmt[i]);
       int         k = 0;
 
       while(*s != '\0')

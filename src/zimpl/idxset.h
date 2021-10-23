@@ -43,23 +43,23 @@ typedef struct index_set         IdxSet;
  */
 //lint -sem(        idxset_new, 1p == 1, 2p == 1, inout(3), 3p == 1, @P >= malloc(1)) 
 extern IdxSet*      idxset_new(
-   const Tuple* tuple, const Set* set, CodeNode* lexpr, bool is_unrestricted) expects_NONNULL returns_NONNULL;
+   Tuple const* tuple, Set const* set, CodeNode* lexpr, bool is_unrestricted) expects_NONNULL returns_NONNULL;
 //lint -sem(        idxset_free, custodial(1), inout(1), 1p == 1) 
 extern void         idxset_free(IdxSet* idxset) expects_NONNULL;
 //lint -sem(        idxset_is_valid, pure, 1p == 1) 
-extern bool         idxset_is_valid(const IdxSet* idxset) is_PURE;
+extern bool         idxset_is_valid(IdxSet const* idxset) is_PURE;
 //lint -sem(        idxset_copy, 1p == 1, @P >= malloc(1)) 
-extern IdxSet*      idxset_copy(const IdxSet* source) expects_NONNULL returns_NONNULL;
+extern IdxSet*      idxset_copy(IdxSet const* source) expects_NONNULL returns_NONNULL;
 //lint -sem(        idxset_get_lexpr, 1p == 1, @p == 1) 
-extern CodeNode*    idxset_get_lexpr(const IdxSet* idxset) expects_NONNULL returns_NONNULL is_PURE;
+extern CodeNode*    idxset_get_lexpr(IdxSet const* idxset) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        idxset_get_tuple, 1p == 1, @p == 1) 
-extern const Tuple* idxset_get_tuple(const IdxSet* idxset) expects_NONNULL returns_NONNULL is_PURE;
+extern Tuple const* idxset_get_tuple(IdxSet const* idxset) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        idxset_get_set, 1p == 1, @p == 1) 
-extern const Set*   idxset_get_set(const IdxSet* idxset) expects_NONNULL returns_NONNULL is_PURE;
+extern Set const*   idxset_get_set(IdxSet const* idxset) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        idxset_is_unrestricted, 1p == 1) 
-extern bool         idxset_is_unrestricted(const IdxSet* idxset) expects_NONNULL is_PURE;
+extern bool         idxset_is_unrestricted(IdxSet const* idxset) expects_NONNULL is_PURE;
 //lint -sem(        idxset_print, 1p == 1, inout(1), 2p == 1) 
-extern void         idxset_print(FILE* fp, const IdxSet* idxset) expects_NONNULL;
+extern void         idxset_print(FILE* fp, IdxSet const* idxset) expects_NONNULL;
 
 #ifdef __cplusplus
 }

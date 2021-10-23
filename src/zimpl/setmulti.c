@@ -57,7 +57,7 @@
 /* This is a bloody hack. But there seems to be no easy way to give
  * additional information to the compare routine needed for qsort().
  */
-static const Set* cmp_set = NULL;
+static Set const* cmp_set = NULL;
 static int        cmp_dim = 0;  
 
 /* ------------------------------------------------------------------------- 
@@ -65,7 +65,7 @@ static int        cmp_dim = 0;
  * -------------------------------------------------------------------------
  */
 is_PURE
-static bool set_multi_is_valid(const Set* set)
+static bool set_multi_is_valid(Set const* set)
 {
    return set != NULL
       && SID_ok2(set->multi, SET_MULTI_SID)
@@ -76,7 +76,7 @@ static bool set_multi_is_valid(const Set* set)
 }
 
 is_PURE
-static bool set_multi_iter_is_valid(const SetIter* iter)
+static bool set_multi_iter_is_valid(SetIter const* iter)
 {
    return iter != NULL
       && SID_ok2(iter->multi, SET_MULTI_ITER_SID)
@@ -91,10 +91,10 @@ static bool set_multi_iter_is_valid(const SetIter* iter)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL is_PURE
-static int subset_cmp(const void* a, const void* b)
+static int subset_cmp(void const* a, void const* b)
 {
-   const SetIterIdx* aa = (const SetIterIdx*)a;
-   const SetIterIdx* bb = (const SetIterIdx*)b;
+   SetIterIdx const* aa = (SetIterIdx const*)a;
+   SetIterIdx const* bb = (SetIterIdx const*)b;
 
    for(int i = 0; i < cmp_dim; i++)
    {
@@ -109,10 +109,10 @@ static int subset_cmp(const void* a, const void* b)
 }
 
 expects_NONNULL is_PURE
-static int order_cmp(const void* a, const void* b)
+static int order_cmp(void const* a, void const* b)
 {
-   const SetIterIdx* aa = (const SetIterIdx*)a;
-   const SetIterIdx* bb = (const SetIterIdx*)b;
+   SetIterIdx const* aa = (SetIterIdx const*)a;
+   SetIterIdx const* bb = (SetIterIdx const*)b;
 
    assert(cmp_set != NULL);
    assert(cmp_dim >= 0);
@@ -136,7 +136,7 @@ static int order_cmp(const void* a, const void* b)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-Set* set_multi_new_from_list(const List* list, SetCheckType check)
+Set* set_multi_new_from_list(List const* list, SetCheckType check)
 {
    assert(list_is_valid(list));
 
@@ -144,7 +144,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
    Hash*        hash          = NULL;     
    bool         is_entrylist  = list_is_entrylist(list); 
    int          n             = list_get_elems(list);
-   const Tuple* tuple         = is_entrylist
+   Tuple const* tuple         = is_entrylist
       ? entry_get_tuple(list_get_entry(list, &le))
       : list_get_tuple(list, &le);
    int          dim           = tuple_get_dim(tuple);
@@ -280,7 +280,7 @@ Set* set_multi_new_from_list(const List* list, SetCheckType check)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-static Set* set_multi_copy(const Set* source)
+static Set* set_multi_copy(Set const* source)
 {
    Set* set = (Set*)source;
    int  i;
@@ -330,10 +330,10 @@ static void set_multi_free(Set* set)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL is_PURE
-static int subset_idx_cmp(const void* a, const void* b)
+static int subset_idx_cmp(void const* a, void const* b)
 {
-   const SetIterIdx* key    = (const SetIterIdx*)a;
-   const SetIterIdx* subset = (const SetIterIdx*)b;
+   SetIterIdx const* key    = (SetIterIdx const*)a;
+   SetIterIdx const* subset = (SetIterIdx const*)b;
    int               i;
    
    assert(key    != NULL);
@@ -354,10 +354,10 @@ static int subset_idx_cmp(const void* a, const void* b)
 }
 
 expects_NONNULL is_PURE
-static int order_idx_cmp(const void* a, const void* b)
+static int order_idx_cmp(void const* a, void const* b)
 {
-   const SetIterIdx* key   = (const SetIterIdx*)a;
-   const SetIterIdx* order = (const SetIterIdx*)b;
+   SetIterIdx const* key   = (SetIterIdx const*)a;
+   SetIterIdx const* order = (SetIterIdx const*)b;
 
    assert(key     != NULL);
    assert(order   != NULL);
@@ -380,7 +380,7 @@ static int order_idx_cmp(const void* a, const void* b)
 /* return the index of the element, -1 if not found
  */
 expects_NONNULL 
-static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_multi_lookup_idx(Set const* set, Tuple const* tuple, int offset)
 {
    SetIterIdx* idx;
    ptrdiff_t   result;
@@ -432,7 +432,7 @@ static SetIterIdx set_multi_lookup_idx(const Set* set, const Tuple* tuple, int o
  */
 expects_NONNULL 
 static void set_multi_get_tuple(
-   const Set* set,
+   Set const* set,
    SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
@@ -458,8 +458,8 @@ static void set_multi_get_tuple(
  */
 expects_NONNULL1 returns_NONNULL 
 static SetIter* set_multi_iter_init(
-   const Set*   set,
-   const Tuple* pattern,
+   Set const*   set,
+   Tuple const* pattern,
    int          offset)
 {
    int          m;
@@ -629,7 +629,7 @@ static SetIter* set_multi_iter_init(
 expects_NONNULL 
 static bool set_multi_iter_next(
    SetIter*   iter,
-   const Set* set,
+   Set const* set,
    Tuple*     tuple,
    int        offset)
 {
@@ -658,7 +658,7 @@ static bool set_multi_iter_next(
  */
 /*ARGSUSED*/
 expects_NONNULL
-static void set_multi_iter_exit(SetIter* iter, is_UNUSED const Set* set)
+static void set_multi_iter_exit(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_multi_iter_is_valid(iter));
 
@@ -676,7 +676,7 @@ static void set_multi_iter_exit(SetIter* iter, is_UNUSED const Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void set_multi_iter_reset(SetIter* iter, is_UNUSED const Set* set)
+static void set_multi_iter_reset(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_multi_iter_is_valid(iter));
    

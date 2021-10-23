@@ -39,7 +39,7 @@ extern mpq_t const_one;
 extern mpq_t const_minus_one;
 
 //lint -sem(gmp_str2mpq, inout(1), 1p, 2p) 
-extern void gmp_str2mpq(mpq_t value, const char* num);
+extern void gmp_str2mpq(mpq_t value, char const* num);
 //lint -sem(gmp_print, inout(1), 1p == 1, 2p) 
 extern void gmp_print_mpq(FILE* fp, const mpq_t qval);
 extern void gmp_init(bool verb, bool with_management);

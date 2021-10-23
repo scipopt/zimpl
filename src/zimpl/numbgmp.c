@@ -188,7 +188,7 @@ Numb* numb_new(void)
    return numb;
 }
 
-Numb* numb_new_ascii(const char* val)
+Numb* numb_new_ascii(char const* val)
 {
    Numb* numb = numb_new();
    
@@ -275,12 +275,12 @@ void numb_free(Numb* numb)
    store_count--;   
 }
 
-bool numb_is_valid(const Numb* numb)
+bool numb_is_valid(Numb const* numb)
 {
    return numb != NULL && SID_ok(numb, NUMB_SID);
 }
 
-Numb* numb_copy(const Numb* source)
+Numb* numb_copy(Numb const* source)
 {
    Numb* numb = numb_new();
 
@@ -294,7 +294,7 @@ Numb* numb_copy(const Numb* source)
 
 /* true wenn gleich, sonst false
  */
-bool numb_equal(const Numb* numb_a, const Numb* numb_b)
+bool numb_equal(Numb const* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -304,7 +304,7 @@ bool numb_equal(const Numb* numb_a, const Numb* numb_b)
 
 /* Return a positive value if op1 > op2, zero if op1 = op2, and a negative value if op1 < op2
  */
-int numb_cmp(const Numb* numb_a, const Numb* numb_b)
+int numb_cmp(Numb const* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -312,7 +312,7 @@ int numb_cmp(const Numb* numb_a, const Numb* numb_b)
    return mpq_cmp(numb_a->value.numb, numb_b->value.numb);
 }
 
-void numb_set(Numb* numb_a, const Numb* numb_b)
+void numb_set(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -320,7 +320,7 @@ void numb_set(Numb* numb_a, const Numb* numb_b)
    mpq_set(numb_a->value.numb, numb_b->value.numb);
 }
 
-void numb_add(Numb* numb_a, const Numb* numb_b)
+void numb_add(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -328,7 +328,7 @@ void numb_add(Numb* numb_a, const Numb* numb_b)
    mpq_add(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
 }
 
-Numb* numb_new_add(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_add(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -341,7 +341,7 @@ Numb* numb_new_add(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_sub(Numb* numb_a, const Numb* numb_b)
+void numb_sub(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -349,7 +349,7 @@ void numb_sub(Numb* numb_a, const Numb* numb_b)
    mpq_sub(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
 }
 
-Numb* numb_new_sub(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_sub(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -362,7 +362,7 @@ Numb* numb_new_sub(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_mul(Numb* numb_a, const Numb* numb_b)
+void numb_mul(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -370,7 +370,7 @@ void numb_mul(Numb* numb_a, const Numb* numb_b)
    mpq_mul(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
 }
 
-Numb* numb_new_mul(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_mul(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -383,7 +383,7 @@ Numb* numb_new_mul(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_div(Numb* numb_a, const Numb* numb_b)
+void numb_div(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -391,7 +391,7 @@ void numb_div(Numb* numb_a, const Numb* numb_b)
    mpq_div(numb_a->value.numb, numb_a->value.numb, numb_b->value.numb);
 }
 
-Numb* numb_new_div(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_div(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -404,7 +404,7 @@ Numb* numb_new_div(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_intdiv(Numb* numb_a, const Numb* numb_b)
+void numb_intdiv(Numb* numb_a, Numb const* numb_b)
 {
    mpz_t q;
 
@@ -419,7 +419,7 @@ void numb_intdiv(Numb* numb_a, const Numb* numb_b)
    mpz_clear(q);
 }
 
-Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_intdiv(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
    mpz_t q;
@@ -438,7 +438,7 @@ Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_mod(Numb* numb_a, const Numb* numb_b)
+void numb_mod(Numb* numb_a, Numb const* numb_b)
 {
    mpz_t a;
    mpz_t b;
@@ -461,7 +461,7 @@ void numb_mod(Numb* numb_a, const Numb* numb_b)
    mpz_clear(a);
 }
 
-Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_mod(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
    mpz_t a;
@@ -489,7 +489,7 @@ Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-Numb* numb_new_pow(const Numb* base, int expo)
+Numb* numb_new_pow(Numb const* base, int expo)
 {
    assert(expo > INT_MIN);
 
@@ -569,7 +569,7 @@ void numb_sgn(Numb* numb)
    }
 }
 
-int numb_get_sgn(const Numb* numb)
+int numb_get_sgn(Numb const* numb)
 {
    assert(numb_is_valid(numb));
 
@@ -623,7 +623,7 @@ void numb_floor(Numb* numb)
    mpz_clear(q);
 }
 
-Numb* numb_new_log(const Numb* numb)
+Numb* numb_new_log(Numb const* numb)
 {
    char   temp[256];
    double d;
@@ -644,7 +644,7 @@ Numb* numb_new_log(const Numb* numb)
    return numb_new_ascii(temp);
 }
 
-Numb* numb_new_sqrt(const Numb* numb)
+Numb* numb_new_sqrt(Numb const* numb)
 {
    char   temp[256];
    double d;
@@ -665,7 +665,7 @@ Numb* numb_new_sqrt(const Numb* numb)
    return numb_new_ascii(temp);
 }
 
-Numb* numb_new_exp(const Numb* numb)
+Numb* numb_new_exp(Numb const* numb)
 {
    char temp[32];
    
@@ -676,7 +676,7 @@ Numb* numb_new_exp(const Numb* numb)
    return numb_new_ascii(temp);
 }
 
-Numb* numb_new_ln(const Numb* numb)
+Numb* numb_new_ln(Numb const* numb)
 {
    char   temp[256];
    double d;
@@ -697,7 +697,7 @@ Numb* numb_new_ln(const Numb* numb)
    return numb_new_ascii(temp);
 }
 
-Numb* numb_new_rand(const Numb* mini, const Numb* maxi)
+Numb* numb_new_rand(Numb const* mini, Numb const* maxi)
 {
    Numb* numb = numb_new();
    mpq_t maxint;
@@ -725,28 +725,28 @@ Numb* numb_new_rand(const Numb* mini, const Numb* maxi)
    return numb;
 }
 
-double numb_todbl(const Numb* numb)
+double numb_todbl(Numb const* numb)
 {
    assert(numb_is_valid(numb));
    
    return mpq_get_d(numb->value.numb);
 }
 
-void numb_get_mpq(const Numb* numb, mpq_t value)
+void numb_get_mpq(Numb const* numb, mpq_t value)
 {
    assert(numb_is_valid(numb));
    
    mpq_set(value, numb->value.numb);
 }
 
-void numb_print(FILE* fp, const Numb* numb)
+void numb_print(FILE* fp, Numb const* numb)
 {
    assert(numb_is_valid(numb));
 
    fprintf(fp, "%.16g", mpq_get_d(numb->value.numb));
 }
 
-unsigned int numb_hash(const Numb* numb)
+unsigned int numb_hash(Numb const* numb)
 {
    union
    {
@@ -766,7 +766,7 @@ unsigned int numb_hash(const Numb* numb)
    return hcode;
 }
 
-char* numb_tostr(const Numb* numb)
+char* numb_tostr(Numb const* numb)
 {
    char* str;
    
@@ -781,27 +781,27 @@ char* numb_tostr(const Numb* numb)
    return str;
 }
 
-const Numb* numb_zero()
+Numb const* numb_zero()
 {
    return numb_const_zero;
 }
 
-const Numb* numb_one()
+Numb const* numb_one()
 {
    return numb_const_one;
 }
 
-const Numb* numb_minusone()
+Numb const* numb_minusone()
 {
    return numb_const_minusone;
 }
 
-const Numb* numb_unknown()
+Numb const* numb_unknown()
 {
    return numb_const_unknown;
 }
 
-bool numb_is_int(const Numb* numb)
+bool numb_is_int(Numb const* numb)
 {
    /* Do we have an integer ?
     */
@@ -815,7 +815,7 @@ bool numb_is_int(const Numb* numb)
    return false;
 }
 
-int numb_toint(const Numb* numb)
+int numb_toint(Numb const* numb)
 {
    assert(numb_is_valid(numb));
    assert(numb_is_int(numb));

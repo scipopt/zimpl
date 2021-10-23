@@ -60,9 +60,9 @@
 #include "zimpl/xlpglue.h"
 #include "zimpl/strstore.h"
 
-static int checked_eval_numb_toint(const CodeNode* self, int no, const char* errmsg)
+static int checked_eval_numb_toint(CodeNode const* self, int no, char const* errmsg)
 {
-   const Numb* numb;
+   Numb const* numb;
 
    assert(self   != NULL);
    assert(no     >= 0);
@@ -98,7 +98,7 @@ CodeNode* i_nop(CodeNode* self)
 
 CodeNode* i_subto(CodeNode* self)
 {
-   const char* name;
+   char const* name;
    
    Trace("i_subto");
    
@@ -184,7 +184,7 @@ static void addcon_as_qubo(
          
    for(int i = 0; i < telems; i++)
    {
-      const Mono* mono1 = term_get_element(term, i);
+      Mono const* mono1 = term_get_element(term, i);
    
       assert(mono_is_linear(mono1));
 
@@ -224,8 +224,8 @@ static void addcon_as_qubo(
 CodeNode* i_constraint(CodeNode* self)
 {
    Term*        term;
-   const Term*  term_lhs;
-   const Term*  term_rhs;
+   Term const*  term_lhs;
+   Term const*  term_rhs;
    ConType      type;
    Numb*        rhs;
    unsigned int flags;
@@ -353,7 +353,7 @@ CodeNode* i_rangeconst(CodeNode* self)
 
 CodeNode* i_sos(CodeNode* self)
 {
-   const char* name;
+   char const* name;
    
    Trace("i_sos");
    
@@ -378,9 +378,9 @@ CodeNode* i_sos(CodeNode* self)
 
 CodeNode* i_soset(CodeNode* self)
 {
-   const Term*  term;
-   const Numb*  typenumb;
-   const Numb*  priority;
+   Term const*  term;
+   Numb const*  typenumb;
+   Numb const*  priority;
    SosType      type;
    int          ret;
 
@@ -425,7 +425,7 @@ CodeNode* i_soset(CodeNode* self)
 }
 
 static bool has_pattern_name(
-   const Tuple* pattern)
+   Tuple const* pattern)
 {
    int dim = tuple_get_dim(pattern);
    int i;
@@ -438,8 +438,8 @@ static bool has_pattern_name(
 }
 
 static void warn_if_pattern_has_no_name(
-   const CodeNode* self,
-   const Tuple*    pattern)
+   CodeNode const* self,
+   Tuple const*    pattern)
 {
    if (tuple_get_dim(pattern) > 0 && !has_pattern_name(pattern))
    {
@@ -453,9 +453,9 @@ static void warn_if_pattern_has_no_name(
 
 CodeNode* i_forall(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -508,8 +508,8 @@ CodeNode* i_expr_add(CodeNode* self)
       code_value_numb(self, numb_new_add(code_get_numb(child), code_eval_child_numb(self, 1)));
    else
    {
-      const char* s1 = code_get_strg(child);
-      const char* s2 = code_eval_child_strg(self, 1);
+      char const* s1 = code_get_strg(child);
+      char const* s2 = code_eval_child_strg(self, 1);
       char* t        = malloc(strlen(s1) + strlen(s2) + 1);
 
       assert(t != NULL);
@@ -550,7 +550,7 @@ CodeNode* i_expr_mul(CodeNode* self)
 
 CodeNode* i_expr_div(CodeNode* self)
 {
-   const Numb* divisor;
+   Numb const* divisor;
    
    Trace("i_expr_div");
 
@@ -572,7 +572,7 @@ CodeNode* i_expr_div(CodeNode* self)
 
 CodeNode* i_expr_mod(CodeNode* self)
 {
-   const Numb* divisor;
+   Numb const* divisor;
    
    Trace("i_expr_mod");
 
@@ -594,7 +594,7 @@ CodeNode* i_expr_mod(CodeNode* self)
 
 CodeNode* i_expr_intdiv(CodeNode* self)
 {
-   const Numb* divisor;
+   Numb const* divisor;
    
    Trace("i_expr_intdiv");
 
@@ -943,7 +943,7 @@ CodeNode* i_expr_fac(CodeNode* self)
 
 CodeNode* i_expr_card(CodeNode* self)
 {
-   const Set* set;
+   Set const* set;
    
    Trace("i_card");
 
@@ -958,8 +958,8 @@ CodeNode* i_expr_card(CodeNode* self)
 
 CodeNode* i_expr_rand(CodeNode* self)
 {
-   const Numb* mini;
-   const Numb* maxi;
+   Numb const* mini;
+   Numb const* maxi;
    
    Trace("i_rand");
 
@@ -1015,13 +1015,13 @@ CodeNode* i_expr_if_else(CodeNode* self)
 
 CodeNode* i_expr_min(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   const Numb*   value;
+   Numb const*   value;
    Numb*         min   = numb_new();
    bool          first = true;
    
@@ -1076,9 +1076,9 @@ CodeNode* i_expr_sglmin(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   const IdxSet* idxset  = code_eval_child_idxset(self, 0);
-   const Set*    set     = idxset_get_set(idxset);
-   const Tuple*  pattern = idxset_get_tuple(idxset);
+   IdxSet const* idxset  = code_eval_child_idxset(self, 0);
+   Set const*    set     = idxset_get_set(idxset);
+   Tuple const*  pattern = idxset_get_tuple(idxset);
    CodeNode*     lexpr   = idxset_get_lexpr(idxset);
    Numb*         min     = numb_new();
    bool          first   = true;
@@ -1110,7 +1110,7 @@ CodeNode* i_expr_sglmin(CodeNode* self)
          
          if (code_get_bool(code_eval(lexpr)))
          {
-            const Numb* value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            Numb const* value = elem_get_numb(tuple_get_elem(tuple, 0));      
             
             if (first || numb_cmp(value, min) < 0)
             {
@@ -1140,13 +1140,13 @@ CodeNode* i_expr_sglmin(CodeNode* self)
 
 CodeNode* i_expr_max(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   const Numb*   value;
+   Numb const*   value;
    Numb*         max   = numb_new();
    bool          first = true;
 
@@ -1201,9 +1201,9 @@ CodeNode* i_expr_sglmax(CodeNode* self)
    
    assert(code_is_valid(self));
 
-   const IdxSet* idxset  = code_eval_child_idxset(self, 0);
-   const Set*    set     = idxset_get_set(idxset);
-   const Tuple*  pattern = idxset_get_tuple(idxset);
+   IdxSet const* idxset  = code_eval_child_idxset(self, 0);
+   Set const*    set     = idxset_get_set(idxset);
+   Tuple const*  pattern = idxset_get_tuple(idxset);
    CodeNode*     lexpr   = idxset_get_lexpr(idxset);
    Numb*         max     = numb_new();
    bool          first   = true;
@@ -1234,7 +1234,7 @@ CodeNode* i_expr_sglmax(CodeNode* self)
          
          if (code_get_bool(code_eval(lexpr)))
          {
-            const Numb* value = elem_get_numb(tuple_get_elem(tuple, 0));      
+            Numb const* value = elem_get_numb(tuple_get_elem(tuple, 0));      
             
             if (first || numb_cmp(value, max) > 0)
             {
@@ -1263,9 +1263,9 @@ CodeNode* i_expr_sglmax(CodeNode* self)
 
 CodeNode* i_expr_sum(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -1303,9 +1303,9 @@ CodeNode* i_expr_sum(CodeNode* self)
 
 CodeNode* i_expr_prod(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -1343,7 +1343,7 @@ CodeNode* i_expr_prod(CodeNode* self)
 
 CodeNode* i_expr_min2(CodeNode* self)
 {
-   const List*   list;
+   List const*   list;
    Numb*         min;
    ListElem*     le    = NULL;
    int           n;
@@ -1361,8 +1361,8 @@ CodeNode* i_expr_min2(CodeNode* self)
 
    while(n-- > 0)
    {
-      const Elem* elem = list_get_elem(list, &le);
-      const Numb* numb;
+      Elem const* elem = list_get_elem(list, &le);
+      Numb const* numb;
 
       assert(elem != NULL);
       
@@ -1391,7 +1391,7 @@ CodeNode* i_expr_min2(CodeNode* self)
 
 CodeNode* i_expr_max2(CodeNode* self)
 {
-   const List*   list;
+   List const*   list;
    Numb*         max;
    ListElem*     le    = NULL;
    int           n;
@@ -1409,8 +1409,8 @@ CodeNode* i_expr_max2(CodeNode* self)
    
    while(n-- > 0)
    {
-      const Numb* numb;
-      const Elem* elem = list_get_elem(list, &le);
+      Numb const* numb;
+      Elem const* elem = list_get_elem(list, &le);
 
       assert(elem != NULL);
       
@@ -1439,8 +1439,8 @@ CodeNode* i_expr_max2(CodeNode* self)
 
 CodeNode* i_expr_ord(CodeNode* self)
 {
-   const Set*  set;
-   const Elem* elem;
+   Set const*  set;
+   Elem const* elem;
    Tuple*      tuple;
    int         tno;
    int         cno;
@@ -1500,7 +1500,7 @@ CodeNode* i_expr_length(CodeNode* self)
 
 CodeNode* i_expr_substr(CodeNode* self)
 {
-   const char* strg;
+   char const* strg;
    int         beg;
    int         len;
    int         maxlen;
@@ -1801,8 +1801,8 @@ CodeNode* i_bool_lt(CodeNode* self)
 
 CodeNode* i_bool_seq(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
       
    Trace("i_bool_seq");
 
@@ -1818,8 +1818,8 @@ CodeNode* i_bool_seq(CodeNode* self)
 
 CodeNode* i_bool_sneq(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
 
    Trace("i_bool_sneq");
 
@@ -1835,8 +1835,8 @@ CodeNode* i_bool_sneq(CodeNode* self)
 
 CodeNode* i_bool_subs(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
 
    Trace("i_bool_subs");
 
@@ -1852,8 +1852,8 @@ CodeNode* i_bool_subs(CodeNode* self)
 
 CodeNode* i_bool_sseq(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
 
    Trace("i_bool_sseq");
 
@@ -1868,9 +1868,9 @@ CodeNode* i_bool_sseq(CodeNode* self)
 }
 
 static void check_tuple_set_compatible(
-   const CodeNode* self,
-   const Tuple*    tuple_a,
-   const Set*      set_b)
+   CodeNode const* self,
+   Tuple const*    tuple_a,
+   Set const*      set_b)
 {
    Tuple*      tuple_b;
    int         i;
@@ -1921,8 +1921,8 @@ static void check_tuple_set_compatible(
 
 CodeNode* i_bool_is_elem(CodeNode* self)
 {
-   const Tuple* tuple;
-   const Set*   set;
+   Tuple const* tuple;
+   Set const*   set;
    
    Trace("i_bool_is_elem");
 
@@ -1940,9 +1940,9 @@ CodeNode* i_bool_is_elem(CodeNode* self)
 
 CodeNode* i_bool_exists(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -1983,8 +1983,8 @@ CodeNode* i_bool_exists(CodeNode* self)
  */
 CodeNode* i_set_new_tuple(CodeNode* self)
 {
-   const List*  list;
-   const Tuple* tuple;
+   List const*  list;
+   Tuple const* tuple;
    ListElem*    le    = NULL;
    int          dim;
    
@@ -2057,8 +2057,8 @@ CodeNode* i_set_new_tuple(CodeNode* self)
 
 CodeNode* i_set_new_elem(CodeNode* self)
 {
-   const List*  list;
-   const Elem*  elem;
+   List const*  list;
+   Elem const*  elem;
    ListElem*    le    = NULL;
    
    Trace("i_set_new_elem");
@@ -2113,10 +2113,10 @@ CodeNode* i_set_empty(CodeNode* self)
 }
 
 static void check_sets_compatible(
-   const CodeNode* self,
-   const Set*      set_a,
-   const Set*      set_b,
-   const char*     op_name)
+   CodeNode const* self,
+   Set const*      set_a,
+   Set const*      set_b,
+   char const*     op_name)
 {
    Tuple*      tuple_a;
    Tuple*      tuple_b;
@@ -2161,8 +2161,8 @@ static void check_sets_compatible(
 
 CodeNode* i_set_union(CodeNode* self)
 {
-   const Set*  set_a;
-   const Set*  set_b;
+   Set const*  set_a;
+   Set const*  set_b;
    
    Trace("i_set_union");
 
@@ -2180,15 +2180,15 @@ CodeNode* i_set_union(CodeNode* self)
 
 CodeNode* i_set_union2(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    CodeNode*     lexpr;
    SetIter*      iter;
    Tuple*        tuple;
    Set*          set_r = NULL;
    Set*          set_old;
-   const Set*    set_new;
+   Set const*    set_new;
    
    Trace("i_set_union2");
    
@@ -2242,8 +2242,8 @@ CodeNode* i_set_union2(CodeNode* self)
 
 CodeNode* i_set_minus(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
    
    Trace("i_set_minus");
 
@@ -2265,8 +2265,8 @@ CodeNode* i_set_inter(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   const Set* set_a = code_eval_child_set(self, 0);
-   const Set* set_b = code_eval_child_set(self, 1);
+   Set const* set_a = code_eval_child_set(self, 0);
+   Set const* set_b = code_eval_child_set(self, 1);
 
    check_sets_compatible(self, set_a, set_b, "Intersection");
 
@@ -2277,15 +2277,15 @@ CodeNode* i_set_inter(CodeNode* self)
 
 CodeNode* i_set_inter2(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    CodeNode*     lexpr;
    SetIter*      iter;
    Tuple*        tuple;
    Set*          set_r = NULL;
    Set*          set_old;
-   const Set*    set_new;
+   Set const*    set_new;
    
    Trace("i_set_inter2");
    
@@ -2342,8 +2342,8 @@ CodeNode* i_set_inter2(CodeNode* self)
 
 CodeNode* i_set_sdiff(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
    
    Trace("i_set_sdiff");
 
@@ -2361,8 +2361,8 @@ CodeNode* i_set_sdiff(CodeNode* self)
 
 CodeNode* i_set_cross(CodeNode* self)
 {
-   const Set* set_a;
-   const Set* set_b;
+   Set const* set_a;
+   Set const* set_b;
    
    Trace("i_set_cross");
 
@@ -2433,7 +2433,7 @@ CodeNode* i_set_range2(CodeNode* self)
    return self;
 }
 
-static Set* heap_to_set(const CodeNode* self, Heap* heap, int dim)
+static Set* heap_to_set(CodeNode const* self, Heap* heap, int dim)
 {
    assert(code_is_valid(self));
    assert(heap_is_valid(heap));
@@ -2491,13 +2491,13 @@ static int argmax_entry_cmp_ascending(HeapData a, HeapData b)
 
 static CodeNode* do_set_argminmax(CodeNode* self, bool is_min)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
-   const Numb*   value;
+   Numb const*   value;
    Heap*         heap;  
    int           size;
    
@@ -2591,8 +2591,8 @@ CodeNode* i_set_argmax(CodeNode* self)
 
 CodeNode* i_set_proj(CodeNode* self)
 {
-   const Set*   set_a;
-   const Tuple* tuple;
+   Set const*   set_a;
+   Tuple const* tuple;
    int          dim;
    int          i;
    
@@ -2606,8 +2606,8 @@ CodeNode* i_set_proj(CodeNode* self)
    
    for(i = 0; i < tuple_get_dim(tuple); i++)
    {
-      const Elem* elem = tuple_get_elem(tuple, i);
-      const Numb* numb;
+      Elem const* elem = tuple_get_elem(tuple, i);
+      Numb const* numb;
       int         idx;
 
       /* Are there only number in the selection tuple ?
@@ -2649,7 +2649,7 @@ CodeNode* i_set_proj(CodeNode* self)
 
 CodeNode* i_set_indexset(CodeNode* self)
 {
-   const Symbol* sym;
+   Symbol const* sym;
    
    Trace("i_set_indexset");
 
@@ -2664,7 +2664,7 @@ CodeNode* i_set_indexset(CodeNode* self)
    return self;
 }
 
-static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
+static int noneval_get_dim(CodeNode const* code_cexpr_or_tuple)
 {
    assert(code_is_valid(code_cexpr_or_tuple));
 
@@ -2674,7 +2674,7 @@ static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
     */
    if (code_get_inst(code_cexpr_or_tuple) == (Inst)i_tuple_new)
    {
-      for(const CodeNode* code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
+      for(CodeNode const* code_cexpr_list = code_get_child(code_cexpr_or_tuple, 0);
           code_get_inst(code_cexpr_list) == (Inst)i_elem_list_add;
           code_cexpr_list = code_get_child(code_cexpr_list, 0))
       {
@@ -2686,9 +2686,9 @@ static int noneval_get_dim(const CodeNode* code_cexpr_or_tuple)
 
 CodeNode* i_set_expr(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    iset;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    iset;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -2800,7 +2800,7 @@ CodeNode* i_set_expr(CodeNode* self)
  */
 CodeNode* i_tuple_new(CodeNode* self)
 {
-   const List* list  = code_eval_child_list(self, 0);
+   List const* list  = code_eval_child_list(self, 0);
    int         n     = list_get_elems(list);
    Tuple*      tuple = tuple_new(n);
    ListElem*   le    = NULL;
@@ -2812,7 +2812,7 @@ CodeNode* i_tuple_new(CodeNode* self)
    
    for(i = 0; i < n; i++)
    {
-      const Elem* elem = list_get_elem(list, &le);
+      Elem const* elem = list_get_elem(list, &le);
 
       assert(elem != NULL);
 
@@ -2838,13 +2838,13 @@ CodeNode* i_tuple_empty(CodeNode* self)
  * Symbol Funktionen
  * ----------------------------------------------------------------------------
  */
-static Set* set_from_idxset(const IdxSet* idxset)
+static Set* set_from_idxset(IdxSet const* idxset)
 {
-   const Tuple*  pattern;
+   Tuple const*  pattern;
    Tuple*        tuple;
    Set*          newset;
    SetIter*      iter;
-   const Set*    set;
+   Set const*    set;
    CodeNode*     lexpr;
    List*         list  = NULL;
    
@@ -2909,12 +2909,12 @@ static Set* set_from_idxset(const IdxSet* idxset)
 
 CodeNode* i_newsym_set1(CodeNode* self)
 {
-   const char*   name;
-   const IdxSet* idxset;
+   char const*   name;
+   IdxSet const* idxset;
    Set*          iset;
    Symbol*       sym;
 
-   const Tuple*  pattern;
+   Tuple const*  pattern;
    Tuple*        tuple;
    SetIter*      iter;
    
@@ -2960,11 +2960,11 @@ CodeNode* i_newsym_set1(CodeNode* self)
    
 CodeNode* i_newsym_set2(CodeNode* self)
 {
-   const char*   name;
-   const IdxSet* idxset;
+   char const*   name;
+   IdxSet const* idxset;
    Set*          iset;
    Symbol*       sym;
-   const List*   list;
+   List const*   list;
    ListElem*     lelem;
    int           count;
    int           i;
@@ -3004,8 +3004,8 @@ CodeNode* i_newsym_set2(CodeNode* self)
    
    for(i = 0; i < count; i++)
    {
-      const Entry* entry  = list_get_entry(list, &lelem);
-      const Tuple* tuple  = entry_get_tuple(entry);
+      Entry const* entry  = list_get_entry(list, &lelem);
+      Tuple const* tuple  = entry_get_tuple(entry);
 #if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
@@ -3039,11 +3039,11 @@ CodeNode* i_newsym_set2(CodeNode* self)
 }
 
 static void insert_param_list_by_index(
-   const CodeNode* self,
+   CodeNode const* self,
    Symbol*         sym,
-   const Set*      iset,
-   const Tuple*    pattern,
-   const List*     list)
+   Set const*      iset,
+   Tuple const*    pattern,
+   List const*     list)
 {
    SetIter*      iter;
    ListElem*     le_idx = NULL;
@@ -3059,7 +3059,7 @@ static void insert_param_list_by_index(
    {
       /* bool is not needed, because iset has only true elems
        */
-      const Entry* entry = list_get_entry(list, &le_idx);
+      Entry const* entry = list_get_entry(list, &le_idx);
 
       switch(entry_get_type(entry))
       {
@@ -3105,10 +3105,10 @@ static void insert_param_list_by_index(
 }
 
 static void insert_param_list_by_list(
-   const CodeNode* self,
+   CodeNode const* self,
    Symbol*         sym,
-   const Set*      iset,
-   const List*     list)
+   Set const*      iset,
+   List const*     list)
 {
    ListElem*     le_idx = NULL;
    int           list_entries;
@@ -3118,8 +3118,8 @@ static void insert_param_list_by_list(
    
    for(i = 0; i < list_entries; i++)
    {
-      const Entry* entry  = list_get_entry(list, &le_idx);
-      const Tuple* tuple  = entry_get_tuple(entry);
+      Entry const* entry  = list_get_entry(list, &le_idx);
+      Tuple const* tuple  = entry_get_tuple(entry);
 #if 0
       if (set_get_dim(iset) != tuple_get_dim(tuple))
       {
@@ -3158,17 +3158,17 @@ static void insert_param_list_by_list(
  */
 CodeNode* i_newsym_para1(CodeNode* self)
 {
-   const char*   name;
-   const IdxSet* idxset;
+   char const*   name;
+   IdxSet const* idxset;
    Set*          iset;
-   const List*   list;
+   List const*   list;
    CodeNode*     child3;
-   const Entry*  deflt = ENTRY_NULL;
+   Entry const*  deflt = ENTRY_NULL;
    int           list_entries;
 
    ListElem*     le_idx;
-   const Entry*  entry;
-   const Tuple*  tuple;
+   Entry const*  entry;
+   Tuple const*  tuple;
    
    Trace("i_newsym_para1");
 
@@ -3264,13 +3264,13 @@ CodeNode* i_newsym_para1(CodeNode* self)
  */
 CodeNode* i_newsym_para2(CodeNode* self)
 {
-   const char*   name;
+   char const*   name;
    Set*          iset;
-   const IdxSet* idxset;
+   IdxSet const* idxset;
    Symbol*       sym;
    Entry*        entry;
    Tuple*        tuple;
-   const Tuple*  pattern;
+   Tuple const*  pattern;
    SetIter*      iter;
    int           count = 0;
    
@@ -3351,12 +3351,12 @@ CodeNode* i_newsym_para2(CodeNode* self)
 
 CodeNode* i_newsym_var(CodeNode* self)
 {
-   const char*   name;
-   const IdxSet* idxset;
+   char const*   name;
+   IdxSet const* idxset;
    Set*          iset;
    Symbol*       sym;
    Tuple*        tuple;
-   const Tuple*  pattern;
+   Tuple const*  pattern;
    VarClass      varclass;
    SetIter*      iter;
    Numb*         temp;
@@ -3379,8 +3379,8 @@ CodeNode* i_newsym_var(CodeNode* self)
    {      
       Bound* lower;
       Bound* upper;
-      const Numb* priority;
-      const Numb* startval;
+      Numb const* priority;
+      Numb const* startval;
       
       local_install_tuple(pattern, tuple);
 
@@ -3489,9 +3489,9 @@ CodeNode* i_newsym_var(CodeNode* self)
 
 CodeNode* i_symbol_deref(CodeNode* self)
 {
-   const Symbol* sym;
-   const Tuple*  tuple;
-   const Entry*  entry;
+   Symbol const* sym;
+   Tuple const*  tuple;
+   Entry const*  entry;
    Term*         term;
    int           i;
    
@@ -3508,7 +3508,7 @@ CodeNode* i_symbol_deref(CodeNode* self)
 
    for(i = 0; i < tuple_get_dim(tuple); i++)
    {
-      const Elem* elem = tuple_get_elem(tuple, i);
+      Elem const* elem = tuple_get_elem(tuple, i);
 
       /* Are there any unresolved names in the tuple?
        */
@@ -3558,8 +3558,8 @@ CodeNode* i_symbol_deref(CodeNode* self)
 
 CodeNode* i_term_mul(CodeNode* self)
 {
-   const Term* term_a;
-   const Term* term_b;
+   Term const* term_a;
+   Term const* term_b;
 
    assert(code_is_valid(self));
 
@@ -3574,7 +3574,7 @@ CodeNode* i_term_mul(CodeNode* self)
 CodeNode* i_term_power(CodeNode* self)
 {
    int           power;
-   const Term*   term;
+   Term const*   term;
    Term*         term_result;
    Term*         term_temp;
    
@@ -3633,9 +3633,9 @@ CodeNode* i_newdef(CodeNode* self)
 
 CodeNode* i_define_deref(CodeNode* self)
 {
-   const Define* def;
-   const Tuple*  tuple;
-   const Tuple*  param;
+   Define const* def;
+   Tuple const*  tuple;
+   Tuple const*  param;
    int           i;
    
    Trace("i_define_deref");
@@ -3694,7 +3694,7 @@ CodeNode* i_define_deref(CodeNode* self)
  */
 CodeNode* i_set_idxset(CodeNode* self)
 {
-   const IdxSet* idxset;
+   IdxSet const* idxset;
 
    Trace("i_set_idxset");
 
@@ -3712,7 +3712,7 @@ CodeNode* i_idxset_new(CodeNode* self)
    Tuple*       tuple;
    Tuple*       t0;
    CodeNode*    lexpr;
-   const Set*   set;
+   Set const*   set;
    int          dim;
    bool         is_unrestricted;
          
@@ -3840,8 +3840,8 @@ CodeNode* i_idxset_pseudo_new(CodeNode* self)
  */
 CodeNode* i_local_deref(CodeNode* self)
 {
-   const char* name;
-   const Elem* elem;
+   char const* name;
+   Elem const* elem;
    
    Trace("i_local_deref");
    
@@ -3876,7 +3876,7 @@ CodeNode* i_local_deref(CodeNode* self)
 CodeNode* i_term_coeff(CodeNode* self)
 {
    Term*       term;
-   const Numb* coeff;
+   Numb const* coeff;
    
    Trace("i_term_coeff");
    
@@ -3895,7 +3895,7 @@ CodeNode* i_term_coeff(CodeNode* self)
 CodeNode* i_term_const(CodeNode* self)
 {
    Term*       term;
-   const Numb* numb;
+   Numb const* numb;
    
    Trace("i_term_const");
    
@@ -3913,7 +3913,7 @@ CodeNode* i_term_const(CodeNode* self)
 
 CodeNode* i_term_add(CodeNode* self)
 {
-   const Term* term_b;
+   Term const* term_b;
    CodeNode*   child0;
 
    Trace("i_term_add");
@@ -3942,8 +3942,8 @@ CodeNode* i_term_add(CodeNode* self)
 
 CodeNode* i_term_sub(CodeNode* self)
 {
-   const Term* term_a;
-   const Term* term_b;
+   Term const* term_a;
+   Term const* term_b;
    
    Trace("i_term_sub");
    
@@ -3959,9 +3959,9 @@ CodeNode* i_term_sub(CodeNode* self)
 
 CodeNode* i_term_sum(CodeNode* self)
 {
-   const IdxSet* idxset;
-   const Set*    set;
-   const Tuple*  pattern;
+   IdxSet const* idxset;
+   Set const*    set;
+   Tuple const*  pattern;
    Tuple*        tuple;
    CodeNode*     lexpr;
    SetIter*      iter;
@@ -4001,7 +4001,7 @@ CodeNode* i_term_sum(CodeNode* self)
 CodeNode* i_term_expr(CodeNode* self)
 {
    Term*       term;
-   const Numb* numb;
+   Numb const* numb;
    
    Trace("i_term_expr");
    
@@ -4023,7 +4023,7 @@ CodeNode* i_term_expr(CodeNode* self)
  */
 CodeNode* i_entry(CodeNode* self)
 {
-   const Tuple* tuple;
+   Tuple const* tuple;
    Entry*       entry;
    CodeNode*    child;
    
@@ -4152,8 +4152,8 @@ CodeNode* i_elem_list_add(CodeNode* self)
    else
    {
       ListElem*   l = NULL;
-      const List* head_list;
-      const Elem* celem;
+      List const* head_list;
+      Elem const* celem;
       
       head_list = code_get_list(code_eval(node));
       
@@ -4181,7 +4181,7 @@ CodeNode* i_tuple_list_new(CodeNode* self)
 CodeNode* i_tuple_list_add(CodeNode* self)
 {
    CodeNode*    node;
-   const Tuple* tuple;
+   Tuple const* tuple;
    List*        list;
    
    Trace("i_tuple_list_add2");
@@ -4207,7 +4207,7 @@ CodeNode* i_tuple_list_add(CodeNode* self)
    else
    {
       ListElem*   l = NULL;
-      const List* head_list;
+      List const* head_list;
       
       head_list = code_get_list(code_eval(node));
       
@@ -4234,7 +4234,7 @@ CodeNode* i_entry_list_new(CodeNode* self)
 
 CodeNode* i_entry_list_add(CodeNode* self)
 {
-   const Entry* entry;
+   Entry const* entry;
    List*        list;
    CodeNode*    node;
    
@@ -4261,7 +4261,7 @@ CodeNode* i_entry_list_add(CodeNode* self)
    else
    {
       ListElem*   l = NULL;
-      const List* head_list;
+      List const* head_list;
       
       head_list = code_get_list(code_eval(node));
       
@@ -4275,7 +4275,7 @@ CodeNode* i_entry_list_add(CodeNode* self)
 
 CodeNode* i_entry_list_subsets(CodeNode* self)
 {
-   const Set* set;
+   Set const* set;
    List*      list = NULL;
    int        subset_size_from;
    int        subset_size_to;
@@ -4329,7 +4329,7 @@ CodeNode* i_entry_list_subsets(CodeNode* self)
 
 CodeNode* i_entry_list_powerset(CodeNode* self)
 {
-   const Set* set;
+   Set const* set;
    List*      list = NULL;
    SetIterIdx idx  = 0;
    int        i;
@@ -4366,8 +4366,8 @@ CodeNode* i_list_matrix(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   const List* head_list  = code_eval_child_list(self, 0);
-   const List* body_list  = code_eval_child_list(self, 1);
+   List const* head_list  = code_eval_child_list(self, 0);
+   List const* body_list  = code_eval_child_list(self, 1);
    List*       list       = NULL;
    ListElem*   le_body    = NULL;
    int         head_count = list_get_elems(head_list);
@@ -4379,8 +4379,8 @@ CodeNode* i_list_matrix(CodeNode* self)
 
    for(int i = 0; i < body_count; i += 2)
    {
-      const List* idx_list  = list_get_list(body_list, &le_body);
-      const List* val_list  = list_get_list(body_list, &le_body);
+      List const* idx_list  = list_get_list(body_list, &le_body);
+      List const* val_list  = list_get_list(body_list, &le_body);
       int         idx_count = list_get_elems(idx_list);
       ListElem*   le_head   = NULL;
       ListElem*   le_val    = NULL;
@@ -4486,8 +4486,8 @@ CodeNode* i_matrix_list_add(CodeNode* self)
 
 static void objective(CodeNode* self, bool minimize)
 {
-   const char* name;
-   const Term* term;
+   char const* name;
+   Term const* term;
    
    assert(code_is_valid(self));
 
@@ -4557,9 +4557,9 @@ CodeNode* i_print(CodeNode* self)
    {
    case CODE_LIST :
       {
-         const List* list = code_get_list(child);
+         List const* list = code_get_list(child);
          ListElem*   le = NULL;
-         const Elem* elem;
+         Elem const* elem;
 
          assert(list_is_elemlist(list));
          

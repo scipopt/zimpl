@@ -43,19 +43,19 @@ typedef enum bound_type BoundType;
 typedef struct bound    Bound;
 
 //lint -sem(        bound_new, @P >= malloc(1)) 
-extern Bound*       bound_new(BoundType type, const Numb* value) returns_NONNULL;
+extern Bound*       bound_new(BoundType type, Numb const* value) returns_NONNULL;
 //lint -sem(        bound_free, custodial(1), inout(1), 1p == 1) 
 extern void         bound_free(Bound* bound) expects_NONNULL;
 //lint -sem(        bound_is_valid, 1p == 1) 
-extern bool         bound_is_valid(const Bound* bound) is_PURE;
+extern bool         bound_is_valid(Bound const* bound) is_PURE;
 //lint -sem(        bound_copy, 1p == 1, @P >= malloc(1)) 
-extern Bound*       bound_copy(const Bound* source) expects_NONNULL returns_NONNULL;
+extern Bound*       bound_copy(Bound const* source) expects_NONNULL returns_NONNULL;
 //lint -sem(        bound_get_type, 1p == 1) 
-extern BoundType    bound_get_type(const Bound* bound) expects_NONNULL is_PURE;
+extern BoundType    bound_get_type(Bound const* bound) expects_NONNULL is_PURE;
 //lint -sem(        bound_get_value, 1p == 1, @p == 1) 
-extern const Numb*  bound_get_value(const Bound* bound) expects_NONNULL returns_NONNULL is_PURE;
+extern Numb const*  bound_get_value(Bound const* bound) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        bound_print, inout(1), 1p == 1, 2p == 1) 
-extern void         bound_print(FILE* fp, const Bound* bound) expects_NONNULL;
+extern void         bound_print(FILE* fp, Bound const* bound) expects_NONNULL;
 
 #ifdef __cplusplus
 }

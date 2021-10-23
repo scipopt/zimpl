@@ -49,7 +49,7 @@ typedef union read_param_value RParVal;
 union read_param_value
 {
    int         i;
-   const char* s;
+   char const* s;
 };
 
 struct read_param
@@ -62,16 +62,16 @@ struct read_param
 struct read_definition
 {
    SID
-   const char* filename;
-   const char* pattern;  /* this was named "template", but template */   
-   const char* comment;  /* is a C++ reserved word */
-   const char* match;
+   char const* filename;
+   char const* pattern;  /* this was named "template", but template */   
+   char const* comment;  /* is a C++ reserved word */
+   char const* match;
    int         use;
    int         skip;
    int         refc;
 };
 
-RDef* rdef_new(const char* filename, const char* pattern)
+RDef* rdef_new(char const* filename, char const* pattern)
 {
    RDef* rdef = calloc(1, sizeof(*rdef));
 
@@ -108,7 +108,7 @@ void rdef_free(RDef* rdef)
    }
 }
 
-bool rdef_is_valid(const RDef* rdef)
+bool rdef_is_valid(RDef const* rdef)
 {
    return ((rdef != NULL)
       && SID_ok(rdef, RDEF_SID)
@@ -117,7 +117,7 @@ bool rdef_is_valid(const RDef* rdef)
       && (rdef->comment  != NULL));
 }
 
-RDef* rdef_copy(const RDef* source)
+RDef* rdef_copy(RDef const* source)
 {
    RDef* rdef = (RDef*)source;
    
@@ -128,7 +128,7 @@ RDef* rdef_copy(const RDef* source)
    return rdef;
 }
 
-void rdef_set_param(RDef* rdef, const RPar* rpar)
+void rdef_set_param(RDef* rdef, RPar const* rpar)
 {
    assert(rdef_is_valid(rdef));
    assert(rpar_is_valid(rpar));
@@ -153,42 +153,42 @@ void rdef_set_param(RDef* rdef, const RPar* rpar)
    }
 }
 
-const char* rdef_get_filename(const RDef* rdef)
+char const* rdef_get_filename(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
    return rdef->filename;
 }
 
-const char* rdef_get_pattern(const RDef* rdef)
+char const* rdef_get_pattern(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
    return rdef->pattern;
 }
 
-const char* rdef_get_comment(const RDef* rdef)
+char const* rdef_get_comment(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
    return rdef->comment;
 }
 
-const char* rdef_get_match(const RDef* rdef)
+char const* rdef_get_match(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
    return rdef->match;
 }
 
-int rdef_get_use(const RDef* rdef)
+int rdef_get_use(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
    return rdef->use;
 }
 
-int rdef_get_skip(const RDef* rdef)
+int rdef_get_skip(RDef const* rdef)
 {
    assert(rdef_is_valid(rdef));
    
@@ -231,7 +231,7 @@ RPar* rpar_new_use(int use)
    return rpar;
 }
 
-RPar* rpar_new_comment(const char* comment)
+RPar* rpar_new_comment(char const* comment)
 {
    RPar* rpar = calloc(1, sizeof(*rpar));
 
@@ -248,7 +248,7 @@ RPar* rpar_new_comment(const char* comment)
    return rpar;
 }
 
-RPar* rpar_new_match(const char* match)
+RPar* rpar_new_match(char const* match)
 {
    RPar* rpar = calloc(1, sizeof(*rpar));
 
@@ -274,13 +274,13 @@ void rpar_free(RPar* rpar)
    free(rpar);
 }
 
-bool rpar_is_valid(const RPar* rpar)
+bool rpar_is_valid(RPar const* rpar)
 {
    return ((rpar != NULL) && SID_ok(rpar, RPAR_SID)
       && (rpar->type != RPAR_ERR));
 }
 
-RPar* rpar_copy(const RPar* rpar)
+RPar* rpar_copy(RPar const* rpar)
 {
    RPar* rpnew = calloc(1, sizeof(*rpar));
 

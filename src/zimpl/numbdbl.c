@@ -170,7 +170,7 @@ Numb* numb_new(void)
    return numb;
 }
 
-Numb* numb_new_ascii(const char* val)
+Numb* numb_new_ascii(char const* val)
 {
    Numb* numb = numb_new();
    
@@ -215,12 +215,12 @@ void numb_free(Numb* numb)
    store_count--;   
 }
 
-bool numb_is_valid(const Numb* numb)
+bool numb_is_valid(Numb const* numb)
 {
    return numb != NULL && SID_ok(numb, NUMB_SID);
 }
 
-Numb* numb_copy(const Numb* source)
+Numb* numb_copy(Numb const* source)
 {
    Numb* numb = numb_new();
 
@@ -235,7 +235,7 @@ Numb* numb_copy(const Numb* source)
 /* true wenn gleich, sonst false
  */
 /* ??? This not the same as with gmp :-) */
-bool numb_equal(const Numb* numb_a, const Numb* numb_b)
+bool numb_equal(Numb const* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -245,7 +245,7 @@ bool numb_equal(const Numb* numb_a, const Numb* numb_b)
 
 /* Return a positive value if op1 > op2, zero if op1 = op2, and a negative value if op1 < op2
  */
-int numb_cmp(const Numb* numb_a, const Numb* numb_b)
+int numb_cmp(Numb const* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -257,7 +257,7 @@ int numb_cmp(const Numb* numb_a, const Numb* numb_b)
    return 0;
 }
 
-void numb_set(Numb* numb_a, const Numb* numb_b)
+void numb_set(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -265,7 +265,7 @@ void numb_set(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb = numb_b->value.numb;
 }
 
-void numb_add(Numb* numb_a, const Numb* numb_b)
+void numb_add(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -273,7 +273,7 @@ void numb_add(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb += numb_b->value.numb;
 }
 
-Numb* numb_new_add(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_add(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -286,7 +286,7 @@ Numb* numb_new_add(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_sub(Numb* numb_a, const Numb* numb_b)
+void numb_sub(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -294,7 +294,7 @@ void numb_sub(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb -= numb_b->value.numb;
 }
 
-Numb* numb_new_sub(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_sub(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -307,7 +307,7 @@ Numb* numb_new_sub(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_mul(Numb* numb_a, const Numb* numb_b)
+void numb_mul(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -315,7 +315,7 @@ void numb_mul(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb *= numb_b->value.numb;
 }
 
-Numb* numb_new_mul(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_mul(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -328,7 +328,7 @@ Numb* numb_new_mul(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_div(Numb* numb_a, const Numb* numb_b)
+void numb_div(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -336,7 +336,7 @@ void numb_div(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb /= numb_b->value.numb;
 }
 
-Numb* numb_new_div(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_div(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -349,7 +349,7 @@ Numb* numb_new_div(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_intdiv(Numb* numb_a, const Numb* numb_b)
+void numb_intdiv(Numb* numb_a, Numb const* numb_b)
 {
    double q;
 
@@ -359,7 +359,7 @@ void numb_intdiv(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb = trunc(numb_a->value.numb / numb_b->value.numb);
 }
 
-Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_intdiv(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -372,7 +372,7 @@ Numb* numb_new_intdiv(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-void numb_mod(Numb* numb_a, const Numb* numb_b)
+void numb_mod(Numb* numb_a, Numb const* numb_b)
 {
    assert(numb_is_valid(numb_a));
    assert(numb_is_valid(numb_b));
@@ -380,7 +380,7 @@ void numb_mod(Numb* numb_a, const Numb* numb_b)
    numb_a->value.numb = fmod(numb_a->value.numb, numb_b->value.numb);
 }
 
-Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
+Numb* numb_new_mod(Numb const* numb_a, Numb const* numb_b)
 {
    Numb* numb = numb_new();
 
@@ -393,7 +393,7 @@ Numb* numb_new_mod(const Numb* numb_a, const Numb* numb_b)
    return numb;
 }
 
-Numb* numb_new_pow(const Numb* base, int expo)
+Numb* numb_new_pow(Numb const* base, int expo)
 {
    Numb* numb = numb_new();
    
@@ -447,7 +447,7 @@ void numb_sgn(Numb* numb)
       numb->value.numb =  0.0;
 }
 
-int numb_get_sgn(const Numb* numb)
+int numb_get_sgn(Numb const* numb)
 {
    assert(numb_is_valid(numb));
 
@@ -484,7 +484,7 @@ void numb_floor(Numb* numb)
    numb->value.numb = floor(numb->value.numb);
 }
 
-Numb* numb_new_log(const Numb* numb_a)
+Numb* numb_new_log(Numb const* numb_a)
 {
    Numb* numb = numb_new();
 
@@ -505,7 +505,7 @@ Numb* numb_new_log(const Numb* numb_a)
    return numb;
 }
 
-Numb* numb_new_sqrt(const Numb* numb_a)
+Numb* numb_new_sqrt(Numb const* numb_a)
 {
    Numb* numb = numb_new();
    
@@ -526,7 +526,7 @@ Numb* numb_new_sqrt(const Numb* numb_a)
    return numb;
 }
 
-Numb* numb_new_exp(const Numb* numb_a)
+Numb* numb_new_exp(Numb const* numb_a)
 {
    char temp[32];
    Numb* numb = numb_new();
@@ -539,7 +539,7 @@ Numb* numb_new_exp(const Numb* numb_a)
    return numb;
 }
 
-Numb* numb_new_ln(const Numb* numb_a)
+Numb* numb_new_ln(Numb const* numb_a)
 {
    Numb* numb = numb_new();
    
@@ -560,7 +560,7 @@ Numb* numb_new_ln(const Numb* numb_a)
    return numb;
 }
 
-Numb* numb_new_rand(const Numb* mini, const Numb* maxi)
+Numb* numb_new_rand(Numb const* mini, Numb const* maxi)
 {
    Numb* numb = numb_new();
 
@@ -577,21 +577,21 @@ Numb* numb_new_rand(const Numb* mini, const Numb* maxi)
    return numb;
 }
 
-double numb_todbl(const Numb* numb)
+double numb_todbl(Numb const* numb)
 {
    assert(numb_is_valid(numb));
    
    return numb->value.numb;
 }
 
-void numb_print(FILE* fp, const Numb* numb)
+void numb_print(FILE* fp, Numb const* numb)
 {
    assert(numb_is_valid(numb));
 
    fprintf(fp, "%.16g", numb->value.numb);
 }
 
-unsigned int numb_hash(const Numb* numb)
+unsigned int numb_hash(Numb const* numb)
 {
    union
    {
@@ -611,7 +611,7 @@ unsigned int numb_hash(const Numb* numb)
    return hcode;
 }
 
-char* numb_tostr(const Numb* numb)
+char* numb_tostr(Numb const* numb)
 {
    char* str;
    
@@ -626,27 +626,27 @@ char* numb_tostr(const Numb* numb)
    return str;
 }
 
-const Numb* numb_zero()
+Numb const* numb_zero()
 {
    return numb_const_zero;
 }
 
-const Numb* numb_one()
+Numb const* numb_one()
 {
    return numb_const_one;
 }
 
-const Numb* numb_minusone()
+Numb const* numb_minusone()
 {
    return numb_const_minusone;
 }
 
-bool numb_is_int(const Numb* numb)
+bool numb_is_int(Numb const* numb)
 {
    return numb->value.numb == (double)((int)numb->value.numb);
 }
 
-int numb_toint(const Numb* numb)
+int numb_toint(Numb const* numb)
 {
    assert(numb_is_valid(numb));
    assert(numb_is_int(numb));

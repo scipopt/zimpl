@@ -60,41 +60,41 @@ struct mono
 };
 
 //lint -sem(        mono_new, 1P >= 1, 2P >= 1, @P >= malloc(1)) 
-extern Mono*        mono_new(const Numb* coeff, const Entry* entry, MFun fun) expects_NONNULL returns_NONNULL;
+extern Mono*        mono_new(Numb const* coeff, Entry const* entry, MFun fun) expects_NONNULL returns_NONNULL;
 //lint -sem(        mono_is_valid, pure, 1P >= 1) 
-extern bool         mono_is_valid(const Mono* mono) expects_NONNULL is_PURE;
+extern bool         mono_is_valid(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_free, custodial(1), inout(1), 1P >= 1) 
 extern void         mono_free(Mono* mono) expects_NONNULL;
 //lint -sem(        mono_mul_entry, inout(1), 1P >= 1, 2P >= 1) 
-extern void         mono_mul_entry(Mono* mono, const Entry* entry) expects_NONNULL;
+extern void         mono_mul_entry(Mono* mono, Entry const* entry) expects_NONNULL;
 //lint -sem(        mono_copy, 1P >= 1, @P == malloc(1P)) 
-extern Mono*        mono_copy(const Mono* mono) expects_NONNULL returns_NONNULL;
+extern Mono*        mono_copy(Mono const* mono) expects_NONNULL returns_NONNULL;
 //lint -sem(        mono_mul_coeff, inout(1), 1P >= 1, 2P >= 1) 
-extern void         mono_mul_coeff(const Mono* term, const Numb* value) expects_NONNULL;
+extern void         mono_mul_coeff(Mono const* term, Numb const* value) expects_NONNULL;
 //lint -sem(        mono_add_coeff, inout(1), 1P >= 1, 2P >= 1) 
-extern void         mono_add_coeff(const Mono* term, const Numb* value) expects_NONNULL;
+extern void         mono_add_coeff(Mono const* term, Numb const* value) expects_NONNULL;
 //lint -sem(        mono_hash, pure, 1P >= 1) 
-extern unsigned int mono_hash(const Mono* mono) expects_NONNULL is_PURE;
+extern unsigned int mono_hash(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_equal, pure, 1P >= 1, 2P >= 1) 
-extern bool         mono_equal(const Mono* ma, const Mono* mb) expects_NONNULL is_PURE;
+extern bool         mono_equal(Mono const* ma, Mono const* mb) expects_NONNULL is_PURE;
 //lint -sem(        mono_mul, 1P >= 1, 2P >= 1, @P >= malloc(1P)) 
-extern Mono*        mono_mul(const Mono* ma, const Mono* mb) expects_NONNULL returns_NONNULL;
+extern Mono*        mono_mul(Mono const* ma, Mono const* mb) expects_NONNULL returns_NONNULL;
 //lint -sem(        mono_neg, inout(1), 1P >= 1) 
 extern void         mono_neg(Mono* mono) expects_NONNULL;
 //lint -sem(        mono_is_linear, pure, 1P >= 1) 
-extern bool         mono_is_linear(const Mono* mono) expects_NONNULL is_PURE;
+extern bool         mono_is_linear(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_get_degree, pure, 1P >= 1, @n >= 1) 
-extern int          mono_get_degree(const Mono* mono) expects_NONNULL is_PURE;
+extern int          mono_get_degree(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_get_coeff, pure, 1P >= 1, @P >= 1) 
-extern const Numb*  mono_get_coeff(const Mono* mono) expects_NONNULL is_PURE;
+extern Numb const*  mono_get_coeff(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_set_function, inout(1), 1P >= 1) 
 extern void         mono_set_function(Mono* mono, MFun f) expects_NONNULL;
 //lint -sem(        mono_get_function, pure, 1P >= 1) 
-extern MFun         mono_get_function(const Mono* mono) expects_NONNULL is_PURE;
+extern MFun         mono_get_function(Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        mono_get_var, 1P >= 1, chneg(2), @P >= 1) 
-extern Var*         mono_get_var(const Mono* mono, int idx) expects_NONNULL returns_NONNULL is_PURE;
+extern Var*         mono_get_var(Mono const* mono, int idx) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        mono_print, 1P >= 1, 2P >= 1) 
-extern void         mono_print(FILE* fp, const Mono* mono, bool print_symbol_index) expects_NONNULL;
+extern void         mono_print(FILE* fp, Mono const* mono, bool print_symbol_index) expects_NONNULL;
 
 #ifdef __cplusplus
 }

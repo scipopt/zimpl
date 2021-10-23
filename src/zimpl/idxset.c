@@ -53,8 +53,8 @@ struct index_set
 };
 
 IdxSet* idxset_new(
-   const Tuple* tuple,
-   const Set*   set,
+   Tuple const* tuple,
+   Set const*   set,
    CodeNode*    lexpr,
    bool         is_unrestricted)
 {
@@ -87,47 +87,47 @@ void idxset_free(IdxSet* idxset)
    free(idxset);
 }
 
-bool idxset_is_valid(const IdxSet* idxset)
+bool idxset_is_valid(IdxSet const* idxset)
 {
    return ((idxset != NULL) && SID_ok(idxset, IDXSET_SID));
 }
 
-IdxSet* idxset_copy(const IdxSet* source)
+IdxSet* idxset_copy(IdxSet const* source)
 {
    assert(idxset_is_valid(source));
 
    return idxset_new(source->tuple, source->set, source->lexpr, source->is_unrestricted);   
 }
 
-CodeNode* idxset_get_lexpr(const IdxSet* idxset)
+CodeNode* idxset_get_lexpr(IdxSet const* idxset)
 {
    assert(idxset_is_valid(idxset));
 
    return idxset->lexpr;
 }
 
-const Tuple* idxset_get_tuple(const IdxSet* idxset)
+Tuple const* idxset_get_tuple(IdxSet const* idxset)
 {
    assert(idxset_is_valid(idxset));
 
    return idxset->tuple;
 }
 
-const Set* idxset_get_set(const IdxSet* idxset)
+Set const* idxset_get_set(IdxSet const* idxset)
 {
    assert(idxset_is_valid(idxset));
    
    return idxset->set;
 }
 
-bool idxset_is_unrestricted(const IdxSet* idxset)
+bool idxset_is_unrestricted(IdxSet const* idxset)
 {
    assert(idxset_is_valid(idxset));
    
    return idxset->is_unrestricted;
 }
 
-void idxset_print(FILE* fp, const IdxSet* idxset)
+void idxset_print(FILE* fp, IdxSet const* idxset)
 {
    assert(idxset_is_valid(idxset));
 

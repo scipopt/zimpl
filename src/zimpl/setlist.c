@@ -60,7 +60,7 @@
  * -------------------------------------------------------------------------
  */
 is_PURE
-static bool set_list_is_valid(const Set* set)
+static bool set_list_is_valid(Set const* set)
 {
    if (set == NULL
       || !SID_ok2(set->list, SET_LIST_SID)
@@ -79,7 +79,7 @@ static bool set_list_is_valid(const Set* set)
 }
 
 is_PURE
-static bool set_list_iter_is_valid(const SetIter*iter)
+static bool set_list_iter_is_valid(SetIter const*iter)
 {
    return iter != NULL
       && SID_ok2(iter->list, SET_LIST_ITER_SID)
@@ -96,7 +96,7 @@ static bool set_list_iter_is_valid(const SetIter*iter)
 /* Return index number of element. -1 if not present
  */
 expects_NONNULL 
-static SetIterIdx lookup_elem_idx(const Set* set, const Elem* elem)
+static SetIterIdx lookup_elem_idx(Set const* set, Elem const* elem)
 {
    assert(set_list_is_valid(set));
    assert(elem_is_valid(elem));
@@ -142,7 +142,7 @@ Set* set_list_new(int size, int flags)
    return set;
 }
 
-SetIterIdx set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
+SetIterIdx set_list_add_elem(Set* set, Elem const* elem, SetCheckType check)
 {
    SetIterIdx idx = -1;
    
@@ -181,7 +181,7 @@ SetIterIdx set_list_add_elem(Set* set, const Elem* elem, SetCheckType check)
    return idx;
 }
 
-Set* set_list_new_from_elems(const List* list, SetCheckType check)
+Set* set_list_new_from_elems(List const* list, SetCheckType check)
 {
    assert(list_is_valid(list));
 
@@ -194,7 +194,7 @@ Set* set_list_new_from_elems(const List* list, SetCheckType check)
 
    while(n-- > 0)
    {
-      const Elem* elem = list_get_elem(list, &le);
+      Elem const* elem = list_get_elem(list, &le);
 
       assert(elem_is_valid(elem));
       assert(elem != NULL);
@@ -206,7 +206,7 @@ Set* set_list_new_from_elems(const List* list, SetCheckType check)
    return set;
 }
 
-Set* set_list_new_from_tuples(const List* list, SetCheckType check)
+Set* set_list_new_from_tuples(List const* list, SetCheckType check)
 {
    assert(list_is_valid(list));
 
@@ -219,7 +219,7 @@ Set* set_list_new_from_tuples(const List* list, SetCheckType check)
 
    while(n-- > 0)
    {
-      const Tuple* tuple = list_get_tuple(list, &le);
+      Tuple const* tuple = list_get_tuple(list, &le);
 
       assert(tuple_get_dim(tuple) == 1);
       
@@ -230,7 +230,7 @@ Set* set_list_new_from_tuples(const List* list, SetCheckType check)
    return set;
 }
 
-Set* set_list_new_from_entries(const List* list, SetCheckType check)
+Set* set_list_new_from_entries(List const* list, SetCheckType check)
 {
    assert(list_is_valid(list));
 
@@ -243,7 +243,7 @@ Set* set_list_new_from_entries(const List* list, SetCheckType check)
 
    while(n-- > 0)
    {
-      const Tuple* tuple = entry_get_tuple(list_get_entry(list, &le));
+      Tuple const* tuple = entry_get_tuple(list_get_entry(list, &le));
 
       assert(tuple_get_dim(tuple) == 1);
       
@@ -259,7 +259,7 @@ Set* set_list_new_from_entries(const List* list, SetCheckType check)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL
-static Set* set_list_copy(const Set* source)
+static Set* set_list_copy(Set const* source)
 {
    Set* set = (Set*)source;
    
@@ -302,7 +302,7 @@ static void set_list_free(Set* set)
 /* Return index number of element. -1 if not present
  */
 expects_NONNULL 
-static SetIterIdx set_list_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_list_lookup_idx(Set const* set, Tuple const* tuple, int offset)
 {
    assert(set_list_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -318,7 +318,7 @@ static SetIterIdx set_list_lookup_idx(const Set* set, const Tuple* tuple, int of
  */
 expects_NONNULL
 static void set_list_get_tuple(
-   const Set* set,
+   Set const* set,
    SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
@@ -341,11 +341,11 @@ static void set_list_get_tuple(
  */
 expects_NONNULL1 returns_NONNULL 
 static SetIter* set_list_iter_init(
-   const Set*   set,
-   const Tuple* pattern,
+   Set const*   set,
+   Tuple const* pattern,
    int          offset)
 {
-   const Elem*  elem;
+   Elem const*  elem;
    SetIter*     iter;
 
    assert(set_list_is_valid(set));
@@ -402,7 +402,7 @@ static SetIter* set_list_iter_init(
 expects_NONNULL
 static bool set_list_iter_next(
    SetIter*   iter,
-   const Set* set,
+   Set const* set,
    Tuple*     tuple,
    int        offset)
 {
@@ -427,7 +427,7 @@ static bool set_list_iter_next(
  * -------------------------------------------------------------------------
  */
 /*ARGSUSED*/
-static void set_list_iter_exit(SetIter* iter, is_UNUSED const Set* set)
+static void set_list_iter_exit(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_list_iter_is_valid(iter));
 
@@ -442,7 +442,7 @@ static void set_list_iter_exit(SetIter* iter, is_UNUSED const Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL
-static void set_list_iter_reset(SetIter* iter, is_UNUSED const Set* set)
+static void set_list_iter_reset(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_list_iter_is_valid(iter));
    
@@ -470,7 +470,7 @@ void set_list_init(SetVTab* vtab)
  * --- extras
  * -------------------------------------------------------------------------
  */
-const Elem* set_list_get_elem(const Set* set, SetIterIdx idx)
+Elem const* set_list_get_elem(Set const* set, SetIterIdx idx)
 {
    assert(set_list_is_valid(set));
    assert(idx >= 0);

@@ -33,7 +33,7 @@
 
 #include "zimpl/stkchk.h"
 
-const void*  stkchk_start = 0;
+void const*  stkchk_start = 0;
 size_t       stkchk_maxi  = 0;
 
 void stkchk_init_x()
@@ -46,7 +46,7 @@ void stkchk_init_x()
 
 size_t stkchk_used_x()
 {
-   size_t used = (size_t)((const char*)stkchk_start - (const char*)&used);
+   size_t used = (size_t)((char const*)stkchk_start - (char const*)&used);
 
    /*??? Questionable side effect. Function looks like reporting stack use
     *    but actually also needed for recording.

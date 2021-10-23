@@ -55,7 +55,7 @@
  * -------------------------------------------------------------------------
  */
 is_PURE
-static bool set_range_is_valid(const Set* set)
+static bool set_range_is_valid(Set const* set)
 {
    return set != NULL
       && SID_ok2(set->range, SET_RANGE_SID)
@@ -64,7 +64,7 @@ static bool set_range_is_valid(const Set* set)
 }
 
 is_PURE
-static bool set_range_iter_is_valid(const SetIter* iter)
+static bool set_range_iter_is_valid(SetIter const* iter)
 {
    return iter != NULL && SID_ok2(iter->range, SET_RANGE_ITER_SID)
       && iter->range.first >= 0
@@ -106,7 +106,7 @@ Set* set_range_new(int begin, int end, int step)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-static Set* set_range_copy(const Set* source)
+static Set* set_range_copy(Set const* source)
 {
    Set* set = (Set*)source;
    
@@ -161,10 +161,10 @@ static SetIterIdx val_to_idx(SetIterIdx begin, SetIterIdx step, SetIterIdx val)
 }
 
 expects_NONNULL 
-static SetIterIdx set_range_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_range_lookup_idx(Set const* set, Tuple const* tuple, int offset)
 {
-   const Elem* elem;
-   const Numb* numb;
+   Elem const* elem;
+   Numb const* numb;
    int         val;
    
    assert(set_range_is_valid(set));
@@ -210,7 +210,7 @@ static SetIterIdx set_range_lookup_idx(const Set* set, const Tuple* tuple, int o
  */
 expects_NONNULL 
 static void set_range_get_tuple(
-   const Set* set,
+   Set const* set,
    SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
@@ -237,11 +237,11 @@ static void set_range_get_tuple(
  */
 expects_NONNULL1 returns_NONNULL 
 static SetIter* set_range_iter_init(
-   const Set*   set,
-   const Tuple* pattern,
+   Set const*   set,
+   Tuple const* pattern,
    int          offset)
 {
-   const Elem*  elem;
+   Elem const*  elem;
    SetIter*     iter;
    
    assert(set_range_is_valid(set));
@@ -305,7 +305,7 @@ static SetIter* set_range_iter_init(
 expects_NONNULL 
 static bool set_range_iter_next(
    SetIter*   iter,
-   const Set* set,
+   Set const* set,
    Tuple*     tuple,
    int        offset)
 {
@@ -335,7 +335,7 @@ static bool set_range_iter_next(
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void set_range_iter_exit(SetIter* iter, is_UNUSED const Set* set)
+static void set_range_iter_exit(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_range_iter_is_valid(iter));
 
@@ -350,7 +350,7 @@ static void set_range_iter_exit(SetIter* iter, is_UNUSED const Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void set_range_iter_reset(SetIter* iter, is_UNUSED const Set* set)
+static void set_range_iter_reset(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_range_iter_is_valid(iter));
    

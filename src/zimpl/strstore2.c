@@ -73,7 +73,7 @@ static void extend_storage(void)
    store_anchor = store;
 }
 
-const char* str_new(const char* s)
+char const* str_new(char const* s)
 {
    char*  t;
    size_t len;
@@ -134,7 +134,7 @@ void str_exit(void)
    store_anchor = NULL;
 }
 
-unsigned int str_hash(const char* s)
+unsigned int str_hash(char const* s)
 {
 #if 0
    return (unsigned int)s;

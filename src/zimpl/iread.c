@@ -76,8 +76,8 @@
 
 CodeNode* i_read_new(CodeNode* self)
 {
-   const char* filename;
-   const char* pattern;
+   char const* filename;
+   char const* pattern;
    
    Trace("i_read_new");
    
@@ -94,7 +94,7 @@ CodeNode* i_read_new(CodeNode* self)
 CodeNode* i_read_param(CodeNode* self)
 {
    RDef*       rdef;
-   const RPar* rpar;
+   RPar const* rpar;
    
    Trace("i_read_param");
    
@@ -112,7 +112,7 @@ CodeNode* i_read_param(CodeNode* self)
 
 CodeNode* i_read_comment(CodeNode* self)
 {
-   const char* comment;
+   char const* comment;
    
    Trace("i_read_comment");
    
@@ -127,7 +127,7 @@ CodeNode* i_read_comment(CodeNode* self)
 
 CodeNode* i_read_match(CodeNode* self)
 {
-   const char* match;
+   char const* match;
    
    Trace("i_read_match");
    
@@ -142,7 +142,7 @@ CodeNode* i_read_match(CodeNode* self)
 
 CodeNode* i_read_use(CodeNode* self)
 {
-   const Numb* use;
+   Numb const* use;
    int         int_use;
    
    Trace("i_read_use");
@@ -174,7 +174,7 @@ CodeNode* i_read_use(CodeNode* self)
 
 CodeNode* i_read_skip(CodeNode* self)
 {
-   const Numb* skip;
+   Numb const* skip;
    int         int_skip;
    
    Trace("i_read_skip");
@@ -205,15 +205,15 @@ CodeNode* i_read_skip(CodeNode* self)
 }
 
 static int parse_pattern(
-   const CodeNode* self,
-   const char*     pattern,
+   CodeNode const* self,
+   char const*     pattern,
    int*            param_field,
    int*            param_type,
    bool*           is_tuple_list,
    bool*           is_streaming,
    int*            hi_field_no)
 {
-   const char* sep = " ,<>";
+   char const* sep = " ,<>";
    
    char* temp = strdup(pattern);
    char* s;
@@ -431,9 +431,9 @@ static int split_fields(char* s, int hi_field_no, char* field[])
 
 
 static List* process_entry_stream(
-   const CodeNode* self,
+   CodeNode const* self,
    List*          list,
-   const RDef*    rdef,
+   RDef const*    rdef,
    int            line,
    int            fields,
    char**         field,
@@ -486,9 +486,9 @@ static List* process_entry_stream(
 }
 
 static List* process_tuple_stream(
-   const CodeNode*   self,
+   CodeNode const*   self,
    List*             list,
-   const RDef*       rdef,
+   RDef const*       rdef,
    int               line,
    int               fields,
    char**            field,
@@ -541,16 +541,16 @@ static List* process_tuple_stream(
 }
 
 static List* process_line(
-   const CodeNode* self,
+   CodeNode const* self,
    List*           list,
-   const RDef*     rdef,
+   RDef const*     rdef,
    int             line,
    bool            is_tuple_list,
    int             dim,
    int             fields,
    char**          field,
-   const int*      param_field,
-   const int*      param_type) 
+   int const*      param_field,
+   int const*      param_type) 
 {
    Tuple*      tuple;
    Elem*       elem;
@@ -669,11 +669,11 @@ CodeNode* i_read(CodeNode* self)
    bool        is_streaming;
    int         hi_field_no;
    int         dim;
-   const RDef* rdef;
+   RDef const* rdef;
    List*       list = NULL;
    char*       filename;
    char*       comment;
-   const char* match;
+   char const* match;
    int         skip;
    int         use;
    regex_t     regex;

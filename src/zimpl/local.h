@@ -42,9 +42,9 @@ extern void         local_init(void);
 extern void         local_exit(void);
 extern void         local_drop_frame(void);
 //lint -sem(        local_lookup, 1p, r_null) 
-extern const Elem*  local_lookup(const char* name) expects_NONNULL is_PURE;
+extern Elem const*  local_lookup(char const* name) expects_NONNULL is_PURE;
 //lint -sem(        local_install_tuple, 1p == 1, 2p == 1) 
-extern void         local_install_tuple(const Tuple* patt, const Tuple* vals) expects_NONNULL;
+extern void         local_install_tuple(Tuple const* patt, Tuple const* vals) expects_NONNULL;
 //lint -sem(        local_print_all, inout(1), 1p == 1) 
 extern void         local_print_all(FILE* fp) expects_NONNULL;
 //lint -sem(        local_tostrall, @P >= malloc(1)) 

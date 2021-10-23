@@ -53,27 +53,27 @@ extern Hash*        hash_new(HashType type, int size) returns_NONNULL;
 //lint -sem(        hash_free, custodial(1), inout(1), 1p == 1) 
 extern void         hash_free(Hash* hash) expects_NONNULL;
 //lint -sem(        hash_add_tuple, inout(1), 1p == 1, 2p == 1) 
-extern void         hash_add_tuple(Hash* hash, const Tuple* tuple) expects_NONNULL;
+extern void         hash_add_tuple(Hash* hash, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        hash_add_entry, inout(1), 1p == 1, 2p == 1) 
-extern void         hash_add_entry(Hash* hash, const Entry* entry) expects_NONNULL;
+extern void         hash_add_entry(Hash* hash, Entry const* entry) expects_NONNULL;
 //lint -sem(        hash_add_mono, inout(1), 1p == 1, 2p == 1) 
-extern void         hash_add_mono(Hash* hash, const Mono* mono) expects_NONNULL;
+extern void         hash_add_mono(Hash* hash, Mono const* mono) expects_NONNULL;
 //lint -sem(        hash_add_elem_idx, inout(1), 1p == 1, 2p == 1, chneg(3)) 
-extern void         hash_add_elem_idx(Hash* hash, const Elem* elem, int idx) expects_NONNULL;
+extern void         hash_add_elem_idx(Hash* hash, Elem const* elem, int idx) expects_NONNULL;
 //lint -sem(        hash_add_numb, inout(1), 1p == 1, 2p == 1) 
-extern void         hash_add_numb(Hash* hash, const Numb* numb) expects_NONNULL;
+extern void         hash_add_numb(Hash* hash, Numb const* numb) expects_NONNULL;
 //lint -sem(        hash_has_tuple, 1p == 1, 2p == 1) 
-extern bool         hash_has_tuple(const Hash* hash, const Tuple* tuple) expects_NONNULL;
+extern bool         hash_has_tuple(Hash const* hash, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        hash_has_entry, 1p == 1, 2p == 1) 
-extern bool         hash_has_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL;
+extern bool         hash_has_entry(Hash const* hash, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        hash_has_numb, 1p == 1, 2p == 1) 
-extern bool         hash_has_numb(const Hash* hash, const Numb* numb) expects_NONNULL is_PURE;
+extern bool         hash_has_numb(Hash const* hash, Numb const* numb) expects_NONNULL is_PURE;
 //lint -sem(        hash_lookup_entry, 1p == 1, 2p == 1) 
-extern const Entry* hash_lookup_entry(const Hash* hash, const Tuple* tuple) expects_NONNULL;
+extern Entry const* hash_lookup_entry(Hash const* hash, Tuple const* tuple) expects_NONNULL;
 //lint -sem(        hash_lookup_mono, 1p == 1, 2p == 1) 
-extern const Mono*  hash_lookup_mono(const Hash* hash, const Mono* mono) expects_NONNULL is_PURE;
+extern Mono const*  hash_lookup_mono(Hash const* hash, Mono const* mono) expects_NONNULL is_PURE;
 //lint -sem(        hash_lookup_elem_idx, 1p == 1, 2p == 1) 
-extern int          hash_lookup_elem_idx(const Hash* hash, const Elem* elem) expects_NONNULL;
+extern int          hash_lookup_elem_idx(Hash const* hash, Elem const* elem) expects_NONNULL;
 
 #ifdef __cplusplus
 }

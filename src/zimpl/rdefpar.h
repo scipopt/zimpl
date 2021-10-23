@@ -34,42 +34,42 @@ typedef struct read_param        RPar;
 typedef struct read_definition   RDef;
 
 //lint -sem(       rdef_new, 1p, 2p, @P >= malloc(1)) 
-extern RDef*       rdef_new(const char* filename, const char* pattern) expects_NONNULL returns_NONNULL;
+extern RDef*       rdef_new(char const* filename, char const* pattern) expects_NONNULL returns_NONNULL;
 //lint -sem(       rdef_free, custodial(1), inout(1), 1p == 1) 
 extern void        rdef_free(RDef* rdef) expects_NONNULL;
 //lint -sem(       rdef_is_valid, pure, 1p == 1) 
-extern bool        rdef_is_valid(const RDef* rdef) is_PURE;
+extern bool        rdef_is_valid(RDef const* rdef) is_PURE;
 //lint -sem(       rdef_copy, 1p == 1, @P >= malloc(1)) 
-extern RDef*       rdef_copy(const RDef* rdef) expects_NONNULL returns_NONNULL;
+extern RDef*       rdef_copy(RDef const* rdef) expects_NONNULL returns_NONNULL;
 //lint -sem(       rdef_set_param, inout(1), 1p == 1, 2p == 1) 
-extern void        rdef_set_param(RDef* rdef, const RPar* rpar) expects_NONNULL;
+extern void        rdef_set_param(RDef* rdef, RPar const* rpar) expects_NONNULL;
 //lint -sem(       rdef_get_filename, pure, 1p == 1, @p) 
-extern const char* rdef_get_filename(const RDef* rdef) expects_NONNULL returns_NONNULL is_PURE;
+extern char const* rdef_get_filename(RDef const* rdef) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(       rdef_get_pattern, pure, 1p == 1, @p) 
-extern const char* rdef_get_pattern(const RDef* rdef) expects_NONNULL returns_NONNULL is_PURE;
+extern char const* rdef_get_pattern(RDef const* rdef) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(       rdef_get_comment, pure, 1p == 1, @p) 
-extern const char* rdef_get_comment(const RDef* rdef) expects_NONNULL returns_NONNULL is_PURE;
+extern char const* rdef_get_comment(RDef const* rdef) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(       rdef_get_match, pure, 1p == 1, r_null) 
-extern const char* rdef_get_match(const RDef* rdef) expects_NONNULL is_PURE;
+extern char const* rdef_get_match(RDef const* rdef) expects_NONNULL is_PURE;
 //lint -sem(       rdef_get_use, pure, 1p == 1, chneg(@)) 
-extern int         rdef_get_use(const RDef* rdef) expects_NONNULL is_PURE;
+extern int         rdef_get_use(RDef const* rdef) expects_NONNULL is_PURE;
 //lint -sem(       rdef_get_skip, pure, 1p == 1, chneg(@)) 
-extern int         rdef_get_skip(const RDef* rdef) expects_NONNULL is_PURE;
+extern int         rdef_get_skip(RDef const* rdef) expects_NONNULL is_PURE;
 
 //lint -sem(       rpar_new_skip, chneg(1), @P >= malloc(1)) 
 extern RPar*       rpar_new_skip(int skip) returns_NONNULL;
 //lint -sem(       rpar_new_use, chneg(1), @P >= malloc(1)) 
 extern RPar*       rpar_new_use(int use) returns_NONNULL;
 //lint -sem(       rpar_new_comment, 1p, @P >= malloc(1)) 
-extern RPar*       rpar_new_comment(const char* comment) expects_NONNULL returns_NONNULL;
+extern RPar*       rpar_new_comment(char const* comment) expects_NONNULL returns_NONNULL;
 //lint -sem(       rpar_new_match, 1p, @P >= malloc(1)) 
-extern RPar*       rpar_new_match(const char* match) expects_NONNULL returns_NONNULL;
+extern RPar*       rpar_new_match(char const* match) expects_NONNULL returns_NONNULL;
 //lint -sem(       rpar_free, custodial(1), inout(1), 1p == 1) 
 extern void        rpar_free(RPar* rpar) expects_NONNULL;
 //lint -sem(       rpar_is_valid, pure, 1p == 1) 
-extern bool        rpar_is_valid(const RPar* rpar) is_PURE;
+extern bool        rpar_is_valid(RPar const* rpar) is_PURE;
 //lint -sem(       rpar_copy, 1p == 1, @P >= malloc(1)) 
-extern RPar*       rpar_copy(const RPar* rpar) expects_NONNULL returns_NONNULL;
+extern RPar*       rpar_copy(RPar const* rpar) expects_NONNULL returns_NONNULL;
 
 #ifdef __cplusplus
 }

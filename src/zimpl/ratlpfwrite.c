@@ -92,7 +92,7 @@ static void write_val(FILE* fp, LpFormat format, bool force_sign, const mpq_t va
    }
 }
 
-static void write_lhs(FILE* fp, LpFormat format, const Con* con, ConType type)
+static void write_lhs(FILE* fp, LpFormat format, Con const* con, ConType type)
 {
    assert(fp  != NULL);
    assert(con != NULL);
@@ -112,7 +112,7 @@ static void write_lhs(FILE* fp, LpFormat format, const Con* con, ConType type)
    }
 }
 
-static void write_rhs(FILE* fp, LpFormat format, const Con* con, ConType type)
+static void write_rhs(FILE* fp, LpFormat format, Con const* con, ConType type)
 {
    assert(fp  != NULL);
    assert(con != NULL);
@@ -142,7 +142,7 @@ expects_NONNULL
 static void write_term(
    FILE*          fp,
    const LpFormat format,
-   const Term*    term_org,
+   Term const*    term_org,
    char*          name,
    const int      name_size,
    const bool     is_objective)
@@ -180,8 +180,8 @@ static void write_term(
 
    for(int i = 0; i < term_get_elements(term); i++)
    {
-      const Mono* mono  = term_get_element(term, i);
-      const Numb* coeff = mono_get_coeff(mono);
+      Mono const* mono  = term_get_element(term, i);
+      Numb const* coeff = mono_get_coeff(mono);
       MFun        fun   = mono_get_function(mono);
       int         k;
       
@@ -297,7 +297,7 @@ static void write_term(
 static void write_row(
    FILE*      fp,
    LpFormat   format,
-   const Con* con,
+   Con const* con,
    char*      name,
    int        name_size)
 {
@@ -358,12 +358,12 @@ static void write_row(
  * The "Lazy Constraints" section seems to be undocumented.
  */
 void lpf_write(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
    LpFormat    format,
-   const char* text)
+   char const* text)
 {
-   const Var* var;
+   Var const* var;
    Con*       con;
    Con**      contab;
    bool  have_integer   = false;
@@ -599,8 +599,8 @@ void lpf_write(
 
    if (lps_has_sos(lp))
    {
-      const Sos* sos;
-      const Sse* sse;
+      Sos const* sos;
+      Sse const* sse;
 
       fprintf(fp, "SOS\n");
 

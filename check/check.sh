@@ -110,7 +110,7 @@ done
     1) echo Test minlp.zpl "(pip)" FAIL ;;
     *) echo Test minlp.zpl "(pip)" ERROR ;;
    esac
-   #rm minlp.pip minlp.tbl
+   rm minlp.pip minlp.tbl
 # 
 #
    $1 -v0 -Dcities=5 -o metaio @selftest_tspste.zpl >metaio.out

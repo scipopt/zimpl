@@ -46,13 +46,13 @@
  * ILOG CPLEX Reference Manual.
  */
 void lps_sosfile(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
    LpFormat    format,
-   const char* text)
+   char const* text)
 {
-   const Sos*  sos;
-   const Sse*  sse;
+   Sos const*  sos;
+   Sse const*  sse;
    int         name_size;
    char*       vtmp;
 

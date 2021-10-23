@@ -52,8 +52,8 @@ static void write_data(
    bool         use_field5,
    const int    indicator1,
    const int    indicator2,
-   const char*  name1,
-   const char*  name2,
+   char const*  name1,
+   char const*  name2,
    const mpq_t  value)
 {
    assert(name1 != NULL);
@@ -79,15 +79,15 @@ static void write_data(
 }   
 
 static void write_vars(
-   const Lps* lp,
+   Lps const* lp,
    FILE*      fp,
    VarClass   varclass,
    int        name_size)
 {
    static bool first = true;
 
-   const Var*  var;
-   const Nzo*  nzo;
+   Var const*  var;
+   Nzo const*  nzo;
    char* vtmp;
    char* ctmp;
    mpq_t temp;
@@ -152,12 +152,12 @@ static void write_vars(
 }
 
 void mps_write(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
-   const char* text)
+   char const* text)
 {
-   const Var*  var;
-   const Con*  con;
+   Var const*  var;
+   Con const*  con;
    int   indicator;
    bool  has_ranges = false;
    int   name_size;
@@ -320,8 +320,8 @@ void mps_write(
    }
    if (lps_has_sos(lp))
    {
-      const Sos* sos;
-      const Sse* sse;
+      Sos const* sos;
+      Sse const* sse;
 
       fprintf(fp, "SOS\n");
 

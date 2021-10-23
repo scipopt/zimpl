@@ -48,8 +48,8 @@ typedef struct element_storage ElemStore;
 union element_value
 {
    Numb*       numb;
-   const char* strg;
-   const char* name;
+   char const* strg;
+   char const* name;
    Elem*       next;
 };
 
@@ -156,7 +156,7 @@ void elem_exit()
    store_count  = 0;
 }
 
-Elem* elem_new_numb(const Numb* numb)
+Elem* elem_new_numb(Numb const* numb)
 {
    Elem* elem = new_elem();
    
@@ -168,7 +168,7 @@ Elem* elem_new_numb(const Numb* numb)
    return elem;
 }
 
-Elem* elem_new_strg(const char* strg)
+Elem* elem_new_strg(char const* strg)
 {
    Elem* elem = new_elem();
 
@@ -181,7 +181,7 @@ Elem* elem_new_strg(const char* strg)
    return elem;
 }
 
-Elem* elem_new_name(const char* name)
+Elem* elem_new_name(char const* name)
 {
    Elem* elem = new_elem();
 
@@ -207,12 +207,12 @@ void elem_free(Elem* elem)
    store_count--;
 }
 
-bool elem_is_valid(const Elem* elem)
+bool elem_is_valid(Elem const* elem)
 {
    return elem != NULL && SID_ok(elem, ELEM_SID);
 }
 
-Elem* elem_copy(const Elem* source)
+Elem* elem_copy(Elem const* source)
 {
    assert(elem_is_valid(source));
 
@@ -232,7 +232,7 @@ Elem* elem_copy(const Elem* source)
 
 /* 0 wenn gleich, sonst != 0
  */
-bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
+bool elem_cmp(Elem const* elem_a, Elem const* elem_b)
 {
    assert(elem_is_valid(elem_a));
    assert(elem_is_valid(elem_b));
@@ -264,14 +264,14 @@ bool elem_cmp(const Elem* elem_a, const Elem* elem_b)
    return !numb_equal(elem_a->value.numb, elem_b->value.numb);
 }
 
-ElemType elem_get_type(const Elem* elem)
+ElemType elem_get_type(Elem const* elem)
 {
    assert(elem_is_valid(elem));
    
    return elem->type;
 }
 
-const Numb* elem_get_numb(const Elem* elem)
+Numb const* elem_get_numb(Elem const* elem)
 {
    assert(elem_is_valid(elem));
    assert(elem->type == ELEM_NUMB);
@@ -279,7 +279,7 @@ const Numb* elem_get_numb(const Elem* elem)
    return elem->value.numb;
 }
 
-const char* elem_get_strg(const Elem* elem)
+char const* elem_get_strg(Elem const* elem)
 {
    assert(elem_is_valid(elem));
    assert(elem->type       == ELEM_STRG);
@@ -288,7 +288,7 @@ const char* elem_get_strg(const Elem* elem)
    return elem->value.strg;
 }
 
-const char* elem_get_name(const Elem* elem)
+char const* elem_get_name(Elem const* elem)
 {
    assert(elem_is_valid(elem));
    assert(elem->type       == ELEM_NAME);
@@ -297,7 +297,7 @@ const char* elem_get_name(const Elem* elem)
    return elem->value.name;
 }
 
-void elem_print(FILE* fp, const Elem* elem, bool use_quotes)
+void elem_print(FILE* fp, Elem const* elem, bool use_quotes)
 {
    assert(elem_is_valid(elem));
 
@@ -320,7 +320,7 @@ void elem_print(FILE* fp, const Elem* elem, bool use_quotes)
    }
 }
 
-unsigned int elem_hash(const Elem* elem)
+unsigned int elem_hash(Elem const* elem)
 {
    unsigned int hcode = 0;
    
@@ -342,7 +342,7 @@ unsigned int elem_hash(const Elem* elem)
    return hcode;
 }
 
-char* elem_tostr(const Elem* elem)
+char* elem_tostr(Elem const* elem)
 {
    char* str;
    

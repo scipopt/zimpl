@@ -51,7 +51,7 @@
 struct symbol
 {
    SID
-   const char*  name;
+   char const*  name;
    int          size;
    int          used;
    int          extend;
@@ -66,11 +66,11 @@ struct symbol
 static Symbol* anchor = NULL;
 
 Symbol* symbol_new(
-   const char*  name,
+   char const*  name,
    SymbolType   type,
-   const Set*   set,
+   Set const*   set,
    int          estimated_size,
-   const Entry* deflt)
+   Entry const* deflt)
 {
    Symbol* sym;
 
@@ -132,7 +132,7 @@ void symbol_exit(void)
    anchor = NULL;
 }
 
-bool symbol_is_valid(const Symbol* sym)
+bool symbol_is_valid(Symbol const* sym)
 {
    if (sym == NULL || !SID_ok(sym, SYMBOL_SID))
       return false;
@@ -143,7 +143,7 @@ bool symbol_is_valid(const Symbol* sym)
    return true;
 }
 
-Symbol* symbol_lookup(const char* name)
+Symbol* symbol_lookup(char const* name)
 {
    Symbol* sym;
 
@@ -156,7 +156,7 @@ Symbol* symbol_lookup(const char* name)
    return sym;
 }
 
-bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
+bool symbol_has_entry(Symbol const* sym, Tuple const* tuple)
 {
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -169,9 +169,9 @@ bool symbol_has_entry(const Symbol* sym, const Tuple* tuple)
  * Falls ein default zurueckgegeben wird, stimmt "tuple" nicht mit
  * entry->tuple ueberein.
  */
-const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
+Entry const* symbol_lookup_entry(Symbol const* sym, Tuple const* tuple)
 {
-   const Entry* entry;
+   Entry const* entry;
    
    assert(symbol_is_valid(sym));
    assert(tuple_is_valid(tuple));
@@ -190,7 +190,7 @@ const Entry* symbol_lookup_entry(const Symbol* sym, const Tuple* tuple)
  */
 void symbol_add_entry(Symbol* sym, Entry* entry)
 {
-   const Tuple* tuple;
+   Tuple const* tuple;
    
    assert(symbol_is_valid(sym));
    assert(entry_is_valid(entry));
@@ -241,35 +241,35 @@ void symbol_add_entry(Symbol* sym, Entry* entry)
    }
 }
 
-int symbol_get_dim(const Symbol* sym)
+int symbol_get_dim(Symbol const* sym)
 {
    assert(symbol_is_valid(sym));
 
    return set_get_dim(sym->set);
 }
 
-const Set* symbol_get_iset(const Symbol* sym)
+Set const* symbol_get_iset(Symbol const* sym)
 {
    assert(symbol_is_valid(sym));
 
    return sym->set;
 }
 
-const char* symbol_get_name(const Symbol* sym)
+char const* symbol_get_name(Symbol const* sym)
 {
    assert(symbol_is_valid(sym));
 
    return sym->name;
 }
 
-SymbolType symbol_get_type(const Symbol* sym)
+SymbolType symbol_get_type(Symbol const* sym)
 {
    assert(symbol_is_valid(sym));
 
    return sym->type;
 }
 
-const Numb* symbol_get_numb(const Symbol* sym, int idx)
+Numb const* symbol_get_numb(Symbol const* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);
@@ -278,7 +278,7 @@ const Numb* symbol_get_numb(const Symbol* sym, int idx)
    return entry_get_numb(sym->entry[idx]);
 }
 
-const char* symbol_get_strg(const Symbol* sym, int idx)
+char const* symbol_get_strg(Symbol const* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);
@@ -287,7 +287,7 @@ const char* symbol_get_strg(const Symbol* sym, int idx)
    return entry_get_strg(sym->entry[idx]);
 }
 
-const Set* symbol_get_set(const Symbol* sym, int idx)
+Set const* symbol_get_set(Symbol const* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);
@@ -296,7 +296,7 @@ const Set* symbol_get_set(const Symbol* sym, int idx)
    return entry_get_set(sym->entry[idx]);
 }
 
-Var* symbol_get_var(const Symbol* sym, int idx)
+Var* symbol_get_var(Symbol const* sym, int idx)
 {
    assert(symbol_is_valid(sym));
    assert(idx >= 0);
@@ -305,9 +305,9 @@ Var* symbol_get_var(const Symbol* sym, int idx)
    return entry_get_var(sym->entry[idx]);
 }
 
-void symbol_print(FILE* fp, const Symbol* sym)
+void symbol_print(FILE* fp, Symbol const* sym)
 {
-   static const char* const type_name[] = { "Error", "Numb", "Strg", "Set", "Var" };
+   static char const* const type_name[] = { "Error", "Numb", "Strg", "Set", "Var" };
    
    int i;
    

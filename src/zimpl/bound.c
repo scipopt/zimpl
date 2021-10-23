@@ -47,7 +47,7 @@ struct bound
    Numb*     value;
 };
 
-Bound* bound_new(BoundType type, const Numb* value)
+Bound* bound_new(BoundType type, Numb const* value)
 {
    Bound* bound = calloc(1, sizeof(*bound));
 
@@ -80,7 +80,7 @@ void bound_free(Bound* bound)
    free(bound);
 }
 
-bool bound_is_valid(const Bound* bound)
+bool bound_is_valid(Bound const* bound)
 {
    if (bound == NULL || !SID_ok(bound, BOUND_SID)
       || (bound->type == BOUND_VALUE && bound->value == NULL)
@@ -92,21 +92,21 @@ bool bound_is_valid(const Bound* bound)
    return true;
 }
 
-Bound* bound_copy(const Bound* source)
+Bound* bound_copy(Bound const* source)
 {
    assert(bound_is_valid(source));
 
    return bound_new(source->type, source->value);
 }
 
-BoundType bound_get_type(const Bound* bound)
+BoundType bound_get_type(Bound const* bound)
 {
    assert(bound_is_valid(bound));
 
    return bound->type;
 }
 
-const Numb* bound_get_value(const Bound* bound)
+Numb const* bound_get_value(Bound const* bound)
 {
    assert(bound_is_valid(bound));
    assert(bound->type == BOUND_VALUE);
@@ -114,7 +114,7 @@ const Numb* bound_get_value(const Bound* bound)
    return bound->value;
 }
 
-void bound_print(FILE* fp, const Bound* bound)
+void bound_print(FILE* fp, Bound const* bound)
 {
    switch(bound->type)
    {

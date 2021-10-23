@@ -40,22 +40,22 @@ typedef enum define_type         DefineType;
 typedef struct define            Define;
 
 //lint -sem(        define_new, 1p, @P >= malloc(1)) */
-extern Define*      define_new(const char* name, DefineType type) expects_NONNULL returns_NONNULL;
+extern Define*      define_new(char const* name, DefineType type) expects_NONNULL returns_NONNULL;
 //lint -sem(        define_set_param, inout(1), 1p == 1, custodial(2), 2p == 1) */
 extern void         define_set_param(Define* def, Tuple* param) expects_NONNULL;
 //lint -sem(        define_set_code, inout(1), 1p == 1, 2p == 1) */
 extern void         define_set_code(Define* def, CodeNode* code) expects_NONNULL;
 extern void         define_exit(void);
 //lint -sem(        define_lookup, 1p, r_null) */
-extern Define*      define_lookup(const char* name) expects_NONNULL;
+extern Define*      define_lookup(char const* name) expects_NONNULL;
 //lint -sem(        define_get_name, 1p == 1, @p) */
-extern const char*  define_get_name(const Define* def) expects_NONNULL returns_NONNULL is_PURE;
+extern char const*  define_get_name(Define const* def) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        define_get_type, 1p == 1) */
-extern DefineType   define_get_type(const Define* def) expects_NONNULL is_PURE;
+extern DefineType   define_get_type(Define const* def) expects_NONNULL is_PURE;
 //lint -sem(        define_get_param, 1p == 1, r_null) */
-extern const Tuple* define_get_param(const Define* def) expects_NONNULL returns_NONNULL is_PURE;
+extern Tuple const* define_get_param(Define const* def) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(        define_get_code, 1p == 1, r_null) */
-extern CodeNode*    define_get_code(const Define* def) expects_NONNULL is_PURE;
+extern CodeNode*    define_get_code(Define const* def) expects_NONNULL is_PURE;
 
 #ifdef __cplusplus
 }

@@ -37,9 +37,9 @@
 #include "zimpl/ratlpstore.h"
 
 expects_NONNULL
-static void write_name(FILE* fp, const char* name)
+static void write_name(FILE* fp, char const* name)
 {
-   const char* s         = name;
+   char const* s         = name;
    bool        first     = true;
    bool        in_string = false;
    
@@ -87,7 +87,7 @@ static void write_name(FILE* fp, const char* name)
 }
 
 expects_NONNULL
-static void write_lhs(FILE* fp, const Con* con, ConType type)
+static void write_lhs(FILE* fp, Con const* con, ConType type)
 {
    assert(fp  != NULL);
    assert(con != NULL);
@@ -108,7 +108,7 @@ static void write_lhs(FILE* fp, const Con* con, ConType type)
 }
 
 expects_NONNULL
-static void write_rhs(FILE* fp, const Con* con, ConType type)
+static void write_rhs(FILE* fp, Con const* con, ConType type)
 {
    assert(fp  != NULL);
    assert(con != NULL);
@@ -137,9 +137,9 @@ static void write_rhs(FILE* fp, const Con* con, ConType type)
 expects_NONNULL
 static void write_row(
    FILE* fp,
-   const Con* con)
+   Con const* con)
 {
-   const Nzo* nzo;
+   Nzo const* nzo;
    int        cnt = 0;
 
    assert(fp   != NULL);
@@ -170,12 +170,12 @@ static void write_row(
 
 expects_NONNULL12
 void hum_write(
-   const Lps*  lp,
+   Lps const*  lp,
    FILE*       fp,
-   const char* text)
+   char const* text)
 {
-   const Var* var;
-   const Con* con;
+   Var const* var;
+   Con const* con;
    bool  have_integer  = false;
    int   cnt;
    
@@ -297,8 +297,8 @@ void hum_write(
 
    if (lps_has_sos(lp))
    {
-      const Sos* sos;
-      const Sse* sse;
+      Sos const* sos;
+      Sse const* sse;
 
       fprintf(fp, "SOS\n");
 

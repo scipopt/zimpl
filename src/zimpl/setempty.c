@@ -54,7 +54,7 @@
  * -------------------------------------------------------------------------
  */
 is_PURE
-static bool set_empty_is_valid(const Set* set)
+static bool set_empty_is_valid(Set const* set)
 {
    return set != NULL
       && SID_ok2(set->empty, SET_EMPTY_SID)
@@ -62,7 +62,7 @@ static bool set_empty_is_valid(const Set* set)
       && set->head.members == 0;
 }
 
-static bool set_empty_iter_is_valid(const SetIter* iter)
+static bool set_empty_iter_is_valid(SetIter const* iter)
 {
    return iter != NULL && SID_ok2(iter->empty, SET_EMPTY_ITER_SID);
 }
@@ -96,7 +96,7 @@ Set* set_empty_new(int dim)
  * -------------------------------------------------------------------------
  */
 expects_NONNULL returns_NONNULL 
-static Set* set_empty_copy(const Set* source)
+static Set* set_empty_copy(Set const* source)
 {
    Set* set = (Set*)source;
    
@@ -132,7 +132,7 @@ static void set_empty_free(Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL
-static SetIterIdx set_empty_lookup_idx(const Set* set, const Tuple* tuple, int offset)
+static SetIterIdx set_empty_lookup_idx(Set const* set, Tuple const* tuple, int offset)
 {
    assert(set_empty_is_valid(set));
    assert(tuple_is_valid(tuple));
@@ -148,7 +148,7 @@ static SetIterIdx set_empty_lookup_idx(const Set* set, const Tuple* tuple, int o
 /*ARGSUSED*/
 expects_NONNULL is_NORETURN
 static void set_empty_get_tuple(
-   const Set* set,
+   Set const* set,
    SetIterIdx idx,
    Tuple*     tuple,
    int        offset)
@@ -173,8 +173,8 @@ static void set_empty_get_tuple(
 /*ARGSUSED*/
 expects_NONNULL1 returns_NONNULL 
 static SetIter* iter_init(
-   const Set*   set,
-   const Tuple* pattern,
+   Set const*   set,
+   Tuple const* pattern,
    int          offset)
 {
    SetIter*        iter;
@@ -204,7 +204,7 @@ static SetIter* iter_init(
 expects_NONNULL 
 static bool iter_next(
    SetIter*       iter,
-   const Set*     set,
+   Set const*     set,
    is_UNUSED Tuple*  tuple,
    is_UNUSED int     offset)
 {
@@ -220,7 +220,7 @@ static bool iter_next(
  */
 /*ARGSUSED*/
 expects_NONNULL 
-static void iter_exit(SetIter* iter, is_UNUSED const Set* set)
+static void iter_exit(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_empty_iter_is_valid(iter));
 
@@ -235,7 +235,7 @@ static void iter_exit(SetIter* iter, is_UNUSED const Set* set)
  */
 /*ARGSUSED*/
 expects_NONNULL
-static void iter_reset(SetIter* iter, is_UNUSED const Set* set)
+static void iter_reset(SetIter* iter, is_UNUSED Set const* set)
 {
    assert(set_empty_iter_is_valid(iter));
 }

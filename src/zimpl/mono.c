@@ -54,12 +54,12 @@
  * actually has a field var->number, but not accessible from here.
  */
 is_PURE expects_NONNULL
-static inline ptrdiff_t get_varnumber(const Var* var)
+static inline ptrdiff_t get_varnumber(Var const* var)
 {
    return (ptrdiff_t)var;
 }
 
-Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
+Mono* mono_new(Numb const* coeff, Entry const* entry, MFun fun)
 {
    Mono* mono = calloc(1, sizeof(*mono));
 
@@ -84,9 +84,9 @@ Mono* mono_new(const Numb* coeff, const Entry* entry, MFun fun)
 }
 
 #ifndef NDEBUG
-bool mono_is_valid(const Mono* mono)
+bool mono_is_valid(Mono const* mono)
 {
-   const MonoElem* e;
+   MonoElem const* e;
    int             count = 1;
    
    assert(SID_ok(mono, MONO_SID));
@@ -141,7 +141,7 @@ void mono_free(Mono* mono)
 
 void mono_mul_entry(
    Mono*        mono,
-   const Entry* entry)
+   Entry const* entry)
 {
    Trace("mono_mul_entry");
 
@@ -198,7 +198,7 @@ void mono_mul_entry(
    assert(mono_is_valid(mono));
 }
 
-Mono* mono_copy(const Mono* mono)
+Mono* mono_copy(Mono const* mono)
 {
    Mono*     mnew;
    MonoElem* e;
@@ -215,7 +215,7 @@ Mono* mono_copy(const Mono* mono)
    return mnew;
 }
      
-void mono_mul_coeff(const Mono* mono, const Numb* value)
+void mono_mul_coeff(Mono const* mono, Numb const* value)
 {
    Trace("mono_mul_coeff");
 
@@ -225,7 +225,7 @@ void mono_mul_coeff(const Mono* mono, const Numb* value)
    numb_mul(mono->coeff, value);
 }
 
-void mono_add_coeff(const Mono* mono, const Numb* value)
+void mono_add_coeff(Mono const* mono, Numb const* value)
 {
    Trace("mono_add_coeff");
 
@@ -235,10 +235,10 @@ void mono_add_coeff(const Mono* mono, const Numb* value)
    numb_add(mono->coeff, value);
 }
 
-unsigned int mono_hash(const Mono* mono)
+unsigned int mono_hash(Mono const* mono)
 {
    size_t          hcode = 0;
-   const MonoElem* e;
+   MonoElem const* e;
    
    assert(mono_is_valid(mono));   
    
@@ -253,10 +253,10 @@ unsigned int mono_hash(const Mono* mono)
 #if 1
 /* We assume (I think it is true that there is only one distinct entry per var
  */
-bool mono_equal(const Mono* ma, const Mono* mb)
+bool mono_equal(Mono const* ma, Mono const* mb)
 {
-   const MonoElem* ea;
-   const MonoElem* eb;
+   MonoElem const* ea;
+   MonoElem const* eb;
    
    assert(mono_is_valid(ma));   
    assert(mono_is_valid(mb));   
@@ -269,7 +269,7 @@ bool mono_equal(const Mono* ma, const Mono* mb)
 
    for(ea = &ma->first; ea != NULL; ea = ea->next)
    {
-      const Entry* entry_a = ea->entry;
+      Entry const* entry_a = ea->entry;
 
       assert(entry_is_valid(entry_a));
       assert(entry_get_type(entry_a) == SYM_VAR);
@@ -295,10 +295,10 @@ bool mono_equal(const Mono* ma, const Mono* mb)
    return true;
 }
 #else /* old */
-bool mono_equal(const Mono* ma, const Mono* mb)
+bool mono_equal(Mono const* ma, Mono const* mb)
 {
-   const MonoElem* ea;
-   const MonoElem* eb;
+   MonoElem const* ea;
+   MonoElem const* eb;
    Var*            var_a;
    
    assert(mono_is_valid(ma));   
@@ -338,10 +338,10 @@ bool mono_equal(const Mono* ma, const Mono* mb)
 }
 #endif
 
-Mono* mono_mul(const Mono* ma, const Mono* mb)
+Mono* mono_mul(Mono const* ma, Mono const* mb)
 {
    Mono*           mono;
-   const MonoElem* eb;
+   MonoElem const* eb;
    
    assert(mono_is_valid(ma));   
    assert(mono_is_valid(mb));   
@@ -368,7 +368,7 @@ void mono_neg(Mono* mono)
    numb_neg(mono->coeff);
 }
 
-bool mono_is_linear(const Mono* mono)
+bool mono_is_linear(Mono const* mono)
 {
    assert(mono_is_valid(mono));
 
@@ -376,14 +376,14 @@ bool mono_is_linear(const Mono* mono)
    return mono->count == 1 && (mono->fun == MFUN_NONE || mono->fun == MFUN_TRUE || mono->fun == MFUN_FALSE);
 }
 
-int mono_get_degree(const Mono* mono)
+int mono_get_degree(Mono const* mono)
 {
    assert(mono_is_valid(mono));
 
    return mono->count;
 }
 
-const Numb* mono_get_coeff(const Mono* mono)
+Numb const* mono_get_coeff(Mono const* mono)
 {
    assert(mono_is_valid(mono));
 
@@ -399,16 +399,16 @@ void mono_set_function(Mono* mono, MFun f)
    assert(mono_is_valid(mono));
 }
 
-MFun mono_get_function(const Mono* mono)
+MFun mono_get_function(Mono const* mono)
 {
    assert(mono_is_valid(mono));
 
    return mono->fun;
 }
 
-Var* mono_get_var(const Mono* mono, int idx)
+Var* mono_get_var(Mono const* mono, int idx)
 {
-   const MonoElem* e = &mono->first;
+   MonoElem const* e = &mono->first;
    
    assert(mono_is_valid(mono));
    assert(mono->count > 0);
@@ -430,9 +430,9 @@ Var* mono_get_var(const Mono* mono, int idx)
 }
 
 #ifndef NDEBUG
-void mono_print(FILE* fp, const Mono* mono, bool print_symbol_index)
+void mono_print(FILE* fp, Mono const* mono, bool print_symbol_index)
 {
-   const MonoElem* e;
+   MonoElem const* e;
 
    assert(mono_is_valid(mono));
    

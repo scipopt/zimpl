@@ -51,7 +51,7 @@
 
    the routine tries to grap the linenumber.
 */
-static void skip_comment(const MFP* fp, int* lineno)
+static void skip_comment(MFP const* fp, int* lineno)
 {
    int k = 0;
    int c;
@@ -83,7 +83,7 @@ static void skip_comment(const MFP* fp, int* lineno)
       c = mio_getc(fp);
 }
 
-static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
+static char* get_line(char** buf, int* size, MFP const* fp, int* lineno)
 {
    bool in_string = false;
    // bool in_bslash = false;  no backslah handling
@@ -156,10 +156,10 @@ static char* get_line(char** buf, int* size, const MFP* fp, int* lineno)
    return *buf;
 }
 
-static const char* make_pathname(
+static char const* make_pathname(
    char*       target,
-   const char* pathname,
-   const char* filename)
+   char const* pathname,
+   char const* filename)
 {
    assert(target   != NULL);
    assert(pathname != NULL);
@@ -184,9 +184,9 @@ static const char* make_pathname(
 
 static void add_stmt(
    Prog*       prog,
-   const char* filename,
+   char const* filename,
    const int   lineno,
-   const char* text)
+   char const* text)
 {
    StmtType type = STMT_ERR;
 
@@ -228,7 +228,7 @@ static void add_stmt(
    prog_add_stmt(prog, stmt_new(type, filename, lineno, text));
 }
 
-void prog_load(Prog* prog, const char* cmdpipe, const char* filename)
+void prog_load(Prog* prog, char const* cmdpipe, char const* filename)
 {
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);

@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 #ifndef NDEBUG
-extern const void* stkchk_start;
+extern void const* stkchk_start;
 extern size_t      stkchk_maxi;
 
 extern void   stkchk_init_x(void);

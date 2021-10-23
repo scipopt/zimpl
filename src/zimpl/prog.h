@@ -44,22 +44,22 @@ extern Prog*        prog_new(void) returns_NONNULL;
 //lint -sem(        prog_free, custodial(1), inout(1), 1p == 1) 
 extern void         prog_free(Prog* prog) expects_NONNULL;
 //lint -sem(        prog_is_valid, pure, 1p == 1) 
-extern bool         prog_is_valid(const Prog* prog) is_PURE;
+extern bool         prog_is_valid(Prog const* prog) is_PURE;
 //lint -sem(        prog_is_empty, pure, 1p == 1) 
-extern bool         prog_is_empty(const Prog* prog) expects_NONNULL is_PURE;
+extern bool         prog_is_empty(Prog const* prog) expects_NONNULL is_PURE;
 //lint -sem(        prog_add_stmt, 1p == 1, custodial(2), 2p == 1) 
 extern void         prog_add_stmt(Prog* prog, Stmt* stmt) expects_NONNULL;
 //lint -sem(        prog_print, inout(1), 1p == 1, 2p == 1) 
-extern void         prog_print(FILE* fp, const Prog* prog) expects_NONNULL;
+extern void         prog_print(FILE* fp, Prog const* prog) expects_NONNULL;
 //lint -sem(        prog_execute, 1p == 1) 
-extern void         prog_execute(const Prog* prog, void* lp) expects_NONNULL;
+extern void         prog_execute(Prog const* prog, void* lp) expects_NONNULL;
 //lint -sem(        prog_tostr, 1p == 1, 2p, 3p, @P >= malloc(1)) 
-extern char*        prog_tostr(const Prog* prog, const char* prefix, const char* title, size_t max_output_line_len) expects_NONNULL returns_NONNULL;
+extern char*        prog_tostr(Prog const* prog, char const* prefix, char const* title, size_t max_output_line_len) expects_NONNULL returns_NONNULL;
 
 /* load.c
  */
 //lint -sem(        prog_load, inout(1), 1p == 1, 3p) 
-extern void         prog_load(Prog* prog, const char* cmd, const char* filename);
+extern void         prog_load(Prog* prog, char const* cmd, char const* filename);
 
 #ifdef __cplusplus
 }
