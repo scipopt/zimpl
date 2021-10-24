@@ -133,7 +133,7 @@ void zpl_var_print(FILE* fp, Var const* var)
    Bound*      lower = xlp_getlower(prog_get_lp(), var);
    Bound*      upper = xlp_getupper(prog_get_lp(), var);
 
-   fprintf(fp, "\"%s\" ", name);
+   fprintf(fp, "\"%s\" %p ", name, var);
 
    switch(class)
    {

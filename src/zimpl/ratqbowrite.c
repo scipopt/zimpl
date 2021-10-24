@@ -193,25 +193,30 @@ void qbo_write(
    if (text != NULL)
       fprintf(fp, "%s", text);   
 
-   Term* const term_seq = term_new(lp->vars);
-
+   Term*  const term_seq = term_new(lp->vars);
+   Tuple* const tuple    = tuple_new(0);
+   
    for(Var* var = lp->var_root; var != NULL; var = var->next)
    {
       if (mpq_equal(var->cost, const_zero))
          continue;
 
-      Entry* const entry = entry_new_var(tuple_new(0), var); 
-      Mono*  const mono  = mono_new(numb_one(), entry, MFUN_NONE);
+      Entry* const entry = entry_new_var(tuple, var);
+      Numb*  const cost  = numb_new_mpq(var->cost);
+      Mono*  const mono  = mono_new(cost, entry, MFUN_NONE);      
 
       mono_mul_entry(mono, entry);
       term_append_elem(term_seq, mono);
       entry_free(entry);
+      numb_free(cost);
    }
-
+   tuple_free(tuple);
    term_append_term(term_seq, lp->obj_term);
-   
+   // ???
    Term* const term_obj = term_simplify(term_seq);
 
+   term_print(stdout, term_obj, true);
+   
    term_free(term_seq);
    
    int const  entry_size = term_get_elements(term_obj);

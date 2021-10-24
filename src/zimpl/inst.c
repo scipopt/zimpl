@@ -138,7 +138,7 @@ CodeNode* i_constraint_list(CodeNode* self)
 expects_NONNULL
 static void addcon_as_qubo(
    CodeNode const* const self,   
-   ConType         const  contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   ConType         const contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
    Numb     const* const rhs,        /**< term contype rhs.*/
    Term     const* const term_org)   /**< term to use */
 {
@@ -149,7 +149,6 @@ static void addcon_as_qubo(
    switch(contype)
    {
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
-   case CON_RHS   :
       if (!numb_equal(rhs, numb_one()))
       {
          fprintf(stderr, "*** Error XXX: RHS unequal to 1 can't be converted to QUBO\n");
@@ -157,17 +156,18 @@ static void addcon_as_qubo(
          zpl_exit(EXIT_FAILURE);
       }
       break;
+   case CON_RHS   :
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
       fall_THROUGH; //lint -fallthrough 
    case CON_RANGE :
-      fprintf(stderr, "*** Error XXX: Less equal and range can't be converted to QUBO\n");
+      fprintf(stderr, "*** Error XXX: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
-   Term* term = term_simplify(term_org);
+   Term* const term = term_simplify(term_org);
 
    if (!term_is_linear(term))
    {
@@ -175,11 +175,23 @@ static void addcon_as_qubo(
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   
-   int telems = term_get_elements(term);   
 
-   Term* qterm = term_new(telems * telems + telems);
+   /*
+      x             == 1 => P(1 -x)
+      x + y         == 1 => P(1 -x -y +2xy)
+      x + y + z     == 1 => P(1 -x -y -z +2xy +2xz +2yz)
+      a + b + c + d == 1 => P(1 -a -b -c -d +2ab +2ac +2ad +2bc +2bd +2cd)
+      
+      x         >= 1 => P(1 -x)  # x can't be > 1
+      x + y     >= 1 => P(1 -x -y +xy)
+      Wrong:
+      x + y + z >= 1 => P(1 -x -y -z +xy +xz +yz)
+      a + b + c + d >= 1 => P(1 -a -b -c -d +ab +ac +ad +bc +bd +cd)
+   */
+   int   const telems = term_get_elements(term);   
+   Term* const qterm  = term_new(telems * telems + telems);
 
+   // remove the 1
    term_add_constant(qterm, numb_one());
          
    for(int i = 0; i < telems; i++)
@@ -202,9 +214,6 @@ static void addcon_as_qubo(
       }    
       for(int k = 0; k < telems; k++)
       {
-         if ((contype == CON_RHS) && (i == k))
-            continue;
-         
          Mono const* mono2 = term_get_element(term, k);
          Mono*       mono  = mono_mul(mono1, mono2);
          

@@ -314,14 +314,13 @@ is to assume minimization.
 \begin{tabular}{lp{104mm}}
 \toprule
 -t \emph{format} & Selects the output format. Can be either \code{lp},
-                  which is default, or \code{mps}, or \code{pip},
-                  which is polynomial IP,
-                  or \code{hum}, which
-                  is only human readable, or \code{rlp}, which is the
+                  which is default, or \code{mps}, 
+                  or \code{hum}, which is only human readable,
+                  or \code{rlp}, which is the
 		  same as \code{lp} but with rows and columns randomly
                   permuted. The permutation is depending on the
-		  \emph{seed}. Also possible is \code{pip}m which
-		  means Polynomial IP.\\
+		  \emph{seed}. Also possible is \code{pip} which
+		  means Polynomial IP, or \code{qbo} which means QUBO.\\
 -o \emph{name}   & Sets the base-name for the output files.\\
                 & Defaults to the name of the first input file with
                   its path and extension stripped off.\\
@@ -1255,6 +1254,8 @@ how it should be handled later on.
   indicator constraint and not by a big-M formulation.
   If you use this attribute, you can no longer write \mps-format, as
   indicator variables are not supported by this format.
+\item[qubo]
+  Transform the constraint into an qudratic qbjective.
 \end{description}
 
 \noindent

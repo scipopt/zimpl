@@ -250,57 +250,8 @@ unsigned int mono_hash(Mono const* mono)
 
 /** Checks whether two monoms cosist of the same variables.
  */  
-#if 1
-/* We assume (I think it is true that there is only one distinct entry per var
- */
 bool mono_equal(Mono const* ma, Mono const* mb)
 {
-   MonoElem const* ea;
-   MonoElem const* eb;
-   
-   assert(mono_is_valid(ma));   
-   assert(mono_is_valid(mb));   
-
-   if (ma->count != mb->count)
-      return false;
-
-   if (ma->count == 1 && (ma->first.entry != mb->first.entry))
-      return false;
-
-   for(ea = &ma->first; ea != NULL; ea = ea->next)
-   {
-      Entry const* entry_a = ea->entry;
-
-      assert(entry_is_valid(entry_a));
-      assert(entry_get_type(entry_a) == SYM_VAR);
-           
-      for(eb = &mb->first; eb != NULL; eb = eb->next)
-         if (entry_a == eb->entry)
-            break;
-
-      if (eb == NULL)
-         return false;
-      
-      /* Now all variables of a kind are consecutive 
-       */
-      while(ea->next != NULL && ea->next->entry == entry_a) 
-      {
-         if (eb->next == NULL || eb->next->entry != entry_a)
-            return false;
-               
-         ea = ea->next; /*lint !e850 loop index variable is modified in body of the loop */
-         eb = eb->next;               
-      }
-   } 
-   return true;
-}
-#else /* old */
-bool mono_equal(Mono const* ma, Mono const* mb)
-{
-   MonoElem const* ea;
-   MonoElem const* eb;
-   Var*            var_a;
-   
    assert(mono_is_valid(ma));   
    assert(mono_is_valid(mb));   
 
@@ -310,12 +261,14 @@ bool mono_equal(Mono const* ma, Mono const* mb)
    if (ma->count == 1 && (entry_get_var(ma->first.entry) != entry_get_var(mb->first.entry)))
       return false;
 
-   for(ea = &ma->first; ea != NULL; ea = ea->next)
+   for(MonoElem const* ea = &ma->first; ea != NULL; ea = ea->next)
    {
       assert(entry_is_valid(ea->entry));
 
-      var_a = entry_get_var(ea->entry);
-      
+      Var const* const var_a = entry_get_var(ea->entry);
+
+      MonoElem const* eb;
+         
       for(eb = &mb->first; eb != NULL; eb = eb->next)
          if (var_a == entry_get_var(eb->entry))
             break;
@@ -336,7 +289,6 @@ bool mono_equal(Mono const* ma, Mono const* mb)
    }
    return true;
 }
-#endif
 
 Mono* mono_mul(Mono const* ma, Mono const* mb)
 {
