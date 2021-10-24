@@ -4,6 +4,20 @@ project(ZIMPL
     VERSION 3.5.0
     LANGUAGES C)
 
+# if changing these flags, also update GCCWARN/GXXWARN in make/make.project
+set(ADD_C_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-nonnull-compare -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wstrict-overflow=4 -Wduplicated-branches -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=format -Wno-error=unknown-warning -fno-omit-frame-pointer -fstack-protector-strong -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow")
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
+        message(WARNING "GCC version smaller than , it is recommended to use a version higher than !")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS}")
+    else() # gcc 10 or later
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -fsanitize=pointer-overflow -fsanitize=builtin -Wsuggest-attribute=malloc -Wsuggest-attribute=cold ") # additional parameters don't exit in gnu 7
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Weverything -Wno-padded -Wno-switch-enum -Wno-covered-switch-default -Wno-static-in-inline -Wno-pedantic -Wno-format-nonliteral -Wno-shorten-64-to-32 -Wno-disabled-macro-expansion -Wno-reserved-id-macro")
+endif()
+
 # use C99 standard
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_VISIBILITY_PRESET hidden)

@@ -38,9 +38,11 @@
 
 #if defined(_lint)
 #define fall_THROUGH      /*lint -fallthrough */
+#elif defined(__GNUC__) && __GNUC__ >= 7
+ #define fall_THROUGH __attribute__ ((fallthrough))
 #else
-#define fall_THROUGH      __attribute__ ((fallthrough))
-#endif // _lint
+ #define fall_THROUGH /* fall through */
+#endif /* __GNUC__ >= 7 */
 
 #else // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
