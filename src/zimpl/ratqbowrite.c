@@ -215,17 +215,19 @@ void qbo_write(
    // ???
    Term* const term_obj = term_simplify(term_seq);
 
+#ifndef NDEBUG
    term_print(stdout, term_obj, true);
-   
+#endif /* !NDEBUG */
+
    term_free(term_seq);
-   
+
    int const  entry_size = term_get_elements(term_obj);
    Qme* const entry      = calloc((size_t)entry_size, sizeof(*entry));
    int        entry_used = 0;
    mpq_t      offset;
 
    mpq_init(offset);
- 
+
    numb_get_mpq(term_get_constant(term_obj), offset);
 
    // TODO maybe move this into QUBO from entry.

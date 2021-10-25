@@ -81,18 +81,18 @@ LINTCONF	=	/opt/pclint/config
 CPPFLAGS	=	-I$(SRCDIR)/.. -DVERSION='"$(VERSION)"'
 CFLAGS		=	-O
 LDFLAGS		=	-lgmp -lm
-YFLAGS		=	-d -t -v 
+YFLAGS		=	-d -t -v
 LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
+# if changing these flags, also update ADD_C_FLAGS in CMakeLists.txt
 GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-Wno-nonnull-compare \
 			-Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow \
 			-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations \
 			-Wstrict-overflow=4 -Wduplicated-branches \
 			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
-			-Wmissing-noreturn -Wsuggest-attribute=malloc -Wsuggest-attribute=format \
-			-Wsuggest-attribute=cold \
+			-Wmissing-noreturn -Wsuggest-attribute=format \
 			-fno-omit-frame-pointer \
 			-fstack-protector-strong \
 			-fsanitize=address \
@@ -113,8 +113,11 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-fsanitize=bool \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
-			-fsanitize=pointer-overflow \
-			-fsanitize=builtin
+			#-fsanitize=builtin \
+			#-fsanitize=pointer-overflow \
+			#-Wsuggest-attribute=malloc \
+			#-Wsuggest-attribute=cold \
+
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz
 else
