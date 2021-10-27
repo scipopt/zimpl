@@ -93,6 +93,9 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-Wstrict-overflow=4 -Wduplicated-branches \
 			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
 			-Wmissing-noreturn -Wsuggest-attribute=format \
+			-Wno-attributes \
+			-Wno-unused-function \
+			-Wno-unused-parameter \
 			-fno-omit-frame-pointer \
 			-fstack-protector-strong \
 			-fsanitize=address \

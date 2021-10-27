@@ -8,11 +8,14 @@ project(ZIMPL
 set(ADD_C_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-nonnull-compare -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wstrict-overflow=4 -Wduplicated-branches -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=format -fno-omit-frame-pointer -fstack-protector-strong -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow")
 
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
-        message(WARNING "GCC version smaller than 10, it is recommended to use a version higher than 10.")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+        message(WARNING "GCC version smaller than 5, it is recommended to use a version 10 or higher.")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Wno-attributes")
+    elseif (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
+        message(WARNING "GCC version smaller than 10, it is recommended to use a version 10 or higher.")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS}")
     else() # gcc 10 or later
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -fsanitize=pointer-overflow -fsanitize=builtin -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wno-error=unknown-warning ") # additional parameters don't exit in gcc 7
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -fsanitize=pointer-overflow -fsanitize=builtin -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wno-error=unknown-warning ") # additional parameters don't exist in gcc 7
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Weverything -Wno-padded -Wno-switch-enum -Wno-covered-switch-default -Wno-static-in-inline -Wno-pedantic -Wno-format-nonliteral -Wno-shorten-64-to-32 -Wno-disabled-macro-expansion -Wno-reserved-id-macro")
