@@ -6,6 +6,7 @@ src/zimpl/mmlparse2.h
 src/zimpl/mmlparse2.output
 src/zimpl/mmlscan.c
 build/
+build*/
 debug/
 release/
 .vscode/

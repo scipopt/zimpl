@@ -5,20 +5,31 @@ project(ZIMPL
     LANGUAGES C)
 
 # if changing these flags, also update GCCWARN/GXXWARN in make/make.project
-set(ADD_C_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -Wno-nonnull-compare -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wstrict-overflow=4 -Wduplicated-branches -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wmissing-noreturn -Wsuggest-attribute=format -fno-omit-frame-pointer -fstack-protector-strong -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow")
+set(ADD_C_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer -Wsuggest-attribute=format ")
+set(ADD_SANITIZE_FLAGS "-fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow")
 
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
-        message(WARNING "GCC version smaller than 5, it is recommended to use a version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Wno-attributes")
-    elseif (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
-        message(WARNING "GCC version smaller than 10, it is recommended to use a version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS}")
+    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 5)
+        message(WARNING "GCC version smaller than 5, it is recommended to use version 10 or higher.")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -Wno-pragmas -Wno-clobbered -Wno-attributes")
+    elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 8)
+        message(WARNING "GCC version smaller than 8, it is recommended to use version 10 or higher.")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches ")
+    elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 9)
+        message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches ")
     else() # gcc 10 or later
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -fsanitize=pointer-overflow -fsanitize=builtin -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wno-error=unknown-warning ") # additional parameters don't exist in gcc 7
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -fsanitize=pointer-overflow -fsanitize=builtin -Wno-nonnull-compare -Wno-error=unknown-warning ") # additional parameters don't exist in gcc 7
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} -Weverything -Wno-padded -Wno-switch-enum -Wno-covered-switch-default -Wno-static-in-inline -Wno-pedantic -Wno-format-nonliteral -Wno-shorten-64-to-32 -Wno-disabled-macro-expansion -Wno-reserved-id-macro")
+    set(ADD_CLANG_FLAGS "-Wno-unused-parameter -Wno-unused-function -Wno-cast-align -Wno-strict-prototypes -Wno-pragmas -Wno-attributes -Wstrict-overflow=4 -fstack-protector-strong ")
+    set(EXTRA_CLANG_FLAGS "-Weverything -Wno-reserved-id-macro -Wno-cast-qual -Wno-bad-function-cast -Wno-float-equal -Wno-unused-macros -Wno-implicit-fallthrough -Wno-switch-enum -Wno-padded -Wno-covered-switch-default -Wno-shorten-64-to-32 -Wno-pedantic -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-static-in-inline")
+    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 7)
+        message(WARNING "Clang version smaller than 7, it is recommended to use version 10 or higher.")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} ${ADD_CLANG_FLAGS} ${EXTRA_CLANG_FLAGS}")
+    else()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_SANITIZE_FLAGS} ${ADD_CLANG_FLAGS} ${EXTRA_CLANG_FLAGS} -Wno-extra-semi-stmt")
+    endif()
 endif()
 
 # use C99 standard

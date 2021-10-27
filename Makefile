@@ -86,18 +86,30 @@ LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
 # if changing these flags, also update ADD_C_FLAGS in CMakeLists.txt
-GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
-			-Wno-nonnull-compare \
-			-Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow \
-			-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations \
-			-Wstrict-overflow=4 -Wduplicated-branches \
-			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
-			-Wmissing-noreturn -Wsuggest-attribute=format \
+GCCWARN		=	-Wall \
+			-Wextra \
+			-Wno-unknown-pragmas \
+			-Wpointer-arith \
+			-Wcast-align \
+			-Wwrite-strings \
+			-Winline \
+			-Wshadow \
+			-Wstrict-prototypes \
+			-Wmissing-prototypes \
+			-Wmissing-noreturn \
+			-Wmissing-declarations \
+			-fno-omit-frame-pointer \
+			-Wsuggest-attribute=format \
+			-Wsuggest-attribute=pure \
+			-Wsuggest-attribute=const \
+			-Wsuggest-attribute=noreturn \
+			-Wstrict-overflow=4 \
+			-fstack-protector-strong \
+			-Wduplicated-branches \
 			-Wno-attributes \
 			-Wno-unused-function \
 			-Wno-unused-parameter \
-			-fno-omit-frame-pointer \
-			-fstack-protector-strong \
+			-Wno-nonnull-compare \
 			-fsanitize=address \
 			-fsanitize=undefined \
 			-fsanitize=shift \
