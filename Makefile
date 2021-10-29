@@ -113,10 +113,11 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-fsanitize=bool \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
-			#-fsanitize=builtin \
-			#-fsanitize=pointer-overflow \
-			#-Wsuggest-attribute=malloc \
-			#-Wsuggest-attribute=cold \
+			-Wno-error=unknown-warning \
+			-fsanitize=builtin \
+			-fsanitize=pointer-overflow \
+			-Wsuggest-attribute=malloc \
+			-Wsuggest-attribute=cold \
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

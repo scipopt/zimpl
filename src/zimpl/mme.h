@@ -97,10 +97,10 @@ extern void interns_exit(void);
 #ifndef NDEBUG
 #define SID unsigned int sid;
 #define SID_set(p, id)  (p->sid = id)
-#define SID_del(p)      (p->sid = 0xffffffff)
+#define SID_del(p)      (p->sid = 0xdeadda7a)
 #define SID_ok(p, id)   (p->sid == id)
 #define SID_set2(p, id) (p.sid = id)
-#define SID_del2(p)     (p.sid = 0xffffffff)
+#define SID_del2(p)     (p.sid = 0xdeadda7a)
 #define SID_ok2(p, id)  (p.sid == id)
 #else /* NDEBUG */
 #define SID              /* */

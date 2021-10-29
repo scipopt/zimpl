@@ -215,10 +215,6 @@ void qbo_write(
    // ???
    Term* const term_obj = term_simplify(term_seq);
 
-#ifndef NDEBUG
-   term_print(stdout, term_obj, true);
-#endif /* !NDEBUG */
-
    term_free(term_seq);
 
    int const  entry_size = term_get_elements(term_obj);
