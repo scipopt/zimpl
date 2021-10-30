@@ -93,6 +93,7 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-Wstrict-overflow=4 -Wduplicated-branches \
 			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
 			-Wmissing-noreturn -Wsuggest-attribute=format \
+			-Wsuggest-attribute=malloc -Wsuggest-attribute=cold \
 			-fno-omit-frame-pointer \
 			-fstack-protector-strong \
 			-fsanitize=address \
@@ -113,11 +114,10 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-fsanitize=bool \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
-			-Wno-error=unknown-warning \
-			-fsanitize=builtin \
 			-fsanitize=pointer-overflow \
-			-Wsuggest-attribute=malloc \
-			-Wsuggest-attribute=cold \
+			-fsanitize=builtin \
+#			-fsanitize=float-divide-by-zero \
+#			-fsanitize=bounds-strict \
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

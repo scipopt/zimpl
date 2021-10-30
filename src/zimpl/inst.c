@@ -159,7 +159,7 @@ static void addcon_as_qubo(
    case CON_RHS   :
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      fall_THROUGH; //lint -fallthrough 
+      fall_THROUGH
    case CON_RANGE :
       fprintf(stderr, "*** Error XXX: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
       code_errmsg(self);

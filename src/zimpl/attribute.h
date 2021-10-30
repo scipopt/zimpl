@@ -36,10 +36,8 @@
 #define is_PURE           __attribute__ ((pure))              //lint !e755
 #define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
 
-#if defined(_lint)
-#define fall_THROUGH      /*lint -fallthrough */
-#elif (defined(__GNUC__) && __GNUC__ >= 7) || defined(__clang__)
-#define fall_THROUGH __attribute__ ((fallthrough))
+#if (defined(__GNUC__) && __GNUC__ >= 7) || defined(__clang__) || defined(_lint)
+#define fall_THROUGH __attribute__ ((fallthrough)); /*lint -fallthrough */
 #else
 #define fall_THROUGH /* FALLTHROUGH */
 #endif /* __GNUC__ >= 7 */
