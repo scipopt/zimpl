@@ -740,7 +740,8 @@ void lps_free(Lps* lp)
    for(var = lp->var_root; var != NULL; var = var_next) 
    {
       var_next = var->next;
-      var->sid = 0xDEADDEAD;
+      
+      SID_del(var);
 
       mpq_clear(var->cost);
       mpq_clear(var->lower);
@@ -2057,6 +2058,14 @@ void lps_transtable(Lps const* lp, FILE* fp, LpFormat format, char const* head)
       fprintf(fp, "%s\tc %7d\t%-*s\t\"%s\"\t%.16e\n",
          head, con->number, namelen - 1, temp, con->name, mpq_get_d(con->scale));
    }
+   if (lp->objname != NULL)
+   {
+      lps_makename(temp, namelen, lp->objname, 0);
+
+      fprintf(fp, "%s\to %7d\t%-*s\t\"%s\"\n",
+         head, 0, namelen - 1, temp, lp->objname);
+   }
+
    free(temp);
 }
 

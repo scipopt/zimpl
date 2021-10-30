@@ -4510,14 +4510,6 @@ static void objective(CodeNode* self, bool minimize)
    }
    term = code_eval_child_term(self, 1);
 
-   const int degree = term_get_degree(term);
-   
-   if (degree != 1 && degree != 2)
-   {
-      fprintf(stderr, "*** Error 221: The objective function has to be linear or quadratic\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);      
-   }
    if (xlp_setobj(prog_get_lp(), name, minimize))
    {
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);

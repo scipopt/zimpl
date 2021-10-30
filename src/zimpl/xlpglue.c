@@ -104,19 +104,6 @@ void xlp_free(
    lps_free(lp);
 }
 
-#if 0 /* not used anymore ??? */
-/** Does the mathematical program have SOS constraints?
- *  @return True if there is at least one SOS constraint, False otherwise.
- */
-bool xlp_hassos(
-   Lps const* lp)         /**< Pointer to storage */
-{
-   assert(lp != NULL);
-
-   return lps_has_sos(lp);
-}
-#endif
-
 /** Does there already exists a constraint with the given name?
  *  @return True if there is already a constraint with name conname, False
  *          otherwise.
@@ -206,104 +193,6 @@ static bool check_con_is_invalid(
    return is_invalid;
 }
 
-#if 0
-expects_NONNULL
-static bool addcon_term_as_qubo(
-   Lps*         lp,         /**< Pointer to storage */
-   char const*  name,       /**< Name of the constraint */
-   ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
-   Numb const*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
-   Numb const*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
-   unsigned int flags,      /**< special treatment flags, see ratlptypes.h */
-   Term const*  term_org)   /**< term to use */
-{
-   assert(lp   != NULL);
-   assert(name != NULL);
-   assert(lhs  != NULL);
-   assert(rhs  != NULL);
-   assert(term_is_valid(term_org));
-   assert(numb_equal(term_get_constant(term_org), numb_zero()));
-   assert(flags & LP_FLAG_CON_QUBO);
-
-   Term* term = term_simplify(term_org);
-
-   //  if ((term_get_degree(term) > 2) || !term_is_polynomial(term))
-   if (!term_is_linear(term))
-   {
-      fprintf(stderr, "Error: can't QUBO it");
-      abort();           
-   }
-   
-   switch(contype)
-   {
-   case CON_EQUAL : /* In case of EQUAL, both should be equal */
-      assert(numb_equal(lhs, rhs));
-      fall_THROUGH
-   case CON_RHS :
-      if (!numb_equal(rhs, numb_one()))
-      {
-         fprintf(stderr, "Error: can't QUBO it");
-         abort();           
-      }
-      break;
-   case CON_LHS :
-      //if (!nump_equal(lhs, numb_one))
-      fall_THROUGH
-   case CON_RANGE :
-      fprintf(stderr, "Error: can't QUBO");
-      abort();     
-      break;
-   default :
-      abort();
-   }
-   if (flags & ~LP_FLAG_CON_QUBO)
-   {
-      fprintf(stderr, "Warning other flags ignored");      
-   }
-   int telems = term_get_elements(term);   
-
-   for(int i = 0; i < telems; i++)
-   {
-      Mono const* mono = term_get_element(term, i);
-      Var*        var1 = mono_get_var(mono, 0);
-   
-      assert(mono_is_linear(mono));
-
-      if (mono_get_function(mono) != MFUN_NONE)
-      {
-         fprintf(stderr, "Error: can't QUBO");
-         abort();     
-      }
-      if (!numb_equal(mono_get_coeff(mono), numb_one()))
-      {
-         fprintf(stderr, "Error: can't QUBO");
-         abort();     
-      }
-      for(int k = 0; k < telems; k++)
-      {
-         Mono const* mono2 = term_get_element(term, k);
-         Var*        var2  = mono_get_var(mono2, 0);
-         int         coef_value = 1;
-                  
-         if (i == k)
-            coef_value = (contype == CON_RHS) ? 0 : -1;
-
-         mpq_t coef;
-   
-         mpq_init(coef);
-   
-         mpq_set_si(coef, coef_value, 1);
-
-         lps_objqme(lp, var1, var2, coef);
-
-         mpq_clear(coef);
-      }
-   }
-   term_free(term);
-
-   return false;
-}
-#endif
 
 /** Add a constraint.
  *  Add a given a Zimpl term together with a right and/or left hand side as
@@ -665,69 +554,15 @@ bool xlp_setobj(
    return lps_setobjname(lp, name);
 }
 
-#if 0
-/** Add to the objective value coefficient of a variable.
- */
-/*ARGSUSED*/
-void xlp_addtocost(
-   is_UNUSED Lps*     lp,      /**< Pointer to storage */
-   Var*               var,     /**< Pointer to variable as returned by xlp_addvar() */
-   Numb const*        cost)    /**< Value to be added to the objective coefficient of the variable */
-{
-   mpq_t val1;
-   mpq_t val2;
-
-   assert(var  != NULL);
-   assert(cost != NULL);
-   
-   mpq_init(val1);
-   mpq_init(val2);
-
-   lps_getcost(var, val1);
-   numb_get_mpq(cost, val2);
-   mpq_add(val1, val1, val2);
-   lps_setcost(var, val1);
-
-   mpq_clear(val1);
-   mpq_clear(val2);
-}
-#endif
-
-#if 0
-/** Add to the objective value coefficient of a variable.
- */
-/*ARGSUSED*/
-void xlp_addobjqme(
-   Lps*        lp,      /**< Pointer to storage */
-   Var*        var1,    /**< Pointer to variable as returned by xlp_addvar() */
-   Var*        var2,    /**< Pointer to variable as returned by xlp_addvar() */
-   Numb const* cost)    /**< Value to be added to the objective coefficient of the variable */
-{
-   assert(lp   != NULL);
-   assert(var1 != NULL);
-   assert(var2 != NULL);
-   
-   mpq_t val1;
-   
-   mpq_init(val1);
-   
-   numb_get_mpq(cost, val1);
-
-   lps_objqme(lp, var1, var2, val1);
-
-   mpq_clear(val1);
-}
-#endif
-
 void xlp_addtoobj(
-   Lps*        lp,
-   Term const* term_org)
+   Lps*        const lp,
+   Term const* const term_org)
 {
    assert(lp != NULL);
    assert(term_is_valid(term_org));
 
-   Term* term = term_simplify(term_org);
-   
+   Term* const term = term_simplify(term_org);
+
    if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
       lps_addtoobjterm(lp, term);
    else
@@ -787,59 +622,3 @@ void xlp_addtoobj(
    term_free(term);
 }
 
-#if 0
-void term_to_objective(Term const* term_org)
-{
-   Trace("term_to_objective");
-
-   assert(term_is_valid(term_org));
-
-   Term* term = term_simplify(term_org);
-
-   Lps* lp = prog_get_lp();
-
-   /* If we have a constant in the objective, generate an artificial
-    * variable @OOffset fixed to the value. This works allways.
-    * This is needed because there is no general way for example in
-    * MPS format to specify an objective value offset.
-    */
-   if (!numb_equal(term->constant, numb_zero()))
-   {
-      char const* format = "%sObjOffset";
-   
-      Bound* lower = bound_new(BOUND_VALUE, numb_one());
-      Bound* upper = bound_new(BOUND_VALUE, numb_one());
-      char*  vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
-
-      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-      Var* var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
-      xlp_addtocost(lp, var, term->constant);
-
-      free(vname);
-      bound_free(upper);
-      bound_free(lower);
-   }
-   
-   for(int i = 0; i < term->used; i++)
-   {
-      Mono const* mono   = term->elem[i];
-      Numb const* coeff  = mono_get_coeff(mono);
-      const int   degree = mono_get_degree(mono);
-         
-      assert(!numb_equal(coeff, numb_zero()));
-      assert(degree == 1 || degree == 2);
-      
-      if (degree == 1) // linear
-      {
-         xlp_addtocost(lp, mono_get_var(mono, 0), coeff);
-         mono_mul_coef(mono, numb_zero);
-      }
-      else // quadratic
-      {
-         xlp_addobjqme(lp, mono_get_var(mono, 0), mono_get_var(mono, 1), coeff);
-      }
-   }
-   term_free(term);
-}
-
-#endif

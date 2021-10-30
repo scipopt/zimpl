@@ -56,8 +56,7 @@ extern bool     xlp_addcon_term(Lps* lp, char const* name, ConType type,
 extern Var*     xlp_addvar(Lps* lp, char const* name, VarClass usevarclass,
    Bound const* lower, Bound const* upper, Numb const* priority, Numb const* startval) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_addsos_term, inout(1), 1p == 1, 2p, 4p == 1, 5p == 1) 
-extern int      xlp_addsos_term(Lps* lp, char const* name, SosType type,
-   Numb const* priority, Term const* term) expects_NONNULL;
+extern int      xlp_addsos_term(Lps* lp, char const* name, SosType type, Numb const* priority, Term const* term) expects_NONNULL;
 //lint -sem(    xlp_getvarname, 1p == 1, 2p == 1, @p) 
 char const*     xlp_getvarname(Lps const* lp, Var const* var) expects_NONNULL returns_NONNULL is_PURE;
 //lint -sem(    xlp_getclass, 1p == 1, 2p == 1) 
@@ -68,12 +67,6 @@ extern Bound*   xlp_getlower(Lps const* lp, Var const* var) expects_NONNULL retu
 extern Bound*   xlp_getupper(Lps const* lp, Var const* var) expects_NONNULL returns_NONNULL;
 //lint -sem(    xlp_setobj, inout(1), 1p == 1, 2p) 
 extern bool     xlp_setobj(Lps* lp, char const* name, bool minimize) expects_NONNULL;
-#if 0
-//lint -sem(    xlp_addtocost, inout(1), 1p == 1, inout(2), 2p == 1, 3p == 1) 
-extern void     xlp_addtocost(Lps* lp, Var* var, Numb const* cost) expects_NONNULL;
-//lint -sem(    xlp_addobjqme, inout(1), 1p == 1, inout(2), 2p == 1, inout(3), 3p == 1, 4p == 1) 
-extern void     xlp_addobjqme(Lps* lp, Var* var1, Var* var2, Numb const* cost) expects_NONNULL;
-#endif
 //lint -sem(    xlp_addtermtoobj, inout(1), 1p == 1, 2p == 1) 
 extern void     xlp_addtoobj(Lps* lp, Term const* term) expects_NONNULL;
    

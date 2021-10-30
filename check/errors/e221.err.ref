@@ -1,4 +1,0 @@
-*** Error 221: The objective function has to be linear or quadratic
-*** File: e221.zpl Line 3
-*** maximize a: x * x * x;
-***                      ^^^
