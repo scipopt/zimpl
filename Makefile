@@ -106,13 +106,6 @@ GCCWARN		=	-Wall \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
 			-Wsuggest-attribute=format \
-			-Wsuggest-attribute=malloc \
-			-Wsuggest-attribute=cold \
-			-Wsuggest-attribute=format \
-			-Wsuggest-attribute=pure \
-			-Wsuggest-attribute=const \
-			-Wsuggest-attribute=noreturn \
-			-Wduplicated-branches \
 			-Wno-attributes \
 			-Wno-unused-function \
 			-Wno-unused-parameter \
@@ -137,8 +130,10 @@ GCCWARN		=	-Wall \
 			-fsanitize=bool \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
-			-fsanitize=pointer-overflow \
-			-fsanitize=builtin 
+#			-Wsuggest-attribute=malloc \
+#			-Wsuggest-attribute=cold \
+#			-fsanitize=pointer-overflow \
+#			-fsanitize=builtin 
 #			-fsanitize=float-divide-by-zero \
 #			-fsanitize=bounds-strict \
 
