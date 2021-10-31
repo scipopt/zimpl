@@ -484,13 +484,13 @@ int main(int argc, char* const* argv)
 
       switch(format)
       {
-      case LP_FORM_HUM :
       case LP_FORM_QBO :
          prog_text = prog_tostr(prog, strchr(format_options, 'c') == NULL ? "# " : "c ", title, 128);
          break;
+      case LP_FORM_HUM :
       case LP_FORM_LPF :
       case LP_FORM_PIP :
-         prog_text = prog_tostr(prog, "\\", title, 128);
+         prog_text = prog_tostr(prog, "\\ ", title, 128);
          break;
       case LP_FORM_MPS :
          prog_text = prog_tostr(prog, "* ", title, 128);
