@@ -46,8 +46,6 @@ extern "C" {
 extern Lps*         lps_alloc(char const* name) expects_NONNULL returns_NONNULL;
 //lint -sem(        lps_free, custodial(1), inout(1), 1p == 1) 
 extern void         lps_free(Lps* lp) expects_NONNULL;
-//lint -sem(        lps_number, inout(1), 1p == 1) 
-extern void         lps_number(Lps const* lp) expects_NONNULL;
 //lint -sem(        lps_getsos, 1p == 1, 2p, r_null) 
 extern Sos*         lps_getsos(Lps const* lp, char const* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getvar, 1p == 1, 2p, r_null) 
@@ -134,10 +132,6 @@ extern void         lps_getlhs(Con const* con, mpq_t lhs) expects_NONNULL;
 extern void         lps_getrhs(Con const* con, mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_varname, 1p == 1, @p) 
 extern char const*  lps_varname(Var const* var) expects_NONNULL returns_NONNULL is_PURE;
-#if 0
-//lint -sem(        lps_varnumber, 1p == 1, @ >= 0) 
-extern int          lps_varnumber(Var const* var) expects_NONNULL is_PURE; 
-#endif
 //lint -sem(        lps_setvartype, inout(1), 1p == 1) 
 extern void         lps_setvartype(Var* con, VarType type) expects_NONNULL;
 //lint -sem(        lps_flags, 1p == 1) 

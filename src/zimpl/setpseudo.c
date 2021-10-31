@@ -210,7 +210,6 @@ static bool iter_next(
    is_UNUSED int        offset)
 {
    assert(set_pseudo_iter_is_valid(iter));
-   assert(set_pseudo_is_valid(set));
 
    if (!iter->pseudo.first)
       return false;

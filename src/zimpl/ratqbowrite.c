@@ -247,7 +247,7 @@ void qbo_write(
    
    Qubo* const qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
-   fprintf(fp, "%d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
+   fprintf(fp, "p %d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
    
    free(entry);
 
@@ -257,7 +257,7 @@ void qbo_write(
       {
          int col = qubo->col[k];
 
-         fprintf(fp, "%d %d %.15g\n", row, col, mpq_get_d(qubo->val[k]));
+         fprintf(fp, "%d %d %.15g\n", row + 1, col + 1, mpq_get_d(qubo->val[k]));
       }
    }
    mpq_clear(offset);   

@@ -417,10 +417,7 @@ int main(int argc, char* const* argv)
     */
    if (presolve)
       fprintf(stderr, "--- Warning: Presolve no longer support. If you need it, send me an email\n");
-#if 0 
-      if (!zlp_presolve())
-         exit(EXIT_SUCCESS);
-#endif
+
    if (verbose >= VERB_NORMAL)
       zlp_stat(lp);
    
@@ -481,8 +478,16 @@ int main(int argc, char* const* argv)
    }
    switch(format)
    {
+   case LP_FORM_HUM :
    case LP_FORM_QBO :
-      prog_text = strdup("");
+      prog_text = prog_tostr(prog, "#", title, 128);
+      break;
+   case LP_FORM_LPF :
+   case LP_FORM_PIP :
+      prog_text = prog_tostr(prog, "\\", title, 128);
+      break;
+   case LP_FORM_MPS :
+      prog_text = prog_tostr(prog, "*", title, 128);
       break;
    case LP_FORM_RLP :
       prog_text = malloc(strlen(title) + 4);
@@ -492,8 +497,7 @@ int main(int argc, char* const* argv)
       sprintf(prog_text, "\\%s\n", title);
       break;
    default :
-      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title, 128);
-      break;
+      abort();
    }
    zlp_write(lp, fp, format, prog_text);
 

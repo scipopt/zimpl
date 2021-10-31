@@ -193,7 +193,7 @@ static void addcon_as_qubo(
 
    // remove the 1
    term_add_constant(qterm, numb_one());
-         
+
    for(int i = 0; i < telems; i++)
    {
       Mono const* mono1 = term_get_element(term, i);
@@ -3015,18 +3015,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       Entry const* entry  = list_get_entry(list, &lelem);
       Tuple const* tuple  = entry_get_tuple(entry);
-#if 0
-      if (set_get_dim(iset) != tuple_get_dim(tuple))
-      {
-         fprintf(stderr, "*** Error 196: Indexing Tuple ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d\n",
-            tuple_get_dim(tuple),
-            set_get_dim(iset));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-#endif
+
       check_tuple_set_compatible(self, tuple, iset);
 
       if (set_lookup(iset, tuple))
@@ -3129,18 +3118,7 @@ static void insert_param_list_by_list(
    {
       Entry const* entry  = list_get_entry(list, &le_idx);
       Tuple const* tuple  = entry_get_tuple(entry);
-#if 0
-      if (set_get_dim(iset) != tuple_get_dim(tuple))
-      {
-         fprintf(stderr, "*** Error 194: Indexing tuple ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d\n",
-            tuple_get_dim(tuple),
-            set_get_dim(iset));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-#endif
+
       check_tuple_set_compatible(self, tuple, iset);
 
       if (!set_lookup(iset, tuple))

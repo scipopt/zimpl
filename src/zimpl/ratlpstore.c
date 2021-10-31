@@ -150,7 +150,7 @@ static void lps_hash_free(LpsHash* hash)
       
    assert(hash_valid(hash));
 
-#if 0
+#ifdef VERBOSE_OUTPUT
 #ifndef NDEBUG
    hash_statist(stdout, hash);
 #endif
