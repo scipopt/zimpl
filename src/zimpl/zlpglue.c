@@ -103,16 +103,17 @@ bool zlp_presolve(Lps* lp)
 /** Write mathematical program to file.
  */
 void zlp_write(
-   Lps const*  lp,         /**< Pointer to storage */
-   FILE*       fp,         /**< File pointer to write to */
-   LpFormat    format,     /**< File format */
-   char const* text)       /**< Comment to be written into the file */
+   Lps const*  const lp,         /**< Pointer to storage */
+   FILE*       const fp,         /**< File pointer to write to */
+   LpFormat    const format,     /**< File format */
+   char const* const format_options, /**<< Format option characters if any */
+   char const* const text)       /**< Comment to be written into the file */
 {  
    assert(lp != NULL);
    assert(fp != NULL);
 
    lps_scale(lp);
-   lps_write(lp, fp, format, text);
+   lps_write(lp, fp, format, format_options, text);
 }
 
 /** Write variable and constraint translation table to file.

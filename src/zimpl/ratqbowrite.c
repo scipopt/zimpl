@@ -184,7 +184,8 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
 void qbo_write(
    Lps const*  const lp,
    FILE*       const fp,
-   LpFormat    const format ,
+   LpFormat    const format,
+   char const* const format_options,
    char const* const text)
 {
    assert(lp != NULL);
@@ -247,17 +248,26 @@ void qbo_write(
    
    Qubo* const qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
-   fprintf(fp, "p %d %d %g\n", lp->vars, entry_used, mpq_get_d(offset));
+   fprintf(fp, "%s Vars Non-zeros Offset\n",
+      strchr(format_options, 'c') == NULL ? "#" : "c");
+   
+   fprintf(fp, "%s%d %d %g\n",
+      strchr(format_options, 'p') == NULL ? "" : "p ",
+      lp->vars,
+      entry_used,
+      mpq_get_d(offset));
    
    free(entry);
 
+   int const index_base = (strchr(format_options, '0') == NULL) ? 1 : 0;
+   
    for(int row = 0; row < qubo->rows; row++)
    {
       for(int k = qubo->rowbeg[row]; k < qubo->rowbeg[row + 1]; k++)
       {
          int col = qubo->col[k];
 
-         fprintf(fp, "%d %d %.15g\n", row + 1, col + 1, mpq_get_d(qubo->val[k]));
+         fprintf(fp, "%d %d %.15g\n", row + index_base, col + index_base, mpq_get_d(qubo->val[k]));
       }
    }
    mpq_clear(offset);   

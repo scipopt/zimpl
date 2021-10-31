@@ -150,8 +150,8 @@ extern void         lps_setstartval(Var* var, const mpq_t startval) expects_NONN
 extern void         lps_setnamelen(Lps* lp, int name_len) expects_NONNULL;
 //lint -sem(        lps_setindictaor, inout(1), 1p == 1, inout(2), 2p == 1) 
 extern void         lps_setindicator(Con* con, Var* var, bool on_true) expects_NONNULL;
-//lint -sem(        lps_write, 1p == 1, inout(2), 2p == 1) 
-extern void         lps_write(Lps const* lp, FILE* fp, LpFormat format, char const* text) expects_NONNULL12;
+//lint -sem(        lps_write, 1p == 1, inout(2), 2p == 1, 4p) 
+extern void         lps_write(Lps const* lp, FILE* fp, LpFormat format, char const* format_options, char const* text) expects_NONNULL12;
 //lint -sem(        lps_transtable, 1p == 1, inout(2), 2p == 1, 4p) 
 extern void         lps_transtable(Lps const* lp, FILE* fp, LpFormat format, char const* head) expects_NONNULL;
 //lint -sem(        lps_clearobj, inout(1), 1p == 1) 
@@ -185,8 +185,8 @@ extern void         lps_mstfile(Lps const* lp, FILE* fp, LpFormat format, char c
 
 /* ratqubowrite.c
  */
-//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1) 
-extern void         qbo_write(Lps const* lp, FILE* fp, LpFormat format, char const* text) expects_NONNULL12;
+//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1, 4p) 
+extern void         qbo_write(Lps const* lp, FILE* fp, LpFormat format, char const* format_options, char const* text) expects_NONNULL12;
 
 #if 0 // Not used anymore ??? 
 /* ratpresolve.c

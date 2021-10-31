@@ -320,7 +320,13 @@ is to assume minimization.
 		  same as \code{lp} but with rows and columns randomly
                   permuted. The permutation is depending on the
 		  \emph{seed}. Also possible is \code{pip} which
-		  means Polynomial IP, or \code{qbo} which means QUBO.\\
+		  means Polynomial IP, or \code{q}\emph{x} which
+                  means QUBO. \emph{x} are format
+                  options. Available are: \emph{0} for zero based matrix
+                  indexing (1 is default), \emph{c} for using 'c' as
+                  comment line indicator in the file (default is '#'),
+                  and \emph{p} for writing an 'p' in the first line of
+                  the instance. \\
 -o \emph{name}   & Sets the base-name for the output files.\\
                 & Defaults to the name of the first input file with
                   its path and extension stripped off.\\

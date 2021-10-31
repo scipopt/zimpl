@@ -1821,10 +1821,11 @@ int lps_getnamesize(Lps const* lp, LpFormat format)
 }
 
 void lps_write(
-   Lps const*  lp,
-   FILE*       fp,
-   LpFormat    format,
-   char const* text)
+   Lps const*  const lp,
+   FILE*       const fp,
+   LpFormat    const format,
+   char const* const format_options,   
+   char const* const text)
 {
    assert(lp   != NULL);
    assert(fp   != NULL);
@@ -1843,7 +1844,7 @@ void lps_write(
       mps_write(lp, fp, text);
       break;
    case LP_FORM_QBO :
-      qbo_write(lp, fp, format, text);
+      qbo_write(lp, fp, format, format_options, text);
       break;
    default :
       abort();
