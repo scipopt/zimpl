@@ -43,6 +43,12 @@
 
 #if !defined(NO_MSHELL) 
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wcast-align"
+#pragma clang diagnostic ignored "-Wcast-qual"
+#pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
+#endif // __clang__
+
 #define ALIGN_SIZE   sizeof(double)
 #define MEMTAG1      0xa55a
 #define MEMTAG2      0xd88d
@@ -85,7 +91,7 @@ static size_t mem_alloc_size(
 }
    
 static int* mem_endptr(
-   MHDR* p)
+   MHDR* const p)
 {
    size_t offset;
    
@@ -97,8 +103,21 @@ static int* mem_endptr(
    return (int*)((char*)p + offset); //lint !e2445 !e826
 }  
    
+static int const* mem_endptr_const(
+   MHDR const* const p)
+{
+   size_t offset;
+   
+   assert(p != NULL);
+   
+   offset = ((RESERVE_SIZE + p->size + ALIGN_SIZE - 1) / ALIGN_SIZE)
+      * ALIGN_SIZE;
+   
+   return (int const*)((char const*)p + offset); //lint !e2445 !e826
+}  
+   
 static void mem_add_list(
-   MHDR* p)
+   MHDR* const p)
 {
    assert((p != NULL) && (p->tag1 == MEMTAG1) && (p->tag2 == MEMTAG2));
 
@@ -115,7 +134,7 @@ static void mem_add_list(
 }
 
 static void mem_del_list(
-   MHDR *p)
+   MHDR* const p)
 {
    assert((p != NULL) && (p->tag1 == MEMTAG1) && (p->tag2 == MEMTAG2));
 
@@ -134,12 +153,12 @@ static void mem_del_list(
 }
 
 static is_NORETURN void mem_tag_err(
-   MHDR const* p,
-   int         typ,
-   char const* file1,
-   const int   line1,
-   char const* file2,
-   const int   line2)
+   MHDR const* const p,
+   int         const typ,
+   char const* const file1,
+   int         const line1,
+   char const* const file2,
+   int         const line2)
 {
    char const* const errtyp[] = { "pre1", "pre2", "post" };
    
@@ -159,9 +178,9 @@ static is_NORETURN void mem_tag_err(
 }   
 
 static void mem_valid(
-   MHDR*       p,
-   char const* file,
-   const int   line)
+   MHDR const* const p,
+   char const* const file,
+   int         const line)
 {
    if (p->tag1 != MEMTAG1)
    {
@@ -177,14 +196,14 @@ static void mem_valid(
 
       Mem_tag_err(p, 1, "Unknown", 0);
    }
-   if (*mem_endptr(p) != ENDTAG)
+   if (*mem_endptr_const(p) != ENDTAG)
       Mem_tag_err(p, 2, p->file, p->line);
 }
       
 void* mem_malloc(
-   size_t       size,
-   char const*  file,
-   const int    line) 
+   size_t       const size,
+   char const*  const file,
+   int          const line) 
 {
    char const* const errmsg1 =
       "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
@@ -221,10 +240,10 @@ void* mem_malloc(
 } 
 
 void* mem_calloc(
-   size_t       item,
-   size_t       size,
-   char const*  file,
-   const int    line)
+   size_t       const item,
+   size_t       const size,
+   char const*  const file,
+   int          const line)
 {
    char const* const errmsg1 =
       "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
@@ -237,7 +256,7 @@ void* mem_calloc(
       abort();
    }
 
-   MHDR* p = calloc(1, mem_alloc_size(size * item)); //lint --e{429}
+   MHDR* const p = calloc(1, mem_alloc_size(size * item)); //lint --e{429}
 
    if (p == MHDR_NIL)
    {
@@ -258,10 +277,10 @@ void* mem_calloc(
 } 
 
 void* mem_realloc(
-   void*        ptr,
-   size_t       size,
-   char const*  file,
-   const int    line)
+   void*        const ptr,
+   size_t       const size,
+   char const*  const file,
+   int          const line)
 {
    char const* const errmsg1 =
       "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
@@ -301,9 +320,9 @@ void* mem_realloc(
 }
 
 char* mem_strdup(
-   char const* str,
-   char const* file,
-   const int   line)
+   char const* const str,
+   char const* const file,
+   int         const line)
 {
    char const* const errmsg1 = "mem_strdup(file=%s, line=%d): null pointer\n";
 
@@ -316,9 +335,9 @@ char* mem_strdup(
 }
       
 void mem_free(
-   void*       ptr,
-   char const* file,
-   const int   line)
+   void*       const ptr,
+   char const* const file,
+   int         const line)
 {
    char const* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 
@@ -336,9 +355,9 @@ void mem_free(
 }
 
 void mem_hide_x(
-   void*       ptr,
-   char const* file,
-   const int   line)
+   void*       const ptr,
+   char const* const file,
+   int         const line)
 {
    char const* const errmsg = "mem_checkout(file=%s, line=%d): null pointer\n";
 
@@ -347,7 +366,7 @@ void mem_hide_x(
       (void)fprintf(stderr, errmsg, file, line);
       abort();
    }
-   MHDR* p = CLIENT_2_HDR(ptr);
+   MHDR* const p = CLIENT_2_HDR(ptr);
 
    mem_valid(p, file, line);   
    mem_del_list(p);
@@ -370,12 +389,12 @@ void mem_maximum(
 }
 
 void mem_display(
-   FILE* fp)
+   FILE* const fp)
 {
    (void)fprintf(fp, "\nAddress     Size  File(Line) - total size %lu\n",
       mem_size);
    
-   for(MHDR* p = memlist; p != MHDR_NIL; p = p->next)
+   for(MHDR const* p = memlist; p != MHDR_NIL; p = p->next)
    {
       (void)fprintf(fp, "%8lx  %6lu  %s(%d) %s %s\n",
          (unsigned long)p,
@@ -383,42 +402,42 @@ void mem_display(
          p->file,
          p->line,
          ((p->tag1 != MEMTAG1) || (p->tag2 != MEMTAG2)) ? "Invalid" : "",
-         (*mem_endptr(p) == ENDTAG) ? "ok" : "Clobbered");
+         (*mem_endptr_const(p) == ENDTAG) ? "ok" : "Clobbered");
    } 
    mem_maximum(fp);
 }      
 
 void mem_check_x(
-   void const* ptr,
-   char const* file,
-   const int   line)
+   void const* const ptr,
+   char const* const file,
+   int         const line)
 {
-   MHDR* p = CLIENT_2_HDR(ptr);
+   MHDR const* const p = CLIENT_2_HDR(ptr);
    
    mem_valid(p, file, line);
 }      
 
 void mem_check_all_x(
-   char const* file,
-   const int   line)
+   char const* const file,
+   int         const line)
 {
-   for(MHDR* p = memlist; p != MHDR_NIL; p = p->next)
+   for(MHDR const* p = memlist; p != MHDR_NIL; p = p->next)
       mem_valid(p, file, line);
 }      
 
 #else /* NO_MSHELL */
 
 void* mem_malloc(
-   size_t       size,
-   char const*  file,
-   const int    line) 
+   size_t       const size,
+   char const*  const file,
+   int         const line) 
 {
    char const* const errmsg1 =
       "mem_malloc(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(size > 0);
 
-   void* p = malloc(size);
+   void* const p = malloc(size);
    
    if (NULL == p)
    {
@@ -429,10 +448,10 @@ void* mem_malloc(
 }
 
 void* mem_calloc(
-   size_t       item,
-   size_t       size,
-   char const*  file,
-   const int    line)
+   size_t       const item,
+   size_t       const size,
+   char const*  const file,
+   int          const line)
 {
    char const* const errmsg1 =
       "mem_calloc(item=%zu, size=%zu, file=%s, line=%d): out of memory\n";
@@ -440,7 +459,7 @@ void* mem_calloc(
    assert(item > 0);
    assert(size > 0);
 
-   void* p = calloc(item, size); //lint --e{429}
+   void* const p = calloc(item, size); //lint --e{429}
    
    if (NULL == p)
    {
@@ -451,10 +470,10 @@ void* mem_calloc(
 }
 
 void* mem_realloc(
-   void*        ptr,
-   size_t       size,
-   char const*  file,
-   const int    line)
+   void*        const ptr,
+   size_t       const size,
+   char const*  const file,
+   int          const line)
 {
    char const* const errmsg1 =
       "mem_realloc(size=%zu, file=%s, line=%d): out of memory\n";
@@ -462,7 +481,7 @@ void* mem_realloc(
    assert(ptr  != NULL);
    assert(size >  0);
    
-   void* p = realloc(ptr, size);
+   void* const p = realloc(ptr, size);
 
    if (NULL == p)
    {
@@ -473,16 +492,16 @@ void* mem_realloc(
 }
 
 char* mem_strdup(
-   char const* str,
-   char const* file,
-   const int   line)
+   char const* const str,
+   char const* const file,
+   int         const line)
 {
    char const* const errmsg1 =
       "mem_strdup(size=%zu, file=%s, line=%d): out of memory\n";
 
    assert(str != NULL);
    
-   char* s = strdup(str);
+   char* const s = strdup(str);
    
    if (NULL == s)
    {
@@ -493,9 +512,9 @@ char* mem_strdup(
 }
 
 void mem_free(
-   void*       ptr,
-   char const* file,
-   const int   line)
+   void*       const ptr,
+   char const* const file,
+   int         const line)
 {
    char const* const errmsg = "mem_free(file=%s, line=%d): null pointer\n";
 

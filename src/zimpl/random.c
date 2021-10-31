@@ -152,7 +152,7 @@ unsigned int rand_get_int32(void)
  */
 int rand_get_range(int mini, int maxi)
 {
-   double r = (double)rand_get_int32() / 4294967295.0;
+   double r = rand_get_int32() / 4294967295.0;
 
    assert(mini < maxi);
    

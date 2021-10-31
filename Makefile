@@ -86,14 +86,37 @@ LFLAGS		=	-d
 ARFLAGS		=
 DFLAGS		=	-MM
 # if changing these flags, also update ADD_C_FLAGS in CMakeLists.txt
-GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
+GCCWARN		=	-Wall \
+			-Wextra \
+			-Wno-unknown-pragmas \
 			-Wno-nonnull-compare \
-			-Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow \
-			-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations \
-			-Wstrict-overflow=4 -Wduplicated-branches \
-			-Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn \
-			-Wmissing-noreturn -Wsuggest-attribute=format \
-			-Wsuggest-attribute=malloc -Wsuggest-attribute=cold \
+			-Wno-cast-qual \
+			-Wpointer-arith \
+			-Wcast-align \
+			-Wwrite-strings \
+			-Winline \
+			-Wshadow \
+			-Wstrict-prototypes \
+			-Wmissing-prototypes \
+			-Wmissing-declarations \
+			-Wmissing-noreturn \
+			-Wstrict-overflow=4 \
+			-Wduplicated-branches \
+			-Wsuggest-attribute=pure \
+			-Wsuggest-attribute=const \
+			-Wsuggest-attribute=noreturn \
+			-Wsuggest-attribute=format \
+			-Wsuggest-attribute=malloc \
+			-Wsuggest-attribute=cold \
+			-Wsuggest-attribute=format \
+			-Wsuggest-attribute=pure \
+			-Wsuggest-attribute=const \
+			-Wsuggest-attribute=noreturn \
+			-Wduplicated-branches \
+			-Wno-attributes \
+			-Wno-unused-function \
+			-Wno-unused-parameter \
+			-Wno-nonnull-compare \
 			-fno-omit-frame-pointer \
 			-fstack-protector-strong \
 			-fsanitize=address \
@@ -115,7 +138,7 @@ GCCWARN		=	-Wall -Wextra -Wno-unknown-pragmas \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
 			-fsanitize=pointer-overflow \
-			-fsanitize=builtin \
+			-fsanitize=builtin 
 #			-fsanitize=float-divide-by-zero \
 #			-fsanitize=bounds-strict \
 

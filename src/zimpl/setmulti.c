@@ -282,14 +282,17 @@ Set* set_multi_new_from_list(List const* list, SetCheckType check)
 expects_NONNULL returns_NONNULL 
 static Set* set_multi_copy(Set const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+      
    Set* set = (Set*)source;
-   int  i;
+
+   CLANG_WARN_ON
    
    assert(set_multi_is_valid(source));
 
    set->head.refc++;
 
-   for(i = 0; i < set->head.dim; i++)
+   for(int i = 0; i < set->head.dim; i++)
       (void)set_copy(set->multi.set[i]);
    
    return set;

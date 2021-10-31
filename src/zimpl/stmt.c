@@ -147,9 +147,13 @@ void stmt_free(Stmt* stmt)
    if (stmt->node != NULL)
       code_free(stmt->node);
 
+   CLANG_WARN_OFF(-Wcast-qual)
+      
    free((void*)stmt->filename);
    free((void*)stmt->text);
    free(stmt);
+
+   CLANG_WARN_ON
 }
 
 bool stmt_is_valid(Stmt const* stmt)

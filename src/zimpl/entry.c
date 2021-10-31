@@ -193,8 +193,10 @@ bool entry_is_valid(Entry const* const entry)
 
 Entry* entry_copy(Entry const* const source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
    Entry* const entry = (Entry*)source;
-   
+   CLANG_WARN_ON
+      
    assert(entry_is_valid(entry));
 
    entry->refc++;

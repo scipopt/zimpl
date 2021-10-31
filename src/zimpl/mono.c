@@ -238,10 +238,12 @@ unsigned int mono_hash(Mono const* const mono)
    assert(mono_is_valid(mono));   
    
    size_t hcode = 0;
-   
    for(MonoElem const* e = &mono->first; e != NULL; e = e->next)
+   {
+      CLANG_WARN_OFF(-Wbad-function-cast)   
       hcode += ((size_t)entry_get_var(e->entry)) >> 2;
-
+      CLANG_WARN_ON
+   }      
    return DISPERSE((unsigned int)hcode);
 }
 

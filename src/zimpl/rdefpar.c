@@ -119,8 +119,12 @@ bool rdef_is_valid(RDef const* rdef)
 
 RDef* rdef_copy(RDef const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+
    RDef* rdef = (RDef*)source;
-   
+
+   CLANG_WARN_ON
+      
    assert(rdef_is_valid(rdef));
 
    rdef->refc++;

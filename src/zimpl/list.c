@@ -250,7 +250,9 @@ bool list_is_tuplelist(List const* list)
 
 List* list_copy(List const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
    List* list = (List*)source;
+   CLANG_WARN_ON
    
    assert(list_is_valid(list));
 

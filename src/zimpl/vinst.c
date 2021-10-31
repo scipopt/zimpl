@@ -1210,7 +1210,8 @@ CodeNode* i_vexpr_fun(CodeNode* self)
 
    assert(numb_is_int(funno));
    
-   mfun         = (MFun)numb_toint(funno);
+   //mfun         = (MFun)numb_toint(funno);
+   mfun         = numb_toint(funno);
    term_fun     = code_eval_child_term(self, 1);
    
    switch(mfun)

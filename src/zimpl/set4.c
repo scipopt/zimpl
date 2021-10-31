@@ -46,10 +46,6 @@
 #include "zimpl/entry.h"
 #include "zimpl/set4.h"
 
-#define TEST_DUBLICATE   0
-
-#define SET_SID          0x5365745f
-
 #ifndef NDEBUG
 static
 #endif
