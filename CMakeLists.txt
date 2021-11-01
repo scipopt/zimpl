@@ -11,19 +11,20 @@ set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align 
 
 add_compile_options(${ADD_C_FLAGS})
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    set(ADD_GNU_FLAGS -Wsuggest-attribute=format)
+    set(ADD_GNU_FLAGS -Wsuggest-attribute=format -Wno-suggest-attribute=noreturn )
     add_compile_options(${ADD_GNU_FLAGS})
     if (CMAKE_C_COMPILER_VERSION VERSION_LESS 5)
         message(WARNING "GCC version smaller than 5, it is recommended to use version 10 or higher.")
-        add_compile_options(-fsanitize=address -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -Wno-pragmas -Wno-clobbered -Wno-attributes)
+        add_compile_options(-Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -Wno-pragmas -Wno-clobbered -Wno-attributes)
+        # -fsanitize=address # add when ready
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 8)
         message(WARNING "GCC version smaller than 8, it is recommended to use version 10 or higher.")
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 9)
         message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     else() # gcc 10 or later
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
         #-Wno-error=unknown-warning -fsanitize=pointer-overflow -fsanitize=builtin # add when ready
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
