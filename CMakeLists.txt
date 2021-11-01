@@ -5,32 +5,36 @@ project(ZIMPL
     LANGUAGES C)
 
 # if changing these flags, also update GCCWARN/GXXWARN in make/make.project
-set(ADD_C_FLAGS "-Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer ")
-set(ADD_SANITIZE_FLAGS "-fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow")
+set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer)
+set(ADD_SANITIZE_FLAGS -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow)
 
+add_compile_options(${ADD_C_FLAGS})
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-    set(ADD_GNU_FLAGS "-Wsuggest-attribute=format")
+    set(ADD_GNU_FLAGS -Wsuggest-attribute=format)
+    add_compile_options(${ADD_GNU_FLAGS})
     if (CMAKE_C_COMPILER_VERSION VERSION_LESS 5)
         message(WARNING "GCC version smaller than 5, it is recommended to use version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_GNU_FLAGS} -fsanitize=address -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -Wno-pragmas -Wno-clobbered -Wno-attributes")
+        add_compile_options(-fsanitize=address -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -Wno-pragmas -Wno-clobbered -Wno-attributes)
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 8)
         message(WARNING "GCC version smaller than 8, it is recommended to use version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_GNU_FLAGS} ${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches ")
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 9)
         message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_GNU_FLAGS} ${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches ")
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     else() # gcc 10 or later
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_GNU_FLAGS} ${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -fsanitize=pointer-overflow -fsanitize=builtin -Wno-nonnull-compare -Wno-error=unknown-warning ") # additional parameters don't exist in gcc 7
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -fsanitize=pointer-overflow -fsanitize=builtin -Wno-nonnull-compare -Wno-error=unknown-warning) # additional parameters don't exist in gcc 7
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(ADD_CLANG_FLAGS "-Wno-unused-parameter -Wno-unused-function -Wno-cast-align -Wno-strict-prototypes -Wno-pragmas -Wno-attributes -Wstrict-overflow=4 -fstack-protector-strong -Wno-invalid-command-line-argument")
-    set(EXTRA_CLANG_FLAGS "-Weverything -Wno-reserved-id-macro -Wno-cast-qual -Wno-bad-function-cast -Wno-float-equal -Wno-unused-macros -Wno-implicit-fallthrough -Wno-switch-enum -Wno-padded -Wno-covered-switch-default -Wno-shorten-64-to-32 -Wno-pedantic -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-static-in-inline")
+    set(ADD_CLANG_FLAGS -Wno-unused-parameter -Wno-unused-function -Wno-cast-align -Wno-strict-prototypes -Wno-pragmas -Wno-attributes -Wstrict-overflow=4 -fstack-protector-strong -Wno-invalid-command-line-argument)
+    set(EXTRA_CLANG_FLAGS -Weverything -Wno-reserved-id-macro -Wno-cast-qual -Wno-bad-function-cast -Wno-float-equal -Wno-unused-macros -Wno-implicit-fallthrough -Wno-switch-enum -Wno-padded -Wno-covered-switch-default -Wno-shorten-64-to-32 -Wno-pedantic -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-static-in-inline)
+    add_compile_options(${ADD_CLANG_FLAGS} ${ADD_SANITIZE_FLAGS} ${EXTRA_CLANG_FLAGS})
     if (CMAKE_C_COMPILER_VERSION VERSION_LESS 7)
         message(WARNING "Clang version smaller than 7, it is recommended to use version 10 or higher.")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_CLANG_FLAGS} ${ADD_SANITIZE_FLAGS} ${EXTRA_CLANG_FLAGS}")
     else()
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADD_C_FLAGS} ${ADD_CLANG_FLAGS} ${ADD_SANITIZE_FLAGS} ${EXTRA_CLANG_FLAGS} -Wno-extra-semi-stmt")
+        add_compile_options(-Wno-extra-semi-stmt)
     endif()
+elseif(CMAKE_C_COMPILER MATCHES "intel")
+    add_compile_options(-wd111,151,171,279,981,1173,1419,1684,2259)
 endif()
 
 # use C99 standard
@@ -58,10 +62,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE Release)
 endif()
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-
-if(CMAKE_C_COMPILER MATCHES "intel")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd111,151,171,279,981,1173,1419,1684,2259")
-endif()
 
 # filter /MD and /MDd from C and CXX flags
 if(MSVC)
