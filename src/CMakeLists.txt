@@ -130,6 +130,11 @@ target_link_libraries(libzimpl ${libs})
 add_executable(zimpl ${binsources})
 target_link_libraries(zimpl libzimpl ${libs})
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    find_package(Sanitizers)
+    add_sanitizers(zimpl)
+endif()
+
 set_target_properties(libzimpl PROPERTIES
     OUTPUT_NAME "zimpl")
 
