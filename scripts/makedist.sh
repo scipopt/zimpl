@@ -43,7 +43,7 @@ VERSIONS=""
 VERSIONS="$VERSIONS\n$(grep "^VERSION" Makefile)"
 VERSIONS="$VERSIONS\n$(grep " Version" doc/zimpl.tex |grep -v date|grep -v License)"
 VERSIONS="$VERSIONS\n$(grep "@version" doc/docu.c)"
-VERSIONS="$VERSIONS\n$(grep " VERSION" CMakeLists.txt)"
+VERSIONS="$VERSIONS\n$(grep " VERSION" CMakeLists.txt |head -n 1)"
 VERSIONS="$VERSIONS\n$(grep "ZIMPL_VERSION" src/zimpl/mme.h)"
 
 # boil the formerly found versionnumbers down to a short format
