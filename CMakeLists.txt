@@ -6,7 +6,8 @@ project(ZIMPL
 
 # if changing these flags, also update GCCWARN/GXXWARN in make/make.project
 set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer)
-set(ADD_SANITIZE_FLAGS -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow)
+# uncomment when ready
+#set(ADD_SANITIZE_FLAGS -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow)
 
 add_compile_options(${ADD_C_FLAGS})
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
@@ -22,7 +23,8 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
         message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
         add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-suggest-attribute=noreturn -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     else() # gcc 10 or later
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -fsanitize=pointer-overflow -fsanitize=builtin -Wno-nonnull-compare -Wno-error=unknown-warning) # additional parameters don't exist in gcc 7
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
+        #-Wno-error=unknown-warning -fsanitize=pointer-overflow -fsanitize=builtin # add when ready
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(ADD_CLANG_FLAGS -Wno-unused-parameter -Wno-unused-function -Wno-cast-align -Wno-strict-prototypes -Wno-pragmas -Wno-attributes -Wstrict-overflow=4 -fstack-protector-strong -Wno-invalid-command-line-argument)
