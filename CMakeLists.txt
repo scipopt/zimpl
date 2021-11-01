@@ -24,7 +24,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
         message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
         add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
     else() # gcc 10 or later
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wsuggest-attribute=const -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-unused-parameter -Wno-unused-function -Wsuggest-attribute=const -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
         #-Wno-error=unknown-warning -fsanitize=pointer-overflow -fsanitize=builtin # add when ready
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
