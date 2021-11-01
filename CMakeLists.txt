@@ -6,8 +6,7 @@ project(ZIMPL
 
 # if changing these flags, also update GCCWARN/GXXWARN in make/make.project
 set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer)
-# uncomment when ready
-#set(ADD_SANITIZE_FLAGS -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow)
+set(ADD_SANITIZE_FLAGS -fsanitize=address -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=signed-integer-overflow)
 
 add_compile_options(${ADD_C_FLAGS})
 if(CMAKE_C_COMPILER_ID MATCHES "GNU")
@@ -20,17 +19,20 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 8)
         message(WARNING "GCC version smaller than 8, it is recommended to use version 10 or higher.")
         add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
+        add_link_options(${ADD_SANITIZE_FLAGS})
     elseif (CMAKE_C_COMPILER_VERSION VERSION_LESS 9)
         message(WARNING "GCC version smaller than 9, it is recommended to use version 10 or higher.")
         add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-nonnull-compare -Wno-unused-parameter -Wno-unused-function -fstack-protector-strong -Wduplicated-branches)
+        add_link_options(${ADD_SANITIZE_FLAGS})
     else() # gcc 10 or later
-        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-unused-parameter -Wno-unused-function -Wsuggest-attribute=const -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare )
-        #-Wno-error=unknown-warning -fsanitize=pointer-overflow -fsanitize=builtin # add when ready
+        add_compile_options(${ADD_SANITIZE_FLAGS} -Wno-unused-parameter -Wno-unused-function -Wsuggest-attribute=const -Wsuggest-attribute=pure -Wsuggest-attribute=malloc -Wsuggest-attribute=cold -Wstrict-overflow=4 -fstack-protector-strong -Wduplicated-branches -Wno-nonnull-compare -fsanitize=pointer-overflow -fsanitize=builtin  )
+        add_link_options(${ADD_SANITIZE_FLAGS})
     endif()
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(ADD_CLANG_FLAGS -Wno-unused-parameter -Wno-unused-function -Wno-cast-align -Wno-strict-prototypes -Wno-pragmas -Wno-attributes -Wstrict-overflow=4 -fstack-protector-strong -Wno-invalid-command-line-argument)
     set(EXTRA_CLANG_FLAGS -Weverything -Wno-reserved-id-macro -Wno-cast-qual -Wno-bad-function-cast -Wno-float-equal -Wno-unused-macros -Wno-implicit-fallthrough -Wno-switch-enum -Wno-padded -Wno-covered-switch-default -Wno-shorten-64-to-32 -Wno-pedantic -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-static-in-inline)
     add_compile_options(${ADD_CLANG_FLAGS} ${ADD_SANITIZE_FLAGS} ${EXTRA_CLANG_FLAGS})
+    add_link_options(${ADD_SANITIZE_FLAGS})
     if (CMAKE_C_COMPILER_VERSION VERSION_LESS 7)
         message(WARNING "Clang version smaller than 7, it is recommended to use version 10 or higher.")
     else()
