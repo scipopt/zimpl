@@ -158,7 +158,7 @@ static void write_term(
          if (verbose > 0)
          {
             fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
-            fprintf(stderr, "                 Constraint %s with degree %d ignored\n", 
+            fprintf(stderr, "                 Constraint \"%s\" with degree %d ignored\n", 
                name, term_get_degree(term));
          }
          only_comment = true;
@@ -404,7 +404,9 @@ void lpf_write(
       
    fprintf(fp, "\\Problem name: %s\n", lp->name);   
    fprintf(fp, "%s\n", (lp->direct == LP_MIN) ? "Minimize" : "Maximize");
-   fprintf(fp, " %s: ", lp->objname == NULL ? "Objective" : lp->objname);
+
+   lps_makename(name, name_size, lp->objname == NULL ? "Objective" : lp->objname, 0);
+   fprintf(fp, " %s: ", name);
    
    for(var = lp->var_root, cnt = 0; var != NULL; var = var->next)
    {
@@ -430,7 +432,10 @@ void lpf_write(
          fprintf(fp, "\n ");
    }
    if (lp->obj_term != NULL)
+   {
+      lps_makename(name, name_size, lp->objname == NULL ? "Objective" : lp->objname, 0);
       write_term(fp, format, lp->obj_term, name, name_size, true);
+   }
    
    /* ---------------------------------------------------------------------- */
 

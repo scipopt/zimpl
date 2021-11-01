@@ -46,8 +46,6 @@ extern "C" {
 extern Lps*         lps_alloc(char const* name) expects_NONNULL returns_NONNULL;
 //lint -sem(        lps_free, custodial(1), inout(1), 1p == 1) 
 extern void         lps_free(Lps* lp) expects_NONNULL;
-//lint -sem(        lps_number, inout(1), 1p == 1) 
-extern void         lps_number(Lps const* lp) expects_NONNULL;
 //lint -sem(        lps_getsos, 1p == 1, 2p, r_null) 
 extern Sos*         lps_getsos(Lps const* lp, char const* name) expects_NONNULL is_PURE;
 //lint -sem(        lps_getvar, 1p == 1, 2p, r_null) 
@@ -134,10 +132,6 @@ extern void         lps_getlhs(Con const* con, mpq_t lhs) expects_NONNULL;
 extern void         lps_getrhs(Con const* con, mpq_t rhs) expects_NONNULL;
 //lint -sem(        lps_varname, 1p == 1, @p) 
 extern char const*  lps_varname(Var const* var) expects_NONNULL returns_NONNULL is_PURE;
-#if 0
-//lint -sem(        lps_varnumber, 1p == 1, @ >= 0) 
-extern int          lps_varnumber(Var const* var) expects_NONNULL is_PURE; 
-#endif
 //lint -sem(        lps_setvartype, inout(1), 1p == 1) 
 extern void         lps_setvartype(Var* con, VarType type) expects_NONNULL;
 //lint -sem(        lps_flags, 1p == 1) 
@@ -156,8 +150,8 @@ extern void         lps_setstartval(Var* var, const mpq_t startval) expects_NONN
 extern void         lps_setnamelen(Lps* lp, int name_len) expects_NONNULL;
 //lint -sem(        lps_setindictaor, inout(1), 1p == 1, inout(2), 2p == 1) 
 extern void         lps_setindicator(Con* con, Var* var, bool on_true) expects_NONNULL;
-//lint -sem(        lps_write, 1p == 1, inout(2), 2p == 1) 
-extern void         lps_write(Lps const* lp, FILE* fp, LpFormat format, char const* text) expects_NONNULL12;
+//lint -sem(        lps_write, 1p == 1, inout(2), 2p == 1, 4p) 
+extern void         lps_write(Lps const* lp, FILE* fp, LpFormat format, char const* format_options, char const* text) expects_NONNULL12;
 //lint -sem(        lps_transtable, 1p == 1, inout(2), 2p == 1, 4p) 
 extern void         lps_transtable(Lps const* lp, FILE* fp, LpFormat format, char const* head) expects_NONNULL;
 //lint -sem(        lps_clearobj, inout(1), 1p == 1) 
@@ -191,8 +185,8 @@ extern void         lps_mstfile(Lps const* lp, FILE* fp, LpFormat format, char c
 
 /* ratqubowrite.c
  */
-//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1) 
-extern void         qbo_write(Lps const* lp, FILE* fp, LpFormat format, char const* text) expects_NONNULL12;
+//lint -sem(        qubo_write, 1p == 1, inout(2), 2p == 1, 4p) 
+extern void         qbo_write(Lps const* lp, FILE* fp, LpFormat format, char const* format_options, char const* text) expects_NONNULL12;
 
 #if 0 // Not used anymore ??? 
 /* ratpresolve.c

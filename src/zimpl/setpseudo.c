@@ -95,8 +95,12 @@ Set* set_pseudo_new()
 expects_NONNULL returns_NONNULL 
 static Set* set_pseudo_copy(Set const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+
    Set* set = (Set*)source;
-   
+
+   CLANG_WARN_ON
+      
    set->head.refc++;
 
    return set;
@@ -206,7 +210,6 @@ static bool iter_next(
    is_UNUSED int        offset)
 {
    assert(set_pseudo_iter_is_valid(iter));
-   assert(set_pseudo_is_valid(set));
 
    if (!iter->pseudo.first)
       return false;

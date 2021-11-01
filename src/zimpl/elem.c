@@ -137,7 +137,7 @@ void elem_exit()
    
    for(store = store_anchor; store != NULL; store = next)
    {
-#if 0 /* only for debugging */
+#ifdef DEBUGGING /* only for debugging */
       int i;
       
       for(i = 0; i < ELEM_STORE_SIZE - 1; i++)

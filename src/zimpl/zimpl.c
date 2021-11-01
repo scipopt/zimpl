@@ -86,9 +86,9 @@ static char const* const help =
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
-"  -t lp|mps|hum|rlp|pip|qbo  select output format. Either LP (default), MPS format,\n" \
+"  -t lp|mps|hum|rlp|pip|qx  select output format. Either LP (default), MPS format,\n" \
 "                 human readable HUM, randomly permuted LP, PIP polynomial IP, or\n" \
-"                 QUBO format\n" \
+"                 QUBO format: option x can be zero or more of [1,c,p]\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
@@ -179,39 +179,32 @@ static void check_write_ok(FILE* fp, char const* filename)
 
 int main(int argc, char* const* argv)
 {
-   Prog*         prog;
-   Set*          set;
-   void*         lp;
-   char const*   extension = "";
-   char*         filter    = strdup("%s");
+   stkchk_init();
+
+   char*         filter         = strdup("%s");
    char*         outfile;
    char*         tblfile;
    char*         ordfile;
    char*         mstfile;
-   char*         basefile = NULL;
-   char*         inppipe  = NULL;
+   char*         basefile       = NULL;
+   char*         inppipe        = NULL;
    char*         outpipe;
-   LpFormat      format   = LP_FORM_LPF;
-   FILE*         fp;
-   bool          write_order = false;
-   bool          write_mst   = false;
-   bool          presolve    = false;
-   int           name_length = 0;
-   char*         prog_text;
-   unsigned long seed = 13021967UL;
-   char**        param_table;
-   int           param_count = 0;
+   LpFormat      format         = LP_FORM_LPF;
+   char const*   format_options = "";
+   bool          write_order    = false;
+   bool          write_mst      = false;
+   bool          presolve       = false;
+   int           name_length    = 0;
+   unsigned long seed           = 13021967UL;
+   char**        param_table    = malloc(sizeof(*param_table));
+   int           param_count    = 0;
    int           c;
-   int           i;
    FILE*         (*openfile)(char const*, char const*) = fopen;
    int           (*closefile)(FILE*)                   = fclose;
-
-   stkchk_init();
-   
+  
    yydebug       = 0;
    yy_flex_debug = 0;
    verbose       = VERB_NORMAL;
-   param_table   = malloc(sizeof(*param_table));
    
    while((c = getopt(argc, argv, options)) != -1)
    {
@@ -301,6 +294,7 @@ int main(int argc, char* const* argv)
             break;
          case 'q' :
             format = LP_FORM_QBO;
+            format_options = &optarg[1];
             break;
          case 'r' :
             format = LP_FORM_RLP;
@@ -337,6 +331,8 @@ int main(int argc, char* const* argv)
    
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));
+
+   char const* extension = "";
 
    switch(format)
    {
@@ -384,20 +380,20 @@ int main(int argc, char* const* argv)
    
    /* Make symbol to hold entries of internal variables
     */
-   set = set_pseudo_new();
+   Set* const set = set_pseudo_new();
    (void)symbol_new(SYMBOL_NAME_INTERNAL, SYM_VAR, set, 100, ENTRY_NULL);
    set_free(set);
    
    /* Now store the param defines
     */
-   for(i = 0; i < param_count; i++)
+   for(int i = 0; i < param_count; i++)
       zpl_add_parameter(param_table[i]);
 
    /* Next we read in the zpl program(s)
     */
-   prog = prog_new();
+   Prog* const prog = prog_new();
 
-   for(i = optind; i < argc; i++)
+   for(int i = optind; i < argc; i++)
       prog_load(prog, inppipe, argv[i]);
 
    if (prog_is_empty(prog))
@@ -408,7 +404,7 @@ int main(int argc, char* const* argv)
    if (verbose >= VERB_DEBUG)
       prog_print(stderr, prog);
    
-   lp = xlp_alloc(argv[optind], write_mst || write_order, NULL);
+   void* const lp = xlp_alloc(argv[optind], write_mst || write_order, NULL);
    zlp_setnamelen(lp, name_length);
    
    prog_execute(prog, lp);
@@ -417,13 +413,10 @@ int main(int argc, char* const* argv)
     */
    if (presolve)
       fprintf(stderr, "--- Warning: Presolve no longer support. If you need it, send me an email\n");
-#if 0 
-      if (!zlp_presolve())
-         exit(EXIT_SUCCESS);
-#endif
+
    if (verbose >= VERB_NORMAL)
       zlp_stat(lp);
-   
+
    /* Write order file 
     */
    if (write_order)
@@ -433,7 +426,9 @@ int main(int argc, char* const* argv)
       if (verbose >= VERB_NORMAL)
          printf("Writing [%s]\n", outpipe);
 
-      if (NULL == (fp = (*openfile)(outpipe, "w")))
+      FILE* const fp = (*openfile)(outpipe, "w");
+      
+      if (NULL == fp) 
       {
          fprintf(stderr, "*** Error 104: File open failed ");
          perror(ordfile);
@@ -454,7 +449,9 @@ int main(int argc, char* const* argv)
       if (verbose >= VERB_NORMAL)
          printf("Writing [%s]\n", outpipe);
 
-      if (NULL == (fp = (*openfile)(outpipe, "w")))
+      FILE* const fp = (*openfile)(outpipe, "w");
+
+      if (NULL == fp)
       {
          fprintf(stderr, "*** Error 104: File open failed ");
          perror(mstfile);
@@ -473,34 +470,50 @@ int main(int argc, char* const* argv)
    if (verbose >= VERB_NORMAL)
       printf("Writing [%s]\n", outpipe);
 
-   if (NULL == (fp = (*openfile)(outpipe, "w")))
+   // Write instance file
    {
-      fprintf(stderr, "*** Error 104: File open failed ");
-      perror(outfile);
-      exit(EXIT_FAILURE);
-   }
-   switch(format)
-   {
-   case LP_FORM_QBO :
-      prog_text = strdup("");
-      break;
-   case LP_FORM_RLP :
-      prog_text = malloc(strlen(title) + 4);
+      FILE* const fp = (*openfile)(outpipe, "w");
       
-      assert(prog_text != NULL);
+      if (NULL == fp)
+      {
+         fprintf(stderr, "*** Error 104: File open failed ");
+         perror(outfile);
+         exit(EXIT_FAILURE);
+      }
+      char* prog_text = NULL;
 
-      sprintf(prog_text, "\\%s\n", title);
-      break;
-   default :
-      prog_text = prog_tostr(prog, format == LP_FORM_MPS ? "* " : "\\ ", title, 128);
-      break;
+      switch(format)
+      {
+      case LP_FORM_QBO :
+         prog_text = prog_tostr(prog, strchr(format_options, 'c') == NULL ? "# " : "c ", title, 128);
+         break;
+      case LP_FORM_HUM :
+      case LP_FORM_LPF :
+      case LP_FORM_PIP :
+         prog_text = prog_tostr(prog, "\\ ", title, 128);
+         break;
+      case LP_FORM_MPS :
+         prog_text = prog_tostr(prog, "* ", title, 128);
+         break;
+      case LP_FORM_RLP :
+         prog_text = malloc(strlen(title) + 4);
+         
+         assert(prog_text != NULL);
+         
+         sprintf(prog_text, "\\%s\n", title);
+         break;
+      default :
+         abort();
+      }
+      zlp_write(lp, fp, format, format_options, prog_text);
+      
+      check_write_ok(fp, outfile);
+      
+      (void)(*closefile)(fp);
+
+      free(prog_text);
    }
-   zlp_write(lp, fp, format, prog_text);
-
-   check_write_ok(fp, outfile);
-
-   (void)(*closefile)(fp);
-
+   
    /* We do not need the translation table for human readable format
     * Has to be written after the LP file, so the scaling has been done.
     */
@@ -513,7 +526,9 @@ int main(int argc, char* const* argv)
       if (verbose >= VERB_NORMAL)
          printf("Writing [%s]\n", outpipe);
 
-      if (NULL == (fp = (*openfile)(outpipe, "w")))
+      FILE* fp = (*openfile)(outpipe, "w");
+
+      if (NULL == fp)
       {
          fprintf(stderr, "*** Error 104: File open failed");
          perror(tblfile);
@@ -526,19 +541,17 @@ int main(int argc, char* const* argv)
       (void)(*closefile)(fp);
    }
 
-   free(prog_text);
-   
    if (verbose >= VERB_DEBUG) 
       symbol_print_all(stderr);
 
-#if defined(__INSURE__) || !defined(NDEBUG) || defined(FREEMEM)
+#if !defined(NDEBUG) || defined(FREEMEM)
    
    /* Now clean up. 
     */
    if (inppipe != NULL)
       free(inppipe);
    
-   for(i = 0; i < param_count; i++)
+   for(int i = 0; i < param_count; i++)
       free(param_table[i]);
    free(param_table);
    
@@ -569,7 +582,7 @@ int main(int argc, char* const* argv)
       mem_display(stdout);
       stkchk_maximum(stdout);
    }
-#endif /* __INSURE__ || !NDEBUG || FREEMEM */
+#endif /* !NDEBUG || FREEMEM */
    return 0;
 }
 

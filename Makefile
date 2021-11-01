@@ -89,6 +89,8 @@ DFLAGS		=	-MM
 GCCWARN		=	-Wall \
 			-Wextra \
 			-Wno-unknown-pragmas \
+			-Wno-nonnull-compare \
+			-Wno-cast-qual \
 			-Wpointer-arith \
 			-Wcast-align \
 			-Wwrite-strings \
@@ -96,20 +98,20 @@ GCCWARN		=	-Wall \
 			-Wshadow \
 			-Wstrict-prototypes \
 			-Wmissing-prototypes \
-			-Wmissing-noreturn \
 			-Wmissing-declarations \
-			-fno-omit-frame-pointer \
-			-Wsuggest-attribute=format \
+			-Wmissing-noreturn \
+			-Wstrict-overflow=4 \
+			-Wduplicated-branches \
 			-Wsuggest-attribute=pure \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
-			-Wstrict-overflow=4 \
-			-fstack-protector-strong \
-			-Wduplicated-branches \
+			-Wsuggest-attribute=format \
 			-Wno-attributes \
 			-Wno-unused-function \
 			-Wno-unused-parameter \
 			-Wno-nonnull-compare \
+			-fno-omit-frame-pointer \
+			-fstack-protector-strong \
 			-fsanitize=address \
 			-fsanitize=undefined \
 			-fsanitize=shift \
@@ -128,10 +130,12 @@ GCCWARN		=	-Wall \
 			-fsanitize=bool \
 			-fsanitize=enum \
 			-fsanitize=signed-integer-overflow \
-			#-fsanitize=builtin \
-			#-fsanitize=pointer-overflow \
-			#-Wsuggest-attribute=malloc \
-			#-Wsuggest-attribute=cold \
+#			-Wsuggest-attribute=malloc \
+#			-Wsuggest-attribute=cold \
+#			-fsanitize=pointer-overflow \
+#			-fsanitize=builtin 
+#			-fsanitize=float-divide-by-zero \
+#			-fsanitize=bounds-strict \
 
 ifeq ($(ZLIB),true)
 LDFLAGS		+=	-lz

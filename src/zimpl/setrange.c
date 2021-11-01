@@ -108,8 +108,12 @@ Set* set_range_new(int begin, int end, int step)
 expects_NONNULL returns_NONNULL 
 static Set* set_range_copy(Set const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+      
    Set* set = (Set*)source;
-   
+
+   CLANG_WARN_ON
+      
    set->head.refc++;
 
    return set;

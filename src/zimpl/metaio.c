@@ -460,11 +460,15 @@ void mio_exit()
 
       assert(strgfile_is_valid(p));
 
-      free((void*)p->name);
+      CLANG_WARN_OFF(-Wcast-qual)
+
+         free((void*)p->name);
       
       if (p->use_copy)
          free((void*)p->content);
-      
+
+      CLANG_WARN_ON
+         
       SID_del(p);
       
       free(p);

@@ -151,7 +151,7 @@ static void addcon_as_qubo(
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       if (!numb_equal(rhs, numb_one()))
       {
-         fprintf(stderr, "*** Error XXX: RHS unequal to 1 can't be converted to QUBO\n");
+         fprintf(stderr, "*** Error QBO1 (experimental): RHS unequal to 1 can't be converted to QUBO\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
@@ -159,9 +159,9 @@ static void addcon_as_qubo(
    case CON_RHS   :
    case CON_LHS :
       //if (!nump_equal(lhs, numb_one))
-      fall_THROUGH; //lint -fallthrough 
+      fall_THROUGH
    case CON_RANGE :
-      fprintf(stderr, "*** Error XXX: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
+      fprintf(stderr, "*** Error QBO2 (experimental): Less equal, greater equal and range can't be converted to QUBO (yet)\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    default :
@@ -171,7 +171,7 @@ static void addcon_as_qubo(
 
    if (!term_is_linear(term))
    {
-      fprintf(stderr, "*** Error XXX: Non linear term can't be converted to QUBO\n");
+      fprintf(stderr, "*** Error QBO3 (experimental): Non linear term can't be converted to QUBO\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
@@ -193,7 +193,7 @@ static void addcon_as_qubo(
 
    // remove the 1
    term_add_constant(qterm, numb_one());
-         
+
    for(int i = 0; i < telems; i++)
    {
       Mono const* mono1 = term_get_element(term, i);
@@ -3015,18 +3015,7 @@ CodeNode* i_newsym_set2(CodeNode* self)
    {
       Entry const* entry  = list_get_entry(list, &lelem);
       Tuple const* tuple  = entry_get_tuple(entry);
-#if 0
-      if (set_get_dim(iset) != tuple_get_dim(tuple))
-      {
-         fprintf(stderr, "*** Error 196: Indexing Tuple ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d\n",
-            tuple_get_dim(tuple),
-            set_get_dim(iset));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-#endif
+
       check_tuple_set_compatible(self, tuple, iset);
 
       if (set_lookup(iset, tuple))
@@ -3129,18 +3118,7 @@ static void insert_param_list_by_list(
    {
       Entry const* entry  = list_get_entry(list, &le_idx);
       Tuple const* tuple  = entry_get_tuple(entry);
-#if 0
-      if (set_get_dim(iset) != tuple_get_dim(tuple))
-      {
-         fprintf(stderr, "*** Error 194: Indexing tuple ");
-         tuple_print(stderr, tuple);
-         fprintf(stderr, " has wrong dimension %d, expected %d\n",
-            tuple_get_dim(tuple),
-            set_get_dim(iset));
-         code_errmsg(self);
-         zpl_exit(EXIT_FAILURE);
-      }
-#endif
+
       check_tuple_set_compatible(self, tuple, iset);
 
       if (!set_lookup(iset, tuple))
@@ -4510,14 +4488,6 @@ static void objective(CodeNode* self, bool minimize)
    }
    term = code_eval_child_term(self, 1);
 
-   const int degree = term_get_degree(term);
-   
-   if (degree != 1 && degree != 2)
-   {
-      fprintf(stderr, "*** Error 221: The objective function has to be linear or quadratic\n");
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);      
-   }
    if (xlp_setobj(prog_get_lp(), name, minimize))
    {
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);

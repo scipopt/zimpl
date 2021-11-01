@@ -150,7 +150,7 @@ static void lps_hash_free(LpsHash* hash)
       
    assert(hash_valid(hash));
 
-#if 0
+#ifdef VERBOSE_OUTPUT
 #ifndef NDEBUG
    hash_statist(stdout, hash);
 #endif
@@ -740,7 +740,8 @@ void lps_free(Lps* lp)
    for(var = lp->var_root; var != NULL; var = var_next) 
    {
       var_next = var->next;
-      var->sid = 0xDEADDEAD;
+      
+      SID_del(var);
 
       mpq_clear(var->cost);
       mpq_clear(var->lower);
@@ -1820,10 +1821,11 @@ int lps_getnamesize(Lps const* lp, LpFormat format)
 }
 
 void lps_write(
-   Lps const*  lp,
-   FILE*       fp,
-   LpFormat    format,
-   char const* text)
+   Lps const*  const lp,
+   FILE*       const fp,
+   LpFormat    const format,
+   char const* const format_options,   
+   char const* const text)
 {
    assert(lp   != NULL);
    assert(fp   != NULL);
@@ -1842,7 +1844,7 @@ void lps_write(
       mps_write(lp, fp, text);
       break;
    case LP_FORM_QBO :
-      qbo_write(lp, fp, format, text);
+      qbo_write(lp, fp, format, format_options, text);
       break;
    default :
       abort();
@@ -2057,6 +2059,14 @@ void lps_transtable(Lps const* lp, FILE* fp, LpFormat format, char const* head)
       fprintf(fp, "%s\tc %7d\t%-*s\t\"%s\"\t%.16e\n",
          head, con->number, namelen - 1, temp, con->name, mpq_get_d(con->scale));
    }
+   if (lp->objname != NULL)
+   {
+      lps_makename(temp, namelen, lp->objname, 0);
+
+      fprintf(fp, "%s\to %7d\t%-*s\t\"%s\"\n",
+         head, 0, namelen - 1, temp, lp->objname);
+   }
+
    free(temp);
 }
 

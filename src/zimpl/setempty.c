@@ -98,8 +98,12 @@ Set* set_empty_new(int dim)
 expects_NONNULL returns_NONNULL 
 static Set* set_empty_copy(Set const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+
    Set* set = (Set*)source;
-   
+
+   CLANG_WARN_ON
+      
    set->head.refc++;
 
    return set;

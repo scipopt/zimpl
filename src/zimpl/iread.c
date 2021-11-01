@@ -784,11 +784,10 @@ CodeNode* i_read(CodeNode* self)
          /* Now we break the line in fields.
           */
          int fields = split_fields(s, hi_field_no, field);
-#if 0
+#ifdef DEBUGGING
          {
-            int i;
             fprintf(stdout, "Fields=%d\n", fields);
-            for(i = 0; i < fields; i++)
+            for(int i = 0; i < fields; i++)
                fprintf(stdout, "Field[%d]=[%s]\n", i, field[i]);
          }
 #endif

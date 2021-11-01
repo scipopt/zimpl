@@ -111,8 +111,12 @@ Set* set_prod_new(Set const* a, Set const* b)
 expects_NONNULL returns_NONNULL 
 static Set* set_prod_copy(Set const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+      
    Set* set = (Set*)source;
-   
+
+   CLANG_WARN_ON
+      
    set->head.refc++;
 
    (void)set_copy(set->prod.set_a);

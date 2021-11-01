@@ -97,10 +97,10 @@ extern void interns_exit(void);
 #ifndef NDEBUG
 #define SID unsigned int sid;
 #define SID_set(p, id)  (p->sid = id)
-#define SID_del(p)      (p->sid = 0xffffffff)
+#define SID_del(p)      (p->sid = 0xdeadda7a)
 #define SID_ok(p, id)   (p->sid == id)
 #define SID_set2(p, id) (p.sid = id)
-#define SID_del2(p)     (p.sid = 0xffffffff)
+#define SID_del2(p)     (p.sid = 0xdeadda7a)
 #define SID_ok2(p, id)  (p.sid == id)
 #else /* NDEBUG */
 #define SID              /* */
@@ -120,6 +120,19 @@ extern void interns_exit(void);
 #define Trace(fname) /* */
 #endif /* TRACE */
 
+// Here is a macro to switch off a particular warning from clang in the code
+// Somebody should burn in hell for making it so difficult
+#ifdef __clang__
+#define MAKE_STRING(x) #x
+#define CLANG_WARN_OFF(warningoption) \
+   _Pragma("clang diagnostic push") \
+   _Pragma(MAKE_STRING(clang diagnostic ignored #warningoption))
+#define CLANG_WARN_ON _Pragma("clang diagnostic pop")
+#else
+#define CLANG_WARN_OFF(warningoption) /* */
+#define CLANG_WARN_ON /* */
+#endif // __clang__   
+   
 #ifdef __cplusplus
 }
 #endif

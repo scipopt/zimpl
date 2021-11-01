@@ -131,6 +131,36 @@ done
    rm metaio.lp metaio.tbl metaio.out
 # 
 #
+for i in qubo
+do
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 -t q $i.zpl 
+   diff $i.qbo $i.q.ref >/dev/null
+   case $? in
+    0) echo Test qubo.zpl "(qbo: q)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test qubo.zpl "(qbo: q)" FAIL ;;
+    *) echo Test qubo.zpl "(qbo: q)" ERROR ;;
+   esac
+   cp qubo.qbo xxx.qbo
+   COUNT=`expr $COUNT + 1` 
+   $1 -v0 -t q0cp $i.zpl 
+   diff $i.qbo $i.q0cp.ref >/dev/null
+   case $? in
+    0) echo Test qubo.zpl "(qbo: q0cp)" OK; PASS=`expr $PASS + 1` ;;
+    1) echo Test qubo.zpl "(qbo: q0cp)" FAIL ;;
+    *) echo Test qubo.zpl "(qbo: q0cp)" ERROR ;;
+   esac
+   COUNT=`expr $COUNT + 1` 
+   diff -b $i.tbl $i.tbl.ref >/dev/null
+   case $? in
+    0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
+    1) echo Test $i "(tbl)" FAIL ;;
+    *) echo Test $i "(tbl)" ERROR ;;
+   esac
+   rm $i.tbl $i.qbo
+done
+# 
+#
 cd warnings
 for i in w*.zpl
 do

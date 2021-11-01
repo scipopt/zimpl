@@ -38,8 +38,8 @@ extern "C" {
 extern void     zlp_stat(Lps const* lp) expects_NONNULL;
 //lint -sem(    zlp_setnamelen, inout(1), 1p == 1, chneg(2)) 
 extern void     zlp_setnamelen(Lps* lp, int name_len) expects_NONNULL;
-//lint -sem(    zlp_write, 1p == 1, inout(2), 2p == 1, 4p) 
-extern void     zlp_write(Lps const* lp, FILE* fp, LpFormat format, char const* title) expects_NONNULL;
+//lint -sem(    zlp_write, 1p == 1, inout(2), 2p == 1, 4p, 5p) 
+extern void     zlp_write(Lps const* lp, FILE* fp, LpFormat format, char const* format_options, char const* title) expects_NONNULL;
 //lint -sem(    zlp_transtable, 1p == 1, inout(2), 2p == 1) 
 extern void     zlp_transtable(Lps const* lp, FILE* fp, LpFormat format) expects_NONNULL;
 //lint -sem(    zlp_orderfile, 1p == 1, inout(2), 2p == 1) 

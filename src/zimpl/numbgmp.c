@@ -633,12 +633,16 @@ Numb* numb_new_log(Numb const* numb)
    d = log10(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
+   CLANG_WARN_OFF(-Wfloat-equal)
+      
    if ((d != d) || (d == -HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 700: log(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
       return NULL;
    }
+   CLANG_WARN_ON
+      
    sprintf(temp, "%.16e", d);
 
    return numb_new_ascii(temp);
@@ -685,13 +689,17 @@ Numb* numb_new_ln(Numb const* numb)
 
    d = log(mpq_get_d(numb->value.numb));
 
+   CLANG_WARN_OFF(-Wfloat-equal)
+      
    /* !finite == !isfinite == isnan || isinf */
    if ((d != d) || (d == -HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 702: ln(%f)", mpq_get_d(numb->value.numb));
       perror(temp);
       return NULL;
-   }   
+   }
+   CLANG_WARN_ON
+      
    sprintf(temp, "%.16e", d);
 
    return numb_new_ascii(temp);

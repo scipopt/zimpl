@@ -112,8 +112,12 @@ bool tuple_is_valid(Tuple const* tuple)
 
 Tuple* tuple_copy(Tuple const* source)
 {
+   CLANG_WARN_OFF(-Wcast-qual)
+      
    Tuple* tuple = (Tuple*)source;
-   
+
+   CLANG_WARN_ON
+      
    assert(tuple_is_valid(tuple));
 
    tuple->refc++;
