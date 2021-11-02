@@ -85,7 +85,7 @@ if (CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
     endif()
 endif()
 
-find_package(BISON 3.0.0 REQUIRED)
+find_package(BISON 2.4.0 REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(GMP REQUIRED)
 
