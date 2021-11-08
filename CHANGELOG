@@ -1,7 +1,7 @@
-3.5.0  November 2021 Release
+3.5.0  7. November 2021 Release
 
   - Non linear objective functions are allowed.
-    xlp interface slightly changed.	
+    xlp interface slightly changed.
 
   - New file format qbo which writes out a QUBO file.
     Warning: This format is subject to change.
@@ -9,6 +9,8 @@
   - New "qubo" constraint attribute, which tries to convert the
     constraint into a qubo. So far only sum of binary variables
     equals one can be convertet. More planned.
+
+  - Lots of code style changes and attributes etc.
 
 3.4.0  June 2020 Release
 

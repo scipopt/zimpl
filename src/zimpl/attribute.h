@@ -49,7 +49,7 @@
 #define is_CONST          /**/
 #define is_PURE           /**/
 #define returns_NONNULL   /**/
-#define FALLTHROUGH       /**/
+#define fall_THROUGH       /**/
 
 #endif // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
