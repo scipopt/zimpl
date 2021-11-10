@@ -141,7 +141,6 @@ do
     1) echo Test qubo.zpl "(qbo: q)" FAIL ;;
     *) echo Test qubo.zpl "(qbo: q)" ERROR ;;
    esac
-   cp qubo.qbo xxx.qbo
    COUNT=`expr $COUNT + 1` 
    $1 -v0 -t q0cp $i.zpl 
    diff $i.qbo $i.q0cp.ref >/dev/null

@@ -36,7 +36,7 @@
 #define is_PURE           __attribute__ ((pure))              //lint !e755
 #define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
 
-#if (defined(__GNUC__) && __GNUC__ >= 7) || (defined(__clang__) && __clang_major__ >= 7) || defined(_lint)
+#if (defined(__GNUC__) && __GNUC__ >= 7) || (defined(__clang__) && __clang_major__ >= 7 && !defined(__apple_build_version__)) || defined(_lint)
 #define fall_THROUGH __attribute__ ((fallthrough)); /*lint -fallthrough */
 #else
 #define fall_THROUGH /* FALLTHROUGH */
