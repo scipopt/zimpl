@@ -267,7 +267,9 @@ void qbo_write(
       {
          int col = qubo->col[k];
 
-         fprintf(fp, "%d %d %.15g\n", row + index_base, col + index_base, mpq_get_d(qubo->val[k]));
+         // divide off diagonal entries by two as they will be doubled later
+         // this is the biqmac format
+         fprintf(fp, "%d %d %.15g\n", row + index_base, col + index_base, ((row == col) ? 1.0 : 0.5) * mpq_get_d(qubo->val[k]));
       }
    }
    mpq_clear(offset);   

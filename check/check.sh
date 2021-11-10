@@ -159,7 +159,19 @@ do
    esac
    rm $i.tbl $i.qbo
 done
-# 
+#
+for i in bqp50-1
+do
+    COUNT=`expr $COUNT + 1` 
+    $1 -v0 -Dfilename=$i".sparse" -t q1 -o $i qubo2miqp.zpl
+    grep -v "#" $i.qbo | sed 's/50 111 0/50 111/' | diff - $i.sparse
+    case $? in
+     0) echo Test $i "(qbo2)" OK; PASS=`expr $PASS + 1`  ;;
+     1) echo Test $i "(qbo2)" FAIL ;;
+     *) echo Test $i "(qbo2)" ERROR ;;
+    esac
+    rm $i.tbl $i.qbo
+done
 #
 cd warnings
 for i in w*.zpl
