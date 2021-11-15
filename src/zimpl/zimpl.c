@@ -352,7 +352,7 @@ int main(int argc, char* const* argv)
       extension = ".pip";
       break;
    case LP_FORM_QBO :
-      extension = ".qbo";
+      extension = ".qs";
       break;
    default :
       abort();

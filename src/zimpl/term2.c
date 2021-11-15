@@ -64,7 +64,7 @@ struct term
    Mono** elem;
 };
 
-Term* term_new(int size)
+Term* term_new(int const size)
 {
    Term* term = calloc(1, sizeof(*term));
 
@@ -84,7 +84,7 @@ Term* term_new(int size)
    return term;
 }
    
-void term_add_elem(Term* term, Entry const* entry, Numb const* coeff, MFun mfun)
+void term_add_elem(Term* const term, Entry const* const entry, Numb const* const coeff, MFun const mfun)
 {
    Trace("term_add_elem");
 
@@ -130,17 +130,15 @@ void term_mul_elem(Term* term, Entry const* entry, Numb const* coeff)
 }
 #endif
 
-void term_free(Term* term)
+void term_free(Term* const term)
 {
-   int i;
-
    Trace("term_free");
 
    assert(term_is_valid(term));
 
    SID_del(term);
 
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       mono_free(term->elem[i]);
 
    numb_free(term->constant);
@@ -149,31 +147,28 @@ void term_free(Term* term)
    free(term);
 }
 
-bool term_is_valid(Term const* term)
+bool term_is_valid(Term const* const term)
 {
-   int i;
-
    if (term == NULL || !SID_ok(term, TERM_SID) || term->used > term->size)
       return false;
 
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       if (numb_equal(mono_get_coeff(term->elem[i]), numb_zero()))
          return false;      
 
    return true;
 }
 
-Term* term_copy(Term const* term)
+Term* term_copy(Term const* const term)
 {
-   Term* tnew = term_new(term->used + TERM_EXTEND_SIZE);
-   int   i;
+   Term* const tnew = term_new(term->used + TERM_EXTEND_SIZE);
    
    Trace("term_copy");
    
    assert(term_is_valid(term));
    assert(term_is_valid(tnew));
 
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       tnew->elem[i] = mono_copy(term->elem[i]);
 
    tnew->used = term->used;
@@ -184,7 +179,7 @@ Term* term_copy(Term const* term)
    return tnew;
 }
 
-void term_append_elem(Term* term, Mono* mono)
+void term_append_elem(Term* const term, Mono* const mono)
 {
    Trace("term_append_elem");
 
@@ -199,8 +194,8 @@ void term_append_elem(Term* term, Mono* mono)
 }
 
 void term_append_term(
-   Term* term,
-   Term const* term_b)
+   Term*       const term,
+   Term const* const term_b)
 {
    /* ??? test auf gleiche monome fehlt!!! */
 
@@ -230,23 +225,18 @@ void term_append_term(
    assert(term_is_valid(term));
 }
 
-Term* term_mul_term(Term const* term_a, Term const* term_b)
+Term* term_mul_term(Term const* const term_a, Term const* const term_b)
 {
-   Term* term;
-   Term* term_simplified;
-   int   i;
-   int   k;
-
    Trace("term_mul_term");
 
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term = term_new((term_a->used + 1) * (term_b->used + 1)); /* +1 for constant */
+   Term* const term = term_new((term_a->used + 1) * (term_b->used + 1)); /* +1 for constant */
 
-   for(i = 0; i < term_a->used; i++)
+   for(int i = 0; i < term_a->used; i++)
    {
-      for(k = 0; k < term_b->used; k++)
+      for(int k = 0; k < term_b->used; k++)
       {
          assert(term->used < term->size);
          
@@ -256,7 +246,7 @@ Term* term_mul_term(Term const* term_a, Term const* term_b)
    }
    if (!numb_equal(term_b->constant, numb_zero()))
    {
-      for(i = 0; i < term_a->used; i++)
+      for(int i = 0; i < term_a->used; i++)
       {
          assert(term->used < term->size);
 
@@ -267,7 +257,7 @@ Term* term_mul_term(Term const* term_a, Term const* term_b)
    }
    if (!numb_equal(term_a->constant, numb_zero()))
    {
-      for(i = 0; i < term_b->used; i++)
+      for(int i = 0; i < term_b->used; i++)
       {
          assert(term->used < term->size);
 
@@ -281,35 +271,32 @@ Term* term_mul_term(Term const* term_a, Term const* term_b)
 
    assert(term_is_valid(term));
    
-   term_simplified = term_simplify(term);
+   Term* const term_simplified = term_simplify(term);
 
    term_free(term);
 
    return term_simplified;
 }
 
-Term* term_add_term(Term const* term_a, Term const* term_b)
+Term* term_add_term(Term const* const term_a, Term const* const term_b)
 {
-   Term* term;
-   int   i;
-   
    Trace("term_add_term");
 
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term           = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
-   term->used     = term_a->used + term_b->used;
+   Term* const term = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
+   term->used       = term_a->used + term_b->used;
 
    numb_set(term->constant, term_a->constant);
    numb_add(term->constant, term_b->constant);
 
    assert(term->size >= term->used);
 
-   for(i = 0; i < term_a->used; i++)
+   for(int i = 0; i < term_a->used; i++)
       term->elem[i] = mono_copy(term_a->elem[i]);
 
-   for(i = 0; i < term_b->used; i++)
+   for(int i = 0; i < term_b->used; i++)
       term->elem[i + term_a->used] = mono_copy(term_b->elem[i]);
 
    assert(term_is_valid(term));
@@ -317,28 +304,25 @@ Term* term_add_term(Term const* term_a, Term const* term_b)
    return term;
 }
 
-Term* term_sub_term(Term const* term_a, Term const* term_b)
+Term* term_sub_term(Term const* const term_a, Term const* const term_b)
 {
-   Term* term;
-   int   i;
-
    Trace("term_sub_term");
    
    assert(term_is_valid(term_a));
    assert(term_is_valid(term_b));
 
-   term           = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
-   term->used     = term_a->used + term_b->used;
+   Term* const term = term_new(term_a->used + term_b->used + TERM_EXTEND_SIZE);
+   term->used       = term_a->used + term_b->used;
 
    numb_set(term->constant, term_a->constant);
    numb_sub(term->constant, term_b->constant);
 
    assert(term->size >= term->used);
 
-   for(i = 0; i < term_a->used; i++)
+   for(int i = 0; i < term_a->used; i++)
       term->elem[i] = mono_copy(term_a->elem[i]);
 
-   for(i = 0; i < term_b->used; i++)
+   for(int i = 0; i < term_b->used; i++)
    {
       term->elem[i + term_a->used] = mono_copy(term_b->elem[i]);
       mono_neg(term->elem[i + term_a->used]);
@@ -350,22 +334,16 @@ Term* term_sub_term(Term const* term_a, Term const* term_b)
 
 /** Combines monoms in the term where possible
  */  
-/* ??? TODO:reimplement with a hash list */
-#if 1
-Term* term_simplify(Term const* term_org)
+Term* term_simplify(Term const* const term_org)
 {
-   Term* term;
-   int   i;
-   Hash* hash;
-   
    assert(term_is_valid(term_org));
 
-   term = term_new(term_org->used + TERM_EXTEND_SIZE);
-   hash = hash_new(HASH_MONO, term_org->used);
+   Term* const term = term_new(term_org->used + TERM_EXTEND_SIZE);
+   Hash* const hash = hash_new(HASH_MONO, term_org->used);
 
    numb_set(term->constant, term_org->constant);
 
-   for(i = 0; i < term_org->used; i++)
+   for(int i = 0; i < term_org->used; i++)
    {
       Mono const* mono = hash_lookup_mono(hash, term_org->elem[i]);
 
@@ -388,7 +366,7 @@ Term* term_simplify(Term const* term_org)
    
    /* Check if there are any cancellations
     */
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
    {
       if (numb_equal(mono_get_coeff(term->elem[i]), numb_zero()))
       {
@@ -405,56 +383,11 @@ Term* term_simplify(Term const* term_org)
 
    return term;
 }
-#else /* Old and quadratic */
-Term* term_simplify(Term const* term_org)
-{
-   Term* term;
-   Bool* done;
-   int   i;
-
-   assert(term_is_valid(term_org));
-
-   term = term_new(term_org->used);
-   done = calloc(term_org->used, sizeof(*done));
-
-   assert(done != NULL);
-
-   numb_set(term->constant, term_org->constant);
-
-   for(i = 0; i < term_org->used; i++)
-   {
-      int k;
-
-      if (done[i])
-         continue;
-
-      term->elem[term->used] = mono_copy(term_org->elem[i]);
-
-      for(k = i + 1; k < term_org->used; k++)
-      {
-         if (!done[k] && mono_equal(term->elem[term->used], term_org->elem[k]))
-         {
-            mono_add_coeff(term->elem[term->used], mono_get_coeff(term_org->elem[k]));
-            done[k] = true;
-         }
-      }
-      if (!numb_equal(mono_get_coeff(term->elem[term->used]), numb_zero()))
-         term->used++;
-      else
-         mono_free(term->elem[term->used]);
-   }
-   free(done);
-
-   assert(term_is_valid(term));
-
-   return term;
-}
-#endif
 
 /*lint -e{818} supress "Pointer parameter 'term' could be declared as pointing to const" */
 void term_add_constant(
-   Term* term, 
-   Numb const* value)
+   Term*       const term, 
+   Numb const* const value)
 {
    Trace("term_add_constant");
 
@@ -466,7 +399,7 @@ void term_add_constant(
 }
 
 /*lint -e{818} supress "Pointer parameter 'term' could be declared as pointing to const" */
-void term_sub_constant(Term* term, Numb const* value)
+void term_sub_constant(Term* const term, Numb const* const value)
 {
    Trace("term_sub_constant");
 
@@ -477,10 +410,8 @@ void term_sub_constant(Term* term, Numb const* value)
    assert(term_is_valid(term));
 }
 
-void term_mul_coeff(Term* term, Numb const* value)
+void term_mul_coeff(Term* const term, Numb const* const value)
 {
-   int i;
-
    Trace("term_mul_coeff");
 
    assert(term_is_valid(term));
@@ -489,20 +420,20 @@ void term_mul_coeff(Term* term, Numb const* value)
 
    if (numb_equal(value, numb_zero()))
    {
-      for(i = 0; i < term->used; i++)
+      for(int i = 0; i < term->used; i++)
          mono_free(term->elem[i]);
       
       term->used = 0;
    }
    else
    {
-      for(i = 0; i < term->used; i++)
+      for(int i = 0; i < term->used; i++)
          mono_mul_coeff(term->elem[i], value);
    }
    assert(term_is_valid(term));
 }
 
-Numb const* term_get_constant(Term const* term)
+Numb const* term_get_constant(Term const* const term)
 {
    assert(term_is_valid(term));
    
@@ -510,7 +441,7 @@ Numb const* term_get_constant(Term const* term)
 }
 
 #if 0 /* not used */
-void term_negate(Term* term)
+void term_negate(Term* const term)
 {
    Trace("term_negate");
 
@@ -520,14 +451,14 @@ void term_negate(Term* term)
 }
 #endif
 
-int term_get_elements(Term const* term)
+int term_get_elements(Term const* const term)
 {
    assert(term_is_valid(term));
 
    return term->used;
 }
 
-Mono* term_get_element(Term const* term, int i)
+Mono* term_get_element(Term const* const term, int const i)
 {
    assert(term_is_valid(term));
    assert(i >= 0);
@@ -536,19 +467,18 @@ Mono* term_get_element(Term const* term, int i)
    return term->elem[i];
 }
 
-Bound* term_get_lower_bound(Term const* term)
+Bound* term_get_lower_bound(Term const* const term)
 {
-   Bound*      bound;
-   Numb*       lower;
-   Numb*       value;
-   int         i;
+   Bound* bound;
+   Numb*  lower;
+   Numb*  value;
    
    lower = numb_new_integer(0);
       
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
    {
-      Numb const* coeff = mono_get_coeff(term->elem[i]);
-      int         sign  = numb_get_sgn(coeff);
+      Numb const* const coeff = mono_get_coeff(term->elem[i]);
+      int         const sign  = numb_get_sgn(coeff);
 
       assert(sign != 0);
 
@@ -576,16 +506,15 @@ Bound* term_get_lower_bound(Term const* term)
    return bound;
 }
 
-Bound* term_get_upper_bound(Term const* term)
+Bound* term_get_upper_bound(Term const* const term)
 {
    Bound*      bound;
    Numb*       upper;
    Numb*       value;
-   int         i;
    
    upper = numb_new_integer(0);
       
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
    {
       Numb const* coeff = mono_get_coeff(term->elem[i]);
       int         sign  = numb_get_sgn(coeff);
@@ -616,47 +545,49 @@ Bound* term_get_upper_bound(Term const* term)
    return bound;
 }
 
-int term_get_degree(Term const* term)
+int term_get_degree(Term const* const term)
 {
    int degree = 0;
-   int i;
    
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       if (degree < mono_get_degree(term->elem[i]))
          degree = mono_get_degree(term->elem[i]);
 
    return degree;
 }
      
-bool term_is_linear(Term const* term)
+bool term_is_linear(Term const* const term)
 {
-   int i;
-   
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       if (!mono_is_linear(term->elem[i]))
          return false;
 
    return true;
 }
 
-bool term_is_polynomial(Term const* term)
+bool term_is_polynomial(Term const* const term)
 {
-   int i;
-   
-   for(i = 0; i < term->used; i++)
-      if ((mono_get_function(term->elem[i]) != MFUN_NONE)
-       && (mono_get_function(term->elem[i]) != MFUN_TRUE)   
-       && (mono_get_function(term->elem[i]) != MFUN_FALSE))
+   for(int i = 0; i < term->used; i++)
+      if (mono_get_function(term->elem[i]) != MFUN_NONE)
          return false;
 
    return true;
 }
 
-
-Term* term_make_conditional(Term const* ind_term, Term const* cond_term, bool is_true)
+bool term_has_realfunction(Term const* const term)
 {
-   Term* term;
+   for(int i = 0; i < term->used; i++)
+   {
+      MFun const fun = mono_get_function(term->elem[i]);
+         
+      if (fun != MFUN_NONE && fun != MFUN_TRUE && fun != MFUN_FALSE)
+         return true;
+   }
+   return false;
+}
 
+Term* term_make_conditional(Term const* const ind_term, Term const* const cond_term, bool const is_true)
+{
    assert(term_is_valid(ind_term));
    assert(term_is_valid(cond_term));
 
@@ -664,7 +595,7 @@ Term* term_make_conditional(Term const* ind_term, Term const* cond_term, bool is
    assert(term_get_degree(ind_term)   == 1);
    assert(numb_equal(mono_get_coeff(term_get_element(ind_term, 0)), numb_one()));
 
-   term = term_copy(ind_term);
+   Term* const term = term_copy(ind_term);
 
    mono_set_function(term_get_element(term, 0), is_true ? MFUN_TRUE : MFUN_FALSE);
 
@@ -673,11 +604,9 @@ Term* term_make_conditional(Term const* ind_term, Term const* cond_term, bool is
    return term;
 }
 
-bool term_is_all_integer(Term const* term)
+bool term_is_all_integer(Term const* const term)
 {
-   int i;
-   
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
    {
       VarClass vc = xlp_getclass(prog_get_lp(), mono_get_var(term->elem[i], 0));
 
@@ -688,13 +617,11 @@ bool term_is_all_integer(Term const* term)
 }
 
 #ifndef NDEBUG
-void term_print(FILE* fp, Term const* term, bool print_symbol_index)
+void term_print(FILE* fp, Term const* const term, bool const print_symbol_index)
 {
-   int i;
-   
    assert(term_is_valid(term));
 
-   for(i = 0; i < term->used; i++)
+   for(int i = 0; i < term->used; i++)
       mono_print(fp, term->elem[i], print_symbol_index);
 
    if (!numb_equal(term->constant, numb_zero()))

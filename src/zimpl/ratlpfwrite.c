@@ -147,23 +147,24 @@ static void write_term(
    const int      name_size,
    const bool     is_objective)
 {
-   Term* term  = term_simplify(term_org);
-   
-   bool only_comment = false;
+   Term* const term         = term_simplify(term_org);   
+   int   const term_degree  = term_get_degree(term);
+   bool        only_comment = false;
 
-   if (term_get_degree(term) > 2 || !term_is_polynomial(term))
+   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
    {
-      if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+      if (term_degree > 2 || term_has_realfunction(term))
       {
+         only_comment = true;
+
          if (verbose > 0)
          {
             fprintf(stderr, "--- Warning 600: File format can only handle linear and quadratic constraints\n");
             fprintf(stderr, "                 Constraint \"%s\" with degree %d ignored\n", 
                name, term_get_degree(term));
          }
-         only_comment = true;
       }
-   }
+   }      
    // assert(numb_equal(term_get_constant(term), numb_zero())); // ???
 
    // ???
@@ -175,18 +176,53 @@ static void write_term(
    if (only_comment)
       fprintf(fp, "\\ ");
 
-   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+   /* Write out the linear part first
+    */
+   for(int i = 0; i < term_get_elements(term); i++)
+   {
+      Mono const* const mono = term_get_element(term, i);
+
+      if (mono_get_degree(mono) > 1 || mono_get_function(mono) != MFUN_NONE)
+         continue;
+
+      Numb const* const coeff = mono_get_coeff(mono);
+
+      if (numb_equal(coeff, numb_one()))
+         fprintf(fp, " +");
+      else
+      {
+         mpq_t t;
+         mpq_init(t);
+         numb_get_mpq(coeff, t);
+         fprintf(fp, " ");         
+         write_val(fp, format, true, t);      
+         mpq_clear(t);
+      }
+      Var* var = mono_get_var(mono, 0);
+         
+      lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
+      fprintf(fp, " %s", name);
+
+      if (++cnt % 6 == 0)
+         fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
+   }
+   
+   if ((format == LP_FORM_LPF || format == LP_FORM_RLP) && term_degree > 1)
       fprintf(fp, " + [");
 
    for(int i = 0; i < term_get_elements(term); i++)
    {
-      Mono const* mono  = term_get_element(term, i);
-      Numb const* coeff = mono_get_coeff(mono);
-      MFun        fun   = mono_get_function(mono);
-      int         k;
-      
+      Mono const* const mono   = term_get_element(term, i);
+      Numb const* const coeff  = mono_get_coeff(mono);
+      MFun        const fun    = mono_get_function(mono);
+      int         const degree = mono_get_degree(mono);
+
       if (fun == MFUN_NONE)
       {
+         // Ignore those we already had!
+         if (degree == 1)
+            continue;
+
          if (numb_equal(coeff, numb_one()))
             fprintf(fp, " +");
          else
@@ -248,8 +284,8 @@ static void write_term(
             abort();
          } 
       }
-      
-      for(k = 0; k < mono_get_degree(mono); k++)
+
+      for(int k = 0; k < degree; k++)
       {
          Var* var = mono_get_var(mono, k);
          int  j;
@@ -257,14 +293,16 @@ static void write_term(
          if (k > 0)
             fprintf(fp, " * ");
          
-         for(j = 1; k + j < mono_get_degree(mono); j++)
+         for(j = 1; k + j < degree; j++)
             if (var != mono_get_var(mono, k + j))
                break;
          
          lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
          
          if (j == 1)
-            fprintf(fp, "%s", name);
+         {
+            fprintf(fp, "%s%s", name, (degree == 1 && fun == MFUN_NONE) ? "^2" : "");
+         }
          else
          {
             fprintf(fp, "%s^%d", name, j);
@@ -287,7 +325,7 @@ static void write_term(
       if (++cnt % 6 == 0)
          fprintf(fp, "\n%s ", only_comment ? "\\" : "");         
    }
-   if (format == LP_FORM_LPF || format == LP_FORM_RLP)
+   if ((format == LP_FORM_LPF || format == LP_FORM_RLP) && term_degree > 1)
       fprintf(fp, is_objective ? " ]/2\n" : " ]\n");
 
    term_free(term);

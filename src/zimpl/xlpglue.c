@@ -262,7 +262,7 @@ bool xlp_addcon_term(
    mpq_clear(trhs);
    mpq_clear(tlhs);
 
-   if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
+   if ((term_get_degree(term) >= 2) || term_has_realfunction(term))
       lps_addterm(lp, con, term);
    else
    {
@@ -563,44 +563,55 @@ void xlp_addtoobj(
 
    Term* const term = term_simplify(term_org);
 
-   if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
-      lps_addtoobjterm(lp, term);
-   else
-   {
-      /* If we have a constant in the objective, generate an artificial
-       * variable @OOffset fixed to the value. This works allways.
-       * This is needed because there is no general way for example in
-       * MPS format to specify an objective value offset.
-       */
-      Numb const* term_constant = term_get_constant(term);
+   /* If we have a constant in the objective, generate an artificial
+    * variable @OOffset fixed to the value. This works allways.
+    * This is needed because there is no general way for example in
+    * MPS format to specify an objective value offset.
+    */
+   Numb const* term_constant = term_get_constant(term);
       
+   if (!numb_equal(term_constant, numb_zero()))
+   {
+      char const* const format = "%sObjOffset";
+      char      * const vname  = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+
+      sprintf(vname, format, SYMBOL_NAME_INTERNAL);
+
+      Var* var = lps_getvar(lp, vname);
+
+      if (var == NULL)
+      {
+         Bound* const bound_one = bound_new(BOUND_VALUE, numb_one());
+         var = xlp_addvar(lp, vname, VAR_IMP, bound_one, bound_one, numb_zero(), numb_zero());
+         bound_free(bound_one);
+      }
       mpq_t val1;
       mpq_t val2;
          
       mpq_init(val1);
       mpq_init(val2);
       
-      if (!numb_equal(term_constant, numb_zero()))
-      {
-         char const* const format = "%sObjOffset";
-   
-         Bound* const lower = bound_new(BOUND_VALUE, numb_one());
-         Bound* const upper = bound_new(BOUND_VALUE, numb_one());
-         char*  const vname = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+      lps_getcost(var, val1);
+      numb_get_mpq(term_constant, val2);
+      mpq_add(val1, val1, val2);
+      lps_setcost(var, val1);
 
-         sprintf(vname, format, SYMBOL_NAME_INTERNAL);
-         Var* const var = xlp_addvar(lp, vname, VAR_CON, lower, upper, numb_zero(), numb_zero());
+      mpq_clear(val1);
+      mpq_clear(val2);
 
-         lps_getcost(var, val1);
-         numb_get_mpq(term_constant, val2);
-         mpq_add(val1, val1, val2);
-         lps_setcost(var, val1);
+      free(vname);
+   }
 
-         free(vname);
-         bound_free(upper);
-         bound_free(lower);
-      }
-   
+   if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
+      lps_addtoobjterm(lp, term);
+   else
+   {   
+      mpq_t val1;
+      mpq_t val2;
+         
+      mpq_init(val1);
+      mpq_init(val2);
+
       for(int i = 0; i < term_get_elements(term); i++)
       {
          Mono const* const mono   = term_get_element(term, i);

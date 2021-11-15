@@ -94,6 +94,8 @@ extern bool         term_is_all_integer(Term const* term) expects_NONNULL;
 extern bool         term_is_linear(Term const* term) expects_NONNULL is_PURE;
 //lint -sem(        term_is_polynomial, 1p == 1) 
 extern bool         term_is_polynomial(Term const* term) expects_NONNULL is_PURE;
+//lint -sem(        term_has_realfunction, 1p == 1) 
+extern bool         term_has_realfunction(Term const* term) expects_NONNULL is_PURE;
 //lint -sem(        term_get_degree, 1p == 1) 
 extern int          term_get_degree(Term const* term) expects_NONNULL is_PURE;
 //lint -sem(        term_make_conditional, 1p == 1, 2p == 1, @P > malloc(1P)) 

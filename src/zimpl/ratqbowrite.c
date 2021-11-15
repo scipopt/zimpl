@@ -179,6 +179,21 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
    return qubo;      
 }
 
+expects_NONNULL
+static Var const* find_offsetvar(Lps const* const lp)
+{
+   char const* const format = "%sObjOffset";
+   char      * const vname  = malloc(strlen(SYMBOL_NAME_INTERNAL) + strlen(format) + 1);
+
+   sprintf(vname, format, SYMBOL_NAME_INTERNAL);
+
+   Var const* const var_offset = lps_getvar(lp, vname);
+
+   free(vname);
+
+   return var_offset;
+}
+
 /* A specification for the QUBO LP file format can be found in the
  */
 void qbo_write(
@@ -191,34 +206,61 @@ void qbo_write(
    assert(lp != NULL);
    assert(fp != NULL);
 
+   if (lp->obj_term != NULL && term_get_degree(lp->obj_term) > 2)
+   {
+      fprintf(stderr, "--- Warning 602: QUBO file format can only handle linear and quadratic terms\n");
+      fprintf(stderr, "                 No file written\n");
+
+      return;
+   }
    if (text != NULL)
       fprintf(fp, "%s", text);   
 
-   Term*  const term_seq = term_new(lp->vars);
-   Tuple* const tuple    = tuple_new(0);
-   
+   /* Add linear part to term
+    */
+   Var const* const offset_var = find_offsetvar(lp);
+   Term     * const term_seq   = term_new(lp->vars);
+   Tuple    * const tuple      = tuple_new(0);
+
    for(Var* var = lp->var_root; var != NULL; var = var->next)
    {
+      if (var == offset_var)
+         continue;
+
       if (mpq_equal(var->cost, const_zero))
          continue;
 
+      if (!lps_is_binary(var))
+      {
+         if (verbose > 0)
+         {
+            fprintf(stderr, "--- Warning 601: File format can only handle binary variables\n");
+            fprintf(stderr, "                 Non-binary variable \"%s\" ignored\n", 
+               var->name);
+         }
+         continue;
+      }
       Entry* const entry = entry_new_var(tuple, var);
       Numb*  const cost  = numb_new_mpq(var->cost);
       Mono*  const mono  = mono_new(cost, entry, MFUN_NONE);      
-
-      mono_mul_entry(mono, entry);
+      
+      mono_mul_entry(mono, entry); // necessary such that simplify works
       term_append_elem(term_seq, mono);
       entry_free(entry);
       numb_free(cost);
    }
    tuple_free(tuple);
-   term_append_term(term_seq, lp->obj_term);
-   // ???
+
+   /* Now add qudratic part and make into a list
+    */
+   if (lp->obj_term != NULL)
+      term_append_term(term_seq, lp->obj_term);
+
    Term* const term_obj = term_simplify(term_seq);
 
    term_free(term_seq);
 
-   int const  entry_size = term_get_elements(term_obj);
+   int  const entry_size = term_get_elements(term_obj);
    Qme* const entry      = calloc((size_t)entry_size, sizeof(*entry));
    int        entry_used = 0;
    mpq_t      offset;
@@ -227,15 +269,36 @@ void qbo_write(
 
    numb_get_mpq(term_get_constant(term_obj), offset);
 
+   if (offset_var != NULL)
+      mpq_add(offset, offset, offset_var->cost);
+         
    // TODO maybe move this into QUBO from entry.
    for(int i = 0; i < entry_size; i++)
    {
       Mono const* const mono = term_get_element(term_obj, i);
 
+#if 1
+      int const degree = mono_get_degree(mono);
+
+      assert(degree == 1 || degree == 2);
+      
+      Var const* const var1 = mono_get_var(mono, 0);
+
+      // Check here quadratic
+      entry[entry_used].sid  = QME_SID;
+      entry[entry_used].var1 = var1;
+      entry[entry_used].var2 = (degree == 1) ? var1 : mono_get_var(mono, 1);
+#else
+       if (mono_get_degree(mono) != 2)
+          term_print(stdout, term_obj, false);
+
+      assert(mono_get_degree(mono) == 2);
+      
+      // Check here quadratic
       entry[entry_used].sid  = QME_SID;
       entry[entry_used].var1 = mono_get_var(mono, 0);
       entry[entry_used].var2 = mono_get_var(mono, 1);
-
+#endif
       numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
 
       assert(!mpq_equal(entry[entry_used].value, const_zero));

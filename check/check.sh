@@ -134,42 +134,42 @@ done
 for i in qubo
 do
    COUNT=`expr $COUNT + 1` 
-   $1 -v0 -t q $i.zpl 
-   diff $i.qbo $i.q.ref >/dev/null
+   $1 -v0 -t q -o $i.q $i.zpl 
+   diff $i.q.qs $i.q.ref >/dev/null
    case $? in
     0) echo Test qubo.zpl "(qbo: q)" OK; PASS=`expr $PASS + 1` ;;
     1) echo Test qubo.zpl "(qbo: q)" FAIL ;;
     *) echo Test qubo.zpl "(qbo: q)" ERROR ;;
    esac
    COUNT=`expr $COUNT + 1` 
-   $1 -v0 -t q0cp $i.zpl 
-   diff $i.qbo $i.q0cp.ref >/dev/null
+   $1 -v0 -t q0cp -o $i.q0cp $i.zpl 
+   diff $i.q0cp.qs $i.q0cp.ref >/dev/null
    case $? in
     0) echo Test qubo.zpl "(qbo: q0cp)" OK; PASS=`expr $PASS + 1` ;;
     1) echo Test qubo.zpl "(qbo: q0cp)" FAIL ;;
     *) echo Test qubo.zpl "(qbo: q0cp)" ERROR ;;
    esac
    COUNT=`expr $COUNT + 1` 
-   diff -b $i.tbl $i.tbl.ref >/dev/null
+   diff -b $i.q0cp.tbl $i.tbl.ref >/dev/null
    case $? in
     0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
     1) echo Test $i "(tbl)" FAIL ;;
     *) echo Test $i "(tbl)" ERROR ;;
    esac
-   rm $i.tbl $i.qbo
+#   rm $i.tbl $i.qbo
 done
 #
 for i in bqp50-1
 do
     COUNT=`expr $COUNT + 1` 
     $1 -v0 -Dfilename=$i".sparse" -t q1 -o $i qubo2miqp.zpl
-    grep -v "#" $i.qbo | sed 's/50 111 0/50 111/' | diff - $i.sparse
+    grep -v "#" $i.qs | sed 's/50 111 0/50 111/' | diff - $i.sparse
     case $? in
      0) echo Test $i "(qbo2)" OK; PASS=`expr $PASS + 1`  ;;
      1) echo Test $i "(qbo2)" FAIL ;;
      *) echo Test $i "(qbo2)" ERROR ;;
     esac
-    rm $i.tbl $i.qbo
+    rm $i.tbl $i.qs
 done
 #
 cd warnings

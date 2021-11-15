@@ -1634,6 +1634,28 @@ VarType lps_vartype(Var const* var)
    return var->type;
 }
 
+bool lps_is_binary(Var const* const var)
+{
+   assert(var      != NULL);
+   assert(var->sid == VAR_SID);
+
+   if (var->vclass != VAR_INT && var->vclass != VAR_IMP)
+      return false;
+
+   switch(var->type)
+   {
+   case VAR_FIXED :
+      assert(mpq_equal(var->lower, var->upper));
+         
+      return mpq_equal(var->lower, const_zero) || mpq_equal(var->upper, const_one);
+      break;
+   case VAR_BOXED :
+      return mpq_equal(var->lower, const_zero) &&  mpq_equal(var->upper, const_one);
+   default :
+      return false;
+   }
+}
+
 VarClass lps_getclass(const Var *var)
 {
    assert(var      != NULL);
