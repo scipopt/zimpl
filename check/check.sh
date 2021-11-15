@@ -150,13 +150,13 @@ do
     *) echo Test qubo.zpl "(qbo: q0cp)" ERROR ;;
    esac
    COUNT=`expr $COUNT + 1` 
-   diff -b $i.q0cp.tbl $i.tbl.ref >/dev/null
+   diff -b $i.q0cp.tbl $i.q0cp.tbl.ref >/dev/null
    case $? in
     0) echo Test $i "(tbl)" OK; PASS=`expr $PASS + 1`  ;;
     1) echo Test $i "(tbl)" FAIL ;;
     *) echo Test $i "(tbl)" ERROR ;;
    esac
-#   rm $i.tbl $i.qbo
+   rm $i.q.tbl $i.q0cp.tbl $i.q.qs $i.q0cp.qs
 done
 #
 for i in bqp50-1
@@ -177,14 +177,17 @@ for i in w*.zpl
 do
    COUNT=`expr $COUNT + 1` 
    NAME=`basename $i .zpl`
-   ../$1 $i 2>$NAME.warn >/dev/null
+   case $NAME in
+       w601|w602|w603) ../$1 -t q $i 2>$NAME.warn >/dev/null ;;
+       *)  ../$1 $i 2>$NAME.warn >/dev/null ;;
+   esac
    diff $NAME.warn $NAME.warn.ref >/dev/null
    case $? in
     0) echo Test $i "(warn)" OK; PASS=`expr $PASS + 1`  ;;
     1) echo Test $i "(warn)" FAIL ;;
     *) echo Test $i "(warn)" ERROR ;;
    esac
-   rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.sos
+   rm -f $NAME.warn $NAME.tbl $NAME.lp $NAME.qs $NAME.sos
 done 2>/dev/null
 # 
 # Special w215 test

@@ -209,8 +209,7 @@ void qbo_write(
    if (lp->obj_term != NULL && term_get_degree(lp->obj_term) > 2)
    {
       fprintf(stderr, "--- Warning 602: QUBO file format can only handle linear and quadratic terms\n");
-      fprintf(stderr, "                 No file written\n");
-
+      fprintf(fp, "%s0 0 0\n", strchr(format_options, 'p') == NULL ? "" : "p ");
       return;
    }
    if (text != NULL)
@@ -261,6 +260,13 @@ void qbo_write(
    term_free(term_seq);
 
    int  const entry_size = term_get_elements(term_obj);
+
+   if (entry_size == 0)
+   {
+      fprintf(stderr, "--- Warning 603: QUBO instance empty\n");
+      fprintf(fp, "%s0 0 0\n", strchr(format_options, 'p') == NULL ? "" : "p ");
+      return;
+   }
    Qme* const entry      = calloc((size_t)entry_size, sizeof(*entry));
    int        entry_used = 0;
    mpq_t      offset;
@@ -277,7 +283,6 @@ void qbo_write(
    {
       Mono const* const mono = term_get_element(term_obj, i);
 
-#if 1
       int const degree = mono_get_degree(mono);
 
       assert(degree == 1 || degree == 2);
@@ -288,17 +293,7 @@ void qbo_write(
       entry[entry_used].sid  = QME_SID;
       entry[entry_used].var1 = var1;
       entry[entry_used].var2 = (degree == 1) ? var1 : mono_get_var(mono, 1);
-#else
-       if (mono_get_degree(mono) != 2)
-          term_print(stdout, term_obj, false);
 
-      assert(mono_get_degree(mono) == 2);
-      
-      // Check here quadratic
-      entry[entry_used].sid  = QME_SID;
-      entry[entry_used].var1 = mono_get_var(mono, 0);
-      entry[entry_used].var2 = mono_get_var(mono, 1);
-#endif
       numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
 
       assert(!mpq_equal(entry[entry_used].value, const_zero));
@@ -313,10 +308,12 @@ void qbo_write(
 
    fprintf(fp, "%s Vars Non-zeros Offset\n",
       strchr(format_options, 'c') == NULL ? "#" : "c");
-   
+
+   // if offset_var is the last variable, reduce the number of vars given by 1
+   // Overall it can happen that variables which are no constraint are counted here.   
    fprintf(fp, "%s%d %d %g\n",
       strchr(format_options, 'p') == NULL ? "" : "p ",
-      lp->vars,
+      lp->vars - ((offset_var != NULL && offset_var->number == lp->vars - 1) ? 1 : 0),
       entry_used,
       mpq_get_d(offset));
    

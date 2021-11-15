@@ -191,7 +191,6 @@ static void addcon_as_qubo(
    int   const telems = term_get_elements(term);   
    Term* const qterm  = term_new(telems * telems + telems);
 
-   // remove the 1
    term_add_constant(qterm, numb_one());
 
    for(int i = 0; i < telems; i++)

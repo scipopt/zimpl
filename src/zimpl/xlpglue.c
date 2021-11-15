@@ -201,19 +201,14 @@ static bool check_con_is_invalid(
  *          otherwise.
   */
 bool xlp_addcon_term(
-   Lps*         lp,         /**< Pointer to storage */
-   char const*  name,       /**< Name of the constraint */
-   ConType      contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
-   Numb const*  lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
-   Numb const*  rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
-   unsigned int flags,      /**< special treatment flags, see ratlptypes.h */
-   Term const*  term_org)   /**< term to use */
+   Lps*         const lp,         /**< Pointer to storage */
+   char const*  const name,       /**< Name of the constraint */
+   ConType      const contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   Numb const*  const lhs,        /**< lhs <= term. Not used if contype is CON_RHS */
+   Numb const*  const rhs,        /**< term <= rhs. Not used if contype is CON_LHS */
+   unsigned int const flags,      /**< special treatment flags, see ratlptypes.h */
+   Term const*  const term_org)   /**< term to use */
 {
-   Term* term;
-   Con*  con;
-   mpq_t tlhs;
-   mpq_t trhs;
-
    assert(lp   != NULL);
    assert(name != NULL);
    assert(lhs  != NULL);
@@ -221,17 +216,13 @@ bool xlp_addcon_term(
    assert(term_is_valid(term_org));
    assert(numb_equal(term_get_constant(term_org), numb_zero()));
 
-#if 0
-   // shall we put the constrait as quadratic into the objective? 
-   if (flags & LP_FLAG_CON_QUBO)
-      return addcon_term_as_qubo(lp, name, contype, lhs, rhs, flags, term_org);   
-#endif
-   
-   term = term_simplify(term_org);
-
-   con = lps_addcon(lp, name);
+   Term* const term = term_simplify(term_org);
+   Con*  const con = lps_addcon(lp, name);
 
    assert(con != NULL);
+
+   mpq_t tlhs;
+   mpq_t trhs;
 
    mpq_init(tlhs);
    mpq_init(trhs);
@@ -600,6 +591,8 @@ void xlp_addtoobj(
       mpq_clear(val2);
 
       free(vname);
+      
+      term_sub_constant(term, term_constant);
    }
 
    if ((term_get_degree(term) >= 2) || !term_is_polynomial(term))
