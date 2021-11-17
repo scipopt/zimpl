@@ -222,8 +222,13 @@ static void addcon_as_qubo(
          term_append_elem(qterm, mono);
       }
    }
-   xlp_addtoobj(prog_get_lp(), qterm);
+   Numb* const penalty_factor = numb_new_integer(1000);
    
+   term_mul_coeff(qterm, penalty_factor);
+
+   xlp_addtoobj(prog_get_lp(), qterm);
+
+   numb_free(penalty_factor);   
    term_free(qterm);
    term_free(term);
 }

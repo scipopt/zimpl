@@ -218,7 +218,7 @@ void qbo_write(
    /* Add linear part to term
     */
    Var const* const offset_var = find_offsetvar(lp);
-   Term     * const term_seq   = term_new(lp->vars);
+   Term     * const term_seq   = term_new(lp->vars + (lp->obj_term != NULL) ? term_get_elements(lp->obj_term) : 0);
    Tuple    * const tuple      = tuple_new(0);
 
    for(Var* var = lp->var_root; var != NULL; var = var->next)
@@ -243,22 +243,59 @@ void qbo_write(
       Numb*  const cost  = numb_new_mpq(var->cost);
       Mono*  const mono  = mono_new(cost, entry, MFUN_NONE);      
       
-      mono_mul_entry(mono, entry); // necessary such that simplify works
+      //old mono_mul_entry(mono, entry); // necessary such that simplify works
       term_append_elem(term_seq, mono);
       entry_free(entry);
       numb_free(cost);
    }
-   tuple_free(tuple);
-
    /* Now add qudratic part and make into a list
     */
    if (lp->obj_term != NULL)
-      term_append_term(term_seq, lp->obj_term);
+   {
+      //old term_append_term(term_seq, lp->obj_term);
+
+      // Since multiplying a binary variable with itsself is useless,
+      // we remove these. This is neccessary for simplify to work.
+      for(int i = 0; i < term_get_elements(lp->obj_term); i++)
+      {
+         Mono const* const mono     = term_get_element(lp->obj_term, i);
+         Mono*             new_mono = NULL;
+         int         const degree   = mono_get_degree(mono);
+
+         if (degree == 1)
+            new_mono = mono_copy(mono);
+         else
+         {
+            assert(degree == 2);
+
+            Var* const var = mono_get_var(mono, 0);
+
+            assert(lps_is_binary(var));
+      
+            if (var != mono_get_var(mono, 1))
+               new_mono = mono_copy(mono);
+            else
+            {
+               // now we have the case that its x^2 with x binary.
+               Entry*      const entry = entry_new_var(tuple, var);
+               Numb const* const coeff = mono_get_coeff(mono);
+
+               new_mono = mono_new(coeff, entry, MFUN_NONE);
+               entry_free(entry);
+            }
+         }
+         assert(new_mono != NULL);
+         
+         term_append_elem(term_seq, new_mono);
+      }
+   }
+   tuple_free(tuple);
 
    Term* const term_obj = term_simplify(term_seq);
 
    term_free(term_seq);
 
+   // Put into Q
    int  const entry_size = term_get_elements(term_obj);
 
    if (entry_size == 0)
