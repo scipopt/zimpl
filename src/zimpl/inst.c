@@ -187,6 +187,25 @@ static void addcon_as_qubo(
       Wrong:
       x + y + z >= 1 => P(1 -x -y -z +xy +xz +yz)
       a + b + c + d >= 1 => P(1 -a -b -c -d +ab +ac +ad +bc +bd +cd)
+
+      General:
+      i = 1..n
+      p = n!/(2*(n-2)!)
+
+      if a of the x_i = 1
+      => a!/(2*(a-2)!) of the pairs = 1
+
+      a  A     B    Offset 
+      1  1     2      1
+      2  3/2   1      2
+      3  4/3  1/3     3
+      4  5/4  1/6     4
+      5  6/5  1/10    5
+
+      ab 3
+      A = (a + 1)/a
+      B = 1/(a!/(2*(a-2)!))= 2*(a-2)!/a!
+      sum x_i == a => P(  - A x_i + B x_i x_j      
    */
    int   const telems = term_get_elements(term);   
    Term* const qterm  = term_new(telems * telems + telems);

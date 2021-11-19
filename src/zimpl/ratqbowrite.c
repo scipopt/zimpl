@@ -151,9 +151,8 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
    int prev_row = -1;
    
    for(int i = 0; i < entry_used; i++)
-   {
-      if (mpq_equal(entry[i].value, const_zero))
-         continue;
+   {      
+      assert(!mpq_equal(entry[i].value, const_zero));
 
       int const row = entry[i].var1->number;
 
@@ -325,12 +324,16 @@ void qbo_write(
       assert(degree == 1 || degree == 2);
       
       Var const* const var1 = mono_get_var(mono, 0);
+      Var const* const var2 = (degree == 1) ? var1 : mono_get_var(mono, 1);
 
       // Check here quadratic
       entry[entry_used].sid  = QME_SID;
-      entry[entry_used].var1 = var1;
-      entry[entry_used].var2 = (degree == 1) ? var1 : mono_get_var(mono, 1);
 
+      entry[entry_used].var1 = var1->number <= var2->number ? var1 : var2;
+      entry[entry_used].var2 = var1->number <= var2->number ? var2 : var1;
+
+      assert(entry[entry_used].var1->number <= entry[entry_used].var2->number);
+         
       numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
 
       assert(!mpq_equal(entry[entry_used].value, const_zero));
@@ -364,6 +367,8 @@ void qbo_write(
       {
          int col = qubo->col[k];
 
+         assert(row <= col);
+         
          // divide off diagonal entries by two as they will be doubled later
          // this is the biqmac format
          fprintf(fp, "%d %d %.15g\n", row + index_base, col + index_base, ((row == col) ? 1.0 : 0.5) * mpq_get_d(qubo->val[k]));
