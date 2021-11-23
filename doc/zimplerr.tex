@@ -432,18 +432,34 @@
    If branching priorities for variables are given, these have to be integral.
 \item[302 SOS priority has to be integral] (warning)\ \\
    If SOS priorities are given, these have to be integral.
-%
+   %
+\item[401 RHS unequal to 1 can't be converted to QUBO (yet)]\ \\
+   Currently, only constraints with an right hand side of 1 can be
+   automatically converted into a QUBO.
+\item[402 Less equal, greater equal and range can't be converted to
+  QUBO (yet)]\ \\
+  Currently, only equality constants can be automatically converted
+  into a QUBO.
+\item [403 Non linear term can't be converted to QUBO]\ \\
+  Only linear terms can be automatically converted into a QUBO.
+\item [404 Non linear expressions can't be converted to QUBO]\ \\
+  Only linear expressions without indicator constraints can be
+  automatically converted into a QUBO. 
+\item [405 Constraints with coefficients != 1 can't be converted to
+  QUBO]\ \\
+  Currently, no coefficients for the variables are allowed in an
+  constraints that should be automatically converted into a QUBO.  
 \item[600 File format can only handle linear and quadratic constraints
          (warning)]\ \\
-The chosen file format can currently only handle linear and
-quadratic constraints. Higher degree constraints were ignored.
+  The chosen file format can currently only handle linear and
+  quadratic constraints. Higher degree constraints were ignored.
 \item[601 File format can only handle binary variables] (warning)]\ \\
-The chosen file format can only handle binary variables. 
-Variables of other types will be ignored.
+  The chosen file format can only handle binary variables. 
+  Variables of other types will be ignored.
 \item[602 QUBO file format can only handle linear and quadratic term
          (warning)]\ \\
-By definition the QUBO file format can only handle linear and
-quadratic terms. No file can be written.
+  By definition the QUBO file format can only handle linear and
+  quadratic terms. No file can be written.
 %
 % space here
 %
@@ -451,13 +467,13 @@ quadratic terms. No file can be written.
 % numbgmp.c
 %
 \item[700 log(): \code{OS specific domain or range error message}]\ \\
-Function \code{log} was called with a zero or negative argument, or
+  Function \code{log} was called with a zero or negative argument, or
 the argument was too small to be represented as a \code{double}.
 \item[701 sqrt(): \code{OS specific domain error message}]\ \\
-Function \code{sqrt} was called with a negative argument.
+  Function \code{sqrt} was called with a negative argument.
 \item[702 ln(): \code{OS specific domain or range error message}]\ \\
-Function \code{ln} was called with a zero or negative argument, or
-the argument was too small to be represented as a \code{double}.
+  Function \code{ln} was called with a zero or negative argument, or
+  the argument was too small to be represented as a \code{double}.
 %\item[]\ \\
 %\item[]\ \\
 %\item[]\ \\

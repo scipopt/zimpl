@@ -284,7 +284,7 @@ bool mono_equal(
          if (eb->next == NULL || entry_get_var(eb->next->entry) != var_a)
             return false;
                
-         ea = ea->next;
+         ea = ea->next; //lint !e850
          eb = eb->next;               
       }
    }

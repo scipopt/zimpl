@@ -151,7 +151,7 @@ static void addcon_as_qubo(
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       if (!numb_equal(rhs, numb_one()))
       {
-         fprintf(stderr, "*** Error QBO1 (experimental): RHS unequal to 1 can't be converted to QUBO\n");
+         fprintf(stderr, "*** Error 401: RHS unequal to 1 can't be converted to QUBO (yet)\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
@@ -161,7 +161,7 @@ static void addcon_as_qubo(
       //if (!nump_equal(lhs, numb_one))
       fall_THROUGH
    case CON_RANGE :
-      fprintf(stderr, "*** Error QBO2 (experimental): Less equal, greater equal and range can't be converted to QUBO (yet)\n");
+      fprintf(stderr, "*** Error 402: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    default :
@@ -171,7 +171,7 @@ static void addcon_as_qubo(
 
    if (!term_is_linear(term))
    {
-      fprintf(stderr, "*** Error QBO3 (experimental): Non linear term can't be converted to QUBO\n");
+      fprintf(stderr, "*** Error 403: Non linear term can't be converted to QUBO\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
@@ -204,7 +204,7 @@ static void addcon_as_qubo(
 
       ab 3
       A = (a + 1)/a
-      B = 1/(a!/(2*(a-2)!))= 2*(a-2)!/a!
+      B = 1/(a!/(2*(a-2)!))= 2*(a-2)!/a! = 2/(a * (a - 1))
       sum x_i == a => P(  - A x_i + B x_i x_j      
    */
    int   const telems = term_get_elements(term);   
@@ -220,13 +220,14 @@ static void addcon_as_qubo(
 
       if (mono_get_function(mono1) != MFUN_NONE)
       {
-         fprintf(stderr, "*** Error XXX: Non linear expressions can't be converted to QUBO\n");
+         //??? not sure this can be reached
+         fprintf(stderr, "*** Error 404: Non linear expressions can't be converted to QUBO\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }
       if (!numb_equal(mono_get_coeff(mono1), numb_one()))
       {
-         fprintf(stderr, "*** Error XXX: Constraints with coefficients != 1 can't be converted to QUBO\n");
+         fprintf(stderr, "*** Error 405: Constraints with coefficients != 1 can't be converted to QUBO\n");
          code_errmsg(self);
          zpl_exit(EXIT_FAILURE);
       }    
@@ -241,7 +242,8 @@ static void addcon_as_qubo(
          term_append_elem(qterm, mono);
       }
    }
-   Numb* const penalty_factor = numb_new_integer(1000);
+   Numb* const penalty_factor = numb_new_integer(10000);
+   //Numb* const penalty_factor = numb_new_integer(1);
    
    term_mul_coeff(qterm, penalty_factor);
 

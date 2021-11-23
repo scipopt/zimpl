@@ -185,6 +185,14 @@ void term_append_elem(Term* const term, Mono* const mono)
 
    assert(term_is_valid(term));
    assert(mono_is_valid(mono));
+
+   if (term->used + 1 >= term->size)
+   {
+      term->size  = term->used + TERM_EXTEND_SIZE;
+      term->elem  = realloc(term->elem, (size_t)term->size * sizeof(*term->elem));
+
+      assert(term->elem != NULL);
+   }
    assert(term->used < term->size);
 
    term->elem[term->used] = mono;
@@ -207,8 +215,7 @@ void term_append_term(
    if (term->used + term_b->used >= term->size)
    {
       term->size  = term->used + term_b->used;
-      term->elem  = realloc(
-         term->elem, (size_t)(term->size + TERM_EXTEND_SIZE)* sizeof(*term->elem));
+      term->elem  = realloc(term->elem, (size_t)term->size * sizeof(*term->elem));
 
       assert(term->elem != NULL);
    }

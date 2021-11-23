@@ -217,7 +217,7 @@ void qbo_write(
    /* Add linear part to term
     */
    Var const* const offset_var = find_offsetvar(lp);
-   Term     * const term_seq   = term_new(lp->vars + (lp->obj_term != NULL) ? term_get_elements(lp->obj_term) : 0);
+   Term     * const term_seq   = term_new(lp->vars + ((lp->obj_term != NULL) ? term_get_elements(lp->obj_term) : 0));
    Tuple    * const tuple      = tuple_new(0);
 
    for(Var* var = lp->var_root; var != NULL; var = var->next)
@@ -346,19 +346,32 @@ void qbo_write(
    
    Qubo* const qubo = qubo_from_entries(lp->vars, entry_used, entry);
 
-   fprintf(fp, "%s Vars Non-zeros Offset\n",
-      strchr(format_options, 'c') == NULL ? "#" : "c");
+   free(entry);
+
+   char const* const start_comment = (strchr(format_options, 'c')) == NULL ? "#" : "c";
+   
+   fprintf(fp, "%s ObjectiveOffset %g\n",
+      start_comment, 
+      mpq_get_d(offset));
+
+#ifdef TO_BE_IMPLEMENTED
+   fprintf(fp, "%s FeasibilityInstance %s\n",
+      start_comment, 
+      );
+   
+   fprintf(fp, "%s SolutionCardinality %d\n",
+      start_comment, 
+      );
+#endif 
+   fprintf(fp, "%s Vars Non-zeros\n", start_comment);
 
    // if offset_var is the last variable, reduce the number of vars given by 1
    // Overall it can happen that variables which are no constraint are counted here.   
-   fprintf(fp, "%s%d %d %g\n",
+   fprintf(fp, "%s%d %d\n",
       strchr(format_options, 'p') == NULL ? "" : "p ",
-      lp->vars - ((offset_var != NULL && offset_var->number == lp->vars - 1) ? 1 : 0),
-      entry_used,
-      mpq_get_d(offset));
+      lp->vars - ((offset_var != NULL && (offset_var->number == lp->vars - 1)) ? 1 : 0),
+      entry_used);
    
-   free(entry);
-
    int const index_base = (strchr(format_options, '0') == NULL) ? 1 : 0;
    
    for(int row = 0; row < qubo->rows; row++)

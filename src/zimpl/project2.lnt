@@ -130,6 +130,7 @@
 -esym(714 759 765, stkchk_display_x, stkchk_maxi, stkchk_start)
 -esym(714 759 765, mono_mul_entry)
 -esym(714 759 765, prog_is_valid)
+-emacro(823, fall_THROUGH)
 
 -sem(__lint_assert, pure)
 -esym(522, __lint_assert)
