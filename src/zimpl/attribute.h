@@ -26,58 +26,59 @@
 
 #if (defined(__GNUC__) || defined(__clang__) || defined(_lint)) && !defined(__INTEL_COMPILER)
 
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wignored-attributes"
-#endif // __clang__
+#   if defined(__clang__)
+#      pragma clang diagnostic ignored "-Wignored-attributes"
+#   endif // __clang__
 
-#define is_UNUSED         __attribute__ ((unused))            //lint !e755
-#define is_NORETURN       __attribute__ ((noreturn))          //lint !e755
-#define is_CONST          __attribute__ ((const))             //lint !e755  
-#define is_PURE           __attribute__ ((pure))              //lint !e755
-#define returns_NONNULL   __attribute__ ((returns_nonnull))   //lint !e755
+#   define is_UNUSED         __attribute__((__unused__))            //lint !e755
+#   define is_NORETURN       __attribute__((__noreturn__))          //lint !e755
+#   define is_CONST          __attribute__((__const__))             //lint !e755  
+#   define is_PURE           __attribute__((__pure__))              //lint !e755
 
-#if (defined(__GNUC__) && __GNUC__ >= 7) || (defined(__clang__) && __clang_major__ >= 7 && !defined(__apple_build_version__)) || defined(_lint)
-#define fall_THROUGH __attribute__ ((fallthrough)); /*lint -fallthrough !e612 */
-#else
-#define fall_THROUGH /* FALLTHROUGH */
-#endif /* __GNUC__ >= 7 */
+#   if (defined(__GNUC__) && __GNUC__ >= 8) || (defined(__clang__) && __clang_major__ >= 7 && !defined(__apple_build_version__)) || defined(_lint)
+#      define fall_THROUGH __attribute__((__fallthrough__)); /*lint -fallthrough !e612 */
+#      define returns_NONNULL   __attribute__((__returns_nonnull__))   //lint !e755
+#   else
+#      define fall_THROUGH /* FALLTHROUGH */
+#      define returns_NONNULL   /**/
+#   endif /* __GNUC__ >= 8 */
 
 #else // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
-#define is_UNUSED         /**/
-#define is_NORETURN       /**/
-#define is_CONST          /**/
-#define is_PURE           /**/
-#define returns_NONNULL   /**/
-#define fall_THROUGH       /**/
+#   define is_UNUSED         /**/
+#   define is_NORETURN       /**/
+#   define is_CONST          /**/
+#   define is_PURE           /**/
+#   define returns_NONNULL   /**/
+#   define fall_THROUGH       /**/
 
 #endif // __GNUC__ || __clang__ || _lint && !__INTEL_COMPILER
 
 #if (defined(__GNUC__) || defined(__clang__)) && !defined(_lint) && !defined(__INTEL_COMPILER)
 
-#define is_MALLOC         __attribute__ ((malloc))            //lint !e755
-#define always_INLINE     __attribute__ ((always_inline))     //lint !e755
-#define has_SIZE1         __attribute__ ((alloc_size (1)))    //lint !e755
-#define has_SIZE1x2       __attribute__ ((alloc_size (1,2)))  //lint !e755
-#define is_COLD           __attribute__ ((cold))              //lint !e755
-#define is_HOT            __attribute__ ((hot))               //lint !e755
-#define expects_NONNULL   __attribute__ ((nonnull))           //lint !e755
-#define expects_NONNULL1  __attribute__ ((nonnull (1)))       //lint !e755
-#define expects_NONNULL12 __attribute__ ((nonnull (1,2)))     //lint !e755
-#define expects_NONNULL13 __attribute__ ((nonnull (1,3)))     //lint !e755
+#   define is_MALLOC         __attribute__((__malloc__))            //lint !e755
+#   define always_INLINE     __attribute__((__always_inline__))     //lint !e755
+#   define has_SIZE1         __attribute__((__alloc_size__ (1)))    //lint !e755
+#   define has_SIZE1x2       __attribute__((__alloc_size__ (1,2)))  //lint !e755
+#   define is_COLD           __attribute__((__cold__))              //lint !e755
+#   define is_HOT            __attribute__((__hot__))               //lint !e755
+#   define expects_NONNULL   __attribute__((__nonnull__))           //lint !e755
+#   define expects_NONNULL1  __attribute__((__nonnull__ (1)))       //lint !e755
+#   define expects_NONNULL12 __attribute__((__nonnull__ (1,2)))     //lint !e755
+#   define expects_NONNULL13 __attribute__((__nonnull__ (1,3)))     //lint !e755
 
 #else // __GNUC__ || __clang__ && !_lint && !__INTEL_COMPILER
 
-#define is_MALLOC         /**/
-#define always_INLINE     /**/
-#define has_SIZE1         /**/
-#define has_SIZE1x2       /**/
-#define is_COLD           /**/
-#define is_HOT            /**/
-#define expects_NONNULL   /**/
-#define expects_NONNULL1  /**/
-#define expects_NONNULL12 /**/
-#define expects_NONNULL13 /**/
+#   define is_MALLOC         /**/
+#   define always_INLINE     /**/
+#   define has_SIZE1         /**/
+#   define has_SIZE1x2       /**/
+#   define is_COLD           /**/
+#   define is_HOT            /**/
+#   define expects_NONNULL   /**/
+#   define expects_NONNULL1  /**/
+#   define expects_NONNULL12 /**/
+#   define expects_NONNULL13 /**/
 
 #endif // (__GNUC__ || __clang__) && !_lint && !__INTEL_COMPILER
 

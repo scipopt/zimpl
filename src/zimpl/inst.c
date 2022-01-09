@@ -4518,7 +4518,7 @@ static void objective(CodeNode* self, bool minimize)
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
       code_errmsg(self);
    }
-   xlp_addtoobj(prog_get_lp(), term);
+    xlp_addtoobj(prog_get_lp(), term);
 
    conname_free();
 

@@ -223,21 +223,17 @@ static void write_term(
          if (degree == 1)
             continue;
 
-         if (numb_equal(coeff, numb_one()))
-            fprintf(fp, " +");
-         else
-         {
-            mpq_t t;
-            mpq_init(t);
-            numb_get_mpq(coeff, t);
+         mpq_t t;
+         mpq_init(t);
+         numb_get_mpq(coeff, t);
 
-            if (is_objective && (format == LP_FORM_LPF || format == LP_FORM_RLP))
-               mpq_add(t, t, t); // t *= 2 needed for [...]/2
+         if (is_objective && (format == LP_FORM_LPF || format == LP_FORM_RLP))
+            mpq_add(t, t, t); // t *= 2 needed for [...]/2
 
-            fprintf(fp, " ");         
-            write_val(fp, format, true, t);      
-            mpq_clear(t);
-         }
+         fprintf(fp, " ");         
+         write_val(fp, format, true, t);      
+         mpq_clear(t);
+
          fputc(' ', fp);
       }
       else
@@ -445,7 +441,7 @@ void lpf_write(
 
    lps_makename(name, name_size, lp->objname == NULL ? "Objective" : lp->objname, 0);
    fprintf(fp, " %s: ", name);
-   
+
    for(var = lp->var_root, cnt = 0; var != NULL; var = var->next)
    {
       /* If cost is zero, do not include in objective function

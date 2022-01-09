@@ -211,6 +211,7 @@ void qbo_write(
       fprintf(fp, "%s0 0 0\n", strchr(format_options, 'p') == NULL ? "" : "p ");
       return;
    }
+
    if (text != NULL)
       fprintf(fp, "%s", text);   
 
@@ -372,7 +373,8 @@ void qbo_write(
       lp->vars - ((offset_var != NULL && (offset_var->number == lp->vars - 1)) ? 1 : 0),
       entry_used);
    
-   int const index_base = (strchr(format_options, '0') == NULL) ? 1 : 0;
+   int    const index_base = (strchr(format_options, '0') == NULL) ? 1 : 0;
+   double const sign       = (lp->direct == LP_MIN) ? 1.0 : -1.0;
    
    for(int row = 0; row < qubo->rows; row++)
    {
@@ -384,7 +386,10 @@ void qbo_write(
          
          // divide off diagonal entries by two as they will be doubled later
          // this is the biqmac format
-         fprintf(fp, "%d %d %.15g\n", row + index_base, col + index_base, ((row == col) ? 1.0 : 0.5) * mpq_get_d(qubo->val[k]));
+         fprintf(fp, "%d %d %.15g\n",
+            row + index_base,
+            col + index_base,
+            ((row == col) ? 1.0 : 0.5) * sign * mpq_get_d(qubo->val[k]));
       }
    }
    mpq_clear(offset);   
