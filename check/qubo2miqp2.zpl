@@ -23,7 +23,6 @@ param weight[I*I] := read filename as "<1n,2n> 3n" skip 1 use edges comment "#";
 var x[I] binary;
 
 minimize cost:
-   sum <i,j> in E : x[i] * x[j] * weight[i,j] * if i == j then 1 else 2 end;
-
-
+   sum <i,j> in E with i == j: x[i] * weight[i,i]
++  sum <i,j> in E with i != j: x[i] * x[j] * weight[i,j] * 2;
 

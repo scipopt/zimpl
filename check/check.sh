@@ -159,15 +159,27 @@ do
    rm $i.q.tbl $i.q0cp.tbl $i.q.qs $i.q0cp.qs
 done
 #
-for i in bqp50-1
+for i in bqp50-1 ps5-1
 do
     COUNT=`expr $COUNT + 1` 
     $1 -v0 -Dfilename=$i".sparse" -t q1 -o $i qubo2miqp.zpl
-    grep -v "#" $i.qs | sed 's/50 111 0/50 111/' | diff - $i.sparse
+    grep -v "#" $i.qs | diff -b - $i.sparse
     case $? in
      0) echo Test $i "(qbo2)" OK; PASS=`expr $PASS + 1`  ;;
      1) echo Test $i "(qbo2)" FAIL ;;
      *) echo Test $i "(qbo2)" ERROR ;;
+    esac
+    rm $i.tbl $i.qs
+done
+for i in bqp50-1 ps5-1
+do
+    COUNT=`expr $COUNT + 1` 
+    $1 -v0 -Dfilename=$i".sparse" -t q1 -o $i qubo2miqp2.zpl
+    grep -v "#" $i.qs | diff -b - $i.sparse
+    case $? in
+     0) echo Test $i "(qbo3)" OK; PASS=`expr $PASS + 1`  ;;
+     1) echo Test $i "(qbo3)" FAIL ;;
+     *) echo Test $i "(qbo3)" ERROR ;;
     esac
     rm $i.tbl $i.qs
 done
