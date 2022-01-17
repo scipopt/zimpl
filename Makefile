@@ -7,7 +7,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2021 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2022 by Thorsten Koch <koch@zib.de>
 #*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=  	3.5.1
+VERSION		=  3.5.1
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false

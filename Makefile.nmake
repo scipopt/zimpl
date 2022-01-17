@@ -8,7 +8,7 @@
 #*                                                                           *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #*
-#* Copyright (C) 2005-2021 by Thorsten Koch <koch@zib.de>
+#* Copyright (C) 2005-2022 by Thorsten Koch <koch@zib.de>
 #*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@
 
 ARCH        =  x86
 OSTYPE      =  win
-VERSION		=  3.5.0
+VERSION		=  3.5.1
 VERBOSE		=	0
 LINK		   =	normal
 OPT		   =	opt
