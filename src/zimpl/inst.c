@@ -242,7 +242,7 @@ static void addcon_as_qubo(
          term_append_elem(qterm, mono);
       }
    }
-   Numb* const penalty_factor = numb_new_integer(10000);
+   Numb* const penalty_factor = numb_new_integer(300000);
    //Numb* const penalty_factor = numb_new_integer(1);
    
    term_mul_coeff(qterm, penalty_factor);

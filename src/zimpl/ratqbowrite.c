@@ -112,7 +112,7 @@ static void qubo_free(Qubo* const qubo)
 }
 
 expects_NONNULL
-static int entry_cmp_row(void const* const a, void const* const b)
+static int qme_cmp_row(void const* const a, void const* const b)
 {
    Qme const* const aa = (Qme const*)a;
    Qme const* const bb = (Qme const*)b;
@@ -129,32 +129,32 @@ static int entry_cmp_row(void const* const a, void const* const b)
 }
 
 expects_NONNULL returns_NONNULL
-static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
+static Qubo* qubo_from_entries(int rows, int qme_used, Qme* qme)
 {
-   qsort(entry, (size_t)entry_used, sizeof(*entry), entry_cmp_row);
+   qsort(qme, (size_t)qme_used, sizeof(*qme), qme_cmp_row);
 
 #ifndef NDEBUG
-   for(int i = 1; i < entry_used; i++)
-      assert(entry[i - 1].var1->number < entry[i].var1->number || (entry[i - 1].var1->number == entry[i].var1->number && entry[i - 1].var2->number <= entry[i].var2->number));   
+   for(int i = 1; i < qme_used; i++)
+      assert(qme[i - 1].var1->number < qme[i].var1->number || (qme[i - 1].var1->number == qme[i].var1->number && qme[i - 1].var2->number <= qme[i].var2->number));   
 
-   for(int i = 0; i < entry_used; i++)
+   for(int i = 0; i < qme_used; i++)
    {
-      assert(!mpq_equal(entry[i].value, const_zero));
+      assert(!mpq_equal(qme[i].value, const_zero));
 
-      if (i + 1 < entry_used && entry[i].var1->number == entry[i + 1].var1->number && entry[i].var2->number == entry[i + 1].var2->number)
-         assert(!mpq_equal(entry[i].value, entry[i + 1].value)); // non-symmetric matrix
+      if (i + 1 < qme_used && qme[i].var1->number == qme[i + 1].var1->number && qme[i].var2->number == qme[i + 1].var2->number)
+         assert(!mpq_equal(qme[i].value, qme[i + 1].value)); // non-symmetric matrix
    }
 #endif
 
-   Qubo* const qubo = qubo_new(rows, entry_used);
+   Qubo* const qubo = qubo_new(rows, qme_used);
 
    int prev_row = -1;
    
-   for(int i = 0; i < entry_used; i++)
+   for(int i = 0; i < qme_used; i++)
    {      
-      assert(!mpq_equal(entry[i].value, const_zero));
+      assert(!mpq_equal(qme[i].value, const_zero));
 
-      int const row = entry[i].var1->number;
+      int const row = qme[i].var1->number;
 
       if (prev_row != row)
       {
@@ -164,16 +164,16 @@ static Qubo* qubo_from_entries(int rows, int entry_used, Qme* entry)
       }
       assert(prev_row < rows);
 
-      qubo->col [qubo->used] = entry[i].var2->number;
+      qubo->col [qubo->used] = qme[i].var2->number;
 
-      mpq_set(qubo->val[qubo->used], entry[i].value);
+      mpq_set(qubo->val[qubo->used], qme[i].value);
       
       qubo->used++;
    }
    for(int k = prev_row + 1; k <= rows; k++)
       qubo->rowbeg[k] = qubo->used;
 
-   assert(entry_used == qubo->used);
+   assert(qme_used == qubo->used);
 
    return qubo;      
 }
@@ -296,16 +296,16 @@ void qbo_write(
    term_free(term_seq);
 
    // Put into Q
-   int  const entry_size = term_get_elements(term_obj);
+   int  const qme_size = term_get_elements(term_obj);
 
-   if (entry_size == 0)
+   if (qme_size == 0)
    {
       fprintf(stderr, "--- Warning 603: QUBO instance empty\n");
       fprintf(fp, "%s0 0 0\n", strchr(format_options, 'p') == NULL ? "" : "p ");
       return;
    }
-   Qme* const entry      = calloc((size_t)entry_size, sizeof(*entry));
-   int        entry_used = 0;
+   Qme* const qme      = calloc((size_t)qme_size, sizeof(*qme));
+   int        qme_used = 0;
    mpq_t      offset;
 
    mpq_init(offset);
@@ -315,8 +315,8 @@ void qbo_write(
    if (offset_var != NULL)
       mpq_add(offset, offset, offset_var->cost);
          
-   // TODO maybe move this into QUBO from entry.
-   for(int i = 0; i < entry_size; i++)
+   // TODO maybe move this into QUBO from qme.
+   for(int i = 0; i < qme_size; i++)
    {
       Mono const* const mono = term_get_element(term_obj, i);
 
@@ -328,26 +328,31 @@ void qbo_write(
       Var const* const var2 = (degree == 1) ? var1 : mono_get_var(mono, 1);
 
       // Check here quadratic
-      entry[entry_used].sid  = QME_SID;
+      qme[qme_used].sid  = QME_SID;
 
-      entry[entry_used].var1 = var1->number <= var2->number ? var1 : var2;
-      entry[entry_used].var2 = var1->number <= var2->number ? var2 : var1;
+      qme[qme_used].var1 = var1->number <= var2->number ? var1 : var2;
+      qme[qme_used].var2 = var1->number <= var2->number ? var2 : var1;
 
-      assert(entry[entry_used].var1->number <= entry[entry_used].var2->number);
-         
-      numb_get_mpq(mono_get_coeff(mono), entry[entry_used].value);
+      assert(qme[qme_used].var1->number <= qme[qme_used].var2->number);
 
-      assert(!mpq_equal(entry[entry_used].value, const_zero));
+      mpq_init(qme[qme_used].value);
 
-      entry_used++;         
+      numb_get_mpq(mono_get_coeff(mono), qme[qme_used].value);
+
+      assert(!mpq_equal(qme[qme_used].value, const_zero));
+
+      qme_used++;         
    }
-   assert(entry_used == entry_size);
+   assert(qme_used == qme_size);
 
    term_free(term_obj);
    
-   Qubo* const qubo = qubo_from_entries(lp->vars, entry_used, entry);
+   Qubo* const qubo = qubo_from_entries(lp->vars, qme_used, qme);
 
-   free(entry);
+   for(int i = 0; i < qme_used; i++)
+      mpq_clear(qme[i].value);
+   
+   free(qme);
 
    char const* const start_comment = (strchr(format_options, 'c')) == NULL ? "#" : "c";
    
@@ -371,7 +376,7 @@ void qbo_write(
    fprintf(fp, "%s%d %d\n",
       strchr(format_options, 'p') == NULL ? "" : "p ",
       lp->vars - ((offset_var != NULL && (offset_var->number == lp->vars - 1)) ? 1 : 0),
-      entry_used);
+      qme_used);
    
    int    const index_base = (strchr(format_options, '0') == NULL) ? 1 : 0;
    double const sign       = (lp->direct == LP_MIN) ? 1.0 : -1.0;
