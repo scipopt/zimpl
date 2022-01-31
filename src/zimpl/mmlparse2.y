@@ -117,7 +117,7 @@ extern void yyerror(const char* s) is_NORETURN;
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
-%token <bits> SCALE SEPARATE CHECKONLY INDICATOR QUBO
+%token <bits> SCALE SEPARATE CHECKONLY INDICATOR QUBO PENALTY1 PENALTY2 PENALTY3 PENALTY4 PENALTY5 PENALTY6
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
 %type <code> def_numb def_strg def_bool def_set
@@ -292,6 +292,7 @@ decl_par
       }
    | DECLPAR { $$ = code_new_inst(i_nop, 0); } /* Happens when a parameter is redeclared */
    ;
+
 par_singleton
    : cexpr_entry_list { $$ = $1; }
    | cexpr            {
@@ -732,6 +733,12 @@ con_attr
    | CHECKONLY { $$ = LP_FLAG_CON_CHECK; }
    | INDICATOR { $$ = LP_FLAG_CON_INDIC; }
    | QUBO      { $$ = LP_FLAG_CON_QUBO;  }
+   | PENALTY1  { $$ = LP_FLAG_CON_PENALTY1; }
+   | PENALTY2  { $$ = LP_FLAG_CON_PENALTY2; }
+   | PENALTY3  { $$ = LP_FLAG_CON_PENALTY3; }
+   | PENALTY4  { $$ = LP_FLAG_CON_PENALTY4; }
+   | PENALTY5  { $$ = LP_FLAG_CON_PENALTY5; }
+   | PENALTY6  { $$ = LP_FLAG_CON_PENALTY6; }
    ;
 
 con_type

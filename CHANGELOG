@@ -1,3 +1,5 @@
+  - Fixed bug in term_simplyfy
+
 3.5.0  7. November 2021 Release
 
   - Non linear objective functions are allowed.

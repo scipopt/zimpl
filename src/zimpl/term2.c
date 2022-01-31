@@ -383,6 +383,7 @@ Term* term_simplify(Term const* const term_org)
          {
             term->used--;
             term->elem[i] = term->elem[term->used];
+            i--;
          }
       }
    }

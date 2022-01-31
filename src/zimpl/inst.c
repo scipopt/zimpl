@@ -62,13 +62,11 @@
 
 static int checked_eval_numb_toint(CodeNode const* self, int no, char const* errmsg)
 {
-   Numb const* numb;
-
    assert(self   != NULL);
    assert(no     >= 0);
    assert(errmsg != NULL);
 
-   numb = code_eval_child_numb(self, no);
+   Numb const* const numb = code_eval_child_numb(self, no);
    
    if (!numb_is_int(numb))
    {
@@ -98,13 +96,11 @@ CodeNode* i_nop(CodeNode* self)
 
 CodeNode* i_subto(CodeNode* self)
 {
-   char const* name;
-   
    Trace("i_subto");
    
    assert(code_is_valid(self));
 
-   name = code_eval_child_name(self, 0);
+   char const* const name = code_eval_child_name(self, 0);
 
    if (!conname_set(name))
    {
@@ -140,7 +136,8 @@ static void addcon_as_qubo(
    CodeNode const* const self,   
    ConType         const contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
    Numb     const* const rhs,        /**< term contype rhs.*/
-   Term     const* const term_org)   /**< term to use */
+   Term     const* const term_org,   /**< term to use */
+   unsigned int    const flags)
 {
    assert(rhs  != NULL);
    assert(term_is_valid(term_org));
@@ -242,7 +239,22 @@ static void addcon_as_qubo(
          term_append_elem(qterm, mono);
       }
    }
-   Numb* const penalty_factor = numb_new_integer(300000);
+   int penalty = 1;
+   
+   if      (flags & LP_FLAG_CON_PENALTY1)
+      penalty = 10;
+   else if (flags & LP_FLAG_CON_PENALTY2)
+      penalty = 100;
+   else if (flags & LP_FLAG_CON_PENALTY3)
+      penalty = 1000;
+   else if (flags & LP_FLAG_CON_PENALTY4)
+      penalty = 10000;
+   else if (flags & LP_FLAG_CON_PENALTY5)
+      penalty = 100000;
+   else if (flags & LP_FLAG_CON_PENALTY6)
+      penalty = 1000000;
+   
+   Numb* const penalty_factor = numb_new_integer(penalty);
    //Numb* const penalty_factor = numb_new_integer(1);
    
    term_mul_coeff(qterm, penalty_factor);
@@ -257,24 +269,17 @@ static void addcon_as_qubo(
 
 CodeNode* i_constraint(CodeNode* self)
 {
-   Term*        term;
-   Term const*  term_lhs;
-   Term const*  term_rhs;
-   ConType      type;
-   Numb*        rhs;
-   unsigned int flags;
-   
    Trace("i_constraint");
    
    assert(code_is_valid(self));
 
-   term_lhs   = code_eval_child_term(self, 0);
-   type       = code_eval_child_contype(self, 1);
-   term_rhs   = code_eval_child_term(self, 2);
-   flags      = code_eval_child_bits(self, 3);
+   Term const*  const term_lhs = code_eval_child_term(self, 0);
+   ConType      const type     = code_eval_child_contype(self, 1);
+   Term const*  const term_rhs = code_eval_child_term(self, 2);
+   unsigned int const flags    = code_eval_child_bits(self, 3);
 
-   rhs        = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
-   term       = term_sub_term(term_lhs, term_rhs);
+   Numb*        const rhs      = numb_new_sub(term_get_constant(term_rhs), term_get_constant(term_lhs));
+   Term*        const term     = term_sub_term(term_lhs, term_rhs);
 
    /* Check if trival infeasible
     */
@@ -302,7 +307,7 @@ CodeNode* i_constraint(CodeNode* self)
 
       if (flags & LP_FLAG_CON_QUBO)
       {
-         addcon_as_qubo(self, type, rhs, term);
+         addcon_as_qubo(self, type, rhs, term, flags);
       }
       else
       {      
@@ -321,11 +326,6 @@ CodeNode* i_constraint(CodeNode* self)
 
 CodeNode* i_rangeconst(CodeNode* self)
 {
-   Term*        term;
-   Numb*        lhs;
-   Numb*        rhs;
-   unsigned int flags;
-   
    Trace("i_rangeconst");
    
    assert(code_is_valid(self));
@@ -339,10 +339,10 @@ CodeNode* i_rangeconst(CodeNode* self)
       zpl_exit(EXIT_FAILURE);
    }
    
-   lhs        = numb_copy(code_eval_child_numb(self, 0));
-   term       = term_copy(code_eval_child_term(self, 1));
-   rhs        = numb_copy(code_eval_child_numb(self, 2));
-   flags      = code_eval_child_bits(self, 5);
+   Numb*        const lhs   = numb_copy(code_eval_child_numb(self, 0));
+   Term*        const term  = term_copy(code_eval_child_term(self, 1));
+   Numb*        const rhs   = numb_copy(code_eval_child_numb(self, 2));
+   unsigned int const flags = code_eval_child_bits(self, 5);
 
    numb_sub(lhs, term_get_constant(term));
    numb_sub(rhs, term_get_constant(term));
@@ -387,13 +387,11 @@ CodeNode* i_rangeconst(CodeNode* self)
 
 CodeNode* i_sos(CodeNode* self)
 {
-   char const* name;
-   
    Trace("i_sos");
    
    assert(code_is_valid(self));
 
-   name = code_eval_child_name(self, 0);
+   char const* const name = code_eval_child_name(self, 0);
 
    if (!conname_set(name))
    {
@@ -412,19 +410,13 @@ CodeNode* i_sos(CodeNode* self)
 
 CodeNode* i_soset(CodeNode* self)
 {
-   Term const*  term;
-   Numb const*  typenumb;
-   Numb const*  priority;
-   SosType      type;
-   int          ret;
-
-   Trace("i_constraint");
+   Trace("i_soset");
    
    assert(code_is_valid(self));
 
-   term       = code_eval_child_term(self, 0);
-   typenumb   = code_eval_child_numb(self, 1);
-   priority   = code_eval_child_numb(self, 2);
+   Term const* const term       = code_eval_child_term(self, 0);
+   Numb const* const typenumb   = code_eval_child_numb(self, 1);
+   Numb const* const priority   = code_eval_child_numb(self, 2);
 
    if (!numb_equal(term_get_constant(term), numb_zero()))
    {
@@ -432,12 +424,9 @@ CodeNode* i_soset(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   if (numb_equal(typenumb, numb_one()))
-      type = SOS_TYPE1;
-   else
-      type = SOS_TYPE2;
+   SosType const type = (numb_equal(typenumb, numb_one())) ? SOS_TYPE1 : SOS_TYPE2;
    
-   ret = xlp_addsos_term(prog_get_lp(), conname_get(), type, priority, term);
+   int ret = xlp_addsos_term(prog_get_lp(), conname_get(), type, priority, term);
 
    if ((ret & 1) && stmt_trigger_warning(200))
    {
@@ -462,8 +451,8 @@ static bool has_pattern_name(
    Tuple const* pattern)
 {
    int dim = tuple_get_dim(pattern);
-   int i;
 
+   int i;
    for(i = 0; i < dim; i++)
       if (ELEM_NAME == elem_get_type(tuple_get_elem(pattern, i)))
          break;
@@ -487,25 +476,20 @@ static void warn_if_pattern_has_no_name(
 
 CodeNode* i_forall(CodeNode* self)
 {
-   IdxSet const* idxset;
-   Set const*    set;
-   Tuple const*  pattern;
-   Tuple*        tuple;
-   CodeNode*     lexpr;
-   SetIter*      iter;
-   
    Trace("i_forall");
    
    assert(code_is_valid(self));
 
-   idxset  = code_eval_child_idxset(self, 0);  
-   set     = idxset_get_set(idxset);
-   pattern = idxset_get_tuple(idxset);
-   lexpr   = idxset_get_lexpr(idxset);
-   iter    = set_iter_init(set, pattern);
-
+   IdxSet const* const idxset  = code_eval_child_idxset(self, 0);  
+   Set    const* const set     = idxset_get_set(idxset);
+   Tuple  const* const pattern = idxset_get_tuple(idxset);
+   CodeNode*     const lexpr   = idxset_get_lexpr(idxset);
+   SetIter*      const iter    = set_iter_init(set, pattern);
+   
    warn_if_pattern_has_no_name(code_get_child(self, 0), pattern);
    
+   Tuple* tuple;
+
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -530,13 +514,11 @@ CodeNode* i_forall(CodeNode* self)
  */
 CodeNode* i_expr_add(CodeNode* self)
 {
-   CodeNode* child;
-   
    Trace("i_expr_add");
 
    assert(code_is_valid(self));
 
-   child = code_eval_child(self, 0);
+   CodeNode* const child = code_eval_child(self, 0);
 
    if (code_get_type(child) == CODE_NUMB)
       code_value_numb(self, numb_new_add(code_get_numb(child), code_eval_child_numb(self, 1)));
@@ -584,13 +566,11 @@ CodeNode* i_expr_mul(CodeNode* self)
 
 CodeNode* i_expr_div(CodeNode* self)
 {
-   Numb const* divisor;
-   
    Trace("i_expr_div");
 
    assert(code_is_valid(self));
 
-   divisor = code_eval_child_numb(self, 1);
+   Numb const* const divisor = code_eval_child_numb(self, 1);
 
    if (numb_equal(divisor, numb_zero()))
    {
@@ -606,13 +586,11 @@ CodeNode* i_expr_div(CodeNode* self)
 
 CodeNode* i_expr_mod(CodeNode* self)
 {
-   Numb const* divisor;
-   
    Trace("i_expr_mod");
 
    assert(code_is_valid(self));
 
-   divisor = code_eval_child_numb(self, 1);
+   Numb const* const divisor = code_eval_child_numb(self, 1);
 
    if (numb_equal(divisor, numb_zero()))
    {
@@ -628,13 +606,11 @@ CodeNode* i_expr_mod(CodeNode* self)
 
 CodeNode* i_expr_intdiv(CodeNode* self)
 {
-   Numb const* divisor;
-   
    Trace("i_expr_intdiv");
 
    assert(code_is_valid(self));
 
-   divisor = code_eval_child_numb(self, 1);
+   Numb const* const divisor = code_eval_child_numb(self, 1);
 
    if (numb_equal(divisor, numb_zero()))
    {
@@ -651,13 +627,11 @@ CodeNode* i_expr_intdiv(CodeNode* self)
 
 CodeNode* i_expr_pow(CodeNode* self)
 {
-   int ex;
-   
    Trace("i_expr_pow");
 
    assert(code_is_valid(self));
 
-   ex = checked_eval_numb_toint(self, 1, "112: Exponent value");
+   int ex = checked_eval_numb_toint(self, 1, "112: Exponent value");
    
    code_value_numb(self,
       numb_new_pow(code_eval_child_numb(self, 0), ex));
@@ -667,13 +641,12 @@ CodeNode* i_expr_pow(CodeNode* self)
 
 CodeNode* i_expr_neg(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_neg");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+
    numb_neg(numb);
    
    code_value_numb(self, numb);
@@ -683,13 +656,12 @@ CodeNode* i_expr_neg(CodeNode* self)
 
 CodeNode* i_expr_abs(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_abs");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+
    numb_abs(numb);
    
    code_value_numb(self, numb);
@@ -699,13 +671,12 @@ CodeNode* i_expr_abs(CodeNode* self)
 
 CodeNode* i_expr_sgn(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_sgn");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+
    numb_sgn(numb);
    
    code_value_numb(self, numb);
@@ -715,13 +686,12 @@ CodeNode* i_expr_sgn(CodeNode* self)
 
 CodeNode* i_expr_floor(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_floor");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+
    numb_floor(numb);
    
    code_value_numb(self, numb);
@@ -731,13 +701,12 @@ CodeNode* i_expr_floor(CodeNode* self)
 
 CodeNode* i_expr_ceil(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_ceil");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+   
    numb_ceil(numb);
    
    code_value_numb(self, numb);
@@ -747,13 +716,11 @@ CodeNode* i_expr_ceil(CodeNode* self)
 
 CodeNode* i_expr_log(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_log");
 
    assert(code_is_valid(self));
 
-   numb = numb_new_log(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_new_log(code_eval_child_numb(self, 0));
    
    if (numb == NULL)
    {
@@ -767,13 +734,11 @@ CodeNode* i_expr_log(CodeNode* self)
 
 CodeNode* i_expr_ln(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_ln");
 
    assert(code_is_valid(self));
 
-   numb = numb_new_ln(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_new_ln(code_eval_child_numb(self, 0));
    
    if (numb == NULL)
    {
@@ -787,13 +752,11 @@ CodeNode* i_expr_ln(CodeNode* self)
 
 CodeNode* i_expr_sqrt(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_sqrt");
 
    assert(code_is_valid(self));
 
-   numb = numb_new_sqrt(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_new_sqrt(code_eval_child_numb(self, 0));
    
    if (numb == NULL)
    {
@@ -818,8 +781,6 @@ CodeNode* i_expr_exp(CodeNode* self)
 
 CodeNode* i_expr_sin(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_sin");
 
    assert(code_is_valid(self));
@@ -828,6 +789,8 @@ CodeNode* i_expr_sin(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -840,8 +803,6 @@ CodeNode* i_expr_sin(CodeNode* self)
 
 CodeNode* i_expr_cos(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_cos");
 
    assert(code_is_valid(self));
@@ -850,6 +811,8 @@ CodeNode* i_expr_cos(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -862,8 +825,6 @@ CodeNode* i_expr_cos(CodeNode* self)
 
 CodeNode* i_expr_tan(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_tan");
 
    assert(code_is_valid(self));
@@ -872,6 +833,8 @@ CodeNode* i_expr_tan(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -884,8 +847,6 @@ CodeNode* i_expr_tan(CodeNode* self)
 
 CodeNode* i_expr_asin(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_asin");
 
    assert(code_is_valid(self));
@@ -894,6 +855,8 @@ CodeNode* i_expr_asin(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -906,8 +869,6 @@ CodeNode* i_expr_asin(CodeNode* self)
 
 CodeNode* i_expr_acos(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_acos");
 
    assert(code_is_valid(self));
@@ -916,6 +877,8 @@ CodeNode* i_expr_acos(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -928,8 +891,6 @@ CodeNode* i_expr_acos(CodeNode* self)
 
 CodeNode* i_expr_atan(CodeNode* self)
 {
-   Numb* numb = NULL;
-
    Trace("i_expr_atan");
 
    assert(code_is_valid(self));
@@ -938,6 +899,8 @@ CodeNode* i_expr_atan(CodeNode* self)
 
    /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
    
+   Numb* numb = NULL;
+
    if (numb == NULL) //lint !e774 conditionalways true
    {
       code_errmsg(self);
@@ -950,13 +913,11 @@ CodeNode* i_expr_atan(CodeNode* self)
 
 CodeNode* i_expr_fac(CodeNode* self)
 {
-   int n;
-   
    Trace("i_expr_fac");
 
    assert(code_is_valid(self));
 
-   n = checked_eval_numb_toint(self, 0, "113: Factorial value");
+   int n = checked_eval_numb_toint(self, 0, "113: Factorial value");
    
    if (n < 0)
    {
@@ -977,13 +938,11 @@ CodeNode* i_expr_fac(CodeNode* self)
 
 CodeNode* i_expr_card(CodeNode* self)
 {
-   Set const* set;
-   
    Trace("i_card");
 
    assert(code_is_valid(self));
 
-   set = code_eval_child_set(self, 0);
+   Set const* const set = code_eval_child_set(self, 0);
 
    code_value_numb(self, numb_new_integer(set_get_members(set)));
 
@@ -992,15 +951,12 @@ CodeNode* i_expr_card(CodeNode* self)
 
 CodeNode* i_expr_rand(CodeNode* self)
 {
-   Numb const* mini;
-   Numb const* maxi;
-   
    Trace("i_rand");
 
    assert(code_is_valid(self));
 
-   mini = code_eval_child_numb(self, 0);
-   maxi = code_eval_child_numb(self, 1);
+   Numb const* const mini = code_eval_child_numb(self, 0);
+   Numb const* const maxi = code_eval_child_numb(self, 1);
 
    if (numb_cmp(mini, maxi) >= 0)
    {
@@ -1019,13 +975,12 @@ CodeNode* i_expr_rand(CodeNode* self)
 
 CodeNode* i_expr_round(CodeNode* self)
 {
-   Numb* numb;
-   
    Trace("i_expr_round");
 
    assert(code_is_valid(self));
 
-   numb = numb_copy(code_eval_child_numb(self, 0));
+   Numb* const numb = numb_copy(code_eval_child_numb(self, 0));
+   
    numb_round(numb);
    
    code_value_numb(self, numb);

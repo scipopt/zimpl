@@ -62,11 +62,17 @@ typedef enum   lp_direct     LpDirect;
 typedef enum   lp_type       LpType;
 typedef enum   lp_format     LpFormat;
 
-#define LP_FLAG_CON_SCALE    0x01
-#define LP_FLAG_CON_SEPAR    0x02
-#define LP_FLAG_CON_CHECK    0x04
-#define LP_FLAG_CON_INDIC    0x08
-#define LP_FLAG_CON_QUBO     0x16
+#define LP_FLAG_CON_SCALE     0x0001
+#define LP_FLAG_CON_SEPAR     0x0002
+#define LP_FLAG_CON_CHECK     0x0004
+#define LP_FLAG_CON_INDIC     0x0008
+#define LP_FLAG_CON_QUBO      0x0010
+#define LP_FLAG_CON_PENALTY1  0x0020
+#define LP_FLAG_CON_PENALTY2  0x0040
+#define LP_FLAG_CON_PENALTY3  0x0080
+#define LP_FLAG_CON_PENALTY4  0x0100
+#define LP_FLAG_CON_PENALTY5  0x0200
+#define LP_FLAG_CON_PENALTY6  0x0400
 
 #define HAS_LOWER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_UPPER)
 #define HAS_UPPER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_LOWER)
