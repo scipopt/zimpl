@@ -5,9 +5,9 @@
  \version   1.0
  \date      30May2020
  \copyright Copyright (C) 2020 by Thorsten Koch <koch@zib.de>,
-            licened under LGPL version 3 or later 
+            licened under LGPL version 3 or later
  \details
- 
+
  In case the code is compiled with gcc or clang here are defines for
  attribute which allow the compiler to better issue compile time
  warning (-Wnonnull), runtime diagnostics -fsanitize=nonnull-attribute
@@ -32,7 +32,7 @@
 
 #   define is_UNUSED         __attribute__((__unused__))            //lint !e755
 #   define is_NORETURN       __attribute__((__noreturn__))          //lint !e755
-#   define is_CONST          __attribute__((__const__))             //lint !e755  
+#   define is_CONST          __attribute__((__const__))             //lint !e755
 #   define is_PURE           __attribute__((__pure__))              //lint !e755
 
 #   if (defined(__GNUC__) && __GNUC__ >= 8) || (defined(__clang__) && __clang_major__ >= 7 && !defined(__apple_build_version__)) || defined(_lint)
@@ -88,7 +88,7 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -97,4 +97,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-

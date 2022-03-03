@@ -1,5 +1,7 @@
 3.5.2 upcoming Release
 
+ - added penalty1..6 to qubo flag
+
  - Fixed bug in term_simplyfy
 
 3.5.1 January 2022 no realeased

@@ -1305,7 +1305,162 @@ CodeNode* i_vexpr_fun(CodeNode* self)
    return self;
 }
 
+  
+expects_NONNULL
+void addcon_as_qubo(
+   CodeNode const* const self,   
+   ConType         const contype,    /**< Type of constraint (LHS, RHS, EQUAL, RANGE, etc) */
+   Numb     const* const rhs,        /**< term contype rhs.*/
+   Term     const* const term_org,   /**< term to use */
+   unsigned int    const flags)
+{
+   assert(rhs  != NULL);
+   assert(term_is_valid(term_org));
+   assert(numb_equal(term_get_constant(term_org), numb_zero()));
+
+   Term* const term  = term_simplify(term_org);
+   Bound*      bound = NULL;
    
+   if (!term_is_linear(term))
+   {
+      fprintf(stderr, "*** Error 403: Non linear term can't be converted to QUBO\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   // ax = b => ax - b = 0
+   term_sub_constant(term, rhs);
+
+   switch(contype)
+   {
+   case CON_EQUAL : /* In case of EQUAL, both should be equal */
+      bound = bound_new(BOUND_VALUE, numb_zero());
+      break;
+   case CON_RHS   :
+      bound = term_get_lower_bound(term);
+      break;
+   case CON_LHS :
+      bound = term_get_lower_bound(term);
+      break;
+   case CON_RANGE :
+      fprintf(stderr, "*** Error 402: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   default :
+      abort();
+   }
+   // TODO: Check that bound_get_type(bound) == BOUND_VALUE otherwise error
+
+   // Do we need to add slack?
+   if (contype != CON_EQUAL)
+   {
+      Numb const* const slack      = bound_get_value(bound);
+
+      assert(numb_is_int(slack));
+   
+      int         const sval       = abs(numb_toint(slack));
+
+      assert(sval > 0);
+
+      // fprintf(stderr, "sval = %d\n", sval);
+      
+      Bound*      const bound_zero = bound_new(BOUND_VALUE, numb_zero());
+      Bound*      const bound_one  = bound_new(BOUND_VALUE, numb_one());
+      char const* const cname      = conname_get();
+      Symbol*     const sym        = symbol_lookup(SYMBOL_NAME_INTERNAL);
+
+      assert(sym != NULL);
+
+      // if (sval > 1 << 30)
+      //   error too big;
+      
+      /* binäre zerlegung:
+          1 => [] 1
+          2 => 1 [] 1
+          3 => 1 2
+          4 => 1 2 [] 1
+          5 => 1 2 [] 2
+          6 => 1 2 [] 1 2
+          7 => 1 2 4
+          8 => 1 2 4 [] 1
+          9 => 1 2 4 [] 2
+         10 => 1 2 4 [] 1 2
+         11 => 1 2 4 [] 4
+         12 => 1 2 4 [] 1 4
+         13 => 1 2 4 [] 2 4
+         14 => 1 2 4 [] 1 2 4
+         15 => 1 2 4 8 [] 
+         15 => 1 2 4 8 [] 1
+         17 => 1 2 4 8 [] 2
+      */
+      int p2 = 0;
+
+      for(; sval > (1 << (p2 + 1)); p2++)
+      {
+         Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
+         Numb*  const coeff_slack = numb_new_integer((1 << p2) * ((contype == CON_RHS) ? 1 : -1));
+
+         // fprintf(stderr, "added p2 = %d %d\n", p2, (1 << p2) * ((contype == CON_RHS) ? 1 : -1));
+         
+         symbol_add_entry(sym, entry_slack);
+         term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);
+
+         numb_free(coeff_slack);
+      }
+      int rest = sval - ((1 << p2) - 1);
+
+      // fprintf(stderr, "rest= %d  p2=%d\n", rest, p2);
+      
+      for(int i = 0; i < 30; i++)
+      {
+         if ((rest & (1 << i)) == 0)
+            continue;
+
+         Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
+         Numb*  const coeff_slack = numb_new_integer((1 << i) * ((contype == CON_RHS) ? 1 : -1));
+         
+         // fprintf(stderr, "added i = %d %d\n", i, (1 << i) * ((contype == CON_RHS) ? 1 : -1));
+
+         symbol_add_entry(sym, entry_slack);
+         term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);
+
+         numb_free(coeff_slack);
+      }
+      bound_free(bound_zero);
+      bound_free(bound_one);
+   }
+   bound_free(bound);
+
+   // P * (Ax - b)^2
+   // TODO: Check integral coefficients!
+
+   Term* qterm   = term_mul_term(term, term);
+   int   penalty = 1;
+   
+   if      (flags & LP_FLAG_CON_PENALTY1)
+      penalty = 10;
+   else if (flags & LP_FLAG_CON_PENALTY2)
+      penalty = 100;
+   else if (flags & LP_FLAG_CON_PENALTY3)
+      penalty = 1000;
+   else if (flags & LP_FLAG_CON_PENALTY4)
+      penalty = 10000;
+   else if (flags & LP_FLAG_CON_PENALTY5)
+      penalty = 100000;
+   else if (flags & LP_FLAG_CON_PENALTY6)
+      penalty = 1000000;
+   
+   Numb* const penalty_factor = numb_new_integer(penalty);
+   
+   term_mul_coeff(qterm, penalty_factor);
+
+   // term_print(stderr, qterm, false);
+   
+   xlp_addtoobj(prog_get_lp(), qterm);
+
+   numb_free(penalty_factor);   
+   term_free(qterm);
+   term_free(term);
+}
 
 
 

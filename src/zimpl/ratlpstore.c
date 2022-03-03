@@ -1389,6 +1389,14 @@ void lps_setdir(
    lp->direct = direct;
 }
 
+LpDirect lps_getdir(
+   Lps*     lp)
+{
+   assert(lps_valid(lp));
+
+   return lp->direct;
+}
+
 void lps_setprobname(
    Lps*        lp,
    char const* name)

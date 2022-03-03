@@ -329,6 +329,10 @@ extern CodeNode* i_vif(CodeNode* self) expects_NONNULL returns_NONNULL;
 //lint -sem(     i_vif_else, inout(1), 1p == 1, @P == 1P) 
 extern CodeNode* i_vif_else(CodeNode* self) expects_NONNULL returns_NONNULL;
 
+//lint -sem(     addcon_as_qubo, 1p == 1 && 3p == 1 && 4p == 1) 
+extern void      addcon_as_qubo(CodeNode const* self, ConType contype, Numb const* rhs,
+   Term const* term_org, unsigned int flags) expects_NONNULL;
+
 #ifdef __cplusplus
 }
 #endif

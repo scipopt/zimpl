@@ -131,6 +131,7 @@ CodeNode* i_constraint_list(CodeNode* self)
    return self;
 }
 
+#if 0
 expects_NONNULL
 static void addcon_as_qubo(
    CodeNode const* const self,   
@@ -265,7 +266,7 @@ static void addcon_as_qubo(
    term_free(qterm);
    term_free(term);
 }
-
+#endif
 
 CodeNode* i_constraint(CodeNode* self)
 {

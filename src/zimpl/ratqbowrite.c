@@ -356,9 +356,9 @@ void qbo_write(
 
    char const* const start_comment = (strchr(format_options, 'c')) == NULL ? "#" : "c";
    
-   fprintf(fp, "%s ObjectiveOffset %g\n",
+   fprintf(fp, "%s ObjectiveOffset %ld\n",
       start_comment, 
-      mpq_get_d(offset));
+      (long)mpq_get_d(offset));
 
 #ifdef TO_BE_IMPLEMENTED
    fprintf(fp, "%s FeasibilityInstance %s\n",
