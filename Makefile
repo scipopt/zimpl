@@ -26,16 +26,17 @@
 #
 .PHONY:		all depend clean lint doc doxygen check valgrind libdbl coverage
 
-ARCH            :=      $(shell uname -m | \
-                        sed \
-			-e s/sun../sparc/ \
-			-e s/i.86/x86/ \
-			-e s/i86pc/x86/ \
-			-e s/amd64/x86_64/ \
-			-e s/IP../mips/ \
-			-e s/9000..../hppa/ \
-			-e s/Power\ Macintosh/ppc/ \
-			-e s/00........../pwr4/)
+ARCH		:=	$(shell uname -m | \
+			sed \
+			-e 's/sun../sparc/' \
+			-e 's/i.86/x86/' \
+			-e 's/i86pc/x86/' \
+			-e 's/[0-9]86/x86/' \
+			-e 's/amd64/x86_64/' \
+			-e 's/9000..../hppa/' \
+			-e 's/00........../pwr4/' \
+			-e 's/arm.*/arm/' \
+			-e 's/aarch64/arm/')
 OSTYPE          :=      $(shell uname -s | \
                         tr '[:upper:]' '[:lower:]' | \
 			tr '/' '_' | \
