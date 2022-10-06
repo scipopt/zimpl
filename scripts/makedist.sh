@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-VERSION="3.5.3"
+VERSION="3.5.4"
 NAME="zimpl-$VERSION"
 
 echo ">>> Packaging $NAME."
