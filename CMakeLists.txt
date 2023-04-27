@@ -35,7 +35,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         endif()
     endif()
 endif()
-if(CMAKE_C_COMPILER MATCHES "intel")
+if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
     add_compile_options(-wd111,151,171,279,981,1173,1419,1684,2259)
 endif()
 
