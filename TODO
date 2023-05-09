@@ -47,10 +47,6 @@ set J := { 1 to max(I)+1 };
 Man muss statt dessen schreiben
 set J := { 1 to (max(I))+1 };
 
-Alles statics durchsehen ob am ende reset: gemacht
-Es gibt einen bug bei mehrmaligem SCIP aufruf! testen!
-Selbes Problem wie Kjell?
-
 cplex anbidung.
 
 WITH_ZLIB=1 im Makefile
