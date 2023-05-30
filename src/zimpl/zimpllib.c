@@ -224,6 +224,7 @@ bool zpl_read(char const* filename, bool with_management, void* user_data)
 
    zpl_print_banner(stdout, false);
 
+   lp = xlp_alloc(filename, false, user_data);
    blk_init();
    str_init();
    rand_init(13021967UL);
@@ -251,8 +252,6 @@ bool zpl_read(char const* filename, bool with_management, void* user_data)
       {
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
-   
-         lp = xlp_alloc(filename, false, user_data);
 
          prog_execute(prog, lp);
 
@@ -376,6 +375,7 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
       return false;
    }
 
+   lp = xlp_alloc(argv[optind], use_startval, user_data);
    blk_init();
    str_init();
    rand_init(seed);
@@ -412,8 +412,6 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
       {
          if (verbose >= VERB_DEBUG)
             prog_print(stderr, prog);
-   
-         lp = xlp_alloc(argv[optind], use_startval, user_data);
 
          prog_execute(prog, lp);
 
