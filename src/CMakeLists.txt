@@ -4,10 +4,10 @@ flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/zimpl/mmlscan.c)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zimpl)
 
 # add include directory for bison header
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 # for zimpl headers
-include_directories(zimpl)
+include_directories(BEFORE zimpl)
 
 set(libsources
     zimpl/blkmem.c
@@ -109,7 +109,7 @@ set(headers
     zimpl/zimpllib.h
     zimpl/zlpglue.h)
 
-include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 if(MSVC)
    set(headers ${headers} WIN/unistd.h)
