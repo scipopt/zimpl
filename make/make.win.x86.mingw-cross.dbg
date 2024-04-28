@@ -1,6 +1,6 @@
 #--- $Id: make.win.x86.mingw-cross.dbg,v 1.6 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES -DWITH_PCRE -DPCRE_STATIC
-CFLAGS		=	-O -g $(GCCWARN)
+CFLAGS		=	-O -ffp-contract=off -g $(GCCWARN)
 LDFLAGS		=	-lpcreposix -lpcre -lgmp -lm -static
 BINARY		=	$(BINDIR)/$(BINNAME).exe
 
