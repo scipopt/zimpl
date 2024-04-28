@@ -2,7 +2,7 @@
 CC		=	gcc-8 #clang-9
 LINKCC   	=	gcc-8 #clang-9
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES 
-CFLAGS		=	-Og -g $(GCCWARN) -std=gnu99 \
+CFLAGS		=	-Og -ffp-contract=off -g $(GCCWARN) -std=gnu99 \
 			-fno-omit-frame-pointer \
 			-fstack-check -fstack-protector-strong \
 			-fsanitize=address \

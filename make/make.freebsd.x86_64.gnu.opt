@@ -1,5 +1,5 @@
 CPPFLAGS	+=	-I/usr/local/include -DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES -Wno-format-truncation
-CFLAGS		=	-O3
+CFLAGS		=	-O3 -ffp-contract=off
 LDFLAGS		=	-L/usr/local/lib -lgmp -lm -static
 
 ifeq ($(ZLIB),true)

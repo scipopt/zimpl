@@ -2,7 +2,7 @@
 CC		=	icc
 LINKCC		=	icc
 CPPFLAGS	+=	-DFREEMEM
-CFLAGS		=	-g -fp-model precise -w2 -Wcheck \
+CFLAGS		=	-fp-model=precise -g -w2 -Wcheck \
 			-wd111,161,171,279,981,1173,1419,1684,2259
 LDFLAGS         =       -lgmp -lm -Bstatic
 

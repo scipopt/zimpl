@@ -1,6 +1,6 @@
 #--- $Id: make.linux.x86.gnu.dbg,v 1.14 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES -Dinline=
-CFLAGS		=	-O0 -m32 -g -fident -ftrapv $(GCCWARN)
+CFLAGS		=	-m32 -O0 -ffp-contract=off -g -fident -ftrapv $(GCCWARN)
 LDFLAGS		=	-lgmp -lm
 
 ifeq ($(ZLIB),true)

@@ -1,6 +1,6 @@
 #--- $Id: make.darwin.x86_64.gnu.dbg,v 1.7 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS        +=      -DFREEMEM -D__NO_MATH_INLINES 
-CFLAGS          =       -O0 -m64 -g -fident $(GCCWARN)
+CFLAGS          =       -m64 -O0 -ffp-contract=off -g -fident $(GCCWARN)
 LDFLAGS         =       -lgmp -lm
 
 ifeq ($(LINK),shared)
