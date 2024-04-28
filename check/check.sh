@@ -164,7 +164,7 @@ do
     1) echo Test $i "(tbl)" FAIL ;;
     *) echo Test $i "(tbl)" ERROR ;;
    esac
-   rm $i.q.tbl $i.q0cp.tbl $i.q.qs $i.q0cp.qs
+   rm $i.lp $i.tbl $i.q.tbl $i.q0cp.tbl $i.q.qs $i.q0cp.qs
 done
 #
 for i in bqp50-1 ps5-1

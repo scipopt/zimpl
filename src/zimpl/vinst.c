@@ -1408,7 +1408,7 @@ void addcon_as_qubo(
          Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
          Numb*  const coeff_slack = numb_new_integer(p2 * ((contype == CON_RHS) ? 1 : -1));
 
-         fprintf(stderr, "added p2 = %d\n", p2 * ((contype == CON_RHS) ? 1 : -1));
+         // fprintf(stderr, "added p2 = %d\n", p2 * ((contype == CON_RHS) ? 1 : -1));
          
          symbol_add_entry(sym, entry_slack);
          term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);
@@ -1416,7 +1416,7 @@ void addcon_as_qubo(
          numb_free(coeff_slack);
          sval -= p2;
       }
-      fprintf(stderr, "rest= %d\n", sval);
+      // fprintf(stderr, "rest= %d\n", sval);
       
       for(int i = 0; i < 30; i++)
       {
@@ -1426,7 +1426,7 @@ void addcon_as_qubo(
          Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
          Numb*  const coeff_slack = numb_new_integer((1 << i) * ((contype == CON_RHS) ? 1 : -1));
          
-         fprintf(stderr, "added i = %d %d\n", i, (1 << i) * ((contype == CON_RHS) ? 1 : -1));
+         // fprintf(stderr, "added i = %d %d\n", i, (1 << i) * ((contype == CON_RHS) ? 1 : -1));
 
          symbol_add_entry(sym, entry_slack);
          term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);

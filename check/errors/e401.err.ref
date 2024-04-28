@@ -1,0 +1,4 @@
+*** Error 401: Slack too large (2147483645) for QUBO conversion
+*** File: e401.zpl Line 3
+*** subto c1: sum <i> in I : 2^i * x[i] >= 1, qubo;
+***                                               ^^^
