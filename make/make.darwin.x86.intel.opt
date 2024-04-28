@@ -2,7 +2,7 @@
 CC		=	icc
 LINKCC		=	icc
 CPPFLAGS	+=	-DNDEBUG -DNO_MSHELL
-CFLAGS		=	-O3 -ip -fp-model precise -w1 -wd161,1173
+CFLAGS		=	-O3 -fp-model=precise -ip -w1 -wd161,1173
 LDFLAGS         =       -lgmp -lm
 
 ifeq ($(ZLIB),true)

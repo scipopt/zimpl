@@ -35,8 +35,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         endif()
     endif()
 endif()
-if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
-    add_compile_options(-wd111,151,171,279,981,1173,1419,1684,2259)
+
+# disable fused floating point contraction to enhance reproducibility across compilers and architectures
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    add_compile_options(/fp:precise)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+    add_compile_options(-fp-model=precise -wd111,151,171,279,981,1173,1419,1684,2259)
+elseif((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    add_compile_options(-ffp-contract=off)
 endif()
 
 # use C99 standard

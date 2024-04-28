@@ -1,5 +1,5 @@
 CPPFLAGS        +=      -DNDEBUG -DNO_MSHELL -D__NO_MATH_INLINES
-CFLAGS		+=	-O3 -m64
+CFLAGS		+=	-m64 -O3 -ffp-contract=off
 LDFLAGS         =       -lgmp -lm
 
 ifeq ($(LINK),shared)
