@@ -240,7 +240,7 @@ bool xlp_addcon_term(
       break;
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
       assert(mpq_equal(tlhs, trhs) != 0);
-      fall_THROUGH
+      fall_THROUGH;
    case CON_RANGE :
       lps_setlhs(con, tlhs);
       lps_setrhs(con, trhs);
