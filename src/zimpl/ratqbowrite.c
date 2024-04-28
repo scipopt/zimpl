@@ -270,8 +270,16 @@ void qbo_write(
 
             Var* const var = mono_get_var(mono, 0);
 
-            assert(lps_is_binary(var));
-      
+            if (!lps_is_binary(var))
+            {
+               if (verbose > 0)
+               {
+                  fprintf(stderr, "--- Warning 601: File format can only handle binary variables\n");
+                  fprintf(stderr, "                 Non-binary variable \"%s\" ignored\n", 
+                     var->name);
+               }
+               continue;
+            }
             if (var != mono_get_var(mono, 1))
                new_mono = mono_copy(mono);
             else

@@ -1,4 +1,6 @@
-3.5.4
+3.6.0
+
+ - fixed some bugs with qubo attribute.
 
  - fixed bug in memory management for consecutive runs
 
@@ -6,7 +8,7 @@
 
 3.5.2 upcoming Release
 
- - added penalty1..6 to qubo flag
+ - added penalty1..6 to qubo attribute
 
  - Fixed bug in term_simplyfy
 

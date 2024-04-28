@@ -369,7 +369,9 @@ int main(int argc, char* const* argv)
    assert(outpipe != NULL);
 
    void* const lp = xlp_alloc(argv[optind], write_mst || write_order, NULL);
+
    zlp_setnamelen(lp, name_length);
+
    blk_init();
    str_init();
    rand_init(seed);

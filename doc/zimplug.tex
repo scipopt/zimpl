@@ -1261,8 +1261,13 @@ how it should be handled later on.
   If you use this attribute, you can no longer write \mps-format, as
   indicator variables are not supported by this format.
 \item[qubo]
-  Transform the constraint into an qudratic qbjective.
-  Currently, this only works with a sum of binary variables equal to one.
+  Transform the constraint into an qudratic objective.
+  Note that neccessary binary slacks are created automatically.
+  However, integer variables are currently not automatically
+  converted into binary variables.
+\item[penaltyX] Only to be used together with the \emph{qubo}
+attribute. Multiply the constraint that is put into the objective
+by a factor of $P=10^X$, $X\in\{1,\ldots,6}$.
 \end{description}
 
 \noindent
@@ -1275,6 +1280,7 @@ and are separated by commas.
 subto c1: 1000 * x + 0.3 * y <= 5, scale, checkonly;
 subto c2: x + y + z == 7, separate;
 subto c3: vif x == 1 then y == 7 end, indicator;
+subto c4: sum <i> in I : x[i] <= 15, qubo, penalty3;
 \end{verbatim}
 }
 

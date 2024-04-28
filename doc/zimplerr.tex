@@ -433,22 +433,14 @@
 \item[302 SOS priority has to be integral] (warning)\ \\
    If SOS priorities are given, these have to be integral.
    %
-\item[401 RHS unequal to 1 can't be converted to QUBO (yet)]\ \\
-   Currently, only constraints with an right hand side of 1 can be
-   automatically converted into a QUBO.
-\item[402 Less equal, greater equal and range can't be converted to
-  QUBO (yet)]\ \\
-  Currently, only equality constants can be automatically converted
-  into a QUBO.
+\item [401 Slack too large (\code{xxx}) for QUBO conversion]
+   The upper bound of the slack needed for this constraint is more then
+   $2^{30}$.   
 \item [403 Non linear term can't be converted to QUBO]\ \\
   Only linear terms can be automatically converted into a QUBO.
 \item [404 Non linear expressions can't be converted to QUBO]\ \\
   Only linear expressions without indicator constraints can be
   automatically converted into a QUBO. 
-\item [405 Constraints with coefficients != 1 can't be converted to
-  QUBO]\ \\
-  Currently, no coefficients for the variables are allowed in an
-  constraints that should be automatically converted into a QUBO.  
 \item[600 File format can only handle linear and quadratic constraints
          (warning)]\ \\
   The chosen file format can currently only handle linear and

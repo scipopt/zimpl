@@ -1327,9 +1327,7 @@ void addcon_as_qubo(
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   // ax = b => ax - b = 0
-   term_sub_constant(term, rhs);
-
+   
    switch(contype)
    {
    case CON_EQUAL : /* In case of EQUAL, both should be equal */
@@ -1339,29 +1337,38 @@ void addcon_as_qubo(
       bound = term_get_lower_bound(term);
       break;
    case CON_LHS :
-      bound = term_get_lower_bound(term);
+      bound = term_get_upper_bound(term);
       break;
    case CON_RANGE :
-      fprintf(stderr, "*** Error 402: Less equal, greater equal and range can't be converted to QUBO (yet)\n");
+      fprintf(stderr, "*** Error 402: ranges can't be converted to QUBO (yet)\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    default :
       abort();
    }
-   // TODO: Check that bound_get_type(bound) == BOUND_VALUE otherwise error
+   assert(bound_get_type(bound) == BOUND_VALUE);
 
+   // ax = b => ax - b = 0
+   term_sub_constant(term, rhs);
+
+   // term_print(stderr, term, false); fprintf(stderr, "\n");
+   
    // Do we need to add slack?
    if (contype != CON_EQUAL)
    {
-      Numb const* const slack      = bound_get_value(bound);
+      // fprintf(stderr, "%d %d\n", numb_toint(bound_get_value(bound)), numb_toint(rhs));
+      
+      Numb* const slack = numb_new_sub(bound_get_value(bound), rhs);
 
       assert(numb_is_int(slack));
    
-      int         const sval       = abs(numb_toint(slack));
+      int sval = abs(numb_toint(slack));
 
+      //fprintf(stderr, "sval = %d\n", sval);
+
+      numb_free(slack);
+      
       assert(sval > 0);
-
-      // fprintf(stderr, "sval = %d\n", sval);
       
       Bound*      const bound_zero = bound_new(BOUND_VALUE, numb_zero());
       Bound*      const bound_one  = bound_new(BOUND_VALUE, numb_one());
@@ -1369,10 +1376,14 @@ void addcon_as_qubo(
       Symbol*     const sym        = symbol_lookup(SYMBOL_NAME_INTERNAL);
 
       assert(sym != NULL);
-
-      // if (sval > 1 << 30)
-      //   error too big;
       
+      if (sval > (1 << 30))
+      {
+         fprintf(stderr, "*** Error 401: Slack too large (%d) for QUBO conversion\n", sval);
+         code_errmsg(self);
+         zpl_exit(EXIT_FAILURE);
+      }
+         
       /* binäre zerlegung:
           1 => [] 1
           2 => 1 [] 1
@@ -1392,33 +1403,30 @@ void addcon_as_qubo(
          15 => 1 2 4 8 [] 1
          17 => 1 2 4 8 [] 2
       */
-      int p2 = 0;
-
-      for(; sval > (1 << (p2 + 1)); p2++)
+      for(int p2 = 1; sval >= p2; p2 *= 2)
       {
          Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
-         Numb*  const coeff_slack = numb_new_integer((1 << p2) * ((contype == CON_RHS) ? 1 : -1));
+         Numb*  const coeff_slack = numb_new_integer(p2 * ((contype == CON_RHS) ? 1 : -1));
 
-         // fprintf(stderr, "added p2 = %d %d\n", p2, (1 << p2) * ((contype == CON_RHS) ? 1 : -1));
+         fprintf(stderr, "added p2 = %d\n", p2 * ((contype == CON_RHS) ? 1 : -1));
          
          symbol_add_entry(sym, entry_slack);
          term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);
 
          numb_free(coeff_slack);
+         sval -= p2;
       }
-      int rest = sval - ((1 << p2) - 1);
-
-      // fprintf(stderr, "rest= %d  p2=%d\n", rest, p2);
+      fprintf(stderr, "rest= %d\n", sval);
       
       for(int i = 0; i < 30; i++)
       {
-         if ((rest & (1 << i)) == 0)
+         if ((sval & (1 << i)) == 0)
             continue;
 
          Entry* const entry_slack = create_new_var_entry(cname, "_sl", VAR_INT, bound_zero, bound_one);      
          Numb*  const coeff_slack = numb_new_integer((1 << i) * ((contype == CON_RHS) ? 1 : -1));
          
-         // fprintf(stderr, "added i = %d %d\n", i, (1 << i) * ((contype == CON_RHS) ? 1 : -1));
+         fprintf(stderr, "added i = %d %d\n", i, (1 << i) * ((contype == CON_RHS) ? 1 : -1));
 
          symbol_add_entry(sym, entry_slack);
          term_add_elem(term, entry_slack, coeff_slack, MFUN_NONE);

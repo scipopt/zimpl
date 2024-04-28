@@ -218,13 +218,13 @@ bool zpl_read(char const* filename, bool with_management, void* user_data)
 
    stkchk_init();
 
+   zpl_print_banner(stdout, false);
+   
    ret           = false;
    yydebug       = 0;
    yy_flex_debug = 0;
-
-   zpl_print_banner(stdout, false);
-
-   lp = xlp_alloc(filename, false, user_data);
+   lp            = xlp_alloc(filename, false, user_data);
+   
    blk_init();
    str_init();
    rand_init(13021967UL);
@@ -376,6 +376,7 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
    }
 
    lp = xlp_alloc(argv[optind], use_startval, user_data);
+
    blk_init();
    str_init();
    rand_init(seed);
@@ -386,7 +387,7 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
    interns_init();
    local_init();
    
-   if (0 == setjmp( zpl_read_env))
+   if (0 == setjmp(zpl_read_env))
    {
       is_longjmp_ok = true;
       
