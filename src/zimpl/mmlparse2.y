@@ -32,6 +32,7 @@
 #pragma clang diagnostic ignored "-Wunused-macros"
 #pragma clang diagnostic ignored "-Wimplicit-function-declaration"
 #pragma clang diagnostic ignored "-Wunreachable-code"
+#pragma clang diagnostic ignored "-Wdeprecated-non-prototype"
 #endif
    
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
