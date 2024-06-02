@@ -1456,6 +1456,10 @@ void addcon_as_qubo(
       penalty = 100000;
    else if (flags & LP_FLAG_CON_PENALTY6)
       penalty = 1000000;
+   else if (flags & LP_FLAG_CON_PENALTY7)
+      penalty = 10000000;
+   else if (flags & LP_FLAG_CON_PENALTY8)
+      penalty = 100000000;
    
    Numb* const penalty_factor = numb_new_integer(penalty);
    

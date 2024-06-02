@@ -73,6 +73,8 @@ typedef enum   lp_format     LpFormat;
 #define LP_FLAG_CON_PENALTY4  0x0100
 #define LP_FLAG_CON_PENALTY5  0x0200
 #define LP_FLAG_CON_PENALTY6  0x0400
+#define LP_FLAG_CON_PENALTY7  0x0800
+#define LP_FLAG_CON_PENALTY8  0x1000
 
 #define HAS_LOWER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_UPPER)
 #define HAS_UPPER(var)  ((var)->type != VAR_FREE && (var)->type != VAR_LOWER)

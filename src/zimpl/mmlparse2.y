@@ -118,7 +118,8 @@ extern void yyerror(const char* s) is_NORETURN;
 %token <name> NAME
 %token <strg> STRG
 %token <numb> NUMB
-%token <bits> SCALE SEPARATE CHECKONLY INDICATOR QUBO PENALTY1 PENALTY2 PENALTY3 PENALTY4 PENALTY5 PENALTY6
+%token <bits> SCALE SEPARATE CHECKONLY INDICATOR
+%token <bits> QUBO PENALTY1 PENALTY2 PENALTY3 PENALTY4 PENALTY5 PENALTY6 PENALTY7 PENALTY8
 
 %type <code> stmt decl_set decl_par decl_var decl_obj decl_sub decl_sos
 %type <code> def_numb def_strg def_bool def_set
@@ -740,6 +741,8 @@ con_attr
    | PENALTY4  { $$ = LP_FLAG_CON_PENALTY4; }
    | PENALTY5  { $$ = LP_FLAG_CON_PENALTY5; }
    | PENALTY6  { $$ = LP_FLAG_CON_PENALTY6; }
+   | PENALTY7  { $$ = LP_FLAG_CON_PENALTY7; }
+   | PENALTY8  { $$ = LP_FLAG_CON_PENALTY8; }
    ;
 
 con_type
