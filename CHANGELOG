@@ -10,7 +10,7 @@
 
  - add compile option -ffp-contract=off or /fp:precise to enhance reproducibility across different systems
 
-3.5.2 upcoming Release
+3.5.2 23. June 2022 Release
 
  - added penalty1..6 to qubo attribute
 
