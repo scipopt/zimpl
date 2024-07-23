@@ -4,12 +4,12 @@ find_path(PCRE_INCLUDE_DIRS
     PATH_SUFFIXES include)
 
 find_library(PCRE_LIBRARY
-   NAMES libpcre pcre2-posix
+   NAMES libpcre pcre2-posix pcre2-posix-static
    HINTS ${PCRE_DIR}
    PATH_SUFFIXES lib)
 
 find_library(PCRE_LIBRARY_WIN
-   NAMES pcre2-8
+   NAMES pcre2-8 pcre2-8-static
    HINTS ${PCRE_DIR}
    PATH_SUFFIXES lib)
 
