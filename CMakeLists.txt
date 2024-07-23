@@ -134,8 +134,10 @@ if(ZLIB_FOUND)
     include_directories(${ZLIB_INCLUDE_DIRS})
 else()
     add_definitions(-DWITHOUT_ZLIB)
+endif()
 
-    # look for pcre if ZLIB could not be found
+if(MSVC)
+    # look for pcre if Windows
     find_package(PCRE)
     if(PCRE_FOUND)
         add_definitions(-DWITH_PCRE)
