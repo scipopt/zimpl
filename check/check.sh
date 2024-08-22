@@ -263,7 +263,7 @@ do
 done 2>/dev/null
 
 if [ $PASS -eq $COUNT ] ; then echo All $PASS tests passed; 
-else echo FAILURE! Only $PASS of $COUNT tests passed; 
+else echo FAILURE! Only $PASS of $COUNT tests passed; exit 1;
 fi
 
 
