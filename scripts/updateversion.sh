@@ -28,6 +28,9 @@ then
 
   sed -i "s/Version \+[0-9].[0-9].[0-9]\+/Version ${NEWVERSION}/" doc/zimpl.tex
 
+  NEWDATE=`date "+%B, %Y"`
+  sed -i "/\\date/s/\\\\\\\\.*}/\\\\\\\\${NEWDATE}}/" doc/zimpl.tex
+
   sed -i "s/    VERSION \+[0-9].[0-9].[0-9]\+/    VERSION ${NEWVERSION}/" CMakeLists.txt
 
   echo "new version:"
