@@ -26,11 +26,14 @@ then
   fi
   sed -i "s/@version  \+[0-9].[0-9].[0-9]\+/@version  ${NEWVERSION}/" doc/docu.c
 
+  sed -i "s/Version \+[0-9].[0-9].[0-9]\+/Version ${NEWVERSION}/" doc/zimpl.tex
+
   sed -i "s/    VERSION \+[0-9].[0-9].[0-9]\+/    VERSION ${NEWVERSION}/" CMakeLists.txt
 
   echo "new version:"
   grep " VERSION" CMakeLists.txt
   grep -i @version doc/docu.c
+  grep Version doc/zimpl.tex
   grep -i ZIMPL_VERSION src/zimpl/mme.h
   grep -i ^VERSION= scripts/makedist.sh
   grep -i ^VERSION Makefile.nmake Makefile
@@ -48,5 +51,3 @@ else
   grep -i ^VERSION Makefile.nmake Makefile
   exit 1;
 fi
-
-echo "TODO update in two places in doc/zimpl.tex"
