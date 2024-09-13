@@ -1,3 +1,8 @@
+3.6.2 September 2024 Release
+
+  - have cmake check for PCRE also if ZLIB is found in MSVC builds
+  - have cmake look also for PCRE libs with -static name suffix
+
 3.6.1 21. June 2024 Release
 
   - added penalty7 and penalty8
