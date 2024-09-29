@@ -1,6 +1,9 @@
-  - added penalty7 and penalty8
 
-3.6.0 28. April 2024 Release
+3.6.1 June 2024 Release
+
+ - added penalty7 and penalty8
+
+3.6.0 April 2024 Release
 
  - fixed some bugs with qubo attribute.
 
