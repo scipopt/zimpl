@@ -36,7 +36,7 @@ enum sos_type        { SOS_ERR     = 0, SOS_TYPE1, SOS_TYPE2 };
 enum var_class       { VAR_CON     = 0, VAR_IMP,   VAR_INT };
 enum lp_direct       { LP_MIN      = 0, LP_MAX };
 enum lp_type         { LP_ERR      = 0, LP_LP, LP_IP };
-enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP, LP_FORM_QBO };
+enum lp_format       { LP_FORM_ERR = 0, LP_FORM_LPF, LP_FORM_HUM, LP_FORM_MPS, LP_FORM_RLP, LP_FORM_PIP, LP_FORM_QBO, LP_FORM_OPB };
 
 #if 0 /* not used anymore ??? */
 enum presolve_result

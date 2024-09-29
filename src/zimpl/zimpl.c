@@ -86,9 +86,10 @@ static char const* const help =
 "  -P cmd         Pipe input through command, e.g. \"cpp -DONLY_X %%s\"\n" \
 "  -r             write CPLEX branching order file.\n" \
 "  -s seed        random number generator seed.\n" \
-"  -t lp|mps|hum|rlp|pip|qx  select output format. Either LP (default), MPS format,\n" \
+"  -t lp|mps|hum|rlp|pip|qx|opb  select output format. Either LP (default), MPS format,\n" \
 "                 human readable HUM, randomly permuted LP, PIP polynomial IP, or\n" \
-"                 QUBO format: option x can be zero or more of [1,c,p]\n" \
+"                 QUBO format: option x can be zero or more of [1,c,p], or\n" \
+"                 Pseudo Boolena OPB\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
@@ -289,6 +290,9 @@ int main(int argc, char* const* argv)
          case 'l' :
             format = LP_FORM_LPF;
             break;
+         case 'o' :
+            format = LP_FORM_OPB;
+            break;
          case 'p' :
             format = LP_FORM_PIP;
             break;
@@ -353,6 +357,9 @@ int main(int argc, char* const* argv)
       break;
    case LP_FORM_QBO :
       extension = ".qs";
+      break;
+   case LP_FORM_OPB :
+      extension = ".opb";
       break;
    default :
       abort();
@@ -494,6 +501,7 @@ int main(int argc, char* const* argv)
          prog_text = prog_tostr(prog, "\\ ", title, 128);
          break;
       case LP_FORM_MPS :
+      case LP_FORM_OPB :
          prog_text = prog_tostr(prog, "* ", title, 128);
          break;
       case LP_FORM_RLP :

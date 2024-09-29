@@ -48,7 +48,7 @@ OSTYPE          :=      $(shell uname -s | \
 
 HOSTNAME	:=      $(shell uname -n | tr '[:upper:]' '[:lower:]')
 
-VERSION		=  3.6.3
+VERSION		=  	3.7.0
 VERBOSE		=	false
 SHARED		=	false
 STATIC		=	false
@@ -172,7 +172,7 @@ DEPEND		=	$(SRCDIR)/depend
 
 OBJECT  	=       zimpl.o xlpglue.o zlpglue.o \
 			ratlpstore.o ratlpfwrite.o ratmpswrite.o ratmstwrite.o \
-			ratordwrite.o ratpresolve.o ratqbowrite.o
+			ratopbwrite.o ratordwrite.o ratpresolve.o ratqbowrite.o
 LIBBASE		=	blkmem.o bound.o code.o conname.o define.o elem.o entry.o \
 			hash.o heap.o idxset.o inst.o iread.o list.o \
 			load.o local.o metaio.o mmlparse2.o mmlscan.o mono.o \
