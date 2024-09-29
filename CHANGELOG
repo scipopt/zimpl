@@ -1,7 +1,11 @@
+3.6.3 14. September 2024 Release
 
-3.6.1 June 2024 Release
+  - have cmake check for PCRE also if ZLIB is found in MSVC builds
+  - have cmake look also for PCRE libs with -static name suffix
 
- - added penalty7 and penalty8
+3.6.1 21. June 2024 Release
+
+  - added penalty7 and penalty8
 
 3.6.0 April 2024 Release
 
@@ -11,7 +15,7 @@
 
  - add compile option -ffp-contract=off or /fp:precise to enhance reproducibility across different systems
 
-3.5.2 upcoming Release
+3.5.2 23. June 2022 Release
 
  - added penalty1..6 to qubo attribute
 

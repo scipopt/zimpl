@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-VERSION="3.6.1"
+VERSION="3.6.3"
 NAME="zimpl-$VERSION"
 
 echo ">>> Packaging $NAME."
@@ -36,18 +36,19 @@ CMakeLists.txt zimpl-config.cmake.in \
 cmake/Modules/FindGMP.cmake cmake/Modules/FindPCRE.cmake
 
 # check version numbers
-echo ">>> Checking version numbers in Makefile, doc/zimpl.tex (2x), doc/docu.c, CMakeLists.txt, src/zimpl/mme.h and scripts/makedist.sh. (Should be $VERSION)"
+echo ">>> Checking version numbers in Makefile, Makefile.nmake, doc/zimpl.tex (2x), doc/docu.c, CMakeLists.txt, src/zimpl/mme.h and scripts/makedist.sh. (Should be $VERSION)"
 
 # find all version numbers
 VERSIONS=""
 VERSIONS="$VERSIONS\n$(grep "^VERSION" Makefile)"
-VERSIONS="$VERSIONS\n$(grep " Version" doc/zimpl.tex |grep -v date|grep -v License)"
+VERSIONS="$VERSIONS\n$(grep "^VERSION" Makefile.nmake)"
+VERSIONS="$VERSIONS\n$(grep " Version" doc/zimpl.tex |grep -v License)"
 VERSIONS="$VERSIONS\n$(grep "@version" doc/docu.c)"
 VERSIONS="$VERSIONS\n$(grep " VERSION" CMakeLists.txt |head -n 1)"
 VERSIONS="$VERSIONS\n$(grep "ZIMPL_VERSION" src/zimpl/mme.h)"
 
 # boil the formerly found versionnumbers down to a short format
-VERSIONNUMBERS=$(echo "$VERSIONS" | grep  -o "[0-9.]*" | sed 's/\.//g')
+VERSIONNUMBERS=$(echo "$VERSIONS" | grep  -o "[0-9]*\.[0-9.]*" | sed 's/\.//g')
 
 # check if the boiled down numbers coincide with the one defined above
 VERSIONNUMBER=$(echo "$VERSION" | sed 's/\.//g')

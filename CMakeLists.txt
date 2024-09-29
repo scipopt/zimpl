@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 
 project(ZIMPL
-    VERSION 3.6.1
+    VERSION 3.6.3
     LANGUAGES C)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -134,8 +134,10 @@ if(ZLIB_FOUND)
     include_directories(${ZLIB_INCLUDE_DIRS})
 else()
     add_definitions(-DWITHOUT_ZLIB)
+endif()
 
-    # look for pcre if ZLIB could not be found
+if(MSVC)
+    # look for pcre if Windows
     find_package(PCRE)
     if(PCRE_FOUND)
         add_definitions(-DWITH_PCRE)
