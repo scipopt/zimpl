@@ -64,6 +64,7 @@ set(binsources
     zimpl/ratlpfwrite.c
     zimpl/ratmpswrite.c
     zimpl/ratmstwrite.c
+    zimpl/ratopbwrite.c
     zimpl/ratordwrite.c
     zimpl/ratqbowrite.c
     zimpl/ratpresolve.c)
