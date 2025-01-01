@@ -163,10 +163,10 @@ void mono_mul_entry(
    }
    else
    {
-   /* This ensures that if the same variable is to come several times,
-    * all of them come together, i.e. yxy is not allowed, yyx would be ok.
-    * Neccessary for simplify of terms and other things.
-    */
+      /* This ensures that if the same variable is to come several times,
+       * all of them come together, i.e. yxy is not allowed, yyx would be ok.
+       * Neccessary for simplify of terms and other things.
+       */
       MonoElem* last = NULL;
 
       for(MonoElem* e = &mono->first; e != NULL; e = e->next)

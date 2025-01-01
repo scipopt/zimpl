@@ -111,6 +111,7 @@ GCCWARN		=	-Wall \
 			-Wno-unused-function \
 			-Wno-unused-parameter \
 			-Wno-nonnull-compare \
+			-Wno-strict-overflow \
 			-fno-omit-frame-pointer \
 			-fstack-protector-strong \
 			-fsanitize=address \
