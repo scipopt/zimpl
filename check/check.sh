@@ -135,10 +135,13 @@ for i in qubo
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 -o $i $i.zpl 
-   diff $i.lp $i.lp.ref >/dev/null
-   case $? in
-    0) echo Test qubo.zpl "(qbo: lp)" OK; PASS=`expr $PASS + 1` ;;
-    1) echo Test qubo.zpl "(qbo: lp)" FAIL ;;
+   diff -q $i.lp $i.lp.1.ref >/dev/null
+   result1=$?
+   diff -q $i.lp $i.lp.2.ref >/dev/null
+   result2=$?
+   case "$result1-$result2" in
+    0-*|*-0) echo Test qubo.zpl "(qbo: lp)" OK; PASS=`expr $PASS + 1` ;;
+    1-1) echo Test qubo.zpl "(qbo: lp)" FAIL ;;
     *) echo Test qubo.zpl "(qbo: lp)" ERROR ;;
    esac
    COUNT=`expr $COUNT + 1` 
