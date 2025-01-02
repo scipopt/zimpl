@@ -1,0 +1,4 @@
+*** Error 137: Set to permute is empty
+*** File: e137.zpl Line 3
+*** set P := permute(K);
+***                   ^^^

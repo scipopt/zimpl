@@ -1,0 +1,4 @@
+*** Error 138: Set size 13 > 12 is too big
+*** File: e138.zpl Line 2
+*** set P := permute(I);
+***                   ^^^

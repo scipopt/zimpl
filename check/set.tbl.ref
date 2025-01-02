@@ -110,6 +110,30 @@ zimpl	v     223	bb$b#5          	"bb$b#5"
 zimpl	v     224	bb$c#3          	"bb$c#3"
 zimpl	v     225	bb$c#4          	"bb$c#4"
 zimpl	v     226	bb$c#5          	"bb$c#5"
+zimpl	v     327	pc#1#2#3#4      	"pc#1#2#3#4"
+zimpl	v     328	pc#1#2#4#3      	"pc#1#2#4#3"
+zimpl	v     329	pc#1#3#2#4      	"pc#1#3#2#4"
+zimpl	v     330	pc#1#3#4#2      	"pc#1#3#4#2"
+zimpl	v     331	pc#1#4#3#2      	"pc#1#4#3#2"
+zimpl	v     332	pc#1#4#2#3      	"pc#1#4#2#3"
+zimpl	v     333	pc#2#1#3#4      	"pc#2#1#3#4"
+zimpl	v     334	pc#2#1#4#3      	"pc#2#1#4#3"
+zimpl	v     335	pc#2#3#1#4      	"pc#2#3#1#4"
+zimpl	v     336	pc#2#3#4#1      	"pc#2#3#4#1"
+zimpl	v     337	pc#2#4#3#1      	"pc#2#4#3#1"
+zimpl	v     338	pc#2#4#1#3      	"pc#2#4#1#3"
+zimpl	v     339	pc#3#2#1#4      	"pc#3#2#1#4"
+zimpl	v     340	pc#3#2#4#1      	"pc#3#2#4#1"
+zimpl	v     341	pc#3#1#2#4      	"pc#3#1#2#4"
+zimpl	v     342	pc#3#1#4#2      	"pc#3#1#4#2"
+zimpl	v     343	pc#3#4#2#1      	"pc#3#4#2#1"
+zimpl	v     344	pc#3#4#1#2      	"pc#3#4#1#2"
+zimpl	v     345	pc#4#2#3#1      	"pc#4#2#3#1"
+zimpl	v     346	pc#4#2#1#3      	"pc#4#2#1#3"
+zimpl	v     347	pc#4#1#3#2      	"pc#4#1#3#2"
+zimpl	v     348	pc#4#1#2#3      	"pc#4#1#2#3"
+zimpl	v     349	pc#4#3#2#1      	"pc#4#3#2#1"
+zimpl	v     350	pc#4#3#1#2      	"pc#4#3#1#2"
 zimpl	c       0	a1_1            	"a1_1"	0.0000000000000000e+00
 zimpl	c       1	b1_1            	"b1_1"	0.0000000000000000e+00
 zimpl	c       2	c1_1            	"c1_1"	0.0000000000000000e+00
@@ -166,3 +190,4 @@ zimpl	c      52	z2_1            	"z2_1"	0.0000000000000000e+00
 zimpl	c      53	aa1_1           	"aa1_1"	0.0000000000000000e+00
 zimpl	c      54	bb1_1           	"bb1_1"	0.0000000000000000e+00
 zimpl	c      55	dd1_1           	"dd1_1"	0.0000000000000000e+00
+zimpl	c      56	pc_1            	"pc_1"	0.0000000000000000e+00

@@ -35,6 +35,7 @@
 \ set BB  := { <a,b> in A*B : <a,b+2> };
 \ set CC  := { 1 ..  1000 } * { 1001 .. 2000 } * { "A", "B", "C", "D", "E"} * { 2001 .. 9999 } * { 1 .. 100 };
 \ set DD  := { <2,2000,"D",3000,e> in CC };
+\ set PC  := permute(C);
 \ var a[L2I];
 \ var b[B];
 \ var c[C];
@@ -59,6 +60,7 @@
 \ var aa[AA];
 \ var bb[BB];
 \ var dd[DD];
+\ var pc[PC];
 \ subto a1: sum <i> in L2I : a[i] >= 0;
 \ subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
 \ subto c1: sum <i> in C : c[i] >= ord(C2,1,1);
@@ -85,6 +87,7 @@
 \ subto aa1: sum <i> in AA : aa[i] >= 5;
 \ subto bb1: sum <i1,i2> in BB : bb[i1,i2] <= 3;
 \ subto dd1: b[1] == card(DD);
+\ subto pc: sum <t1,t2,t3,t4> in PC : pc[t1,t2,t3,t4] <= 1;
 \Problem name: set.zpl
 Minimize
  Objective: 
@@ -210,6 +213,12 @@ Subject to
   + bb$a#5 + bb$a#4 + bb$a#3 <= 3
  dd1_1:
   + b#1 = 100
+ pc_1:
+  + pc#4#3#1#2 + pc#4#3#2#1 + pc#4#1#2#3 + pc#4#1#3#2 + pc#4#2#1#3 + pc#4#2#3#1
+  + pc#3#4#1#2 + pc#3#4#2#1 + pc#3#1#4#2 + pc#3#1#2#4 + pc#3#2#4#1 + pc#3#2#1#4
+  + pc#2#4#1#3 + pc#2#4#3#1 + pc#2#3#4#1 + pc#2#3#1#4 + pc#2#1#4#3 + pc#2#1#3#4
+  + pc#1#4#2#3 + pc#1#4#3#2 + pc#1#3#4#2 + pc#1#3#2#4 + pc#1#2#4#3 + pc#1#2#3#4
+  <= 1
 Bounds
  0 <= a$a <= +inf
  0 <= a$b <= +inf
@@ -323,4 +332,28 @@ Bounds
  0 <= bb$c#3 <= +inf
  0 <= bb$c#4 <= +inf
  0 <= bb$c#5 <= +inf
+ 0 <= pc#1#2#3#4 <= +inf
+ 0 <= pc#1#2#4#3 <= +inf
+ 0 <= pc#1#3#2#4 <= +inf
+ 0 <= pc#1#3#4#2 <= +inf
+ 0 <= pc#1#4#3#2 <= +inf
+ 0 <= pc#1#4#2#3 <= +inf
+ 0 <= pc#2#1#3#4 <= +inf
+ 0 <= pc#2#1#4#3 <= +inf
+ 0 <= pc#2#3#1#4 <= +inf
+ 0 <= pc#2#3#4#1 <= +inf
+ 0 <= pc#2#4#3#1 <= +inf
+ 0 <= pc#2#4#1#3 <= +inf
+ 0 <= pc#3#2#1#4 <= +inf
+ 0 <= pc#3#2#4#1 <= +inf
+ 0 <= pc#3#1#2#4 <= +inf
+ 0 <= pc#3#1#4#2 <= +inf
+ 0 <= pc#3#4#2#1 <= +inf
+ 0 <= pc#3#4#1#2 <= +inf
+ 0 <= pc#4#2#3#1 <= +inf
+ 0 <= pc#4#2#1#3 <= +inf
+ 0 <= pc#4#1#3#2 <= +inf
+ 0 <= pc#4#1#2#3 <= +inf
+ 0 <= pc#4#3#2#1 <= +inf
+ 0 <= pc#4#3#1#2 <= +inf
 End

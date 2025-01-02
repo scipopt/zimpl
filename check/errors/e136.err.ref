@@ -1,0 +1,4 @@
+*** Error 136: Permutation on non 1-dimensional set
+*** File: e136.zpl Line 2
+*** set P := permute(I);
+***                   ^^^

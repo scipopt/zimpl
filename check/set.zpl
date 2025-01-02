@@ -64,6 +64,7 @@ set AA  := { <b> in B : 2 * b };
 set BB  := { <a,b> in A*B : <a,b+2> };
 set CC  := { 1 ..  1000 } * { 1001 .. 2000 } * { "A", "B", "C", "D", "E"} * { 2001 .. 9999 } * { 1 .. 100 };
 set DD  := { <2,2000,"D",3000,e> in CC };
+set PC  := permute(C);
 var a[L2I];
 var b[B];
 var c[C];
@@ -88,6 +89,7 @@ var z[Z];
 var aa[AA];
 var bb[BB];
 var dd[DD];
+var pc[PC];
 subto a1: sum <i> in L2I : a[i] >= 0;
 subto b1: sum <i> in B : b[i] >= ord(B2,1,1);
 subto c1: sum <i> in C : c[i] >= ord(C2,1,1);
@@ -119,6 +121,7 @@ subto z2: sum <c1,a1,b1> in Z with a1 > "b" do z[c1,a1,b1] <= 8;
 subto aa1: sum <i> in AA : aa[i] >= 5;
 subto bb1: sum <i1,i2> in BB : bb[i1,i2] <= 3;
 subto dd1: b[1] == card(DD);
+subto pc: sum <t1,t2,t3,t4> in PC : pc[t1,t2,t3,t4] <= 1;
 
 
 

@@ -2663,19 +2663,19 @@ CodeNode* i_set_permute(CodeNode* self)
 
    if (dim != 1)
    {
-      fprintf(stderr, "*** Error XXX: Permutation on non 1-dimensional set\n");
+      fprintf(stderr, "*** Error 136: Permutation on non 1-dimensional set\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
    if (set_size == 0) // Warning?
    {
-      fprintf(stderr, "*** Error XXX: Set to permute is empty\n");
+      fprintf(stderr, "*** Error 137: Set to permute is empty\n");
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
    if (set_size > 12)
    {
-      fprintf(stderr, "*** Error XXX: Set size %d > 12 too big.\n", set_size);
+      fprintf(stderr, "*** Error 138: Set size %d > 12 is too big\n", set_size);
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
