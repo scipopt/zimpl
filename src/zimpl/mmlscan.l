@@ -183,6 +183,7 @@ static int        yydecl    = 0;
 "subsets"                 { yycolumn += yyleng; return SUBSETS; }
 "powerset"                { yycolumn += yyleng; return POWERSET; }
 "indexset"                { yycolumn += yyleng; return INDEXSET; }
+"permute"                 { yycolumn += yyleng; return PERMUTE; }
 "print"                   { yycolumn += yyleng; return PRINT; }
 "check"                   { yycolumn += yyleng; return CHECK; }
 "infinity"                { yycolumn += yyleng; return INFTY; }

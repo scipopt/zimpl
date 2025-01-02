@@ -109,7 +109,7 @@ extern void yyerror(const char* s) is_NORETURN;
 %token CARD ROUND FLOOR CEIL RANDOM ORD
 %token ABS SGN LOG LN EXP SQRT SIN COS TAN ASIN ACOS ATAN POWER SGNPOW
 %token READ AS SKIP USE COMMENT MATCH
-%token SUBSETS INDEXSET POWERSET
+%token SUBSETS INDEXSET POWERSET PERMUTE
 %token VIF VABS
 %token TYPE1 TYPE2
 %token LENGTH SUBSTR
@@ -924,6 +924,7 @@ sval
             code_new_define($1),
             code_new_inst(i_tuple_new, 1, $3));
       }
+   | PERMUTE '(' sexpr ')' { $$ = code_new_inst(i_set_permute, 1, $3); }
    | '{' '}' { $$ = code_new_inst(i_set_empty, 1, code_new_size(0)); }
    | '{' cexpr TO cexpr BY cexpr '}' {
          $$ = code_new_inst(i_set_range2, 3, $2, $4, $6);

@@ -233,6 +233,8 @@ extern CodeNode* i_set_new_tuple(CodeNode* self) expects_NONNULL returns_NONNULL
 extern CodeNode* i_set_new_elem(CodeNode* self) expects_NONNULL returns_NONNULL;
 //lint -sem(     i_set_proj, inout(1), 1p == 1, @P == 1P) 
 extern CodeNode* i_set_proj(CodeNode* self) expects_NONNULL returns_NONNULL;
+//lint -sem(     i_set_permute, inout(1), 1p == 1, @P == 1P) 
+extern CodeNode* i_set_permute(CodeNode* self) expects_NONNULL returns_NONNULL;
 //lint -sem(     i_set_pseudo, inout(1), 1p == 1, @P == 1P) 
 extern CodeNode* i_set_pseudo(CodeNode* self) expects_NONNULL returns_NONNULL;
 //lint -sem(     i_set_range, inout(1), 1p == 1, @P == 1P) 

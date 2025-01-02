@@ -1,3 +1,5 @@
+  - added permute(S) to generate permutations.
+
 3.6.3 14. September 2024 Release
 
   - have cmake check for PCRE also if ZLIB is found in MSVC builds

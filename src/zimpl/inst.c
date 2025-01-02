@@ -2647,6 +2647,110 @@ CodeNode* i_set_expr(CodeNode* self)
    return self;
 }
 
+/* Implementation of Heap's algorithm to generate permutation
+ * with only two swapped elements.
+ * See https://en.wikipedia.org/wiki/Heap%27s_algorithm
+ */
+CodeNode* i_set_permute(CodeNode* self)
+{
+   Trace("i_set_permute");
+
+   assert(code_is_valid(self));
+
+   Set const* set_a    = code_eval_child_set(self, 0);
+   int        dim      = set_get_dim(set_a);
+   int        set_size = set_get_members(set_a);
+
+   if (dim != 1)
+   {
+      fprintf(stderr, "*** Error XXX: Permutation on non 1-dimensional set\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   if (set_size == 0) // Warning?
+   {
+      fprintf(stderr, "*** Error XXX: Set to permute is empty\n");
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   if (set_size > 12)
+   {
+      fprintf(stderr, "*** Error XXX: Set size %d > 12 too big.\n", set_size);
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }
+   int   call[set_size];
+   int   perm[set_size];
+   Elem* elem[set_size];
+
+   for(int k = 0; k < set_size; k++)
+   {
+      call[k] = 0;
+      perm[k] = k;
+
+      Tuple* tuple = set_get_tuple(set_a, k);
+      elem[k]      = elem_copy(tuple_get_elem(tuple, 0));
+      tuple_free(tuple);
+   }
+   assert(set_size > 1);
+   
+   Tuple* tuple = tuple_new(set_size);
+   
+   for(int idx = 0; idx < set_size; idx++)
+      tuple_set_elem(tuple, idx,
+         elem_copy(elem[perm[idx]]));
+
+   List* list = list_new_tuple(tuple);
+
+   tuple_free(tuple);
+   
+   int sp = 1;
+
+   while(sp < set_size)
+   {
+      if  (call[sp] < sp)
+      {
+         if ((sp & 1) == 0) // even call
+         {
+            // swap(PERM[0], PERM[sp]);
+            int t = perm[0];
+            perm[0]  = perm[sp];
+            perm[sp]  = t;
+         }
+         else // odd call
+         {
+            // swap(PERM[call[sp]], PERM[sp]);
+            int t   = perm[call[sp]];
+            perm[call[sp]] = perm[sp];
+            perm[sp]    = t;
+         }
+         tuple = tuple_new(set_size);
+         for(int idx = 0; idx < set_size; idx++)
+            tuple_set_elem(tuple, idx,
+               elem_copy(elem[perm[idx]]));
+
+         list_add_tuple(list, tuple);
+         tuple_free(tuple);
+         
+         call[sp]++;
+         sp = 1;
+      }
+      else
+      {
+         call[sp] = 0;
+         sp++;
+      }
+   }
+   code_value_set(self, set_new_from_list(list, SET_CHECK_WARN));
+
+   list_free(list);
+
+   for(int k = 0; k < set_size; k++)
+      elem_free(elem[k]);
+   
+   return self;
+}
+
 /* ----------------------------------------------------------------------------
  * Tupel Funktionen
  * ----------------------------------------------------------------------------
@@ -4337,7 +4441,7 @@ static void objective(CodeNode* self, bool minimize)
       fprintf(stderr, "--- Warning 223: Objective function %s overwrites existing one\n", name);
       code_errmsg(self);
    }
-    xlp_addtoobj(prog_get_lp(), term);
+   xlp_addtoobj(prog_get_lp(), term);
 
    conname_free();
 
