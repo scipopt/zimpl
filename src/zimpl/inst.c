@@ -2679,9 +2679,15 @@ CodeNode* i_set_permute(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
+#if defined(_MSC_VER)  /* MSVS (2017,2019,2022) does not support dynamic stack allocation (from C99) */
+   int*   call = (int*)malloc(set_size * sizeof(int));
+   int*   perm = (int*)malloc(set_size * sizeof(int));
+   Elem** elem = (Elem**)malloc(set_size * sizeof(Elem*));
+#else
    int   call[set_size];
    int   perm[set_size];
    Elem* elem[set_size];
+#endif
 
    for(int k = 0; k < set_size; k++)
    {
@@ -2748,6 +2754,12 @@ CodeNode* i_set_permute(CodeNode* self)
    for(int k = 0; k < set_size; k++)
       elem_free(elem[k]);
    
+#if defined(_MSC_VER)
+   free(call);
+   free(perm);
+   free(elem);
+#endif
+
    return self;
 }
 
