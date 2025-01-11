@@ -3,13 +3,18 @@ find_path(PCRE_INCLUDE_DIRS
     HINTS ${PCRE_DIR}
     PATH_SUFFIXES include)
 
+# on Windows, PCRE debug libs have an extra 'd' attached to the name
+if(MSVC AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+   set(DEBUGd d)
+endif()
+
 find_library(PCRE_LIBRARY
-   NAMES libpcre pcre2-posix pcre2-posix-static
+   NAMES libpcre pcre2-posix${DEBUGd} pcre2-posix-static${DEBUGd}
    HINTS ${PCRE_DIR}
    PATH_SUFFIXES lib)
 
 find_library(PCRE_LIBRARY_WIN
-   NAMES pcre2-8 pcre2-8-static
+   NAMES pcre2-8${DEBUGd} pcre2-8-static${DEBUGd}
    HINTS ${PCRE_DIR}
    PATH_SUFFIXES lib)
 
