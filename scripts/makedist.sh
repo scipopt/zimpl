@@ -54,8 +54,11 @@ VERSIONNUMBERS=$(echo "$VERSIONS" | grep  -o "[0-9]*\.[0-9.]*" | sed 's/\.//g')
 VERSIONNUMBER=$(echo "$VERSION" | sed 's/\.//g')
 while read -r line; do
   if [ "${VERSIONNUMBER}" != "${line}" ]; then
-    echo "${VERSIONNUMBER} and ${line} do not coincide! Aborting."
-    exit 1
+    echo "${VERSIONNUMBER} and ${line} do not coincide!" > /dev/stderr
+    if [ -z "${ZIMPL_MAKEDIST_IGNOREVERSIONNUMBERCHECK}" ] ; then
+      echo "Aborting. Set ZIMPL_MAKEDIST_IGNOREVERSIONNUMBERCHECK=1 to ignore." > /dev/stderr
+      exit 1
+    fi
   fi
 done <<< "${VERSIONNUMBERS}";
 
