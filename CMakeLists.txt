@@ -6,7 +6,9 @@ project(ZIMPL
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # if changing these flags, also update GCCWARN/GXXWARN in make/make.project
-    set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer)
+    if((CMAKE_C_COMPILER_ID MATCHES "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+        set(ADD_C_FLAGS -Wall -Wextra -Wno-unknown-pragmas -Wpointer-arith -Wcast-align -Wwrite-strings -Winline -Wshadow -Wstrict-prototypes -Wmissing-prototypes -Wmissing-noreturn -Wmissing-declarations -fno-omit-frame-pointer)
+    endif()
 
     add_compile_options(${ADD_C_FLAGS})
     if(CMAKE_C_COMPILER_ID MATCHES "GNU")
