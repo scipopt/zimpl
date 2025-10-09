@@ -861,7 +861,7 @@ are skipped and not counted for the \code{use} and \code{skip} clauses.
 \smallskip
 \noindent\verb|nodes.txt:|\\
 \verb|   Hamburg            | $\rightarrow$ $<$"Hamburg"$>$\\
-\verb|   München            | $\rightarrow$ $<$"München"$>$\\
+\verb|   Mï¿½nchen            | $\rightarrow$ $<$"Mï¿½nchen"$>$\\
 \verb|   Berlin             | $\rightarrow$ $<$"Berlin"$>$\\
 
 \smallskip
@@ -881,7 +881,7 @@ are skipped and not counted for the \code{use} and \code{skip} clauses.
 \noindent\verb|cost.txt:|\\
 \verb|   # Name Price       | $\rightarrow$ skip\\
 \verb|   Hamburg 1000       | $\rightarrow$ $<$"Hamburg"$>$ 1000\\
-\verb|   München 1200       | $\rightarrow$ $<$"München"$>$ 1200\\
+\verb|   Mï¿½nchen 1200       | $\rightarrow$ $<$"Mï¿½nchen"$>$ 1200\\
 \verb|   Berlin  1400       | $\rightarrow$ $<$"Berlin"$>$ 1400\\
 
 \smallskip
@@ -1099,7 +1099,7 @@ var y[A] real >= 2 <= 18;
 var z[<a,b> in C] integer
       >= a * 10 <= if b <= 3 then p[b] else infinity end;
 var w implicit binary;
-var t[k in K] integer >= 1 <= 3 * k startval 2 * k priority 50;
+var t[<k> in K] integer >= 1 <= 3 * k priority 50 startval 2 * k;
 \end{verbatim}
 }
 
@@ -1504,7 +1504,7 @@ Jena       5093 1158
 % #City        x y
 % "Sylt"       1 1
 % "Flensburg"  3 1
-% "Neumünster" 2 2
+% "Neumï¿½nster" 2 2
 % "Husum"      1 3
 % "Schleswig"  3 3
 % "Ausacker"   2 4
