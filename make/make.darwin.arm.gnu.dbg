@@ -1,6 +1,5 @@
-#--- $Id: make.linux.x86.gnu.dbg,v 1.14 2014/01/12 11:07:04 bzfkocht Exp $
 CPPFLAGS	+=	-DFREEMEM -D__NO_MATH_INLINES -Dinline=
-CFLAGS		=	-m32 -O0 -ffp-contract=off -g -fident -ftrapv $(GCCWARN)
+CFLAGS		=	-O0 -ffp-contract=off -g -fident -ftrapv $(GCCWARN)
 LDFLAGS		=	-lgmp -lm
 
 ifeq ($(ZLIB),true)
@@ -11,7 +10,7 @@ ifeq ($(LINK),shared)
 #LIBRARY	=	$(LIBDIR)/lib$(LIBNAME).so
 #LIBLINK	=	$(LIBDIR)/lib$(NAME).$(BASE).so
 CFLAGS		+=	-fPIC -fvisibility=hidden
-#AR		=	gcc -m32 -shared -o # the trailing space is important
+#AR		=	gcc -shared -o # the trailing space is important
 #ARFLAGS	=       $(LDFLAGS)
 #RANLIB		=	true
 endif
