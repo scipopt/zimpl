@@ -144,15 +144,17 @@ set_target_properties(libzimpl PROPERTIES
 set_target_properties(libzimpl-pic PROPERTIES
     OUTPUT_NAME "zimpl-pic")
 
+include(GNUInstallDirs)
+
 # install the header files of zimpl
-install(FILES ${headers} DESTINATION include/zimpl)
+install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zimpl)
 
 # install the binary and the library to appropriate locations and add them to an export group
 install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Add library targets to the build-tree export set
 export(TARGETS libzimpl libzimpl-pic
@@ -185,7 +187,7 @@ write_basic_package_version_file(
 
 # install the targets of the zimpl export group and the config file so that oter projects
 # can link easily against zimpl
-install(EXPORT zimpl-targets FILE zimpl-targets.cmake DESTINATION lib/cmake/zimpl)
+install(EXPORT zimpl-targets FILE zimpl-targets.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zimpl)
 install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake"
    "${CMAKE_BINARY_DIR}/zimpl-config-version.cmake"
-   DESTINATION lib/cmake/zimpl)
+   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zimpl)
