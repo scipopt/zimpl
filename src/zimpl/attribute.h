@@ -4,7 +4,7 @@
  \author    Thorsten Koch
  \version   1.0
  \date      30May2020
- \copyright Copyright (C) 2020 by Thorsten Koch <koch@zib.de>,
+ \copyright Copyright (C) 2020-2025 by Thorsten Koch <koch@zib.de>,
             licened under LGPL version 3 or later
  \details
 
