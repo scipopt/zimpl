@@ -156,6 +156,10 @@ install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+if(MSVC)
+    install(FILES $<TARGET_PDB_FILE:zimpl> DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
+endif()
+
 # Add library targets to the build-tree export set
 export(TARGETS libzimpl libzimpl-pic
   FILE "${CMAKE_BINARY_DIR}/zimpl-targets.cmake")
