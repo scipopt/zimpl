@@ -160,6 +160,9 @@ if(MSVC)
     install(FILES $<TARGET_PDB_FILE:zimpl> DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
 endif()
 
+# install the license file of ZIMPL
+install(FILES ${PROJECT_SOURCE_DIR}/LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/zimpl)
+
 # Add library targets to the build-tree export set
 export(TARGETS libzimpl libzimpl-pic
   FILE "${CMAKE_BINARY_DIR}/zimpl-targets.cmake")
