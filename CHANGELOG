@@ -1,4 +1,4 @@
-3.7.0 November 2025 Release
+3.7.0 23. November 2025 Release
 
   - added permute(S) to generate permutations
   - increased minimal required cmake version to 3.11
