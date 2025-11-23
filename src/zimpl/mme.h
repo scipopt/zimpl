@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#define ZIMPL_VERSION  370
+#define ZIMPL_VERSION  371
 
 /* the following is not in code.h because code.h needs mme.h anyway,
  * but we also need these declaratons.

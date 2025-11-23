@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(ZIMPL
-    VERSION 3.7.0
+    VERSION 3.7.1
     LANGUAGES C)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
