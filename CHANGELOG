@@ -1,6 +1,7 @@
 3.7.1
 
   - fixed missing installation of WIN/getopt.h header and wrong location of installed unistd.h and getopt.h when building with cmake and MSVC-alike compilers
+  - keep sanitizers enabled if only unsupported for some language in cmake
 
 3.7.0 23. November 2025 Release
 
