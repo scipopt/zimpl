@@ -113,7 +113,6 @@ set(headers
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 if(MSVC)
-   set(headers ${headers} WIN/unistd.h WIN/getopt.h)
    set(libsources ${libsources} WIN/getopt.c)
    include_directories(${PROJECT_SOURCE_DIR}/src/WIN)
 endif()
@@ -148,6 +147,9 @@ include(GNUInstallDirs)
 
 # install the header files of zimpl
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zimpl)
+if(MSVC)
+    install(FILES WIN/unistd.h WIN/getopt.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/WIN)
+endif()
 
 # install the binary and the library to appropriate locations and add them to an export group
 install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
