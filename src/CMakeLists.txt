@@ -113,7 +113,7 @@ set(headers
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 if(MSVC)
-   set(headers ${headers} WIN/unistd.h)
+   set(headers ${headers} WIN/unistd.h WIN/getopt.h)
    set(libsources ${libsources} WIN/getopt.c)
    include_directories(${PROJECT_SOURCE_DIR}/src/WIN)
 endif()
