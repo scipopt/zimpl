@@ -95,58 +95,62 @@ endfunction ()
 
 # Helper function to test compiler flags.
 function (sanitizer_check_compiler_flags FLAG_CANDIDATES NAME PREFIX)
+    if(DEFINED ${PREFIX}_FLAG_DETECTED)
+        return()
+    endif()
+
     set(CMAKE_REQUIRED_QUIET ${${PREFIX}_FIND_QUIETLY})
+    set(${PREFIX}_FLAG_DETECTED FALSE)
 
     get_property(ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
-    foreach (LANG ${ENABLED_LANGUAGES})
+    foreach(LANG ${ENABLED_LANGUAGES})
         # Sanitizer flags are not dependend on language, but the used compiler.
-        # So instead of searching flags foreach language, search flags foreach
+        # So instead of detecting flags foreach language, detect flags for each
         # compiler used.
         set(COMPILER ${CMAKE_${LANG}_COMPILER_ID})
-        if (NOT DEFINED ${PREFIX}_${COMPILER}_FLAGS)
-            foreach (FLAG ${FLAG_CANDIDATES})
+        if(NOT DEFINED ${PREFIX}_${COMPILER}_FLAGS)
+            foreach(FLAG ${FLAG_CANDIDATES})
                 if(NOT CMAKE_REQUIRED_QUIET)
                     message(STATUS "Try ${COMPILER} ${NAME} flag = [${FLAG}]")
                 endif()
 
                 set(CMAKE_REQUIRED_FLAGS "${FLAG}")
-                unset(${PREFIX}_FLAG_DETECTED CACHE)
+                unset(${PREFIX}_${COMPILER}_FLAG_DETECTED CACHE)
                 sanitizer_check_compiler_flag("${FLAG}" ${LANG}
-                    ${PREFIX}_FLAG_DETECTED)
+                    ${PREFIX}_${COMPILER}_FLAG_DETECTED)
 
-                if (${PREFIX}_FLAG_DETECTED)
+                if(${PREFIX}_${COMPILER}_FLAG_DETECTED)
                     # If compiler is a GNU compiler, search for static flag, if
                     # SANITIZE_LINK_STATIC is enabled.
-                    if (SANITIZE_LINK_STATIC AND (${COMPILER} STREQUAL "GNU"))
+                    if(SANITIZE_LINK_STATIC AND (${COMPILER} STREQUAL "GNU"))
                         string(TOLOWER ${PREFIX} PREFIX_lower)
                         sanitizer_check_compiler_flag(
                             "-static-lib${PREFIX_lower}" ${LANG}
                             ${PREFIX}_STATIC_FLAG_DETECTED)
 
-                        if (${PREFIX}_STATIC_FLAG_DETECTED)
+                        if(${PREFIX}_STATIC_FLAG_DETECTED)
                             set(FLAG "-static-lib${PREFIX_lower} ${FLAG}")
-                        endif ()
-                    endif ()
+                        endif()
+                    endif()
 
                     set(${PREFIX}_${COMPILER}_FLAGS "${FLAG}" CACHE STRING
                         "${NAME} flags for ${COMPILER} compiler.")
                     mark_as_advanced(${PREFIX}_${COMPILER}_FLAGS)
+                    set(${PREFIX}_FLAG_DETECTED TRUE)
                     break()
-                endif ()
-            endforeach ()
+                endif()
+            endforeach()
 
-            if (NOT ${PREFIX}_FLAG_DETECTED)
+            if(NOT ${PREFIX}_${COMPILER}_FLAG_DETECTED)
                 set(${PREFIX}_${COMPILER}_FLAGS "" CACHE STRING
                     "${NAME} flags for ${COMPILER} compiler.")
                 mark_as_advanced(${PREFIX}_${COMPILER}_FLAGS)
+            endif()
+        endif()
+    endforeach()
 
-                message(WARNING "${NAME} is not available for ${COMPILER} "
-                        "compiler. Targets using this compiler will be "
-                        "compiled without ${NAME}.")
-            endif ()
-        endif ()
-    endforeach ()
-endfunction ()
+    set(${PREFIX}_FLAG_DETECTED ${${PREFIX}_FLAG_DETECTED} CACHE BOOL "${NAME} flags detected.")
+endfunction()
 
 
 # Helper to assign sanitizer flags for TARGET.
@@ -167,4 +171,6 @@ function (sanitizer_add_flags TARGET NAME PREFIX)
         PROPERTY COMPILE_FLAGS " ${SanBlist_${TARGET_COMPILER}_FLAGS}")
     set_property(TARGET ${TARGET} APPEND_STRING
         PROPERTY LINK_FLAGS " ${${PREFIX}_${TARGET_COMPILER}_FLAGS}")
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY SANITIZE_FLAGS " ${${PREFIX}_${TARGET_COMPILER}_FLAGS}")
 endfunction ()
