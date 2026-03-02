@@ -2,6 +2,7 @@
 
   - fixed missing installation of WIN/getopt.h header and wrong location of installed unistd.h and getopt.h when building with cmake and MSVC-alike compilers
   - keep sanitizers enabled if only unsupported for some language in cmake
+  - replaced cmake options SANITIZE_ADDRESS, SANITIZE_MEMORY, SANITIZE_UNDEFINED, and SANITIZE_THREAD by single option SANITIZE (can be set to address, thread, memory, on, off)
 
 3.7.0 23. November 2025 Release
 
