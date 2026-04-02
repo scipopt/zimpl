@@ -30,7 +30,7 @@
 
 /**@mainpage ZIMPL (Zuse Institute Mathematical Programming Language)
  * @author   Thorsten Koch
- * @version  3.7.1
+ * @version  3.7.2
  *
  */
 
