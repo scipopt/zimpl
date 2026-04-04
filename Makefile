@@ -152,6 +152,10 @@ ifeq ($(STATIC),true)
 LINK		=	static
 endif
 
+ifeq ($(OSTYPE),darwin)
+COMP		=	clang
+endif
+
 BASE		=	$(OSTYPE).$(ARCH).$(COMP).$(OPT)
 OBJDIR		=	obj/O.$(OSTYPE).$(ARCH).$(COMP).$(LINK).$(OPT)
 NAME		=	zimpl

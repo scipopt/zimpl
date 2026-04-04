@@ -198,13 +198,13 @@ static int        yydecl    = 0;
 "substr"                  { yycolumn += yyleng; return SUBSTR; }
 "match"                   { yycolumn += yyleng; return MATCH; }
 
-[0-9]+("."[0-9]+)?([eEdD][-+]?[0-9]+)?  { 
+[0-9]+("."[0-9]+)?([eE][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       lval->numb = numb_new_ascii(yytext);
 /*      sscanf(yytext, "%lf", &lval->numb);*/
       return NUMB; 
    }
-"."[0-9]+([eEdD][-+]-?[0-9]+)?  { 
+"."[0-9]+([eE][-+]?[0-9]+)?  { 
       yycolumn += yyleng; 
       lval->numb = numb_new_ascii(yytext);
 /*      sscanf(yytext, "%lf", &lval->numb);*/

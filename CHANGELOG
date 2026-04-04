@@ -1,3 +1,9 @@
+  
+  - added sub-makefiles for Linux/Darwin ARM with gnu and clang and fixed warnings.
+    ***Note: On Darwin it is neccessary to install new versions of bison/flex. The versions from Apple are too old.
+    ***Note: For some reason multi_set_iter is giving a different order of the elements. 
+             This lets the metaio test fail. This can be ignored.
+
 3.7.1 1. April 2026 Release
 
   - fixed missing installation of WIN/getopt.h header and wrong location of installed unistd.h and getopt.h when building with cmake and MSVC-alike compilers
