@@ -3934,7 +3934,7 @@ CodeNode* i_term_sum(CodeNode* self)
       tuple_free(tuple);
    }
    set_iter_exit(iter, set);
-   
+
    code_value_term(self, term_r);
 
    return self;
