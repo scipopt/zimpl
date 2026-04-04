@@ -358,7 +358,9 @@ CodeNode* i_forall(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
 
+      fprintf(stderr, "forall: ");
       tuple_print(stderr, tuple);
+      fprintf(stderr, "\n");     
 
       if (code_get_bool(code_eval(lexpr)))
          (void)code_eval_child(self, 1); /* z.B. constraint */
@@ -368,7 +370,7 @@ CodeNode* i_forall(CodeNode* self)
       tuple_free(tuple);
    }
    set_iter_exit(iter, set);
-   fprintf(stderr, "\n");   
+
    code_value_void(self);
 
    return self;
@@ -3927,6 +3929,10 @@ CodeNode* i_term_sum(CodeNode* self)
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
+
+      fprintf(stderr, "   i_term_sum: ");
+      tuple_print(stderr, tuple);
+      fprintf(stderr, "\n");     
 
       if (code_get_bool(code_eval(lexpr)))
          term_append_term(term_r, code_eval_child_term(self, 1));
