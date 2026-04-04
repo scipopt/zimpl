@@ -115,7 +115,7 @@ static bool is_valid_identifier(char const* s)
 
    /* Identifiers start with a letter or a '_'
     */
-   if (!isalpha(*s) || *s == '_')
+   if (!isalpha(*s) && *s != '_')
       return false;
 
    /* Then letters, digits or '_' can follow.
@@ -361,7 +361,7 @@ bool zpl_read_with_args(char** argv, int argc, bool with_management, void* user_
          verbose = atoi(optarg);
          break;
       case '?':
-         fprintf(stderr, "Unknown option '%c'\n", c);
+         fprintf(stderr, "Unknown option '%c'\n", optopt);
          return false;
       default :
          abort();

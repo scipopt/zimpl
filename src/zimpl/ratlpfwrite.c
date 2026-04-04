@@ -347,7 +347,7 @@ static void write_row(
 
    /* Add 1 in case con->size == 0
     */
-   nzotab = calloc((size_t)con->size + 1, sizeof(*con));
+   nzotab = calloc((size_t)con->size + 1, sizeof(*nzotab));
 
    assert(nzotab != NULL);
 

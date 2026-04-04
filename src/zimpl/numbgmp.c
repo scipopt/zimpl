@@ -625,13 +625,11 @@ void numb_floor(Numb* numb)
 }
 
 Numb* numb_new_log(Numb const* numb)
-{
-   char   temp[256];
-   double d;
-   
+{ 
    assert(numb_is_valid(numb));
 
-   d = log10(mpq_get_d(numb->value.numb));
+   char   temp[256];
+   double d = log10(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
    CLANG_WARN_OFF(-Wfloat-equal)
@@ -650,13 +648,11 @@ Numb* numb_new_log(Numb const* numb)
 }
 
 Numb* numb_new_sqrt(Numb const* numb)
-{
-   char   temp[256];
-   double d;
-   
+{ 
    assert(numb_is_valid(numb));
-
-   d = sqrt(mpq_get_d(numb->value.numb));
+ 
+   char   temp[256];
+   double d = sqrt(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
    if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
@@ -672,23 +668,29 @@ Numb* numb_new_sqrt(Numb const* numb)
 
 Numb* numb_new_exp(Numb const* numb)
 {
-   char temp[32];
-   
    assert(numb_is_valid(numb));
 
-   sprintf(temp, "%.16e", exp(mpq_get_d(numb->value.numb)));
+   char temp[32];
+   double d = exp(mpq_get_d(numb->value.numb));
+
+   /* !finite == !isfinite == isnan || isinf */
+   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+   {
+      sprintf(temp, "*** Error 703: exp(%f)", mpq_get_d(numb->value.numb));
+      perror(temp);
+      return NULL;
+   }
+   sprintf(temp, "%.16e", d);
 
    return numb_new_ascii(temp);
 }
 
 Numb* numb_new_ln(Numb const* numb)
 {
-   char   temp[256];
-   double d;
-   
    assert(numb_is_valid(numb));
 
-   d = log(mpq_get_d(numb->value.numb));
+   char   temp[256];
+   double d = log(mpq_get_d(numb->value.numb));
 
    CLANG_WARN_OFF(-Wfloat-equal)
       

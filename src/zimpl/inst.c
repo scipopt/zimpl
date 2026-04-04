@@ -358,10 +358,6 @@ CodeNode* i_forall(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
 
-      fprintf(stderr, "forall: ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, "\n");     
-
       if (code_get_bool(code_eval(lexpr)))
          (void)code_eval_child(self, 1); /* z.B. constraint */
 
@@ -2877,23 +2873,13 @@ static Set* set_from_idxset(IdxSet const* idxset)
 
 CodeNode* i_newsym_set1(CodeNode* self)
 {
-   char const*   name;
-   IdxSet const* idxset;
-   Set*          iset;
-   Symbol*       sym;
-
-   Tuple const*  pattern;
-   Tuple*        tuple;
-   SetIter*      iter;
-   
    Trace("i_newsym_set1");
 
-   name    = code_eval_child_name(self, 0);
-   idxset  = code_eval_child_idxset(self, 1);
-   iset    = set_from_idxset(idxset);
-   sym     = symbol_new(name, SYM_SET, iset, set_get_members(iset), NULL);
-
    assert(code_is_valid(self));
+
+   char const*   name   = code_eval_child_name(self, 0);
+   IdxSet const* idxset = code_eval_child_idxset(self, 1);
+   Set*          iset   = set_from_idxset(idxset);;
 
    if (set_get_members(iset) == 0)
    {
@@ -2901,11 +2887,14 @@ CodeNode* i_newsym_set1(CodeNode* self)
       code_errmsg(self);
       zpl_exit(EXIT_FAILURE);
    }
-   pattern = idxset_get_tuple(idxset);
-   iter    = set_iter_init(iset, pattern);
+   Symbol* sym          = symbol_new(name, SYM_SET, iset, set_get_members(iset), NULL);
+   Tuple const* pattern = idxset_get_tuple(idxset);
+   SetIter*     iter    = set_iter_init(iset, pattern);
 
    warn_if_pattern_has_no_name(code_get_child(self, 1), pattern);
-   
+
+   Tuple* tuple;
+
    while((tuple = set_iter_next(iter, iset)) != NULL)
    {
       local_install_tuple(pattern, tuple);
@@ -3929,10 +3918,6 @@ CodeNode* i_term_sum(CodeNode* self)
    while((tuple = set_iter_next(iter, set)) != NULL)
    {
       local_install_tuple(pattern, tuple);
-
-      fprintf(stderr, "   i_term_sum: ");
-      tuple_print(stderr, tuple);
-      fprintf(stderr, "\n");     
 
       if (code_get_bool(code_eval(lexpr)))
          term_append_term(term_r, code_eval_child_term(self, 1));

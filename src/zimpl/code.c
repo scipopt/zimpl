@@ -375,8 +375,8 @@ void code_free_value(CodeNode* node)
    case CODE_IDXSET :
       assert(node->value.idxset != NULL);
       idxset_free(node->value.idxset);
-      node->value.entry = NULL;
-      node->type        = CODE_ERR;      
+      node->value.idxset = NULL;
+      node->type         = CODE_ERR;      
       break;
    case CODE_BOOL :
    case CODE_SIZE :

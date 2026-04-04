@@ -1,4 +1,5 @@
   
+  - fixed several small bugs.
   - added sub-makefiles for Linux/Darwin ARM with gnu and clang and fixed warnings.
     ***Note: On Darwin it is neccessary to install new versions of bison/flex. The versions from Apple are too old.
     ***Note: For some reason multi_set_iter is giving a different order of the elements. 

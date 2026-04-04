@@ -878,7 +878,7 @@ Sos* lps_getsos(
 
    sr = hash_lookup_sos(lp->sos_hash, name);
 
-   assert((sr == NULL) || (sr->sid == VAR_SID));
+   assert((sr == NULL) || (sr->sid == SOS_SID));
    assert((sr == NULL) || (!strcmp(sr->name, name)));
 
 #ifndef NDEBUG

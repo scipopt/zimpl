@@ -363,7 +363,7 @@ Var* mono_get_var(Mono const* const mono, int idx)
    assert(mono_is_valid(mono));
    assert(mono->count > 0);
    assert(idx >= 0);
-   assert(idx <= mono->count);
+   assert(idx <  mono->count);
 
    MonoElem const* e = &mono->first;
    

@@ -42,8 +42,8 @@
 #include "zimpl/set.h"
 #include "zimpl/set4.h"
 
-#define SET_PSEUDO_SID          0x53455452
-#define SET_PSEUDO_ITER_SID     0x53455249
+#define SET_PSEUDO_SID          0x5345544F
+#define SET_PSEUDO_ITER_SID     0x53454F49
 
 /* ------------------------------------------------------------------------- 
  * --- valid                 

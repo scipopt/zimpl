@@ -86,7 +86,7 @@ char const* str_new(char const* s)
    if (len > MAX_STR_STORE_SIZE)
    {
       fprintf(stderr, "*** Error 803: String too long %zu > %zu\n",
-         len + 1, (size_t)MAX_STR_STORE_SIZE); 
+         len , (size_t)MAX_STR_STORE_SIZE); 
 
       zpl_exit(EXIT_FAILURE);
    }
