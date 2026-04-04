@@ -1,0 +1,7 @@
+ifeq ($(ZLIB),true)
+CPPFLAGS	+=	-I/opt/homebrew/opt/zlib
+LDFLAGS	    +=	-L/opt/homebrew/opt/zlib/lib
+endif
+CPPFLAGS    +=	-I/opt/homebrew/include
+LDFLAGS	    +=	-L/opt/homebrew/lib 
+

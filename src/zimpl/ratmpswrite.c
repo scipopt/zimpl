@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#pragma clang diagnostic ignored "-Wsign-conversion"
 #include <gmp.h>
 
 #include "zimpl/lint.h"

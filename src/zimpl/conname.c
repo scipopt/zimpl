@@ -139,6 +139,8 @@ char const* conname_get()
 
       free(localstr);
       break;
+   default: 
+      abort();
    }
    assert(strlen(cname) < clen);
    

@@ -54,24 +54,24 @@ SHARED		=	false
 STATIC		=	false
 ZLIB		=	true
 LINK		=	static
-OPT		=	dbg
+OPT			=	dbg
 COMP		=	gnu
-CC		=	gcc
+CC			=	gcc
 CC_o		= 	-o #
 LINKCC   	=	gcc
 LINKCC_o 	=	-o #the white space is important
 LIBEXT		= 	.a
 YACC		=	bison
-LEX		=	flex
-DCC		=	gcc
+LEX			=	flex
+DCC			=	gcc
 LINT		=	pclp64_linux # _debug
 CPPCHECK	=	cppcheck
-AR		=	ar cr
+AR			=	ar cr
 AR_o	   	=
 RANLIB		=	ranlib
 DOXY		=	doxygen
 VALGRIND	=	valgrind --tool=memcheck --leak-check=full \
-			--leak-resolution=high --show-reachable=yes
+				--leak-resolution=high --show-reachable=yes
 ANALYZER	=	scan-build
 
 SRCDIR		=	src/zimpl

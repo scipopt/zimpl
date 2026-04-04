@@ -2682,9 +2682,9 @@ CodeNode* i_set_permute(CodeNode* self)
    /* MSVS (2017,2019,2022) does not support dynamic stack allocation (from C99)
     * MSVC sucks.
     */
-   int*   call = malloc(set_size * sizeof(*call));
-   int*   perm = malloc(set_size * sizeof(*perm));
-   Elem** elem = malloc(set_size * sizeof(*elem));
+   int*   call = malloc((size_t)set_size * sizeof(*call));
+   int*   perm = malloc((size_t)set_size * sizeof(*perm));
+   Elem** elem = malloc((size_t)set_size * sizeof(*elem));
 
    for(int k = 0; k < set_size; k++)
    {

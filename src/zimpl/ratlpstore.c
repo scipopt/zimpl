@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
+#pragma clang diagnostic ignored "-Wsign-conversion"
 #include <gmp.h>
 
 #include "zimpl/lint.h"
@@ -1655,9 +1656,7 @@ bool lps_is_binary(Var const* const var)
    {
    case VAR_FIXED :
       assert(mpq_equal(var->lower, var->upper));
-         
       return mpq_equal(var->lower, const_zero) || mpq_equal(var->upper, const_one);
-      break;
    case VAR_BOXED :
       return mpq_equal(var->lower, const_zero) &&  mpq_equal(var->upper, const_one);
    default :

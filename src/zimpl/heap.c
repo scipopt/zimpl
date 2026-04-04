@@ -200,17 +200,17 @@ static void sift_down(
       if ((*heap->data_cmp)(data[child + 1], data[child]) < 0)
          child++;
 
-   while(child < heap->used && (*heap->data_cmp)(data[current], data[child]) > 0)
-   {
-      swap_entries(heap, current, child);
+    while(child < heap->used && (*heap->data_cmp)(data[current], data[child]) > 0)
+    {
+       swap_entries(heap, current, child);
 
-      current = child;
-      child  += child;
-      
-      if (child + 1 < heap->used)
-         if ((*heap->data_cmp)(data[child + 1], data[child]) < 0)
-            child++;
-   }
+       current = child;
+       child  = current * 2;
+       
+       if (child + 1 < heap->used)
+          if ((*heap->data_cmp)(data[child + 1], data[child]) < 0)
+             child++;
+    }
 }
 
 /* Bewegt einen Eintrag weiter hoch/nach unten im Vektor

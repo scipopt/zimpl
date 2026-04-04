@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <assert.h>
 
+#pragma clang diagnostic ignored "-Wsign-conversion"
 #include <gmp.h>
 
 /* #define TRACE 1 */

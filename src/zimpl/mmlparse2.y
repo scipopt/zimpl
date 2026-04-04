@@ -33,6 +33,9 @@
 #pragma clang diagnostic ignored "-Wimplicit-function-declaration"
 #pragma clang diagnostic ignored "-Wunreachable-code"
 #pragma clang diagnostic ignored "-Wdeprecated-non-prototype"
+#pragma clang diagnostic ignored "-Wmissing-variable-declarations"
+#pragma clang diagnostic ignored "-Wused-but-marked-unused"
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #endif
    
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
