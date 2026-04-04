@@ -358,6 +358,8 @@ CodeNode* i_forall(CodeNode* self)
    {
       local_install_tuple(pattern, tuple);
 
+      tuple_print(stderr, tuple);
+
       if (code_get_bool(code_eval(lexpr)))
          (void)code_eval_child(self, 1); /* z.B. constraint */
 
@@ -366,7 +368,7 @@ CodeNode* i_forall(CodeNode* self)
       tuple_free(tuple);
    }
    set_iter_exit(iter, set);
-   
+   fprintf(stderr, "\n");   
    code_value_void(self);
 
    return self;
