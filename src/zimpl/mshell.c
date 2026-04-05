@@ -301,7 +301,7 @@ void* mem_realloc(
       mem_valid(p, file, line);   
       mem_del_list(p);
    }
-   // cppcheck-suppress memleakOnRealloc no need to free directly before abort()
+   // cppcheck-suppress memleakOnRealloc 
    if ((p = realloc(p, mem_alloc_size(size))) == MHDR_NIL) //lint !e698 --e{429} 
    {
       fprintf(stderr, errmsg1, size, file, line);

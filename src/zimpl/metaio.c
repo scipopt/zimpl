@@ -365,9 +365,9 @@ char* mio_gets(MFP const* mfp, char* buf, int len)
 
 char* mio_get_line(MFP const* mfp)
 {
-   int    size = 1;
-   char*  buf = NULL;
-   char*  s;
+   int         size = 1;
+   char*       buf = NULL;
+   char const* s;
    
    assert(mfp_is_valid(mfp));
 

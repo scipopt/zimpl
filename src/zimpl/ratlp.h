@@ -83,7 +83,7 @@ extern void         lps_getval(Nzo const* nzo, mpq_t value) expects_NONNULL;
 //lint -sem(        lps_setdir, inout(1), 1p == 1) 
 extern void         lps_setdir(Lps* lp, LpDirect direct) expects_NONNULL;
 //lint -sem(        lps_getdir, inout(1), 1p == 1) 
-extern LpDirect     lps_getdir(Lps* lp) expects_NONNULL;
+extern LpDirect     lps_getdir(Lps const* lp) expects_NONNULL;
 //lint -sem(        lps_setprobname, inout(1), 1p == 1, 2p) 
 extern void         lps_setprobname(Lps* lp, char const* name) expects_NONNULL;
 //lint -sem(        lps_setobjname, inout(1), 1p == 1, 2p) 

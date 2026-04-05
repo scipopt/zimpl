@@ -233,11 +233,11 @@ void prog_load(Prog* prog, char const* cmdpipe, char const* filename)
    int   bufsize = BUF_EXT;
    char* buf     = malloc((size_t)bufsize);
    MFP*  fp;
-   char* s;
    int   lineno  = 1;
    char  newname [1024];
    char* temp;
    char* myfilename;
+   char const* s;
    
    assert(prog     != NULL);
    assert(filename != NULL);

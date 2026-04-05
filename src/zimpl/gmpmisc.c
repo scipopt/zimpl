@@ -51,6 +51,7 @@ typedef struct pool     Pool;
 
 union pool_elem
 {
+   // cppcheck-suppress unusedStructMember
    char      pad[POOL_ELEM_SIZE]; //lint !e754 union member not referenced
    PoolElem* next;   
 };

@@ -336,7 +336,7 @@ int main(int argc, char* const* argv)
    if (basefile == NULL)
       basefile = strip_extension(strdup(strip_path(argv[optind])));
 
-   char const* extension = "";
+   char const* extension;
 
    switch(format)
    {

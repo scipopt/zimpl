@@ -199,7 +199,7 @@ static void write_term(
          write_val(fp, format, true, t);      
          mpq_clear(t);
       }
-      Var* var = mono_get_var(mono, 0);
+      Var const* var = mono_get_var(mono, 0);
          
       lps_makename(name, name_size, var->name, format == LP_FORM_HUM ? -1 : var->number);
       fprintf(fp, " %s", name);
@@ -284,7 +284,7 @@ static void write_term(
 
       for(int k = 0; k < degree; k++)
       {
-         Var* var = mono_get_var(mono, k);
+         Var const* var = mono_get_var(mono, k);
          int  j;
          
          if (k > 0)

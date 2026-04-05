@@ -111,7 +111,8 @@ char const* str_new(char const* s)
    t = &store_anchor->begin[store_anchor->used];
 
    store_anchor->used += len;
-   
+
+   // cppcheck-suppress returnDanglingLifetime
    return strcpy(t, s);
 }
 

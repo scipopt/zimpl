@@ -296,11 +296,11 @@ static bool set_prod_iter_next(
    assert(offset >= 0);
    assert(offset + set->head.dim <= tuple_get_dim(tuple));
 
-   Set*     a       = set->prod.set_a;
-   Set*     b       = set->prod.set_b;
-   SetIter* iter_a  = iter->prod.iter_a;
-   SetIter* iter_b  = iter->prod.iter_b;
-   int      offset2 = offset + a->head.dim;
+   Set*       a       = set->prod.set_a;
+   Set const* b       = set->prod.set_b;
+   SetIter*   iter_a  = iter->prod.iter_a;
+   SetIter*   iter_b  = iter->prod.iter_b;
+   int        offset2 = offset + a->head.dim;
 
    if (iter->prod.first)
    {

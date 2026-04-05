@@ -349,15 +349,12 @@ static SetIter* set_list_iter_init(
    Tuple const* pattern,
    int          offset)
 {
-   Elem const*  elem;
-   SetIter*     iter;
-
    assert(set_list_is_valid(set));
    assert(pattern == NULL || tuple_is_valid(pattern));
    assert(offset        >= 0);
    assert(pattern == NULL || offset < tuple_get_dim(pattern));
 
-   iter = calloc(1, sizeof(*iter));
+   SetIter* iter = calloc(1, sizeof(*iter));
    
    assert(iter != NULL);
 
@@ -368,7 +365,7 @@ static SetIter* set_list_iter_init(
    }
    else
    {
-      elem = tuple_get_elem(pattern, offset);
+      Elem const* elem = tuple_get_elem(pattern, offset);
    
       if (elem_get_type(elem) == ELEM_NAME)
       {

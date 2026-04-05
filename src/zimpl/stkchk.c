@@ -38,11 +38,11 @@ size_t       stkchk_maxi  = 0;
 
 void stkchk_init_x()
 {
-   int a;
+  int a;
 
-   // cppcheck-suppress danglingLifetime done on purpose
-   stkchk_start = &a; /*lint !e733 !e789 Assigning address of auto variable 'a' to static */
-   stkchk_maxi  = 0;
+  // cppcheck-suppress danglingLifetime
+  stkchk_start = &a; /*lint !e733 !e789 Assigning address of auto variable 'a' to static */
+  stkchk_maxi  = 0;
 }
 
 size_t stkchk_used_x()

@@ -555,7 +555,7 @@ static List* process_line(
    Tuple*      tuple;
    Elem*       elem;
    Numb*       numb;
-   char*       t;
+   char const* t;
    int         i;
 
    assert(rdef        != NULL);

@@ -436,7 +436,6 @@ static bool lps_valid(Lps const* lp)
    int  nzo_count;
    int  sto_count;
    int  sos_count;
-   int  sse_count;
    
    /* Variable Test
     */
@@ -571,6 +570,8 @@ static bool lps_valid(Lps const* lp)
 
    for(Sos const* sos = lp->sos_root; sos != NULL; sos = sos->next)
    {
+      int sse_count;
+
       if (sos->sid != SOS_SID)
       {
          fprintf(stderr, "%s\n", err15); //lint !e453
@@ -1392,7 +1393,7 @@ void lps_setdir(
 }
 
 LpDirect lps_getdir(
-   Lps*     lp)
+   Lps const* lp)
 {
    assert(lps_valid(lp));
 

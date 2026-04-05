@@ -123,7 +123,7 @@ static void write_term(
 
       for(int k = 0; k < degree; k++)
       {
-         Var* var = mono_get_var(mono, k);
+         Var const* var = mono_get_var(mono, k);
          int  j;
          
          if (k > 0)
