@@ -104,6 +104,18 @@ extern Numb*        numb_new_sqrt(Numb const* numb) expects_NONNULL;
 extern Numb*        numb_new_exp(Numb const* numb) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_new_ln, 1p == 1, @P >= malloc(1) || @P == 0) 
 extern Numb*        numb_new_ln(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_sin, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_sin(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_cos, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_cos(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_tan, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_tan(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_asin, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_asin(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_acos, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_acos(Numb const* numb) expects_NONNULL;
+//lint -sem(        numb_new_atan, 1p == 1, @P >= malloc(1) || @P == 0) 
+extern Numb*        numb_new_atan(Numb const* numb) expects_NONNULL;
 //lint -sem(        numb_new_rand, 1p == 1, 2p == 1, @P >= malloc(1)) 
 extern Numb*        numb_new_rand(Numb const* mini, Numb const* maxi) expects_NONNULL returns_NONNULL;
 //lint -sem(        numb_todbl, pure, 1p == 1) 

@@ -259,12 +259,21 @@ static void write_term(
          case MFUN_COS :
             fprintf(fp, " + cos(");
             break;
-         case MFUN_TAN :
-            fprintf(fp, " + tan(");
-            break;
-         case MFUN_ABS :
-            fprintf(fp, " + abs(");
-            break;
+          case MFUN_TAN :
+             fprintf(fp, " + tan(");
+             break;
+          case MFUN_ASIN :
+             fprintf(fp, " + asin(");
+             break;
+          case MFUN_ACOS :
+             fprintf(fp, " + acos(");
+             break;
+          case MFUN_ATAN :
+             fprintf(fp, " + atan(");
+             break;
+          case MFUN_ABS :
+             fprintf(fp, " + abs(");
+             break;
          case MFUN_SGN :
             fprintf(fp, " + sgn(");
             break;

@@ -525,14 +525,15 @@ CodeNode* code_eval(CodeNode* node)
 
 bool code_prune_tree(CodeNode* node)
 {
-   static Inst const prunable[] = 
-   { 
-      i_expr_abs, i_expr_sgn, i_expr_add, i_expr_card, i_expr_ceil, i_expr_div, i_expr_exp, 
-      i_expr_sqrt, i_expr_fac, i_expr_floor, i_expr_if_else, i_expr_intdiv, i_expr_length, i_expr_ln,
-      i_expr_log, i_expr_ord, i_expr_prod, i_expr_round, i_expr_sum, i_expr_max,
-      i_expr_max2, i_expr_sglmax, i_expr_min, i_expr_min2, i_expr_sglmin, i_expr_mul, 
-      i_expr_mod, i_expr_neg, i_expr_pow, i_expr_sub, i_expr_substr, NULL 
-   };
+static Inst const prunable[] = 
+{ 
+   i_expr_abs, i_expr_sgn, i_expr_add, i_expr_card, i_expr_ceil, i_expr_div, i_expr_exp, 
+   i_expr_sqrt, i_expr_fac, i_expr_floor, i_expr_if_else, i_expr_intdiv, i_expr_length, i_expr_ln,
+   i_expr_log, i_expr_ord, i_expr_prod, i_expr_round, i_expr_sum, i_expr_max,
+   i_expr_max2, i_expr_sglmax, i_expr_min, i_expr_min2, i_expr_sglmin, i_expr_mul, 
+   i_expr_mod, i_expr_neg, i_expr_pow, i_expr_sub, i_expr_substr,
+   i_expr_sin, i_expr_cos, i_expr_asin, i_expr_acos, i_expr_tan, i_expr_atan, NULL 
+};
 
    bool is_all_const = true;
    int  i;

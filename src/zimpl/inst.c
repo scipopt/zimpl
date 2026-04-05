@@ -652,134 +652,89 @@ CodeNode* i_expr_exp(CodeNode* self)
 
 CodeNode* i_expr_sin(CodeNode* self)
 {
-   Trace("i_expr_sin");
+    Trace("i_expr_sin");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
-
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    code_value_numb(self, numb_new_sin(code_eval_child_numb(self, 0)));
+    
+    return self;
 }
 
 CodeNode* i_expr_cos(CodeNode* self)
 {
-   Trace("i_expr_cos");
+    Trace("i_expr_cos");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
-
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    code_value_numb(self, numb_new_cos(code_eval_child_numb(self, 0)));
+    
+    return self;
 }
 
 CodeNode* i_expr_tan(CodeNode* self)
 {
-   Trace("i_expr_tan");
+    Trace("i_expr_tan");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
-
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    code_value_numb(self, numb_new_tan(code_eval_child_numb(self, 0)));
+    
+    return self;
 }
 
 CodeNode* i_expr_asin(CodeNode* self)
 {
-   Trace("i_expr_asin");
+    Trace("i_expr_asin");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
+    Numb* const numb = numb_new_asin(code_eval_child_numb(self, 0));
 
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    if (numb == NULL)
+    {
+       code_errmsg(self);
+       zpl_exit(EXIT_FAILURE);
+    }
+    code_value_numb(self, numb);
+    
+    return self;
 }
 
 CodeNode* i_expr_acos(CodeNode* self)
 {
-   Trace("i_expr_acos");
+    Trace("i_expr_acos");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
+    Numb* const numb = numb_new_acos(code_eval_child_numb(self, 0));
 
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    if (numb == NULL)
+    {
+       code_errmsg(self);
+       zpl_exit(EXIT_FAILURE);
+    }
+    code_value_numb(self, numb);
+    
+    return self;
 }
 
 CodeNode* i_expr_atan(CodeNode* self)
 {
-   Trace("i_expr_atan");
+    Trace("i_expr_atan");
 
-   assert(code_is_valid(self));
+    assert(code_is_valid(self));
 
-   fprintf(stderr, "Not implemented yet\n");
+    Numb* const numb = numb_new_atan(code_eval_child_numb(self, 0));
 
-   /* ??? numb = numb_new_log(code_eval_child_numb(self, 0)); */
-   
-   Numb* numb = NULL;
-
-   if (numb == NULL) //lint !e774 conditionalways true
-   {
-      code_errmsg(self);
-      zpl_exit(EXIT_FAILURE);
-   }      
-   code_value_numb(self, numb);
-   
-   return self;
+    if (numb == NULL)
+    {
+       code_errmsg(self);
+       zpl_exit(EXIT_FAILURE);
+    }
+    code_value_numb(self, numb);
+    
+    return self;
 }
 
 CodeNode* i_expr_fac(CodeNode* self)

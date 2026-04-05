@@ -668,21 +668,117 @@ Numb* numb_new_sqrt(Numb const* numb)
 
 Numb* numb_new_exp(Numb const* numb)
 {
-   assert(numb_is_valid(numb));
+    assert(numb_is_valid(numb));
 
-   char temp[256];
-   double d = exp(mpq_get_d(numb->value.numb));
+    char temp[256];
+    double d = exp(mpq_get_d(numb->value.numb));
 
-   /* !finite == !isfinite == isnan || isinf */
-   if ((d != d) || (d == HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
-   {
-      sprintf(temp, "*** Error 703: exp(%f)", mpq_get_d(numb->value.numb));
-      perror(temp);
-      return NULL;
-   }
-   sprintf(temp, "%.16e", d);
+    /* !finite == !isfinite == isnan || isinf */
+    if ((d != d) || (d == HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+    {
+       sprintf(temp, "*** Error 703: exp(%f)", mpq_get_d(numb->value.numb));
+       perror(temp);
+       return NULL;
+    }
+    sprintf(temp, "%.16e", d);
 
-   return numb_new_ascii(temp);
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_sin(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char temp[256];
+    
+    snprintf(temp, 31, "%.16e", sin(mpq_get_d(numb->value.numb)));
+
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_cos(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char temp[256];
+    
+    snprintf(temp, 31, "%.16e", cos(mpq_get_d(numb->value.numb)));
+
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_tan(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char temp[256];
+    
+    snprintf(temp, 31, "%.16e", tan(mpq_get_d(numb->value.numb)));
+
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_asin(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char   temp[256];
+    double d;
+    
+    d = asin(mpq_get_d(numb->value.numb));
+
+    /* !finite == !isfinite == isnan || isinf */
+    if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+    {
+       snprintf(temp, 255, "*** Error 701: asin(%f)", mpq_get_d(numb->value.numb));
+       perror(temp);
+       return NULL;
+    }
+    snprintf(temp, 255, "%.16e", d);
+
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_acos(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char   temp[256];
+    double d;
+    
+    d = acos(mpq_get_d(numb->value.numb));
+
+    /* !finite == !isfinite == isnan || isinf */
+    if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+    {
+       snprintf(temp, 255, "*** Error 701: acos(%f)", mpq_get_d(numb->value.numb));
+       perror(temp);
+       return NULL;
+    }
+    snprintf(temp, 255, "%.16e", d);
+
+    return numb_new_ascii(temp);
+}
+
+Numb* numb_new_atan(Numb const* numb)
+{
+    assert(numb_is_valid(numb));
+
+    char   temp[256];
+    double d;
+    
+    d = atan(mpq_get_d(numb->value.numb));
+
+    /* !finite == !isfinite == isnan || isinf */
+    if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+    {
+       snprintf(temp, 255, "*** Error 701: atan(%f)", mpq_get_d(numb->value.numb));
+       perror(temp);
+       return NULL;
+    }
+    snprintf(temp, 255, "%.16e", d);
+
+    return numb_new_ascii(temp);
 }
 
 Numb* numb_new_ln(Numb const* numb)

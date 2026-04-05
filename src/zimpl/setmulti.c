@@ -80,8 +80,8 @@ static bool set_multi_iter_is_valid(SetIter const* iter)
 {
    return iter != NULL
       && SID_ok2(iter->multi, SET_MULTI_ITER_SID)
+      && iter->multi.members >= 0
       && iter->multi.now     >= 0
-      && iter->multi.dim     >  0
       && (  (iter->multi.members == 0 && iter->multi.dim == 0 && iter->multi.subset == NULL)
          || (iter->multi.members >= 0 && iter->multi.dim >  0 && iter->multi.subset != NULL));
 }
