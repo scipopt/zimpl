@@ -1,0 +1,23 @@
+zimpl	v       0	d       	"d"
+zimpl	v       1	x_pi    	"x_pi"
+zimpl	v       2	x_sin   	"x_sin"
+zimpl	v       3	x_cos   	"x_cos"
+zimpl	v       4	x_tan   	"x_tan"
+zimpl	v       5	x_asin  	"x_asin"
+zimpl	v       6	x_acos  	"x_acos"
+zimpl	v       7	x_atan  	"x_atan"
+zimpl	c       0	c1a_1   	"c1a_1"	0.0000000000000000e+00
+zimpl	c       1	c1b_1   	"c1b_1"	0.0000000000000000e+00
+zimpl	c       2	c2a_1   	"c2a_1"	0.0000000000000000e+00
+zimpl	c       3	c2b_1   	"c2b_1"	0.0000000000000000e+00
+zimpl	c       4	c3a_1   	"c3a_1"	0.0000000000000000e+00
+zimpl	c       5	c3b_1   	"c3b_1"	0.0000000000000000e+00
+zimpl	c       6	c4a_1   	"c4a_1"	0.0000000000000000e+00
+zimpl	c       7	c4b_1   	"c4b_1"	0.0000000000000000e+00
+zimpl	c       8	c5a_1   	"c5a_1"	0.0000000000000000e+00
+zimpl	c       9	c5b_1   	"c5b_1"	0.0000000000000000e+00
+zimpl	c      10	c6a_1   	"c6a_1"	0.0000000000000000e+00
+zimpl	c      11	c6b_1   	"c6b_1"	0.0000000000000000e+00
+zimpl	c      12	c7a_1   	"c7a_1"	0.0000000000000000e+00
+zimpl	c      13	c7b_1   	"c7b_1"	0.0000000000000000e+00
+zimpl	o       0	slack   	"slack"

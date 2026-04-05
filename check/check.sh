@@ -28,7 +28,7 @@
 # $1 = Binary (relative to current directory when called from check/)
 PASS=0
 COUNT=0
-for i in expr param set subto condit var bool define vinst sos read
+for i in expr param set subto condit var bool define vinst sos read trigon
 do
    COUNT=`expr $COUNT + 1` 
    $1 -v0 $i.zpl

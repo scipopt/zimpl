@@ -1,0 +1,4 @@
+*** Error 705: acos(2.000000): Numerical argument out of domain
+*** File: e705.zpl Line 1
+*** param x := acos(2);
+***                  ^^^

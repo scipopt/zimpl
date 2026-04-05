@@ -1,0 +1,19 @@
+****************************************************
+* Zuse Institute Mathematical Programming Language *
+* Release 3.7.2 Copyright (C)2018 by Thorsten Koch *
+****************************************************
+*   This is free software and you are welcome to   *
+*     redistribute it under certain conditions     *
+*      ZIMPL comes with ABSOLUTELY NO WARRANTY     *
+****************************************************
+
+Reading check/errors/e706.zpl
+Instructions evaluated: 11
+Name: check/errors/e706.zpl   Variables: 0   Constraints: 0   Non Zeros: 0
+Writing [e706.lp]
+Writing [e706.tbl]
+
+Address     Size  File(Line) - total size 8
+5060000001a0       8  src/zimpl/mmlscan.c(3006)  ok
+Maximum amount of memory used = 24334673 bytes
+Maximum amount of stack used = 18446744073709551552 bytes

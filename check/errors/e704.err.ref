@@ -1,0 +1,4 @@
+*** Error 704: asin(2.000000): Numerical argument out of domain
+*** File: e704.zpl Line 1
+*** param x := asin(2);
+***                  ^^^
