@@ -100,7 +100,7 @@ static void create_new_constraint(
    assert(term_is_valid(term));
    assert(numb_is_valid(lrhs));
    
-   cname = malloc(strlen(basename) + strlen(extension) + 10 + 1);
+   cname = malloc(strlen(basename) + strlen(extension) + 1 + 10 + 1);
    sprintf(cname, "%s%s_%d", basename, extension, internal_cons++);
    (void)xlp_addcon_term(prog_get_lp(), cname, con_type, lrhs, lrhs, flags, term);
 

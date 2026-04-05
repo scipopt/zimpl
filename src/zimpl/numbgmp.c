@@ -670,11 +670,11 @@ Numb* numb_new_exp(Numb const* numb)
 {
    assert(numb_is_valid(numb));
 
-   char temp[32];
+   char temp[256];
    double d = exp(mpq_get_d(numb->value.numb));
 
    /* !finite == !isfinite == isnan || isinf */
-   if (d != d) /*lint !e777 */ /* == isnan(d) || isinf(d) */
+   if ((d != d) || (d == HUGE_VAL)) /*lint !e777 */ /* == isnan(d) || isinf(d) */
    {
       sprintf(temp, "*** Error 703: exp(%f)", mpq_get_d(numb->value.numb));
       perror(temp);

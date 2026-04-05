@@ -638,7 +638,14 @@ CodeNode* i_expr_exp(CodeNode* self)
 
    assert(code_is_valid(self));
 
-   code_value_numb(self, numb_new_exp(code_eval_child_numb(self, 0)));
+   Numb* const numb = numb_new_exp(code_eval_child_numb(self, 0));
+
+   if (numb == NULL)
+   {
+      code_errmsg(self);
+      zpl_exit(EXIT_FAILURE);
+   }      
+   code_value_numb(self, numb);
    
    return self;
 }

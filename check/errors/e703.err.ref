@@ -1,0 +1,4 @@
+*** Error 703: exp(1000.000000): Undefined error: 0
+*** File: e703.zpl Line 2
+*** param x := exp(1000);
+***                    ^^^

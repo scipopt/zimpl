@@ -179,8 +179,10 @@ Subject to
  u1_3:
   + u$B#9 >= 0
  u1_4:
-  + u$A#8 >= 0
+  + u$A#7 >= 0
  u1_5:
+  + u$A#8 >= 0
+ u1_6:
   + u$A#9 >= 0
  v1_1:
   + v$b#2 + v$a#2 >= 0
@@ -191,13 +193,13 @@ Subject to
  w1_3:
   + n#3 + n#2 + n#1 >= 0
  x1_1:
-  + xabcdefghijkl@a2 >= 0
+  + xabcdefghijkl@a3 >= 0
  y1_1:
   + y#1 + y#2 + y#3 + y#4 + y#5 + y#6
-  + y#7 + y#_10@aa + y#_12@a9 + y#_14@a8 + y#_16@a7 + y#_8@a6
-  + y#_6@a5 + y#_4@a4 + y#_2@a3 >= 0
+  + y#7 + y#_10@ab + y#_12@aa + y#_14@a9 + y#_16@a8 + y#_8@a7
+  + y#_6@a6 + y#_4@a5 + y#_2@a4 >= 0
  y2_1:
-  + y2#_2@b2 >= 2
+  + y2#_2@b3 >= 2
  z1_1:
   + e#4$c + e#4$b + e#4$a + e#3$c + e#3$b + e#3$a
   + e#2$c + e#2$b + e#2$a + e#1$c + e#1$b + e#1$a
@@ -287,19 +289,20 @@ Bounds
  0 <= u$B#7 <= +inf
  0 <= u$B#8 <= +inf
  0 <= u$B#9 <= +inf
+ 0 <= u$A#7 <= +inf
  0 <= u$A#8 <= +inf
  0 <= u$A#9 <= +inf
  0 <= v$a#2 <= +inf
  0 <= v$b#2 <= +inf
- 0 <= xabcdefghijkl@a2 <= +inf
- 0 <= y#_2@a3 <= +inf
- 0 <= y#_4@a4 <= +inf
- 0 <= y#_6@a5 <= +inf
- 0 <= y#_8@a6 <= +inf
- 0 <= y#_16@a7 <= +inf
- 0 <= y#_14@a8 <= +inf
- 0 <= y#_12@a9 <= +inf
- 0 <= y#_10@aa <= +inf
+ 0 <= xabcdefghijkl@a3 <= +inf
+ 0 <= y#_2@a4 <= +inf
+ 0 <= y#_4@a5 <= +inf
+ 0 <= y#_6@a6 <= +inf
+ 0 <= y#_8@a7 <= +inf
+ 0 <= y#_16@a8 <= +inf
+ 0 <= y#_14@a9 <= +inf
+ 0 <= y#_12@aa <= +inf
+ 0 <= y#_10@ab <= +inf
  0 <= y#7 <= +inf
  0 <= y#6 <= +inf
  0 <= y#5 <= +inf
@@ -307,7 +310,7 @@ Bounds
  0 <= y#3 <= +inf
  0 <= y#2 <= +inf
  0 <= y#1 <= +inf
- 0 <= y2#_2@b2 <= +inf
+ 0 <= y2#_2@b3 <= +inf
  0 <= z#1$c#1 <= +inf
  0 <= z#1$c#2 <= +inf
  0 <= z#1$c#3 <= +inf

@@ -65,9 +65,7 @@ struct heap
 
 static void heap_print(FILE* fp, Heap const* heap)
 {
-   int i;
-   
-   for(i = 0; i < heap->used; i++)
+   for(int i = 0; i < heap->used; i++)
    {
       fprintf(fp, "%3d ", i);
       switch(heap->type)
@@ -84,9 +82,6 @@ static void heap_print(FILE* fp, Heap const* heap)
 
 bool heap_is_valid(Heap const* heap)
 {
-   HeapData const* data;
-   int       i;
-   
    if (  heap           == NULL
       || heap->type     == HEAP_ERR
       || heap->data     == NULL
@@ -96,20 +91,17 @@ bool heap_is_valid(Heap const* heap)
       || heap->used     >  heap->size)
       return false;
 
-   data = heap->data;
+   HeapData const* data = heap->data;
    
    /* Heap property
     */
-   for(i = 0; i < heap->used / 2; i++)
+   for(int current = heap->used - 1; current > 0; current--)
    {
-      if ((*heap->data_cmp)(data[i], data[i + i]) > 0) //lint !e453
+      int parent = (current - 1) / 2;
+
+      if ((*heap->data_cmp)(data[current], data[parent]) < 0) //lint !e453
       {
          heap_print(stderr, heap); //lint !e453
-         return false;
-      }
-      if (i + i + 1 < heap->used && (*heap->data_cmp)(data[i], data[i + i + 1]) > 0) //lint !e453
-      {
-         // heap_print(stderr, heap);
          return false;
       }
    }
@@ -151,12 +143,10 @@ Heap* heap_new_entry(
 }
 
 void heap_free(Heap* heap)
-{
-   int i;
-   
+{  
    assert(heap_is_valid(heap));
 
-   for(i = 0; i < heap->used; i++)
+   for(int i = 0; i < heap->used; i++)
    {
       switch(heap->type)
       {
@@ -188,13 +178,14 @@ static void sift_down(
    Heap const* heap,
    int         current)
 {
+   assert(heap != NULL);
+
    HeapData* data = heap->data;
-   int       child;
 
    /* Heap shift down
     * (Oberstes Element runter und korrigieren)
     */         
-   child = current * 2;
+   int child = current * 2 + 1;
 
    if (child + 1 < heap->used)
       if ((*heap->data_cmp)(data[child + 1], data[child]) < 0)
@@ -205,7 +196,7 @@ static void sift_down(
        swap_entries(heap, current, child);
 
        current = child;
-       child  = current * 2;
+       child  = current * 2 + 1;
        
        if (child + 1 < heap->used)
           if ((*heap->data_cmp)(data[child + 1], data[child]) < 0)
@@ -220,8 +211,10 @@ static void sift_up(
    Heap const* heap,
    int         current)
 {
+   assert(heap != NULL);
+
    HeapData* data   = heap->data;
-   int       parent = current / 2;
+   int       parent = (current - 1) / 2;
    
    /* Heap sift up 
     */
@@ -229,7 +222,7 @@ static void sift_up(
    {
       swap_entries(heap, current, parent);
       current = parent;
-      parent /= 2;
+      parent  = (current - 1) / 2;
    }
 }
 
@@ -241,7 +234,7 @@ void heap_push_entry(
 {
    assert(heap_is_valid(heap));
    assert(entry_is_valid(entry));
-   assert(heap->used <  heap->size);
+   assert(heap->used < heap->size);
 
    heap->data[heap->used].entry = entry;
    
@@ -256,9 +249,7 @@ void heap_push_entry(
  */
 Entry* heap_pop_entry(
    Heap* heap)
-{
-   Entry* entry;
-   
+{  
    assert(heap_is_valid(heap));
    assert(heap->used > 0);
    assert(heap->type == HEAP_ENTRY);
@@ -266,7 +257,7 @@ Entry* heap_pop_entry(
    /* Heap shift down
     * (Oberstes Element runter und korrigieren)
     */         
-   entry = heap->data[0].entry;
+   Entry* entry = heap->data[0].entry;
 
    heap->data[0].entry = NULL;
    
@@ -277,7 +268,7 @@ Entry* heap_pop_entry(
    sift_down(heap, 0);
 
    assert(heap_is_valid(heap));
-      
+         
    return entry;
 }
 
