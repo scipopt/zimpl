@@ -1,4 +1,7 @@
+3.8.0   
   
+  - exchanged "not implemented" for the trigonometric functions to floating point implementations.
+  - started t changed coverage to gcovr
   - fixed error in heap.c that could lead to wrong results from argmin/argmax
   - Added e703 for too large exp()
   - fixed several small bugs. Fix in documentation.
