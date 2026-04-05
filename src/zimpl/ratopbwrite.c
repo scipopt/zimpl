@@ -225,7 +225,7 @@ void opb_write(
    assert(lp != NULL);
    assert(fp != NULL);
    
-   name_size = lps_getnamesize(lp, LP_FORM_LPF);
+   name_size = lps_getnamesize(lp, LP_FORM_OPB);
    name      = malloc((size_t)name_size);
 
    assert(name != NULL);
@@ -257,6 +257,8 @@ void opb_write(
       }
       if (lp->obj_term != NULL)
          write_term(fp, format, lp->obj_term, name, name_size, true, (lp->direct == LP_MAX));
+
+      fprintf(fp, ";\n");  
    }
    /* ---------------------------------------------------------------------- */
 

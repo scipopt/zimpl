@@ -259,6 +259,9 @@ bool elem_cmp(Elem const* elem_a, Elem const* elem_b)
    if (elem_a->type == ELEM_STRG)
       return strcmp(elem_a->value.strg, elem_b->value.strg) != 0;
 
+   if (elem_a->type == ELEM_NAME)
+      return strcmp(elem_a->value.name, elem_b->value.name) != 0;
+
    assert(elem_a->type == ELEM_NUMB);
 
    return !numb_equal(elem_a->value.numb, elem_b->value.numb);

@@ -991,6 +991,8 @@ void lps_delvar(
 
    assert(var->size == 0);
 
+   lp->vars--;
+
    /* Correkt "next" links
     */
    if (var->prev != NULL)
@@ -1036,8 +1038,6 @@ void lps_delvar(
    
    free(var->name);
    free(var);
-
-   lp->vars--;
    
    assert(lps_valid(lp));
 }
@@ -1104,6 +1104,8 @@ void lps_delcon(
 
    assert(con->size == 0);
 
+   lp->cons--;
+
    /* Correkt "next" links
     */
    if (con->prev != NULL)
@@ -1147,8 +1149,6 @@ void lps_delcon(
    
    free(con->name);
    free(con);
-
-   lp->cons--;
    
    assert(lps_valid(lp));
 }

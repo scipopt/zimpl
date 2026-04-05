@@ -89,7 +89,7 @@ static char const* const help =
 "  -t lp|mps|hum|rlp|pip|qx|opb  select output format. Either LP (default), MPS format,\n" \
 "                 human readable HUM, randomly permuted LP, PIP polynomial IP, or\n" \
 "                 QUBO format: option x can be zero or more of [1,c,p], or\n" \
-"                 Pseudo Boolena OPB\n" \
+"                 Pseudo Boolean OPB\n" \
 "  -v[0-5]        verbosity level: 0 = quiet, 1 = default, up to 5 = debug\n" \
 "  -V             print program version\n" \
 "  filename       is the name of the input ZPL file.\n" \
