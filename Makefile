@@ -299,7 +299,7 @@ coverage:
 		-ln -s ../../src $(OBJDIR)
 		-mkdir -p gcov
 		lcov -d $(OBJDIR) -z
-		make OPT=gcov check
+		- make OPT=gcov check
 		lcov -d $(OBJDIR) -c >gcov/z.capture
 		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse2.c" >gcov/zimpl.capture
 		genhtml -o gcov gcov/zimpl.capture
