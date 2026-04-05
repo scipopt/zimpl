@@ -296,14 +296,10 @@ analyze:
 		$(ANALYZER) make
 
 coverage:
-		-ln -s ../../src $(OBJDIR)
-		-mkdir -p gcov
-		lcov -d $(OBJDIR) -z
-		- make OPT=gcov check
-		lcov -d $(OBJDIR) -c >gcov/z.capture
-		lcov -d $(OBJDIR) -r gcov/z.capture "*mmlscan.c" "*mmlparse2.c" >gcov/zimpl.capture
-		genhtml -o gcov gcov/zimpl.capture
-		-rm gcov/z.capture
+		make OPT=gcov
+		make OPT=gcov check
+		-mkdir -p coverage
+		gcovr -r . --txt --decisions --calls --html-details coverage/index.html --txt=coverage.txt
 
 $(OBJDIR):
 		@echo "** creating directory \"$@\""

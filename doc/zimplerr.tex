@@ -471,15 +471,18 @@ the argument was too small to be represented as a \code{double}.
   Function \code{ln} was called with a zero or negative argument, or
   the argument was too small to be represented as a \code{double}.
 \item[703 exp(): \code{OS specific domain or range error message}]\ \\
-  Function \code{exp} was called with the magnitude of the argument too large.
+   Function \code{exp} was called with the magnitude of the argument too large.
+\item[704 asin(): \code{OS specific domain error message}]\ \\
+   Function \code{asin} was called with an argument outside the domain [-1,1].
+\item[705 acos(): \code{OS specific domain error message}]\ \\
+   Function \code{acos} was called with an argument outside the domain [-1,1].
+\item[706 atan(): \code{OS specific domain or range error message}]\ \\
+   Function \code{atan} was called with an argument causing overflow.
 %\item[]\ \\
 %\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
-%\item[]\ \\
+%   
 % mmlscan.l
+%
 \item[800 parse error: expecting \code{xxx} (or \code{yyy})]\ \\
   Parsing error. What was found was not what was expected.
   The statement you entered is not valid.

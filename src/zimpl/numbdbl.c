@@ -577,65 +577,79 @@ Numb* numb_new_tan(Numb const* numb_a)
 
 Numb* numb_new_asin(Numb const* numb_a)
 {
-   Numb* numb = numb_new();
-   
-   assert(numb != NULL);
-   assert(numb_is_valid(numb_a));
+    Numb* numb = numb_new();
+    
+    assert(numb != NULL);
+    assert(numb_is_valid(numb_a));
 
-   numb->value.numb = asin(numb_a->value.numb);
+    numb->value.numb = asin(numb_a->value.numb);
 
-   /* !finite == !isfinite == isnan || isinf */
-   if (numb->value.numb != numb->value.numb) 
-   {
-      char temp[256];
+    /* !finite == !isfinite == isnan || isinf */
+    if (numb->value.numb != numb->value.numb) 
+    {
+       char temp[256];
 
-      snprintf(temp, 255, "*** Error 701: asin(%f)", numb_a->value.numb);
-      perror(temp);
-      return NULL;
-   }
-   return numb;
+       snprintf(temp, 255, "*** Error 704: asin(%f)", numb_a->value.numb);
+       perror(temp);
+       return NULL;
+    }
+    return numb;
+}
+    return numb;
+}
+    return numb;
+}
+    return numb;
+}
+    return numb;
+}
+    return numb;
+}
+    return numb;
 }
 
 Numb* numb_new_acos(Numb const* numb_a)
 {
-   Numb* numb = numb_new();
-   
-   assert(numb != NULL);
-   assert(numb_is_valid(numb_a));
+    Numb* numb = numb_new();
+    
+    assert(numb != NULL);
+    assert(numb_is_valid(numb_a));
 
-   numb->value.numb = acos(numb_a->value.numb);
+    numb->value.numb = acos(numb_a->value.numb);
 
-   /* !finite == !isfinite == isnan || isinf */
-   if (numb->value.numb != numb->value.numb) 
-   {
-      char temp[256];
+    /* !finite == !isfinite == isnan || isinf */
+    if (numb->value.numb != numb->value.numb) 
+    {
+       char temp[256];
 
-      snprintf(temp, 255, "*** Error 701: acos(%f)", numb_a->value.numb);
-      perror(temp);
-      return NULL;
-   }
-   return numb;
+       snprintf(temp, 255, "*** Error 705: acos(%f)", numb_a->value.numb);
+       perror(temp);
+       return NULL;
+    }
+    return numb;
 }
 
 Numb* numb_new_atan(Numb const* numb_a)
 {
-   Numb* numb = numb_new();
-   
-   assert(numb != NULL);
-   assert(numb_is_valid(numb_a));
+    Numb* numb = numb_new();
+    
+    assert(numb != NULL);
+    assert(numb_is_valid(numb_a));
 
-   numb->value.numb = atan(numb_a->value.numb);
+    numb->value.numb = atan(numb_a->value.numb);
 
-   /* !finite == !isfinite == isnan || isinf */
-   if (numb->value.numb != numb->value.numb) 
-   {
-      char temp[256];
+    /* !finite == !isfinite == isnan || isinf */
+    if (numb->value.numb != numb->value.numb) 
+    {
+       char temp[256];
 
-      snprintf(temp, 255, "*** Error 701: atan(%f)", numb_a->value.numb);
-      perror(temp);
-      return NULL;
-   }
-   return numb;
+       snprintf(temp, 255, "*** Error 706: atan(%f)", numb_a->value.numb);
+       perror(temp);
+       return NULL;
+    }
+    return numb;
+}
+    return numb;
 }
 
 Numb* numb_new_ln(Numb const* numb_a)
