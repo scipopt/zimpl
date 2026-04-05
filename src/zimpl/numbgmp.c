@@ -454,7 +454,7 @@ void numb_mod(Numb* numb_a, Numb const* numb_b)
 
    mpz_mul(a, mpq_numref(numb_a->value.numb), mpq_denref(numb_b->value.numb));
    mpz_mul(b, mpq_numref(numb_b->value.numb), mpq_denref(numb_a->value.numb));
-   mpz_mod(r, a, b);
+   mpz_tdiv_r(r, a, b);
    mpq_set_z(numb_a->value.numb, r);
 
    mpz_clear(r);
