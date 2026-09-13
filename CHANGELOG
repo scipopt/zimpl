@@ -1,11 +1,12 @@
-3.8.0   
+3.8.0 September 2026 Release
   
-  - exchanged "not implemented" for the trigonometric functions to floating point implementations.
+  - exchanged "not implemented" for the trigonometric functions to floating point implementations
   - started t changed coverage to gcovr
   - fixed error in heap.c that could lead to wrong results from argmin/argmax
   - Added e703 for too large exp()
-  - fixed several small bugs. Fix in documentation.
-  - added sub-makefiles for Linux/Darwin ARM with gnu and clang and fixed warnings.
+  - fixed several small bugs and fix in documentation
+  - in Makefile, changed default compiler (COMP) from gnu to clang when on macOS (Darwin)
+  - added sub-makefiles for Linux/Darwin ARM with gnu and clang and fixed warnings
     ***Note: On Darwin it is neccessary to install newer versions of bison/flex. The versions from Apple are too old.
     ***Note: For some reason multi_set_iter is giving a different order of the elements on Darwin. 
              This lets the metaio test fail. This can be ignored.
