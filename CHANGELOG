@@ -1,4 +1,4 @@
-3.8.0 September 2026 Release
+3.8.0 18. September 2026 Release
   
   - exchanged "not implemented" for the trigonometric functions to floating point implementations
   - started t changed coverage to gcovr
