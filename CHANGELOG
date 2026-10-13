@@ -1,3 +1,8 @@
+3.9.0 10. October 2026 Release
+
+  - refactored CMake build configuration.
+  - fixed bug in double-only code (numbdbl.c).
+
 3.8.0 18. September 2026 Release
   
   - exchanged "not implemented" for the trigonometric functions to floating point implementations
