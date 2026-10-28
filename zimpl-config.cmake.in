@@ -1,9 +1,75 @@
-if(NOT TARGET libzimpl)
-  include("${CMAKE_CURRENT_LIST_DIR}/zimpl-targets.cmake")
+# Check if already found.
+if(TARGET ZIMPL::ZIMPL)
+   if(NOT ZIMPL_FIND_QUIETLY)
+      message(STATUS "Already found suitable ZIMPL version ${ZIMPL_VERSION}.")
+   endif()
+else()
+  if(NOT ZIMPL_FIND_QUIETLY)
+     message(STATUS "Checking ZIMPL: ${CMAKE_CURRENT_LIST_FILE}")
+  endif()
 endif()
 
-set(ZIMPL_LIBRARIES libzimpl)
-set(ZIMPL_PIC_LIBRARIES libzimpl-pic)
-set(ZIMPL_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
-set(ZIMPL_FOUND TRUE)
+# Whether ZIMPL was built with position-independent code.
+set(ZIMPL_HAS_PIC @ZIMPL_HAS_PIC@)
+
+# Whether ZIMPL was built with GMP.
+set(ZIMPL_HAS_GMP @ZIMPL_HAS_GMP@)
+
+# Whether ZIMPL was built with ZLIB.
+set(ZIMPL_HAS_ZLIB @ZIMPL_HAS_ZLIB@)
+
+# Dependency search and inclusion of targets.
+if(NOT TARGET ZIMPL::ZIMPL)
+   # Indent messages for dependency search.
+   list(APPEND CMAKE_MESSAGE_INDENT "  ")
+
+   # For `find_dependency` function.
+   include(CMakeFindDependencyMacro)
+   
+   list(APPEND CMAKE_MODULE_PATH @EXTRA_CMAKE_MODULE_PATH@)
+   
+   # If ZIMPL was built with GMP then we also need it.
+   @ZIMPL_CONFIG_GMP_DIR@
+   if(ZIMPL_HAS_GMP)
+      find_dependency(GMP)
+   endif()
+   
+   # If ZIMPL was built with ZLIB then we also need it.
+   @ZIMPL_CONFIG_ZLIB_DIR@
+   if(ZIMPL_HAS_ZLIB)
+      find_dependency(ZLIB)
+   endif()
+   
+   # Unindent messages again; equivalent to list(POP_BACK, CMAKE_MESSAGE_INDENT) which requires CMake 3.15.
+   list(REVERSE CMAKE_MESSAGE_INDENT)
+   list(REMOVE_AT CMAKE_MESSAGE_INDENT 0)
+   list(REVERSE CMAKE_MESSAGE_INDENT)
+   
+   # Include the targets.
+   include("${CMAKE_CURRENT_LIST_DIR}/zimpl-targets.cmake")
+   
+   # Add main alias.
+   add_library(ZIMPL::ZIMPL ALIAS ZIMPL::libzimpl)
+
+   # Set version.
+   set(ZIMPL_VERSION "@ZIMPL_VERSION_MAJOR@.@ZIMPL_VERSION_MINOR@.@ZIMPL_VERSION_PATCH@")
+
+   # Report success.
+   if(NOT ZIMPL_FIND_QUIETLY)
+      message(STATUS "Found ZIMPL version ${ZIMPL_VERSION}.")
+   endif()
+endif()
+
+# Deprecated variables.
+add_library(ZIMPL_LIBRARIES INTERFACE IMPORTED)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
+   set_target_properties(ZIMPL_LIBRARIES PROPERTIES
+      DEPRECATION "Do not use ZIMPL_INCLUDE_DIRS and ZIMPL_LIBRARIES anymore, but the ZIMPL::ZIMPL target instead.")
+else()
+   message(DEBUG "CMake version ${CMAKE_VERSION} is too low to mark ZIMPL_LIBRARIES target as deprecated!")
+endif()
+target_link_libraries(ZIMPL_LIBRARIES INTERFACE ZIMPL::libzimpl)
+set(ZIMPL_LIBRARIES "ZIMPL_LIBRARIES")
+get_target_property(ZIMPL_INCLUDE_DIRS ZIMPL::libzimpl INTERFACE_INCLUDE_DIRECTORIES)
+
 
