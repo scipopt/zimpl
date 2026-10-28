@@ -1,6 +1,9 @@
-3.9.0 10. October 2026 Release
+3.9.0
 
-  - refactored CMake build configuration.
+  - redesigned the CMake configuration entirely.
+  - CMake now also respects the SHARED option (as well as BUILD_SHARED_LIBS) to build PIC-enabled static libraries.
+  - replaced FindGMP.cmake module.
+  - renamed several CMake variables and preprocessor macros to ZIMPL_HAS_*, creating deprecated aliases. The new macros are always defined but are either 0 or 1. Affected: ZIMPL_WITH_GMP -> ZIMPL_HAS_GMP, ZIMPL_WITH_ZLIB -> ZIMPL_HAS_ZLIB.
   - fixed bug in double-only code (numbdbl.c).
 
 3.8.0 18. September 2026 Release

@@ -595,18 +595,6 @@ Numb* numb_new_asin(Numb const* numb_a)
     }
     return numb;
 }
-    return numb;
-}
-    return numb;
-}
-    return numb;
-}
-    return numb;
-}
-    return numb;
-}
-    return numb;
-}
 
 Numb* numb_new_acos(Numb const* numb_a)
 {
@@ -647,8 +635,6 @@ Numb* numb_new_atan(Numb const* numb_a)
        perror(temp);
        return NULL;
     }
-    return numb;
-}
     return numb;
 }
 

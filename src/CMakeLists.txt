@@ -1,200 +1,219 @@
-bison_target(MMLPARSE2 zimpl/mmlparse2.y ${CMAKE_CURRENT_BINARY_DIR}/zimpl/mmlparse2.c COMPILE_FLAGS -t)
-flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/zimpl/mmlscan.c)
+# Overall structure:
+#  
+# Configure build-dependent header file.
+# Define common compilation settings.
+# Define targets along with properties, dependencies, includes, linked libraries, definitions.
+# Define target aliases.
+# Add sanitizers, etc.
+# Install headers.
+# Install targets.
+# Generate export header file.
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zimpl)
+# Run Bison and Flex.
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/zimpl")
+bison_target(MMLPARSE2
+   zimpl/mmlparse2.y
+   "${PROJECT_BINARY_DIR}/zimpl/mmlparse2.c"
+   COMPILE_FLAGS -t
+   )
+flex_target(MMLSCAN
+   zimpl/mmlscan.l
+   "${PROJECT_BINARY_DIR}/zimpl/mmlscan.c"
+   )
 
-# add include directory for bison header
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+# Note that the scope of the following settings is local.
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
-# for zimpl headers
-include_directories(BEFORE zimpl)
-
-set(libsources
-    zimpl/blkmem.c
-    zimpl/bound.c
-    zimpl/code.c
-    zimpl/conname.c
-    zimpl/define.c
-    zimpl/elem.c
-    zimpl/entry.c
-    zimpl/hash.c
-    zimpl/heap.c
-    zimpl/idxset.c
-    zimpl/inst.c
-    zimpl/iread.c
-    zimpl/list.c
-    zimpl/load.c
-    zimpl/local.c
-    zimpl/metaio.c
-    ${BISON_MMLPARSE2_OUTPUTS}
-    ${FLEX_MMLSCAN_OUTPUTS}
-    zimpl/mono.c
-    zimpl/mshell.c
-    zimpl/prog.c
-    zimpl/random.c
-    zimpl/rdefpar.c
-    zimpl/source.c
-    zimpl/setempty.c
-    zimpl/setpseudo.c
-    zimpl/setlist.c
-    zimpl/setrange.c
-    zimpl/setprod.c
-    zimpl/setmulti.c
-    zimpl/set4.c
-    zimpl/stmt.c
-    zimpl/stkchk.c
-    zimpl/strstore2.c
-    zimpl/symbol.c
-    zimpl/term2.c
-    zimpl/tuple.c
-    zimpl/vinst.c
-    zimpl/zimpllib.c)
-
-if(GMP_FOUND)
-    set(libsources ${libsources} zimpl/gmpmisc.c zimpl/numbgmp.c)
-else()
-    set(libsources ${libsources} zimpl/numbdbl.c)
-endif()
-
-set(binsources
-    zimpl/zimpl.c
-    zimpl/xlpglue.c
-    zimpl/zlpglue.c
-    zimpl/ratlpstore.c
-    zimpl/ratlpfwrite.c
-    zimpl/ratmpswrite.c
-    zimpl/ratmstwrite.c
-    zimpl/ratopbwrite.c
-    zimpl/ratordwrite.c
-    zimpl/ratqbowrite.c
-    zimpl/ratpresolve.c)
-
-set(headers
-    zimpl/attribute.h
-    zimpl/blkmem.h
-    zimpl/bound.h
-    zimpl/code.h
-    zimpl/conname.h
-    zimpl/define.h
-    zimpl/elem.h
-    zimpl/entry.h
-    zimpl/gmpmisc.h
-    zimpl/hash.h
-    zimpl/heap.h
-    zimpl/idxset.h
-    zimpl/inst.h
-    zimpl/lint.h
-    zimpl/list.h
-    zimpl/local.h
-    zimpl/metaio.h
-    zimpl/mme.h
-    ${BISON_MMLPARSE2_OUTPUT_HEADER}
-    zimpl/mono.h
-    zimpl/mshell.h
-    zimpl/numb.h
-    zimpl/prog.h
-    zimpl/random.h
-    zimpl/ratlp.h
-    zimpl/ratlpstore.h
-    zimpl/ratlptypes.h
-    zimpl/rdefpar.h
-    zimpl/set4.h
-    zimpl/set.h
-    zimpl/stkchk.h
-    zimpl/stmt.h
-    zimpl/strstore.h
-    zimpl/symbol.h
-    zimpl/term.h
-    zimpl/tuple.h
-    zimpl/xlpglue.h
-    zimpl/zimpllib.h
-    zimpl/zlpglue.h)
-
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/src)
-
-if(MSVC)
-   set(libsources ${libsources} WIN/getopt.c)
-   include_directories(${PROJECT_SOURCE_DIR}/src/WIN)
-endif()
-
-#create zimpl with pic
-add_library(libzimpl-pic STATIC ${libsources})
-set_target_properties(libzimpl-pic PROPERTIES POSITION_INDEPENDENT_CODE on)
-target_link_libraries(libzimpl-pic ${libs})
-
-#create zimpl without pic
-add_library(libzimpl STATIC ${libsources})
-target_link_libraries(libzimpl ${libs})
-
-#create zimpl binary
-add_executable(zimpl ${binsources})
-target_link_libraries(zimpl libzimpl ${libs})
-
-if(SANITIZE)
-    find_package(Sanitizers)
-    add_sanitizers(zimpl)
-endif()
-
+# ZIMPL library: Note that we always build a static library as otherwise
+# the required glueing code is hard to import from another shared library
+# (on Mac) or DLL (on Windows).
+add_library(libzimpl STATIC
+   zimpl/blkmem.c
+   zimpl/bound.c
+   zimpl/code.c
+   zimpl/conname.c
+   zimpl/define.c
+   zimpl/elem.c
+   zimpl/entry.c
+   zimpl/hash.c
+   zimpl/heap.c
+   zimpl/idxset.c
+   zimpl/inst.c
+   zimpl/iread.c
+   zimpl/list.c
+   zimpl/load.c
+   zimpl/local.c
+   zimpl/metaio.c
+   zimpl/mono.c
+   zimpl/mshell.c
+   zimpl/prog.c
+   zimpl/random.c
+   zimpl/rdefpar.c
+   zimpl/source.c
+   zimpl/setempty.c
+   zimpl/setpseudo.c
+   zimpl/setlist.c
+   zimpl/setrange.c
+   zimpl/setprod.c
+   zimpl/setmulti.c
+   zimpl/set4.c
+   zimpl/stmt.c
+   zimpl/stkchk.c
+   zimpl/strstore2.c
+   zimpl/symbol.c
+   zimpl/term2.c
+   zimpl/tuple.c
+   zimpl/vinst.c
+   zimpl/zimpllib.c
+   $<$<BOOL:${ZIMPL_HAS_GMP}>:zimpl/gmpmisc.c>
+   $<$<BOOL:${ZIMPL_HAS_GMP}>:zimpl/numbgmp.c>
+   $<$<NOT:$<BOOL:${ZIMPL_HAS_GMP}>>:zimpl/numbdbl.c>
+   $<$<BOOL:${MSVC}>:WIN/getopt.c>
+   ${BISON_MMLPARSE2_OUTPUTS}
+   ${FLEX_MMLSCAN_OUTPUTS}
+   )
+target_include_directories(libzimpl BEFORE
+   PUBLIC
+      "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
+      "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+      "$<$<BOOL:${MSVC}>:$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/WIN>>"
+      "$<INSTALL_INTERFACE:include>"
+      "$<$<BOOL:${MSVC}>:$<INSTALL_INTERFACE:include/WIN>>"
+   )
+target_link_libraries(libzimpl
+   PUBLIC
+      $<$<BOOL:${ZIMPL_HAS_GMP}>:GMP::GMP>
+      $<$<BOOL:${ZIMPL_HAS_ZLIB}>:ZLIB::ZLIB>
+      ${libs}
+   )
+target_compile_definitions(libzimpl
+   PRIVATE
+      $<$<NOT:$<BOOL:${ZIMPL_HAS_ZLIB}>>:WITHOUT_ZLIB>
+      VERSION=\"${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMPL_VERSION_PATCH}\"
+   )
 set_target_properties(libzimpl PROPERTIES
-    OUTPUT_NAME "zimpl")
+   PREFIX ""
+#   TODO: once we annotated functions with ZIMPL_EXPORT and generate `zimpl_export.h`:
+#   C_VISIBILITY_PRESET hidden
+#   VISIBILITY_INLINES_HIDDEN 1
+   )
 
-set_target_properties(libzimpl-pic PROPERTIES
-    OUTPUT_NAME "zimpl-pic")
-
-include(GNUInstallDirs)
-
-# install the header files of zimpl
-install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zimpl)
-if(MSVC)
-    install(FILES WIN/unistd.h WIN/getopt.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/WIN)
+if(ZIMPL_HAS_GMP)
+   # ZIMPL executable.
+   set(zimpl_executable "zimpl-executable")
+   add_executable(zimpl-executable
+      zimpl/zimpl.c
+      zimpl/xlpglue.c
+      zimpl/zlpglue.c
+      zimpl/ratlpstore.c
+      zimpl/ratlpfwrite.c
+      zimpl/ratmpswrite.c
+      zimpl/ratmstwrite.c
+      zimpl/ratopbwrite.c
+      zimpl/ratordwrite.c
+      zimpl/ratqbowrite.c
+      zimpl/ratpresolve.c
+      )
+   target_link_libraries(zimpl-executable libzimpl)
+   target_compile_definitions(zimpl-executable
+      PRIVATE
+         VERSION=\"${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMPL_VERSION_PATCH}\")
+   set_target_properties(zimpl-executable PROPERTIES
+      OUTPUT_NAME zimpl
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      )
 endif()
 
-# install the binary and the library to appropriate locations and add them to an export group
-install(TARGETS libzimpl zimpl libzimpl-pic EXPORT zimpl-targets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-if(MSVC)
-    install(FILES $<TARGET_PDB_FILE:zimpl> DESTINATION ${CMAKE_INSTALL_BINDIR} OPTIONAL)
+# Create aliases internally in case ZIMPL is included via `add_subdirectory`.
+add_library(ZIMPL::ZIMPL ALIAS libzimpl)
+add_library(ZIMPL::libzimpl ALIAS libzimpl)
+if(zimpl_executable)
+   add_executable(ZIMPL::zimpl-executable ALIAS zimpl-executable)
 endif()
 
-# install the license file of ZIMPL
-install(FILES ${PROJECT_SOURCE_DIR}/LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/zimpl)
-
-# Add library targets to the build-tree export set
-export(TARGETS libzimpl libzimpl-pic
-  FILE "${CMAKE_BINARY_DIR}/zimpl-targets.cmake")
-
-#configure the config file for the build tree
-set(CONF_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/src)
-if(MSVC)
-   set(CONF_INCLUDE_DIRS ${CONF_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src/WIN)
+# Add sanitizers.
+if(SANITIZE)
+   find_package(Sanitizers)
+   add_sanitizers(libzimpl)
+   if(zimpl_executable)
+      add_sanitizers(zimpl-executable)
+   endif()
 endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
-  "${CMAKE_BINARY_DIR}/zimpl-config.cmake" @ONLY)
+# Install public header files.
+foreach(header_file
+   zimpl/attribute.h
+   zimpl/blkmem.h
+   zimpl/bound.h
+   zimpl/code.h
+   zimpl/conname.h
+   zimpl/define.h
+   zimpl/elem.h
+   zimpl/entry.h
+   zimpl/gmpmisc.h
+   zimpl/hash.h
+   zimpl/heap.h
+   zimpl/idxset.h
+   zimpl/inst.h
+   zimpl/lint.h
+   zimpl/list.h
+   zimpl/local.h
+   zimpl/metaio.h
+   zimpl/mme.h
+   zimpl/mono.h
+   zimpl/mshell.h
+   zimpl/numb.h
+   zimpl/prog.h
+   zimpl/random.h
+   zimpl/ratlp.h
+   zimpl/ratlpstore.h
+   zimpl/ratlptypes.h
+   zimpl/rdefpar.h
+   zimpl/set4.h
+   zimpl/set.h
+   zimpl/stkchk.h
+   zimpl/stmt.h
+   zimpl/strstore.h
+   zimpl/symbol.h
+   zimpl/term.h
+   zimpl/tuple.h
+   zimpl/xlpglue.h
+   zimpl/zimpllib.h
+   zimpl/zlpglue.h
+   )
+   # Extract directory part.
+   get_filename_component(directory "${header_file}" DIRECTORY)
+   # Install the header file.
+   install(
+      FILES "${PROJECT_SOURCE_DIR}/src/${header_file}"
+      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${directory}")
+endforeach()
 
-#configure the config file for the install
-set(CONF_INCLUDE_DIRS \${CMAKE_CURRENT_LIST_DIR}/../../../include)
+# TODO: Check if we need to install the Bison-generated headers. They are not included by any ZIMPL header.
+# Install Bison-generated headers. 
+#install(
+#   FILES ${BISON_MMLPARSE2_OUTPUT_HEADER}
+#   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/zimpl")
+
+# Install Windows-specific header files.
 if(MSVC)
-   set(CONF_INCLUDE_DIRS ${CONF_INCLUDE_DIRS} \${CMAKE_CURRENT_LIST_DIR}/../../../include/WIN)
+   install(
+      FILES WIN/unistd.h WIN/getopt.h
+      DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/WIN")
+endif()
+if(MSVC AND zimpl_executable)
+   install(
+      FILES $<TARGET_PDB_FILE:zimpl-executable>
+      DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
 endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake" @ONLY)
+# Install targets, and record them in zimpl-targets export set.
+install(TARGETS ${zimpl_executable} libzimpl
+   EXPORT zimpl-targets
+   LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+   )
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-	 ${CMAKE_BINARY_DIR}/zimpl-config-version.cmake
-	 VERSION ${ZIMPL_VERSION_MAJOR}.${ZIMPL_VERSION_MINOR}.${ZIMPL_VERSION_PATCH}
-	 COMPATIBILITY SameMajorVersion
-	 )
-
-# install the targets of the zimpl export group and the config file so that oter projects
-# can link easily against zimpl
-install(EXPORT zimpl-targets FILE zimpl-targets.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zimpl)
-install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake"
-   "${CMAKE_BINARY_DIR}/zimpl-config-version.cmake"
-   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zimpl)
