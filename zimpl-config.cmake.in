@@ -32,8 +32,43 @@ if(NOT TARGET ZIMPL::ZIMPL)
    @ZIMPL_CONFIG_GMP_DIR@
    if(ZIMPL_HAS_GMP)
       find_dependency(GMP)
+
+      # Support legacy FindGMP.cmake versions.
+      if(GMP_FOUND AND NOT TARGET GMP::GMP)
+         if(TARGET GMP::gmp)
+            message(WARNING "Found GMP version \"${GMP_VERSION}\" has no GMP::GMP target; interfacing GMP::gmp target instead.")
+            add_library(GMP::GMP INTERFACE IMPORTED)
+            target_link_libraries(GMP::GMP INTERFACE GMP::gmp)
+         elseif(TARGET GMP)
+            message(WARNING "Found GMP version \"${GMP_VERSION}\" has no GMP::GMP target; interfacing GMP target instead.")
+            add_library(GMP::GMP INTERFACE IMPORTED)
+            target_link_libraries(GMP::GMP INTERFACE GMP)
+         elseif(TARGET gmp)
+            message(WARNING "Found GMP version \"${GMP_VERSION}\" has no GMP::GMP target; interfacing gmp target instead.")
+            add_library(GMP::GMP INTERFACE IMPORTED)
+            target_link_libraries(GMP::GMP INTERFACE gmp)
+         elseif(GMP_INCLUDE_DIRS AND GMP_LIBRARIES)
+            message(WARNING "Found GMP version \"${GMP_VERSION}\" has no GMP::GMP target; using legacy variables GMP_INCLUDE_DIRS=\"${GMP_INCLUDE_DIRS}\" and GMP_LIBRARIES=\"${GMP_LIBRARIES}\" instead.")
+            # GMP_LIBRARIES may be a list, so we need to create each library seperately and glue them via an INTERFACE library.
+            list(LENGTH GMP_LIBRARIES num_gmp_lib)
+            math(EXPR last_gmp_lib ${num_gmp_lib}-1)
+            add_library(GMP_libgmp INTERFACE IMPORTED)
+            foreach(id_gmp_lib RANGE ${last_gmp_lib})
+               add_library(GMP::libgmp_${id_gmp_lib} UNKNOWN IMPORTED)
+               list(GET GMP_LIBRARIES ${id_gmp_lib} the_gmp_lib)
+               set_target_properties(GMP::libgmp_${id_gmp_lib} PROPERTIES
+                  IMPORTED_LOCATION "${the_gmp_lib}"
+                  INTERFACE_INCLUDE_DIRECTORIES "${GMP_INCLUDE_DIRS}")
+               target_link_libraries(GMP_libgmp INTERFACE GMP::libgmp_${id_gmp_lib})
+            endforeach()
+            add_library(GMP::GMP INTERFACE IMPORTED)
+            target_link_libraries(GMP::GMP INTERFACE GMP_libgmp)
+         else()
+            message(FATAL_ERROR "Found GMP version \"${GMP_VERSION}\" has no GMP::GMP target; unable to recover!")
+         endif()
+      endif()
    endif()
-   
+
    # If ZIMPL was built with ZLIB then we also need it.
    @ZIMPL_CONFIG_ZLIB_DIR@
    if(ZIMPL_HAS_ZLIB)
