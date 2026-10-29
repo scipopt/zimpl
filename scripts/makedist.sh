@@ -33,7 +33,7 @@ example/chvatal_diet.zpl example/facility_location.zpl \
 example/queens[12345].zpl example/steinerbaum.zpl \
 example/tsp.zpl example/tsp.dat \
 CMakeLists.txt zimpl-config.cmake.in \
-cmake/Modules/FindGMP.cmake cmake/Modules/FindPCRE.cmake cmake/Modules/PackageConfigDependencies.cmake
+cmake/FindGMP.cmake cmake/FindPCRE.cmake cmake/PackageConfigDependencies.cmake
 
 # check version numbers
 echo ">>> Checking version numbers in Makefile, Makefile.nmake, doc/zimpl.tex (2x), doc/docu.c, CMakeLists.txt, src/zimpl/mme.h and scripts/makedist.sh. (Should be $VERSION)"

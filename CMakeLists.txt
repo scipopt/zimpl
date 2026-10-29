@@ -38,7 +38,7 @@ project(ZIMPL
 include(GNUInstallDirs)
 
 # Path to CMake modules such as FindGMP.cmake.
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 ##### OPTIONS #####
 
@@ -314,29 +314,33 @@ endif()
 
 # Configure zimpl-config.cmake for the build-tree:
 # We add the CMake module path from the sources.
-set(EXTRA_CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+set(EXTRA_CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 configure_file("${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in"
    "${CMAKE_BINARY_DIR}/zimpl-config.cmake"
-   @ONLY)
+   @ONLY
+   )
 
 # Configure zimpl-config.cmake for the installation.
 # We add the current directory of the installed zimpl-config.cmake.
 set(EXTRA_CMAKE_MODULE_PATH "\${CMAKE_CURRENT_LIST_DIR}")
 configure_file("${PROJECT_SOURCE_DIR}/zimpl-config.cmake.in"
    "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake"
-   @ONLY)
+   @ONLY
+   )
 
 # Install CMake config and modules.
 install(FILES
    "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/zimpl-config.cmake"
    "${CMAKE_BINARY_DIR}/zimpl-config-version.cmake"
-   $<$<BOOL:${ZIMPL_HAS_GMP}>:${PROJECT_SOURCE_DIR}/cmake/Modules/FindGMP.cmake>
-   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/zimpl")
+   "$<$<BOOL:${ZIMPL_HAS_GMP}>:${PROJECT_SOURCE_DIR}/cmake/FindGMP.cmake>"
+   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/zimpl"
+   )
 
 # Install the zimpl-targets export set.
 install(EXPORT zimpl-targets
    NAMESPACE ZIMPL::
-   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/zimpl")
+   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/zimpl"
+   )
 
 # Export targets for the build-tree.
 export(EXPORT zimpl-targets
