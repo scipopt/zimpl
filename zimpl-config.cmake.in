@@ -95,19 +95,22 @@ if(NOT TARGET ZIMPL::ZIMPL)
    endif()
 endif()
 
-# Deprecated variables.
-add_library(ZIMPL_LIBRARIES INTERFACE IMPORTED)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
-   set_target_properties(ZIMPL_LIBRARIES PROPERTIES
-      DEPRECATION "Do not use ZIMPL_INCLUDE_DIRS and ZIMPL_LIBRARIES anymore, but the ZIMPL::ZIMPL target instead.")
-else()
-   message(DEBUG "CMake version ${CMAKE_VERSION} is too low to mark ZIMPL_LIBRARIES target as deprecated!")
+# Deprecated `ZIMPL_LIBRARIES` target aliases ZIMPL::libzimpl.
+if(NOT TARGET ZIMPL_LIBRARIES)
+   add_library(ZIMPL_LIBRARIES INTERFACE IMPORTED)
+   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
+      set_target_properties(ZIMPL_LIBRARIES PROPERTIES
+         DEPRECATION "Do not use ZIMPL_INCLUDE_DIRS and ZIMPL_LIBRARIES anymore, but the ZIMPL::ZIMPL target instead.")
+   else()
+      message(DEBUG "CMake version ${CMAKE_VERSION} is too low to mark ZIMPL_LIBRARIES target as deprecated!")
+   endif()
+   target_link_libraries(ZIMPL_LIBRARIES INTERFACE ZIMPL::libzimpl)
 endif()
-target_link_libraries(ZIMPL_LIBRARIES INTERFACE ZIMPL::libzimpl)
+
+# Deprecated variables.
+get_target_property(ZIMPL_INCLUDE_DIRS ZIMPL::libzimpl INTERFACE_INCLUDE_DIRECTORIES)
 set(ZIMPL_LIBRARIES "ZIMPL_LIBRARIES")
 if(ZIMPL_HAS_PIC)
    set(ZIMPL_PIC_LIBRARIES "ZIMPL_LIBRARIES")
 endif()
-get_target_property(ZIMPL_INCLUDE_DIRS ZIMPL::libzimpl INTERFACE_INCLUDE_DIRECTORIES)
-
 
