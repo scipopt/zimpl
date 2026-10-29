@@ -105,6 +105,9 @@ else()
 endif()
 target_link_libraries(ZIMPL_LIBRARIES INTERFACE ZIMPL::libzimpl)
 set(ZIMPL_LIBRARIES "ZIMPL_LIBRARIES")
+if(ZIMPL_HAS_PIC)
+   set(ZIMPL_PIC_LIBRARIES "ZIMPL_LIBRARIES")
+endif()
 get_target_property(ZIMPL_INCLUDE_DIRS ZIMPL::libzimpl INTERFACE_INCLUDE_DIRECTORIES)
 
 
