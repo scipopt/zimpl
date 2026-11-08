@@ -42,6 +42,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 ##### OPTIONS #####
 
+option(BUILD_PACKAGE "are we building a package" OFF)
+
 # Whether to build a shared library.
 option(BUILD_SHARED_LIBS "Whether to build a pic-enabled static library" ON)
 # For compatibility with the Makefile build system, the SHARED option exists.
@@ -305,10 +307,10 @@ write_basic_package_version_file("${CMAKE_BINARY_DIR}/zimpl-config-version.cmake
 # Unless we build a package, we populate search directories for dependencies.
 include(PackageConfigDependencies)
 
-if(NOT BUILD_PACKAGE AND ZIMPL_HAS_GMP AND GMP_DIR)
+if(NOT BUILD_PACKAGE AND ZIMPL_HAS_GMP)
    package_config_dependency_dir(ZIMPL_CONFIG_GMP_DIR GMP_FOUND GMP_DIR)
 endif()
-if(NOT BUILD_PACKAGE AND ZIMPL_HAS_ZLIB AND ZLIB_DIR)
+if(NOT BUILD_PACKAGE AND ZIMPL_HAS_ZLIB)
    package_config_dependency_dir(ZIMPL_CONFIG_ZLIB_DIR ZLIB_FOUND ZLIB_DIR)
 endif()
 
