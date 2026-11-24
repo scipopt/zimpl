@@ -73,20 +73,20 @@ Sets the parameter
 .I name
 to the specified value. This is equivalent with having this line in the
 Zimpl program: param name:=val .
-.IP -f
+.IP \-f
 Enable
 .BR flex (1)
 debugging output.
 .IP "\-F filter"
 The output is piped through a filter. A %s in the
 string is replaced by the output filename. For example: 
--F "gzip \-c >%s.gz" would compress all the 
+\-F "gzip \-c >%s.gz" would compress all the 
 output files.
-.IP -h
+.IP \-h
 Show program help.
 .IP "\-l length"
 Sets the maximum length for variable names in LPF output files.
-.IP -m
+.IP \-m
 Write a CPLEX .mst Mip STart file.
 .IP "\-n cm|cn|cf"
 Select the format for the generation of constraint
@@ -102,7 +102,7 @@ will use the name given with the subto,
 then a 1 .. n number like in 
 .I cm 
 and then append all the local variables from the forall statements.
-.IP "-o outfile"
+.IP "\-o outfile"
 Sets the base-name for the output files. Default is the name of the
 input file without extension.
 .IP \-O 
@@ -110,7 +110,7 @@ Optimize the generated LP by doing some presolve analysis (experimental).
 .IP "\-P filter" 
 The input is piped through a filter. A %s in the
 string is replaced by the input filename. For example: 
-\-F "cpp -DWITH_C1 %s" would pass the input file through the
+\-F "cpp \-DWITH_C1 %s" would pass the input file through the
 C-preprocessor.
 .IP \-r 
 Write a CPLEX .ord branching order file.
